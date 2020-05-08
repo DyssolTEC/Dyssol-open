@@ -1,28 +1,15 @@
-Dyssol 
-==============================
-
+# Dyssol
 Dyssol is a tool for dynamic flowsheet simulation of complex production processes with advanced treatment of granular materials.
 
-For more information, please check the documentation at: https://collaborating.tuhh.de/v-3/msolids/dyssol-open/-/tree/master/Documentation
+For more information, please check the [documentation](https://collaborating.tuhh.de/v-3/msolids/dyssol-open/-/tree/master/Documentation). 
 
-Check for updates at: https://cloud.tuhh.de/index.php/s/gxefp2WDZxjwMPg
+For new versions and updates, please check [here](https://cloud.tuhh.de/index.php/s/gxefp2WDZxjwMPg).
 
-Requirements 
-==============================
-Dyssol should install and work on the latest versions of Windows without any problems.
-Requires Visual C++ Redistributable for Visual Studio 2015 to be installed.
+# Requirements 
+Dyssol should install and work on all latest versions of Windows.
+Requires Visual C++ Redistributable for Visual Studio 2015 to run.
 
-Third-party tools and libraries
-==============================
-- Qt 5.11.3 – The Qt Company - LGPL v3 https://doc.qt.io/qt-5/lgpl.html
-- HDF5 v1.10.2 – HDF Group - HDF Licence https://support.hdfgroup.org/ftp/HDF5/current/src/unpacked/COPYING
-- zlib v1.2.11 – Jean-loup Gailly and Mark Adler - zlib License https://www.zlib.net/zlib_license.html
-- SUNDIALS v3.1.0 – Lawrence Livermore National Security - BSD-3-Clause License  https://computation.llnl.gov/projects/sundials/license
-- Inno Setup v5.6.1 – Jordan Russell - Inno Setup License http://www.jrsoftware.org/files/is/license.txt
-- KISS FFT v131 – Mark Borgerding - BSD-3-Clause License https://github.com/mborgerding/kissfft/blob/master/COPYING
-
-Compilation
-==============================
+# Compilation
 A fully functional version can be compiled and biult with Microsoft Visual Studio 2015. A command-line version can also be compiled on Linux.
 
 Requirements on Windows:
@@ -46,12 +33,10 @@ Biuld on Linux:
 - Run ./copy_files.sh to gather source files
 - Run ./make_dyssol to build Dyssol
 
-Installation
-==============================
+# Installation
 Run the provided installer and follow the instructions.
 
-Code organization
-==============================
+# Code organization
 - BaseSolvers - interfaces for equation solvers
 - CahceHandlers - dynamic data caching
 - Documentation - manuals
@@ -77,8 +62,7 @@ Code organization
 - Materials.dmdb - examplary database of meterials 
 - README - this file
 
-Installation directory organization 
-==============================
+# Installation directory organization 
 - Example flowsheets – flowsheet examples 
 - Example units – source code of units (C++)
 - Example solvers – source code of solvers (C++)
@@ -95,3 +79,11 @@ Installation directory organization
 - Materials.dmdb – default materials database
 - Qt5*.dll - Qt libraries to support GUI
 - unins000.exe – Dyssol uninstaller
+
+# Third-party tools and libraries
+- [Qt 5.11.3](https://www.qt.io/) – The Qt Company - [LGPL v3](https://doc.qt.io/qt-5/lgpl.html)
+- [HDF5 v1.10.2](https://www.hdfgroup.org/downloads/hdf5/) – HDF Group - [HDF Licence](https://support.hdfgroup.org/ftp/HDF5/current/src/unpacked/COPYING)
+- [zlib v1.2.11](https://www.zlib.net/) – Jean-loup Gailly and Mark Adler - [zlib License](https://www.zlib.net/zlib_license.html)
+- [SUNDIALS v3.1.0](https://computing.llnl.gov/projects/sundials/) – Lawrence Livermore National Security - [BSD-3-Clause License]( https://computation.llnl.gov/projects/sundials/license)
+- [Inno Setup v5.6.1](https://jrsoftware.org/isinfo.php) – Jordan Russell - [Inno Setup License](http://www.jrsoftware.org/files/is/license.txt)
+- [KISS FFT v131](https://github.com/mborgerding/kissfft) – Mark Borgerding - [BSD-3-Clause License](https://github.com/mborgerding/kissfft/blob/master/COPYING)
