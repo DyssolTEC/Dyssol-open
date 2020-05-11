@@ -3,7 +3,7 @@ Dyssol is a tool for dynamic flowsheet simulation of complex production processe
 
 For more information, please check the [documentation](https://collaborating.tuhh.de/v-3/msolids/dyssol-open/-/tree/master/Documentation). 
 
-For new versions and updates, please check [here](https://cloud.tuhh.de/index.php/s/gxefp2WDZxjwMPg).
+For new versions and updates, please check [here](https://www.dynsim-fp.de/dyssol/).
 
 # Requirements 
 Dyssol should install and work on all latest versions of Windows.
