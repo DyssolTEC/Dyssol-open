@@ -650,7 +650,7 @@ double CStream::GetCompoundConstant(const std::string& _sCompoundKey, ECompoundC
 
 	switch(static_cast<ECompoundConstProperties>(_nConstProperty))
 	{
-	case REACTIVITY_TYPE:
+	//case REACTIVITY_TYPE:
 	case CRITICAL_PRESSURE:
 	case CRITICAL_TEMPERATURE:
 	case HEAT_OF_FUSION_AT_NORMAL_FREEZING_POINT:

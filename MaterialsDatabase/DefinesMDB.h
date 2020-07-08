@@ -92,7 +92,7 @@ enum ECompoundConstProperties : unsigned
 	MOLAR_MASS                                   = 121,
 	NORMAL_BOILING_POINT                         = 122,
 	NORMAL_FREEZING_POINT                        = 123,
-	REACTIVITY_TYPE                              = 128,
+	//REACTIVITY_TYPE                              = 128,
 	STANDARD_FORMATION_ENTHALPY                  = 131,
 	BOND_WORK_INDEX								 = 132,
 	SOA_AT_NORMAL_CONDITIONS                     = 141,
@@ -150,17 +150,17 @@ namespace MDBDescriptors
 	// List of initial values of const properties
 	static constDescr defaultConstProperties
 	{
-		{ CRITICAL_PRESSURE ,							 { "Critical pressure" ,	 L"Pa" ,	 ""                                                                                                     , 220.55	} },
-		{ CRITICAL_TEMPERATURE ,						 { "Critical temperature" ,	 L"K" ,		 ""                                                                                                     , 647.13	} },
-		{ HEAT_OF_FUSION_AT_NORMAL_FREEZING_POINT ,		 { "Heat of fusion" ,		 L"J/mol" ,	 "Heat of fusion at normal freezing point"                                                              , 6002		} },
-		{ HEAT_OF_VAPORIZATION_AT_NORMAL_BOILING_POINT , { "Heat of vaporization " , L"J/mol" ,	 "Heat of vaporization at normal boiling point"                                                         , 40660.53	} },
-		{ MOLAR_MASS ,									 { "Molar mass" ,			 L"kg/mol" , ""                                                                                                     , 0.0180154	} },
-		{ NORMAL_BOILING_POINT ,						 { "Normal boiling point" ,	 L"K" ,		 ""                                                                                                     , 373.15	} },
-		{ NORMAL_FREEZING_POINT ,						 { "Normal freezing point" , L"K" ,		 ""                                                                                                     , 273.15	} },
-		{ REACTIVITY_TYPE ,								 { "Reactivity type" ,		 L"-"	,	 "Reactivity type\n[ 0 - reactive ], [ 1 - inert ], [ 2 - solvent ], [ 3 - insolvent ], [ 4 - solute ]" , 2			} },
-		{ STANDARD_FORMATION_ENTHALPY ,					 { "Formation enthalpy" ,	 L"J/mol" ,	 "Standard enthalpy of formation"                                                                       , -241826.4	} },
-		{ BOND_WORK_INDEX,							     { "Bond work index" ,	     L"kWh/t" ,	 "Bond work index"																						, 12 		} },
-		{ SOA_AT_NORMAL_CONDITIONS ,					 { "State of aggregation" ,	 L"-" ,		 "State of aggregation at normal conditions\n[ 0 - solid ] [ 1 - liquid ] [ 2 - gas ] [ 3 - unknown ]"  , 0			} },
+		{ CRITICAL_PRESSURE ,							 { "Critical pressure" ,	 L"Pa" ,	 ""                                                                                                     , 0 } },
+		{ CRITICAL_TEMPERATURE ,						 { "Critical temperature" ,	 L"K" ,		 ""                                                                                                     , 0 } },
+		{ HEAT_OF_FUSION_AT_NORMAL_FREEZING_POINT ,		 { "Heat of fusion" ,		 L"J/mol" ,	 "Heat of fusion at normal freezing point"                                                              , 0 } },
+		{ HEAT_OF_VAPORIZATION_AT_NORMAL_BOILING_POINT , { "Heat of vaporization " , L"J/mol" ,	 "Heat of vaporization at normal boiling point"                                                         , 0 } },
+		{ MOLAR_MASS ,									 { "Molar mass" ,			 L"kg/mol" , ""                                                                                                     , 0 } },
+		{ NORMAL_BOILING_POINT ,						 { "Normal boiling point" ,	 L"K" ,		 ""                                                                                                     , 0 } },
+		{ NORMAL_FREEZING_POINT ,						 { "Normal freezing point" , L"K" ,		 ""                                                                                                     , 0 } },
+		//{ REACTIVITY_TYPE ,								 { "Reactivity type" ,		 L"-"	,	 "Reactivity type\n[ 0 - reactive ], [ 1 - inert ], [ 2 - solvent ], [ 3 - insolvent ], [ 4 - solute ]" , 0 } },
+		{ STANDARD_FORMATION_ENTHALPY ,					 { "Formation enthalpy" ,	 L"J/mol" ,	 "Standard enthalpy of formation"                                                                       , 0 } },
+		{ BOND_WORK_INDEX,							     { "Bond work index" ,	     L"kWh/t" ,	 "Bond work index"																						, 0 } },
+		{ SOA_AT_NORMAL_CONDITIONS ,					 { "State of aggregation" ,	 L"-" ,		 "State of aggregation at normal conditions\n[ 0 - solid ] [ 1 - liquid ] [ 2 - gas ] [ 3 - unknown ]"  , 3 } },
 	};
 }
 
@@ -217,12 +217,12 @@ namespace MDBDescriptors
 	// List of initial values of temperature/pressure - dependent properties
 	static tpdepDescr defaultTPDProperties =
 	{
-		{ ENTHALPY ,			 { "Enthalpy" ,				L"J/kg" 			, "" , ECorrelationTypes::POLYNOMIAL_H ,	 { -203.6060 , 1523.290 , -3196.413 , 2474.455 , 3.855326 , -256.5478 , -285.8304 } } },
-		{ THERMAL_CONDUCTIVITY , { "Thermal conductivity" ,	L"W/(m·K)" 			, "" , ECorrelationTypes::LIST_OF_T_VALUES , { 273.15 , 0.561 , 298.15 , 0.6071 , 323.15 , 0.6435 , 348.15 , 0.6668 , 373.15 , 0.6791 , 473 , 0.025093 , 573 , 0.025096 , 673 , 0.033291 , 773 , 0.043426 , 873 , 0.054763 , 973 , 0.066981 , 1073 , 0.079898 , 1173 , 0.093383 , 1273 , 0.10734 , 1373 , 0.12167 , 1473 , 0.13633 } } },
-		{ VAPOR_PRESSURE ,		 { "Vapor pressure" ,		L"Pa" 				, "" , ECorrelationTypes::EXPONENT_1 ,		 { 0.61094 , 2.71828182 , 0 , 0 , 17.27 , 0 , 1 , 273.4 , 0 } } },
-		{ VISCOSITY ,			 { "Dynamic Viscosity" ,	L"Pa·s" 			, "" , ECorrelationTypes::EXPONENT_1 ,		 { 2.414e-5 , 10 , 0 , 0 , 0 , 247.8 , 1 , -140 , 0 } } },
-		{ DENSITY ,				 { "Density" ,				L"kg/m<sup>3</sup>" , "" , ECorrelationTypes::POLYNOMIAL_1 ,	 { 999.85308 , 6.32693e-2 , -8.523829e-3 , 6.943248e-5 , 3.821216e-7, 0 , 0 , 0 } } },
-		{ PERMITTIVITY ,		 { "Permittivity" ,			L"F/m" 				, "" , ECorrelationTypes::CONSTANT ,		 { 710 } } },
+		{ ENTHALPY ,			 { "Enthalpy" ,				L"J/kg" 			, "" , ECorrelationTypes::CONSTANT , { 0.0 } } },
+		{ THERMAL_CONDUCTIVITY , { "Thermal conductivity" ,	L"W/(m*K)" 			, "" , ECorrelationTypes::CONSTANT , { 0.0 } } },
+		{ VAPOR_PRESSURE ,		 { "Vapor pressure" ,		L"Pa" 				, "" , ECorrelationTypes::CONSTANT , { 0.0 } } },
+		{ VISCOSITY ,			 { "Dynamic Viscosity" ,	L"Pa*s" 			, "" , ECorrelationTypes::CONSTANT , { 0.0 } } },
+		{ DENSITY ,				 { "Density" ,				L"kg/m<sup>3</sup>" , "" , ECorrelationTypes::CONSTANT , { 0.0 } } },
+		{ PERMITTIVITY ,		 { "Permittivity" ,			L"F/m" 				, "" , ECorrelationTypes::CONSTANT , { 0.0 } } },
 	};
 }
 
@@ -264,7 +264,7 @@ namespace MDBDescriptors
 	// List of descriptors of temperature/pressure-dependent properties
 	static interDescr defaultInteractionProperties
 	{
-		{ INTERFACE_TENSION , { "Interface tension" , L"N/m" , "" , ECorrelationTypes::CONSTANT , { 0.07 } } },
+		{ INTERFACE_TENSION , { "Interface tension" , L"N/m" , "" , ECorrelationTypes::CONSTANT , { 0 } } },
 	};
 }
 

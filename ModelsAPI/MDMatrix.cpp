@@ -1462,7 +1462,7 @@ bool CMDMatrix::SetDistribution(double _dTime, unsigned _nDim1, unsigned _nDim2,
 	{
 		// get distribution for top level
 		std::vector<double> vTopLevelValues( _Distr.Rows() );
-		std::vector<std::vector<double>> vBottomLevelValues( _Distr.Cols(), std::vector<double>(_Distr.Rows()) );
+		std::vector<std::vector<double>> vBottomLevelValues(_Distr.Rows(), std::vector<double>(_Distr.Cols()));
 		for( unsigned i=0; i<_Distr.Rows(); ++i )
 		{
 			vBottomLevelValues[i] = _Distr.GetRow(i);
@@ -1482,7 +1482,7 @@ bool CMDMatrix::SetDistribution(double _dTime, unsigned _nDim1, unsigned _nDim2,
 	{
 		// get distribution for top level
 		std::vector<double> vTopLevelValues( _Distr.Cols() );
-		std::vector<std::vector<double>> vBottomLevelValues( _Distr.Rows(), std::vector<double>(_Distr.Cols()) );
+		std::vector<std::vector<double>> vBottomLevelValues(_Distr.Cols(), std::vector<double>(_Distr.Rows()));
 		for( unsigned i=0; i<_Distr.Cols(); ++i )
 		{
 			vBottomLevelValues[i] = _Distr.GetCol(i);
