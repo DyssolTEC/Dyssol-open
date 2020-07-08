@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CDescriptionEditor</class>
+ <widget class="QDialog" name="CDescriptionEditor">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>299</width>
+    <height>118</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Description</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../DyssolMainWindow/Resources.qrc">
+    <normaloff>:/Icons/WinIcon</normaloff>:/Icons/WinIcon</iconset>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QPlainTextEdit" name="textEdit">
+     <property name="placeholderText">
+      <string>Put your description here...</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="../../DyssolMainWindow/Resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

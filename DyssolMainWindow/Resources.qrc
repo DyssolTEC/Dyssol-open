@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/Icons">
+        <file alias="WinIcon">Resources/WinIcon.png</file>
+    </qresource>
+    <qresource prefix="/Resources">
+        <file alias="License">../LICENSE</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DustFormationTesterTabClass</class>
+ <widget class="QDialog" name="DustFormationTesterTabClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1280</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dust formation tendency</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../DyssolMainWindow/Resources.qrc">
+    <normaloff>:/Icons/WinIcon</normaloff>:/Icons/WinIcon</iconset>
+  </property>
+  <layout class="QGridLayout" name="gridLayout" columnstretch="1,4">
+   <item row="0" column="0" rowspan="2">
+    <widget class="QToolBox" name="toolBox">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <property name="tabSpacing">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="streams">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>251</width>
+        <height>740</height>
+       </rect>
+      </property>
+      <property name="accessibleName">
+       <string>Streams</string>
+      </property>
+      <attribute name="label">
+       <string>Streams</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="spacing">
+        <number>6</number>
+       </property>
+       <property name="leftMargin">
+        <number>2</number>
+       </property>
+       <property name="topMargin">
+        <number>2</number>
+       </property>
+       <property name="rightMargin">
+        <number>2</number>
+       </property>
+       <property name="bottomMargin">
+        <number>2</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBoxStreams">
+         <property name="title">
+          <string>Material streams</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <property name="spacing">
+           <number>2</number>
+          </property>
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <item>
+           <widget class="QListWidget" name="listWidgetStreams"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="units">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>98</width>
+        <height>190</height>
+       </rect>
+      </property>
+      <attribute name="label">
+       <string>Units</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <property name="spacing">
+        <number>2</number>
+       </property>
+       <property name="leftMargin">
+        <number>2</number>
+       </property>
+       <property name="topMargin">
+        <number>2</number>
+       </property>
+       <property name="rightMargin">
+        <number>2</number>
+       </property>
+       <property name="bottomMargin">
+        <number>2</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBoxUnits">
+         <property name="title">
+          <string>Units</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <item>
+           <widget class="QListWidget" name="listWidgetUnits"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBoxHoldups">
+         <property name="title">
+          <string>Holdups</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <item>
+           <widget class="QListWidget" name="listWidgetHoldups"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1,0,0,1,0,0,1,0,0,1">
+     <item>
+      <widget class="QLabel" name="labelPorosity">
+       <property name="text">
+        <string>Bulk porosity of sample:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEditPorosity">
+       <property name="text">
+        <string>0.5</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="labelMoisture">
+       <property name="text">
+        <string>Moisture content of sample:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEditMoisture">
+       <property name="text">
+        <string>0.03</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="labelMoisture90">
+       <property name="text">
+        <string>Moisture content at 90% relative humidity:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEditMoisture90">
+       <property name="text">
+        <string>0.08</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="labelCompound">
+       <property name="text">
+        <string>Compound:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBoxCompound"/>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="1">
+    <widget class="CQtTable" name="tableWidgetData">
+     <column>
+      <property name="text">
+       <string>Time [s]</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Single drop
+RH 20%</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Single drop
+RH 50%</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Single drop
+RH 80%</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Single drop
+Low vacuum</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Rotating drum
+Upper limit</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Rotating drum
+Mean value</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Rotating drum
+Lower limit</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Rotating drum
+Wet bulk</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>UNC tester</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>CQtTable</class>
+   <extends>QTableWidget</extends>
+   <header location="global">QtTable.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>listWidgetStreams</tabstop>
+  <tabstop>lineEditPorosity</tabstop>
+  <tabstop>lineEditMoisture</tabstop>
+  <tabstop>lineEditMoisture90</tabstop>
+  <tabstop>comboBoxCompound</tabstop>
+  <tabstop>tableWidgetData</tabstop>
+  <tabstop>listWidgetHoldups</tabstop>
+  <tabstop>listWidgetUnits</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../../DyssolMainWindow/Resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DyssolClass</class>
+ <widget class="QMainWindow" name="DyssolClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>940</width>
+    <height>510</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dyssol</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="Resources.qrc">
+    <normaloff>:/Icons/WinIcon</normaloff>:/Icons/WinIcon</iconset>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QHBoxLayout" name="horizontalLayout_11">
+    <property name="leftMargin">
+     <number>3</number>
+    </property>
+    <property name="topMargin">
+     <number>3</number>
+    </property>
+    <property name="rightMargin">
+     <number>3</number>
+    </property>
+    <property name="bottomMargin">
+     <number>3</number>
+    </property>
+    <item>
+     <widget class="QTabWidget" name="mainTabWidget">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="toolTip">
+       <string/>
+      </property>
+      <property name="currentIndex">
+       <number>-1</number>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>940</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionNewFlowsheet"/>
+    <addaction name="actionOpenFlowsheet"/>
+    <addaction name="actionSaveFlowsheet"/>
+    <addaction name="actionSaveFlowsheetAs"/>
+    <addaction name="separator"/>
+    <addaction name="actionSaveConfig"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionModelsManager"/>
+    <addaction name="actionCompoundsEditor"/>
+    <addaction name="separator"/>
+    <addaction name="actionSettingsEditor"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <widget class="QMenu" name="menuDocumentation">
+     <property name="title">
+      <string>Documentation</string>
+     </property>
+    </widget>
+    <addaction name="menuDocumentation"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout"/>
+   </widget>
+   <widget class="QMenu" name="menuFlowsheet">
+    <property name="title">
+     <string>Setup</string>
+    </property>
+    <addaction name="actionCompoundsManager"/>
+    <addaction name="actionPhasesEditor"/>
+    <addaction name="actionGridEditor"/>
+    <addaction name="actionHoldupsEditor"/>
+    <addaction name="actionOptionsEditor"/>
+    <addaction name="separator"/>
+    <addaction name="actionCalcSequencerEditor"/>
+    <addaction name="actionRecycleStreams"/>
+   </widget>
+   <widget class="QMenu" name="menuModules">
+    <property name="title">
+     <string>Modules</string>
+    </property>
+    <addaction name="actionDustFormationTester"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuFlowsheet"/>
+   <addaction name="menuModules"/>
+   <addaction name="menuTools"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <action name="actionOpenFlowsheet">
+   <property name="text">
+    <string>Open flowsheet...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionModelsManager">
+   <property name="text">
+    <string>Models Manager</string>
+   </property>
+   <property name="toolTip">
+    <string>Models manager</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+U</string>
+   </property>
+  </action>
+  <action name="actionSaveFlowsheet">
+   <property name="text">
+    <string>Save flowsheet</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionHoldupsEditor">
+   <property name="text">
+    <string>Holdups</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+H</string>
+   </property>
+  </action>
+  <action name="actionCompoundsManager">
+   <property name="text">
+    <string>Compounds</string>
+   </property>
+   <property name="toolTip">
+    <string>Used compounds manager</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+C</string>
+   </property>
+  </action>
+  <action name="actionGridEditor">
+   <property name="text">
+    <string>Distributions Grids</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+G</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+Shift+Q</string>
+   </property>
+  </action>
+  <action name="actionSaveFlowsheetAs">
+   <property name="text">
+    <string>Save flowsheet as...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionOptionsEditor">
+   <property name="text">
+    <string>Options</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+O</string>
+   </property>
+  </action>
+  <action name="actionNewFlowsheet">
+   <property name="text">
+    <string>New flowsheet...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionPhasesEditor">
+   <property name="text">
+    <string>Phases</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+P</string>
+   </property>
+  </action>
+  <action name="actionCalcSequencerEditor">
+   <property name="text">
+    <string>Calculation Sequence</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+Q</string>
+   </property>
+  </action>
+  <action name="actionUnits">
+   <property name="text">
+    <string>Units documentation</string>
+   </property>
+  </action>
+  <action name="actionUnitsDev">
+   <property name="text">
+    <string>Units development</string>
+   </property>
+  </action>
+  <action name="actionBaseUnit">
+   <property name="text">
+    <string>BaseUnit interfaces</string>
+   </property>
+  </action>
+  <action name="actionMaterialStream">
+   <property name="text">
+    <string>MaterialStream interfaces</string>
+   </property>
+  </action>
+  <action name="actionHoldup">
+   <property name="text">
+    <string>Holdup interfaces</string>
+   </property>
+  </action>
+  <action name="actionTM">
+   <property name="text">
+    <string>TransformMatrix interfaces</string>
+   </property>
+  </action>
+  <action name="actionMDMatrix">
+   <property name="text">
+    <string>MDMatrix interfaces</string>
+   </property>
+  </action>
+  <action name="action2DMatrix">
+   <property name="text">
+    <string>2DMatrix interfaces</string>
+   </property>
+  </action>
+  <action name="actionDAE">
+   <property name="text">
+    <string>DAE model and solver</string>
+   </property>
+  </action>
+  <action name="actionPSD">
+   <property name="text">
+    <string>PSD functions</string>
+   </property>
+  </action>
+  <action name="actionMDB">
+   <property name="text">
+    <string>Materials database</string>
+   </property>
+  </action>
+  <action name="actionDefines">
+   <property name="text">
+    <string>Predefined constants</string>
+   </property>
+  </action>
+  <action name="actionChangelog">
+   <property name="text">
+    <string>What's new</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About Dyssol</string>
+   </property>
+  </action>
+  <action name="actionConvergence">
+   <property name="text">
+    <string>Convergence methods</string>
+   </property>
+  </action>
+  <action name="actionInitConfig">
+   <property name="text">
+    <string>Initial configuration</string>
+   </property>
+  </action>
+  <action name="actionExternalSolver">
+   <property name="text">
+    <string>ExternalSolver interfaces</string>
+   </property>
+  </action>
+  <action name="actionSolversDev">
+   <property name="text">
+    <string>Solvers development</string>
+   </property>
+  </action>
+  <action name="actionSolvers">
+   <property name="text">
+    <string>Solvers documentation</string>
+   </property>
+  </action>
+  <action name="actionCommandLine">
+   <property name="text">
+    <string>Command line interface</string>
+   </property>
+   <property name="toolTip">
+    <string>Command line interface</string>
+   </property>
+  </action>
+  <action name="actionCompoundsEditor">
+   <property name="text">
+    <string>Materials Database</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+M</string>
+   </property>
+  </action>
+  <action name="actionRecycleStreams">
+   <property name="text">
+    <string>Recycle Streams</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+R</string>
+   </property>
+  </action>
+  <action name="actionDustFormationTester">
+   <property name="text">
+    <string>Dust Formation Tendency</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+D</string>
+   </property>
+  </action>
+  <action name="actionDustiness">
+   <property name="text">
+    <string>Dust formation tester</string>
+   </property>
+  </action>
+  <action name="actionSaveConfig">
+   <property name="text">
+    <string>Save config file...</string>
+   </property>
+  </action>
+  <action name="actionSettingsEditor">
+   <property name="text">
+    <string>Settings</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+A</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="Resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>actionExit</sender>
+   <signal>triggered()</signal>
+   <receiver>DyssolClass</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>555</x>
+     <y>440</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

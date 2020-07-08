@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>14.0</VCProjectVersion>
+    <ProjectGuid>{150781F9-5A9F-4A7F-B835-C4012BA35D8F}</ProjectGuid>
+    <RootNamespace>ModelsAPI</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(SolutionDir)PropertySheets\Common.props" />
+    <Import Project="$(SolutionDir)PropertySheets\Common32.props" />
+    <Import Project="$(SolutionDir)PropertySheets\CommonDebug.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(SolutionDir)PropertySheets\Common.props" />
+    <Import Project="$(SolutionDir)PropertySheets\Common64.props" />
+    <Import Project="$(SolutionDir)PropertySheets\CommonDebug.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(SolutionDir)PropertySheets\Common.props" />
+    <Import Project="$(SolutionDir)PropertySheets\Common32.props" />
+    <Import Project="$(SolutionDir)PropertySheets\CommonRelease.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(SolutionDir)PropertySheets\Common.props" />
+    <Import Project="$(SolutionDir)PropertySheets\Common64.props" />
+    <Import Project="$(SolutionDir)PropertySheets\CommonRelease.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="BaseUnit.cpp" />
+    <ClCompile Include="Matrix2D.cpp" />
+    <ClCompile Include="DenseDistr2D.cpp" />
+    <ClCompile Include="DenseMDMatrix.cpp" />
+    <ClCompile Include="DependentValues.cpp" />
+    <ClCompile Include="DistributionsGrid.cpp" />
+    <ClCompile Include="DynamicUnit.cpp" />
+    <ClCompile Include="Holdup.cpp" />
+    <ClCompile Include="LookupTable.cpp" />
+    <ClCompile Include="MaterialStream.cpp" />
+    <ClCompile Include="MDMatrix.cpp" />
+    <ClCompile Include="SteadyStateUnit.cpp" />
+    <ClCompile Include="Stream.cpp" />
+    <ClCompile Include="TDArray.cpp" />
+    <ClCompile Include="TransformMatrix.cpp" />
+    <ClCompile Include="UnitParameters.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BaseUnit.h" />
+    <ClInclude Include="Matrix2D.h" />
+    <ClInclude Include="DenseDistr2D.h" />
+    <ClInclude Include="DenseMDMatrix.h" />
+    <ClInclude Include="DependentValues.h" />
+    <ClInclude Include="DistributionsFunctions.h" />
+    <ClInclude Include="DistributionsGrid.h" />
+    <ClInclude Include="DynamicUnit.h" />
+    <ClInclude Include="Holdup.h" />
+    <ClInclude Include="LookupTable.h" />
+    <ClInclude Include="MaterialStream.h" />
+    <ClInclude Include="MDMatrix.h" />
+    <ClInclude Include="SteadyStateUnit.h" />
+    <ClInclude Include="Stream.h" />
+    <ClInclude Include="TDArray.h" />
+    <ClInclude Include="TransformMatrix.h" />
+    <ClInclude Include="UnitDevelopmentDefines.h" />
+    <ClInclude Include="UnitParameters.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="$(SolutionDir)BaseSolvers\BaseSolvers.vcxproj">
+      <Project>{3ab101de-4d4a-4aee-bb1f-bf81bc08dea6}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)CacheHandler\CacheHandler.vcxproj">
+      <Project>{55ad8231-176f-4282-88fa-a0a0e71a51c6}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)EquationSolvers\EquationSolvers.vcxproj">
+      <Project>{c3ab785e-ddf8-4496-b41a-b037d166e71a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)HDF5Handler\HDF5Handler.vcxproj">
+      <Project>{cf8bb0df-6aa7-42ce-bbb4-5d96d1385428}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)MaterialsDatabase\MaterialsDatabase.vcxproj">
+      <Project>{d45627d3-ce01-479c-9b54-7b8cfd88848b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)Utilities\Utilities.vcxproj">
+      <Project>{b249af0a-12e6-4099-85f8-928147de5a68}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,239 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{06FC09C8-3DBA-40B5-A5D2-5A33CD23F917}</ProjectGuid>
+    <Keyword>QtVS_v301</Keyword>
+    <ProjectName>Dyssol</ProjectName>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup Condition="'$(QtMsBuild)'=='' or !Exists('$(QtMsBuild)\qt.targets')">
+    <QtMsBuild>$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
+  </PropertyGroup>
+  <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
+    <Message Importance="High" Text="QtMsBuild: could not locate qt.targets, qt.props; project may not build correctly." />
+  </Target>
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(SolutionDir)PropertySheets\CommonQt.props" />
+    <Import Project="$(SolutionDir)PropertySheets\Common32.props" />
+    <Import Project="$(SolutionDir)PropertySheets\CommonDebug.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(SolutionDir)PropertySheets\CommonQt.props" />
+    <Import Project="$(SolutionDir)PropertySheets\Common64.props" />
+    <Import Project="$(SolutionDir)PropertySheets\CommonDebug.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(SolutionDir)PropertySheets\CommonQt.props" />
+    <Import Project="$(SolutionDir)PropertySheets\Common32.props" />
+    <Import Project="$(SolutionDir)PropertySheets\CommonRelease.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(SolutionDir)PropertySheets\CommonQt.props" />
+    <Import Project="$(SolutionDir)PropertySheets\Common64.props" />
+    <Import Project="$(SolutionDir)PropertySheets\CommonRelease.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
+    <Import Project="$(QtMsBuild)\qt_defaults.props" />
+  </ImportGroup>
+  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <QtInstall>msvc2015_64</QtInstall>
+    <QtModules>core;gui;widgets</QtModules>
+  </PropertyGroup>
+  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <QtInstall>msvc2015</QtInstall>
+    <QtModules>core;gui;widgets</QtModules>
+  </PropertyGroup>
+  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <QtInstall>msvc2015_64</QtInstall>
+    <QtModules>core;gui;widgets</QtModules>
+  </PropertyGroup>
+  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <QtInstall>msvc2015</QtInstall>
+    <QtModules>core;gui;widgets</QtModules>
+  </PropertyGroup>
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)Modules\DustFormationTester;$(SolutionDir)GUIDialogs\CalculationSequenceEditor;$(SolutionDir)$(Platform)\$(Configuration)\CalculationSequenceEditor\uic;$(SolutionDir)GUIDialogs\CompoundsManager;$(SolutionDir)$(Platform)\$(Configuration)\CompoundsManager\uic;$(SolutionDir)GUIDialogs\DustFormationTesterTab;$(SolutionDir)$(Platform)\$(Configuration)\DustFormationTesterTab\uic;$(SolutionDir)GUIDialogs\FlowsheetEditor;$(SolutionDir)$(Platform)\$(Configuration)\FlowsheetEditor\uic;$(SolutionDir)GUIDialogs\GridEditor;$(SolutionDir)$(Platform)\$(Configuration)\GridEditor\uic;$(SolutionDir)GUIDialogs\HoldupsEditor;$(SolutionDir)$(Platform)\$(Configuration)\HoldupsEditor\uic;$(SolutionDir)GUIDialogs\MaterialsDatabaseTab;$(SolutionDir)$(Platform)\$(Configuration)\MaterialsDatabaseTab\uic;$(SolutionDir)GUIDialogs\ModulesManagerTab;$(SolutionDir)$(Platform)\$(Configuration)\ModulesManagerTab\uic;$(SolutionDir)GUIDialogs\OptionsEditor;$(SolutionDir)$(Platform)\$(Configuration)\OptionsEditor\uic;$(SolutionDir)GUIDialogs\PhasesEditor;$(SolutionDir)$(Platform)\$(Configuration)\PhasesEditor\uic;$(SolutionDir)GUIDialogs\SettingsEditor;$(SolutionDir)$(Platform)\$(Configuration)\SettingsEditor\uic;$(SolutionDir)GUIDialogs\SimulatorTab;$(SolutionDir)$(Platform)\$(Configuration)\SimulatorTab\uic;$(SolutionDir)GUIDialogs\StreamsViewer;$(SolutionDir)$(Platform)\$(Configuration)\StreamsViewer\uic;$(SolutionDir)GUIDialogs\TearStreamsEditor;$(SolutionDir)$(Platform)\$(Configuration)\TearStreamsEditor\uic;$(SolutionDir)GUIDialogs\UnitsViewer;$(SolutionDir)$(Platform)\$(Configuration)\UnitsViewer\uic;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)Modules\DustFormationTester;$(SolutionDir)GUIDialogs\CalculationSequenceEditor;$(SolutionDir)$(Platform)\$(Configuration)\CalculationSequenceEditor\uic;$(SolutionDir)GUIDialogs\CompoundsManager;$(SolutionDir)$(Platform)\$(Configuration)\CompoundsManager\uic;$(SolutionDir)GUIDialogs\DustFormationTesterTab;$(SolutionDir)$(Platform)\$(Configuration)\DustFormationTesterTab\uic;$(SolutionDir)GUIDialogs\FlowsheetEditor;$(SolutionDir)$(Platform)\$(Configuration)\FlowsheetEditor\uic;$(SolutionDir)GUIDialogs\GridEditor;$(SolutionDir)$(Platform)\$(Configuration)\GridEditor\uic;$(SolutionDir)GUIDialogs\HoldupsEditor;$(SolutionDir)$(Platform)\$(Configuration)\HoldupsEditor\uic;$(SolutionDir)GUIDialogs\MaterialsDatabaseTab;$(SolutionDir)$(Platform)\$(Configuration)\MaterialsDatabaseTab\uic;$(SolutionDir)GUIDialogs\ModulesManagerTab;$(SolutionDir)$(Platform)\$(Configuration)\ModulesManagerTab\uic;$(SolutionDir)GUIDialogs\OptionsEditor;$(SolutionDir)$(Platform)\$(Configuration)\OptionsEditor\uic;$(SolutionDir)GUIDialogs\PhasesEditor;$(SolutionDir)$(Platform)\$(Configuration)\PhasesEditor\uic;$(SolutionDir)GUIDialogs\SettingsEditor;$(SolutionDir)$(Platform)\$(Configuration)\SettingsEditor\uic;$(SolutionDir)GUIDialogs\SimulatorTab;$(SolutionDir)$(Platform)\$(Configuration)\SimulatorTab\uic;$(SolutionDir)GUIDialogs\StreamsViewer;$(SolutionDir)$(Platform)\$(Configuration)\StreamsViewer\uic;$(SolutionDir)GUIDialogs\TearStreamsEditor;$(SolutionDir)$(Platform)\$(Configuration)\TearStreamsEditor\uic;$(SolutionDir)GUIDialogs\UnitsViewer;$(SolutionDir)$(Platform)\$(Configuration)\UnitsViewer\uic;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)Modules\DustFormationTester;$(SolutionDir)GUIDialogs\CalculationSequenceEditor;$(SolutionDir)$(Platform)\$(Configuration)\CalculationSequenceEditor\uic;$(SolutionDir)GUIDialogs\CompoundsManager;$(SolutionDir)$(Platform)\$(Configuration)\CompoundsManager\uic;$(SolutionDir)GUIDialogs\DustFormationTesterTab;$(SolutionDir)$(Platform)\$(Configuration)\DustFormationTesterTab\uic;$(SolutionDir)GUIDialogs\FlowsheetEditor;$(SolutionDir)$(Platform)\$(Configuration)\FlowsheetEditor\uic;$(SolutionDir)GUIDialogs\GridEditor;$(SolutionDir)$(Platform)\$(Configuration)\GridEditor\uic;$(SolutionDir)GUIDialogs\HoldupsEditor;$(SolutionDir)$(Platform)\$(Configuration)\HoldupsEditor\uic;$(SolutionDir)GUIDialogs\MaterialsDatabaseTab;$(SolutionDir)$(Platform)\$(Configuration)\MaterialsDatabaseTab\uic;$(SolutionDir)GUIDialogs\ModulesManagerTab;$(SolutionDir)$(Platform)\$(Configuration)\ModulesManagerTab\uic;$(SolutionDir)GUIDialogs\OptionsEditor;$(SolutionDir)$(Platform)\$(Configuration)\OptionsEditor\uic;$(SolutionDir)GUIDialogs\PhasesEditor;$(SolutionDir)$(Platform)\$(Configuration)\PhasesEditor\uic;$(SolutionDir)GUIDialogs\SettingsEditor;$(SolutionDir)$(Platform)\$(Configuration)\SettingsEditor\uic;$(SolutionDir)GUIDialogs\SimulatorTab;$(SolutionDir)$(Platform)\$(Configuration)\SimulatorTab\uic;$(SolutionDir)GUIDialogs\StreamsViewer;$(SolutionDir)$(Platform)\$(Configuration)\StreamsViewer\uic;$(SolutionDir)GUIDialogs\TearStreamsEditor;$(SolutionDir)$(Platform)\$(Configuration)\TearStreamsEditor\uic;$(SolutionDir)GUIDialogs\UnitsViewer;$(SolutionDir)$(Platform)\$(Configuration)\UnitsViewer\uic;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)Modules\DustFormationTester;$(SolutionDir)GUIDialogs\CalculationSequenceEditor;$(SolutionDir)$(Platform)\$(Configuration)\CalculationSequenceEditor\uic;$(SolutionDir)GUIDialogs\CompoundsManager;$(SolutionDir)$(Platform)\$(Configuration)\CompoundsManager\uic;$(SolutionDir)GUIDialogs\DustFormationTesterTab;$(SolutionDir)$(Platform)\$(Configuration)\DustFormationTesterTab\uic;$(SolutionDir)GUIDialogs\FlowsheetEditor;$(SolutionDir)$(Platform)\$(Configuration)\FlowsheetEditor\uic;$(SolutionDir)GUIDialogs\GridEditor;$(SolutionDir)$(Platform)\$(Configuration)\GridEditor\uic;$(SolutionDir)GUIDialogs\HoldupsEditor;$(SolutionDir)$(Platform)\$(Configuration)\HoldupsEditor\uic;$(SolutionDir)GUIDialogs\MaterialsDatabaseTab;$(SolutionDir)$(Platform)\$(Configuration)\MaterialsDatabaseTab\uic;$(SolutionDir)GUIDialogs\ModulesManagerTab;$(SolutionDir)$(Platform)\$(Configuration)\ModulesManagerTab\uic;$(SolutionDir)GUIDialogs\OptionsEditor;$(SolutionDir)$(Platform)\$(Configuration)\OptionsEditor\uic;$(SolutionDir)GUIDialogs\PhasesEditor;$(SolutionDir)$(Platform)\$(Configuration)\PhasesEditor\uic;$(SolutionDir)GUIDialogs\SettingsEditor;$(SolutionDir)$(Platform)\$(Configuration)\SettingsEditor\uic;$(SolutionDir)GUIDialogs\SimulatorTab;$(SolutionDir)$(Platform)\$(Configuration)\SimulatorTab\uic;$(SolutionDir)GUIDialogs\StreamsViewer;$(SolutionDir)$(Platform)\$(Configuration)\StreamsViewer\uic;$(SolutionDir)GUIDialogs\TearStreamsEditor;$(SolutionDir)$(Platform)\$(Configuration)\TearStreamsEditor\uic;$(SolutionDir)GUIDialogs\UnitsViewer;$(SolutionDir)$(Platform)\$(Configuration)\UnitsViewer\uic;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="AboutWindow.cpp" />
+    <ClCompile Include="Dyssol.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="SaveLoadThread.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="Dyssol.h">
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="Dyssol.ui">
+    </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h" />
+    <QtMoc Include="SaveLoadThread.h">
+    </QtMoc>
+    <QtMoc Include="AboutWindow.h">
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="$(SolutionDir)GUIDialogs\CompoundsManager\CompoundsManager.vcxproj">
+      <Project>{905615c6-5300-4931-8463-137fb44b7a5b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)GUIDialogs\FlowsheetEditor\FlowsheetEditor.vcxproj">
+      <Project>{c2c2a003-ead4-46bf-a83d-b3d702a1349d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)GUIDialogs\GridEditor\GridEditor.vcxproj">
+      <Project>{4ddb3b56-d967-4790-b043-82f0e7c2ef1c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)GUIDialogs\HoldupsEditor\HoldupsEditor.vcxproj">
+      <Project>{2c1e0c56-be38-483f-aef5-54a8808aeb2b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)GUIDialogs\MaterialsDatabaseTab\MaterialsDatabaseTab.vcxproj">
+      <Project>{b12702ad-abfb-343a-a199-8e24837244a3}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)GUIDialogs\OptionsEditor\OptionsEditor.vcxproj">
+      <Project>{2c23a589-4152-493d-981b-9c4baf987c59}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)GUIDialogs\PhasesEditor\PhasesEditor.vcxproj">
+      <Project>{3c008e3a-52b3-4604-b1c9-2167339c572a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)GUIDialogs\SimulatorTab\SimulatorTab.vcxproj">
+      <Project>{d144fed6-8136-46b2-a6f2-9b8002499035}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)GUIDialogs\StreamsViewer\StreamsViewer.vcxproj">
+      <Project>{82f079a8-7ee2-46d1-9896-293fa8ae9425}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)GUIDialogs\TearStreamsEditor\TearStreamsEditor.vcxproj">
+      <Project>{2734c7b5-978a-492c-86a9-4e326443220d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)GUIDialogs\UnitsViewer\UnitsViewer.vcxproj">
+      <Project>{78166748-08af-4453-9871-7c896e1a2323}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)SimulatorCore\SimulatorCore.vcxproj">
+      <Project>{a631849a-0b28-4982-9a8d-9e4921a2a84c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)GUIDialogs\CalculationSequenceEditor\CalculationSequenceEditor.vcxproj">
+      <Project>{e5c9c319-448e-4855-823f-182aedeec9a7}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)GUIDialogs\DustFormationTesterTab\DustFormationTesterTab.vcxproj">
+      <Project>{cf7ef1fb-265a-4b10-8d3c-133a5e30cacf}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)GUIDialogs\SettingsEditor\SettingsEditor.vcxproj">
+      <Project>{aa695107-b3df-4383-bb70-483c28e3d81a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)GUIDialogs\ModulesManagerTab\ModulesManagerTab.vcxproj">
+      <Project>{4882842d-566d-456a-a267-a5f9c8fdb16d}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Dyssol.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="AboutWindow.ui">
+    </QtUic>
+    <QtRcc Include="Resources.qrc">
+    </QtRcc>
+    <None Include="Resources\Icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\WinIcon.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Image>
+  </ItemGroup>
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt.props')">
+    <Import Project="$(QtMsBuild)\qt.props" />
+  </ImportGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
+    <Import Project="$(QtMsBuild)\qt.targets" />
+  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
