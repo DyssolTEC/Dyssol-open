@@ -25,7 +25,7 @@
  * Filter identifiers.  Values 0 through 255 are for filters defined by the
  * HDF5 library.  Values 256 through 511 are available for testing new
  * filters. Subsequent values should be obtained from the HDF5 development
- * team at hdf5dev@ncsa.uiuc.edu.  These values will never change because they
+ * team at help@hdfgroup.org.  These values will never change because they
  * appear in the HDF5 files.
  */
 typedef int H5Z_filter_t;
@@ -50,7 +50,7 @@ typedef int H5Z_filter_t;
                                          * unlimited amount, but currently each
                                          * filter uses a bit in a 32-bit field,
                                          * so the format would have to be
-                                         * changed to accomodate that)
+                                         * changed to accommodate that)
                                          */
 
 /* Flags for filter definition (stored) */

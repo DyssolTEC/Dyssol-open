@@ -180,7 +180,7 @@ private:
 	QString m_sManualYLabelName;
 
 public:
-	CQtPlot(QWidget* parent = 0, Qt::WindowFlags flags = 0);
+	CQtPlot(QWidget* parent = 0, Qt::WindowFlags flags = {});
 	~CQtPlot();
 
 	unsigned AddCurve();														// add new empty curve to the plot

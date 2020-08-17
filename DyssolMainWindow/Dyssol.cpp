@@ -15,7 +15,7 @@
 //////////////////////////////////////////////////////////////////////////
 /// Dyssol
 //////////////////////////////////////////////////////////////////////////
-Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= 0*/)
+Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	: QMainWindow(parent, flags)
 {
 	ui.setupUi(this);

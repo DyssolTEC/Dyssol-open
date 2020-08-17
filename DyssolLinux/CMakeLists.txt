@@ -2,11 +2,11 @@
 
 cmake_minimum_required(VERSION 3.0)
 
-project(DYSSOL VERSION 0.10.0.0 LANGUAGES CXX)
+project(DYSSOL VERSION 0.10.1.0 LANGUAGES CXX)
 
-set(HDF5_INSTALL_PATH ./hdf5_install)
-set(ZLIB_INSTALL_PATH ./zlib_install)
-set(SUNDIALS_INSTALL_PATH ./sundials_install)
+set(HDF5_INSTALL_PATH ./external_libs/hdf5)
+set(ZLIB_INSTALL_PATH ./external_libs/zlib)
+set(SUNDIALS_INSTALL_PATH ./external_libs/sundials)
 
 set(SRC_CORE "./src/Core")
 set(SRC_UNITS "./src/Units")

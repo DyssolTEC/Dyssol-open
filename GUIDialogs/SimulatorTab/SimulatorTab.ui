@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>693</width>
-    <height>370</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -101,7 +101,7 @@
         <item>
          <widget class="CQtTable" name="tableLog">
           <property name="sizeAdjustPolicy">
-           <enum>QAbstractScrollArea::AdjustToContents</enum>
+           <enum>QAbstractScrollArea::AdjustIgnored</enum>
           </property>
           <attribute name="horizontalHeaderVisible">
            <bool>false</bool>

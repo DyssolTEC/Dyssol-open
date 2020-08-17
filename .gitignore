@@ -223,6 +223,7 @@ Dyssol.VC.VC.opendb
 /DyssolLinux/hdf5_install/
 /DyssolLinux/sundials_install/
 /DyssolLinux/zlib_install/
+/DyssolLinux/external_libs/
 /Utilities/BuildVersion.h
 *.wbk
 /DyssolLinux/compiled/

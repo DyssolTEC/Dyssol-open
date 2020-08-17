@@ -5,7 +5,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalLibraryDirectories>$(MATLAB_PATH)\extern\lib\win32\microsoft;$(SolutionDir)ExternalLibraries\hdf5\lib32;$(SolutionDir)ExternalLibraries\zlib\lib32;$(SolutionDir)ExternalLibraries\szip\lib32;$(SolutionDir)ExternalLibraries\sundials\lib32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(MATLAB_PATH)\extern\lib\win32\microsoft;$(SolutionDir)ExternalLibraries\hdf5\lib32;$(SolutionDir)ExternalLibraries\zlib\lib32;$(SolutionDir)ExternalLibraries\sundials\lib32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

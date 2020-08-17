@@ -53,10 +53,10 @@
 #define H5_FC_FUNC_(name,NAME) name ## _
 
 /* Define if Fortran C_LONG_DOUBLE is different from C_DOUBLE */
-/* #undef H5_FORTRAN_C_LONG_DOUBLE_IS_UNIQUE */
+#define H5_FORTRAN_C_LONG_DOUBLE_IS_UNIQUE 
 
 /* Define if we have Fortran C_LONG_DOUBLE */
-/* #undef H5_FORTRAN_HAVE_C_LONG_DOUBLE */
+#define H5_FORTRAN_HAVE_C_LONG_DOUBLE 
 
 /* Define if we have Fortran intrinsic C_SIZEOF */
 /* #undef H5_FORTRAN_HAVE_C_SIZEOF */
@@ -71,7 +71,7 @@
 /* #undef H5_FORTRAN_SIZEOF_LONG_DOUBLE */
 
 /* Define Fortran compiler ID */
-/* #undef H5_Fortran_COMPILER_ID */
+#define H5_Fortran_COMPILER_ID 
 
 /* Define valid Fortran INTEGER KINDs */
 /* #undef H5_H5CONFIG_F_IKIND */
@@ -110,6 +110,9 @@
 /* Define if the function stack tracing code is to be compiled in */
 /* #undef H5_HAVE_CODESTACK */
 
+/* Define to 1 if you have the <curl/curl.h> header file. */
+/* #undef H5_HAVE_CURL_H */
+
 /* Define if Darwin or Mac OS X */
 /* #undef H5_HAVE_DARWIN */
 
@@ -141,7 +144,7 @@
 #define H5_HAVE_FILTER_DEFLATE 1
 
 /* Define if support for szip filter is enabled */
-#define H5_HAVE_FILTER_SZIP 1
+/* #undef H5_HAVE_FILTER_SZIP */
 
 /* Determine if __float128 is available */
 /* #undef H5_HAVE_FLOAT128 */
@@ -161,23 +164,11 @@
 /* Define to 1 if you have the `fseeko' function. */
 /* #undef H5_HAVE_FSEEKO */
 
-/* Define to 1 if you have the `fseeko64' function. */
-/* #undef H5_HAVE_FSEEKO64 */
-
-/* Define to 1 if you have the `fstat64' function. */
-/* #undef H5_HAVE_FSTAT64 */
-
-/* Define to 1 if you have the `ftello' function. */
-/* #undef H5_HAVE_FTELLO */
-
-/* Define to 1 if you have the `ftello64' function. */
-/* #undef H5_HAVE_FTELLO64 */
-
-/* Define to 1 if you have the `ftruncate64' function. */
-/* #undef H5_HAVE_FTRUNCATE64 */
-
 /* Define if the compiler understands the __FUNCTION__ keyword */
 #define H5_HAVE_FUNCTION 1
+
+/* Determine if INTEGER*16 is available */
+/* #undef H5_HAVE_Fortran_INTEGER_SIZEOF_16 */
 
 /* Define to 1 if you have the `GetConsoleScreenBufferInfo' function. */
 #define H5_HAVE_GETCONSOLESCREENBUFFERINFO 1
@@ -197,6 +188,9 @@
 /* Define to 1 if you have the `gettimeofday' function. */
 #define H5_HAVE_GETTIMEOFDAY 1
 
+/* Define to 1 if you have the <hdfs.h> header file. */
+/* #undef H5_HAVE_HDFS_H */
+
 /* Define if the compiler understands inline */
 #define H5_HAVE_INLINE 1
 
@@ -213,11 +207,23 @@
 /* Define to 1 if you have the <io.h> header file. */
 #define H5_HAVE_IO_H 1
 
+/* Define to 1 if you have the `crypto' library (-lcrypto). */
+/* #undef H5_HAVE_LIBCRYPTO */
+
+/* Define to 1 if you have the `curl' library (-lcurl). */
+/* #undef H5_HAVE_LIBCURL */
+
 /* Define to 1 if you have the `dl' library (-ldl). */
 /* #undef H5_HAVE_LIBDL */
 
 /* Define to 1 if you have the `dmalloc' library (-ldmalloc). */
 /* #undef H5_HAVE_LIBDMALLOC */
+
+/* Proceed to build with libhdfs */
+/* #undef H5_HAVE_LIBHDFS */
+
+/* Define to 1 if you have the `jvm' library (-ljvm). */
+/* #undef H5_HAVE_LIBJVM */
 
 /* Define to 1 if you have the `m' library (-lm). */
 #define H5_HAVE_LIBM 1
@@ -229,7 +235,7 @@
 /* #undef H5_HAVE_LIBPTHREAD */
 
 /* Define to 1 if you have the `sz' library (-lsz). */
-#define H5_HAVE_LIBSZ 1
+/* #undef H5_HAVE_LIBSZ */
 
 /* Define to 1 if you have the `ws2_32' library (-lws2_32). */
 #define H5_HAVE_LIBWS2_32 1
@@ -261,6 +267,9 @@
 /* Define to 1 if you have the <mach/mach_time.h> header file. */
 /* #undef H5_HAVE_MACH_MACH_TIME_H */
 
+/* Define if the map API (H5M) should be compiled */
+/* #undef H5_HAVE_MAP_API */
+
 /* Define to 1 if you have the <memory.h> header file. */
 #define H5_HAVE_MEMORY_H 1
 
@@ -270,14 +279,26 @@
 /* Define to 1 if you have the <mpe.h> header file. */
 /* #undef H5_HAVE_MPE_H */
 
-/* Define if `MPI_Comm_c2f' and `MPI_Comm_f2c' exists */
+/* Define if MPI_Comm_c2f and MPI_Comm_f2c exists */
 /* #undef H5_HAVE_MPI_MULTI_LANG_Comm */
 
-/* Define if `MPI_Info_c2f' and `MPI_Info_f2c' exists */
+/* Define if MPI_Info_c2f and MPI_Info_f2c exists */
 /* #undef H5_HAVE_MPI_MULTI_LANG_Info */
+
+/* Define to 1 if you have the <openssl/evp.h> header file. */
+/* #undef H5_HAVE_OPENSSL_EVP_H */
+
+/* Define to 1 if you have the <openssl/hmac.h> header file. */
+/* #undef H5_HAVE_OPENSSL_HMAC_H */
+
+/* Define to 1 if you have the <openssl/sha.h> header file. */
+/* #undef H5_HAVE_OPENSSL_SHA_H */
 
 /* Define if we have parallel support */
 /* #undef H5_HAVE_PARALLEL */
+
+/* Define if both pread and pwrite exist. */
+/* #undef H5_HAVE_PREADWRITE */
 
 /* Define to 1 if you have the <pthread.h> header file. */
 /* #undef H5_HAVE_PTHREAD_H */
@@ -290,6 +311,10 @@
 
 /* Define to 1 if you have the `rand_r' function. */
 /* #undef H5_HAVE_RAND_R */
+
+/* Define whether the Read-Only S3 virtual file driver (VFD) should be
+   compiled */
+/* #undef H5_HAVE_ROS3_VFD */
 
 /* Define to 1 if you have the `round' function. */
 #define H5_HAVE_ROUND 1
@@ -348,22 +373,22 @@
 /* Define to 1 if you have the `strdup' function. */
 #define H5_HAVE_STRDUP 1
 
-/* Define to 1 if you have the `strtoll' function. */
-#define H5_HAVE_STRTOLL 1
-
-/* Define to 1 if you have the `strtoull' function. */
-#define H5_HAVE_STRTOULL 1
-
 /* Define to 1 if you have the <strings.h> header file. */
 /* #undef H5_HAVE_STRINGS_H */
 
 /* Define to 1 if you have the <string.h> header file. */
 #define H5_HAVE_STRING_H 1
 
-/* Define if `struct text_info' is defined */
+/* Define to 1 if you have the `strtoll' function. */
+#define H5_HAVE_STRTOLL 1
+
+/* Define to 1 if you have the `strtoull' function. */
+#define H5_HAVE_STRTOULL 1
+
+/* Define if struct text_info is defined */
 /* #undef H5_HAVE_STRUCT_TEXT_INFO */
 
-/* Define if `struct videoconfig' is defined */
+/* Define if struct videoconfig is defined */
 /* #undef H5_HAVE_STRUCT_VIDEOCONFIG */
 
 /* Define to 1 if you have the `symlink' function. */
@@ -397,12 +422,17 @@
 #define H5_HAVE_SYS_TYPES_H 1
 
 /* Define to 1 if you have the <szlib.h> header file. */
-#define H5_HAVE_SZLIB_H 1
+/* #undef H5_HAVE_SZLIB_H */
 
+#if defined(_WIN32) && !defined(H5_BUILT_AS_DYNAMIC_LIB)
+/* Not supported on WIN32 platforms with static linking */
+/* #undef H5_HAVE_THREADSAFE */
+#else
 /* Define if we have thread safe support */
 /* #undef H5_HAVE_THREADSAFE */
+#endif
 
-/* Define if `timezone' is a global variable */
+/* Define if timezone is a global variable */
 #define H5_HAVE_TIMEZONE 1
 
 /* Define if the ioctl TIOCGETD is defined */
@@ -414,7 +444,7 @@
 /* Define to 1 if you have the `tmpfile' function. */
 #define H5_HAVE_TMPFILE 1
 
-/* Define if `tm_gmtoff' is a member of `struct tm' */
+/* Define if tm_gmtoff is a member of struct tm */
 /* #undef H5_HAVE_TM_GMTOFF */
 
 /* Define to 1 if you have the <unistd.h> header file. */
@@ -435,7 +465,7 @@
 /* Define if your system has window style path name. */
 #define H5_HAVE_WINDOW_PATH 1
 
-/* Define to 1 if you have the <winsock.h> header file. */
+/* Define to 1 if you have the <winsock2.h> header file. */
 #define H5_HAVE_WINSOCK2_H 1
 
 /* Define to 1 if you have the <zlib.h> header file. */
@@ -453,12 +483,12 @@
 /* Define if the compiler understands __inline__ */
 /* #undef H5_HAVE___INLINE__ */
 
-/* Define if HDF5's high-level library headers should be included in hdf5.h */
+/* Define if the high-level library headers should be included in hdf5.h */
 #define H5_INCLUDE_HL 1
 
 /* Define if your system can convert long double to (unsigned) long long
    values correctly. */
-/* #undef H5_LDOUBLE_TO_LLONG_ACCURATE */
+#define H5_LDOUBLE_TO_LLONG_ACCURATE 1
 
 /* Define if your system converts long double to (unsigned) long values with
    special algorithm. */
@@ -466,11 +496,14 @@
 
 /* Define if your system can convert (unsigned) long long to long double
    values correctly. */
-/* #undef H5_LLONG_TO_LDOUBLE_CORRECT */
+#define H5_LLONG_TO_LDOUBLE_CORRECT 1
 
 /* Define if your system can convert (unsigned) long to long double values
    with special algorithm. */
 /* #undef H5_LONG_TO_LDOUBLE_SPECIAL */
+
+/* Define if your system is power6 and cannot convert some long double values. */
+/* #undef H5_DISABLE_SOME_LDOUBLE_CONV */
 
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
 /* #undef H5_LT_OBJDIR */
@@ -478,11 +511,8 @@
 /* Define to enable internal memory allocation sanity checking. */
 /* #undef H5_MEMORY_ALLOC_SANITY_CHECK */
 
-/* Define if the metadata trace file code is to be compiled in */
-/* #undef H5_METADATA_TRACE_FILE */
-
 /* Define if we can violate pointer alignment restrictions */
-/* #undef H5_NO_ALIGNMENT_RESTRICTIONS */
+#define H5_NO_ALIGNMENT_RESTRICTIONS 1
 
 /* Define if deprecated public API symbols are disabled */
 /* #undef H5_NO_DEPRECATED_SYMBOLS */
@@ -497,7 +527,7 @@
 #define H5_PACKAGE_NAME "HDF5"
 
 /* Define to the full name and version of this package. */
-#define H5_PACKAGE_STRING "HDF5 1.10.2"
+#define H5_PACKAGE_STRING "HDF5 1.12.0"
 
 /* Define to the one symbol short name of this package. */
 #define H5_PACKAGE_TARNAME "hdf5"
@@ -506,10 +536,10 @@
 #define H5_PACKAGE_URL "http://www.hdfgroup.org"
 
 /* Define to the version of this package. */
-#define H5_PACKAGE_VERSION "1.10.2"
+#define H5_PACKAGE_VERSION "1.12.0"
 
 /* Determine the maximum decimal precision in C */
-#define H5_PAC_C_MAX_REAL_PRECISION 
+/* #undef H5_PAC_C_MAX_REAL_PRECISION */
 
 /* Define Fortran Maximum Real Decimal Precision */
 /* #undef H5_PAC_FC_MAX_REAL_PRECISION */
@@ -614,6 +644,9 @@
 /* The size of `short', as computed by sizeof. */
 #define H5_SIZEOF_SHORT 2
 
+/* The size of `time_t', as computed by sizeof. */
+#define H5_SIZEOF_TIME_T 8
+
 /* The size of `uint16_t', as computed by sizeof. */
 #define H5_SIZEOF_UINT16_T 2
 
@@ -657,7 +690,7 @@
 #define H5_SIZEOF__QUAD 
 
 /* The size of `__float128', as computed by sizeof. */
-#define H5_SIZEOF___FLOAT128 
+#define H5_SIZEOF___FLOAT128 0
 
 /* The size of `__int64', as computed by sizeof. */
 #define H5_SIZEOF___INT64 8
@@ -681,13 +714,19 @@
 /* Define using v1.8 public API symbols by default */
 /* #undef H5_USE_18_API_DEFAULT */
 
+/* Define using v1.10 public API symbols by default */
+/* #undef H5_USE_110_API_DEFAULT */
+
+/* Define using v1.12 public API symbols by default */
+#define H5_USE_112_API_DEFAULT 1
+
 /* Define if a memory checking tool will be used on the library, to cause
    library to be very picky about memory operations and also disable the
    internal free list manager code. */
 /* #undef H5_USING_MEMCHECKER */
 
 /* Version number of package */
-#define H5_VERSION "1.10.2"
+#define H5_VERSION "1.12.0"
 
 /* Data accuracy is prefered to speed during data conversions */
 #define H5_WANT_DATA_ACCURACY 1

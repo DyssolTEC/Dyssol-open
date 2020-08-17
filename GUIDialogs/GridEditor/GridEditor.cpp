@@ -36,7 +36,7 @@ QComboBox* CGridEditor::AddComboBoxDimensions(unsigned _nRow)
 	// disable 'compounds'
 	QStandardItem* item = qobject_cast<const QStandardItemModel*>(pCombo->model())->item(0);
 	item->setFlags(item->flags() & ~(Qt::ItemIsSelectable | Qt::ItemIsEnabled));
-	item->setData(pCombo->palette().color(QPalette::Disabled, QPalette::Text), Qt::TextColorRole);
+	item->setData(pCombo->palette().color(QPalette::Disabled, QPalette::Text), Qt::ForegroundRole);
 	return pCombo;
 }
 

@@ -5,4 +5,5 @@ devenv %2 /build "Release|Win32"
 devenv %2 /build "Debug|Win32"
 devenv %2 /build "Release|x64"
 devenv %2 /build "Debug|x64"
-..\Compiler\iscc ..\Scripts\Installer_Src_x86_x64.iss
+set QtInstallDir="%3/.."
+..\Compiler\ISCC ..\Scripts\Installer_Src_x86_x64.iss "/dQtPath=%QtInstallDir%"

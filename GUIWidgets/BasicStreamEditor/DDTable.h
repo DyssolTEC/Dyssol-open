@@ -18,7 +18,7 @@ private:
 	QHBoxLayout *layout;
 
 public:
-	CDDTable( QWidget *parent = 0, Qt::WindowFlags flags = 0 );
+	CDDTable( QWidget *parent = 0, Qt::WindowFlags flags = {} );
 	~CDDTable();
 
 	void SetDistribution( CDenseDistr2D* _pDistribution );

@@ -4,7 +4,7 @@
 #include "FlowsheetParameters.h"
 #include "DyssolUtilities.h"
 
-COptionsEditor::COptionsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pMaterialsDB, QWidget* parent /*= 0*/, Qt::WindowFlags flags /*= 0*/)
+COptionsEditor::COptionsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pMaterialsDB, QWidget* parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	: QDialog(parent, flags),
 	m_pFlowsheet(_pFlowsheet),
 	m_pParams(m_pFlowsheet->m_pParams),

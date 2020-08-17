@@ -17,7 +17,7 @@ private:
 	bool m_bAvoidSignal;
 
 public:
-	CGridEditor(CFlowsheet* _pFlowsheet, QWidget* parent = 0, Qt::WindowFlags flags = 0);
+	CGridEditor(CFlowsheet* _pFlowsheet, QWidget* parent = 0, Qt::WindowFlags flags = {});
 	~CGridEditor();
 
 	void InitializeConnections();

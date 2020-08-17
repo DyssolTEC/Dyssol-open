@@ -3,7 +3,7 @@
 #include "StreamsViewer.h"
 #include "MaterialStream.h"
 
-CStreamsViewer::CStreamsViewer(CFlowsheet* _pFlowsheet, QWidget* _parent /*= nullptr*/, Qt::WindowFlags flags /*= 0 */) :
+CStreamsViewer::CStreamsViewer(CFlowsheet* _pFlowsheet, QWidget* _parent /*= nullptr*/, Qt::WindowFlags flags /*= {} */) :
 	QWidget(_parent, flags),
 	m_pFlowsheet{ _pFlowsheet },
 	m_pViewer{ new CBasicStreamsViewer(_pFlowsheet, this) }
@@ -61,7 +61,7 @@ void CStreamsViewer::UpdateStreamsView() const
 	ui.streamsList->setCurrentRow(oldCurrent < ui.streamsList->count() ? oldCurrent : -1);
 	for (const auto& index : oldSelection)
 		if (index.row() < ui.streamsList->count())
-			ui.streamsList->setItemSelected(ui.streamsList->item(index.row()), true);
+			ui.streamsList->item(index.row())->setSelected(true);
 	StreamChanged();
 }
 

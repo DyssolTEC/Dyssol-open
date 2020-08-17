@@ -16,7 +16,7 @@ private:
 	std::vector<QComboBox*> m_vCombos;
 
 public:
-	CPhasesEditor( CFlowsheet* _pFlowsheet, QWidget *parent = 0, Qt::WindowFlags flags = 0 );
+	CPhasesEditor( CFlowsheet* _pFlowsheet, QWidget *parent = 0, Qt::WindowFlags flags = {} );
 	~CPhasesEditor();
 
 	void InitializeConnections();

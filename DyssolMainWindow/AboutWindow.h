@@ -8,7 +8,25 @@ class CAboutWindow : public QDialog
 {
 	Q_OBJECT
 
-	Ui::CAboutWindow ui;
+	struct S3rdParty
+	{
+		QString name;
+		QString link;
+		QString text;
+		QString licenseName;
+		QString licenseLink;
+	};
+
+	Ui::CAboutWindow ui{};
+
+	QString m_headerProgramName;
+	QString m_headerTeamName;
+	QString m_headerUpdatesLink;
+
+	std::vector<QString> m_mainDevelopers;
+	std::vector<QString> m_otherDevelopers;
+
+	std::vector<S3rdParty> m_libraries;
 
 public:
 	CAboutWindow(QWidget* parent = nullptr);
@@ -16,7 +34,8 @@ public:
 private:
 	void InitializeConnections() const;
 
-	void SetTitle();
-	void SetDescription() const;
+	void SetHeaderText() const;
 	void SetLicense() const;
+	void SetContributors() const;
+	void SetThirdParties() const;
 };

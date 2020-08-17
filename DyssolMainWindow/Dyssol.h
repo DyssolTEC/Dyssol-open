@@ -74,7 +74,7 @@ private:
 	CStatusWindow *m_pLoadingWindow;	// status window for loading
 
 public:
-	Dyssol(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+	Dyssol(QWidget *parent = 0, Qt::WindowFlags flags = {});
 	~Dyssol();
 
 	void InitializeConnections() const;	// initialize all qt connections

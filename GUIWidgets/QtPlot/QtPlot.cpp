@@ -153,7 +153,7 @@ void CQtPlot::paintEvent(QPaintEvent* _paintEvent)
 
 void CQtPlot::wheelEvent(QWheelEvent* _wheelEvent)
 {
-	if (_wheelEvent->delta() > 0)
+	if (_wheelEvent->angleDelta().y() > 0)
 		ZoomIn();
 	else
 		ZoomOut();
@@ -532,7 +532,7 @@ void CQtPlot::DrawLegend(QPainter* _painter)
 		int nLinesNumber = 0;
 		for (int i = 0; i < m_vpCurves.size(); ++i)
 		{
-			int nTextWidth = fm.width(m_vpCurves.at(i)->sCurveName);
+			int nTextWidth = fm.boundingRect(m_vpCurves.at(i)->sCurveName).width();
 			if ((m_vpCurves.at(i)->bVisibility) && (nTextWidth > nMaxTextWidth))
 				nMaxTextWidth = nTextWidth;
 			if (m_vpCurves.at(i)->bVisibility)
@@ -642,10 +642,10 @@ void CQtPlot::DrawMarks(QPainter* _painter)
 				if (m_bLogY)
 					dYPrint = std::pow(10, dY);
 
-				if (fm.width(QString::number(dX)) < m_paintRect.x() + m_paintRect.width() - dPixelX - 5)
+				if (fm.boundingRect(QString::number(dX)).width() < m_paintRect.x() + m_paintRect.width() - dPixelX - 5)
 					_painter->drawText(dPixelX + 5, m_paintRect.y() + m_paintRect.height() - 5, QString::number(dXPrint));
 				else
-					_painter->drawText(dPixelX - fm.width(QString::number(dX)) - 5, m_paintRect.y() + m_paintRect.height() - 5, QString::number(dXPrint));
+					_painter->drawText(dPixelX - fm.boundingRect(QString::number(dX)).width() - 5, m_paintRect.y() + m_paintRect.height() - 5, QString::number(dXPrint));
 				if (fm.height() < dPixelY - m_paintRect.y() - 5)
 					_painter->drawText(m_paintRect.x() + 5, dPixelY - 5, QString::number(dYPrint));
 				else
@@ -1320,13 +1320,13 @@ void CQtPlot::SaveAsCSVFile(const QString& _sFileName)
 		{
 			if ((m_vpCurves.at(i)->bVisibility) && (m_vpCurves.at(i)->points.size() > 0))
 			{
-				textStream << m_vpCurves.at(i)->sCurveName << endl;
+				textStream << m_vpCurves.at(i)->sCurveName << Qt::endl;
 				for (int j = 0; j < m_vpCurves.at(i)->points.size(); ++j)
 					textStream << m_vpCurves.at(i)->points.at(j).x() << ", ";
-				textStream << endl;
+				textStream << Qt::endl;
 				for (int j = 0; j < m_vpCurves.at(i)->points.size(); ++j)
 					textStream << m_vpCurves.at(i)->points.at(j).y() << ", ";
-				textStream << endl;
+				textStream << Qt::endl;
 			}
 		}
 	}
