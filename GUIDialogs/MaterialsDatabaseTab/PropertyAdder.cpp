@@ -2,6 +2,7 @@
 
 #include "PropertyAdder.h"
 #include "DyssolUtilities.h"
+#include "ContainerFunctions.h"
 #include "SignalBlocker.h"
 #include <QStandardItem>
 #include <QMessageBox>

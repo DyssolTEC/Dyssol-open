@@ -4,7 +4,7 @@
 #include "FlowsheetParameters.h"
 #include "MaterialStream.h"
 #include "DyssolStringConstants.h"
-#include "DyssolUtilities.h"
+#include "ContainerFunctions.h"
 
 CSimulator::CSimulator()
 {

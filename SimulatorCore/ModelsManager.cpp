@@ -3,7 +3,7 @@
 #include "ModelsManager.h"
 #include "FileSystem.h"
 #include "DyssolStringConstants.h"
-#include "DyssolUtilities.h"
+#include "ContainerFunctions.h"
 #ifdef _MSC_VER
 #else
 #include <dlfcn.h>

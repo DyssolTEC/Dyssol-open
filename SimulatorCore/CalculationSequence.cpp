@@ -1,9 +1,9 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
-#include "CalculationSequence.h"
+#include "ContainerFunctions.h"
 #include "MaterialStream.h"
 #include "DyssolStringConstants.h"
-#include "DyssolUtilities.h"
+#include "CalculationSequence.h"
 
 const int CCalculationSequence::m_cnSaveVersion = 1;
 

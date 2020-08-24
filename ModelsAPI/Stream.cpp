@@ -4,6 +4,7 @@
 #include "DistributionsFunctions.h"
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
+#include "ContainerFunctions.h"
 #include <cfloat>
 
 const unsigned CStream::m_cnSaveVersion	= 1;
@@ -1418,7 +1419,7 @@ bool CStream::GetDistribution(double _dTime, EDistrTypes _nDim, const std::strin
 	int iComp = GetCompoundIndex(_sCompound);
 	if (iComp == -1) return false;
 	bool bRes = m_vpPhases[iSolid]->distribution.GetVectorValue(_dTime, DISTR_COMPOUNDS, iComp, _nDim, _vResult);
-	VectorNormalize(_vResult);
+	Normalize(_vResult);
 	return bRes;
 }
 
@@ -1429,7 +1430,7 @@ std::vector<double> CStream::GetDistribution(double _dTime, EDistrTypes _nDim, c
 	if (iSolid == -1) return {};
 	const int iComp = GetCompoundIndex(_sCompound);
 	if (iComp == -1) return {};
-	return VectorNormalize(m_vpPhases[iSolid]->distribution.GetVectorValue(_dTime, DISTR_COMPOUNDS, iComp, _nDim));
+	return Normalize(m_vpPhases[iSolid]->distribution.GetVectorValue(_dTime, DISTR_COMPOUNDS, iComp, _nDim));
 }
 
 bool CStream::GetDistribution(double _dTime, EDistrTypes _nDim1, EDistrTypes _nDim2, const std::string& _sCompound, CMatrix2D& _2DResult) const
@@ -1778,7 +1779,7 @@ std::vector<double> CStream::p_GetPSDMassFrac(double _dTime, const std::vector<s
 			for (size_t j = 0; j < vTemp.size(); ++j)
 				vDistr[j] += vTemp[j];
 		}
-		VectorNormalize(vDistr);
+		Normalize(vDistr);
 		return vDistr;
 	}
 }
@@ -1806,7 +1807,7 @@ std::vector<double> CStream::p_GetPSDNumber(double _dTime, const std::vector<std
 	// single compound with no porosity, several compounds defined
 	else if (!bPorosityDefined && nCompoundsNum == 1)
 	{
-		const std::vector<double> fracs = VectorNormalize(m_vpPhases[GetSolidPhaseIndex()]->distribution.GetVectorValue(_dTime, DISTR_COMPOUNDS, GetCompoundIndex(vUsingComps.front()), DISTR_SIZE));
+		const std::vector<double> fracs = Normalize(m_vpPhases[GetSolidPhaseIndex()]->distribution.GetVectorValue(_dTime, DISTR_COMPOUNDS, GetCompoundIndex(vUsingComps.front()), DISTR_SIZE));
 		const double dDensity = GetPhaseTPDProp(_dTime, DENSITY, SOA_SOLID);
 		std::vector<double> res(fracs.size());
 		for (size_t i = 0; i < fracs.size(); ++i)
@@ -1917,7 +1918,7 @@ void CStream::SetPSD(double _dTime, EPSDTypes _PSDType, const std::string& _sCom
 	case PSD_Q2:		vDistr = ConvertQ2ToMassFractions(grid.GetPSDGrid(_PSDGridType), _vPSD);																				      break;
 	default:																																									      break;
 	}
-	VectorNormalize(vDistr);
+	Normalize(vDistr);
 
 	if(_sCompound.empty())	// for the mixture
 		m_vpPhases[index]->distribution.SetDistribution(_dTime, DISTR_SIZE, vDistr);

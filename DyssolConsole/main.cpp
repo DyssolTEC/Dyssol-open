@@ -98,7 +98,7 @@ void RunSimulation(const CConfigFileParser& _parser)
 				break;
 			case EUnitParameter::TIME_DEPENDENT:
 				for (const auto td : u.tdValue)
-					dynamic_cast<CTDUnitParameter*>(pParam)->SetValue(td.dTime, td.dValue);
+					dynamic_cast<CTDUnitParameter*>(pParam)->SetValue(td.time, td.value);
 				break;
 			case EUnitParameter::STRING:
 				dynamic_cast<CStringUnitParameter*>(pParam)->SetValue(u.sValue);

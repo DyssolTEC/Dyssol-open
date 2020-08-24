@@ -297,7 +297,7 @@ void CMDMatrix::AddClass(unsigned _nDim)
 	CheckCacheNeed();
 }
 
-void CMDMatrix::RemoveClass(unsigned _nDim, unsigned _nClassIndex)
+void CMDMatrix::RemoveClass(unsigned _nDim, size_t _nClassIndex)
 {
 	for( unsigned i=0; i<m_vDimensions.size(); ++i )
 	{
@@ -1960,7 +1960,7 @@ void CMDMatrix::LoadMDBlockFromFile(CH5Handler& _h5File, const std::string& _sPa
 	CheckCacheNeed();
 }
 
-void CMDMatrix::SetCacheParams( bool _bEnabled, unsigned _nWindow )
+void CMDMatrix::SetCacheParams(bool _bEnabled, size_t _nWindow)
 {
 	m_bCacheEnabled = _bEnabled;
 	m_nCacheWindow = _nWindow;
@@ -3011,7 +3011,7 @@ sFraction* CMDMatrix::AddClassRecursive(sFraction *_pFraction, unsigned _nDimInd
 	return _pFraction;
 }
 
-sFraction* CMDMatrix::RemoveClassRecursive( sFraction *_pFraction, unsigned _nDimIndex, unsigned _nClassIndex, unsigned _nNesting /*= 0 */)
+sFraction* CMDMatrix::RemoveClassRecursive(sFraction *_pFraction, unsigned _nDimIndex, size_t _nClassIndex, unsigned _nNesting /*= 0 */)
 {
 	if( ( _nNesting >= m_vDimensions.size() ) || ( _pFraction == NULL ) )
 		return NULL;
@@ -3019,7 +3019,7 @@ sFraction* CMDMatrix::RemoveClassRecursive( sFraction *_pFraction, unsigned _nDi
 	if( _nNesting == _nDimIndex )
 	{
 		sFraction *pNewFraction = IitialiseDimension( m_vClasses[_nDimIndex]-1 );
-		unsigned index = 0;
+		size_t index = 0;
 		for( unsigned i=0; i<m_vClasses[_nDimIndex]; ++i )
 		{
 			if( index == _nClassIndex )

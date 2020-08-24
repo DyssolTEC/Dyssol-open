@@ -3,6 +3,7 @@
 #include "SolidDistributionsEditor.h"
 #include "ParamsItem.h"
 #include "DyssolUtilities.h"
+#include "ContainerFunctions.h"
 #include "DyssolStringConstants.h"
 
 CSolidDistributionsEditor::CSolidDistributionsEditor(QWidget* parent) : QWidget(parent),
@@ -227,7 +228,7 @@ void CSolidDistributionsEditor::UpdateDistributionTable() const
 	else if (vDistrTypes.size() == 2 && vDistrTypes.front() == DISTR_COMPOUNDS && vDistrTypes.back() == DISTR_SIZE)	// PSD for one specific compound
 		vvData.push_back(m_pStream->GetPSD(dTime, ChosenPSDType(), ChosenCompound(), ChosenPSDGridType()));
 	else // not a PSD
-		vvData = MatrixNormalize(m_pDistribution->GetMatrixValue(dTime, VectorEnumToIntegral(vDistrTypes), vCoord));
+		vvData = Normalize(m_pDistribution->GetMatrixValue(dTime, VectorEnumToIntegral(vDistrTypes), vCoord));
 
 	// switch button for functional distribution on/off
 	ui.pushButtonFunctional->setEnabled(vvData.size() == 1);
@@ -635,7 +636,7 @@ void CSolidDistributionsEditor::ApplyPressed()
 	else if (vTypes.size() == 2 && vTypes.front() == DISTR_COMPOUNDS && vTypes.back() == DISTR_SIZE)	// PSD for specific compound
 		m_pStream->SetPSD(dTime, ChosenPSDType(), ChosenCompound(), vvData.front(), ChosenPSDGridType());
 	else																								// another distribution, not a PSD
-		m_pDistribution->SetMatrixValue(m_pDistribution->GetAllTimePoints().at(m_iCurrTime), VectorEnumToIntegral(vTypes), vCoord, MatrixNormalize(static_cast<const std::vector<std::vector<double>>>(vvData)));
+		m_pDistribution->SetMatrixValue(m_pDistribution->GetAllTimePoints().at(m_iCurrTime), VectorEnumToIntegral(vTypes), vCoord, Normalize(static_cast<const std::vector<std::vector<double>>>(vvData)));
 
 	emit DataChanged();
 

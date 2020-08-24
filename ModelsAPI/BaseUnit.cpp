@@ -4,6 +4,7 @@
 #include "MaterialStream.h"
 #include "DyssolUtilities.h"
 #include "DyssolStringConstants.h"
+#include "ContainerFunctions.h"
 
 const unsigned CBaseUnit::m_cnSaveVersion	= 2;
 
@@ -1147,6 +1148,7 @@ double CBaseUnit::GetCompoundsInteractionProp(const std::string& _sCompoundKey1,
 	case INT_PROP_USER_DEFINED_19:
 	case INT_PROP_USER_DEFINED_20:
 		dVal = m_pMaterialsDB->GetInteractionPropertyValue(_sCompoundKey1, _sCompoundKey2, static_cast<EInteractionProperties>(_nProperty), _dTemperature, _dPressure);
+		break;
 	case INT_PROP_NO_PROERTY: break;
 	}
 	return dVal;

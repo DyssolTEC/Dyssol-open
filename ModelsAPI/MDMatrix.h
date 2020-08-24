@@ -45,7 +45,7 @@ private:
 	mutable unsigned m_nCounter;
 	mutable double m_dCurrWinStart;
 	mutable double m_dCurrWinEnd;
-	unsigned m_nCacheWindow;
+	size_t m_nCacheWindow;
 	mutable unsigned m_nNonCachedTPNum;
 	mutable size_t m_nCurrOffset;
 	mutable bool m_bCacheCoherent;
@@ -86,7 +86,7 @@ public:
 	/** Adds class to a dimension.*/
 	void AddClass( unsigned _nDim );
 	/** Removes specified class from dimension.*/
-	void RemoveClass( unsigned _nDim, unsigned _nClassIndex );
+	void RemoveClass(unsigned _nDim, size_t _nClassIndex);
 	/** Returns true if matrices have the same dimensions.*/
 	bool CompareDims( const CMDMatrix& _matr ) const;
 
@@ -302,7 +302,7 @@ public:
 	void LoadMDBlockFromFile(CH5Handler& _h5File, const std::string& _sPath, unsigned _iFirst, unsigned _iLast, std::vector<std::vector<double>>& vvBuf);
 
 	void SetCachePath(const std::wstring& _sPath);
-	void SetCacheParams( bool _bEnabled, unsigned _nWindow );
+	void SetCacheParams(bool _bEnabled, size_t _nWindow);
 
 	/** Removes all data, which can be approximated.*/
 	void CompressData( double _dStartTime, double _dEndTime, double _dATol, double _dRTol );
@@ -367,7 +367,7 @@ private:
 	/** Adds new class to a dimension with index _nDimIndex.*/
 	sFraction* AddClassRecursive( sFraction *_pFraction, unsigned _nDimIndex, unsigned _nNesting = 0 );
 	/** Removes class _nClassIndex from a dimension _nDimIndex.*/
-	sFraction* RemoveClassRecursive( sFraction *_pFraction, unsigned _nDimIndex, unsigned _nClassIndex, unsigned _nNesting = 0 );
+	sFraction* RemoveClassRecursive(sFraction *_pFraction, unsigned _nDimIndex, size_t _nClassIndex, unsigned _nNesting = 0);
 	/** Removes all data, which can be approximated in time interval [m_dTempT1, m_dTempT2].*/
 	void CompressDataRecursive( sFraction *_pFraction, double _dATol, double _dRTol, unsigned _nNesting = 0 );
 	//void NormalizeToOneRecursive( sFraction *_pFraction, unsigned _nNesting = 0 );

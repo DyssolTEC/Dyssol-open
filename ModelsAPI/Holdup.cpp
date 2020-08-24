@@ -3,6 +3,7 @@
 #include "Holdup.h"
 #include "MaterialStream.h"
 #include "DyssolUtilities.h"
+#include "ContainerFunctions.h"
 
 CHoldup::CHoldup(const std::string& _sHoldupKey/*="" */) : CStream(_sHoldupKey)
 {

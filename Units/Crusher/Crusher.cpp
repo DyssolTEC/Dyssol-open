@@ -313,7 +313,7 @@ void CCrusher::InitializeCone(double _time)
 		for (size_t k = 0; k < m_classesNumber; ++k)
 			if (k <= i)
 				breakage[i][k] = std::pow(m_diameters[i] / m_diameters[k], q) * 0.5 * (1 + std::tanh((m_diameters[k] - FS) / FS));
-		VectorNormalize(breakage[i]);
+		Normalize(breakage[i]);
 	});
 
 	// calculate transformation matrix

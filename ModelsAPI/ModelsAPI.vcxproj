@@ -119,6 +119,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseUnit.cpp" />
+    <ClCompile Include="CachedMap.cpp" />
+    <ClCompile Include="LookupTables.cpp" />
+    <ClCompile Include="Phase.cpp" />
+    <ClCompile Include="Holdup2.cpp" />
+    <ClCompile Include="MaterialStream2.cpp" />
+    <ClCompile Include="Stream2.cpp" />
+    <ClCompile Include="Stream2ModelInterface.cpp" />
+    <ClCompile Include="TimeDependentValue.cpp" />
     <ClCompile Include="Matrix2D.cpp" />
     <ClCompile Include="DenseDistr2D.cpp" />
     <ClCompile Include="DenseMDMatrix.cpp" />
@@ -137,6 +145,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseUnit.h" />
+    <ClInclude Include="CachedMap.h" />
+    <ClInclude Include="Holdup2.h" />
+    <ClInclude Include="LookupTables.h" />
+    <ClInclude Include="MaterialStream2.h" />
     <ClInclude Include="Matrix2D.h" />
     <ClInclude Include="DenseDistr2D.h" />
     <ClInclude Include="DenseMDMatrix.h" />
@@ -148,9 +160,13 @@
     <ClInclude Include="LookupTable.h" />
     <ClInclude Include="MaterialStream.h" />
     <ClInclude Include="MDMatrix.h" />
+    <ClInclude Include="Phase.h" />
     <ClInclude Include="SteadyStateUnit.h" />
     <ClInclude Include="Stream.h" />
+    <ClInclude Include="Stream2.h" />
+    <ClInclude Include="Stream2ModelInterface.h" />
     <ClInclude Include="TDArray.h" />
+    <ClInclude Include="TimeDependentValue.h" />
     <ClInclude Include="TransformMatrix.h" />
     <ClInclude Include="UnitDevelopmentDefines.h" />
     <ClInclude Include="UnitParameters.h" />

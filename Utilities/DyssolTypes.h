@@ -11,11 +11,10 @@
 // Time dependent value.
 struct STDValue
 {
-	double dTime;
-	double dValue;
-	STDValue() : dTime(0), dValue(0) {};
-	STDValue( double _dTime, double _dValue ) : dTime(_dTime), dValue(_dValue) {};
-	bool operator<(const STDValue ob2) const { return (dTime < ob2.dTime); }
+	double time{ 0.0 };
+	double value{ 0.0 };
+	STDValue(double _time, double _value) : time{ _time }, value{ _value } {}
+	bool operator<(const STDValue& _other) const { return time < _other.time; }
 };
 
 struct SInterval
@@ -55,4 +54,11 @@ enum class EArguments
 	UNIT_HOLDUP_PHASES,
 	UNIT_HOLDUP_COMP,
 	UNIT_HOLDUP_SOLID
+};
+
+struct SCacheSettings
+{
+	bool isEnabled{ false };
+	size_t window{ DEFAULT_CACHE_WINDOW };
+	std::wstring path{ L"" };
 };

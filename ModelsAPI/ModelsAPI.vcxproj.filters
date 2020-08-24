@@ -63,6 +63,30 @@
     <ClCompile Include="UnitParameters.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CachedMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeDependentValue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Holdup2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialStream2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Stream2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Phase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Stream2ModelInterface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LookupTables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseUnit.h">
@@ -117,6 +141,30 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UnitParameters.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CachedMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeDependentValue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Holdup2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialStream2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Stream2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Phase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Stream2ModelInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LookupTables.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

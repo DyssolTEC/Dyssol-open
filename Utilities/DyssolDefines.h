@@ -151,6 +151,7 @@ enum class EDependencyTypes
 
 // ========== Non-constant single-phase mixture properties and overall properties [300..399]
 
+// TODO: remove them
 //#define ENTHALPY				308 // overall
 #define FLOW					320	// overall (stream)
 #define MASS					320	// overall (holdup)
@@ -197,4 +198,32 @@ enum class EPSDGridType : unsigned
 {
 	DIAMETER = 0,
 	VOLUME = 1
+};
+
+// Identifiers of phase types.
+enum class EPhase : unsigned
+{
+	UNDEFINED,
+	SOLID,
+	LIQUID,
+	VAPOR,
+};
+
+// Identifiers of time-dependent overall parameters.
+enum class EOverall : unsigned
+{
+	// TODO: rename when corresponding defines are removed
+	OVERALL_MASS,
+	OVERALL_TEMPERATURE,
+	OVERALL_PRESSURE,
+	OVERALL_USER_DEFINED_01 = 201,
+	OVERALL_USER_DEFINED_02 = 202,
+	OVERALL_USER_DEFINED_03 = 203,
+	OVERALL_USER_DEFINED_04 = 204,
+	OVERALL_USER_DEFINED_05 = 205,
+	OVERALL_USER_DEFINED_06 = 206,
+	OVERALL_USER_DEFINED_07 = 207,
+	OVERALL_USER_DEFINED_08 = 208,
+	OVERALL_USER_DEFINED_09 = 209,
+	OVERALL_USER_DEFINED_10 = 210,
 };

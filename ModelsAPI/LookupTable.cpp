@@ -63,7 +63,7 @@ void CLookupTable::SetCompoundFractions(const std::vector<double>& _vFractions)
 	if (_vFractions.size() != m_vCompoundKeys.size()) return;
 
 	// Normalize mass fractions vector
-	const std::vector<double> vNormFractions = VectorNormalize(_vFractions);
+	const std::vector<double> vNormFractions = Normalize(_vFractions);
 
 	// Create m_table from compound lookup tables
 	// set the first...

@@ -27,7 +27,7 @@ private:
 
 	EDependencyTypes m_nDependenceType;
 	ECompoundTPProperties m_nProperty;
-	std::vector<std::string> m_vCompoundKeys;			// Vector with keys of the chemical compounds which contains this lookuptable
+	std::vector<std::string> m_vCompoundKeys;			// Vector with keys of the chemical compounds which contains this lookup table
 	std::vector<CDependentValues> m_vCompoundTables;	// Vector with compound lookup tables
 
 public:
@@ -37,7 +37,7 @@ public:
 	/// Initializes the lookup table with new initials.
 	void Initialize(const CMaterialsDatabase* _pMaterialsDB, const std::vector<std::string>& _vCompoundKeys, ECompoundTPProperties _nProperty, EDependencyTypes _nDependenceType);
 
-	/// Removes all infpormation from the table.
+	/// Removes all information from the table.
 	void Clear();
 
 	/// Returns true if it set up and ready to use.

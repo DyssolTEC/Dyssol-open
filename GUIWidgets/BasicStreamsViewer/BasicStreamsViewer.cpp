@@ -4,6 +4,7 @@
 #include "DistributionsFunctions.h"
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
+#include "ContainerFunctions.h"
 #include "MaterialStream.h"
 #include <QMenu>
 #include <QContextMenuEvent>

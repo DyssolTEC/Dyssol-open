@@ -4,6 +4,7 @@
 #include "StringFunctions.h"
 #include "DyssolUtilities.h"
 #include "DyssolStringConstants.h"
+#include "ContainerFunctions.h"
 #include <fstream>
 #include <sstream>
 
@@ -456,7 +457,6 @@ bool CMaterialsDatabase::LoadFromFileV3(std::ifstream& _file)
 			case MDBDescriptors::EPropertyType::CONSTANT:	  currPropDescr = &activeConstProperties[static_cast<ECompoundConstProperties>(GetValueFromStream<unsigned>(&ss))]; break;
 			case MDBDescriptors::EPropertyType::TP_DEPENDENT: currPropDescr = &activeTPDepProperties[static_cast<ECompoundTPProperties>(GetValueFromStream<unsigned>(&ss))];	break;
 			case MDBDescriptors::EPropertyType::INTERACTION:  currPropDescr = &activeInterProperties[static_cast<EInteractionProperties>(GetValueFromStream<unsigned>(&ss))];	break;
-			default:;
 			}
 			break;
 		case ETXTFileKeys::PROPERTY_NAME:
