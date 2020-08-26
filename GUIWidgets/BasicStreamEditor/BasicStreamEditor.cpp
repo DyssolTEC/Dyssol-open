@@ -1,6 +1,7 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "BasicStreamEditor.h"
+#include "Phase.h"
 #include <QMessageBox>
 
 CBasicStreamEditor::CBasicStreamEditor(QWidget *parent)
@@ -47,7 +48,7 @@ void CBasicStreamEditor::SetFlowsheet(CFlowsheet* _pFlowsheet)
 	m_pFlowsheet = _pFlowsheet;
 }
 
-void CBasicStreamEditor::SetStream(CStream* _pStream)
+void CBasicStreamEditor::SetStream(CBaseStream* _pStream)
 {
 	m_pSelectedHoldup = _pStream;
 	UpdateWholeView();
@@ -112,7 +113,7 @@ void CBasicStreamEditor::UpdateTabs()
 			//m_pSolidDistrEditor = new CSolidDistributionsEditor(ui.mainTabWidget);
 			m_pSolidDistrEditor->SetFlowsheet(m_pFlowsheet);
 			if(m_pSelectedHoldup)
-				m_pSolidDistrEditor->SetDistribution(m_pSelectedHoldup->GetPhaseDistribution(i), m_pSelectedHoldup);
+				m_pSolidDistrEditor->SetDistribution(m_pSelectedHoldup->GetPhase(CFlowsheet::PhaseSOA2EPhase(m_pFlowsheet->GetPhaseAggregationState(i)))->MDDistr(), m_pSelectedHoldup);
 			else
 				m_pSolidDistrEditor->SetDistribution(nullptr, nullptr);
 			m_pSolidDistrEditor->SetViewState(m_vLastCombos, m_vLastSliders);
@@ -187,7 +188,7 @@ void CBasicStreamEditor::UpdateStreamMTPTab()
 	else
 	{
 		m_bAvoidSignal = true;
-		m_pDDTableMTP->SetDistribution(m_pSelectedHoldup->GetDistrStreamMTP());
+		m_pDDTableMTP->SetDistribution(m_pSelectedHoldup->GetOverallProperty(EOverall::OVERALL_MASS));
 		m_bAvoidSignal = false;
 		m_pDDTableMTP->setVisible(true);
 	}
@@ -200,7 +201,7 @@ void CBasicStreamEditor::UpdatePhaseFractionsTab()
 	else
 	{
 		m_bAvoidSignal = true;
-		m_pDDTablePhase->SetDistribution(m_pSelectedHoldup->GetDistrPhaseFractions());
+		m_pDDTablePhase->SetDistribution(m_pSelectedHoldup->GetPhase(EPhase::SOLID)->Fractions());
 		m_bAvoidSignal = false;
 		m_pDDTablePhase->setVisible(true);
 	}
@@ -227,7 +228,7 @@ void CBasicStreamEditor::UpdatePhaseTab(unsigned _nIndex)
 		}
 
 		m_bAvoidSignal = true;
-		m_vMDMTablePhases[_nIndex]->SetDistribution(m_pSelectedHoldup->GetPhaseDistribution(iPhaseIndex), m_pFlowsheet->GetCompoundsNames());
+		m_vMDMTablePhases[_nIndex]->SetDistribution(m_pSelectedHoldup->GetPhase(CFlowsheet::PhaseSOA2EPhase(m_pFlowsheet->GetPhaseAggregationState(iPhaseIndex)))->MDDistr(), m_pFlowsheet->GetCompoundsNames());
 		m_bAvoidSignal = false;
 		m_vMDMTablePhases[_nIndex]->setVisible(true);
 	}
@@ -248,7 +249,7 @@ void CBasicStreamEditor::UpdateDistributionTab()
 		for (unsigned i = 0; i<m_pFlowsheet->GetPhasesNumber(); ++i)
 			if (m_pFlowsheet->GetPhaseAggregationState(i) == SOA_SOLID)
 			{
-				m_pSolidDistrEditor->SetDistribution(m_pSelectedHoldup->GetPhaseDistribution(i), m_pSelectedHoldup);
+				m_pSolidDistrEditor->SetDistribution(m_pSelectedHoldup->GetPhase(CFlowsheet::PhaseSOA2EPhase(m_pFlowsheet->GetPhaseAggregationState(i)))->MDDistr(), m_pSelectedHoldup);
 				break;
 			}
 		m_bAvoidSignal = false;
@@ -290,8 +291,8 @@ void CBasicStreamEditor::AddTimePoint()
 	m_pSelectedHoldup->AddTimePoint(dLastTP + 1);
 	if (dLastTP == -1)
 	{
-		m_pSelectedHoldup->SetOverallProperty(dLastTP + 1, TEMPERATURE, 300);
-		m_pSelectedHoldup->SetOverallProperty(dLastTP + 1, PRESSURE, 100000);
+		m_pSelectedHoldup->SetOverallProperty(dLastTP + 1, EOverall::OVERALL_TEMPERATURE, 300);
+		m_pSelectedHoldup->SetOverallProperty(dLastTP + 1, EOverall::OVERALL_PRESSURE, 100000);
 	}
 	UpdateTabContent();
 
@@ -343,7 +344,7 @@ void CBasicStreamEditor::ChangeTimePoint()
 	if (m_bAvoidSignal) return;
 	if (m_pSelectedHoldup == NULL) return;
 	double dNewValue = (ui.timePointsTable->item(ui.timePointsTable->currentRow(), 0))->text().toDouble();
-	m_pSelectedHoldup->ChangeTimePoint(ui.timePointsTable->currentRow(), dNewValue);
+	//m_pSelectedHoldup->ChangeTimePoint(ui.timePointsTable->currentRow(), dNewValue);
 	UpdateTabContent();
 	emit DataChanged();
 }

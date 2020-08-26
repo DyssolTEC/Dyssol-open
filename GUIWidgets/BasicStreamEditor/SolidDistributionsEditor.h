@@ -5,6 +5,7 @@
 #include "ui_SolidDistributionsEditor.h"
 #include "Flowsheet.h"
 #include "DistrFunctionDialog.h"
+#include "MDMatrix.h"
 
 class CSolidDistributionsEditor : public QWidget
 {
@@ -16,7 +17,7 @@ private:
 	CFlowsheet* m_pFlowsheet;
 	CDistributionsGrid* m_pGrid;
 	CMDMatrix* m_pDistribution;
-	CStream* m_pStream;
+	CBaseStream* m_pStream;
 
 	std::vector<QComboBox*> m_vCombos;
 	std::vector<QSlider*> m_vSliders;
@@ -32,7 +33,7 @@ public:
 	~CSolidDistributionsEditor();
 
 	void SetFlowsheet(CFlowsheet* _pFlowsheet);
-	void SetDistribution(CMDMatrix* _pDistribution, CStream* _pStream);
+	void SetDistribution(CMDMatrix* _pDistribution, CBaseStream* _pStream);
 	void SetTimePoint(size_t _index);
 
 	void GetViewState(std::vector<int> &_vLastCombos, std::vector<int> &_vLastSliders) const;

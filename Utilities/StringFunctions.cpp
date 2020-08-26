@@ -13,6 +13,7 @@
 #include <locale>
 #include <cctype>
 #include <iomanip>
+#include <random>
 
 namespace StringFunctions
 {
@@ -194,25 +195,25 @@ namespace StringFunctions
 		return s;
 	}
 
-	std::string GenerateRandomString(size_t _length /*= 20*/)
+	std::string GenerateRandomKey(size_t _length /*= 20*/)
 	{
-		std::string result;
-		static const char symbols[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-		for (size_t i = 0; i < _length; ++i)
-			result += symbols[std::rand() % (sizeof(symbols) - 1)];
+		static std::string symbols = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+		std::random_device device;
+		std::default_random_engine engine{ device() };
+		const std::uniform_int_distribution<size_t> distribution{ 0, symbols.length() - 1 };
+		std::string result(_length, '0');
+		std::generate(result.begin(), result.end(), [&]() { return symbols[distribution(engine)]; });
 		return result;
 	}
 
-	std::string GenerateUniqueString(const std::string& _init, const std::vector<std::string>& _existing, size_t _length /*= 20*/)
+	std::string GenerateUniqueKey(const std::string& _init, const std::vector<std::string>& _existing, size_t _length /*= 20*/)
 	{
-		std::string res = !_init.empty() ? _init : GenerateRandomString(_length);
-		bool unique = false;
-		while (!unique)
+		std::string res = _init;
+		while (true)
 		{
-			unique = std::find(_existing.begin(), _existing.end(), res) == _existing.end();
-			if (!unique)
-				res = GenerateRandomString(_length);
+			if (std::find(_existing.begin(), _existing.end(), res) == _existing.end())
+				return res;
+			res = GenerateRandomKey(_length);
 		}
-		return res;
 	}
 }

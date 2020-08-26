@@ -4,6 +4,7 @@
 
 #include "DyssolTypes.h"
 #include <algorithm>
+#include <vector>
 
 struct SGridDimensionEx
 {

@@ -1,7 +1,8 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
+#define NOMINMAX
 #include "FlowsheetEditor.h"
-#include "MaterialStream.h"
+#include "Stream.h"
 #include "DyssolStringConstants.h"
 #include <sstream>
 #include <QMessageBox>
@@ -133,8 +134,8 @@ void CFlowsheetEditor::DownModel()
 
 void CFlowsheetEditor::AddStream()
 {
-	CMaterialStream *stream = m_pFlowsheet->AddStream();
-	stream->SetStreamName(StrConst::FE_StreamDefaultName + std::to_string(m_pFlowsheet->GetStreamsCount()));
+	CStream*stream = m_pFlowsheet->AddStream();
+	stream->SetName(StrConst::FE_StreamDefaultName + std::to_string(m_pFlowsheet->GetStreamsCount()));
 
 	UpdateStreamsView();
 	QSignalBlocker blocker(ui.listStreams);
@@ -150,7 +151,7 @@ void CFlowsheetEditor::DeleteStream()
 {
 	if (!m_pSelectedStream) return;
 
-	m_pFlowsheet->DeleteStream(m_pSelectedStream->GetStreamKey());
+	m_pFlowsheet->DeleteStream(m_pSelectedStream->GetKey());
 
 	UpdateStreamsView();
 	UpdatePortsView();
@@ -162,7 +163,7 @@ void CFlowsheetEditor::DeleteStream()
 void CFlowsheetEditor::UpStream()
 {
 	if (!m_pSelectedStream || ui.listStreams->currentRow() <= 0) return;
-	m_pFlowsheet->ShiftStreamUp(m_pSelectedStream->GetStreamKey());
+	m_pFlowsheet->ShiftStreamUp(m_pSelectedStream->GetKey());
 	UpdateStreamsView();
 	UpdatePortsView();
 	ui.listStreams->setCurrentItem(ui.listStreams->item(ui.listStreams->currentRow() - 1, 0));
@@ -172,7 +173,7 @@ void CFlowsheetEditor::UpStream()
 void CFlowsheetEditor::DownStream()
 {
 	if (!m_pSelectedStream || ui.listStreams->currentRow() >= ui.listStreams->rowCount() - 1) return;
-	m_pFlowsheet->ShiftStreamDown(m_pSelectedStream->GetStreamKey());
+	m_pFlowsheet->ShiftStreamDown(m_pSelectedStream->GetKey());
 	UpdateStreamsView();
 	UpdatePortsView();
 	ui.listStreams->setCurrentItem(ui.listStreams->item(ui.listStreams->currentRow() + 1, 0));
@@ -234,7 +235,7 @@ void CFlowsheetEditor::ChangeStreamName(int _iRow, int _iCol)
 {
 	if (!m_pSelectedStream) return;
 
-	m_pSelectedStream->SetStreamName(ui.listStreams->item(_iRow, _iCol)->text().simplified().toStdString());
+	m_pSelectedStream->SetName(ui.listStreams->item(_iRow, _iCol)->text().simplified().toStdString());
 
 	UpdateStreamsView();
 	UpdatePortsView();
@@ -411,7 +412,7 @@ void CFlowsheetEditor::UpdateStreamsView()
 
 	ui.listStreams->setRowCount(static_cast<int>(m_pFlowsheet->GetStreamsCount()));
 	for (int i = 0; i < static_cast<int>(m_pFlowsheet->GetStreamsCount()); ++i)
-		ui.listStreams->SetItemEditable(i, 0, m_pFlowsheet->GetStream(i)->GetStreamName(), QString::fromStdString(m_pFlowsheet->GetStream(i)->GetStreamKey()));
+		ui.listStreams->SetItemEditable(i, 0, m_pFlowsheet->GetStream(i)->GetName(), QString::fromStdString(m_pFlowsheet->GetStream(i)->GetKey()));
 
 	// restore selection
 	ui.listStreams->RestoreSelectedCell(oldPos);
@@ -459,8 +460,8 @@ void CFlowsheetEditor::UpdatePortsView() const
 	std::vector<QVariant> streamKeys;
 	for (size_t i = 0; i < m_pFlowsheet->GetStreamsCount(); ++i)
 	{
-		streamNames.push_back(QString::fromStdString(m_pFlowsheet->GetStream(i)->GetStreamName()));
-		streamKeys.emplace_back(QString::fromStdString(m_pFlowsheet->GetStream(i)->GetStreamKey()));
+		streamNames.push_back(QString::fromStdString(m_pFlowsheet->GetStream(i)->GetName()));
+		streamKeys.emplace_back(QString::fromStdString(m_pFlowsheet->GetStream(i)->GetKey()));
 	}
 
 	// create table with total ports of the unit

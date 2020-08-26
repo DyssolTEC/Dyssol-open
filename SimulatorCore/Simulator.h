@@ -4,6 +4,7 @@
 
 #include "Flowsheet.h"
 #include "SimulatorLog.h"
+#include "DenseMDMatrix.h"
 
 enum class ESimulatorStatus
 {
@@ -65,13 +66,9 @@ private:
 	void InitializeUnit(CBaseModel& _model, double _t);
 
 	/// Checks convergence comparing all values from _vStreams1 and _vStreams2 in pairs on the specified time interval. The length of _vStreams1 and _vStreams2 must be the same.
-	bool CheckConvergence(const std::vector<CMaterialStream*>& _vStreams1, const std::vector<CMaterialStream*>& _vStreams2, double _t1, double _t2) const;
+	bool CheckConvergence(const std::vector<CStream*>& _vStreams1, const std::vector<CStream*>& _vStreams2, double _t1, double _t2) const;
 	/// Compares all values of two streams on a specified time interval. Returns true if streams are equal to within tolerance.
-	bool CompareStreams(const CMaterialStream& _str1, const CMaterialStream& _str2, double _t1, double _t2) const;
-	/// Compare two vectors using set tolerance. Vectors must have the same length.
-	bool CompareVectors(const std::vector<double>& _vVec1, const std::vector<double>& _vVec2) const;
-	/// Compare two multidimensional matrices using set tolerance. Matrices must have the same length.
-	bool CompareMatrices(const CDenseMDMatrix& _matr1, const CDenseMDMatrix& _matr2) const;
+	bool CompareStreams(const CStream& _str1, const CStream& _str2, double _t1, double _t2) const;
 
 	/// Sets error's description into log, stops simulation.
 	void RaiseError(const std::string& _sError);
@@ -79,12 +76,13 @@ private:
 	void ClearLogState();
 
 	/// Calculates and sets estimated values to initialize tear _streams up to the _tExtra time point, applying selected extrapolation method on the time interval [_t1, _t2].
-	void ApplyExtrapolationMethod(const std::vector<CMaterialStream*>& _streams, double _t1, double _t2, double _tExtra) const;
+	void ApplyExtrapolationMethod(const std::vector<CStream*>& _streams, double _t1, double _t2, double _tExtra) const;
 
 	/// Setup chosen convergence method.
 	void SetupConvergenceMethod();
 	/// Applies selected convergence method to calculate new values _s3 using previous values _s2 and _s1 on the specified time interval.
-	void ApplyConvergenceMethod(const std::vector<CMaterialStream*>& _s3, std::vector<CMaterialStream*>& _s2, std::vector<CMaterialStream*>& _s1, double _t1, double _t2);
+	void ApplyConvergenceMethod(const std::vector<CStream*>& _s3, std::vector<CStream*>& _s2, std::vector<CStream*>& _s1, double _t1, double _t2);
+	double PredictValues(double _d3, double _d2, double _d1) const;
 	std::vector<double> PredictValues( const std::vector<double>& _v3, const std::vector<double>& _v2, const std::vector<double>& _v1) const;
 	CDenseMDMatrix PredictValues(const CDenseMDMatrix& _m3, const CDenseMDMatrix& _m2, const CDenseMDMatrix& _m1) const;
 	void PredictValues(size_t _len, const double* _v3, const double* _v2, const double* _v1, double* _res) const;
@@ -94,4 +92,6 @@ private:
 
 	// Removes excessive data from streams of the selected partition on the time interval.
 	void ReduceData(const CCalculationSequence::SPartition& _partition, double _t1, double _t2) const;
+
+	static EPhase PhaseSOA2EPhase(unsigned _soa);
 };

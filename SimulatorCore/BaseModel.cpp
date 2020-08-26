@@ -15,7 +15,7 @@ CBaseModel::CBaseModel(CModelsManager* _pModelsManager, const std::string& _sMod
 	m_pUnit(nullptr)
 {
 	if (m_sModelKey.empty())
-		m_sModelKey = StringFunctions::GenerateRandomString();
+		m_sModelKey = StringFunctions::GenerateRandomKey();
 }
 
 CBaseModel::~CBaseModel()
@@ -95,7 +95,7 @@ CHoldup* CBaseModel::GetHoldup(size_t _index)
 const CHoldup* CBaseModel::GetHoldup(const std::string& _sKey) const
 {
 	for (auto& h : m_pUnit->GetHoldups())
-		if (h->GetStreamKey() == _sKey)
+		if (h->GetKey() == _sKey)
 			return h;
 	return nullptr;
 }
@@ -208,7 +208,7 @@ void CBaseModel::SetPortStreamKey( unsigned _nPortIndex, std::string _sStreamKey
 		m_pUnit->SetPortStreamKey( _nPortIndex, _sStreamKey );
 }
 
-void CBaseModel::SetPortStream( unsigned _nPortIndex, CMaterialStream* _pMaterialStream )
+void CBaseModel::SetPortStream( unsigned _nPortIndex, CStream* _pMaterialStream )
 {
 	if ( m_pUnit != NULL )
 		m_pUnit->SetPortStream( _nPortIndex, _pMaterialStream );

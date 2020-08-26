@@ -3,6 +3,7 @@
 #define DLL_EXPORT
 #include "Granulator.h"
 #include "DistributionsFunctions.h"
+#include "TransformMatrix.h"
 
 extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 {
@@ -143,8 +144,8 @@ void CUnitDAEModel::ResultsHandler(double _dTime, double* _pVars, double* _pDeri
 
 	const double dHoldupMass = unit->m_pHoldup->GetMass(_dTime);
 
-	static_cast<CStream*>(unit->m_pHoldup)->AddStream_Base(*static_cast<CStream*>(unit->m_pInSuspStream), _dTime);	// hack to handle holdup as material stream
-	static_cast<CStream*>(unit->m_pHoldup)->AddStream_Base(*static_cast<CStream*>(unit->m_pInNuclStream), _dTime);
+	static_cast<CBaseStream*>(unit->m_pHoldup)->AddStream_Base(*static_cast<CBaseStream*>(unit->m_pInSuspStream), _dTime);	// hack to handle holdup as material stream
+	static_cast<CBaseStream*>(unit->m_pHoldup)->AddStream_Base(*static_cast<CBaseStream*>(unit->m_pInNuclStream), _dTime);
 
 	unit->m_pHoldup->RemoveTimePointsAfter(_dTime);
 

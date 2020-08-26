@@ -574,7 +574,7 @@ CCompound* CMaterialsDatabase::AddCompound(const std::string& _sCompoundUniqueKe
 CCompound* CMaterialsDatabase::AddCompound(const CCompound& _compound)
 {
 	// generate unique key
-	const std::string sKey = GenerateUniqueString(_compound.GetKey(), GetCompoundsKeys());
+	const std::string sKey = GenerateUniqueKey(_compound.GetKey(), GetCompoundsKeys());
 	// add new compound
 	m_vCompounds.emplace_back(_compound);
 	// set key

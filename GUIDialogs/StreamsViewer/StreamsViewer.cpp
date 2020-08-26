@@ -1,7 +1,7 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "StreamsViewer.h"
-#include "MaterialStream.h"
+#include "Stream.h"
 
 CStreamsViewer::CStreamsViewer(CFlowsheet* _pFlowsheet, QWidget* _parent /*= nullptr*/, Qt::WindowFlags flags /*= {} */) :
 	QWidget(_parent, flags),
@@ -52,8 +52,8 @@ void CStreamsViewer::UpdateStreamsView() const
 
 	for (size_t i = 0; i < m_pFlowsheet->GetStreamsCount(); ++i)
 	{
-		QListWidgetItem *pItem = new QListWidgetItem(QString::fromStdString(m_pFlowsheet->GetStream(i)->GetStreamName()));
-		pItem->setData(Qt::UserRole, QString::fromStdString(m_pFlowsheet->GetStream(i)->GetStreamKey()));
+		QListWidgetItem *pItem = new QListWidgetItem(QString::fromStdString(m_pFlowsheet->GetStream(i)->GetName()));
+		pItem->setData(Qt::UserRole, QString::fromStdString(m_pFlowsheet->GetStream(i)->GetKey()));
 		ui.streamsList->insertItem(int(i), pItem);
 	}
 
@@ -67,7 +67,7 @@ void CStreamsViewer::UpdateStreamsView() const
 
 void CStreamsViewer::StreamChanged() const
 {
-	std::vector<const CStream*> vStreams;
+	std::vector<const CBaseStream*> vStreams;
 	for (auto& index : ui.streamsList->selectionModel()->selection().indexes())
 		if (index.row() >= 0 && index.row() < ui.streamsList->count())
 			vStreams.push_back(m_pFlowsheet->GetStream(ui.streamsList->item(index.row())->data(Qt::UserRole).toString().toStdString()));

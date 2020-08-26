@@ -57,7 +57,7 @@ void CCrusher::Initialize(double _time)
 	if (m_classesNumber == 0)					RaiseError("There are no size classes in size distribution.");
 
 	/// Get compounds parameters ///
-	m_compounds = m_inlet->GetCompoundsList();
+	m_compounds = GetCompoundsList();
 
 	/// Get selected crushing model ///
 	m_model = static_cast<EModels>(GetGroupParameterValue("Model"));

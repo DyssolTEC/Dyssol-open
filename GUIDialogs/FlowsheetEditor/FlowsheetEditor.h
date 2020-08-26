@@ -12,7 +12,7 @@ class CFlowsheetEditor : public QWidget
 	Ui::CFlowsheetEditorClass ui;
 	CFlowsheet *m_pFlowsheet;			    // Pointer to a current flowsheet.
 	CBaseModel *m_pSelectedModel;		    // Currently selected model.
-	CMaterialStream *m_pSelectedStream;	    // Currently selected stream.
+	CStream *m_pSelectedStream;	    // Currently selected stream.
 	CUnitParametersManager *m_pModelParams;	// Unit parameters of currently selected model.
 
 public:

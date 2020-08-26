@@ -168,29 +168,6 @@ bool inline IncrementCoords(std::vector<size_t>& _coords, const std::vector<size
 	}
 }
 
-// Converts vector of enumerators to the vector of its underlying type.
-template <typename T>
-std::vector<typename std::underlying_type<T>::type> VectorEnumToIntegral(const std::vector<T>& _enums)
-{
-	if (_enums.empty()) return {};
-	typedef typename std::underlying_type<T>::type integral_type;
-	std::vector<integral_type> res;
-	for (const auto& e : _enums)
-		res.push_back(static_cast<integral_type>(e));
-	return res;
-}
-
-// Converts vector of integers to the vector of enumerators.
-template <typename E, typename T>
-std::vector<E> VI2E(const std::vector<T>& _ints)
-{
-	if (_ints.empty()) return {};
-	std::vector<E> res;
-	for (const auto& i : _ints)
-		res.push_back(static_cast<E>(i));
-	return res;
-}
-
 // Converts enumerator value to its underlying type.
 template<typename E>
 constexpr auto E2I(E e) -> typename std::underlying_type<E>::type
@@ -198,11 +175,27 @@ constexpr auto E2I(E e) -> typename std::underlying_type<E>::type
 	return static_cast<typename std::underlying_type<E>::type>(e);
 }
 
-// Converts integer value to enumerator.
-template<typename E>
-constexpr E I2E(size_t i)
+// Converts vector of enumerators to the vector of its underlying type.
+template <typename T>
+std::vector<typename std::underlying_type<T>::type> E2I(const std::vector<T>& _enums)
 {
-	return static_cast<E>(i);
+	if (_enums.empty()) return {};
+	using integral_type = typename std::underlying_type<T>::type;
+	std::vector<integral_type> res;
+	for (const auto& e : _enums)
+		res.push_back(static_cast<integral_type>(e));
+	return res;
+}
+
+// Casts the vector of values to a vector of another type.
+template <typename TO, typename TI>
+std::vector<TO> vector_cast(const std::vector<TI>& _ints)
+{
+	if (_ints.empty()) return {};
+	std::vector<TO> res;
+	for (const auto& i : _ints)
+		res.push_back(static_cast<TO>(i));
+	return res;
 }
 
 // Converts double value to enumerator.

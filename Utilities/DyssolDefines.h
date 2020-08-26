@@ -134,6 +134,7 @@ enum EPSDTypes
 
 // ========== For stream addition
 
+// TODO: remove
 enum ETimePointsComposition
 {
 	BOTH_TP	= 0,

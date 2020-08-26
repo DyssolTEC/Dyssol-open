@@ -1,13 +1,13 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "ContainerFunctions.h"
-#include "MaterialStream.h"
+#include "Stream.h"
 #include "DyssolStringConstants.h"
 #include "CalculationSequence.h"
 
 const int CCalculationSequence::m_cnSaveVersion = 1;
 
-CCalculationSequence::CCalculationSequence(const std::vector<CBaseModel*>* _allModels, const std::vector<CMaterialStream*>* _allStreams)
+CCalculationSequence::CCalculationSequence(const std::vector<CBaseModel*>* _allModels, const std::vector<CStream*>* _allStreams)
 {
 	m_models = _allModels;
 	m_streams = _allStreams;
@@ -147,13 +147,13 @@ std::vector<CBaseModel*> CCalculationSequence::PartitionModels(size_t _iPartitio
 	return res;
 }
 
-std::vector<CMaterialStream*> CCalculationSequence::PartitionTearStreams(size_t _iPartition) const
+std::vector<CStream*> CCalculationSequence::PartitionTearStreams(size_t _iPartition) const
 {
 	if (_iPartition >= m_partitions.size()) return {};
-	std::vector<CMaterialStream*> res{ m_partitions[_iPartition].tearStreams.size(), nullptr };;
+	std::vector<CStream*> res{ m_partitions[_iPartition].tearStreams.size(), nullptr };;
 	for (size_t i = 0; i < m_partitions[_iPartition].tearStreams.size(); ++i)
-		for (CMaterialStream* stream : *m_streams)
-			if (stream && stream->GetStreamKey() == m_partitions[_iPartition].tearStreams[i])
+		for (CStream* stream : *m_streams)
+			if (stream && stream->GetKey() == m_partitions[_iPartition].tearStreams[i])
 				res[i] = stream;
 	return res;
 }

@@ -36,10 +36,10 @@ private:
 
 	static void AddItemToList(QListWidget* _pList, const std::string& _sName, const std::string& _sKey);
 	static void RestoreSelectedRow(QListWidget* _pList, int iRow);
-	const CStream* GetSelectedStream() const;
+	const CBaseStream* GetSelectedStream() const;
 	const CBaseModel* GetSelectedModel() const;
 	const CHoldup* GetSelectedHoldup() const;
-	const CMaterialStream* GetSelectedMaterialStream() const;
+	const CStream* GetSelectedMaterialStream() const;
 	std::string GetSelectedCompound() const;
 
 private slots:

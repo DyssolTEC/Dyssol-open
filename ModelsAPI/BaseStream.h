@@ -4,6 +4,7 @@
 
 #include "LookupTables.h"
 
+class CH5Handler;
 class CDenseMDMatrix;
 class CPhase;
 class CTimeDependentValue;
@@ -12,30 +13,48 @@ class CDistributionsGrid;
 class CMatrix2D;
 class CTransformMatrix;
 
-/** Base not instantiated class for material stream description.*/
-class CStream2
+class CBaseStream;
+class CStream;
+class CHoldup;
+
+// TODO: make pure virtual.
+/* Base class for material flow description.*/
+class CBaseStream
 {
 	static const unsigned m_saveVersion{ 2 }; // Current version of the saving procedure.
 
-	// TODO: make it accessible or global
-	double m_eps{ 1e-20 };
-
 	std::string m_name{ "Stream" };	// Name of the stream.
 	std::string m_key;				// Unique key of the stream.
+
+protected:
+	inline static const double m_epsilon{ 16 * std::numeric_limits<double>::epsilon() };
 
 	std::vector<double> m_timePoints;									// Time points on which the stream is defined.
 	std::map<EOverall, std::unique_ptr<CTimeDependentValue>> m_overall;	// Defined overall properties.
 	std::map<EPhase, std::unique_ptr<CPhase>> m_phases;					// Defined phases.
 	std::vector<std::string> m_compounds;								// Keys of chemical compounds defined in this stream.
-	CLookupTables m_lookupTables;										// Lookup tables to calculate TP-dependent properties.
+	CLookupTables m_lookupTables{ this };								// Lookup tables to calculate TP-dependent properties.
 	SCacheSettings m_cacheSettings;										// Settings for caching in the stream.
 
-	// TODO: make reference
 	const CMaterialsDatabase* m_materialsDB{ nullptr };	// Pointer to a database of materials.
-	// TODO: make reference
 	const CDistributionsGrid* m_grid{ nullptr };		// Pointer to a distribution grid.
 
 public:
+	// Basic constructor.
+	CBaseStream(const std::string& _key = "");
+	// Copy constructor.
+	CBaseStream(const CBaseStream& _other);
+	virtual ~CBaseStream() = default;
+
+	// Removes all existing data from the stream.
+	void Clear();
+
+	// Sets up the stream structure (MD dimensions, phases, materials, etc.) the same an in the given stream. Removes all existing data.
+	void SetupStructure(const CBaseStream& _other);
+
+	// Checks whether both streams have the same structure (phases, dimensions, etc.).
+	static bool HaveSameStructure(const CBaseStream& _stream1, const CBaseStream& _stream2);
+
 	////////////////////////////////////////////////////////////////////////////////
 	// Basic stream properties
 	//
@@ -59,10 +78,14 @@ public:
 	void RemoveTimePoints(double _timeBeg, double _timeEnd);
 	// Removes all existing time points after the specified one, inclusive or exclusive _time.
 	void RemoveTimePointsAfter(double _time, bool _inclusive = false);
+	// Removes time points within the specified interval [_timeBig; _timeEnd) that are closer together than step.
+	void ReduceTimePoints(double _timeBeg, double _timeEnd, double _step);
 	// Returns all defined time points.
 	std::vector<double> GetAllTimePoints() const;
 	// Returns all defined time points in the specified time interval.
-	std::vector<double> GetTimePointsInInterval(double _timeBeg, double _timeEnd) const;
+	std::vector<double> GetTimePoints(double _timeBeg, double _timeEnd) const;
+	// Returns all defined time points in the specified closed time interval, boundaries are unconditionally included into result.
+	std::vector<double> GetTimePointsClosed(double _timeBeg, double _timeEnd) const;
 	// Returns the last (largest) defined time point.
 	double GetLastTimePoint() const;
 	// Returns the nearest time point before _time, or zero if such time can not be found.
@@ -72,12 +95,17 @@ public:
 	// Overall parameters
 	//
 
-	// Adds new overall property to the stream, if it does not exist yet.
-	void AddOverallProperty(EOverall _property);
+	// TODO: maybe add together with name and units.
+	// Adds new overall property to the stream, if it does not exist yet and returns a pointer to it or already existing property.
+	CTimeDependentValue* AddOverallProperty(EOverall _property);
 	// Removes an overall property from the stream, if it does exist.
 	void RemoveOverallProperty(EOverall _property);
+	// TODO: maybe remove
 	// Returns a pointer to an overall property or nullptr if such property doesn't exist
 	CTimeDependentValue* GetOverallProperty(EOverall _property);
+	// TODO: maybe remove
+	// Returns a pointer to an overall property or nullptr if such property doesn't exist
+	const CTimeDependentValue* GetOverallProperty(EOverall _property) const;
 
 	// Returns a value of the specified overall property at the given time point. Returns default value if such overall property has not been defined.
 	double GetOverallProperty(double _time, EOverall _property) const;
@@ -105,6 +133,11 @@ public:
 	void AddCompound(const std::string& _compoundKey);
 	// Removes compound with the specified unique key from the stream.
 	void RemoveCompound(const std::string& _compoundKey);
+	// TODO: remove this.
+	// Removes all defined compounds.
+	void ClearCompounds();
+	// Returns all defined materials.
+	std::vector<std::string> GetAllCompounds() const;
 
 	// Returns the mass fraction of the compound in the total mixture at the given time point.
 	double GetCompoundFraction(double _time, const std::string& _compoundKey) const;
@@ -114,18 +147,35 @@ public:
 	double GetCompoundFractionMoll(double _time, const std::string& _compoundKey, EPhase _phase) const;
 	// Returns the mass of the compound in the specified phase at the given time point.
 	double GetCompoundMass(double _time, const std::string& _compoundKey, EPhase _phase) const;
+	// Returns mass fraction of all defined compounds at the given time point.
+	std::vector<double> GetCompoundsFractions(double _time) const;
+	// Returns mass fraction of all defined compounds in the specified phase at the given time point.
+	std::vector<double> GetCompoundsFractions(double _time, EPhase _phase) const;
 
 	// Sets the mass fraction of the compound in the specified phase at the given time point.
 	void SetCompoundFraction(double _time, const std::string& _compoundKey, EPhase _phase, double _value);
+	// Sets mass fraction of all defined compounds in all defined phases at the given time point.
+	void SetCompoundsFractions(double _time, const std::vector<double>& _value);
+	// Sets mass fraction of all defined compounds in the specified phase at the given time point.
+	void SetCompoundsFractions(double _time, EPhase _phase, const std::vector<double>& _value);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Phases
 	//
 
-	// Adds the specified phase to the stream.
-	void AddPhase(EPhase _phase);
+	// Adds the specified phase to the stream, if it does not exist yet and returns a pointer to it or already existing phase.
+	CPhase* AddPhase(EPhase _phase);
 	// Removes the specified phase from the stream.
 	void RemovePhase(EPhase _phase);
+	// TODO: maybe remove
+	// Returns a pointer to a phase or nullptr if such phase doesn't exist
+	CPhase* GetPhase(EPhase _phase);
+	// TODO: maybe remove
+	// Returns a pointer to a phase or nullptr if such phase doesn't exist
+	const CPhase* GetPhase(EPhase _phase) const;
+	// TODO: remove this.
+	// Removes all defined phases.
+	void ClearPhases();
 
 	// Returns the mass fraction of the specified phase at the given time point.
 	double GetPhaseFraction(double _time, EPhase _phase) const;
@@ -242,12 +292,81 @@ public:
 	// Interactions with other streams
 	//
 
+	// Copies all stream data at the given time point. All data after the time point are removed from the stream.
+	void Copy(double _time, const CBaseStream& _source);
+	// Copies all stream data at the given time interval. All data after the end time point are removed from the stream.
+	void Copy(double _timeBeg, double _timeEnd, const CBaseStream& _source);
+	// Copies all stream data to the given time point from another time point of source stream. All data after the time point are removed from the stream.
+	void Copy(double _timeDst, const CBaseStream& _source, double _timeSrc);
 
+	// Mixes the specified stream with the current stream at the given time point. Can be applied only for streams with the same structure (MD dimensions, phases, materials, etc.).
+	void Add(double _time, const CBaseStream& _source);
+	/* Mixes the specified stream with the current stream at the given time interval. Can be applied only for streams with the same structure (MD dimensions, phases, materials, etc.).
+	 * The stream will contain the union of time points from both streams.*/
+	void Add(double _timeBeg, double _timeEnd, const CBaseStream& _source);
 
+	// Checks whether all values in the streams at the given time point are equal accurate to the specified tolerances.
+	static bool AreEqual(double _time, const CBaseStream& _stream1, const CBaseStream& _stream2, double _absTol, double _relTol);
 
+	////////////////////////////////////////////////////////////////////////////////
+	// Other
+	//
+
+	// Returns a pointer to lookup tables.
 	CLookupTables* GetLookupTables();
 
+	// Returns a pointer to the used materials database.
+	const CMaterialsDatabase* GetMaterialsDatabase() const;
+	// TODO: remove, initialize MDB in constructor
+	// Sets pointer to the used materials database.
+	void SetMaterialsDatabase(const CMaterialsDatabase* _database);
+
+	// TODO: remove, initialize MDB in constructor
+	// Sets pointer to the used distributions grid.
+	void SetGrid(const CDistributionsGrid* _grid);
+	// Updates grids of distributed parameters.
+	void UpdateMDGrid();
+
+	// Sets new cache settings.
+	void SetCacheSettings(const SCacheSettings& _settings);
+
+	// Sets minimum fraction to be considered in MDMatrix.
+	void SetMinimumFraction(double _fraction);
+
+	// Performs nearest-neighbor extrapolation of all stream data.
+	void Extrapolate(double _timeExtra, double _time);
+	// Performs linear extrapolation of all stream data.
+	void Extrapolate(double _timeExtra, double _time1, double _time2);
+	// Performs cubic spline extrapolation of all stream data.
+	void Extrapolate(double _timeExtra, double _time1, double _time2, double _time3);
+
+	// Saves data to file.
+	void SaveToFile(CH5Handler& _h5File, const std::string& _path);
+	// Loads data from file.
+	void LoadFromFile(CH5Handler& _h5File, const std::string& _path);
+	// Loads data from file of an older version.
+	void LoadFromFile_v1(CH5Handler& _h5File, const std::string& _path);
+
+protected:
+	using mix_type = std::tuple<std::map<EOverall, double>, std::map<EPhase, double>, std::map<EPhase, CDenseMDMatrix>>;
+	// Calculates the mixture of two streams. Does not perform any checks.
+	static mix_type CalculateMix(double _time1, const CBaseStream& _stream1, double _mass1, double _time2, const CBaseStream& _stream2, double _mass2);
+	// Sets the result of mixing two streams into the specified stream at the given time point.
+	static void SetMix(CBaseStream& _stream, double _time, const mix_type& _data);
+	// Calculates the pressure of the mixture of two streams. Does not perform any checks.
+	static double CalculateMixPressure(double _time1, const CBaseStream& _stream1, double _time2, const CBaseStream& _stream2);
+	// Calculates the temperature of the mixture of two streams. Does not perform any checks.
+	static double CalculateMixTemperature(double _time1, const CBaseStream& _stream1, double _mass1, double _time2, const CBaseStream& _stream2, double _mass2);
+	// Calculates the general overall property of the mixture of two streams. Does not perform any checks.
+	static double CalculateMixOverall(double _time1, const CBaseStream& _stream1, double _mass1, double _time2, const CBaseStream& _stream2, double _mass2, EOverall _property);
+	// Calculates the phase fractions of the mixture of two streams for the given phase. Does not perform any checks.
+	static double CalculateMixPhaseFractions(double _time1, const CBaseStream& _stream1, double _mass1, double _time2, const CBaseStream& _stream2, double _mass2, EPhase _phase);
+	// Calculates the multidimensional distributions of the mixture of two streams for the given phase. Does not perform any checks.
+	static CDenseMDMatrix CalculateMixDistribution(double _time1, const CBaseStream& _stream1, double _mass1, double _time2, const CBaseStream& _stream2, double _mass2, EPhase _phase);
+
 private:
+	// Inserts the new time into the list of time points, it it does not exist yet.
+	void InsertTimePoint(double _time);
 	// Checks whether the given time point exists.
 	bool HasTime(double _time) const;
 
@@ -270,4 +389,35 @@ private:
 	/* Calculates the number particle distribution of the stream for the selected compounds. If the list of components is empty, calculates the PSD for the entire mixture.
 	 * Takes into account porosity, if specified. All checks of parameters, phases, grids availability, etc. must be executed by the calling code.*/
 	std::vector<double> GetPSDNumber(double _time, const std::vector<std::string>& _compoundKeys, EPSDGridType _grid) const;
+
+	// TODO: move it somewhere
+	////////////////////////////////////////////////////////////////////////////////
+	/// Deprecated functions
+public:
+	[[deprecated("WARNING! GetTimePointsForInterval(double, double, bool) is deprecated. Use the GetTimePoints(double, double) or GetTimePointsClosed(double, double) instead.")]]
+	std::vector<double> GetTimePointsForInterval(double _timeBeg, double _timeEnd, bool _inclusive) const;
+	[[deprecated("WARNING! GetCompoundsList() is deprecated. Use the unit-level version GetCompoundsList() instead.")]]
+	static std::vector<std::string> GetCompoundsList() { return {}; }
+	[[deprecated("WARNING! GetCompoundPhaseFraction(double, const std::string&, unsigned) is deprecated. Use GetCompoundFraction(double, const std::string&, EPhase) or GetCompoundsFractions(_time, EPhase) instead.")]]
+	double GetCompoundPhaseFraction(double _time, const std::string& _compound, unsigned _soa) const;
+	[[deprecated("WARNING! GetCompoundPhaseFraction(double, unsigned, unsigned) is deprecated. Use GetCompoundFraction(double, const std::string&, EPhase) or GetCompoundsFractions(_time, EPhase) instead.")]]
+	double GetCompoundPhaseFraction(double _time, unsigned _index, unsigned _soa) const;
+	[[deprecated("WARNING! SetCompoundPhaseFraction(double, const std::string&, unsigned, double) is deprecated. Use SetCompoundFraction(double, const std::string&, EPhase, double) instead.")]]
+	void SetCompoundPhaseFraction(double _time, const std::string& _compound, unsigned _soa, double _value);
+	[[deprecated("WARNING! GetCompoundConstant(const std::string&, unsigned) is deprecated. Use GetCompoundConstProperty(const std::string&, ECompoundConstProperties) instead.")]]
+	double GetCompoundConstant(const std::string& _compound, unsigned _key) const;
+	[[deprecated("WARNING! GetPhaseMass(double, unsigned) is deprecated. Use GetPhaseMass(double, EPhase) instead.")]]
+	double GetPhaseMass(double _time, unsigned _soa) const;
+	[[deprecated("WARNING! SetPhaseMass(double, unsigned, double) is deprecated. Use SetPhaseMass(double, EPhase, double) instead.")]]
+	void SetPhaseMass(double _time, unsigned _soa, double _value);
+	[[deprecated("WARNING! AddStream_Base(const CBaseStream&, double) is deprecated. Use Add(double, const CBaseStream&) instead.")]]
+	void AddStream_Base(const CBaseStream& _source, double _time);
+	[[deprecated("WARNING! GetSinglePhaseProp(double, unsigned, unsigned) is deprecated. Use GetPhaseFraction(double, EPhase), GetPhaseMass(double, EPhase), GetPhaseProperty(double, EPhase, EOverall), GetPhaseProperty(double, EPhase, ECompoundConstProperties) or GetPhaseProperty(double, EPhase, ECompoundTPProperties) instead.")]]
+	double GetSinglePhaseProp(double _time, unsigned _property, unsigned _soa);
+	[[deprecated("WARNING! GetPhaseTPDProp(double, unsigned, unsigned) is deprecated. Use GetPhaseProperty(double, EPhase, ECompoundTPProperties) instead.")]]
+	double GetPhaseTPDProp(double _time, unsigned _property, unsigned _soa);
+	[[deprecated("WARNING! SetSinglePhaseProp(double, unsigned, unsigned, double) is deprecated. Use SetPhaseFraction(double, EPhase, double) or SetPhaseMass(double, EPhase, double) instead.")]]
+	void SetSinglePhaseProp(double _time, unsigned _property, unsigned _soa, double _value);
+protected:
+	static EPhase PhaseSOA2EPhase(unsigned _soa);
 };

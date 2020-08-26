@@ -38,7 +38,7 @@ public:
 
 	std::vector<sPortStruct> GetUnitPorts();
 	void SetPortStreamKey( unsigned _nPortIndex, std::string _sStreamKey );
-	void SetPortStream( unsigned _nPortIndex, CMaterialStream* _pMaterialStream );
+	void SetPortStream( unsigned _nPortIndex, CStream* _pMaterialStream );
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// Functions to work with HOLDUPS

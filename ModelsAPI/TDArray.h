@@ -3,6 +3,7 @@
 #pragma once
 
 #include "DyssolTypes.h"
+#include <vector>
 
 /** This class represents a time dependent array of values. Not all time point are saving - only those, which can't be obtained by data interpolation.*/
 class CTDArray

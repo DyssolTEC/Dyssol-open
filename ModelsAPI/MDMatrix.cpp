@@ -4,33 +4,25 @@
 #include "DyssolStringConstants.h"
 #include <cmath>
 
-const unsigned CMDMatrix::m_cnSaveVersion	= 2;
+CMDMatrix::CMDMatrix(const CMDMatrix& _other) :
+	m_vDimensions{ _other.m_vDimensions },
+	m_vClasses{ _other.m_vClasses },
+	m_dMinFraction{ _other.m_dMinFraction },
+	m_sCachePath{ _other.m_sCachePath },
+	m_bCacheEnabled{ _other.m_bCacheEnabled },
+	m_nCacheWindow{ _other.m_nCacheWindow }
+{
+	m_cacheHandler.Initialize();
+	if (!_other.m_vTimePoints.empty())
+	{
+		CopyFrom(_other, _other.m_vTimePoints.front(), _other.m_vTimePoints.back());
+		CheckCacheNeed();
+	}
+}
 
-CMDMatrix::CMDMatrix(void):
-	m_dMinFraction(DEFAULT_MIN_FRACTION),
-	m_data(NULL),
-	m_pSortMatr(nullptr),
-	m_dTempT1(0),
-	m_dTempT2(0),
-	m_dTempValue(0),
-	m_nCounter(0),
-	/// Cache
-	m_sCachePath(L""),
-	m_bCacheEnabled(false),
-	m_dCurrWinStart(0),
-	m_dCurrWinEnd(0),
-	m_nCacheWindow(DEFAULT_CACHE_WINDOW),
-	m_nNonCachedTPNum(0),
-	m_nCurrOffset(0),
-	m_bCacheCoherent(false),
-	m_pCacheHandler(NULL)
-	{}
-
-CMDMatrix::~CMDMatrix(void)
+CMDMatrix::~CMDMatrix()
 {
 	Clear();
-	if( m_pCacheHandler )
-		delete m_pCacheHandler;
 }
 
 void CMDMatrix::Clear()
@@ -1409,14 +1401,10 @@ CDenseMDMatrix CMDMatrix::GetDistribution(double _dTime, const std::vector<unsig
 	std::vector<unsigned> vCoords(vDims.size() - 1, 0);
 
 	// main loop
-	bool bRes;
-	std::vector<double> vResult;
 	do
 	{
-		if (GetVectorValue(_dTime, vDims, vCoords, vResult))
-			res.SetVectorValue(vDims, vCoords, vResult);
-		bRes = IncrementCoords(vCoords, vSizes);
-	} while (bRes);
+		res.SetVectorValue(vDims, vCoords, GetVectorValue(_dTime, vDims, vCoords));
+	} while (IncrementCoords(vCoords, vSizes));
 
 	return res;
 }
@@ -1804,6 +1792,7 @@ bool CMDMatrix::CopyFrom(const CMDMatrix& _Source, double _dStart, double _dEnd)
 	std::vector<double> vTimePoints = _Source.GetTimePoints( _dStart, _dEnd );
 	if( ( vTimePoints.size() == 0 ) && ( _dStart == _dEnd ) )
 		vTimePoints.push_back( _dStart );
+	if (vTimePoints.empty()) return true;
 	for( unsigned i=0; i<vTimePoints.size(); ++i )
 		AddTimePoint( vTimePoints[i] );
 
@@ -1867,7 +1856,7 @@ bool CMDMatrix::CopyFromTimePoint(const CMDMatrix& _Source, double _dTimeSrc, do
 //		SetDistribution( _vTimePoints[i], vBufDst[i]*_vFactorsDst[i] + vBufSrc[i]*_vFactorsSrc[i] );
 //}
 
-void CMDMatrix::SaveToFile(CH5Handler& _h5File, const std::string& _sPath)
+void CMDMatrix::SaveToFile(CH5Handler& _h5File, const std::string& _sPath) const
 {
 	if (!_h5File.IsValid())
 		return;
@@ -1905,7 +1894,7 @@ void CMDMatrix::SaveToFile(CH5Handler& _h5File, const std::string& _sPath)
 	CheckCacheNeed();
 }
 
-void CMDMatrix::SaveMDBlockToFile(CH5Handler& _h5File, const std::string& _sPath, unsigned _iFirst, unsigned _iLast, std::vector<std::vector<double>>& _vvBuf)
+void CMDMatrix::SaveMDBlockToFile(CH5Handler& _h5File, const std::string& _sPath, unsigned _iFirst, unsigned _iLast, std::vector<std::vector<double>>& _vvBuf) const
 {
 	UnCacheData(m_vTimePoints[_iFirst], m_vTimePoints[_iLast]);
 	m_vTempValues.assign(m_vTimePoints.begin() + _iFirst, m_vTimePoints.begin() + _iLast + 1);
@@ -1966,13 +1955,9 @@ void CMDMatrix::SetCacheParams(bool _bEnabled, size_t _nWindow)
 	m_nCacheWindow = _nWindow;
 	if( ( _bEnabled ) && ( !m_sCachePath.empty() ) )
 	{
-		if( m_pCacheHandler == NULL )
-		{
-			m_pCacheHandler = new CMDMatrCacher();
-			m_pCacheHandler->SetChunk( m_nCacheWindow );
-			m_pCacheHandler->SetDirPath( m_sCachePath );
-			m_pCacheHandler->Initialize();
-		}
+		m_cacheHandler.SetChunk( m_nCacheWindow );
+		m_cacheHandler.SetDirPath( m_sCachePath );
+		m_cacheHandler.Initialize();
 		CheckCacheNeed();
 	}
 	if( m_sCachePath.empty() )
@@ -3206,7 +3191,7 @@ void CMDMatrix::UnCacheData(double _dTP) const
 		//std::vector<std::vector<double>> *vvBuf = new std::vector<std::vector<double>>();
 		std::vector<std::vector<double>> vvBuf;
 		//m_CacheHandler.GetData( _dTP, m_vTempValues, *vvBuf, &m_dCurrWinStart, &m_dCurrWinEnd, &m_nCurrOffset );
-		m_pCacheHandler->ReadFromCache( _dTP, m_vTempValues, vvBuf, m_dCurrWinStart, m_dCurrWinEnd, m_nCurrOffset );
+		m_cacheHandler.ReadFromCache( _dTP, m_vTempValues, vvBuf, m_dCurrWinStart, m_dCurrWinEnd, m_nCurrOffset );
 		m_nCounter = 0;
 		m_data = UnCacheDataRecursive( m_data, vvBuf );
 		m_nNonCachedTPNum = (unsigned)m_vTempValues.size();
@@ -3236,7 +3221,7 @@ void CMDMatrix::UnCacheData(double _dT1, double _dT2) const
 		//std::vector<std::vector<double>> *vvBuf = new std::vector<std::vector<double>>();
 		std::vector<std::vector<double>> vvBuf;
 		//m_CacheHandler.GetData( _dT1, _dT2, m_vTempValues, *vvBuf, &m_dCurrWinStart, &m_dCurrWinEnd, &m_nCurrOffset );
-		m_pCacheHandler->ReadFromCache( _dT1, _dT2, m_vTempValues, vvBuf, m_dCurrWinStart, m_dCurrWinEnd, m_nCurrOffset );
+		m_cacheHandler.ReadFromCache( _dT1, _dT2, m_vTempValues, vvBuf, m_dCurrWinStart, m_dCurrWinEnd, m_nCurrOffset );
 		m_nCounter = 0;
 		m_data = UnCacheDataRecursive( m_data, vvBuf );
 		m_nNonCachedTPNum = (unsigned)m_vTempValues.size();
@@ -3275,7 +3260,7 @@ void CMDMatrix::FlushToCache() const
 	CacheDataRecursive( m_data, vvBufData );
 
 	//m_CacheHandler.SaveData( m_vTempValues, *vvBufData );
-	m_pCacheHandler->WriteToCache( m_vTempValues, vvBufData, m_bCacheCoherent );
+	m_cacheHandler.WriteToCache( m_vTempValues, vvBufData, m_bCacheCoherent );
 	m_nCurrOffset = m_vTimePoints.size();
 	m_dCurrWinStart = m_dCurrWinEnd = 0;
 	m_nNonCachedTPNum = 0;
@@ -3302,7 +3287,7 @@ void CMDMatrix::CacheData() const
 	CacheDataRecursive( m_data, vvBufData );
 
 	//m_CacheHandler.SaveData( m_vTempValues, *vvBufData );
-	m_pCacheHandler->WriteToCache( m_vTempValues, vvBufData, m_bCacheCoherent );
+	m_cacheHandler.WriteToCache( m_vTempValues, vvBufData, m_bCacheCoherent );
 	m_nCurrOffset += m_nCacheWindow;
 	m_nNonCachedTPNum -= (unsigned)m_vTempValues.size();
 	m_dCurrWinStart = m_vTimePoints[m_nCurrOffset];
@@ -3345,8 +3330,7 @@ void CMDMatrix::ClearCache() const
 {
 	if( !m_bCacheEnabled ) return;
 
-	if( m_pCacheHandler )
-		m_pCacheHandler->ClearData();
+	m_cacheHandler.ClearData();
 	m_nNonCachedTPNum = 0;
 	m_dCurrWinStart = 0;
 	m_dCurrWinEnd = 0;
@@ -3500,6 +3484,5 @@ void CMDMatrix::SetCachePath(const std::wstring& _sPath)
 {
 	m_sCachePath = _sPath;
 
-	if( m_pCacheHandler )
-		m_pCacheHandler->SetDirPath( m_sCachePath );
+	m_cacheHandler.SetDirPath( m_sCachePath );
 }

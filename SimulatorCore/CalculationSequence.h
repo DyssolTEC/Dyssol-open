@@ -15,7 +15,7 @@ public:
 	struct SPartition
 	{
 		std::vector<CBaseModel*> models;           // List of pointers to models of this partition.
-		std::vector<CMaterialStream*> tearStreams; // List of pointers to tear streams of this partition.
+		std::vector<CStream*> tearStreams; // List of pointers to tear streams of this partition.
 	};
 
 private:
@@ -30,11 +30,11 @@ private:
 	std::vector<SPartitionKeys> m_partitions;       // List of defined partitions.
 
 	const std::vector<CBaseModel*>* m_models{};       // Pointer to a vector of available models.
-	const std::vector<CMaterialStream*>* m_streams{}; // Pointer to a vector of available streams.
+	const std::vector<CStream*>* m_streams{}; // Pointer to a vector of available streams.
 
 public:
 	// Sets pointers to all existing models and streams.
-	CCalculationSequence(const std::vector<CBaseModel*>* _allModels, const std::vector<CMaterialStream*>* _allStreams);
+	CCalculationSequence(const std::vector<CBaseModel*>* _allModels, const std::vector<CStream*>* _allStreams);
 
 	// Clear calculation sequence.
 	void Clear();
@@ -78,7 +78,7 @@ public:
 	// Get pointers to models from the specified partition.
 	std::vector<CBaseModel*> PartitionModels(size_t _iPartition) const;
 	// Get pointers to tear streams from the specified partition.
-	std::vector<CMaterialStream*> PartitionTearStreams(size_t _iPartition) const;
+	std::vector<CStream*> PartitionTearStreams(size_t _iPartition) const;
 	// Get the specified partitions.
 	SPartition Partition(size_t _iPartition) const;
 	// Get all defined partitions.

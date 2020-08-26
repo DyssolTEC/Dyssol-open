@@ -18,9 +18,6 @@
     <ClCompile Include="BaseUnit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DenseDistr2D.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DenseMDMatrix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -33,22 +30,13 @@
     <ClCompile Include="DynamicUnit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Holdup.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LookupTable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MaterialStream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MDMatrix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SteadyStateUnit.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Stream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TDArray.cpp">
@@ -69,15 +57,6 @@
     <ClCompile Include="TimeDependentValue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Holdup2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MaterialStream2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Stream2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Phase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -87,12 +66,18 @@
     <ClCompile Include="LookupTables.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BaseStream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Holdup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Stream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseUnit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DenseDistr2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DenseMDMatrix.h">
@@ -110,22 +95,13 @@
     <ClInclude Include="DynamicUnit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Holdup.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LookupTable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MaterialStream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MDMatrix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SteadyStateUnit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Stream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TDArray.h">
@@ -149,15 +125,6 @@
     <ClInclude Include="TimeDependentValue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Holdup2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MaterialStream2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Stream2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Phase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -165,6 +132,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LookupTables.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialStream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseStream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Holdup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Stream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

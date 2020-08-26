@@ -18,7 +18,7 @@ bool CModelsManager::AddDir(const std::wstring& _path, bool _active)
 {
 	const auto& it = std::find_if(m_dirsList.begin(), m_dirsList.end(), [&](const SModelDir& entry) { return entry.path == _path; });
 	if (it != m_dirsList.end()) return false;	// this path has been already added
-	m_dirsList.push_back(SModelDir{ _path , StringFunctions::GenerateUniqueString("", AllDirsKeys()), _active, false });
+	m_dirsList.push_back(SModelDir{ _path , StringFunctions::GenerateUniqueKey("", AllDirsKeys()), _active, false });
 	UpdateAvailableModels();
 	return true;
 }

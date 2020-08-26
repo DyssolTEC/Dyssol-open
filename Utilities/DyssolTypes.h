@@ -3,9 +3,7 @@
 #pragma once
 
 #include "DyssolDefines.h"
-#include "DependentValues.h"
 #include <string>
-#include <vector>
 #include <iostream>
 
 // Time dependent value.
@@ -13,6 +11,7 @@ struct STDValue
 {
 	double time{ 0.0 };
 	double value{ 0.0 };
+	STDValue() {}
 	STDValue(double _time, double _value) : time{ _time }, value{ _value } {}
 	bool operator<(const STDValue& _other) const { return time < _other.time; }
 };

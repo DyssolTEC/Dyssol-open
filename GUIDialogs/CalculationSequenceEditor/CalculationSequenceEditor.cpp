@@ -1,7 +1,7 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "CalculationSequenceEditor.h"
-#include "MaterialStream.h"
+#include "Stream.h"
 #include <QComboBox>
 #include <QMessageBox>
 #include "DyssolStringConstants.h"
@@ -56,8 +56,8 @@ void CCalculationSequenceEditor::UpdatePartitionsList() const
 	}
 	for (size_t i = 0; i < m_pFlowsheet->GetStreamsCount(); ++i)
 	{
-		streamsNames[i] = QString::fromStdString(m_pFlowsheet->GetStream(i)->GetStreamName());
-		streamsKeys[i] = QString::fromStdString(m_pFlowsheet->GetStream(i)->GetStreamKey());
+		streamsNames[i] = QString::fromStdString(m_pFlowsheet->GetStream(i)->GetName());
+		streamsKeys[i] = QString::fromStdString(m_pFlowsheet->GetStream(i)->GetKey());
 	}
 
 	// create tree table
@@ -74,7 +74,7 @@ void CCalculationSequenceEditor::UpdatePartitionsList() const
 		// tear streams
 		QTreeWidgetItem* streamsItem = ui.treeWidget->AddChildItem(partitionItem, 0, StrConst::CSE_Streams, i);
 		for (const auto& stream : m_pSequence->PartitionTearStreams(i))
-			ui.treeWidget->AddChildItemComboBox(streamsItem, 0, streamsNames, streamsKeys, stream ? static_cast<int>(m_pFlowsheet->GetStreamIndex(stream->GetStreamKey())) : -1);
+			ui.treeWidget->AddChildItemComboBox(streamsItem, 0, streamsNames, streamsKeys, stream ? static_cast<int>(m_pFlowsheet->GetStreamIndex(stream->GetKey())) : -1);
 	}
 
 	ui.treeWidget->expandAll();

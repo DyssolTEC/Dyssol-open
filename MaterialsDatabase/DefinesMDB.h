@@ -84,6 +84,7 @@ namespace MDBDescriptors
 
 // Identifiers of constant material properties
 // TODO: make enum class
+// TODO: rename enum
 enum ECompoundConstProperties : unsigned
 {
 	CONST_PROP_NO_PROERTY                        = 100,
@@ -172,6 +173,7 @@ namespace MDBDescriptors
 
 // Identifiers of temperature/pressure-dependent properties
 // TODO: make enum class
+// TODO: rename enum
 enum ECompoundTPProperties : unsigned
 {
 	TP_PROP_NO_PROERTY      = 200,
@@ -235,6 +237,7 @@ namespace MDBDescriptors
 
 // Identifiers of properties, defined for interaction of two compounds
 // TODO: make enum class
+// TODO: rename enum
 enum EInteractionProperties : unsigned
 {
 	INT_PROP_NO_PROERTY      = 300,

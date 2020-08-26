@@ -83,6 +83,17 @@ bool MapContainsValue(const std::map<K, V>& _map, V _value)
 	return false;
 }
 
+// Returns all keys defined in the map.
+template<typename K, typename V>
+std::vector<K> MapKeys(const std::map<K, V>& _map)
+{
+	std::vector<K> keys;
+	keys.reserve(_map.size());
+	for (auto const& entry : _map)
+		keys.push_back(entry.first);
+	return keys;
+}
+
 // Calculates union of two sorted vectors.
 template<typename T>
 void VectorsUnionSorted(const std::vector<T>& _v1, const std::vector<T>& _v2, std::vector<T>& _res)

@@ -3,10 +3,12 @@
 #include "Flowsheet.h"
 #include "FlowsheetParameters.h"
 #include "Topology.h"
-#include "MaterialStream.h"
+#include "Stream.h"
 #include "DyssolStringConstants.h"
 #include "FileSystem.h"
 #include "DyssolUtilities.h"
+#include "DistributionsGrid.h"
+#include "Phase.h"
 #include <fstream>
 
 const unsigned CFlowsheet::m_cnSaveVersion = 3;
@@ -185,13 +187,13 @@ std::string CFlowsheet::CheckConnections()
 		for (const auto& model : m_vpModels)
 			for (const auto& port : model->GetUnitPorts())
 			{
-				if (port.nType == OUTPUT_PORT && port.sStreamKey == stream->GetStreamKey())
+				if (port.nType == OUTPUT_PORT && port.sStreamKey == stream->GetKey())
 					cOut++;
-				if (port.nType == INPUT_PORT && port.sStreamKey == stream->GetStreamKey())
+				if (port.nType == INPUT_PORT && port.sStreamKey == stream->GetKey())
 					cIn++;
 			}
 		if (cIn != cOut || cIn != 1 && cIn != 0)
-			return StrConst::Flow_ErrWrongStreams(stream->GetStreamName());
+			return StrConst::Flow_ErrWrongStreams(stream->GetName());
 	}
 
 	return {};
@@ -228,7 +230,7 @@ bool CFlowsheet::AnalyzeTopology()
 		for (const auto& srcPort : m_vpModels[_iSrcModel]->GetUnitPorts())
 			for (const auto& dstPort : m_vpModels[_iDstModel]->GetUnitPorts())
 				if (srcPort.sStreamKey == dstPort.sStreamKey)
-					return srcPort.pStream->GetStreamKey();
+					return srcPort.pStream->GetKey();
 		return "";
 	};
 
@@ -261,11 +263,11 @@ void CFlowsheet::CreateInitTearStreams()
 	m_vvInitTearStreams.resize(m_calculationSequence.PartitionsNumber());
 	for (size_t i = 0; i < m_calculationSequence.PartitionsNumber(); ++i)
 		if (m_calculationSequence.TearStreamsNumber(i))
-			m_vvInitTearStreams[i].resize(m_calculationSequence.TearStreamsNumber(i), CMaterialStream(*m_calculationSequence.PartitionTearStreams(i).front()));
+			m_vvInitTearStreams[i].resize(m_calculationSequence.TearStreamsNumber(i), CStream(*m_calculationSequence.PartitionTearStreams(i).front()));
 	for (auto& partition : m_vvInitTearStreams)
 		for (auto& stream : partition)
-			if (stream.GetPhasesNumber() == 0) 	// TODO: normal check for not initialized stream
-				stream.SetupStream(m_vpStreams.front());
+			if (!CBaseStream::HaveSameStructure(stream, *m_vpStreams.front()))	// TODO: check whether it is needed
+				stream.SetupStructure(*m_vpStreams.front());
 }
 
 void CFlowsheet::SetTopologyModified(bool _modified)
@@ -289,14 +291,14 @@ void CFlowsheet::AddPhase(const std::string& _sName, unsigned _nAggregationState
 
 	// add to streams
 	for (unsigned i = 0; i < m_vpStreams.size(); ++i)
-		m_vpStreams[i]->AddPhase(_sName, _nAggregationState);
+		m_vpStreams[i]->AddPhase(PhaseSOA2EPhase(_nAggregationState))->SetName(_sName);
 	// add to models
 	for (unsigned i = 0; i < m_vpModels.size(); ++i)
 		m_vpModels[i]->AddPhase(_sName, _nAggregationState);
 	// add to initial tear streams
 	for (auto& part : m_vvInitTearStreams)
 		for (auto& str : part)
-			str.AddPhase(_sName, _nAggregationState);
+			str.AddPhase(PhaseSOA2EPhase(_nAggregationState))->SetName(_sName);
 }
 
 void CFlowsheet::RemovePhase(unsigned _nIndex)
@@ -309,14 +311,14 @@ void CFlowsheet::RemovePhase(unsigned _nIndex)
 
 		// remove from streams
 		for (unsigned i = 0; i < m_vpStreams.size(); ++i)
-			m_vpStreams[i]->RemovePhase(_nIndex);
+			m_vpStreams[i]->RemovePhase(PhaseSOA2EPhase(m_vPhasesSOA[_nIndex]));
 		// remove from models
 		for (unsigned i = 0; i < m_vpModels.size(); ++i)
 			m_vpModels[i]->RemovePhase(_nIndex);
 		// remove from  initial tear streams
 		for (auto& part : m_vvInitTearStreams)
 			for (auto& str : part)
-				str.RemovePhase(_nIndex);
+				str.RemovePhase(PhaseSOA2EPhase(m_vPhasesSOA[_nIndex]));
 	}
 }
 
@@ -330,14 +332,20 @@ void CFlowsheet::ChangePhase(unsigned _nIndex, const std::string& _sName, unsign
 
 		// change in streams
 		for (unsigned i = 0; i < m_vpStreams.size(); ++i)
-			m_vpStreams[i]->ChangePhase(_nIndex, _sName, _nAggregationState);
+		{
+			m_vpStreams[i]->RemovePhase(PhaseSOA2EPhase(m_vPhasesSOA[_nIndex]));
+			m_vpStreams[i]->AddPhase(PhaseSOA2EPhase(m_vPhasesSOA[_nIndex]))->SetName(_sName);
+		}
 		// change in models
 		for (unsigned i = 0; i < m_vpModels.size(); ++i)
 			m_vpModels[i]->ChangePhase(_nIndex, _sName, _nAggregationState);
 		// change in initial tear streams
 		for (auto& part : m_vvInitTearStreams)
 			for (auto& str : part)
-				str.ChangePhase(_nIndex, _sName, _nAggregationState);
+			{
+				str.RemovePhase(PhaseSOA2EPhase(m_vPhasesSOA[_nIndex]));
+				str.AddPhase(PhaseSOA2EPhase(m_vPhasesSOA[_nIndex]))->SetName(_sName);
+			}
 	}
 }
 
@@ -414,14 +422,20 @@ void CFlowsheet::SetDistributionsGrid()
 {
 	// set to all material streams
 	for (unsigned i = 0; i < m_vpStreams.size(); ++i)
-		m_vpStreams[i]->SetDistributionsGrid(m_pDistributionsGrid);
+	{
+		m_vpStreams[i]->SetGrid(m_pDistributionsGrid);
+		m_vpStreams[i]->UpdateMDGrid();
+	}
 	// set to all holdups
 	for (unsigned i = 0; i < m_vpModels.size(); ++i)
 		m_vpModels[i]->SetDistributionsGrid(m_pDistributionsGrid);
 	// set to all initial tear streams
 	for (auto& part : m_vvInitTearStreams)
 		for (auto& str : part)
-			str.SetDistributionsGrid(m_pDistributionsGrid);
+		{
+			str.SetGrid(m_pDistributionsGrid);
+			str.UpdateMDGrid();
+		}
 }
 
 CModelsManager* CFlowsheet::GetModelsManager() const
@@ -647,16 +661,18 @@ size_t CFlowsheet::GetStreamsCount() const
 	return m_vpStreams.size();
 }
 
-CMaterialStream* CFlowsheet::AddStream(const std::string& _streamKey /*= ""*/)
+CStream* CFlowsheet::AddStream(const std::string& _streamKey /*= ""*/)
 {
 	const std::string uniqueKey = GenerateUniqueStreamKey(_streamKey);
-	auto* pStream = new CMaterialStream(uniqueKey);
-	pStream->SetDistributionsGrid(m_pDistributionsGrid);
+	auto* pStream = new CStream(uniqueKey);
+	pStream->SetGrid(m_pDistributionsGrid);
+	pStream->UpdateMDGrid();
 	pStream->SetMaterialsDatabase(m_pMaterialsDatabase);
-	pStream->SetCompounds(m_vCompoundsKeys);
-	pStream->SetPhases(m_vPhasesNames, m_vPhasesSOA);
-	pStream->SetCachePath(m_pParams->cachePath);
-	pStream->SetCacheParams(m_pParams->cacheFlagStreams, m_pParams->cacheWindow);
+	for (const auto& c : m_vCompoundsKeys)
+		pStream->AddCompound(c);
+	for (size_t i = 0; i < m_vPhasesNames.size(); ++i)
+		pStream->AddPhase(PhaseSOA2EPhase(m_vPhasesSOA[i]))->SetName(m_vPhasesNames[i]);
+	pStream->SetCacheSettings({ m_pParams->cacheFlagStreams, m_pParams->cacheWindow, m_pParams->cachePath});
 	m_vpStreams.push_back(pStream);
 	SetTopologyModified(true);
 	return pStream;
@@ -676,26 +692,26 @@ void CFlowsheet::DeleteStream(const std::string& _sStreamKey)
 	m_vpStreams.erase(m_vpStreams.begin() + iStream);
 }
 
-const CMaterialStream* CFlowsheet::GetStream(size_t _index) const
+const CStream* CFlowsheet::GetStream(size_t _index) const
 {
 	if (_index < m_vpStreams.size())
 		return m_vpStreams[_index];
 	return nullptr;
 }
 
-CMaterialStream* CFlowsheet::GetStream(size_t _index)
+CStream* CFlowsheet::GetStream(size_t _index)
 {
-	return const_cast<CMaterialStream*>(static_cast<const CFlowsheet&>(*this).GetStream(_index));
+	return const_cast<CStream*>(static_cast<const CFlowsheet&>(*this).GetStream(_index));
 }
 
-const CMaterialStream* CFlowsheet::GetStream(const std::string& _sStreamKey) const
+const CStream* CFlowsheet::GetStream(const std::string& _sStreamKey) const
 {
 	return GetStream(GetStreamIndex(_sStreamKey));
 }
 
-CMaterialStream* CFlowsheet::GetStream(const std::string& _sStreamKey)
+CStream* CFlowsheet::GetStream(const std::string& _sStreamKey)
 {
-	return const_cast<CMaterialStream*>(static_cast<const CFlowsheet&>(*this).GetStream(_sStreamKey));
+	return const_cast<CStream*>(static_cast<const CFlowsheet&>(*this).GetStream(_sStreamKey));
 }
 
 void CFlowsheet::ShiftStreamUp(const std::string& _sStreamKey)
@@ -717,7 +733,7 @@ void CFlowsheet::ShiftStreamDown(const std::string& _sStreamKey)
 size_t CFlowsheet::GetStreamIndex(const std::string& _sStreamKey) const
 {
 	for (size_t i = 0; i < m_vpStreams.size(); ++i)
-		if (m_vpStreams[i]->GetStreamKey() == _sStreamKey)
+		if (m_vpStreams[i]->GetKey() == _sStreamKey)
 			return i;
 	return -1;
 }
@@ -833,9 +849,11 @@ bool CFlowsheet::LoadFromFile(CH5Handler& _h5Loader, const std::wstring& _sFileN
 		{
 			AddStream("TempKey");
 			const std::string sPath = "/" + std::string(StrConst::Flow_H5GroupStreams) + "/" + std::string(StrConst::Flow_H5GroupStreamName) + std::to_string(i);
+			m_vpStreams[i]->SetMaterialsDatabase(m_pMaterialsDatabase);
+			m_vpStreams[i]->SetGrid(m_pDistributionsGrid);
 			m_vpStreams[i]->LoadFromFile(_h5Loader, sPath);
-			m_vpStreams[i]->SetCacheParams(m_pParams->cacheFlagStreams, m_pParams->cacheWindow);
-			m_vpStreams[i]->SetMinimalFraction(m_pParams->minFraction);
+			m_vpStreams[i]->SetCacheSettings({ m_pParams->cacheFlagStreams, m_pParams->cacheWindow, m_pParams->cachePath });
+			m_vpStreams[i]->SetMinimumFraction(m_pParams->minFraction);
 		}
 	}
 	EnsureUniqueStreamsKeys();
@@ -851,7 +869,8 @@ bool CFlowsheet::LoadFromFile(CH5Handler& _h5Loader, const std::wstring& _sFileN
 			std::string sUnitKey;
 			_h5Loader.ReadData(sPath, StrConst::Flow_H5UnitKey, sUnitKey);
 			m_vpModels[i]->SetUnit(sUnitKey);
-
+			m_vpModels[i]->SetMaterialsDatabase(m_pMaterialsDatabase);
+			m_vpModels[i]->SetDistributionsGrid(m_pDistributionsGrid);
 			m_vpModels[i]->LoadFromFile(_h5Loader, sPath);
 
 			m_vpModels[i]->SetCompoundsPtr(&m_vCompoundsKeys);
@@ -882,6 +901,8 @@ bool CFlowsheet::LoadFromFile(CH5Handler& _h5Loader, const std::wstring& _sFileN
 			for (size_t j = 0; j < m_vvInitTearStreams[i].size(); ++j)
 			{
 				const std::string streamPath = partitionPath + "/" + StrConst::Flow_H5GroupInitTearStreamName + std::to_string(j);
+				m_vvInitTearStreams[i][j].SetMaterialsDatabase(m_pMaterialsDatabase);
+				m_vvInitTearStreams[i][j].SetGrid(m_pDistributionsGrid);
 				m_vvInitTearStreams[i][j].LoadFromFile(_h5Loader, streamPath);
 			}
 		}
@@ -918,14 +939,18 @@ void CFlowsheet::LoadInitTearStreamsOld(CH5Handler& _h5Loader)
 		{
 			m_vvInitTearStreams.emplace_back(tearStreams.size());
 			for (size_t j = 0; j < m_vvInitTearStreams.back().size(); ++j)
+			{
+				m_vvInitTearStreams.back()[j].SetMaterialsDatabase(m_pMaterialsDatabase);
+				m_vvInitTearStreams.back()[j].SetGrid(m_pDistributionsGrid);
 				m_vvInitTearStreams.back()[j].LoadFromFile(_h5Loader, path + "/" + Flow_H5GroupInitStreams + "/" + Flow_H5GroupInitStreamName + std::to_string(j));
+			}
 		}
 		else // just initialize the structure of initial stream
 		{
 			if (tearStreams.empty()) // no recycle streams
 				m_vvInitTearStreams.emplace_back();
 			else                     // initialize with the structure of corresponding material stream
-				m_vvInitTearStreams.emplace_back(tearStreams.size(), CMaterialStream(*tearStreams.front()));
+				m_vvInitTearStreams.emplace_back(tearStreams.size(), CStream(*tearStreams.front()));
 		}
 	}
 }
@@ -1010,26 +1035,26 @@ void CFlowsheet::SaveConfigFile(const std::wstring& _fileName, const std::wstrin
 	for (size_t iUnit = 0; iUnit < m_vpModels.size(); ++iUnit)
 		for (size_t iHoldup = 0; iHoldup < m_vpModels[iUnit]->GetHoldupsCount(); ++iHoldup)
 		{
-			const CStream* str = m_vpModels[iUnit]->GetHoldupInit(iHoldup);
+			const CBaseStream* str = m_vpModels[iUnit]->GetHoldupInit(iHoldup);
 			const std::vector<double> tp = str->GetAllTimePoints();
 			for (size_t iTime = 0; iTime < tp.size(); ++iTime)
 				file << TO_ARG_STR(EArguments::UNIT_HOLDUP_MTP) << " " << iUnit + 1 << " " << iHoldup + 1 << " " << iTime + 1 << " " <<
-					str->GetMass_Base(tp[iTime]) << " " << str->GetTemperature(tp[iTime]) << " " << str->GetPressure(tp[iTime]);
-			file << "\t" << StrConst::COMMENT_SYMBOL << " " << m_vpModels[iUnit]->GetModelName() << " - " << str->GetStreamName() << " - <Mass> - <Temperature> - <Pressure>" << std::endl;
+					str->GetMass(tp[iTime]) << " " << str->GetTemperature(tp[iTime]) << " " << str->GetPressure(tp[iTime]);
+			file << "\t" << StrConst::COMMENT_SYMBOL << " " << m_vpModels[iUnit]->GetModelName() << " - " << str->GetName() << " - <Mass> - <Temperature> - <Pressure>" << std::endl;
 		}
 	file << std::endl;
 
 	for (size_t iUnit = 0; iUnit < m_vpModels.size(); ++iUnit)
 		for (size_t iHoldup = 0; iHoldup < m_vpModels[iUnit]->GetHoldupsCount(); ++iHoldup)
 		{
-			const CStream* str = m_vpModels[iUnit]->GetHoldupInit(iHoldup);
+			const CBaseStream* str = m_vpModels[iUnit]->GetHoldupInit(iHoldup);
 			const std::vector<double> tp = str->GetAllTimePoints();
 			for (size_t iTime = 0; iTime < tp.size(); ++iTime)
 			{
 				file << TO_ARG_STR(EArguments::UNIT_HOLDUP_PHASES) << " " << iUnit + 1 << " " << iHoldup + 1 << " " << iTime + 1;
 				for (unsigned int phase : m_vPhasesSOA)
-					file << " " << str->GetSinglePhaseProp(tp[iTime], PHASE_FRACTION, phase);
-				file << "\t" << StrConst::COMMENT_SYMBOL << " " << m_vpModels[iUnit]->GetModelName() << " - " << str->GetStreamName() << " - " << tp[iTime] << "[s]";
+					file << " " << str->GetPhaseFraction(tp[iTime], PhaseSOA2EPhase(phase));
+				file << "\t" << StrConst::COMMENT_SYMBOL << " " << m_vpModels[iUnit]->GetModelName() << " - " << str->GetName() << " - " << tp[iTime] << "[s]";
 				for (const auto& n : m_vPhasesNames)
 					file << " - " << n;
 				file << std::endl;
@@ -1040,15 +1065,15 @@ void CFlowsheet::SaveConfigFile(const std::wstring& _fileName, const std::wstrin
 	for (size_t iUnit = 0; iUnit < m_vpModels.size(); ++iUnit)
 		for (size_t iHoldup = 0; iHoldup < m_vpModels[iUnit]->GetHoldupsCount(); ++iHoldup)
 		{
-			const CStream* str = m_vpModels[iUnit]->GetHoldupInit(iHoldup);
+			const CBaseStream* str = m_vpModels[iUnit]->GetHoldupInit(iHoldup);
 			const std::vector<double> tp = str->GetAllTimePoints();
 			for (size_t iPhase = 0; iPhase < m_vPhasesSOA.size(); ++iPhase)
 				for (size_t iTime = 0; iTime < tp.size(); ++iTime)
 				{
 					file << TO_ARG_STR(EArguments::UNIT_HOLDUP_COMP) << " " << iUnit + 1 << " " << iHoldup + 1 << " " << iPhase + 1 << " " << iTime + 1;
 					for (const auto& comp : m_vCompoundsKeys)
-						file << " " << str->GetCompoundPhaseFraction(tp[iTime], comp, m_vPhasesSOA[iPhase]);
-					file << "\t" << StrConst::COMMENT_SYMBOL << " " << m_vpModels[iUnit]->GetModelName() << " - " << str->GetStreamName() << " - " <<
+						file << " " << str->GetCompoundFraction(tp[iTime], comp, PhaseSOA2EPhase(m_vPhasesSOA[iPhase]));
+					file << "\t" << StrConst::COMMENT_SYMBOL << " " << m_vpModels[iUnit]->GetModelName() << " - " << str->GetName() << " - " <<
 						m_vPhasesNames[iPhase] << " - " << tp[iTime] << "[s]";
 					for (const auto& n : GetCompoundsNames())
 						file << " - " << n;
@@ -1060,7 +1085,7 @@ void CFlowsheet::SaveConfigFile(const std::wstring& _fileName, const std::wstrin
 	for (size_t iUnit = 0; iUnit < m_vpModels.size(); ++iUnit)
 		for (size_t iHoldup = 0; iHoldup < m_vpModels[iUnit]->GetHoldupsCount(); ++iHoldup)
 		{
-			const CStream* str = m_vpModels[iUnit]->GetHoldupInit(iHoldup);
+			const CBaseStream* str = m_vpModels[iUnit]->GetHoldupInit(iHoldup);
 			const std::vector<double> tp = str->GetAllTimePoints();
 			const std::vector<EDistrTypes> distrs = m_pDistributionsGrid->GetDistrTypes();
 			for (size_t iDistr = 1; iDistr < distrs.size(); ++iDistr)
@@ -1071,7 +1096,7 @@ void CFlowsheet::SaveConfigFile(const std::wstring& _fileName, const std::wstrin
 							PSD_MassFrac << " " << E2I(EDistrFunction::Manual) << " " << E2I(EPSDGridType::DIAMETER);
 						for (auto v : str->GetDistribution(tp[iTime], distrs[iDistr], m_vCompoundsKeys[iComp]))
 							file << " " << v;
-						file << "\t" << StrConst::COMMENT_SYMBOL << " " << m_vpModels[iUnit]->GetModelName() << " - " << str->GetStreamName() << " - " <<
+						file << "\t" << StrConst::COMMENT_SYMBOL << " " << m_vpModels[iUnit]->GetModelName() << " - " << str->GetName() << " - " <<
 							GetCompoundsNames()[iComp] << " - " << tp[iTime] << "[s] - PSD_MassFrac - Manual - DIAMETER - <Values>" << std::endl;
 					}
 		}
@@ -1101,15 +1126,15 @@ std::string CFlowsheet::GenerateUniqueModelKey(const std::string& _key /*= ""*/)
 	std::vector<std::string> keys;
 	for (auto model : m_vpModels)
 		keys.push_back(model->GetModelKey());
-	return StringFunctions::GenerateUniqueString(_key, keys);
+	return StringFunctions::GenerateUniqueKey(_key, keys);
 }
 
 std::string CFlowsheet::GenerateUniqueStreamKey(const std::string& _key /*= ""*/) const
 {
 	std::vector<std::string> keys;
 	for (auto model : m_vpStreams)
-		keys.push_back(model->GetStreamKey());
-	return StringFunctions::GenerateUniqueString(_key, keys);
+		keys.push_back(model->GetKey());
+	return StringFunctions::GenerateUniqueKey(_key, keys);
 }
 
 void CFlowsheet::EnsureUniqueModelsKeys()
@@ -1124,6 +1149,17 @@ void CFlowsheet::EnsureUniqueStreamsKeys()
 {
 	for (size_t i = 0; i < m_vpStreams.size(); ++i)
 		for (size_t j = i + 1; j < m_vpStreams.size(); ++j)
-			if (m_vpStreams[i]->GetStreamKey() == m_vpStreams[j]->GetStreamKey())
-				m_vpStreams[j]->SetStreamKey(GenerateUniqueStreamKey(m_vpStreams[j]->GetStreamKey()));
+			if (m_vpStreams[i]->GetKey() == m_vpStreams[j]->GetKey())
+				m_vpStreams[j]->SetKey(GenerateUniqueStreamKey(m_vpStreams[j]->GetKey()));
+}
+
+EPhase CFlowsheet::PhaseSOA2EPhase(unsigned _soa)
+{
+	switch (_soa)
+	{
+	case SOA_SOLID:		return EPhase::SOLID;
+	case SOA_LIQUID:	return EPhase::LIQUID;
+	case SOA_VAPOR:		return EPhase::VAPOR;
+	default:			return EPhase::UNDEFINED;
+	}
 }

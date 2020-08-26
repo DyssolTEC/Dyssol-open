@@ -12,7 +12,7 @@ public:
 	virtual ~CPBMSolver() = default;
 
 	virtual void SetInitialHoldup(const CHoldup* _pHoldup);
-	virtual void SetInputStream(const CMaterialStream* _pStream);
+	virtual void SetInputStream(const CStream* _pStream);
 	virtual void SetOutputStream(double _dMassFlow);
 	virtual void Calculate(double _dTStart, double _dTEnd);
 	virtual CHoldup* GetResult();

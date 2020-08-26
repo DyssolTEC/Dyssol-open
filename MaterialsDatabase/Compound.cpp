@@ -5,7 +5,7 @@
 
 CCompound::CCompound(const MDBDescriptors::constDescr& _constDescrs, const MDBDescriptors::tpdepDescr& _tpdDescrs, const std::string& _sUniqueCompoundKey /*= ""*/)
 {
-	m_sUniqueKey = _sUniqueCompoundKey.empty() ? StringFunctions::GenerateRandomString() : _sUniqueCompoundKey;
+	m_sUniqueKey = _sUniqueCompoundKey.empty() ? StringFunctions::GenerateRandomKey() : _sUniqueCompoundKey;
 	m_sName = "New compound";
 
 	// add all const properties

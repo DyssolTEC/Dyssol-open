@@ -12,7 +12,7 @@ class CFlowsheet
 {
 public:
 	CFlowsheetParameters* m_pParams;
-	std::vector<std::vector<CMaterialStream>> m_vvInitTearStreams;	// List of streams used as initial values for tear streams for each partition.
+	std::vector<std::vector<CStream>> m_vvInitTearStreams;	// List of streams used as initial values for tear streams for each partition.
 
 private:
 	static const unsigned m_cnSaveVersion;
@@ -20,7 +20,7 @@ private:
 	CMaterialsDatabase* m_pMaterialsDatabase;
 	CModelsManager* m_pModelsManager;
 	std::vector<CBaseModel*> m_vpModels;
-	std::vector<CMaterialStream*> m_vpStreams;
+	std::vector<CStream*> m_vpStreams;
 	CCalculationSequence m_calculationSequence{ &m_vpModels , &m_vpStreams };
 	bool m_topologyModified; // Determines whether the flowsheet structure has been changed since the last topology analysis.
 
@@ -108,12 +108,12 @@ public:
 	/// ========== Interface functions to work with MATERIAL STREAMS
 
 	size_t GetStreamsCount() const;											// Returns the number of defined material streams.
-	CMaterialStream* AddStream(const std::string& _streamKey = "");		// Adds new stream to the flowsheet and returns pointer to it.
+	CStream* AddStream(const std::string& _streamKey = "");		// Adds new stream to the flowsheet and returns pointer to it.
 	void DeleteStream(const std::string& _sStreamKey);						// Removes material stream with the specified unique key.
-	const CMaterialStream* GetStream(size_t _index) const;					// Returns material stream with the specified index. If no such stream was defined, returns nullptr.
-	CMaterialStream* GetStream(size_t _index);								// Returns material stream with the specified index. If no such stream was defined, returns nullptr.
-	const CMaterialStream* GetStream(const std::string& _sStreamKey) const;	// Returns stream with the specified unique key. If no such stream was defined, returns nullptr.
-	CMaterialStream* GetStream(const std::string& _sStreamKey);				// Returns stream with the specified unique key. If no such stream was defined, returns nullptr.
+	const CStream* GetStream(size_t _index) const;					// Returns material stream with the specified index. If no such stream was defined, returns nullptr.
+	CStream* GetStream(size_t _index);								// Returns material stream with the specified index. If no such stream was defined, returns nullptr.
+	const CStream* GetStream(const std::string& _sStreamKey) const;	// Returns stream with the specified unique key. If no such stream was defined, returns nullptr.
+	CStream* GetStream(const std::string& _sStreamKey);				// Returns stream with the specified unique key. If no such stream was defined, returns nullptr.
 	void ShiftStreamUp(const std::string& _sStreamKey);						// Moves upwards material stream with the specified unique key.
 	void ShiftStreamDown(const std::string& _sStreamKey);					// Moves downwards material stream with the specified unique key.
 	size_t GetStreamIndex(const std::string& _sStreamKey) const;			// Returns index of the material stream with the specified unique key. If no such stream was defined, returns -1.
@@ -126,9 +126,12 @@ public:
 
 	void SaveConfigFile(const std::wstring& _fileName, const std::wstring& _flowsheetFile) const;
 
+	static EPhase PhaseSOA2EPhase(unsigned _soa);
+
 private:
 	std::string GenerateUniqueModelKey(const std::string& _key = "") const;		// Generates a unique key for a model.
 	std::string GenerateUniqueStreamKey(const std::string& _key = "") const;	// Generates a unique key for a stream.
 	void EnsureUniqueModelsKeys();	// Checks keys of models and replaces them if they have duplicates.
 	void EnsureUniqueStreamsKeys();	// Checks keys of streams and replaces them if they have duplicates.
+
 };

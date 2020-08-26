@@ -84,8 +84,8 @@ void CCrusherPBMTM::Initialize(double _dTime)
 	m_TM.SetDimensions(DISTR_SIZE, m_classesNum);
 
 	/// Unit parameters
-	m_selectionFun = I2E<ESelection>(GetGroupParameterValue("Selection"));
-	m_breakageFun  = I2E<EBreakage>(GetGroupParameterValue("Breakage"));
+	m_selectionFun = static_cast<ESelection>(GetGroupParameterValue("Selection"));
+	m_breakageFun  = static_cast<EBreakage>(GetGroupParameterValue("Breakage"));
 	m_sscale = GetConstParameterValue("S_scale");
 	m_s1 = GetConstParameterValue("S1");
 	m_s2 = GetConstParameterValue("S2");
@@ -95,7 +95,7 @@ void CCrusherPBMTM::Initialize(double _dTime)
 	m_b3 = GetConstParameterValue("B3");
 	m_dtMin = GetConstParameterValue("dt_min");
 	m_dtMax = GetConstParameterValue("dt_max");
-	m_method = I2E<EMethod>(GetComboParameterValue("Method"));
+	m_method = static_cast<EMethod>(GetComboParameterValue("Method"));
 
 	/// Precalculate values
 	m_S = CalculateSelectionFunction(m_means);

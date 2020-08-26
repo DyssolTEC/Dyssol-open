@@ -18,18 +18,12 @@
     <ClInclude Include="BaseCacheHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DenseDistrCacher.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MDMatrCacher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseCacheHandler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DenseDistrCacher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MDMatrCacher.cpp">

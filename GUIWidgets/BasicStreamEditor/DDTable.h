@@ -3,7 +3,7 @@
 #pragma once
 
 #include "QtTable.h"
-#include "DenseDistr2D.h"
+#include "TimeDependentValue.h"
 #include <QHBoxLayout>
 
 class CDDTable : public QWidget
@@ -11,7 +11,7 @@ class CDDTable : public QWidget
 	Q_OBJECT
 
 private:
-	CDenseDistr2D* m_pData;
+	CTimeDependentValue* m_pData;
 	CQtTable* m_pTable;
 	bool m_bAvoidSignal;
 	bool m_bNormalize;
@@ -21,7 +21,7 @@ public:
 	CDDTable( QWidget *parent = 0, Qt::WindowFlags flags = {} );
 	~CDDTable();
 
-	void SetDistribution( CDenseDistr2D* _pDistribution );
+	void SetDistribution(CTimeDependentValue* _pDistribution );
 	void SetNormalizationCheck( bool _bAnalyse );
 	void SetEditable(bool _bEditable);				// Turn on/off edit possibility.
 

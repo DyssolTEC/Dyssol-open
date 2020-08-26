@@ -77,7 +77,7 @@ void CBunker::Initialize(double _dTime)
 	m_Model.ClearVariables();
 
 	/// Add state variables to the model ///
-	const double dMassBunker_Init = pHoldup->GetMass(_dTime, SOA_SOLID);
+	const double dMassBunker_Init = pHoldup->GetMass(_dTime);
 
 	m_Model.m_nMassBunker = m_Model.AddDAEVariable(true, dMassBunker_Init, 0, 0);
 	m_Model.m_nMflow_Out = m_Model.AddDAEVariable(false, 0, 0, 0);

@@ -130,12 +130,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BaseCacheHandler.h" />
-    <ClInclude Include="DenseDistrCacher.h" />
     <ClInclude Include="MDMatrCacher.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseCacheHandler.cpp" />
-    <ClCompile Include="DenseDistrCacher.cpp" />
     <ClCompile Include="MDMatrCacher.cpp" />
   </ItemGroup>
   <ItemGroup>

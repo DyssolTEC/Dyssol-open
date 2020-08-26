@@ -49,7 +49,7 @@ void CSolidDistributionsEditor::SetFlowsheet(CFlowsheet* _pFlowsheet)
 	m_pGrid = m_pFlowsheet->GetDistributionsGrid();
 }
 
-void CSolidDistributionsEditor::SetDistribution(CMDMatrix* _pDistribution, CStream* _pStream)
+void CSolidDistributionsEditor::SetDistribution(CMDMatrix* _pDistribution, CBaseStream* _pStream)
 {
 	m_pDistribution = _pDistribution;
 	m_pStream = _pStream;
@@ -228,7 +228,7 @@ void CSolidDistributionsEditor::UpdateDistributionTable() const
 	else if (vDistrTypes.size() == 2 && vDistrTypes.front() == DISTR_COMPOUNDS && vDistrTypes.back() == DISTR_SIZE)	// PSD for one specific compound
 		vvData.push_back(m_pStream->GetPSD(dTime, ChosenPSDType(), ChosenCompound(), ChosenPSDGridType()));
 	else // not a PSD
-		vvData = Normalize(m_pDistribution->GetMatrixValue(dTime, VectorEnumToIntegral(vDistrTypes), vCoord));
+		vvData = Normalize(m_pDistribution->GetMatrixValue(dTime, E2I(vDistrTypes), vCoord));
 
 	// switch button for functional distribution on/off
 	ui.pushButtonFunctional->setEnabled(vvData.size() == 1);
@@ -636,7 +636,7 @@ void CSolidDistributionsEditor::ApplyPressed()
 	else if (vTypes.size() == 2 && vTypes.front() == DISTR_COMPOUNDS && vTypes.back() == DISTR_SIZE)	// PSD for specific compound
 		m_pStream->SetPSD(dTime, ChosenPSDType(), ChosenCompound(), vvData.front(), ChosenPSDGridType());
 	else																								// another distribution, not a PSD
-		m_pDistribution->SetMatrixValue(m_pDistribution->GetAllTimePoints().at(m_iCurrTime), VectorEnumToIntegral(vTypes), vCoord, Normalize(static_cast<const std::vector<std::vector<double>>>(vvData)));
+		m_pDistribution->SetMatrixValue(m_pDistribution->GetAllTimePoints().at(m_iCurrTime), E2I(vTypes), vCoord, Normalize(static_cast<const std::vector<std::vector<double>>>(vvData)));
 
 	emit DataChanged();
 

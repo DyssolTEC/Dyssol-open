@@ -1,7 +1,7 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "TearStreamsEditor.h"
-#include "MaterialStream.h"
+#include "Stream.h"
 #include "FlowsheetParameters.h"
 #include "DyssolStringConstants.h"
 #include <QMessageBox>
@@ -72,7 +72,7 @@ void CTearStreamsEditor::UpdateStreamsList()
 	{
 		ui.tableStreams->setRowCount((int)m_pSequence->TearStreamsNumber(iPartition));
 		for (int i = 0; i < (int)m_pSequence->TearStreamsNumber(iPartition); ++i)
-			ui.tableStreams->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(m_pSequence->PartitionTearStreams(iPartition)[i]->GetStreamName())));
+			ui.tableStreams->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(m_pSequence->PartitionTearStreams(iPartition)[i]->GetName())));
 	}
 
 	ui.tableStreams->RestoreSelectedCell(iOldRow, 0);
@@ -92,7 +92,7 @@ void CTearStreamsEditor::UpdateMode()
 
 void CTearStreamsEditor::NewStreamSelected()
 {
-	CStream* pSelectedStream = nullptr;
+	CBaseStream* pSelectedStream = nullptr;
 	const int iPartition = ui.tablePartitions->currentRow();
 	if (iPartition >= 0 && iPartition < static_cast<int>(m_pSequence->PartitionsNumber()))
 	{

@@ -1,7 +1,8 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "DustFormationTesterTab.h"
-#include "MaterialStream.h"
+#include "Stream.h"
+#include "DistributionsGrid.h"
 
 CDustFormationTesterTab::CDustFormationTesterTab(const CFlowsheet* _pFlowsheet, QWidget *parent)
 	: QDialog(parent),
@@ -56,8 +57,8 @@ void CDustFormationTesterTab::UpdateStreams() const
 	ui.listWidgetStreams->clear();
 	for (size_t i = 0; i < m_pFlowsheet->GetStreamsCount(); ++i)
 	{
-		const CMaterialStream* pStream = m_pFlowsheet->GetStream(i);
-		AddItemToList(ui.listWidgetStreams, pStream->GetStreamName(), pStream->GetStreamKey());
+		const CStream* pStream = m_pFlowsheet->GetStream(i);
+		AddItemToList(ui.listWidgetStreams, pStream->GetName(), pStream->GetKey());
 	}
 
 	// if streams block is selected, unblock the table here
@@ -123,7 +124,7 @@ void CDustFormationTesterTab::UpdateHoldups() const
 	for (size_t i = 0; i < pModel->GetHoldupsCount(); ++i)
 	{
 		const CHoldup* pHoldup = pModel->GetHoldup(i);
-		AddItemToList(ui.listWidgetHoldups, pHoldup->GetStreamName(), pHoldup->GetStreamKey());
+		AddItemToList(ui.listWidgetHoldups, pHoldup->GetName(), pHoldup->GetKey());
 	}
 
 	// if units block is selected, unblock the table here
@@ -177,7 +178,7 @@ void CDustFormationTesterTab::UpdateDataTable()
 	ui.tableWidgetData->setRowCount(0);
 
 	// prepare stuff
-	const CStream* pStream = GetSelectedStream();
+	const CBaseStream* pStream = GetSelectedStream();
 	if (!pStream)
 		return;
 
@@ -220,7 +221,7 @@ void CDustFormationTesterTab::RestoreSelectedRow(QListWidget* _pList, int iRow)
 		_pList->setCurrentRow(_pList->count() - 1, QItemSelectionModel::SelectCurrent);
 }
 
-const CStream* CDustFormationTesterTab::GetSelectedStream() const
+const CBaseStream* CDustFormationTesterTab::GetSelectedStream() const
 {
 	switch (m_focusType)
 	{
@@ -248,7 +249,7 @@ const CHoldup* CDustFormationTesterTab::GetSelectedHoldup() const
 	return pModel->GetHoldup(sKey);
 }
 
-const CMaterialStream* CDustFormationTesterTab::GetSelectedMaterialStream() const
+const CStream* CDustFormationTesterTab::GetSelectedMaterialStream() const
 {
 	const QListWidgetItem* pItem = ui.listWidgetStreams->currentItem();
 	if (!pItem) return nullptr;

@@ -1,6 +1,7 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "HoldupsEditor.h"
+#include "BaseStream.h"
 
 CHoldupsEditor::CHoldupsEditor(CFlowsheet* _pFlowsheet, QWidget *parent) :
 	QDialog(parent),
@@ -42,9 +43,9 @@ void CHoldupsEditor::UpdateHoldupsList()
 		for (size_t i = 0; i < m_pSelectedModel->GetHoldupsCount(); ++i)
 		{
 			ui.holdupsList->insertRow(int(i));
-			const CStream* pStream = m_pSelectedModel->GetHoldupInit(i);
+			const CBaseStream* pStream = m_pSelectedModel->GetHoldupInit(i);
 			if (pStream)
-				ui.holdupsList->SetItemNotEditable(int(i), 0, pStream->GetStreamName());
+				ui.holdupsList->SetItemNotEditable(int(i), 0, pStream->GetName());
 		}
 	}
 
@@ -104,7 +105,7 @@ void CHoldupsEditor::LoadViewState() const
 
 void CHoldupsEditor::NewHoldupSelected() const
 {
-	CStream* pSelectedHoldup = nullptr;
+	CBaseStream* pSelectedHoldup = nullptr;
 	if (m_pSelectedModel != nullptr)
 		if (ui.holdupsList->currentRow() >= 0 && int(m_pSelectedModel->GetHoldupsCount()) > ui.holdupsList->currentRow())
 			pSelectedHoldup = m_pSelectedModel->GetHoldupInit(ui.holdupsList->currentRow());

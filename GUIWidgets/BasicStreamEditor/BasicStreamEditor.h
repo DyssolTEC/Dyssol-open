@@ -17,7 +17,7 @@ private:
 	// TODO: make it const
 	CFlowsheet* m_pFlowsheet; // pointer to the flowsheet
 	bool m_bAvoidSignal;
-	CStream* m_pSelectedHoldup; // pointer to the selected stream
+	CBaseStream* m_pSelectedHoldup; // pointer to the selected stream
 
 	CDDTable* m_pDDTableMTP;
 	CDDTable* m_pDDTablePhase;
@@ -34,7 +34,7 @@ public:
 	CBasicStreamEditor(QWidget *parent = Q_NULLPTR);
 
 	void SetFlowsheet(CFlowsheet* _pFlowsheet);
-	void SetStream(CStream* _pStream);
+	void SetStream(CBaseStream* _pStream);
 	void SetEditable(bool _bEditable);				// Turn on/off edit possibility.
 
 	void UpdateWholeView();

@@ -152,7 +152,7 @@ void CUnitsViewer::UpdateHoldupsView()
 	int nOldSelected = ui.listWidgetHoldups->currentRow();
 	ui.listWidgetHoldups->clear();
 	for (unsigned i = 0; i < m_pSelectedModel->GetHoldupsCount(); ++i)
-		ui.listWidgetHoldups->insertItem(i, new QListWidgetItem(QString::fromStdString(m_pSelectedModel->GetHoldup(i)->GetStreamName())));
+		ui.listWidgetHoldups->insertItem(i, new QListWidgetItem(QString::fromStdString(m_pSelectedModel->GetHoldup(i)->GetName())));
 
 	if ((nOldSelected != -1) && (nOldSelected < (int)m_pSelectedModel->GetHoldupsCount()))
 		ui.listWidgetHoldups->setCurrentRow(nOldSelected);
@@ -240,7 +240,7 @@ void CUnitsViewer::HoldupChanged()
 {
 	if( !m_pSelectedModel ) return;
 	QModelIndexList indexes = ui.listWidgetHoldups->selectionModel()->selection().indexes();
-	std::vector<const CStream*> vHoldups;
+	std::vector<const CBaseStream*> vHoldups;
 	for( int i=0; i<indexes.size(); ++i )
 		if( ( indexes[i].row() >= 0 ) && ( indexes[i].row() < (int)m_pSelectedModel->GetHoldupsCount() ) )
 			vHoldups.push_back(m_pSelectedModel->GetHoldup(indexes[i].row()));

@@ -7,11 +7,11 @@
 #include "PBMSolver.h"
 
 #ifdef _DEBUG
-#define DYSSOL_CREATE_MODEL_FUN CreateDYSSOLUnitV1_DEBUG
-#define DYSSOL_CREATE_MODEL_FUN_NAME "CreateDYSSOLUnitV1_DEBUG"
+#define DYSSOL_CREATE_MODEL_FUN CreateDYSSOLUnitV2_DEBUG
+#define DYSSOL_CREATE_MODEL_FUN_NAME "CreateDYSSOLUnitV2_DEBUG"
 #else
-#define DYSSOL_CREATE_MODEL_FUN CreateDYSSOLUnitV1
-#define DYSSOL_CREATE_MODEL_FUN_NAME "CreateDYSSOLUnitV1"
+#define DYSSOL_CREATE_MODEL_FUN CreateDYSSOLUnitV2
+#define DYSSOL_CREATE_MODEL_FUN_NAME "CreateDYSSOLUnitV2"
 #endif
 
 enum EPortType
@@ -26,7 +26,7 @@ struct sPortStruct
 {
 	std::string sName;			///< The name of the port, should be unique for this port
 	std::string sStreamKey;		///< The key of the stream which connected to this port
-	CMaterialStream* pStream;	///< Pointer to the material stream - updated during flowsheet initialization
+	CStream* pStream;	///< Pointer to the material stream - updated during flowsheet initialization
 	EPortType nType;			///< INPUT_PORT or OUTPUT_PORT
 };
 
@@ -53,12 +53,12 @@ private:
 	std::vector<CHoldup*> m_vHoldupsInit;					///< Holdups in this unit, will be displayed in UI if holdups editor. Will not be changed during the simulation.
 	std::vector<CHoldup*> m_vHoldupsWork;					///< Working copy of holdups, take part in simulation, will be displayed in results.
 	int m_nPermanentHoldups;								///< Is used to distinguish between holdups which have been added in constructor (permanent) and elsewhere (temp)
-	std::vector<CMaterialStream*> m_vStreams;				///< Internal material streams.
+	std::vector<CStream*> m_vStreams;				///< Internal material streams.
 	int m_nPermanentStreams;								///< Is used to distinguish between material streams which have been added in constructor (permanent) and elsewhere (temp)
 	std::vector<sStateVariable*> m_vStateVariables;			///< State variables of the unit
 	bool m_bIsDynamic;										///< Contains true - if this unit is defined as dynamic, false - as steady-state
 	std::vector<CHoldup*> m_vStoreHoldupsWork;				///< Used to store data from m_vHoldupsWork for cyclic calculations
-	std::vector<CMaterialStream*> m_vStoreStreams;			///< Used to store data from m_vStreams for cyclic calculations
+	std::vector<CStream*> m_vStoreStreams;			///< Used to store data from m_vStreams for cyclic calculations
 	double m_dStoreT1, m_dStoreT2;							///< Stored time window in m_vStoreHoldupsWork and m_vStoreStreams
 
 	// ========== Variables to work with errors and warnings
@@ -132,10 +132,10 @@ public:		unsigned GetPortType( const std::string &_sPortName ) const;
 public:		std::string GetPortStreamKey( unsigned _nPortIndex ) const;
 	/** Returns pointer to a stream which is connected to the port. If port with such index hasn't been defined, NULL will be returned.
 	 *	\param _nPortIndex Index of the port*/
-public:		CMaterialStream* GetPortStream( unsigned _nPortIndex ) const;
+public:		CStream* GetPortStream( unsigned _nPortIndex ) const;
 	/** Returns pointer to a stream which is connected to the port. If port with such index hasn't been defined, NULL will be returned.
 	 *	\param _sPortName Name of the port*/
-public:		CMaterialStream* GetPortStream( const std::string &_sPortName ) const;
+public:		CStream* GetPortStream( const std::string &_sPortName ) const;
 	/**	Sets key of the stream for specified port.
 	 *	\param _nPortIndex Index of the port
 	 *	\param _sMaterialKey Unique key of the stream*/
@@ -143,7 +143,7 @@ public:		void SetPortStreamKey( unsigned _nPortIndex, std::string _sStreamKey );
 	/**	Sets stream to the port.
 	 *	\param _nPortIndex Index of the port
 	 *	\param _pStream Pointer to a stream*/
-public:		void SetPortStream( unsigned _nPortIndex, CMaterialStream* _pStream );
+public:		void SetPortStream( unsigned _nPortIndex, CStream* _pStream );
 
 	/** Adds port to the unit. This function is called from the constructors of the child units.
 	 *  If there is already a port with the same name within the unit, logic_error exception will be thrown, and index of this existing port returned.
@@ -176,8 +176,8 @@ public:		CHoldup* GetHoldup( const std::string &_sHoldupName );
 	 *	\param _sFeedName Name of the new feed
 	 *	\param _sStreamKey Unique key of the feed
 	 *	\return Pointer to a feed object*/
-protected:	CMaterialStream* AddFeed( const std::string &_sFeedName, const std::string &_sStreamKey = "" );
-public:		CMaterialStream* GetFeed( const std::string &_sFeedName );
+protected:	CStream* AddFeed( const std::string &_sFeedName, const std::string &_sStreamKey = "" );
+public:		CStream* GetFeed( const std::string &_sFeedName );
 
 	/** Removes holdup from the unit.*/
 public:	void RemoveHoldup( CHoldup* _pHoldup );
@@ -193,9 +193,9 @@ private:	void RemoveTempHoldups();
 	 *	\param _sStreamName Name of the new material stream
 	 *	\param _sStreamKey Unique key of the material stream
 	 *	\return Pointer to a material stream object*/
-public:		CMaterialStream* AddMaterialStream( const std::string &_sStreamName, const std::string &_sStreamKey = "" );
-public:		CMaterialStream* GetMaterialStream( const std::string &_sStreamName );
-public:		void RemoveMaterialStream( CMaterialStream* _pStream );
+public:		CStream* AddMaterialStream( const std::string &_sStreamName, const std::string &_sStreamKey = "" );
+public:		CStream* GetMaterialStream( const std::string &_sStreamName );
+public:		void RemoveMaterialStream( CStream* _pStream );
 public:		void RemoveMaterialStream( const std::string &_sStreamName );
 private:	void InitializeMaterialStreams();
 private:	void RemoveTempMaterialStreams();
@@ -204,7 +204,7 @@ private:	void ClearHoldups();
 private:	void ClearMaterialStreams();
 
 			/** Set grid, phases, compounds, etc.*/
-private:	void SetupStream( CStream* _pStream );
+private:	void SetupStream( CBaseStream* _pStream );
 			/*Returns vector of keys of all defined holdups in this unit.*/
 private:	std::vector<std::string> GetHoldupsKeys() const;
 private:	std::vector<std::string> GetMaterialStreamsKeys() const;
@@ -215,7 +215,7 @@ public:
 	*	\param _pStream2 Pointer to stream2
 	*	\param _dTime Time point that should be copied
 	*	\param _dEfficiency Efficiency of heat exchange, i.e. 0 - stream temperatures remain unchanged and 1 - both streams leave with the same temperature*/
-	void HeatExchange(CMaterialStream* _pStream1, CMaterialStream* _pStream2, double _dTime, double _dEfficiency);
+	void HeatExchange(CStream* _pStream1, CStream* _pStream2, double _dTime, double _dEfficiency);
 
 	// ========== Functions for STREAMS MANIPULATIONS ====================
 
@@ -223,39 +223,39 @@ public:
 	 *	\param _srcStream Pointer to a source stream
 	 *	\param _dstStream Pointer to a destination stream
 	 *	\param _dTime Time point*/
-public:		void CopyStreamToStream( const CMaterialStream* _pSrcStream, CMaterialStream* _pDstStream, double _dTime, bool _bDeleteDataAfter = true );
+public:		void CopyStreamToStream( const CStream* _pSrcStream, CStream* _pDstStream, double _dTime, bool _bDeleteDataAfter = true );
 	/** Copies data from one stream to another on a specified time interval.
 	 *	\param _srcStream Pointer to a source stream
 	 *	\param _dstStream Pointer to a destination stream
 	 *	\param _dStartTime Start of the time interval
 	 *	\param _dEndTime End of the time interval*/
-public:		void CopyStreamToStream( const CMaterialStream* _pSrcStream, CMaterialStream* _pDstStream, double _dStartTime, double _dEndTime, bool _bDeleteDataAfter = true );
+public:		void CopyStreamToStream( const CStream* _pSrcStream, CStream* _pDstStream, double _dStartTime, double _dEndTime, bool _bDeleteDataAfter = true );
 	/** Copies stream data to output port.
 	 *	\param _pStream Pointer to a stream
 	 *	\param _nPortIndex Index of the port
 	 *	\param _dTime Time point*/
-public:		void CopyStreamToPort( const CMaterialStream* _pStream, unsigned _nPortIndex, double _dTime, bool _bDeleteDataAfter = true );
-public:		void CopyStreamToPort( const CMaterialStream* _pStream, const std::string &_sPortName, double _dTime, bool _bDeleteDataAfter = true );
+public:		void CopyStreamToPort( const CStream* _pStream, unsigned _nPortIndex, double _dTime, bool _bDeleteDataAfter = true );
+public:		void CopyStreamToPort( const CStream* _pStream, const std::string &_sPortName, double _dTime, bool _bDeleteDataAfter = true );
 	/** Copies stream data to output port.
 	 *	\param _pStream Pointer to a stream
 	 *	\param _nPortIndex Index of the port
 	 *	\param _dStartTime Start of the time interval
 	 *	\param _dEndTime End of the time interval*/
-public:		void CopyStreamToPort( const CMaterialStream* _pStream, unsigned _nPortIndex, double _dStartTime, double _dEndTime, bool _bDeleteDataAfter = true );
-public:		void CopyStreamToPort( const CMaterialStream* _pStream, const std::string &_sPortName, double _dStartTime, double _dEndTime, bool _bDeleteDataAfter = true );
+public:		void CopyStreamToPort( const CStream* _pStream, unsigned _nPortIndex, double _dStartTime, double _dEndTime, bool _bDeleteDataAfter = true );
+public:		void CopyStreamToPort( const CStream* _pStream, const std::string &_sPortName, double _dStartTime, double _dEndTime, bool _bDeleteDataAfter = true );
 	/** Copies stream data of the input port to another stream.
 	 *	\param _pStream Pointer to a stream
 	 *	\param _nPortIndex Index of the port
 	 *	\param _dTime Time point*/
-public:		void CopyPortToStream( unsigned _nPortIndex, CMaterialStream* _pStream, double _dTime, bool _bDeleteDataAfter = true );
-public:		void CopyPortToStream( const std::string &_sPortName, CMaterialStream* _pStream, double _dTime, bool _bDeleteDataAfter = true );
+public:		void CopyPortToStream( unsigned _nPortIndex, CStream* _pStream, double _dTime, bool _bDeleteDataAfter = true );
+public:		void CopyPortToStream( const std::string &_sPortName, CStream* _pStream, double _dTime, bool _bDeleteDataAfter = true );
 	/** Copies stream data of the input port to another stream.
 	 *	\param _pStream Pointer to a stream
 	 *	\param _nPortIndex Index of the port
 	 *	\param _dStartTime Start of the time interval
 	 *	\param _dEndTime End of the time interval*/
-public:		void CopyPortToStream( unsigned _nPortIndex, CMaterialStream* _pStream, double _dStartTime, double _dEndTime, bool _bDeleteDataAfter = true );
-public:		void CopyPortToStream( const std::string &_sPortName, CMaterialStream* _pStream, double _dStartTime, double _dEndTime, bool _bDeleteDataAfter = true );
+public:		void CopyPortToStream( unsigned _nPortIndex, CStream* _pStream, double _dStartTime, double _dEndTime, bool _bDeleteDataAfter = true );
+public:		void CopyPortToStream( const std::string &_sPortName, CStream* _pStream, double _dStartTime, double _dEndTime, bool _bDeleteDataAfter = true );
 
 	// ========== VIRTUAL FUNCTIONS which should be overridden in child classes
 
@@ -282,7 +282,7 @@ public:		std::vector<double> GetAllDefinedTimePoints( double _dStartTime, double
 	/** Returns all time points for time interval on which inlet streams are defined.*/
 public:		std::vector<double> GetAllInputTimePoints( double _dStartTime, double _dEndTime, bool _bForceStartBoundary = false, bool _bForceEndBoundary = false ) const;
 	/** Returns all time points for specified time interval on which _vSrteams are defined.*/
-public:		std::vector<double> GetAllStreamsTimePoints( const std::vector<CMaterialStream*>& _vSrteams, double _dStartTime, double _dEndTime ) const;
+public:		std::vector<double> GetAllStreamsTimePoints( const std::vector<CStream*>& _vSrteams, double _dStartTime, double _dEndTime ) const;
 
 			// Removes time points, which are closer as _dStep, from internal holdups and streams within the specified interval [_dStart; _dEnd).
 public:		void ReduceTimePoints(double _dStart, double _dEnd, double _dStep);
@@ -681,6 +681,8 @@ public:		void SetCachePath(const std::wstring& _sPath);
 public:		void SetCacheParams( bool _bEnabled, unsigned _nWindow );
 
 public:		void ClearSimulationResults();
+private:
+	static EPhase PhaseSOA2EPhase(unsigned _soa);
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Functions to work with plots

@@ -352,10 +352,33 @@ namespace StrConst
 	const char* const Stream_H5Attr2DDistrNum	= "2DDistrNumber";
 	const char* const Stream_H5Group2DDistrs	= "Distributions";
 	const char* const Stream_H5Group2DDistrName	= "Distribution";
+	const char* const Stream_H5OverallKeys      = "OverallKeys";
+	const char* const Stream_H5GroupOveralls    = "Overalls";
+	const char* const Stream_H5GroupOverallName = "Overall";
+	const char* const Stream_H5PhaseKeys        = "PhaseKeys";
 	const char* const Stream_H5PhaseName		= "PhaseName";
 	const char* const Stream_H5PhaseSOA			= "PhaseSOA";
 	const char* const Stream_H5AttrSaveVersion	= "SaveVersion";
 
+//////////////////////////////////////////////////////////////////////////
+/// CTimeDependentValue
+//////////////////////////////////////////////////////////////////////////
+	const char* const TDV_H5Name  = "Name";
+	const char* const TDV_H5Units = "Units";
+	const char* const TDV_H5Data  = "Data";
+
+//////////////////////////////////////////////////////////////////////////
+/// CPhase
+//////////////////////////////////////////////////////////////////////////
+	const char* const Phase_H5Name         = "Name";
+	const char* const Phase_H5State        = "State";
+	const char* const Phase_H5Fractions    = "Fractions";
+	const char* const Phase_H5Distribution = "Distribution";
+
+//////////////////////////////////////////////////////////////////////////
+/// HDF5 saving/loading
+//////////////////////////////////////////////////////////////////////////
+	const char* const H5AttrSaveVersion = "SaveVersion";
 
 //////////////////////////////////////////////////////////////////////////
 /// CH5Handler

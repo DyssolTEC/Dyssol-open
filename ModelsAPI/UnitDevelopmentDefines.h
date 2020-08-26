@@ -7,6 +7,7 @@
 #include "NLSolver.h"
 #include "DynamicUnit.h"
 #include "SteadyStateUnit.h"
+#include "TransformMatrix.h"
 #include "DistributionsFunctions.h"
 #include "StringFunctions.h"
 #include "DyssolUtilities.h"

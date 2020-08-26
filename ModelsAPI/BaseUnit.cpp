@@ -1,10 +1,12 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "BaseUnit.h"
-#include "MaterialStream.h"
+#include "Stream.h"
 #include "DyssolUtilities.h"
 #include "DyssolStringConstants.h"
 #include "ContainerFunctions.h"
+#include "Phase.h"
+#include "DistributionsGrid.h"
 
 const unsigned CBaseUnit::m_cnSaveVersion	= 2;
 
@@ -109,14 +111,14 @@ std::string CBaseUnit::GetPortStreamKey(unsigned _nPortIndex) const
 	return m_vPorts[_nPortIndex].sStreamKey;
 }
 
-CMaterialStream* CBaseUnit::GetPortStream(unsigned _nPortIndex) const
+CStream* CBaseUnit::GetPortStream(unsigned _nPortIndex) const
 {
 	if( _nPortIndex >= m_vPorts.size() )
 		return nullptr;
 	return m_vPorts[_nPortIndex].pStream;
 }
 
-CMaterialStream* CBaseUnit::GetPortStream( const std::string &_sPortName ) const
+CStream* CBaseUnit::GetPortStream( const std::string &_sPortName ) const
 {
 	for( unsigned i=0; i<m_vPorts.size(); ++i )
 		if( m_vPorts[i].sName == _sPortName )
@@ -132,7 +134,7 @@ void CBaseUnit::SetPortStreamKey(unsigned _nPortIndex, std::string _sStreamKey)
 	m_vPorts[_nPortIndex].sStreamKey = _sStreamKey;
 }
 
-void CBaseUnit::SetPortStream(unsigned _nPortIndex, CMaterialStream* _pStream)
+void CBaseUnit::SetPortStream(unsigned _nPortIndex, CStream* _pStream)
 {
 	if( _nPortIndex >= m_vPorts.size() )
 		return;
@@ -169,23 +171,23 @@ std::vector<CHoldup*> CBaseUnit::GetHoldups() const
 CHoldup* CBaseUnit::AddHoldup(const std::string& _sHoldupName, const std::string& _sStreamKey /*= "" */)
 {
 	for (size_t i = 0; i < m_vHoldupsWork.size(); ++i)
-		if (m_vHoldupsWork[i]->GetStreamName() == _sHoldupName)
+		if (m_vHoldupsWork[i]->GetName() == _sHoldupName)
 			return m_vHoldupsWork[i];
 
-	std::string sKey = StringFunctions::GenerateUniqueString(_sStreamKey, GetHoldupsKeys());
+	std::string sKey = StringFunctions::GenerateUniqueKey(_sStreamKey, GetHoldupsKeys());
 
 	CHoldup* pInitHoldup = new CHoldup(sKey);
-	pInitHoldup->SetStreamName(_sHoldupName);
+	pInitHoldup->SetName(_sHoldupName);
 	SetupStream(pInitHoldup);
 	m_vHoldupsInit.push_back(pInitHoldup);
 
 	CHoldup* pWorkHoldup = new CHoldup(sKey);
-	pWorkHoldup->SetStreamName(_sHoldupName);
+	pWorkHoldup->SetName(_sHoldupName);
 	SetupStream(pWorkHoldup);
 	m_vHoldupsWork.push_back(pWorkHoldup);
 
 	CHoldup* pStoreHoldup = new CHoldup(sKey + StrConst::BUnit_StoreStreamSuffix);
-	pStoreHoldup->SetStreamName(_sHoldupName + StrConst::BUnit_StoreStreamSuffix);
+	pStoreHoldup->SetName(_sHoldupName + StrConst::BUnit_StoreStreamSuffix);
 	SetupStream(pStoreHoldup);
 	m_vStoreHoldupsWork.push_back(pStoreHoldup);
 
@@ -195,57 +197,57 @@ CHoldup* CBaseUnit::AddHoldup(const std::string& _sHoldupName, const std::string
 CHoldup* CBaseUnit::GetHoldup( const std::string &_sHoldupName )
 {
 	for( unsigned i=0; i<m_vHoldupsWork.size(); ++i )
-		if( m_vHoldupsWork[i]->GetStreamName() == _sHoldupName )
+		if( m_vHoldupsWork[i]->GetName() == _sHoldupName )
 			return m_vHoldupsWork[i];
 	throw std::logic_error(StrConst::BUnit_ErrGetHoldup(m_sUnitName, _sHoldupName));
 	return nullptr;
 }
 
-CMaterialStream* CBaseUnit::AddFeed(const std::string& _sFeedName, const std::string& _sStreamKey /*= "" */)
+CStream* CBaseUnit::AddFeed(const std::string& _sFeedName, const std::string& _sStreamKey /*= "" */)
 {
 	for (size_t i = 0; i < m_vHoldupsWork.size(); ++i)
-		if (m_vHoldupsWork[i]->GetStreamName() == _sFeedName)
+		if (m_vHoldupsWork[i]->GetName() == _sFeedName)
 			throw std::logic_error(StrConst::BUnit_ErrAddFeed(m_sUnitName, _sFeedName));
 
-	std::string sKey = StringFunctions::GenerateUniqueString(_sStreamKey, GetHoldupsKeys());
+	std::string sKey = StringFunctions::GenerateUniqueKey(_sStreamKey, GetHoldupsKeys());
 
-	CMaterialStream* pInitFeed = new CMaterialStream(sKey);
-	pInitFeed->SetStreamName(_sFeedName);
+	CStream* pInitFeed = new CStream(sKey);
+	pInitFeed->SetName(_sFeedName);
 	SetupStream(pInitFeed);
 	m_vHoldupsInit.push_back(reinterpret_cast<CHoldup*>(pInitFeed));
 
-	CMaterialStream* pWorkFeed = new CMaterialStream(sKey);
-	pWorkFeed->SetStreamName(_sFeedName);
+	CStream* pWorkFeed = new CStream(sKey);
+	pWorkFeed->SetName(_sFeedName);
 	SetupStream(pWorkFeed);
 	m_vHoldupsWork.push_back(reinterpret_cast<CHoldup*>(pWorkFeed));
 
-	CMaterialStream* pStoreFeed = new CMaterialStream(sKey + StrConst::BUnit_StoreStreamSuffix);
-	pStoreFeed->SetStreamName(_sFeedName + StrConst::BUnit_StoreStreamSuffix);
+	CStream* pStoreFeed = new CStream(sKey + StrConst::BUnit_StoreStreamSuffix);
+	pStoreFeed->SetName(_sFeedName + StrConst::BUnit_StoreStreamSuffix);
 	SetupStream(pStoreFeed);
 	m_vStoreHoldupsWork.push_back(reinterpret_cast<CHoldup*>(pStoreFeed));
 
 	return pWorkFeed;
 }
 
-CMaterialStream* CBaseUnit::GetFeed( const std::string &_sFeedName )
+CStream* CBaseUnit::GetFeed( const std::string &_sFeedName )
 {
 	for( unsigned i=0; i<m_vHoldupsWork.size(); ++i )
-		if( m_vHoldupsWork[i]->GetStreamName() == _sFeedName )
-			return reinterpret_cast<CMaterialStream*>(m_vHoldupsWork[i]);
+		if( m_vHoldupsWork[i]->GetName() == _sFeedName )
+			return reinterpret_cast<CStream*>(m_vHoldupsWork[i]);
 	throw std::logic_error(StrConst::BUnit_ErrGetFeed(m_sUnitName, _sFeedName));
 	return nullptr;
 }
 
 void CBaseUnit::RemoveHoldup(CHoldup* _pHoldup)
 {
-	RemoveHoldup( _pHoldup->GetStreamName() );
+	RemoveHoldup( _pHoldup->GetName() );
 }
 
 void CBaseUnit::RemoveHoldup(const std::string &_sName)
 {
 	for( unsigned i=0; i<m_vHoldupsInit.size(); ++i )
 	{
-		if( m_vHoldupsInit[i]->GetStreamName() == _sName )
+		if( m_vHoldupsInit[i]->GetName() == _sName )
 		{
 			delete m_vHoldupsInit[i];
 			delete m_vHoldupsWork[i];
@@ -262,13 +264,13 @@ void CBaseUnit::InitializeHoldups()
 	for( unsigned i=0; i<m_vStoreHoldupsWork.size(); ++i )
 		SetupStream( m_vStoreHoldupsWork[i] );
 	for( unsigned i=0; i<m_vHoldupsWork.size(); ++i )
-		if( m_vHoldupsWork[i]->GetPhasesNumber() == 0 )	// TODO: normal check for not initialized holdup
+		if( !CBaseStream::HaveSameStructure(*m_vHoldupsWork[i], *m_vHoldupsInit[i]) )	// TODO: check whether it is needed
 			SetupStream( m_vHoldupsWork[i] );
 	for (unsigned i = 0; i < m_vHoldupsInit.size(); ++i)
 	{
 		for (const auto t : m_vHoldupsWork[i]->GetAllTimePoints())
 			m_vHoldupsWork[i]->RemoveTimePoint(t);
-		m_vHoldupsWork[i]->CopyFromHoldup(m_vHoldupsInit[i], 0, m_vHoldupsInit[i]->GetLastTimePoint());
+		m_vHoldupsWork[i]->CopyFromHoldup(0, m_vHoldupsInit[i]->GetLastTimePoint(), m_vHoldupsInit[i]);
 	}
 }
 
@@ -279,46 +281,46 @@ void CBaseUnit::RemoveTempHoldups()
 			RemoveHoldup(m_vHoldupsInit.back());
 }
 
-CMaterialStream* CBaseUnit::AddMaterialStream(const std::string& _sStreamName, const std::string& _sStreamKey /*= "" */)
+CStream* CBaseUnit::AddMaterialStream(const std::string& _sStreamName, const std::string& _sStreamKey /*= "" */)
 {
 	for (size_t i = 0; i < m_vStreams.size(); ++i)
-		if (m_vStreams[i]->GetStreamName() == _sStreamName)
+		if (m_vStreams[i]->GetName() == _sStreamName)
 			return m_vStreams[i];
 
-	std::string sKey = StringFunctions::GenerateUniqueString(_sStreamKey, GetMaterialStreamsKeys());
+	std::string sKey = StringFunctions::GenerateUniqueKey(_sStreamKey, GetMaterialStreamsKeys());
 
-	CMaterialStream* pStream = new CMaterialStream(sKey);
-	pStream->SetStreamName(_sStreamName);
+	CStream* pStream = new CStream(sKey);
+	pStream->SetName(_sStreamName);
 	SetupStream(pStream);
 	m_vStreams.push_back(pStream);
 
-	CMaterialStream* pStoreStream = new CMaterialStream(sKey + StrConst::BUnit_StoreStreamSuffix);
-	pStoreStream->SetStreamName(_sStreamName + StrConst::BUnit_StoreStreamSuffix);
+	CStream* pStoreStream = new CStream(sKey + StrConst::BUnit_StoreStreamSuffix);
+	pStoreStream->SetName(_sStreamName + StrConst::BUnit_StoreStreamSuffix);
 	SetupStream(pStoreStream);
 	m_vStoreStreams.push_back(pStoreStream);
 
 	return pStream;
 }
 
-CMaterialStream* CBaseUnit::GetMaterialStream( const std::string &_sStreamName )
+CStream* CBaseUnit::GetMaterialStream( const std::string &_sStreamName )
 {
 	for( unsigned i=0; i<m_vStreams.size(); ++i )
-		if( m_vStreams[i]->GetStreamName() == _sStreamName )
+		if( m_vStreams[i]->GetName() == _sStreamName )
 			return m_vStreams[i];
 	throw std::logic_error(StrConst::BUnit_ErrGetStream(m_sUnitName, _sStreamName));
 	return nullptr;
 }
 
-void CBaseUnit::RemoveMaterialStream(CMaterialStream* _pStream)
+void CBaseUnit::RemoveMaterialStream(CStream* _pStream)
 {
-	RemoveMaterialStream( _pStream->GetStreamName() );
+	RemoveMaterialStream( _pStream->GetName() );
 }
 
 void CBaseUnit::RemoveMaterialStream(const std::string &_sStreamName)
 {
 	for( size_t i=0; i<m_vStreams.size(); ++i )
 	{
-		if( m_vStreams[i]->GetStreamName() == _sStreamName )
+		if( m_vStreams[i]->GetName() == _sStreamName )
 		{
 			delete m_vStreams[i];
 			delete m_vStoreStreams[i];
@@ -333,7 +335,7 @@ void CBaseUnit::InitializeMaterialStreams()
 	for( unsigned i=0; i<m_vStoreStreams.size(); ++i )
 		SetupStream( m_vStoreStreams[i] );
 	for( unsigned i=0; i<m_vStreams.size(); ++i )
-		if( m_vStreams[i]->GetPhasesNumber() == 0 )	// TODO: normal check for not initialized stream
+		if (!CBaseStream::HaveSameStructure(*m_vStreams[i], *m_vStoreStreams[i]))	// TODO: check whether it is needed
 			SetupStream( m_vStreams[i] );
 }
 
@@ -368,29 +370,36 @@ void CBaseUnit::ClearMaterialStreams()
 	m_vStoreStreams.clear();
 }
 
-void CBaseUnit::SetupStream( CStream* _pStream )
+void CBaseUnit::SetupStream( CBaseStream* _pStream )
 {
 	if( !_pStream )
 		return;
 
 	if( m_pDistributionsGrid )
-		_pStream->SetDistributionsGrid( m_pDistributionsGrid );
+		_pStream->SetGrid( m_pDistributionsGrid );
 	if( m_pMaterialsDB )
 		_pStream->SetMaterialsDatabase( m_pMaterialsDB );
-	if( m_pvCompoundsKeys )
-		_pStream->SetCompounds( *m_pvCompoundsKeys );
-	if( ( m_pvPhasesNames ) && ( m_pvPhasesSOA ) )
-		_pStream->SetPhases( *m_pvPhasesNames, *m_pvPhasesSOA );
-	_pStream->SetMinimalFraction( m_dMinFraction );
-	_pStream->SetCachePath( m_sCachePath );
-	_pStream->SetCacheParams( m_bCacheEnabled, m_nCacheWindow );
+	if (m_pvCompoundsKeys)
+	{
+		_pStream->ClearCompounds();
+		for (const auto& c : *m_pvCompoundsKeys)
+			_pStream->AddCompound(c);
+	}
+	if ((m_pvPhasesNames) && (m_pvPhasesSOA))
+	{
+		_pStream->ClearPhases();
+		for (size_t i = 0; i < m_pvPhasesNames->size(); ++i)
+			_pStream->AddPhase(PhaseSOA2EPhase((*m_pvPhasesSOA)[i]))->SetName((*m_pvPhasesNames)[i]);
+	}
+	_pStream->SetMinimumFraction( m_dMinFraction );
+	_pStream->SetCacheSettings({ m_bCacheEnabled, m_nCacheWindow, m_sCachePath });
 }
 
 std::vector<std::string> CBaseUnit::GetHoldupsKeys() const
 {
 	std::vector<std::string> vRes;
 	for( unsigned i=0; i<m_vHoldupsInit.size(); ++i )
-		vRes.push_back( m_vHoldupsInit[i]->GetStreamKey() );
+		vRes.push_back( m_vHoldupsInit[i]->GetKey() );
 	return vRes;
 }
 
@@ -398,30 +407,30 @@ std::vector<std::string> CBaseUnit::GetMaterialStreamsKeys() const
 {
 	std::vector<std::string> vRes;
 	for( unsigned i=0; i<m_vStreams.size(); ++i )
-		vRes.push_back( m_vStreams[i]->GetStreamKey() );
+		vRes.push_back( m_vStreams[i]->GetKey() );
 	return vRes;
 }
 
-void CBaseUnit::CopyStreamToStream(const CMaterialStream* _pSrcStream, CMaterialStream* _pDstStream, double _dTime, bool _bDeleteDataAfter /*= true */)
+void CBaseUnit::CopyStreamToStream(const CStream* _pSrcStream, CStream* _pDstStream, double _dTime, bool _bDeleteDataAfter /*= true */)
 {
-	_pDstStream->CopyFromStream( _pSrcStream, _dTime, _bDeleteDataAfter );
+	_pDstStream->CopyFromStream(_dTime, _pSrcStream);
 }
 
-void CBaseUnit::CopyStreamToStream(const CMaterialStream* _pSrcStream, CMaterialStream* _pDstStream, double _dStartTime, double _dEndTime, bool _bDeleteDataAfter /*= true */)
+void CBaseUnit::CopyStreamToStream(const CStream* _pSrcStream, CStream* _pDstStream, double _dStartTime, double _dEndTime, bool _bDeleteDataAfter /*= true */)
 {
-	_pDstStream->CopyFromStream( _pSrcStream, _dStartTime, _dEndTime, _bDeleteDataAfter );
+	_pDstStream->CopyFromStream(_dStartTime, _dEndTime, _pSrcStream);
 }
 
-void CBaseUnit::CopyStreamToPort(const CMaterialStream* _pStream, unsigned _nPortIndex, double _dTime, bool _bDeleteDataAfter /*= true */)
+void CBaseUnit::CopyStreamToPort(const CStream* _pStream, unsigned _nPortIndex, double _dTime, bool _bDeleteDataAfter /*= true */)
 {
 	if( _nPortIndex >= m_vPorts.size() ) return;
 	if( m_vPorts[_nPortIndex].nType != OUTPUT_PORT ) return;
 
 	// copy data
-	m_vPorts[_nPortIndex].pStream->CopyFromStream( _pStream, _dTime,_bDeleteDataAfter );
+	m_vPorts[_nPortIndex].pStream->CopyFromStream(_dTime, _pStream);
 }
 
-void CBaseUnit::CopyStreamToPort( const CMaterialStream* _pStream, const std::string &_sPortName, double _dTime, bool _bDeleteDataAfter /*= true*/ )
+void CBaseUnit::CopyStreamToPort( const CStream* _pStream, const std::string &_sPortName, double _dTime, bool _bDeleteDataAfter /*= true*/ )
 {
 	for( unsigned i=0; i<m_vPorts.size(); ++i )
 		if( m_vPorts[i].sName == _sPortName )
@@ -431,16 +440,16 @@ void CBaseUnit::CopyStreamToPort( const CMaterialStream* _pStream, const std::st
 		}
 }
 
-void CBaseUnit::CopyStreamToPort(const CMaterialStream* _pStream, unsigned _nPortIndex, double _dStartTime, double _dEndTime, bool _bDeleteDataAfter /*= true */)
+void CBaseUnit::CopyStreamToPort(const CStream* _pStream, unsigned _nPortIndex, double _dStartTime, double _dEndTime, bool _bDeleteDataAfter /*= true */)
 {
 	if( _nPortIndex >= m_vPorts.size() ) return;
 	if( m_vPorts[_nPortIndex].nType != OUTPUT_PORT ) return;
 
 	// copy data
-	m_vPorts[_nPortIndex].pStream->CopyFromStream( _pStream, _dStartTime, _dEndTime,_bDeleteDataAfter );
+	m_vPorts[_nPortIndex].pStream->CopyFromStream(_dStartTime, _dEndTime, _pStream);
 }
 
-void CBaseUnit::CopyStreamToPort( const CMaterialStream* _pStream, const std::string &_sPortName, double _dStartTime, double _dEndTime, bool _bDeleteDataAfter /*= true*/ )
+void CBaseUnit::CopyStreamToPort( const CStream* _pStream, const std::string &_sPortName, double _dStartTime, double _dEndTime, bool _bDeleteDataAfter /*= true*/ )
 {
 	for( unsigned i=0; i<m_vPorts.size(); ++i )
 		if( m_vPorts[i].sName == _sPortName )
@@ -450,16 +459,16 @@ void CBaseUnit::CopyStreamToPort( const CMaterialStream* _pStream, const std::st
 		}
 }
 
-void CBaseUnit::CopyPortToStream(unsigned _nPortIndex, CMaterialStream* _pStream, double _dTime, bool _bDeleteDataAfter /*= true */)
+void CBaseUnit::CopyPortToStream(unsigned _nPortIndex, CStream* _pStream, double _dTime, bool _bDeleteDataAfter /*= true */)
 {
 	if( _nPortIndex >= m_vPorts.size() ) return;
 	if( m_vPorts[_nPortIndex].nType != INPUT_PORT ) return;
 
 	// copy data
-	_pStream->CopyFromStream( m_vPorts[_nPortIndex].pStream, _dTime,_bDeleteDataAfter );
+	_pStream->CopyFromStream(_dTime, m_vPorts[_nPortIndex].pStream);
 }
 
-void CBaseUnit::CopyPortToStream( const std::string &_sPortName, CMaterialStream* _pStream, double _dTime, bool _bDeleteDataAfter /*= true*/ )
+void CBaseUnit::CopyPortToStream( const std::string &_sPortName, CStream* _pStream, double _dTime, bool _bDeleteDataAfter /*= true*/ )
 {
 	for( unsigned i=0; i<m_vPorts.size(); ++i )
 		if( m_vPorts[i].sName == _sPortName )
@@ -469,16 +478,16 @@ void CBaseUnit::CopyPortToStream( const std::string &_sPortName, CMaterialStream
 		}
 }
 
-void CBaseUnit::CopyPortToStream(unsigned _nPortIndex, CMaterialStream* _pStream, double _dStartTime, double _dEndTime, bool _bDeleteDataAfter /*= true */)
+void CBaseUnit::CopyPortToStream(unsigned _nPortIndex, CStream* _pStream, double _dStartTime, double _dEndTime, bool _bDeleteDataAfter /*= true */)
 {
 	if( _nPortIndex >= m_vPorts.size() ) return;
 	if( m_vPorts[_nPortIndex].nType != INPUT_PORT ) return;
 
 	// copy data
-	_pStream->CopyFromStream( m_vPorts[_nPortIndex].pStream, _dStartTime, _dEndTime, _bDeleteDataAfter );
+	_pStream->CopyFromStream(_dStartTime, _dEndTime, m_vPorts[_nPortIndex].pStream);
 }
 
-void CBaseUnit::CopyPortToStream( const std::string &_sPortName, CMaterialStream* _pStream, double _dStartTime, double _dEndTime, bool _bDeleteDataAfter /*= true*/ )
+void CBaseUnit::CopyPortToStream( const std::string &_sPortName, CStream* _pStream, double _dStartTime, double _dEndTime, bool _bDeleteDataAfter /*= true*/ )
 {
 	for( unsigned i=0; i<m_vPorts.size(); ++i )
 		if( m_vPorts[i].sName == _sPortName )
@@ -511,9 +520,9 @@ std::vector<double> CBaseUnit::GetAllDefinedTimePoints(double _dStartTime, doubl
 		if( m_vPorts[i].nType == INPUT_PORT )
 		{
 			if( vResTimePoints.empty() ) // first input stream
-				vResTimePoints = GetPortStream(i)->GetTimePointsForInterval( _dStartTime, _dEndTime );
+				vResTimePoints = GetPortStream(i)->GetTimePoints( _dStartTime, _dEndTime );
 			else // union with the last time points
-				vResTimePoints = VectorsUnionSorted( vResTimePoints, GetPortStream(i)->GetTimePointsForInterval( _dStartTime, _dEndTime ) );
+				vResTimePoints = VectorsUnionSorted( vResTimePoints, GetPortStream(i)->GetTimePoints( _dStartTime, _dEndTime ) );
 		}
 	}
 	// get time points from parameters
@@ -545,9 +554,9 @@ std::vector<double> CBaseUnit::GetAllInputTimePoints(double _dStartTime, double 
 		if( m_vPorts[i].nType == INPUT_PORT )
 		{
 			if( vResTimePoints.empty() ) // first input stream
-				vResTimePoints = GetPortStream(i)->GetTimePointsForInterval( _dStartTime, _dEndTime );
+				vResTimePoints = GetPortStream(i)->GetTimePoints( _dStartTime, _dEndTime );
 			else // union with the last time points
-				vResTimePoints = VectorsUnionSorted( vResTimePoints, GetPortStream(i)->GetTimePointsForInterval( _dStartTime, _dEndTime ) );
+				vResTimePoints = VectorsUnionSorted( vResTimePoints, GetPortStream(i)->GetTimePoints( _dStartTime, _dEndTime ) );
 		}
 	}
 
@@ -568,16 +577,16 @@ std::vector<double> CBaseUnit::GetAllInputTimePoints(double _dStartTime, double 
 	return vResTimePoints;
 }
 
-std::vector<double> CBaseUnit::GetAllStreamsTimePoints(const std::vector<CMaterialStream*>& _vSrteams, double _dStartTime, double _dEndTime) const
+std::vector<double> CBaseUnit::GetAllStreamsTimePoints(const std::vector<CStream*>& _vSrteams, double _dStartTime, double _dEndTime) const
 {
 	std::vector<double> vResTimePoints;
 	// get time points from streams
 	for( unsigned i=0; i<_vSrteams.size(); ++i )
 	{
 		if( vResTimePoints.empty() ) // first input stream
-			vResTimePoints = _vSrteams[i]->GetTimePointsForInterval( _dStartTime, _dEndTime );
+			vResTimePoints = _vSrteams[i]->GetTimePoints( _dStartTime, _dEndTime );
 		else // union with the last time points
-			vResTimePoints = VectorsUnionSorted( vResTimePoints, _vSrteams[i]->GetTimePointsForInterval( _dStartTime, _dEndTime ) );
+			vResTimePoints = VectorsUnionSorted( vResTimePoints, _vSrteams[i]->GetTimePoints( _dStartTime, _dEndTime ) );
 	}
 	return vResTimePoints;
 }
@@ -960,14 +969,25 @@ void CBaseUnit::SetCompounds(const std::vector<std::string>* _pvCompoundsKeys)
 	m_pvCompoundsKeys = _pvCompoundsKeys;
 	for( unsigned i=0; i<m_vHoldupsInit.size(); ++i )
 	{
-		m_vHoldupsInit[i]->SetCompounds( *m_pvCompoundsKeys );
-		m_vHoldupsWork[i]->SetCompounds( *m_pvCompoundsKeys );
-		m_vStoreHoldupsWork[i]->SetCompounds( *m_pvCompoundsKeys );
+		m_vHoldupsInit[i]->ClearCompounds();
+		m_vHoldupsWork[i]->ClearCompounds();
+		m_vStoreHoldupsWork[i]->ClearCompounds();
+		for (const auto& c : *m_pvCompoundsKeys)
+		{
+			m_vHoldupsInit[i]->AddCompound(c);
+			m_vHoldupsWork[i]->AddCompound(c);
+			m_vStoreHoldupsWork[i]->AddCompound(c);
+		}
 	}
-	for( unsigned i=0; i<m_vStreams.size(); ++i )
+	for (unsigned i = 0; i < m_vStreams.size(); ++i)
 	{
-		m_vStreams[i]->SetCompounds( *m_pvCompoundsKeys );
-		m_vStoreStreams[i]->SetCompounds( *m_pvCompoundsKeys );
+		m_vStreams[i]->ClearCompounds();
+		m_vStoreStreams[i]->ClearCompounds();
+		for (const auto& c : *m_pvCompoundsKeys)
+		{
+			m_vStreams[i]->AddCompound(c);
+			m_vStoreStreams[i]->AddCompound(c);
+		}
 	}
 }
 
@@ -1177,14 +1197,25 @@ void CBaseUnit::SetPhases(const std::vector<std::string>* _pvPhasesNames, const 
 	m_pvPhasesSOA = _pvPhasesSOAs;
 	for( unsigned i=0; i<m_vHoldupsInit.size(); ++i )
 	{
-		m_vHoldupsInit[i]->SetPhases( *m_pvPhasesNames, *m_pvPhasesSOA );
-		m_vHoldupsWork[i]->SetPhases( *m_pvPhasesNames, *m_pvPhasesSOA );
-		m_vStoreHoldupsWork[i]->SetPhases( *m_pvPhasesNames, *m_pvPhasesSOA );
+		m_vHoldupsInit[i]->ClearPhases();
+		m_vHoldupsWork[i]->ClearPhases();
+		m_vStoreHoldupsWork[i]->ClearPhases();
+		for (size_t i = 0; i < m_pvPhasesNames->size(); ++i)
+		{
+			m_vHoldupsInit[i]->AddPhase(PhaseSOA2EPhase((*m_pvPhasesSOA)[i]))->SetName((*m_pvPhasesNames)[i]);
+			m_vHoldupsWork[i]->AddPhase(PhaseSOA2EPhase((*m_pvPhasesSOA)[i]))->SetName((*m_pvPhasesNames)[i]);
+			m_vStoreHoldupsWork[i]->AddPhase(PhaseSOA2EPhase((*m_pvPhasesSOA)[i]))->SetName((*m_pvPhasesNames)[i]);
+		}
 	}
 	for( unsigned i=0; i<m_vStreams.size(); ++i )
 	{
-		m_vStreams[i]->SetPhases( *m_pvPhasesNames, *m_pvPhasesSOA );
-		m_vStoreStreams[i]->SetPhases( *m_pvPhasesNames, *m_pvPhasesSOA );
+		m_vStreams[i]->ClearPhases();
+		m_vStoreStreams[i]->ClearPhases();
+		for (size_t i = 0; i < m_pvPhasesNames->size(); ++i)
+		{
+			m_vStreams[i]->AddPhase(PhaseSOA2EPhase((*m_pvPhasesSOA)[i]))->SetName((*m_pvPhasesNames)[i]);
+			m_vStoreStreams[i]->AddPhase(PhaseSOA2EPhase((*m_pvPhasesSOA)[i]))->SetName((*m_pvPhasesNames)[i]);
+		}
 	}
 }
 
@@ -1198,14 +1229,14 @@ void CBaseUnit::AddPhase( std::string _sName, unsigned _nAggrState )
 {
 	for( unsigned i=0; i<m_vHoldupsInit.size(); ++i )
 	{
-		m_vHoldupsInit[i]->AddPhase( _sName, _nAggrState );
-		m_vHoldupsWork[i]->AddPhase( _sName, _nAggrState );
-		m_vStoreHoldupsWork[i]->AddPhase( _sName, _nAggrState );
+		m_vHoldupsInit[i]->AddPhase(PhaseSOA2EPhase(_nAggrState))->SetName(_sName);
+		m_vHoldupsWork[i]->AddPhase(PhaseSOA2EPhase(_nAggrState))->SetName(_sName);
+		m_vStoreHoldupsWork[i]->AddPhase(PhaseSOA2EPhase(_nAggrState))->SetName(_sName);
 	}
 	for( unsigned i=0; i<m_vStreams.size(); ++i )
 	{
-		m_vStreams[i]->AddPhase( _sName, _nAggrState );
-		m_vStoreStreams[i]->AddPhase( _sName, _nAggrState );
+		m_vStreams[i]->AddPhase(PhaseSOA2EPhase(_nAggrState))->SetName(_sName);
+		m_vStoreStreams[i]->AddPhase(PhaseSOA2EPhase(_nAggrState))->SetName(_sName);
 	}
 }
 
@@ -1213,30 +1244,21 @@ void CBaseUnit::RemovePhase( unsigned _nIndex )
 {
 	for( unsigned i=0; i<m_vHoldupsInit.size(); ++i )
 	{
-		m_vHoldupsInit[i]->RemovePhase( _nIndex );
-		m_vHoldupsWork[i]->RemovePhase( _nIndex );
-		m_vStoreHoldupsWork[i]->RemovePhase( _nIndex );
+		m_vHoldupsInit[i]->RemovePhase(PhaseSOA2EPhase((*m_pvPhasesSOA)[_nIndex]));
+		m_vHoldupsWork[i]->RemovePhase(PhaseSOA2EPhase((*m_pvPhasesSOA)[_nIndex]));
+		m_vStoreHoldupsWork[i]->RemovePhase(PhaseSOA2EPhase((*m_pvPhasesSOA)[_nIndex]));
 	}
 	for( unsigned i=0; i<m_vStreams.size(); ++i )
 	{
-		m_vStreams[i]->RemovePhase( _nIndex );
-		m_vStoreStreams[i]->RemovePhase( _nIndex );
+		m_vStreams[i]->RemovePhase(PhaseSOA2EPhase((*m_pvPhasesSOA)[_nIndex]));
+		m_vStoreStreams[i]->RemovePhase(PhaseSOA2EPhase((*m_pvPhasesSOA)[_nIndex]));
 	}
 }
 
 void CBaseUnit::ChangePhase( unsigned _nIndex, std::string _sName, unsigned _nAggrState )
 {
-	for( unsigned i=0; i<m_vHoldupsInit.size(); ++i )
-	{
-		m_vHoldupsInit[i]->ChangePhase( _nIndex, _sName, _nAggrState );
-		m_vHoldupsWork[i]->ChangePhase( _nIndex, _sName, _nAggrState );
-		m_vStoreHoldupsWork[i]->ChangePhase( _nIndex, _sName, _nAggrState );
-	}
-	for( unsigned i=0; i<m_vStreams.size(); ++i )
-	{
-		m_vStreams[i]->ChangePhase( _nIndex, _sName, _nAggrState );
-		m_vStoreStreams[i]->ChangePhase( _nIndex, _sName, _nAggrState );
-	}
+	RemovePhase(_nIndex);
+	AddPhase(_sName, _nAggrState);
 }
 
 bool CBaseUnit::IsPhaseDefined( EPhaseTypes _nPhaseType ) const
@@ -1298,14 +1320,19 @@ void CBaseUnit::SetDistributionsGrid(const CDistributionsGrid* _pGrid)
 	m_pDistributionsGrid = _pGrid;
 	for( unsigned i=0; i<m_vHoldupsInit.size(); ++i )
 	{
-		m_vHoldupsInit[i]->SetDistributionsGrid( m_pDistributionsGrid );
-		m_vHoldupsWork[i]->SetDistributionsGrid( m_pDistributionsGrid );
-		m_vStoreHoldupsWork[i]->SetDistributionsGrid( m_pDistributionsGrid );
+		m_vHoldupsInit[i]->SetGrid( m_pDistributionsGrid );
+		m_vHoldupsWork[i]->SetGrid( m_pDistributionsGrid );
+		m_vStoreHoldupsWork[i]->SetGrid( m_pDistributionsGrid );
+		m_vHoldupsInit[i]->UpdateMDGrid();
+		m_vHoldupsWork[i]->UpdateMDGrid();
+		m_vStoreHoldupsWork[i]->UpdateMDGrid();
 	}
 	for( unsigned i=0; i<m_vStreams.size(); ++i )
 	{
-		m_vStreams[i]->SetDistributionsGrid( m_pDistributionsGrid );
-		m_vStoreStreams[i]->SetDistributionsGrid( m_pDistributionsGrid );
+		m_vStreams[i]->SetGrid( m_pDistributionsGrid );
+		m_vStoreStreams[i]->SetGrid( m_pDistributionsGrid );
+		m_vStreams[i]->UpdateMDGrid();
+		m_vStoreStreams[i]->UpdateMDGrid();
 	}
 }
 
@@ -1427,19 +1454,19 @@ void CBaseUnit::SetMinimalFraction( double _dFraction )
 {
 	m_dMinFraction = _dFraction;
 	for( unsigned i=0; i<m_vHoldupsInit.size(); ++i )
-		m_vHoldupsInit[i]->SetMinimalFraction( m_dMinFraction );
+		m_vHoldupsInit[i]->SetMinimumFraction( m_dMinFraction );
 
 	for( unsigned i=0; i<m_vHoldupsWork.size(); ++i )
-		m_vHoldupsWork[i]->SetMinimalFraction( m_dMinFraction );
+		m_vHoldupsWork[i]->SetMinimumFraction( m_dMinFraction );
 
 	for( unsigned i=0; i<m_vStoreHoldupsWork.size(); ++i )
-		m_vStoreHoldupsWork[i]->SetMinimalFraction( m_dMinFraction );
+		m_vStoreHoldupsWork[i]->SetMinimumFraction( m_dMinFraction );
 
 	for( unsigned i=0; i<m_vStreams.size(); ++i )
-		m_vStreams[i]->SetMinimalFraction( m_dMinFraction );
+		m_vStreams[i]->SetMinimumFraction( m_dMinFraction );
 
 	for( unsigned i=0; i<m_vStoreStreams.size(); ++i )
-		m_vStoreStreams[i]->SetMinimalFraction( m_dMinFraction );
+		m_vStoreStreams[i]->SetMinimumFraction( m_dMinFraction );
 }
 
 void CBaseUnit::SaveToFile(CH5Handler& _h5Saver, const std::string& _sPath)
@@ -1475,7 +1502,7 @@ void CBaseUnit::SaveToFile(CH5Handler& _h5Saver, const std::string& _sPath)
 	{
 		sFullPath = _h5Saver.CreateGroup(sGroupPath, StrConst::BUnit_H5GroupHoldupName + std::to_string(i));
 		m_vHoldupsInit[i]->SaveToFile(_h5Saver, sFullPath);
-		vHoldupsNames.push_back(m_vHoldupsInit[i]->GetStreamName());
+		vHoldupsNames.push_back(m_vHoldupsInit[i]->GetName());
 	}
 	_h5Saver.WriteData(sGroupPath, StrConst::BUnit_H5HoldupsNames, vHoldupsNames);
 
@@ -1487,7 +1514,7 @@ void CBaseUnit::SaveToFile(CH5Handler& _h5Saver, const std::string& _sPath)
 	{
 		sFullPath = _h5Saver.CreateGroup(sGroupPath, StrConst::BUnit_H5GroupHoldupWorkName + std::to_string(i));
 		m_vHoldupsWork[i]->SaveToFile(_h5Saver, sFullPath);
-		vWorkHoldupsNames.push_back(m_vHoldupsWork[i]->GetStreamName());
+		vWorkHoldupsNames.push_back(m_vHoldupsWork[i]->GetName());
 	}
 	_h5Saver.WriteData(sGroupPath, StrConst::BUnit_H5WorkHoldupsNames, vWorkHoldupsNames);
 
@@ -1499,7 +1526,7 @@ void CBaseUnit::SaveToFile(CH5Handler& _h5Saver, const std::string& _sPath)
 	{
 		sFullPath = _h5Saver.CreateGroup(sGroupPath, StrConst::BUnit_H5GroupStreamWorkName + std::to_string(i));
 		m_vStreams[i]->SaveToFile(_h5Saver, sFullPath);
-		vStreamsNames.push_back(m_vStreams[i]->GetStreamName());
+		vStreamsNames.push_back(m_vStreams[i]->GetName());
 	}
 	_h5Saver.WriteData(sGroupPath, StrConst::BUnit_H5WorkStreamsNames, vStreamsNames);
 
@@ -1594,9 +1621,11 @@ void CBaseUnit::LoadFromFile(CH5Handler& _h5Loader, const std::string& _sPath)
 		for (size_t i = 0; i < m_vHoldupsInit.size(); ++i)	// load by names
 		{
 			for (size_t j = 0; j < vHoldupsNames.size(); ++j)
-				if (m_vHoldupsInit[i]->GetStreamName() == vHoldupsNames[j])
+				if (m_vHoldupsInit[i]->GetName() == vHoldupsNames[j])
 				{
 					std::string sHoldupPath = _sPath + "/" + StrConst::BUnit_H5GroupHoldups + "/" + StrConst::BUnit_H5GroupHoldupName + std::to_string(j);
+					m_vHoldupsInit[i]->SetMaterialsDatabase(m_pMaterialsDB);
+					m_vHoldupsInit[i]->SetGrid(m_pDistributionsGrid);
 					m_vHoldupsInit[i]->LoadFromFile(_h5Loader, sHoldupPath);
 					vFrUsed[j] = true;
 					vToUsed[i] = true;
@@ -1608,9 +1637,11 @@ void CBaseUnit::LoadFromFile(CH5Handler& _h5Loader, const std::string& _sPath)
 			if (!vToUsed[i] && (i < vFrUsed.size()) && !vFrUsed[i])
 			{
 				std::string sHoldupPath = _sPath + "/" + StrConst::BUnit_H5GroupHoldups + "/" + StrConst::BUnit_H5GroupHoldupName + std::to_string(i);
-				std::string sName = m_vHoldupsInit[i]->GetStreamName();
+				std::string sName = m_vHoldupsInit[i]->GetName();
+				m_vHoldupsInit[i]->SetMaterialsDatabase(m_pMaterialsDB);
+				m_vHoldupsInit[i]->SetGrid(m_pDistributionsGrid);
 				m_vHoldupsInit[i]->LoadFromFile(_h5Loader, sHoldupPath);
-				m_vHoldupsInit[i]->SetStreamName(sName);
+				m_vHoldupsInit[i]->SetName(sName);
 			}
 		}
 	}
@@ -1624,9 +1655,11 @@ void CBaseUnit::LoadFromFile(CH5Handler& _h5Loader, const std::string& _sPath)
 		for (size_t i = 0; i < m_vHoldupsWork.size(); ++i)	// load by names
 		{
 			for (size_t j = 0; j < vWorkHoldupsNames.size(); ++j)
-				if (m_vHoldupsWork[i]->GetStreamName() == vWorkHoldupsNames[j])
+				if (m_vHoldupsWork[i]->GetName() == vWorkHoldupsNames[j])
 				{
 					std::string sWorkHoldupPath = _sPath + "/" + StrConst::BUnit_H5GroupHoldupsWork + "/" + StrConst::BUnit_H5GroupHoldupWorkName + std::to_string(j);
+					m_vHoldupsWork[i]->SetMaterialsDatabase(m_pMaterialsDB);
+					m_vHoldupsWork[i]->SetGrid(m_pDistributionsGrid);
 					m_vHoldupsWork[i]->LoadFromFile(_h5Loader, sWorkHoldupPath);
 					vFrUsed[j] = true;
 					vToUsed[i] = true;
@@ -1638,12 +1671,18 @@ void CBaseUnit::LoadFromFile(CH5Handler& _h5Loader, const std::string& _sPath)
 			if (!vToUsed[i] && (i < vFrUsed.size()) && !vFrUsed[i])
 			{
 				std::string sWorkHoldupPath = _sPath + "/" + StrConst::BUnit_H5GroupHoldupsWork + "/" + StrConst::BUnit_H5GroupHoldupWorkName + std::to_string(i);
-				std::string sName = m_vHoldupsWork[i]->GetStreamName();
+				std::string sName = m_vHoldupsWork[i]->GetName();
+				m_vHoldupsWork[i]->SetMaterialsDatabase(m_pMaterialsDB);
+				m_vHoldupsWork[i]->SetGrid(m_pDistributionsGrid);
 				m_vHoldupsWork[i]->LoadFromFile(_h5Loader, sWorkHoldupPath);
-				m_vHoldupsWork[i]->SetStreamName(sName);
+				m_vHoldupsWork[i]->SetName(sName);
 			}
 		}
 	}
+
+	// properly setup store streams
+	for (size_t i = 0; i < m_vStoreHoldupsWork.size(); ++i)
+		m_vStoreHoldupsWork[i]->SetupStructure(*m_vHoldupsWork[i]);
 
 	/// load working material streams
 	{
@@ -1654,9 +1693,11 @@ void CBaseUnit::LoadFromFile(CH5Handler& _h5Loader, const std::string& _sPath)
 		for (size_t i = 0; i < m_vStreams.size(); ++i)	// load by names
 		{
 			for (size_t j = 0; j < vWorkStreamsNames.size(); ++j)
-				if (m_vStreams[i]->GetStreamName() == vWorkStreamsNames[j])
+				if (m_vStreams[i]->GetName() == vWorkStreamsNames[j])
 				{
 					std::string sWorkStreamPath = _sPath + "/" + StrConst::BUnit_H5GroupStreamsWork + "/" + StrConst::BUnit_H5GroupStreamWorkName + std::to_string(j);
+					m_vStreams[i]->SetMaterialsDatabase(m_pMaterialsDB);
+					m_vStreams[i]->SetGrid(m_pDistributionsGrid);
 					m_vStreams[i]->LoadFromFile(_h5Loader, sWorkStreamPath);
 					vFrUsed[j] = true;
 					vToUsed[i] = true;
@@ -1668,9 +1709,11 @@ void CBaseUnit::LoadFromFile(CH5Handler& _h5Loader, const std::string& _sPath)
 			if (!vToUsed[i] && (i < vFrUsed.size()) && !vFrUsed[i])
 			{
 				std::string sWorkStreamPath = _sPath + "/" + StrConst::BUnit_H5GroupStreamsWork + "/" + StrConst::BUnit_H5GroupStreamWorkName + std::to_string(i);
-				std::string sName = m_vStreams[i]->GetStreamName();
+				std::string sName = m_vStreams[i]->GetName();
+				m_vStreams[i]->SetMaterialsDatabase(m_pMaterialsDB);
+				m_vStreams[i]->SetGrid(m_pDistributionsGrid);
 				m_vStreams[i]->LoadFromFile(_h5Loader, sWorkStreamPath);
-				m_vStreams[i]->SetStreamName(sName);
+				m_vStreams[i]->SetName(sName);
 			}
 		}
 	}
@@ -1755,6 +1798,8 @@ void CBaseUnit::LoadFromFileOldVer( CH5Handler& _h5Loader, const std::string& _s
 	for( unsigned i=0; i<m_vHoldupsInit.size(); i++ )
 	{
 		std::string sHoldupPath = _sPath + "/" + StrConst::BUnit_H5GroupHoldups + "/" + StrConst::BUnit_H5GroupHoldupName + std::to_string(i);
+		m_vHoldupsInit[i]->SetMaterialsDatabase(m_pMaterialsDB);
+		m_vHoldupsInit[i]->SetGrid(m_pDistributionsGrid);
 		m_vHoldupsInit[i]->LoadFromFile( _h5Loader, sHoldupPath );
 	}
 
@@ -1765,6 +1810,8 @@ void CBaseUnit::LoadFromFileOldVer( CH5Handler& _h5Loader, const std::string& _s
 		for( int i=0; i<nWorkHoldupsNum; i++ )
 		{
 			std::string sHoldupWorkPath = _sPath + "/" + StrConst::BUnit_H5GroupHoldupsWork + "/" + StrConst::BUnit_H5GroupHoldupWorkName + std::to_string(i);
+			m_vHoldupsWork[i]->SetMaterialsDatabase(m_pMaterialsDB);
+			m_vHoldupsWork[i]->SetGrid(m_pDistributionsGrid);
 			m_vHoldupsWork[i]->LoadFromFile( _h5Loader, sHoldupWorkPath );
 		}
 	}
@@ -1778,6 +1825,8 @@ void CBaseUnit::LoadFromFileOldVer( CH5Handler& _h5Loader, const std::string& _s
 		{
 			AddMaterialStream( "TempName", "TempKey" );
 			std::string sStreamWorkPath = _sPath + "/" + StrConst::BUnit_H5GroupStreamsWork + "/" + StrConst::BUnit_H5GroupStreamWorkName + std::to_string(i);
+			m_vStreams[i]->SetMaterialsDatabase(m_pMaterialsDB);
+			m_vStreams[i]->SetGrid(m_pDistributionsGrid);
 			m_vStreams[i]->LoadFromFile( _h5Loader, sStreamWorkPath );
 		}
 	}
@@ -1964,16 +2013,16 @@ void CBaseUnit::SaveStateUnit(double _dT1, double _dT2 /*= -1*/)
 	if(_dT2 != -1)
 	{
 		for (size_t i = 0; i < m_vStreams.size(); ++i)
-			m_vStoreStreams[i]->CopyFromStream(m_vStreams[i], _dT1, _dT2);
+			m_vStoreStreams[i]->CopyFromStream(_dT1, _dT2, m_vStreams[i]);
 		for (size_t i = 0; i < m_vStoreHoldupsWork.size(); ++i)
-			m_vStoreHoldupsWork[i]->CopyFromHoldup(m_vHoldupsWork[i], _dT1, _dT2);
+			m_vStoreHoldupsWork[i]->CopyFromHoldup(_dT1, _dT2, m_vHoldupsWork[i]);
 	}
 	else
 	{
 		for (size_t i = 0; i < m_vStreams.size(); ++i)
-			m_vStoreStreams[i]->CopyFromStream(m_vStreams[i], _dT1, m_vStreams[i]->GetLastTimePoint());
+			m_vStoreStreams[i]->CopyFromStream(_dT1, m_vStreams[i]->GetLastTimePoint(), m_vStreams[i]);
 		for (size_t i = 0; i < m_vStoreHoldupsWork.size(); ++i)
-			m_vStoreHoldupsWork[i]->CopyFromHoldup(m_vHoldupsWork[i], _dT1, m_vHoldupsWork[i]->GetLastTimePoint());
+			m_vStoreHoldupsWork[i]->CopyFromHoldup(_dT1, m_vHoldupsWork[i]->GetLastTimePoint(), m_vHoldupsWork[i]);
 	}
 	// save time points
 	m_dStoreT1 = _dT1;
@@ -1996,16 +2045,16 @@ void CBaseUnit::LoadStateUnit()
 	if (m_dStoreT2 != -1)
 	{
 		for (size_t i = 0; i < m_vStreams.size(); ++i)
-			m_vStreams[i]->CopyFromStream(m_vStoreStreams[i], m_dStoreT1, m_dStoreT2);
+			m_vStreams[i]->CopyFromStream(m_dStoreT1, m_dStoreT2, m_vStoreStreams[i]);
 		for (size_t i = 0; i < m_vHoldupsWork.size(); ++i)
-			m_vHoldupsWork[i]->CopyFromHoldup(m_vStoreHoldupsWork[i], m_dStoreT1, m_dStoreT2);
+			m_vHoldupsWork[i]->CopyFromHoldup(m_dStoreT1, m_dStoreT2, m_vStoreHoldupsWork[i]);
 	}
 	else
 	{
 		for (size_t i = 0; i < m_vStreams.size(); ++i)
-			m_vStreams[i]->CopyFromStream(m_vStoreStreams[i], m_dStoreT1, m_vStoreStreams[i]->GetLastTimePoint());
+			m_vStreams[i]->CopyFromStream(m_dStoreT1, m_vStoreStreams[i]->GetLastTimePoint(), m_vStoreStreams[i]);
 		for (size_t i = 0; i < m_vHoldupsWork.size(); ++i)
-			m_vHoldupsWork[i]->CopyFromHoldup(m_vStoreHoldupsWork[i], m_dStoreT1, m_vStoreHoldupsWork[i]->GetLastTimePoint());
+			m_vHoldupsWork[i]->CopyFromHoldup(m_dStoreT1, m_vStoreHoldupsWork[i]->GetLastTimePoint(), m_vStoreHoldupsWork[i]);
 	}
 	// load state of plots
 	LoadPlots();
@@ -2048,13 +2097,19 @@ void CBaseUnit::CalculateTM( EDistrTypes _nDistrType, std::vector<double> _vInDi
 		{
 			if( dInVal == dInInit )
 			{
-				dTrVal = dOutVal/dInVal;
+				if (dInVal != 0)
+					dTrVal = dOutVal/dInVal;
+				else
+					dTrVal = 0;
 				dInVal -= dOutVal;
 				dOutVal = 0;
 			}
 			else
 			{
-				dTrVal = dOutVal/dInInit;
+				if (dInInit != 0)
+					dTrVal = dOutVal / dInInit;
+				else
+					dTrVal = 0;
 				dInVal -= dOutVal;
 				dOutVal = 0;
 			}
@@ -2096,19 +2151,19 @@ void CBaseUnit::SetCachePath(const std::wstring& _sPath)
 	m_sCachePath = _sPath;
 
 	for( unsigned i=0; i<m_vHoldupsInit.size(); ++i )
-		m_vHoldupsInit[i]->SetCachePath( m_sCachePath );
+		m_vHoldupsInit[i]->SetCacheSettings({m_bCacheEnabled, m_nCacheWindow, m_sCachePath});
 
 	for( unsigned i=0; i<m_vHoldupsWork.size(); ++i )
-		m_vHoldupsWork[i]->SetCachePath( m_sCachePath );
+		m_vHoldupsWork[i]->SetCacheSettings({ m_bCacheEnabled, m_nCacheWindow, m_sCachePath });
 
 	for( unsigned i=0; i<m_vStoreHoldupsWork.size(); ++i )
-		m_vStoreHoldupsWork[i]->SetCachePath( m_sCachePath );
+		m_vStoreHoldupsWork[i]->SetCacheSettings({ m_bCacheEnabled, m_nCacheWindow, m_sCachePath });
 
 	for( unsigned i=0; i<m_vStreams.size(); ++i )
-		m_vStreams[i]->SetCachePath( m_sCachePath );
+		m_vStreams[i]->SetCacheSettings({ m_bCacheEnabled, m_nCacheWindow, m_sCachePath });
 
 	for( unsigned i=0; i<m_vStoreStreams.size(); ++i )
-		m_vStoreStreams[i]->SetCachePath( m_sCachePath );
+		m_vStoreStreams[i]->SetCacheSettings({ m_bCacheEnabled, m_nCacheWindow, m_sCachePath });
 }
 
 void CBaseUnit::SetCacheParams( bool _bEnabled, unsigned _nWindow )
@@ -2117,19 +2172,19 @@ void CBaseUnit::SetCacheParams( bool _bEnabled, unsigned _nWindow )
 	m_nCacheWindow = _nWindow;
 
 	for( unsigned i=0; i<m_vHoldupsInit.size(); ++i )
-		m_vHoldupsInit[i]->SetCacheParams( m_bCacheEnabled, m_nCacheWindow );
+		m_vHoldupsInit[i]->SetCacheSettings({ m_bCacheEnabled, m_nCacheWindow, m_sCachePath });
 
 	for( unsigned i=0; i<m_vHoldupsWork.size(); ++i )
-		m_vHoldupsWork[i]->SetCacheParams( m_bCacheEnabled, m_nCacheWindow );
+		m_vHoldupsWork[i]->SetCacheSettings({ m_bCacheEnabled, m_nCacheWindow, m_sCachePath });
 
 	for( unsigned i=0; i<m_vStoreHoldupsWork.size(); ++i )
-		m_vStoreHoldupsWork[i]->SetCacheParams( m_bCacheEnabled, m_nCacheWindow );
+		m_vStoreHoldupsWork[i]->SetCacheSettings({ m_bCacheEnabled, m_nCacheWindow, m_sCachePath });
 
 	for( unsigned i=0; i<m_vStreams.size(); ++i )
-		m_vStreams[i]->SetCacheParams( m_bCacheEnabled, m_nCacheWindow );
+		m_vStreams[i]->SetCacheSettings({ m_bCacheEnabled, m_nCacheWindow, m_sCachePath });
 
 	for( unsigned i=0; i<m_vStoreStreams.size(); ++i )
-		m_vStoreStreams[i]->SetCacheParams( m_bCacheEnabled, m_nCacheWindow );
+		m_vStoreStreams[i]->SetCacheSettings({ m_bCacheEnabled, m_nCacheWindow, m_sCachePath });
 }
 
 void CBaseUnit::ClearSimulationResults()
@@ -2401,7 +2456,7 @@ void CBaseUnit::SetSolversPointers(const std::vector<CExternalSolver*>& _vPointe
 	m_vExternalSolvers = _vPointers;
 }
 
-void CBaseUnit::HeatExchange(CMaterialStream* _pStream1, CMaterialStream* _pStream2, double _dTime, double _dEfficiency)
+void CBaseUnit::HeatExchange(CStream* _pStream1, CStream* _pStream2, double _dTime, double _dEfficiency)
 {
 	// No heat transfer if _dEfficiency bigger 1 or smaller/equal 0
 	if (_dEfficiency <= 0. || _dEfficiency > 1.)
@@ -2505,4 +2560,15 @@ double CBaseUnit::CalcTemperatureFromProperty(ECompoundTPProperties _nProperty, 
 double CBaseUnit::CalcPressureFromProperty(ECompoundTPProperties _nProperty, const std::vector<double>& _vCompoundFractions, double _dValue)
 {
 	return GetParamFromLookup(_nProperty, EDependencyTypes::DEPENDENCE_PRES, _vCompoundFractions, _dValue);
+}
+
+EPhase CBaseUnit::PhaseSOA2EPhase(unsigned _soa)
+{
+	switch (_soa)
+	{
+	case SOA_SOLID:		return EPhase::SOLID;
+	case SOA_LIQUID:	return EPhase::LIQUID;
+	case SOA_VAPOR:		return EPhase::VAPOR;
+	default:			return EPhase::UNDEFINED;
+	}
 }

@@ -54,8 +54,8 @@ namespace StringFunctions
 	/*////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// Strings generators. */
 
-	std::string GenerateRandomString(size_t _length = 20);	// Returns a random string with the specified length.
+	std::string GenerateRandomKey(size_t _length = 20);	// Returns a random string with the specified length.
 
 	// Returns a string with the specified length, which will be unique among the set of existing strings.
-	std::string GenerateUniqueString(const std::string& _init, const std::vector<std::string>& _existing, size_t _length = 20);
+	std::string GenerateUniqueKey(const std::string& _init, const std::vector<std::string>& _existing, size_t _length = 20);
 }

@@ -2,7 +2,7 @@
 
 #include "SimulatorTab.h"
 #include "DyssolStringConstants.h"
-#include "MaterialStream.h"
+#include "Stream.h"
 #include <QMessageBox>
 #include <QDateTime>
 
