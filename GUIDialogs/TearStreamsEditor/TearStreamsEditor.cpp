@@ -121,7 +121,7 @@ void CTearStreamsEditor::ClearAllStreams()
 
 		for (auto& part : m_pFlowsheet->m_vvInitTearStreams)
 			for (auto& str : part)
-				str.RemoveTimePointsAfter(0, true);
+				str.RemoveAllTimePoints();
 		NewStreamSelected();
 		QApplication::restoreOverrideCursor();
 

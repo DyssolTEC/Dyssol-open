@@ -16,7 +16,6 @@ class CTimeDependentValue
 	std::string m_name;
 	std::string m_units;
 
-
 public:
 	CTimeDependentValue() = default;							// Creates a new empty dependent value.
 	CTimeDependentValue(std::string _name, std::string _units);	// Creates a new empty dependent value with the specified name and units.
@@ -31,6 +30,7 @@ public:
 	void CopyTimePoint(double _timeDst, double _timeSrc);		// Adds a new temp point _timeDst if it doesn't already exist and fills it with the data of existing time point _timeSrc.
 	void RemoveTimePoint(double _time);							// Removes the specified time point if it does already exist.
 	void RemoveTimePoints(double _timeBeg, double _timeEnd);	// Removes all existing time points in the specified interval.
+	void RemoveAllTimePoints();									// Removes all existing time points.
 
 	// TODO: remove
 	size_t GetTimePointsNumber() const;		// Returns the number of defined time points.

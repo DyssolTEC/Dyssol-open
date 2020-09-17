@@ -389,7 +389,7 @@ void CBaseUnit::SetupStream( CBaseStream* _pStream )
 	{
 		_pStream->ClearPhases();
 		for (size_t i = 0; i < m_pvPhasesNames->size(); ++i)
-			_pStream->AddPhase(PhaseSOA2EPhase((*m_pvPhasesSOA)[i]))->SetName((*m_pvPhasesNames)[i]);
+			_pStream->AddPhase(PhaseSOA2EPhase((*m_pvPhasesSOA)[i]), (*m_pvPhasesNames)[i]);
 	}
 	_pStream->SetMinimumFraction( m_dMinFraction );
 	_pStream->SetCacheSettings({ m_bCacheEnabled, m_nCacheWindow, m_sCachePath });
@@ -611,7 +611,7 @@ CUnitParametersManager& CBaseUnit::GetUnitParametersManager()
 
 double CBaseUnit::GetConstParameterValue(const std::string& _name) const
 {
-	if (const CConstUnitParameter* param = m_unitParameters.GetConstParameter(_name))
+	if (const CConstRealUnitParameter* param = m_unitParameters.GetConstRealParameter(_name))
 		return param->GetValue();
 	throw std::logic_error(StrConst::BUnit_ErrGetConstParam(m_sUnitName, _name));
 }
@@ -632,7 +632,7 @@ std::string CBaseUnit::GetStringParameterValue(const std::string& _name) const
 
 bool CBaseUnit::GetCheckboxParameterValue(const std::string& _name) const
 {
-	if (const CCheckboxUnitParameter* param = m_unitParameters.GetCheckboxParameter(_name))
+	if (const CCheckBoxUnitParameter* param = m_unitParameters.GetCheckboxParameter(_name))
 		return param->IsChecked();
 	throw std::logic_error(StrConst::BUnit_ErrGetBoxParam(m_sUnitName, _name));
 }
@@ -646,9 +646,9 @@ size_t CBaseUnit::GetComboParameterValue(const std::string& _name) const
 
 size_t CBaseUnit::GetGroupParameterValue(const std::string& _name) const
 {
-	if (const CGroupUnitParameter* param = m_unitParameters.GetGroupParameter(_name))
+	if (const CComboUnitParameter* param = m_unitParameters.GetComboParameter(_name))
 		return param->GetValue();
-	throw std::logic_error(StrConst::BUnit_ErrGetGroupParam(m_sUnitName, _name));
+	throw std::logic_error(StrConst::BUnit_ErrGetComboParam(m_sUnitName, _name));
 }
 
 std::string CBaseUnit::GetCompoundParameterValue(const std::string& _name) const
@@ -658,7 +658,7 @@ std::string CBaseUnit::GetCompoundParameterValue(const std::string& _name) const
 	throw std::logic_error(StrConst::BUnit_ErrGetCompParam(m_sUnitName, _name));
 }
 
-CExternalSolver* CBaseUnit::GetSolverParameterValue(const std::string& _name) const
+CBaseSolver* CBaseUnit::GetSolverParameterValue(const std::string& _name) const
 {
 	if (const CSolverUnitParameter* param = m_unitParameters.GetSolverParameter(_name))
 	{
@@ -672,7 +672,7 @@ CExternalSolver* CBaseUnit::GetSolverParameterValue(const std::string& _name) co
 
 CAgglomerationSolver* CBaseUnit::GetSolverAgglomeration(const std::string& _name) const
 {
-	CExternalSolver* pSolver = GetSolverParameterValue(_name);
+	CBaseSolver* pSolver = GetSolverParameterValue(_name);
 	if (pSolver->GetType() != ESolverTypes::SOLVER_AGGLOMERATION_1)
 		throw std::logic_error(StrConst::BUnit_ErrGetSolver1(m_sUnitName, _name));
 	return dynamic_cast<CAgglomerationSolver*>(pSolver);
@@ -680,7 +680,7 @@ CAgglomerationSolver* CBaseUnit::GetSolverAgglomeration(const std::string& _name
 
 CPBMSolver* CBaseUnit::GetSolverPBM(const std::string& _name) const
 {
-	CExternalSolver* pSolver = GetSolverParameterValue(_name);
+	CBaseSolver* pSolver = GetSolverParameterValue(_name);
 	if (pSolver->GetType() != ESolverTypes::SOLVER_PBM_1)
 		throw std::logic_error(StrConst::BUnit_ErrGetSolver2(m_sUnitName, _name));
 	return dynamic_cast<CPBMSolver*>(pSolver);
@@ -689,7 +689,7 @@ CPBMSolver* CBaseUnit::GetSolverPBM(const std::string& _name) const
 void CBaseUnit::AddConstParameter(const std::string& _name, double _minValue, double _maxValue, double _initValue, const std::string& _units, const std::string& _description)
 {
 	if (m_unitParameters.IsNameExist(_name)) throw std::logic_error(StrConst::BUnit_ErrAddParam(m_sUnitName, _name));
-	m_unitParameters.AddConstParameter(_name, _units, _description, _minValue, _maxValue, _initValue);
+	m_unitParameters.AddConstRealParameter(_name, _units, _description, _minValue, _maxValue, _initValue);
 }
 
 void CBaseUnit::AddTDParameter(const std::string& _name, double _minValue, double _maxValue, double _initValue, const std::string& _units, const std::string& _description)
@@ -707,7 +707,7 @@ void CBaseUnit::AddStringParameter(const std::string& _name, const std::string& 
 void CBaseUnit::AddCheckBoxParameter(const std::string& _name, bool _initValue, const std::string& _description)
 {
 	if (m_unitParameters.IsNameExist(_name)) throw std::logic_error(StrConst::BUnit_ErrAddParam(m_sUnitName, _name));
-	m_unitParameters.AddCheckboxParameter(_name, _description, _initValue);
+	m_unitParameters.AddCheckBoxParameter(_name, _description, _initValue);
 }
 
 void CBaseUnit::AddComboParameter(const std::string& _name, size_t _initValue, const std::vector<size_t>& _values, const std::vector<std::string>& _valuesNames, const std::string& _description)
@@ -741,7 +741,7 @@ void CBaseUnit::AddGroupParameter(const std::string& _name, size_t _initValue, c
 	if (values.size() != _valuesNames.size())
 		throw std::logic_error(StrConst::BUnit_ErrAddComboParam(m_sUnitName, _name));
 
-	m_unitParameters.AddGroupParameter(_name, _description, _initValue, values, _valuesNames);
+	m_unitParameters.AddComboParameter(_name, _description, _initValue, values, _valuesNames);
 }
 
 void CBaseUnit::AddCompoundParameter(const std::string& _name, const std::string& _description)
@@ -768,7 +768,7 @@ void CBaseUnit::AddSolverPBM(const std::string& _name, const std::string &_descr
 
 void CBaseUnit::AddParametersToGroup(const std::string& _groupParamName, const std::string& _groupName, const std::vector<std::string>& _paramNames)
 {
-	const auto* groupParameter = m_unitParameters.GetGroupParameter(_groupParamName);
+	const auto* groupParameter = m_unitParameters.GetComboParameter(_groupParamName);
 	if (!groupParameter)						// check that group parameter exists
 		throw std::logic_error(StrConst::BUnit_ErrGroupParamBlock(m_sUnitName, _groupParamName, _groupName));
 	if (!groupParameter->HasName(_groupName))	// check that group exists
@@ -1202,9 +1202,9 @@ void CBaseUnit::SetPhases(const std::vector<std::string>* _pvPhasesNames, const 
 		m_vStoreHoldupsWork[i]->ClearPhases();
 		for (size_t i = 0; i < m_pvPhasesNames->size(); ++i)
 		{
-			m_vHoldupsInit[i]->AddPhase(PhaseSOA2EPhase((*m_pvPhasesSOA)[i]))->SetName((*m_pvPhasesNames)[i]);
-			m_vHoldupsWork[i]->AddPhase(PhaseSOA2EPhase((*m_pvPhasesSOA)[i]))->SetName((*m_pvPhasesNames)[i]);
-			m_vStoreHoldupsWork[i]->AddPhase(PhaseSOA2EPhase((*m_pvPhasesSOA)[i]))->SetName((*m_pvPhasesNames)[i]);
+			m_vHoldupsInit[i]->AddPhase(PhaseSOA2EPhase((*m_pvPhasesSOA)[i]), (*m_pvPhasesNames)[i]);
+			m_vHoldupsWork[i]->AddPhase(PhaseSOA2EPhase((*m_pvPhasesSOA)[i]), (*m_pvPhasesNames)[i]);
+			m_vStoreHoldupsWork[i]->AddPhase(PhaseSOA2EPhase((*m_pvPhasesSOA)[i]), (*m_pvPhasesNames)[i]);
 		}
 	}
 	for( unsigned i=0; i<m_vStreams.size(); ++i )
@@ -1213,8 +1213,8 @@ void CBaseUnit::SetPhases(const std::vector<std::string>* _pvPhasesNames, const 
 		m_vStoreStreams[i]->ClearPhases();
 		for (size_t i = 0; i < m_pvPhasesNames->size(); ++i)
 		{
-			m_vStreams[i]->AddPhase(PhaseSOA2EPhase((*m_pvPhasesSOA)[i]))->SetName((*m_pvPhasesNames)[i]);
-			m_vStoreStreams[i]->AddPhase(PhaseSOA2EPhase((*m_pvPhasesSOA)[i]))->SetName((*m_pvPhasesNames)[i]);
+			m_vStreams[i]->AddPhase(PhaseSOA2EPhase((*m_pvPhasesSOA)[i]), (*m_pvPhasesNames)[i]);
+			m_vStoreStreams[i]->AddPhase(PhaseSOA2EPhase((*m_pvPhasesSOA)[i]), (*m_pvPhasesNames)[i]);
 		}
 	}
 }
@@ -1229,14 +1229,14 @@ void CBaseUnit::AddPhase( std::string _sName, unsigned _nAggrState )
 {
 	for( unsigned i=0; i<m_vHoldupsInit.size(); ++i )
 	{
-		m_vHoldupsInit[i]->AddPhase(PhaseSOA2EPhase(_nAggrState))->SetName(_sName);
-		m_vHoldupsWork[i]->AddPhase(PhaseSOA2EPhase(_nAggrState))->SetName(_sName);
-		m_vStoreHoldupsWork[i]->AddPhase(PhaseSOA2EPhase(_nAggrState))->SetName(_sName);
+		m_vHoldupsInit[i]->AddPhase(PhaseSOA2EPhase(_nAggrState), _sName);
+		m_vHoldupsWork[i]->AddPhase(PhaseSOA2EPhase(_nAggrState), _sName);
+		m_vStoreHoldupsWork[i]->AddPhase(PhaseSOA2EPhase(_nAggrState), _sName);
 	}
 	for( unsigned i=0; i<m_vStreams.size(); ++i )
 	{
-		m_vStreams[i]->AddPhase(PhaseSOA2EPhase(_nAggrState))->SetName(_sName);
-		m_vStoreStreams[i]->AddPhase(PhaseSOA2EPhase(_nAggrState))->SetName(_sName);
+		m_vStreams[i]->AddPhase(PhaseSOA2EPhase(_nAggrState), _sName);
+		m_vStoreStreams[i]->AddPhase(PhaseSOA2EPhase(_nAggrState), _sName);
 	}
 }
 
@@ -1323,16 +1323,16 @@ void CBaseUnit::SetDistributionsGrid(const CDistributionsGrid* _pGrid)
 		m_vHoldupsInit[i]->SetGrid( m_pDistributionsGrid );
 		m_vHoldupsWork[i]->SetGrid( m_pDistributionsGrid );
 		m_vStoreHoldupsWork[i]->SetGrid( m_pDistributionsGrid );
-		m_vHoldupsInit[i]->UpdateMDGrid();
-		m_vHoldupsWork[i]->UpdateMDGrid();
-		m_vStoreHoldupsWork[i]->UpdateMDGrid();
+		m_vHoldupsInit[i]->UpdateDistributionsGrid();
+		m_vHoldupsWork[i]->UpdateDistributionsGrid();
+		m_vStoreHoldupsWork[i]->UpdateDistributionsGrid();
 	}
 	for( unsigned i=0; i<m_vStreams.size(); ++i )
 	{
 		m_vStreams[i]->SetGrid( m_pDistributionsGrid );
 		m_vStoreStreams[i]->SetGrid( m_pDistributionsGrid );
-		m_vStreams[i]->UpdateMDGrid();
-		m_vStoreStreams[i]->UpdateMDGrid();
+		m_vStreams[i]->UpdateDistributionsGrid();
+		m_vStoreStreams[i]->UpdateDistributionsGrid();
 	}
 }
 
@@ -2193,16 +2193,16 @@ void CBaseUnit::ClearSimulationResults()
 	RemoveTempMaterialStreams();
 
 	for( unsigned i=0; i<m_vHoldupsWork.size(); ++i )
-		m_vHoldupsWork[i]->RemoveTimePointsAfter( 0, true );
+		m_vHoldupsWork[i]->RemoveAllTimePoints();
 
 	for( unsigned i=0; i<m_vStoreHoldupsWork.size(); ++i )
-		m_vStoreHoldupsWork[i]->RemoveTimePointsAfter( 0, true );
+		m_vStoreHoldupsWork[i]->RemoveAllTimePoints();
 
 	for( unsigned i=0; i<m_vStreams.size(); ++i )
-		m_vStreams[i]->RemoveTimePointsAfter( 0, true );
+		m_vStreams[i]->RemoveAllTimePoints();
 
 	for( unsigned i=0; i<m_vStoreStreams.size(); ++i )
-		m_vStoreStreams[i]->RemoveTimePointsAfter( 0, true );
+		m_vStoreStreams[i]->RemoveAllTimePoints();
 
 	ClearStateVariables();
 	ClearPlots();
@@ -2451,7 +2451,7 @@ void CBaseUnit::FinalizeExternalSolvers() const
 	for (auto& s : m_vExternalSolvers) s->Finalize();
 }
 
-void CBaseUnit::SetSolversPointers(const std::vector<CExternalSolver*>& _vPointers)
+void CBaseUnit::SetSolversPointers(const std::vector<CBaseSolver*>& _vPointers)
 {
 	m_vExternalSolvers = _vPointers;
 }

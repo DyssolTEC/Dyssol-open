@@ -11,6 +11,7 @@ class CPhase
 {
 	static const uint16_t m_saveVersion{ 0 }; // Version of the saving procedure.
 
+	// TODO: remove it from here, leave only in flowsheet
 	std::string m_name { "Phase" };			// Name.
 	EPhase m_state{ EPhase::UNDEFINED };	// Aggregation state.
 	CTimeDependentValue m_fractions;		// Mass fraction of this phase at each time point.
@@ -20,7 +21,7 @@ class CPhase
 	const CDistributionsGrid& m_grid;		// Pointer to a distribution grid.
 
 public:
-	CPhase(EPhase _state, const CDistributionsGrid& _grid, std::vector<std::string> _compounds, const SCacheSettings& _cache);
+	CPhase(EPhase _state, std::string _name, const CDistributionsGrid& _grid, std::vector<std::string> _compounds, const SCacheSettings& _cache);
 
 	// Returns name of the stream.
 	std::string GetName() const;
@@ -37,6 +38,8 @@ public:
 	void CopyTimePoint(double _timeDst, double _timeSrc);
 	// Removes all existing time points in the specified interval.
 	void RemoveTimePoints(double _timeBeg, double _timeEnd);
+	// Removes all existing time points.
+	void RemoveAllTimePoints();
 
 	// Adds new compound distribution to the phase.
 	void AddCompound(const std::string& _compoundKey);
@@ -86,7 +89,7 @@ public:
 	void SetCacheSettings(const SCacheSettings& _cache);
 
 	// Updates grids of distributed parameters.
-	void UpdateMDGrid();
+	void UpdateDistributionsGrid();
 
 	// Saves data to file.
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;

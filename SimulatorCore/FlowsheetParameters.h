@@ -49,14 +49,14 @@ public:
 	void MinTimeWindow(double val);
 	proxy<double> maxTimeWindow;			// maximal allowed time window
 	void MaxTimeWindow(double val);
-	proxy<unsigned> maxItersNumber;			// maximal allowed number of iteration for one time window
-	void MaxItersNumber(unsigned val);
-	proxy<unsigned> itersUpperLimit;		// upper limit of iterations after witch time window will be decreased
-	void ItersUpperLimit(unsigned val);
-	proxy<unsigned> itersLowerLimit;		// lower limit of iterations after witch time window will be increased
-	void ItersLowerLimit(unsigned val);
-	proxy<unsigned> iters1stUpperLimit;		// upper limit of iterations for the first time window after witch the time window will be decreased
-	void Iters1stUpperLimit(unsigned val);
+	proxy<uint32_t> maxItersNumber;			// maximal allowed number of iteration for one time window
+	void MaxItersNumber(uint32_t val);
+	proxy<uint32_t> itersUpperLimit;		// upper limit of iterations after witch time window will be decreased
+	void ItersUpperLimit(uint32_t val);
+	proxy<uint32_t> itersLowerLimit;		// lower limit of iterations after witch time window will be increased
+	void ItersLowerLimit(uint32_t val);
+	proxy<uint32_t> iters1stUpperLimit;		// upper limit of iterations for the first time window after witch the time window will be decreased
+	void Iters1stUpperLimit(uint32_t val);
 	proxy<double> magnificationRatio;		// factor for increasing of time window size
 	void MagnificationRatio(double val);
 
@@ -93,10 +93,10 @@ public:
 	void CacheFlagHoldupsAfterReload(bool val);
 	proxy<bool> cacheFlagInternalAfterReload;
 	void CacheFlagInternalAfterReload(bool val);
-	proxy<unsigned> cacheWindow;
-	void CacheWindow(unsigned val);
-	proxy<unsigned> cacheWindowAfterReload;
-	void CacheWindowAfterReload(unsigned val);
+	proxy<uint32_t> cacheWindow;
+	void CacheWindow(uint32_t val);
+	proxy<uint32_t> cacheWindowAfterReload;
+	void CacheWindowAfterReload(uint32_t val);
 
 	// == File saving
 	proxy<bool> fileSingleFlag;		// true - single file, false - file is split on subfiles with MAX_FILE_SIZE size

@@ -145,7 +145,7 @@ void CSimulatorTab::ClearInitialRecycleStreams()
 
 	for (auto& partition : m_pFlowsheet->m_vvInitTearStreams)
 		for (auto& stream : partition)
-			stream.RemoveTimePointsAfter(0, true);
+			stream.RemoveAllTimePoints();
 
 	emit DataChanged();
 }
@@ -158,7 +158,7 @@ void CSimulatorTab::ClearAll()
 	m_pFlowsheet->ClearSimulationResults();
 	for (auto& partition : m_pFlowsheet->m_vvInitTearStreams)
 		for (auto& stream : partition)
-			stream.RemoveTimePointsAfter(0, true);
+			stream.RemoveAllTimePoints();
 	ClearLog();
 
 	emit DataChanged();

@@ -492,7 +492,7 @@ std::string CBaseModel::InitializeExternalSolvers()
 			return StrConst::Flow_ErrSolverKeyEmpty(s->GetName(), m_sModelName);
 		}
 
-		CExternalSolver* pSolver = m_pModelsManager->InstantiateSolver(s->GetKey());
+		CBaseSolver* pSolver = m_pModelsManager->InstantiateSolver(s->GetKey());
 		if (!pSolver)
 		{
 			ClearExternalSolvers();

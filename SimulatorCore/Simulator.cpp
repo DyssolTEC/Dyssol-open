@@ -116,9 +116,9 @@ void CSimulator::SimulateUnitsWithRecycles(const CCalculationSequence::SPartitio
 	for (size_t i = 0; i < vRecycles.size(); ++i)
 	{
 		vRecyclesPrev[i] = new CStream(*vRecycles[i]);
-		vRecyclesPrev[i]->RemoveTimePointsAfter(0, true);
+		vRecyclesPrev[i]->RemoveAllTimePoints();
 		vRecyclesPrevPrev[i] = new CStream(*vRecycles[i]);
-		vRecyclesPrevPrev[i]->RemoveTimePointsAfter(0, true);
+		vRecyclesPrevPrev[i]->RemoveAllTimePoints();
 	}
 
 	// main calculation sequence
@@ -158,9 +158,9 @@ void CSimulator::SimulateUnitsWithRecycles(const CCalculationSequence::SPartitio
 			if (m_dTWStart == 0 && m_iTWIterationCurr > m_pParams->iters1stUpperLimit && m_pParams->initializeTearStreamsAutoFlag && bTearStreamsFromInit)
 			{
 				m_log.WriteInfo(StrConst::Sim_InfoFalseInitTearStreams, true);					// warn the user
-				for (auto& stream : vRecycles)			stream->RemoveTimePointsAfter(0, true); // clear recycle streams
-				for (auto& stream : vRecyclesPrev)		stream->RemoveTimePointsAfter(0, true); // clear previous state of recycles
-				for (auto& stream : vRecyclesPrevPrev)	stream->RemoveTimePointsAfter(0, true); // clear pre-previous state of recycles
+				for (auto& stream : vRecycles)			stream->RemoveAllTimePoints();			// clear recycle streams
+				for (auto& stream : vRecyclesPrev)		stream->RemoveAllTimePoints();			// clear previous state of recycles
+				for (auto& stream : vRecyclesPrevPrev)	stream->RemoveAllTimePoints();			// clear pre-previous state of recycles
 				bTearStreamsFromInit = false;													// turn off the control flag to prevent a repeated reset
 				m_iTWIterationFull = 0;															// reset iteration number
 				m_iTWIterationCurr = 0;															// reset iteration number
@@ -337,7 +337,7 @@ void CSimulator::InitializeUnit(CBaseModel& _model, double _t)
 		RaiseError(_model.GetErrorDescription());
 
 	// check unit parameters
-	for (const CBaseUnitParameter* param : _model.GetUnitParametersManager()->AllParameters())
+	for (const CBaseUnitParameter* param : _model.GetUnitParametersManager()->GetParameters())
 		if (!param->IsInBounds())
 			m_log.WriteWarning(StrConst::Sim_WarningParamOutOfRange(_model.GetUnitName(), _model.GetModelName(), param->GetName()));
 }

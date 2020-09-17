@@ -61,3 +61,16 @@ struct SCacheSettings
 	size_t window{ DEFAULT_CACHE_WINDOW };
 	std::wstring path{ L"" };
 };
+
+struct SPhaseDescriptor
+{
+	EPhase state;		// Phase state.
+	std::string name;	// Phase name.
+};
+
+struct SOverallDescriptor
+{
+	EOverall type;
+	std::string name;
+	std::string units;
+};

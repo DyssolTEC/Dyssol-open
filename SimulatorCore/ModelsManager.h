@@ -64,7 +64,7 @@ class CModelsManager
 	std::vector<SSolverDescriptor> m_availableSolvers; // List of available solvers.
 
 	std::map<CBaseUnit*, DYSSOL_LIBRARY_INSTANCE> m_loadedUnits;		 // List of loaded units with their libraries. Used for proper resource management.
-	std::map<CExternalSolver*, DYSSOL_LIBRARY_INSTANCE> m_loadedSolvers; // List of loaded solvers with their libraries. Used for proper resource management.
+	std::map<CBaseSolver*, DYSSOL_LIBRARY_INSTANCE> m_loadedSolvers; // List of loaded solvers with their libraries. Used for proper resource management.
 
 public:
 	// Returns number of defined paths to look for models.
@@ -98,12 +98,12 @@ public:
 	// Instantiates unit with provided unique key and returns a pointer to it. Returns nullptr if such unit has not been found.
 	CBaseUnit* InstantiateUnit(const std::string& _key);
 	// Instantiates solver with provided unique key and returns a pointer to it. Returns nullptr if such solver has not been found.
-	CExternalSolver* InstantiateSolver(const std::string& _key);
+	CBaseSolver* InstantiateSolver(const std::string& _key);
 
 	// Frees resources for the specified unit and closes a corresponding library.
 	void FreeUnit(CBaseUnit* _unit);
 	// Frees resources for the specified solver and closes a corresponding library.
-	void FreeSolver(CExternalSolver* _solver);
+	void FreeSolver(CBaseSolver* _solver);
 
 private:
 	// Returns a vector of unique keys of all defined dirs.

@@ -73,10 +73,10 @@ void CFlowsheetParameters::SaveToFile(CH5Handler& _h5File, const std::string& _s
 	_h5File.WriteData(_sPath, StrConst::FlPar_H51stUpperLimit, iters1stUpperLimit);
 
 	// save convergence and extrapolation parameters
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5ConvMethod, static_cast<unsigned>(convergenceMethod));
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5ConvMethod, static_cast<uint32_t>(convergenceMethod));
 	_h5File.WriteData(_sPath, StrConst::FlPar_H5WegsteinParam, wegsteinAccelParam);
 	_h5File.WriteData(_sPath, StrConst::FlPar_H5RelaxParam, relaxationParam);
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5ExtrapMethod, static_cast<unsigned>(static_cast<EExtrapMethod>(extrapolationMethod)));
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5ExtrapMethod, static_cast<uint32_t>(static_cast<EExtrapMethod>(extrapolationMethod)));
 
 	// save compression
 	_h5File.WriteData(_sPath, StrConst::FlPar_H5SaveTimeStep, saveTimeStep);
@@ -121,7 +121,7 @@ void CFlowsheetParameters::LoadFromFile(CH5Handler& _h5File, const std::string& 
 	_h5File.ReadData(_sPath, StrConst::FlPar_H51stUpperLimit, iters1stUpperLimit.data);
 
 	// load convergence and extrapolation parameters
-	unsigned nTemp;
+	uint32_t nTemp;
 	_h5File.ReadData(_sPath, StrConst::FlPar_H5ConvMethod, nTemp);
 	convergenceMethod = static_cast<EConvMethod>(nTemp);
 	_h5File.ReadData(_sPath, StrConst::FlPar_H5WegsteinParam, wegsteinAccelParam.data);
@@ -197,23 +197,23 @@ void CFlowsheetParameters::MaxTimeWindow(double val)
 		maxTimeWindow = val;
 }
 
-void CFlowsheetParameters::MaxItersNumber(unsigned val)
+void CFlowsheetParameters::MaxItersNumber(uint32_t val)
 {
 	if (val > 0)
 		maxItersNumber = val;
 }
 
-void CFlowsheetParameters::ItersUpperLimit(unsigned val)
+void CFlowsheetParameters::ItersUpperLimit(uint32_t val)
 {
 	itersUpperLimit = val;
 }
 
-void CFlowsheetParameters::ItersLowerLimit(unsigned val)
+void CFlowsheetParameters::ItersLowerLimit(uint32_t val)
 {
 	itersLowerLimit = val;
 }
 
-void CFlowsheetParameters::Iters1stUpperLimit(unsigned val)
+void CFlowsheetParameters::Iters1stUpperLimit(uint32_t val)
 {
 	iters1stUpperLimit = val;
 }
@@ -293,13 +293,13 @@ void CFlowsheetParameters::CacheFlagInternalAfterReload(bool val)
 	cacheFlagInternalAfterReload = val;
 }
 
-void CFlowsheetParameters::CacheWindow(unsigned val)
+void CFlowsheetParameters::CacheWindow(uint32_t val)
 {
 	if (val > 0)
 		cacheWindow = val;
 }
 
-void CFlowsheetParameters::CacheWindowAfterReload(unsigned val)
+void CFlowsheetParameters::CacheWindowAfterReload(uint32_t val)
 {
 	if (val > 0)
 		cacheWindowAfterReload = val;

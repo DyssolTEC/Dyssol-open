@@ -109,9 +109,19 @@ void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatas
 	WriteValue(_sPath, _sDatasetName, 1, PredType::NATIVE_DOUBLE, &_dData);
 }
 
-void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, unsigned _nData) const
+void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, uint32_t _nData) const
 {
-	WriteValue(_sPath, _sDatasetName, 1, PredType::NATIVE_UINT, &_nData);
+	WriteValue(_sPath, _sDatasetName, 1, PredType::NATIVE_UINT32, &_nData);
+}
+
+void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, uint64_t _nData) const
+{
+	WriteValue(_sPath, _sDatasetName, 1, PredType::NATIVE_UINT64, &_nData);
+}
+
+void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, int64_t _nData) const
+{
+	WriteValue(_sPath, _sDatasetName, 1, PredType::NATIVE_INT64, &_nData);
 }
 
 void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, bool _bData) const
@@ -189,9 +199,19 @@ void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatase
 	(void)ReadValue(_sPath, _sDatasetName, PredType::NATIVE_DOUBLE, &_dData);
 }
 
-void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, unsigned& _nData) const
+void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, uint32_t& _nData) const
 {
-	(void)ReadValue(_sPath, _sDatasetName, PredType::NATIVE_UINT, &_nData);
+	(void)ReadValue(_sPath, _sDatasetName, PredType::NATIVE_UINT32, &_nData);
+}
+
+void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, uint64_t& _nData) const
+{
+	(void)ReadValue(_sPath, _sDatasetName, PredType::NATIVE_UINT64, &_nData);
+}
+
+void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, int64_t& _nData) const
+{
+	(void)ReadValue(_sPath, _sDatasetName, PredType::NATIVE_INT64, &_nData);
 }
 
 void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, bool& _bData) const

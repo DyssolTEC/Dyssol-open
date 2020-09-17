@@ -6,7 +6,7 @@
 #include "H5Handler.h"
 
 /// Types of grid units for size.
-enum class EGridUnit : unsigned
+enum class EGridUnit : uint32_t
 {
 	UNIT_M       = 0,
 	UNIT_MM      = 1,
@@ -23,7 +23,7 @@ struct SGridDimension
 	EGridEntry gridEntry;				// Grid entry type (GRID_NUMERIC | GRID_SYMBOLIC)
 	EGridFunction gridFun;				// Function, that was use to define grid (GRID_FUN_MANUAL | GRID_FUN_EQUIDISTANT | GRID_FUN_GEOMETRIC | GRID_FUN_LOGARITHMIC)
 	EGridUnit gridUnit;					// Unit which was selected by user for processing (UNIT_M | UNIT_MM | UNIT_UM | UNIT_M3 | UNIT_MM3 | UNIT_UM3 | UNIT_DEFAULT)
-	unsigned classes;					// Number of classes
+	uint32_t classes;					// Number of classes
 	std::vector<double> numGrid;		// Grid for GRID_NUMERIC
 	std::vector<std::string> strGrid;	// Grid for DISCRETE_SYMBOLIC
 	SGridDimension() : distrType(DISTR_COMPOUNDS), gridEntry(EGridEntry::GRID_NUMERIC), gridFun(EGridFunction::GRID_FUN_MANUAL), gridUnit(EGridUnit::UNIT_DEFAULT), classes(1) {}

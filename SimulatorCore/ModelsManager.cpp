@@ -127,7 +127,7 @@ CBaseUnit* CModelsManager::InstantiateUnit(const std::string& _key)
 	return nullptr;
 }
 
-CExternalSolver* CModelsManager::InstantiateSolver(const std::string& _key)
+CBaseSolver* CModelsManager::InstantiateSolver(const std::string& _key)
 {
 	for (const auto& s : m_availableSolvers)	// go through all available solvers
 		if (s.uniqueID == _key)				// find the required descriptor
@@ -143,7 +143,7 @@ CExternalSolver* CModelsManager::InstantiateSolver(const std::string& _key)
 				continue; // seek further
 			}
 			// instantiate solver
-			CExternalSolver* pSolver = createSolverFunc();
+			CBaseSolver* pSolver = createSolverFunc();
 			if (!pSolver)
 			{
 				CloseDyssolLibrary(hLibrary);
@@ -173,7 +173,7 @@ void CModelsManager::FreeUnit(CBaseUnit* _unit)
 	CloseDyssolLibrary(hLibrary);
 }
 
-void CModelsManager::FreeSolver(CExternalSolver* _solver)
+void CModelsManager::FreeSolver(CBaseSolver* _solver)
 {
 	if (!_solver) return;
 	// test if such solver exists
@@ -317,7 +317,7 @@ SUnitDescriptor CModelsManager::TryGetUnitDescriptor(const std::wstring& _pathTo
 SSolverDescriptor CModelsManager::TryGetSolverDescriptor(const std::wstring& _pathToSolver, DYSSOL_LIBRARY_INSTANCE _library)
 {
 	SSolverDescriptor solverDescriptor;
-	CExternalSolver* pSolver = nullptr;
+	CBaseSolver* pSolver = nullptr;
 	bool bFound = false;
 
 	// go through all solver types

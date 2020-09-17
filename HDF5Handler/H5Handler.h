@@ -34,7 +34,9 @@ public:
 
 	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::string& _sData) const;
 	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, double _dData) const;
-	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, unsigned _nData) const;
+	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, uint32_t _nData) const;
+	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, uint64_t _nData) const;
+	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, int64_t _nData) const;
 	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, bool _bData) const;
 	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<std::string>& _vData) const;
 	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<unsigned>& _vData) const;
@@ -43,7 +45,9 @@ public:
 
 	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::string& _sData) const;
 	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, double& _dData) const;
-	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, unsigned& _nData) const;
+	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, uint32_t& _nData) const;
+	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, uint64_t& _nData) const;
+	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, int64_t& _nData) const;
 	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, bool& _bData) const;
 	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<std::string>& _vData) const;
 	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<unsigned>& _vData) const;

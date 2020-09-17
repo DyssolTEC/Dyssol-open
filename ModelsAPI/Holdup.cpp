@@ -14,6 +14,13 @@ CHoldup::CHoldup(const std::string& _key) :
 	m_overall[EOverall::OVERALL_MASS]->SetUnits("kg");
 }
 
+CHoldup::CHoldup(const std::string& _key, const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid) :
+	CBaseStream{ _key, _materialsDB, _grid }
+{
+	m_overall[EOverall::OVERALL_MASS]->SetName("Mass");
+	m_overall[EOverall::OVERALL_MASS]->SetUnits("kg");
+}
+
 CHoldup::CHoldup(const CBaseStream& _other) :
 	CBaseStream{ _other }
 {

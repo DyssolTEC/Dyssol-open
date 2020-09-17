@@ -336,7 +336,7 @@ void CFlowsheetEditor::UnitParamValueChanged(int _row, int _col)
 	switch (param->GetType())
 	{
 	case EUnitParameter::CONSTANT:
-		dynamic_cast<CConstUnitParameter*>(param)->SetValue(ui.tableUnitParams->GetItem(_row, _col).toDouble());
+		dynamic_cast<CConstRealUnitParameter*>(param)->SetValue(ui.tableUnitParams->GetItem(_row, _col).toDouble());
 		break;
 	case EUnitParameter::TIME_DEPENDENT:
 		dynamic_cast<CTDUnitParameter*>(param)->SetValue(dynamic_cast<CTDUnitParameter*>(param)->GetTimes().front(), ui.tableUnitParams->GetItem(_row, _col).toDouble());
@@ -347,7 +347,7 @@ void CFlowsheetEditor::UnitParamValueChanged(int _row, int _col)
 	case EUnitParameter::CHECKBOX:
 	{
 		const QCheckBox* checkbox = ui.tableUnitParams->GetCheckBox(_row, _col);
-		dynamic_cast<CCheckboxUnitParameter*>(param)->SetChecked(checkbox->isChecked());
+		dynamic_cast<CCheckBoxUnitParameter*>(param)->SetChecked(checkbox->isChecked());
 		break;
 	}
 	case EUnitParameter::SOLVER:
@@ -368,7 +368,7 @@ void CFlowsheetEditor::UnitParamValueChanged(int _row, int _col)
 	{
 		const QComboBox* combo = ui.tableUnitParams->GetComboBox(_row, _col);
 		const size_t value = combo->itemData(combo->currentIndex()).toUInt();
-		dynamic_cast<CGroupUnitParameter*>(param)->SetValue(value);
+		dynamic_cast<CComboUnitParameter*>(param)->SetValue(value);
 		break;
 	}
 	case EUnitParameter::COMPOUND:
@@ -498,7 +498,7 @@ void CFlowsheetEditor::UpdateUnitParamTable() const
 		{
 		case EUnitParameter::CONSTANT:
 		{
-			const auto* p = dynamic_cast<const CConstUnitParameter*>(param);
+			const auto* p = dynamic_cast<const CConstRealUnitParameter*>(param);
 			ui.tableUnitParams->SetItemEditable(iRow, 2, p->GetValue());
 			if (!p->IsInBounds())
 				ui.tableUnitParams->SetItemBackgroundColor(iRow, 2, Qt::red);
@@ -532,7 +532,7 @@ void CFlowsheetEditor::UpdateUnitParamTable() const
 		}
 		case EUnitParameter::CHECKBOX:
 		{
-			const auto* p = dynamic_cast<const CCheckboxUnitParameter*>(param);
+			const auto* p = dynamic_cast<const CCheckBoxUnitParameter*>(param);
 			ui.tableUnitParams->SetCheckBox(iRow, 2, p->IsChecked());
 			ui.tableUnitParams->SetItemNotEditable(iRow, 1, QString{});
 			break;
@@ -630,10 +630,10 @@ void CFlowsheetEditor::UpdateUnitParamDescr() const
 	if (type == EUnitParameter::CONSTANT || type == EUnitParameter::TIME_DEPENDENT)
 	{
 		text += "\n" + QString(StrConst::FE_UnitParamMinVal) + QString::number(type == EUnitParameter::CONSTANT
-			? dynamic_cast<CConstUnitParameter*>(param)->GetMin()
+			? dynamic_cast<CConstRealUnitParameter*>(param)->GetMin()
 			: dynamic_cast<CTDUnitParameter*>(param)->GetMin());
 		text += "\n" + QString(StrConst::FE_UnitParamMaxVal) + QString::number(type == EUnitParameter::CONSTANT
-			? dynamic_cast<CConstUnitParameter*>(param)->GetMax()
+			? dynamic_cast<CConstRealUnitParameter*>(param)->GetMax()
 			: dynamic_cast<CTDUnitParameter*>(param)->GetMax());
 		extraLines = 2;
 	}

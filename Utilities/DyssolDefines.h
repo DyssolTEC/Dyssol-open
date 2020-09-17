@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 // ========== Initial values
 
 // Simulator
@@ -44,7 +46,7 @@ enum EPhaseTypes : unsigned
 };
 
 // ========== Convergence methods
-enum EConvMethod
+enum EConvMethod : uint32_t
 {
 	CM_DIRECT_SUBSTITUTION	= 0,
 	CM_WEGSTEIN				= 1,
@@ -52,7 +54,7 @@ enum EConvMethod
 };
 
 // ========== Extrapolation methods
-enum class EExtrapMethod : unsigned
+enum class EExtrapMethod : uint32_t
 {
 	EM_LINEAR	= 0,
 	EM_SPLINE	= 1,
@@ -62,7 +64,7 @@ enum class EExtrapMethod : unsigned
 //======== SOLID DISTRIBUTIONS DATABASE [0; 50] ===============
 #define DISTRIBUTIONS_NUMBER 15
 
-enum EDistrTypes : unsigned
+enum EDistrTypes : uint32_t
 {
 	DISTR_COMPOUNDS		  = 0,
 	DISTR_SIZE			  = 1,
@@ -100,7 +102,7 @@ inline int GetDistributionTypeIndex(EDistrTypes _nType)
 #define MTP_PRESSURE	2
 
 // ========== TYPES OF GRIDS ENTRIES
-enum class EGridEntry : unsigned
+enum class EGridEntry : uint32_t
 {
 	GRID_NUMERIC	= 0,
 	GRID_SYMBOLIC	= 2,
@@ -108,7 +110,7 @@ enum class EGridEntry : unsigned
 };
 
 // ========== TYPES OF GRID FUNCTIONAL DISTRIBUTIONS
-enum class EGridFunction : unsigned
+enum class EGridFunction : uint32_t
 {
 	GRID_FUN_MANUAL	         = 0,
 	GRID_FUN_EQUIDISTANT	 = 1,
@@ -202,7 +204,7 @@ enum class EPSDGridType : unsigned
 };
 
 // Identifiers of phase types.
-enum class EPhase : unsigned
+enum class EPhase : uint32_t
 {
 	UNDEFINED,
 	SOLID,

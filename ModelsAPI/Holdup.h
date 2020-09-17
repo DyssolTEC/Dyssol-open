@@ -11,6 +11,8 @@ class CHoldup : public CBaseStream
 public:
 	// Basic constructor.
 	CHoldup(const std::string& _key = "");
+	// Basic constructor.
+	CHoldup(const std::string& _key, const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid);
 	// Copy constructor.
 	CHoldup(const CBaseStream& _other);
 

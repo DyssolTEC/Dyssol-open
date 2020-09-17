@@ -195,9 +195,10 @@ namespace StringFunctions
 		return s;
 	}
 
+	// Generates a random key of the given length.
 	std::string GenerateRandomKey(size_t _length /*= 20*/)
 	{
-		static std::string symbols = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+		static const std::string symbols = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 		std::random_device device;
 		std::default_random_engine engine{ device() };
 		const std::uniform_int_distribution<size_t> distribution{ 0, symbols.length() - 1 };
@@ -206,14 +207,22 @@ namespace StringFunctions
 		return result;
 	}
 
-	std::string GenerateUniqueKey(const std::string& _init, const std::vector<std::string>& _existing, size_t _length /*= 20*/)
+	// Returns a key that does not yet exist in _existing.
+	std::string GenerateUniqueKey(const std::vector<std::string>& _existing, size_t _length /*= 20*/)
 	{
-		std::string res = _init;
 		while (true)
 		{
+			std::string res = GenerateRandomKey(_length);
 			if (std::find(_existing.begin(), _existing.end(), res) == _existing.end())
 				return res;
-			res = GenerateRandomKey(_length);
 		}
+	}
+
+	// Returns a key that does not yet exist in _existing.
+	std::string GenerateUniqueKey(const std::string& _init, const std::vector<std::string>& _existing, size_t _length /*= 20*/)
+	{
+		if (std::find(_existing.begin(), _existing.end(), _init) == _existing.end())
+			return _init;
+		return GenerateUniqueKey(_existing, _length);
 	}
 }

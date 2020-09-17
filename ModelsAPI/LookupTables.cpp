@@ -1,21 +1,25 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
-#include "LookupTables.h"
+#include "BaseUnit2.h"
 #include "ContainerFunctions.h"
-#include "Stream.h"
 
-CLookupTables::CLookupTables(const CBaseStream* _stream) :
-	m_stream{ _stream }
+////////////////////////////////////////////////////////////////////////////////
+// CUnitLookupTables
+//
+
+CUnitLookupTables::CUnitLookupTables(const CMaterialsDatabase* _materialsDB, const std::vector<std::string>* _compounds) :
+	m_materialsDB{ _materialsDB },
+	m_compounds{ _compounds }
 {
 }
 
-void CLookupTables::Clear() const
+void CUnitLookupTables::Clear() const
 {
 	m_tablesT.clear();
 	m_tablesP.clear();
 }
 
-CLookupTable* CLookupTables::GetLookupTable(ECompoundTPProperties _property, EDependencyTypes _dependency) const
+CLookupTable* CUnitLookupTables::GetLookupTable(ECompoundTPProperties _property, EDependencyTypes _dependency) const
 {
 	if (!IsDefined(_property, _dependency))
 		AddPropertyTable(_property, _dependency);
@@ -26,71 +30,91 @@ CLookupTable* CLookupTables::GetLookupTable(ECompoundTPProperties _property, EDe
 	return {};
 }
 
-double CLookupTables::CalcTemperature(ECompoundTPProperties _property, double _value, const std::vector<double>& _fractions) const
+double CUnitLookupTables::CalcTemperature(ECompoundTPProperties _property, double _value, const std::vector<double>& _fractions) const
 {
 	auto* table = GetLookupTable(_property, EDependencyTypes::DEPENDENCE_TEMP);
 	table->SetCompoundFractions(_fractions);
 	return table->GetParam(_value);
 }
 
-double CLookupTables::CalcPressure(ECompoundTPProperties _property, double _value, const std::vector<double>& _fractions) const
+double CUnitLookupTables::CalcPressure(ECompoundTPProperties _property, double _value, const std::vector<double>& _fractions) const
 {
 	auto* table = GetLookupTable(_property, EDependencyTypes::DEPENDENCE_PRES);
 	table->SetCompoundFractions(_fractions);
 	return table->GetParam(_value);
 }
 
-double CLookupTables::CalcFromTemperature(ECompoundTPProperties _property, double _T, const std::vector<double>& _fractions) const
+double CUnitLookupTables::CalcFromTemperature(ECompoundTPProperties _property, double _T, const std::vector<double>& _fractions) const
 {
 	auto* table = GetLookupTable(_property, EDependencyTypes::DEPENDENCE_TEMP);
 	table->SetCompoundFractions(_fractions);
 	return table->GetValue(_T);
 }
 
-double CLookupTables::CalcFromPressure(ECompoundTPProperties _property, double _P, const std::vector<double>& _fractions) const
+double CUnitLookupTables::CalcFromPressure(ECompoundTPProperties _property, double _P, const std::vector<double>& _fractions) const
 {
 	auto* table = GetLookupTable(_property, EDependencyTypes::DEPENDENCE_PRES);
 	table->SetCompoundFractions(_fractions);
 	return table->GetValue(_P);
 }
 
-double CLookupTables::CalcTemperature(double _time, ECompoundTPProperties _property) const
-{
-	auto* table = GetLookupTable(_property, EDependencyTypes::DEPENDENCE_TEMP);
-	table->SetCompoundFractions(m_stream->GetCompoundsFractions(_time));
-	return table->GetParam(m_stream->GetMixtureProperty(_time, _property));
-}
-
-double CLookupTables::CalcPressure(double _time, ECompoundTPProperties _property) const
-{
-	auto* table = GetLookupTable(_property, EDependencyTypes::DEPENDENCE_PRES);
-	table->SetCompoundFractions(m_stream->GetCompoundsFractions(_time));
-	return table->GetParam(m_stream->GetMixtureProperty(_time, _property));
-}
-
-double CLookupTables::CalcFromTemperature(double _time, ECompoundTPProperties _property) const
-{
-	auto* table = GetLookupTable(_property, EDependencyTypes::DEPENDENCE_TEMP);
-	table->SetCompoundFractions(m_stream->GetCompoundsFractions(_time));
-	return table->GetValue(m_stream->GetTemperature(_time));
-}
-
-double CLookupTables::CalcFromPressure(double _time, ECompoundTPProperties _property) const
-{
-	auto* table = GetLookupTable(_property, EDependencyTypes::DEPENDENCE_PRES);
-	table->SetCompoundFractions(m_stream->GetCompoundsFractions(_time));
-	return table->GetValue(m_stream->GetPressure(_time));
-}
-
-bool CLookupTables::IsDefined(ECompoundTPProperties _property, EDependencyTypes _dependency) const
+bool CUnitLookupTables::IsDefined(ECompoundTPProperties _property, EDependencyTypes _dependency) const
 {
 	if (_dependency == EDependencyTypes::DEPENDENCE_TEMP)	return MapContainsKey(m_tablesT, _property);
 	if (_dependency == EDependencyTypes::DEPENDENCE_PRES)	return MapContainsKey(m_tablesP, _property);
 	return false;
 }
 
-void CLookupTables::AddPropertyTable(ECompoundTPProperties _property, EDependencyTypes _dependency) const
+void CUnitLookupTables::AddPropertyTable(ECompoundTPProperties _property, EDependencyTypes _dependency) const
 {
-	if (_dependency == EDependencyTypes::DEPENDENCE_TEMP)		m_tablesT.insert_or_assign(_property, std::make_unique<CLookupTable>(m_stream->GetMaterialsDatabase(), m_stream->GetAllCompounds(), _property, _dependency));
-	else if (_dependency == EDependencyTypes::DEPENDENCE_PRES)	m_tablesP.insert_or_assign(_property, std::make_unique<CLookupTable>(m_stream->GetMaterialsDatabase(), m_stream->GetAllCompounds(), _property, _dependency));
+	if (_dependency == EDependencyTypes::DEPENDENCE_TEMP)		m_tablesT.insert_or_assign(_property, std::make_unique<CLookupTable>(m_materialsDB, *m_compounds, _property, _dependency));
+	else if (_dependency == EDependencyTypes::DEPENDENCE_PRES)	m_tablesP.insert_or_assign(_property, std::make_unique<CLookupTable>(m_materialsDB, *m_compounds, _property, _dependency));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// CStreamLookupTables
+//
+
+CStreamLookupTables::CStreamLookupTables(const CBaseStream& _stream, const CMaterialsDatabase* _materialsDB, const std::vector<std::string>* _compounds) :
+	CUnitLookupTables{ _materialsDB, _compounds },
+	m_stream{ _stream }
+{
+}
+
+void CStreamLookupTables::SetMaterialsDatabase(const CMaterialsDatabase* _materialsDB)
+{
+	m_materialsDB = _materialsDB;
+}
+
+void CStreamLookupTables::SetCompounds(const std::vector<std::string>* _compounds)
+{
+	m_compounds = _compounds;
+}
+
+double CStreamLookupTables::CalcTemperature(double _time, ECompoundTPProperties _property) const
+{
+	auto* table = GetLookupTable(_property, EDependencyTypes::DEPENDENCE_TEMP);
+	table->SetCompoundFractions(m_stream.GetCompoundsFractions(_time));
+	return table->GetParam(m_stream.GetMixtureProperty(_time, _property));
+}
+
+double CStreamLookupTables::CalcPressure(double _time, ECompoundTPProperties _property) const
+{
+	auto* table = GetLookupTable(_property, EDependencyTypes::DEPENDENCE_PRES);
+	table->SetCompoundFractions(m_stream.GetCompoundsFractions(_time));
+	return table->GetParam(m_stream.GetMixtureProperty(_time, _property));
+}
+
+double CStreamLookupTables::CalcFromTemperature(double _time, ECompoundTPProperties _property) const
+{
+	auto* table = GetLookupTable(_property, EDependencyTypes::DEPENDENCE_TEMP);
+	table->SetCompoundFractions(m_stream.GetCompoundsFractions(_time));
+	return table->GetValue(m_stream.GetTemperature(_time));
+}
+
+double CStreamLookupTables::CalcFromPressure(double _time, ECompoundTPProperties _property) const
+{
+	auto* table = GetLookupTable(_property, EDependencyTypes::DEPENDENCE_PRES);
+	table->SetCompoundFractions(m_stream.GetCompoundsFractions(_time));
+	return table->GetValue(m_stream.GetPressure(_time));
 }

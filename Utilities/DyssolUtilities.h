@@ -258,11 +258,13 @@ std::vector<double> inline CreateDistribution(EDistrFunction _distr, const std::
 	return std::vector<double>(_x.size(), 0);
 }
 
+// Calculates volume of the sphere from its diameter.
 inline double DiameterToVolume(double _d)
 {
-	return MATH_PI / 6 * std::pow(_d, 3.);
+	return MATH_PI / 6 * std::pow(_d, 3);
 }
 
+// Calculates volumes of the spheres from their diameters.
 inline std::vector<double> DiameterToVolume(const std::vector<double>& _d)
 {
 	std::vector<double> res(_d.size());
@@ -271,15 +273,58 @@ inline std::vector<double> DiameterToVolume(const std::vector<double>& _d)
 	return res;
 }
 
+// Calculates surface of the sphere from its diameter.
+inline double DiameterToSurface(double _d)
+{
+	return MATH_PI * std::pow(_d, 2);
+}
+
+// Calculates surfaces of the spheres from their diameters.
+inline std::vector<double> DiameterToSurface(const std::vector<double>& _d)
+{
+	std::vector<double> res(_d.size());
+	for (size_t i = 0; i < _d.size(); ++i)
+		res[i] = DiameterToSurface(_d[i]);
+	return res;
+}
+
+// Calculates diameter of the sphere from its volume.
 inline double VolumeToDiameter(double _v)
 {
 	return std::pow(6 * _v / MATH_PI, 1./3.);
 }
 
+// Calculates diameters of the spheres from their volumes.
 inline std::vector<double> VolumeToDiameter(const std::vector<double>& _v)
 {
 	std::vector<double> res(_v.size());
 	for (size_t i = 0; i < _v.size(); ++i)
 		res[i] = VolumeToDiameter(_v[i]);
+	return res;
+}
+
+// Adds start and end values to the ends of the sorted vector, if missing, to create a closed interval.
+inline void CloseInterval(std::vector<double>& _v, double _l, double _r)
+{
+	// no time points in the interval - return only limits
+	if (_v.empty())
+	{
+		_v = { _l, _r };
+		return;
+	}
+
+	// TODO: use global epsilon
+	// add limits if necessary
+	if (std::fabs(_v.front() - _l) > 16 * std::numeric_limits<double>::epsilon())
+		_v.insert(_v.begin(), _l);
+	if (std::fabs(_v.back() - _r) > 16 * std::numeric_limits<double>::epsilon())
+		_v.push_back(_r);
+}
+
+// Adds start and end values to the ends of the sorted vector, if missing, to create a closed interval.
+inline std::vector<double> CloseInterval(const std::vector<double>& _v, double _l, double _r)
+{
+	std::vector<double> res;
+	CloseInterval(res, _l, _r);
 	return res;
 }

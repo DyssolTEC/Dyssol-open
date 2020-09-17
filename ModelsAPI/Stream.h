@@ -14,6 +14,8 @@ class CStream : public CBaseStream
 public:
 	// Basic constructor.
 	CStream(const std::string& _key = "");
+	// Basic constructor.
+	CStream(const std::string& _key, const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid);
 	// Copy constructor.
 	CStream(const CBaseStream& _other);
 

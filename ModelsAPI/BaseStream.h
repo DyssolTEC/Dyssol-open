@@ -27,21 +27,25 @@ class CBaseStream
 	std::string m_key;				// Unique key of the stream.
 
 protected:
+	// TODO: make in global and rename
 	inline static const double m_epsilon{ 16 * std::numeric_limits<double>::epsilon() };
-
-	std::vector<double> m_timePoints;									// Time points on which the stream is defined.
-	std::map<EOverall, std::unique_ptr<CTimeDependentValue>> m_overall;	// Defined overall properties.
-	std::map<EPhase, std::unique_ptr<CPhase>> m_phases;					// Defined phases.
-	std::vector<std::string> m_compounds;								// Keys of chemical compounds defined in this stream.
-	CLookupTables m_lookupTables{ this };								// Lookup tables to calculate TP-dependent properties.
-	SCacheSettings m_cacheSettings;										// Settings for caching in the stream.
 
 	const CMaterialsDatabase* m_materialsDB{ nullptr };	// Pointer to a database of materials.
 	const CDistributionsGrid* m_grid{ nullptr };		// Pointer to a distribution grid.
 
+	std::vector<double> m_timePoints;											// Time points on which the stream is defined.
+	std::map<EOverall, std::unique_ptr<CTimeDependentValue>> m_overall;			// Defined overall properties.
+	std::map<EPhase, std::unique_ptr<CPhase>> m_phases;							// Defined phases.
+	std::vector<std::string> m_compounds;										// Keys of chemical compounds defined in this stream.
+	CStreamLookupTables m_lookupTables{ *this, m_materialsDB, &m_compounds };	// Lookup tables to calculate TP-dependent properties.
+	SCacheSettings m_cacheSettings;												// Settings for caching in the stream.
+
 public:
+	// TODO: remove empty constructor, always set pointers to MDB and grid.
 	// Basic constructor.
 	CBaseStream(const std::string& _key = "");
+	// Basic constructor.
+	CBaseStream(const std::string& _key, const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid);
 	// Copy constructor.
 	CBaseStream(const CBaseStream& _other);
 	virtual ~CBaseStream() = default;
@@ -49,7 +53,7 @@ public:
 	// Removes all existing data from the stream.
 	void Clear();
 
-	// Sets up the stream structure (MD dimensions, phases, materials, etc.) the same an in the given stream. Removes all existing data.
+	// Sets up the stream structure (MD dimensions, phases, materials, etc.) the same as an in the given stream. Removes all existing data.
 	void SetupStructure(const CBaseStream& _other);
 
 	// Checks whether both streams have the same structure (phases, dimensions, etc.).
@@ -59,10 +63,14 @@ public:
 	// Basic stream properties
 	//
 
-	std::string GetName() const;			// Returns name of the stream.
-	void SetName(const std::string& _name);	// Sets new name of the stream.
-	std::string GetKey() const;				// Returns unique key of the stream.
-	void SetKey(const std::string& _key);	// Sets new unique key of the stream.
+	// Returns name of the stream.
+	std::string GetName() const;
+	// Sets new name of the stream.
+	void SetName(const std::string& _name);
+	// Returns unique key of the stream.
+	std::string GetKey() const;
+	// Sets new unique key of the stream.
+	void SetKey(const std::string& _key);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Time points
@@ -78,7 +86,9 @@ public:
 	void RemoveTimePoints(double _timeBeg, double _timeEnd);
 	// Removes all existing time points after the specified one, inclusive or exclusive _time.
 	void RemoveTimePointsAfter(double _time, bool _inclusive = false);
-	// Removes time points within the specified interval [_timeBig; _timeEnd) that are closer together than step.
+	// Removes all existing time points.
+	void RemoveAllTimePoints();
+	// Removes time points within the specified interval [timeBeg; timeEnd) that are closer together than step.
 	void ReduceTimePoints(double _timeBeg, double _timeEnd, double _step);
 	// Returns all defined time points.
 	std::vector<double> GetAllTimePoints() const;
@@ -97,7 +107,7 @@ public:
 
 	// TODO: maybe add together with name and units.
 	// Adds new overall property to the stream, if it does not exist yet and returns a pointer to it or already existing property.
-	CTimeDependentValue* AddOverallProperty(EOverall _property);
+	CTimeDependentValue* AddOverallProperty(EOverall _property, const std::string& _name, const std::string& _units);
 	// Removes an overall property from the stream, if it does exist.
 	void RemoveOverallProperty(EOverall _property);
 	// TODO: maybe remove
@@ -129,9 +139,9 @@ public:
 	// Compounds
 	//
 
-	// Adds compound with the specified unique key to the stream.
+	// Adds a compound with the specified unique key to the stream.
 	void AddCompound(const std::string& _compoundKey);
-	// Removes compound with the specified unique key from the stream.
+	// Removes a compound with the specified unique key from the stream.
 	void RemoveCompound(const std::string& _compoundKey);
 	// TODO: remove this.
 	// Removes all defined compounds.
@@ -164,7 +174,7 @@ public:
 	//
 
 	// Adds the specified phase to the stream, if it does not exist yet and returns a pointer to it or already existing phase.
-	CPhase* AddPhase(EPhase _phase);
+	CPhase* AddPhase(EPhase _phase, const std::string& _name);
 	// Removes the specified phase from the stream.
 	void RemovePhase(EPhase _phase);
 	// TODO: maybe remove
@@ -313,19 +323,17 @@ public:
 	//
 
 	// Returns a pointer to lookup tables.
-	CLookupTables* GetLookupTables();
+	CStreamLookupTables* GetLookupTables();
 
-	// Returns a pointer to the used materials database.
-	const CMaterialsDatabase* GetMaterialsDatabase() const;
 	// TODO: remove, initialize MDB in constructor
 	// Sets pointer to the used materials database.
 	void SetMaterialsDatabase(const CMaterialsDatabase* _database);
 
-	// TODO: remove, initialize MDB in constructor
+	// TODO: remove, initialize grid in constructor
 	// Sets pointer to the used distributions grid.
 	void SetGrid(const CDistributionsGrid* _grid);
 	// Updates grids of distributed parameters.
-	void UpdateMDGrid();
+	void UpdateDistributionsGrid();
 
 	// Sets new cache settings.
 	void SetCacheSettings(const SCacheSettings& _settings);

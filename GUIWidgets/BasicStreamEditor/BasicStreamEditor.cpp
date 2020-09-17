@@ -330,7 +330,7 @@ void CBasicStreamEditor::RemoveAllTimePoints()
 	{
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 
-		m_pSelectedHoldup->RemoveTimePointsAfter(0, true);
+		m_pSelectedHoldup->RemoveAllTimePoints();
 		UpdateTabContent();
 
 		QApplication::restoreOverrideCursor();

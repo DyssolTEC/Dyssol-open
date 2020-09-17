@@ -5,7 +5,7 @@
 #include "BaseSolver.h"
 #include <vector>
 
-class CAgglomerationSolver : public CExternalSolver
+class CAgglomerationSolver : public CBaseSolver
 {
 public:
 	enum EKernels : size_t

@@ -11,18 +11,26 @@
 // TODO: remove all reinterpret_cast and static_cast for MDMatrix.
 // TODO: remove AddTimePoint() whet it is not needed by MDMatrix.
 
-CBaseStream::CBaseStream(const std::string& _key)
+CBaseStream::CBaseStream(const std::string& _key) :
+	m_key{ _key.empty() ? StringFunctions::GenerateRandomKey() : _key }
 {
-	m_key = _key.empty() ? StringFunctions::GenerateRandomKey() : _key;
+	m_overall.insert({ EOverall::OVERALL_MASS, std::make_unique<CTimeDependentValue>() });
+}
+
+CBaseStream::CBaseStream(const std::string& _key, const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid) :
+	m_key{ _key.empty() ? StringFunctions::GenerateRandomKey() : _key },
+	m_materialsDB{ _materialsDB },
+	m_grid{ _grid }
+{
 	m_overall.insert({ EOverall::OVERALL_MASS, std::make_unique<CTimeDependentValue>() });
 }
 
 CBaseStream::CBaseStream(const CBaseStream& _other) :
+	m_materialsDB{ _other.m_materialsDB },
+	m_grid{ _other.m_grid },
 	m_timePoints{ _other.m_timePoints },
 	m_compounds{ _other.m_compounds },
-	m_cacheSettings{ _other.m_cacheSettings },
-	m_materialsDB{ _other.m_materialsDB },
-	m_grid{ _other.m_grid }
+	m_cacheSettings{ _other.m_cacheSettings }
 {
 	m_key = StringFunctions::GenerateRandomKey();
 	for (const auto& [type, param] : _other.m_overall)
@@ -43,19 +51,14 @@ void CBaseStream::Clear()
 void CBaseStream::SetupStructure(const CBaseStream& _other)
 {
 	Clear();
-	m_materialsDB = _other.m_materialsDB;
+	SetMaterialsDatabase(_other.m_materialsDB);
 	m_grid = _other.m_grid;
 	m_compounds = _other.m_compounds;
 	for (const auto& [type, old] : _other.m_overall)
-	{
-		auto* overall = AddOverallProperty(type);
-		overall->SetName(old->GetName());
-		overall->SetUnits(old->GetUnits());
-	}
+		AddOverallProperty(type, old->GetName(), old->GetUnits());
 	for (const auto& [type, old] : _other.m_phases)
 	{
-		auto* phase = AddPhase(type);
-		phase->SetName(old->GetName());
+		auto* phase = AddPhase(type, old->GetName());
 		phase->MDDistr()->SetMinimalFraction(old->MDDistr()->GetMinimalFraction());
 	}
 	SetCacheSettings(_other.m_cacheSettings);
@@ -153,6 +156,18 @@ void CBaseStream::RemoveTimePointsAfter(double _time, bool _inclusive/* = false*
 	RemoveTimePoints(*beg, GetLastTimePoint());
 }
 
+void CBaseStream::RemoveAllTimePoints()
+{
+	// remove time points
+	m_timePoints.clear();
+	// remove data in overall parameters
+	for (auto& [type, param] : m_overall)
+		param->RemoveAllTimePoints();
+	// remove data in phases
+	for (auto& [state, phase] : m_phases)
+		phase->RemoveAllTimePoints();
+}
+
 void CBaseStream::ReduceTimePoints(double _timeBeg, double _timeEnd, double _step)
 {
 	std::vector<double> timePoints = GetTimePoints(_timeBeg, _timeEnd);
@@ -195,19 +210,7 @@ std::vector<double> CBaseStream::GetTimePoints(double _timeBeg, double _timeEnd)
 
 std::vector<double> CBaseStream::GetTimePointsClosed(double _timeBeg, double _timeEnd) const
 {
-	std::vector<double> res = GetTimePoints(_timeBeg, _timeEnd);
-
-	// no time points in the interval - return only limits
-	if (res.empty())
-		return { _timeBeg, _timeEnd };
-
-	// add limits if necessary
-	if (std::fabs(res.front() - _timeBeg) > m_epsilon)
-		res.insert(res.begin(), _timeBeg);
-	if (std::fabs(res.back() - _timeEnd) > m_epsilon)
-		res.push_back(_timeEnd);
-
-	return res;
+	return CloseInterval(GetTimePoints(_timeBeg, _timeEnd), _timeBeg, _timeEnd);
 }
 
 double CBaseStream::GetLastTimePoint() const
@@ -226,9 +229,9 @@ double CBaseStream::GetPreviousTimePoint(double _time) const
 	return *--pos;
 }
 
-CTimeDependentValue* CBaseStream::AddOverallProperty(EOverall _property)
+CTimeDependentValue* CBaseStream::AddOverallProperty(EOverall _property, const std::string& _name, const std::string& _units)
 {
-	auto [it, flag] = m_overall.insert({ _property, std::make_unique<CTimeDependentValue>() });
+	auto [it, flag] = m_overall.insert({ _property, std::make_unique<CTimeDependentValue>(_name, _units) });
 
 	if (flag) // a new property added
 	{
@@ -416,10 +419,10 @@ void CBaseStream::SetCompoundsFractions(double _time, EPhase _phase, const std::
 	m_phases[_phase]->SetCompoundsDistribution(_time, _value);
 }
 
-CPhase* CBaseStream::AddPhase(EPhase _phase)
+CPhase* CBaseStream::AddPhase(EPhase _phase, const std::string& _name)
 {
 	// add phase
-	auto [it, flag] = m_phases.insert({ _phase, std::make_unique<CPhase>(_phase, *m_grid, m_compounds, m_cacheSettings) });
+	auto [it, flag] = m_phases.insert({ _phase, std::make_unique<CPhase>(_phase, _name, *m_grid, m_compounds, m_cacheSettings) });
 
 	if (flag) // a new phase added
 	{
@@ -1259,19 +1262,15 @@ bool CBaseStream::AreEqual(double _time, const CBaseStream& _stream1, const CBas
 	return true;
 }
 
-CLookupTables* CBaseStream::GetLookupTables()
+CStreamLookupTables* CBaseStream::GetLookupTables()
 {
 	return &m_lookupTables;
-}
-
-const CMaterialsDatabase* CBaseStream::GetMaterialsDatabase() const
-{
-	return m_materialsDB;
 }
 
 void CBaseStream::SetMaterialsDatabase(const CMaterialsDatabase* _database)
 {
 	m_materialsDB = _database;
+	m_lookupTables.SetMaterialsDatabase(_database);
 }
 
 void CBaseStream::SetGrid(const CDistributionsGrid* _grid)
@@ -1279,10 +1278,10 @@ void CBaseStream::SetGrid(const CDistributionsGrid* _grid)
 	m_grid = _grid;
 }
 
-void CBaseStream::UpdateMDGrid()
+void CBaseStream::UpdateDistributionsGrid()
 {
 	for (auto& [state, phase] : m_phases)
-		phase->UpdateMDGrid();
+		phase->UpdateDistributionsGrid();
 }
 
 void CBaseStream::SetCacheSettings(const SCacheSettings& _settings)
@@ -1430,7 +1429,7 @@ void CBaseStream::LoadFromFile(CH5Handler& _h5File, const std::string& _path)
 	for (auto key : overallKeys)
 	{
 		std::string overallPath = _path + "/" + StrConst::Stream_H5GroupOveralls + "/" + StrConst::Stream_H5GroupOverallName + std::to_string(iOverall++);
-		AddOverallProperty(key)->LoadFromFile(_h5File, overallPath);
+		AddOverallProperty(key, "", "")->LoadFromFile(_h5File, overallPath);
 	}
 
 	// phases
@@ -1440,20 +1439,12 @@ void CBaseStream::LoadFromFile(CH5Handler& _h5File, const std::string& _path)
 	for (auto key : phaseKeys)
 	{
 		std::string phasePath = _path + "/" + StrConst::Stream_H5GroupPhases + "/" + StrConst::Stream_H5GroupPhaseName + std::to_string(iPhase++);
-		AddPhase(key)->LoadFromFile(_h5File, phasePath);
+		AddPhase(key, "")->LoadFromFile(_h5File, phasePath);
 	}
 }
 
 void CBaseStream::LoadFromFile_v1(CH5Handler& _h5File, const std::string& _path)
 {
-	const auto& AddOverall = [&](EOverall _type, const std::vector<std::vector<double>>& _data, const std::string& _name, const std::string& _units)
-	{
-		CTimeDependentValue* overall = AddOverallProperty(_type);
-		overall->SetRawData(_data);
-		overall->SetName(_name);
-		overall->SetUnits(_units);
-	};
-
 	const auto& Transpose = [](const std::vector<std::vector<double>>& _vec)
 	{
 		if (_vec.empty()) return std::vector<std::vector<double>>{};
@@ -1491,9 +1482,9 @@ void CBaseStream::LoadFromFile_v1(CH5Handler& _h5File, const std::string& _path)
 	_h5File.ReadData(distrPathBase + std::to_string(1), StrConst::Distr2D_H5Data, values);
 	if (values.empty())
 	{
-		AddOverall(EOverall::OVERALL_MASS,        { {}, {} }, massName,      massUnit);
-		AddOverall(EOverall::OVERALL_TEMPERATURE, { {}, {} }, "Temperature", "K");
-		AddOverall(EOverall::OVERALL_PRESSURE,    { {}, {} }, "Pressure",    "Pa");
+		AddOverallProperty(EOverall::OVERALL_MASS,        massName,      massUnit)->SetRawData({ {}, {} });
+		AddOverallProperty(EOverall::OVERALL_TEMPERATURE, "Temperature", "K"     )->SetRawData({ {}, {} });
+		AddOverallProperty(EOverall::OVERALL_PRESSURE,    "Pressure",    "Pa"    )->SetRawData({ {}, {} });
 	}
 	else
 	{
@@ -1501,9 +1492,9 @@ void CBaseStream::LoadFromFile_v1(CH5Handler& _h5File, const std::string& _path)
 			values.resize(times.size(), values.front());
 		if (values.front().size() != 3) return;
 		const auto data = Transpose(values);
-		AddOverall(EOverall::OVERALL_MASS,        { times, data[0] }, massName,      massUnit);
-		AddOverall(EOverall::OVERALL_TEMPERATURE, { times, data[1] }, "Temperature", "K");
-		AddOverall(EOverall::OVERALL_PRESSURE,    { times, data[2] }, "Pressure",    "Pa");
+		AddOverallProperty(EOverall::OVERALL_MASS,        massName,      massUnit)->SetRawData({ times, data[0] });
+		AddOverallProperty(EOverall::OVERALL_TEMPERATURE, "Temperature", "K"     )->SetRawData({ times, data[1] });
+		AddOverallProperty(EOverall::OVERALL_PRESSURE,    "Pressure",    "Pa"    )->SetRawData({ times, data[2] });
 	}
 
 	// phases
@@ -1518,18 +1509,17 @@ void CBaseStream::LoadFromFile_v1(CH5Handler& _h5File, const std::string& _path)
 	{
 		std::string phasePath = _path + "/" + StrConst::Stream_H5GroupPhases + "/" + StrConst::Stream_H5GroupPhaseName + std::to_string(iPhase);
 		std::string name;
-		unsigned soa;
+		uint32_t soa;
 		_h5File.ReadData(phasePath, StrConst::Stream_H5PhaseName, name);
 		_h5File.ReadData(phasePath, StrConst::Stream_H5PhaseSOA,  soa);
 		CPhase* phase;
 		switch (soa)
 		{
-		case 0:	 phase = AddPhase(EPhase::SOLID);     break;
-		case 1:  phase = AddPhase(EPhase::LIQUID);    break;
-		case 2:  phase = AddPhase(EPhase::VAPOR);     break;
-		default: phase = AddPhase(EPhase::UNDEFINED); break;
+		case 0:	 phase = AddPhase(EPhase::SOLID, name);     break;
+		case 1:  phase = AddPhase(EPhase::LIQUID, name);    break;
+		case 2:  phase = AddPhase(EPhase::VAPOR, name);     break;
+		default: phase = AddPhase(EPhase::UNDEFINED, name); break;
 		}
-		phase->SetName(name);
 		phase->MDDistr()->LoadFromFile(_h5File, phasePath);
 		if (!data.empty())
 			phase->Fractions()->SetRawData({times, data[iPhase]});

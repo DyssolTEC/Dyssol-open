@@ -5,7 +5,7 @@
 #include "BaseSolver.h"
 #include "Holdup.h"
 
-class CPBMSolver : public CExternalSolver
+class CPBMSolver : public CBaseSolver
 {
 public:
 	CPBMSolver();

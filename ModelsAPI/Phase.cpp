@@ -9,7 +9,8 @@
 
 // TODO: remove all reinterpret_cast and static_cast for MDMatrix
 
-CPhase::CPhase(EPhase _state, const CDistributionsGrid& _grid, std::vector<std::string> _compounds, const SCacheSettings& _cache) :
+CPhase::CPhase(EPhase _state, std::string _name, const CDistributionsGrid& _grid, std::vector<std::string> _compounds, const SCacheSettings& _cache) :
+	m_name{ std::move(_name) },
 	m_state{ _state },
 	m_compounds{ std::move(_compounds) },
 	m_grid{ _grid }
@@ -63,6 +64,12 @@ void CPhase::RemoveTimePoints(double _timeBeg, double _timeEnd)
 	if (_timeBeg > _timeEnd) return;
 	m_fractions.RemoveTimePoints(_timeBeg, _timeEnd);
 	m_distribution.RemoveTimePoints(_timeBeg, _timeEnd);
+}
+
+void CPhase::RemoveAllTimePoints()
+{
+	m_fractions.RemoveAllTimePoints();
+	m_distribution.RemoveAllTimePoints();
 }
 
 void CPhase::AddCompound(const std::string& _compoundKey)
@@ -171,7 +178,7 @@ void CPhase::SetCacheSettings(const SCacheSettings& _cache)
 	m_distribution.SetCacheParams(_cache.isEnabled, _cache.window);
 }
 
-void CPhase::UpdateMDGrid()
+void CPhase::UpdateDistributionsGrid()
 {
 	if (m_state != EPhase::SOLID) return;
 	m_distribution.UpdateDimensions(E2I(m_grid.GetDistrTypes()), m_grid.GetClasses());
@@ -194,7 +201,7 @@ void CPhase::LoadFromFile(CH5Handler& _h5File, const std::string& _path)
 
 	//const int version = _h5File.ReadAttribute(_path, StrConst::m_saveVersion);
 	_h5File.ReadData(_path, StrConst::Phase_H5Name, m_name);
-	unsigned state;
+	uint32_t state;
 	_h5File.ReadData(_path, StrConst::Phase_H5State, state);
 	m_state = static_cast<EPhase>(state);
 	m_fractions.LoadFromFile(_h5File, _path + "/" + StrConst::Phase_H5Fractions);

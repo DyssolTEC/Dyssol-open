@@ -17,7 +17,7 @@ private:
 	unsigned m_nCacheWindow;
 	CModelsManager* m_pModelsManager;
 	CBaseUnit* m_pUnit;
-	std::vector<CExternalSolver*> m_vExternalSolvers;
+	std::vector<CBaseSolver*> m_vExternalSolvers;
 
 public:
 	CBaseModel(CModelsManager* _pModelsManager, const std::string& _sModelKey = ""); // the key can be already specified for this unit

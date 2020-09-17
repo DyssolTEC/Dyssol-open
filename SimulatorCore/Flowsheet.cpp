@@ -278,7 +278,7 @@ void CFlowsheet::SetTopologyModified(bool _modified)
 void CFlowsheet::ClearSimulationResults()
 {
 	for (unsigned i = 0; i < m_vpStreams.size(); ++i)
-		m_vpStreams[i]->RemoveTimePointsAfter(0, true);
+		m_vpStreams[i]->RemoveAllTimePoints();
 	for (unsigned i = 0; i < m_vpModels.size(); ++i)
 		m_vpModels[i]->ClearSimulationResults();
 }
@@ -291,14 +291,14 @@ void CFlowsheet::AddPhase(const std::string& _sName, unsigned _nAggregationState
 
 	// add to streams
 	for (unsigned i = 0; i < m_vpStreams.size(); ++i)
-		m_vpStreams[i]->AddPhase(PhaseSOA2EPhase(_nAggregationState))->SetName(_sName);
+		m_vpStreams[i]->AddPhase(PhaseSOA2EPhase(_nAggregationState), _sName);
 	// add to models
 	for (unsigned i = 0; i < m_vpModels.size(); ++i)
 		m_vpModels[i]->AddPhase(_sName, _nAggregationState);
 	// add to initial tear streams
 	for (auto& part : m_vvInitTearStreams)
 		for (auto& str : part)
-			str.AddPhase(PhaseSOA2EPhase(_nAggregationState))->SetName(_sName);
+			str.AddPhase(PhaseSOA2EPhase(_nAggregationState), _sName);
 }
 
 void CFlowsheet::RemovePhase(unsigned _nIndex)
@@ -334,7 +334,7 @@ void CFlowsheet::ChangePhase(unsigned _nIndex, const std::string& _sName, unsign
 		for (unsigned i = 0; i < m_vpStreams.size(); ++i)
 		{
 			m_vpStreams[i]->RemovePhase(PhaseSOA2EPhase(m_vPhasesSOA[_nIndex]));
-			m_vpStreams[i]->AddPhase(PhaseSOA2EPhase(m_vPhasesSOA[_nIndex]))->SetName(_sName);
+			m_vpStreams[i]->AddPhase(PhaseSOA2EPhase(m_vPhasesSOA[_nIndex]), _sName);
 		}
 		// change in models
 		for (unsigned i = 0; i < m_vpModels.size(); ++i)
@@ -344,7 +344,7 @@ void CFlowsheet::ChangePhase(unsigned _nIndex, const std::string& _sName, unsign
 			for (auto& str : part)
 			{
 				str.RemovePhase(PhaseSOA2EPhase(m_vPhasesSOA[_nIndex]));
-				str.AddPhase(PhaseSOA2EPhase(m_vPhasesSOA[_nIndex]))->SetName(_sName);
+				str.AddPhase(PhaseSOA2EPhase(m_vPhasesSOA[_nIndex]), _sName);
 			}
 	}
 }
@@ -424,7 +424,7 @@ void CFlowsheet::SetDistributionsGrid()
 	for (unsigned i = 0; i < m_vpStreams.size(); ++i)
 	{
 		m_vpStreams[i]->SetGrid(m_pDistributionsGrid);
-		m_vpStreams[i]->UpdateMDGrid();
+		m_vpStreams[i]->UpdateDistributionsGrid();
 	}
 	// set to all holdups
 	for (unsigned i = 0; i < m_vpModels.size(); ++i)
@@ -434,7 +434,7 @@ void CFlowsheet::SetDistributionsGrid()
 		for (auto& str : part)
 		{
 			str.SetGrid(m_pDistributionsGrid);
-			str.UpdateMDGrid();
+			str.UpdateDistributionsGrid();
 		}
 }
 
@@ -666,12 +666,12 @@ CStream* CFlowsheet::AddStream(const std::string& _streamKey /*= ""*/)
 	const std::string uniqueKey = GenerateUniqueStreamKey(_streamKey);
 	auto* pStream = new CStream(uniqueKey);
 	pStream->SetGrid(m_pDistributionsGrid);
-	pStream->UpdateMDGrid();
+	pStream->UpdateDistributionsGrid();
 	pStream->SetMaterialsDatabase(m_pMaterialsDatabase);
 	for (const auto& c : m_vCompoundsKeys)
 		pStream->AddCompound(c);
 	for (size_t i = 0; i < m_vPhasesNames.size(); ++i)
-		pStream->AddPhase(PhaseSOA2EPhase(m_vPhasesSOA[i]))->SetName(m_vPhasesNames[i]);
+		pStream->AddPhase(PhaseSOA2EPhase(m_vPhasesSOA[i]), m_vPhasesNames[i]);
 	pStream->SetCacheSettings({ m_pParams->cacheFlagStreams, m_pParams->cacheWindow, m_pParams->cachePath});
 	m_vpStreams.push_back(pStream);
 	SetTopologyModified(true);
@@ -1017,12 +1017,12 @@ void CFlowsheet::SaveConfigFile(const std::wstring& _fileName, const std::wstrin
 			file << TO_ARG_STR(EArguments::UNIT_PARAMETER) << " " << iUnit + 1 << " " << iParam + 1;
 			switch (param->GetType())
 			{
-			case EUnitParameter::CONSTANT:       file << " " << dynamic_cast<const CConstUnitParameter*>(param)->GetValue();		break;
+			case EUnitParameter::CONSTANT:       file << " " << dynamic_cast<const CConstRealUnitParameter*>(param)->GetValue();		break;
 			case EUnitParameter::TIME_DEPENDENT: file << " " << dynamic_cast<const CTDUnitParameter*>(param)->GetTDData();			break;
 			case EUnitParameter::STRING:         file << " " << dynamic_cast<const CStringUnitParameter*>(param)->GetValue();		break;
 			case EUnitParameter::COMBO:			 file << " " << dynamic_cast<const CComboUnitParameter*>(param)->GetValue();		break;
-			case EUnitParameter::GROUP:			 file << " " << dynamic_cast<const CGroupUnitParameter*>(param)->GetValue();		break;
-			case EUnitParameter::CHECKBOX:		 file << " " << dynamic_cast<const CCheckboxUnitParameter*>(param)->IsChecked();	break;
+			case EUnitParameter::GROUP:			 file << " " << dynamic_cast<const CComboUnitParameter*>(param)->GetValue();		break;
+			case EUnitParameter::CHECKBOX:		 file << " " << dynamic_cast<const CCheckBoxUnitParameter*>(param)->IsChecked();	break;
 			case EUnitParameter::COMPOUND:		 file << " " << dynamic_cast<const CCompoundUnitParameter*>(param)->GetCompound();	break;
 			case EUnitParameter::SOLVER:         file << " " << StringFunctions::WString2String(m_pModelsManager->GetSolverLibName(dynamic_cast<const CSolverUnitParameter*>(param)->GetKey()));	break;
 			case EUnitParameter::UNKNOWN:        break;

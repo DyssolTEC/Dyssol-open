@@ -119,13 +119,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseUnit.cpp" />
+    <ClCompile Include="BaseUnit2.cpp" />
     <ClCompile Include="CachedMap.cpp" />
+    <ClCompile Include="PlotManager.cpp" />
+    <ClCompile Include="StateVariable.cpp" />
     <ClCompile Include="LookupTables.cpp" />
     <ClCompile Include="Phase.cpp" />
     <ClCompile Include="Holdup.cpp" />
     <ClCompile Include="Stream.cpp" />
     <ClCompile Include="BaseStream.cpp" />
     <ClCompile Include="Stream2ModelInterface.cpp" />
+    <ClCompile Include="StreamManager.cpp" />
     <ClCompile Include="TimeDependentValue.cpp" />
     <ClCompile Include="Matrix2D.cpp" />
     <ClCompile Include="DenseMDMatrix.cpp" />
@@ -138,13 +142,17 @@
     <ClCompile Include="TDArray.cpp" />
     <ClCompile Include="TransformMatrix.cpp" />
     <ClCompile Include="UnitParameters.cpp" />
+    <ClCompile Include="UnitPort.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseUnit.h" />
+    <ClInclude Include="BaseUnit2.h" />
     <ClInclude Include="CachedMap.h" />
     <ClInclude Include="Holdup.h" />
     <ClInclude Include="LookupTables.h" />
     <ClInclude Include="MaterialStream.h" />
+    <ClInclude Include="PlotManager.h" />
+    <ClInclude Include="StateVariable.h" />
     <ClInclude Include="Stream.h" />
     <ClInclude Include="Matrix2D.h" />
     <ClInclude Include="DenseMDMatrix.h" />
@@ -158,11 +166,13 @@
     <ClInclude Include="SteadyStateUnit.h" />
     <ClInclude Include="BaseStream.h" />
     <ClInclude Include="Stream2ModelInterface.h" />
+    <ClInclude Include="StreamManager.h" />
     <ClInclude Include="TDArray.h" />
     <ClInclude Include="TimeDependentValue.h" />
     <ClInclude Include="TransformMatrix.h" />
     <ClInclude Include="UnitDevelopmentDefines.h" />
     <ClInclude Include="UnitParameters.h" />
+    <ClInclude Include="UnitPort.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)BaseSolvers\BaseSolvers.vcxproj">

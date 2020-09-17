@@ -327,7 +327,7 @@ public:		std::string GetCompoundParameterValue(const std::string& _name) const;
 	/** Returns pointer to a 'typeless' solver with specified name. Is used internally in all GetSolver*() functions. Throws logic_error exception if solver unit parameter with given name does not exist.
 	*	\param _name Name of the solver unit parameter.
 	*	\return Pointer to a solver.*/
-private:	CExternalSolver* GetSolverParameterValue(const std::string& _name) const;
+private:	CBaseSolver* GetSolverParameterValue(const std::string& _name) const;
 	/** Returns pointer to a agglomeration solver of a type SOLVER_AGGLOMERATION_1 with the specified name. Throws logic_error exception if solver unit parameter with given name does not exist.
 	*	\param _name Name of the agglomeration solver unit parameter.
 	*	\return Pointer to an agglomeration solver.*/
@@ -775,12 +775,12 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 
 private:
-	std::vector<CExternalSolver*> m_vExternalSolvers;
+	std::vector<CBaseSolver*> m_vExternalSolvers;
 
 public:
 	void InitializeExternalSolvers() const;
 	void FinalizeExternalSolvers() const;
-	void SetSolversPointers(const std::vector<CExternalSolver*>& _pvPointers);
+	void SetSolversPointers(const std::vector<CBaseSolver*>& _pvPointers);
 };
 
 typedef DECLDIR CBaseUnit* (*CreateUnit)();

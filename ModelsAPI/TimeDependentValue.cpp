@@ -55,7 +55,11 @@ void CTimeDependentValue::RemoveTimePoints(double _timeBeg, double _timeEnd)
 	const auto [beg, end] = Interval(_timeBeg, _timeEnd);
 	if (beg == m_data.end()) return;
 	m_data.erase(beg, end);
+}
 
+void CTimeDependentValue::RemoveAllTimePoints()
+{
+	m_data.clear();
 }
 
 size_t CTimeDependentValue::GetTimePointsNumber() const
