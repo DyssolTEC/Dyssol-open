@@ -123,7 +123,7 @@ CStream* CBaseUnit::GetPortStream( const std::string &_sPortName ) const
 	for( unsigned i=0; i<m_vPorts.size(); ++i )
 		if( m_vPorts[i].sName == _sPortName )
 			return GetPortStream(i);
-	throw std::logic_error(StrConst::BUnit_ErrGetPort(m_sUnitName, _sPortName));
+	throw std::logic_error(StrConst::BUnit_ErrGetPort(m_sUnitName, _sPortName, __func__));
 	return nullptr;
 }
 
@@ -147,7 +147,7 @@ unsigned CBaseUnit::AddPort(const std::string& _sPortName, EPortType _nPortType)
 	newPort.sName = _sPortName.empty() ? StrConst::BUnit_DefaultPortName + std::to_string(m_vPorts.size()) : _sPortName;
 	for (size_t i = 0; i < m_vPorts.size(); ++i)
 		if (m_vPorts[i].sName == newPort.sName)
-			throw std::logic_error(StrConst::BUnit_ErrAddPort(m_sUnitName, newPort.sName));
+			throw std::logic_error(StrConst::BUnit_ErrAddPort(m_sUnitName, newPort.sName, __func__));
 	if ((_nPortType == INPUT_PORT) || (_nPortType == OUTPUT_PORT))
 		newPort.nType = _nPortType;
 	else
@@ -688,31 +688,31 @@ CPBMSolver* CBaseUnit::GetSolverPBM(const std::string& _name) const
 
 void CBaseUnit::AddConstParameter(const std::string& _name, double _minValue, double _maxValue, double _initValue, const std::string& _units, const std::string& _description)
 {
-	if (m_unitParameters.IsNameExist(_name)) throw std::logic_error(StrConst::BUnit_ErrAddParam(m_sUnitName, _name));
+	if (m_unitParameters.IsNameExist(_name)) throw std::logic_error(StrConst::BUnit_ErrAddParam(m_sUnitName, _name, __func__));
 	m_unitParameters.AddConstRealParameter(_name, _units, _description, _minValue, _maxValue, _initValue);
 }
 
 void CBaseUnit::AddTDParameter(const std::string& _name, double _minValue, double _maxValue, double _initValue, const std::string& _units, const std::string& _description)
 {
-	if (m_unitParameters.IsNameExist(_name)) throw std::logic_error(StrConst::BUnit_ErrAddParam(m_sUnitName, _name));
+	if (m_unitParameters.IsNameExist(_name)) throw std::logic_error(StrConst::BUnit_ErrAddParam(m_sUnitName, _name, __func__));
 	m_unitParameters.AddTDParameter(_name, _units, _description, _minValue, _maxValue, _initValue);
 }
 
 void CBaseUnit::AddStringParameter(const std::string& _name, const std::string& _initValue, const std::string& _description)
 {
-	if (m_unitParameters.IsNameExist(_name)) throw std::logic_error(StrConst::BUnit_ErrAddParam(m_sUnitName, _name));
+	if (m_unitParameters.IsNameExist(_name)) throw std::logic_error(StrConst::BUnit_ErrAddParam(m_sUnitName, _name, __func__));
 	m_unitParameters.AddStringParameter(_name, _description, _initValue);
 }
 
 void CBaseUnit::AddCheckBoxParameter(const std::string& _name, bool _initValue, const std::string& _description)
 {
-	if (m_unitParameters.IsNameExist(_name)) throw std::logic_error(StrConst::BUnit_ErrAddParam(m_sUnitName, _name));
+	if (m_unitParameters.IsNameExist(_name)) throw std::logic_error(StrConst::BUnit_ErrAddParam(m_sUnitName, _name, __func__));
 	m_unitParameters.AddCheckBoxParameter(_name, _description, _initValue);
 }
 
 void CBaseUnit::AddComboParameter(const std::string& _name, size_t _initValue, const std::vector<size_t>& _values, const std::vector<std::string>& _valuesNames, const std::string& _description)
 {
-	if (m_unitParameters.IsNameExist(_name)) throw std::logic_error(StrConst::BUnit_ErrAddParam(m_sUnitName, _name));
+	if (m_unitParameters.IsNameExist(_name)) throw std::logic_error(StrConst::BUnit_ErrAddParam(m_sUnitName, _name, __func__));
 
 	std::vector<size_t> values = _values;
 	if (values.empty())
@@ -722,14 +722,14 @@ void CBaseUnit::AddComboParameter(const std::string& _name, size_t _initValue, c
 	}
 
 	if (values.size() != _valuesNames.size())
-		throw std::logic_error(StrConst::BUnit_ErrAddComboParam(m_sUnitName, _name));
+		throw std::logic_error(StrConst::BUnit_ErrAddComboParam(m_sUnitName, _name, __func__));
 
 	m_unitParameters.AddComboParameter(_name, _description, _initValue, values, _valuesNames);
 }
 
 void CBaseUnit::AddGroupParameter(const std::string& _name, size_t _initValue, const std::vector<size_t>& _values, const std::vector<std::string>& _valuesNames, const std::string& _description)
 {
-	if (m_unitParameters.IsNameExist(_name)) throw std::logic_error(StrConst::BUnit_ErrAddParam(m_sUnitName, _name));
+	if (m_unitParameters.IsNameExist(_name)) throw std::logic_error(StrConst::BUnit_ErrAddParam(m_sUnitName, _name, __func__));
 
 	std::vector<size_t> values = _values;
 	if (values.empty())
@@ -739,20 +739,20 @@ void CBaseUnit::AddGroupParameter(const std::string& _name, size_t _initValue, c
 	}
 
 	if (values.size() != _valuesNames.size())
-		throw std::logic_error(StrConst::BUnit_ErrAddComboParam(m_sUnitName, _name));
+		throw std::logic_error(StrConst::BUnit_ErrAddComboParam(m_sUnitName, _name, __func__));
 
 	m_unitParameters.AddComboParameter(_name, _description, _initValue, values, _valuesNames);
 }
 
 void CBaseUnit::AddCompoundParameter(const std::string& _name, const std::string& _description)
 {
-	if (m_unitParameters.IsNameExist(_name)) throw std::logic_error(StrConst::BUnit_ErrAddParam(m_sUnitName, _name));
+	if (m_unitParameters.IsNameExist(_name)) throw std::logic_error(StrConst::BUnit_ErrAddParam(m_sUnitName, _name, __func__));
 	m_unitParameters.AddCompoundParameter(_name, _description);
 }
 
 void CBaseUnit::AddSolverParameter(const std::string& _name, ESolverTypes _solverType, const std::string& _description)
 {
-	if (m_unitParameters.IsNameExist(_name)) throw std::logic_error(StrConst::BUnit_ErrAddParam(m_sUnitName, _name));
+	if (m_unitParameters.IsNameExist(_name)) throw std::logic_error(StrConst::BUnit_ErrAddParam(m_sUnitName, _name, __func__));
 	m_unitParameters.AddSolverParameter(_name, _description, _solverType);
 }
 
@@ -770,7 +770,7 @@ void CBaseUnit::AddParametersToGroup(const std::string& _groupParamName, const s
 {
 	const auto* groupParameter = m_unitParameters.GetComboParameter(_groupParamName);
 	if (!groupParameter)						// check that group parameter exists
-		throw std::logic_error(StrConst::BUnit_ErrGroupParamBlock(m_sUnitName, _groupParamName, _groupName));
+		throw std::logic_error(StrConst::BUnit_ErrGroupParamBlock(m_sUnitName, _groupParamName, _groupName, __func__));
 	if (!groupParameter->HasName(_groupName))	// check that group exists
 		throw std::logic_error(StrConst::BUnit_ErrGroupParamGroup(m_sUnitName, _groupParamName, _groupName));
 	for (const auto& name : _paramNames)		// check that all parameters exist

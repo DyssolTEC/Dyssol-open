@@ -74,3 +74,16 @@ struct SOverallDescriptor
 	std::string name;
 	std::string units;
 };
+
+// Describes a 2D point.
+class CPoint
+{
+public:
+	double x{};
+	double y{};
+	CPoint() {}
+	CPoint(double _x, double _y) : x{ _x },	y{ _y } {}
+	static size_t Size() { return 2; }
+	double operator[](size_t _i) const { switch (_i) { case 0: return x; case 1: return y; default: throw std::out_of_range("CPoint::operator[size_t] : index is out of range"); } }
+	double& operator[](size_t _i) { switch (_i) { case 0: return x; case 1: return y; default: throw std::out_of_range("CPoint::operator[size_t] : index is out of range"); } }
+};

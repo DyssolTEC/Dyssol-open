@@ -2,27 +2,11 @@
 
 #pragma once
 
+#include "DyssolTypes.h"
 #include <memory>
-#include <string>
 #include <vector>
 
-////////////////////////////////////////////////////////////////////////////////
-// CPoint
-//
-
-// Describes a 2D point.
-class CPoint
-{
-public:
-	double x{};
-	double y{};
-
-	CPoint(double _x, double _y);
-
-	static size_t Size();
-	double operator[](size_t _i) const;
-	double& operator[](size_t _i);
-};
+class CH5Handler;
 
 ////////////////////////////////////////////////////////////////////////////////
 // CCurve
@@ -30,6 +14,8 @@ public:
 
 class CCurve
 {
+	static const unsigned m_saveVersion{ 1 };	// Current version of the saving procedure.
+
 	std::string m_name;				// Name of the curve.
 	double m_valueZ{};				// Value of Z axis for which this curve is defined.
 
@@ -70,6 +56,11 @@ public:
 	void ClearData();
 	// Removes all data from the curve.
 	void Clear();
+
+	// Saves data to file.
+	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
+	// Loads data from file.
+	void LoadFromFile(CH5Handler& _h5File, const std::string& _path);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -78,6 +69,8 @@ public:
 
 class CPlot
 {
+	static const unsigned m_saveVersion{ 1 };	// Current version of the saving procedure.
+
 protected:
 	std::string m_name;		// Name of the plot.
 	std::string m_labelX;	// Label of the X axis.
@@ -161,6 +154,11 @@ public:
 	void ClearData();
 	// Removes all data from the plot.
 	void Clear();
+
+	// Saves data to file.
+	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
+	// Loads data from file.
+	void LoadFromFile(CH5Handler& _h5File, const std::string& _path);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -169,6 +167,8 @@ public:
 
 class CPlotManager
 {
+	static const unsigned m_saveVersion{ 1 };	// Current version of the saving procedure.
+
 	std::vector<std::unique_ptr<CPlot>> m_plots;		// Plots.
 	std::vector<std::unique_ptr<CPlot>> m_plotsStored;	// A copy of plots used to store data during cyclic recalculations.
 
@@ -203,5 +203,12 @@ public:
 	void SaveState();
 	// Restores previously stored state of all plots.
 	void LoadState();
+
+	// Saves data to file.
+	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
+	// Loads data from file.
+	void LoadFromFile(CH5Handler& _h5File, const std::string& _path);
+	// Loads data from file. A compatibility version.
+	void LoadFromFile_v0(const CH5Handler& _h5File, const std::string& _path);
 };
 

@@ -1359,7 +1359,7 @@ void CBaseStream::SaveToFile(CH5Handler& _h5File, const std::string& _path)
 	if (!_h5File.IsValid()) return;
 
 	// current version of save procedure
-	_h5File.WriteAttribute(_path, StrConst::Stream_H5AttrSaveVersion, m_saveVersion);
+	_h5File.WriteAttribute(_path, StrConst::H5AttrSaveVersion, m_saveVersion);
 
 	// stream name
 	_h5File.WriteData(_path, StrConst::Stream_H5StreamName, m_name);
@@ -1394,12 +1394,12 @@ void CBaseStream::SaveToFile(CH5Handler& _h5File, const std::string& _path)
 	}
 }
 
-void CBaseStream::LoadFromFile(CH5Handler& _h5File, const std::string& _path)
+void CBaseStream::LoadFromFile(const CH5Handler& _h5File, const std::string& _path)
 {
 	if (!_h5File.IsValid()) return;
 
 	// current version of save procedure
-	const int version = _h5File.ReadAttribute(_path, StrConst::Stream_H5AttrSaveVersion);
+	const int version = _h5File.ReadAttribute(_path, StrConst::H5AttrSaveVersion);
 
 	// compatibility with older versions
 	if (version < 2)
@@ -1443,7 +1443,7 @@ void CBaseStream::LoadFromFile(CH5Handler& _h5File, const std::string& _path)
 	}
 }
 
-void CBaseStream::LoadFromFile_v1(CH5Handler& _h5File, const std::string& _path)
+void CBaseStream::LoadFromFile_v1(const CH5Handler& _h5File, const std::string& _path)
 {
 	const auto& Transpose = [](const std::vector<std::vector<double>>& _vec)
 	{

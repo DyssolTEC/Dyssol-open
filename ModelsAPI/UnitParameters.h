@@ -93,7 +93,7 @@ public:
 	bool IsInBounds() const override;				///< Checks whether m_value lays in range [m_min; m_max].
 
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
-	void LoadFromFile(CH5Handler& _h5File, const std::string& _path);
+	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
 
 private:
 	EUnitParameter DeduceType() const;				///< Deduces type of the unit parameter depending on the template argument.
@@ -137,7 +137,7 @@ public:
 	bool IsInBounds() const override;           ///< Checks whether all m_values lay in range [m_min; m_max].
 
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
-	void LoadFromFile(CH5Handler& _h5File, const std::string& _path);
+	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
 };
 
 
@@ -157,7 +157,7 @@ public:
 	void SetValue(const std::string& _value); ///< Sets string unit parameter value.
 
 	void SaveToFile(CH5Handler& _h5Saver, const std::string& _path) const;
-	void LoadFromFile(CH5Handler& _h5Loader, const std::string& _path);
+	void LoadFromFile(const CH5Handler& _h5Loader, const std::string& _path);
 };
 
 
@@ -177,7 +177,7 @@ public:
 	void SetChecked(bool _checked); ///< Sets check box unit parameter value.
 
 	void SaveToFile(CH5Handler& _h5Saver, const std::string& _path) const;
-	void LoadFromFile(CH5Handler& _h5Loader, const std::string& _path);
+	void LoadFromFile(const CH5Handler& _h5Loader, const std::string& _path);
 };
 
 
@@ -204,7 +204,7 @@ public:
 	void SetSolver(CBaseSolver* _solver);	///< Sets pointer to a solver.
 
 	void SaveToFile(CH5Handler& _h5Saver, const std::string& _path) const;
-	void LoadFromFile(CH5Handler& _h5Loader, const std::string& _path);
+	void LoadFromFile(const CH5Handler& _h5Loader, const std::string& _path);
 };
 
 
@@ -234,7 +234,7 @@ public:
 	bool IsInBounds() const override;				      ///< Checks whether m_selected is one of the m_items.
 
 	void SaveToFile(CH5Handler& _h5Saver, const std::string& _path) const;
-	void LoadFromFile(CH5Handler& _h5Loader, const std::string& _path);
+	void LoadFromFile(const CH5Handler& _h5Loader, const std::string& _path);
 };
 
 
@@ -254,7 +254,7 @@ public:
 	void SetCompound(const std::string& _key);	///< Sets new compound's key.
 
 	void SaveToFile(CH5Handler& _h5Saver, const std::string& _path) const;
-	void LoadFromFile(CH5Handler& _h5Loader, const std::string& _path);
+	void LoadFromFile(const CH5Handler& _h5Loader, const std::string& _path);
 };
 
 
@@ -439,7 +439,7 @@ public:
 	// Save all parameters to HDF5 file.
 	void SaveToFile(CH5Handler& _h5Saver, const std::string& _path);
 	// Load all parameters from HDF5 file.
-	void LoadFromFile(CH5Handler& _h5Loader, const std::string& _path);
+	void LoadFromFile(const CH5Handler& _h5Loader, const std::string& _path);
 
 private:
 	// Makes parameter with index _parameter a member of the corresponding _block and _group.

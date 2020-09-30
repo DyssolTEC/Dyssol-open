@@ -2,6 +2,7 @@
 
 #include "StreamManager.h"
 #include "DyssolStringConstants.h"
+#include "H5Handler.h"
 
 CStreamManager::CStreamManager(const CMaterialsDatabase& _materialsDB, const CDistributionsGrid& _grid, const std::vector<std::string>& _compounds, const std::vector<SOverallDescriptor>& _overall,
 	const std::vector<SPhaseDescriptor>& _phases, const SCacheSettings& _cache, double& _minFraction) :
@@ -150,8 +151,8 @@ CStream* CStreamManager::AddStream(const std::string& _name)
 {
 	if (GetStream(_name)) return nullptr; // already exists
 	const std::string key = StringFunctions::GenerateUniqueKey(GetAllKeys(m_streamsWork));
-	m_streamsWork.emplace_back(CreateObject<CHoldup>(key, _name));
-	m_streamsStored.emplace_back(CreateObject<CHoldup>(key, _name));
+	m_streamsWork.emplace_back(CreateObject<CStream>(key, _name));
+	m_streamsStored.emplace_back(CreateObject<CStream>(key, _name));
 	return m_streamsWork.back().get();
 }
 
@@ -263,11 +264,145 @@ void CStreamManager::SetupStreamStructure(CBaseStream& _stream) const
 	_stream.SetMinimumFraction(m_minFraction);
 }
 
+void CStreamManager::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
+{
+	if (!_h5File.IsValid()) return;
+
+	// current version of save procedure
+	_h5File.WriteAttribute(_path, StrConst::H5AttrSaveVersion, m_saveVersion);
+
+	// save init and working streams
+	SaveObjects(_h5File, _path, m_feedsInit,   StrConst::StrMngr_H5AttrFeedsInitNum,   StrConst::StrMngr_H5GroupFeedsInit,   StrConst::StrMngr_H5GroupFeedName,   StrConst::StrMngr_H5Names);
+	SaveObjects(_h5File, _path, m_feedsWork,   StrConst::StrMngr_H5AttrFeedsWorkNum,   StrConst::StrMngr_H5GroupFeedsWork,   StrConst::StrMngr_H5GroupFeedName,   StrConst::StrMngr_H5Names);
+	SaveObjects(_h5File, _path, m_holdupsInit, StrConst::StrMngr_H5AttrHoldupsInitNum, StrConst::StrMngr_H5GroupHoldupsInit, StrConst::StrMngr_H5GroupHoldupName, StrConst::StrMngr_H5Names);
+	SaveObjects(_h5File, _path, m_holdupsWork, StrConst::StrMngr_H5AttrHoldupsWorkNum, StrConst::StrMngr_H5GroupHoldupsWork, StrConst::StrMngr_H5GroupHoldupName, StrConst::StrMngr_H5Names);
+	SaveObjects(_h5File, _path, m_streamsWork, StrConst::StrMngr_H5AttrStreamsWorkNum, StrConst::StrMngr_H5GroupStreamsWork, StrConst::StrMngr_H5GroupStreamName, StrConst::StrMngr_H5Names);
+}
+
+void CStreamManager::LoadFromFile(const CH5Handler& _h5File, const std::string& _path)
+{
+	if (!_h5File.IsValid()) return;
+
+	// current version of save procedure
+	//const int version = _h5File.ReadAttribute(_path, StrConst::H5AttrSaveVersion);
+
+	// load init and working streams
+	LoadObjects(_h5File, _path, m_feedsInit,   StrConst::StrMngr_H5AttrFeedsInitNum,   StrConst::StrMngr_H5GroupFeedsInit,   StrConst::StrMngr_H5GroupFeedName,   StrConst::StrMngr_H5Names);
+	LoadObjects(_h5File, _path, m_feedsWork,   StrConst::StrMngr_H5AttrFeedsWorkNum,   StrConst::StrMngr_H5GroupFeedsWork,   StrConst::StrMngr_H5GroupFeedName,   StrConst::StrMngr_H5Names);
+	LoadObjects(_h5File, _path, m_holdupsInit, StrConst::StrMngr_H5AttrHoldupsInitNum, StrConst::StrMngr_H5GroupHoldupsInit, StrConst::StrMngr_H5GroupHoldupName, StrConst::StrMngr_H5Names);
+	LoadObjects(_h5File, _path, m_holdupsWork, StrConst::StrMngr_H5AttrHoldupsWorkNum, StrConst::StrMngr_H5GroupHoldupsWork, StrConst::StrMngr_H5GroupHoldupName, StrConst::StrMngr_H5Names);
+	LoadObjects(_h5File, _path, m_streamsWork, StrConst::StrMngr_H5AttrStreamsWorkNum, StrConst::StrMngr_H5GroupStreamsWork, StrConst::StrMngr_H5GroupStreamName, StrConst::StrMngr_H5Names);
+
+	// properly configure store streams
+	for (size_t i = 0; i < m_holdupsStored.size(); ++i)
+		m_holdupsStored[i]->SetupStructure(*m_holdupsWork[i]);
+	for (size_t i = 0; i < m_streamsStored.size(); ++i)
+		m_streamsStored[i]->SetupStructure(*m_streamsWork[i]);
+}
+
+void CStreamManager::LoadFromFile_v0(const CH5Handler& _h5File, const std::string& _path)
+{
+	const auto& Load = [&](const std::vector<std::unique_ptr<CHoldup>>& _holdups, const std::vector<std::unique_ptr<CStream>>& _feeds, const std::string& _group, const std::string& _subgroup, const std::string& _namespath)
+	{
+		std::vector<std::string> names;
+		_h5File.ReadData(_path + "/" + _group, _namespath, names);
+		std::vector<bool> holdupsReaded(names.size(), false);
+		std::vector<bool> holdupsLoaded(_holdups.size(), false);
+		std::vector<bool> feedsLoaded(_holdups.size(), false);
+		const std::string holdupPath = _path + "/" + _group + "/" + _subgroup;
+		// try to load holdups by names
+		for (size_t iExist = 0; iExist < _holdups.size(); ++iExist)
+			for (size_t iSaved = 0; iSaved < names.size(); ++iSaved)
+				if (_holdups[iExist]->GetName() == names[iSaved])
+				{
+					_holdups[iExist]->LoadFromFile(_h5File, holdupPath + std::to_string(iSaved));
+					holdupsReaded[iSaved] = true;
+					holdupsLoaded[iExist] = true;
+					break;
+				}
+		// try to load feeds by names
+		for (size_t iExist = 0; iExist < _feeds.size(); ++iExist)
+			for (size_t iSaved = 0; iSaved < names.size(); ++iSaved)
+				if (_feeds[iExist]->GetName() == names[iSaved])
+				{
+					_feeds[iExist]->LoadFromFile(_h5File, holdupPath + std::to_string(iSaved));
+					holdupsReaded[iSaved] = true;
+					feedsLoaded[iExist] = true;
+					break;
+				}
+		// load rest by positions
+		for (size_t i = 0; i < _holdups.size(); ++i)
+			if (!holdupsLoaded[i] && i < holdupsReaded.size() && !holdupsReaded[i])
+			{
+				const std::string name = _holdups[i]->GetName();
+				_holdups[i]->LoadFromFile(_h5File, holdupPath + std::to_string(i));
+				_holdups[i]->SetName(name);
+			}
+		for (size_t i = 0; i < _feeds.size(); ++i)
+			if (!feedsLoaded[i] && i < holdupsReaded.size() && !holdupsReaded[i])
+			{
+				const std::string name = _feeds[i]->GetName();
+				_feeds[i]->LoadFromFile(_h5File, holdupPath + std::to_string(i));
+				_feeds[i]->SetName(name);
+			}
+	};
+
+	if (!_h5File.IsValid()) return;
+
+	// load init holdups and feeds
+	Load(m_holdupsInit, m_feedsInit, StrConst::BUnit_H5GroupHoldups, StrConst::BUnit_H5GroupHoldupName, StrConst::BUnit_H5HoldupsNames);
+	// load working holdups and feeds
+	Load(m_holdupsWork, m_feedsWork, StrConst::BUnit_H5GroupHoldupsWork, StrConst::BUnit_H5GroupHoldupWorkName, StrConst::BUnit_H5WorkHoldupsNames);
+	// load working material streams
+	LoadObjects(_h5File, _path, m_streamsWork, StrConst::StrMngr_H5AttrStreamsWorkNum, StrConst::BUnit_H5GroupStreamsWork, StrConst::BUnit_H5GroupStreamWorkName, StrConst::BUnit_H5WorkStreamsNames);
+
+	// properly configure store streams
+	for (size_t i = 0; i < m_holdupsStored.size(); ++i)
+		m_holdupsStored[i]->SetupStructure(*m_holdupsWork[i]);
+	for (size_t i = 0; i < m_streamsStored.size(); ++i)
+		m_streamsStored[i]->SetupStructure(*m_streamsWork[i]);
+}
+
+void CStreamManager::LoadFromFile_v00(const CH5Handler& _h5File, const std::string& _path)
+{
+	if (!_h5File.IsValid()) return;
+
+	// load holdups
+	for (size_t i = 0; i < m_holdupsInit.size(); ++i)
+		m_holdupsInit[i]->LoadFromFile(_h5File, _path + "/" + StrConst::BUnit_H5GroupHoldups + "/" + StrConst::BUnit_H5GroupHoldupName + std::to_string(i));
+	for (size_t i = 0; i < m_feedsInit.size(); ++i)
+		m_feedsInit[i]->LoadFromFile(_h5File, _path + "/" + StrConst::BUnit_H5GroupHoldups + "/" + StrConst::BUnit_H5GroupHoldupName + std::to_string(i));
+
+	// load working holdups
+	const size_t nWorkHoldups = _h5File.ReadAttribute(_path, StrConst::BUnit_H5AttrHoldupsWorkNum);
+	if (nWorkHoldups != static_cast<size_t>(-1))
+	{
+		for (size_t i = 0; i < m_holdupsWork.size(); ++i)
+			m_holdupsWork[i]->LoadFromFile(_h5File, _path + "/" + StrConst::BUnit_H5GroupHoldupsWork + "/" + StrConst::BUnit_H5GroupHoldupWorkName + std::to_string(i));
+		for (size_t i = 0; i < m_feedsWork.size(); ++i)
+			m_feedsWork[i]->LoadFromFile(_h5File, _path + "/" + StrConst::BUnit_H5GroupHoldupsWork + "/" + StrConst::BUnit_H5GroupHoldupWorkName + std::to_string(i));
+	}
+
+	// load working material streams
+	for (const auto& name : GetAllNames(m_streamsWork))
+		RemoveStream(name);
+	const size_t nStreams = _h5File.ReadAttribute(_path, StrConst::BUnit_H5AttrStreamsWorkNum);
+	if (nStreams != static_cast<size_t>(-1))
+		for (size_t i = 0; i < nStreams; ++i)
+			AddStream("TempName")->LoadFromFile(_h5File, _path + "/" + StrConst::BUnit_H5GroupStreamsWork + "/" + StrConst::BUnit_H5GroupStreamWorkName + std::to_string(i));
+
+	// properly configure store streams
+	for (size_t i = 0; i < m_holdupsStored.size(); ++i)
+		m_holdupsStored[i]->SetupStructure(*m_holdupsWork[i]);
+	for (size_t i = 0; i < m_streamsStored.size(); ++i)
+		m_streamsStored[i]->SetupStructure(*m_streamsWork[i]);
+}
+
 template <typename T>
 T* CStreamManager::CreateObject(const std::string& _key, const std::string& _name) const
 {
 	auto* stream = new T{ _key, &m_materialsDB, &m_grid };
-	stream.SetName(_name);
+	stream->SetName(_name);
 	SetupStreamStructure(*stream);
 	return stream;
 }
@@ -302,17 +437,69 @@ std::vector<T*> CStreamManager::GetObjects(const std::vector<std::unique_ptr<T>>
 }
 
 template <typename T>
-void CStreamManager::RemoveObjects(const std::vector<std::unique_ptr<T>>& _streams, const std::string& _name)
+void CStreamManager::RemoveObjects(std::vector<std::unique_ptr<T>>& _streams, const std::string& _name)
 {
-	_streams.erase(std::remove_if(_streams.begin(), _streams.end(), [&](std::unique_ptr<T> s) { return s->GetName() == _name; }), _streams.end());
+	_streams.erase(std::remove_if(_streams.begin(), _streams.end(), [&](const std::unique_ptr<T>& s) { return s->GetName() == _name; }), _streams.end());
 }
 
 template <typename T>
-std::vector<std::string> CStreamManager::GetAllKeys(const std::vector<std::unique_ptr<T>>& _streams)
+void CStreamManager::SaveObjects(CH5Handler& _h5File, const std::string& _path, const std::vector<std::unique_ptr<T>>& _streams, const std::string& _attribute, const std::string& _group, const std::string& _subgroup, const std::string& _namespath) const
+{
+	_h5File.WriteAttribute(_path, _attribute, static_cast<int>(_streams.size()));
+	const std::string blockGroup = _h5File.CreateGroup(_path, _group);
+	_h5File.WriteData(blockGroup, _namespath, GetAllNames(_streams));
+	for (size_t i = 0; i < _streams.size(); ++i)
+	{
+		const std::string streamPath = _h5File.CreateGroup(blockGroup, _subgroup + std::to_string(i));
+		_streams[i]->SaveToFile(_h5File, streamPath);
+	}
+}
+
+template <typename T>
+void CStreamManager::LoadObjects(const CH5Handler& _h5File, const std::string& _path, const std::vector<std::unique_ptr<T>>& _streams, const std::string& _attribute, const std::string& _group, const std::string& _subgroup, const std::string& _namespath)
+{
+	/* complex loading procedure with names, while users can change feeds/holdups/streams during the development of a unit.
+	 * this approach allows to properly load even if the order or names of streams are changed by a developer. */
+	std::vector<std::string> names;
+	_h5File.ReadData(_path + "/" + _group, StrConst::StrMngr_H5Names, names);
+	std::vector<bool> streamLoaded(_streams.size(), false);	// whether an existing stream is already loaded
+	std::vector<bool> streamReaded(names.size(), false);	// whether a saved stream is already used to load an existing stream
+	const std::string streamPath = _path + "/" + _group + "/" + _subgroup;
+	// try to load by names
+	for (size_t iExist = 0; iExist < _streams.size(); ++iExist)
+		for (size_t iSaved = 0; iSaved < names.size(); ++iSaved)
+			if (_streams[iExist]->GetName() == names[iSaved])
+			{
+				_streams[iExist]->LoadFromFile(_h5File, streamPath + std::to_string(iSaved));
+				streamReaded[iSaved] = true;
+				streamLoaded[iExist] = true;
+				break;
+			}
+	// load rest by positions
+	for (size_t i = 0; i < _streams.size(); ++i)
+		if (!streamLoaded[i] && i < streamReaded.size() && !streamReaded[i])
+		{
+			const std::string name = _streams[i]->GetName();
+			_streams[i]->LoadFromFile(_h5File, streamPath + std::to_string(i));
+			_streams[i]->SetName(name);
+		}
+}
+
+template <typename T>
+std::vector<std::string> CStreamManager::GetAllKeys(const std::vector<std::unique_ptr<T>>& _streams) const
 {
 	std::vector<std::string> res;
 	for (const auto& stream : _streams)
 		res.push_back(stream->GetKey());
+	return res;
+}
+
+template <typename T>
+std::vector<std::string> CStreamManager::GetAllNames(const std::vector<std::unique_ptr<T>>& _streams) const
+{
+	std::vector<std::string> res;
+	for (const auto& stream : _streams)
+		res.push_back(stream->GetName());
 	return res;
 }
 

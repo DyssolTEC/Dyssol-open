@@ -1,43 +1,8 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "PlotManager.h"
-#include "StringFunctions.h"
-#include <stdexcept>
-
-////////////////////////////////////////////////////////////////////////////////
-// CPoint
-//
-
-CPoint::CPoint(double _x, double _y) :
-	x{ _x },
-	y{ _y }
-{
-}
-
-size_t CPoint::Size()
-{
-	return 2;
-}
-
-double CPoint::operator[](size_t _i) const
-{
-	switch (_i)
-	{
-	case 0: return x;
-	case 1: return y;
-	default: throw std::out_of_range("CPoint::operator[size_t] : index is out of range");
-	}
-}
-
-double& CPoint::operator[](size_t _i)
-{
-	switch (_i)
-	{
-	case 0: return x;
-	case 1: return y;
-	default: throw std::out_of_range("CPoint::operator[size_t] : index is out of range");
-	}
-}
+#include "H5Handler.h"
+#include "DyssolStringConstants.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // CCurve
@@ -130,6 +95,32 @@ void CCurve::Clear()
 {
 	ClearData();
 	m_name.clear();
+}
+
+void CCurve::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
+{
+	if (!_h5File.IsValid()) return;
+
+	// current version of save procedure
+	_h5File.WriteAttribute(_path, StrConst::H5AttrSaveVersion, m_saveVersion);
+
+	_h5File.WriteData(_path, StrConst::PlotMngr_H5CurveName,   m_name);
+	_h5File.WriteData(_path, StrConst::PlotMngr_H5CurveZValue, m_valueZ);
+	_h5File.WriteData(_path, StrConst::PlotMngr_H5CurveData,   m_values);
+}
+
+void CCurve::LoadFromFile(CH5Handler& _h5File, const std::string& _path)
+{
+	Clear();
+
+	if (!_h5File.IsValid()) return;
+
+	// current version of save procedure
+	//const int version = _h5File.ReadAttribute(_path, StrConst::H5AttrSaveVersion);
+
+	_h5File.ReadData(_path, StrConst::PlotMngr_H5CurveName,   m_name);
+	_h5File.ReadData(_path, StrConst::PlotMngr_H5CurveZValue, m_valueZ);
+	_h5File.ReadData(_path, StrConst::PlotMngr_H5CurveData,   m_values);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -234,7 +225,7 @@ void CPlot::SetLabels(const std::string& _labelX, const std::string& _labelY, co
 CCurve* CPlot::AddCurve(const std::string& _name)
 {
 	if (GetCurve(_name)) return nullptr;
-	m_curves.emplace_back(CCurve{ _name });
+	m_curves.emplace_back(new CCurve{ _name });
 	return m_curves.back().get();
 }
 
@@ -301,12 +292,12 @@ CCurve* CPlot::GetCurve(double _z)
 
 void CPlot::RemoveCurve(const std::string& _name)
 {
-	m_curves.erase(std::remove_if(m_curves.begin(), m_curves.end(), [&](std::unique_ptr<CCurve> s) { return s->GetName() == _name; }), m_curves.end());
+	m_curves.erase(std::remove_if(m_curves.begin(), m_curves.end(), [&](const std::unique_ptr<CCurve>& s) { return s->GetName() == _name; }), m_curves.end());
 }
 
 void CPlot::RemoveCurve(double _z)
 {
-	m_curves.erase(std::remove_if(m_curves.begin(), m_curves.end(), [&](std::unique_ptr<CCurve> s) { return s->GetZValue() == _z; }), m_curves.end());
+	m_curves.erase(std::remove_if(m_curves.begin(), m_curves.end(), [&](const std::unique_ptr<CCurve>& s) { return s->GetZValue() == _z; }), m_curves.end());
 }
 
 std::vector<const CCurve*> CPlot::GetAllCurves() const
@@ -355,6 +346,50 @@ void CPlot::Clear()
 	m_labelZ = {};
 }
 
+void CPlot::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
+{
+	if (!_h5File.IsValid()) return;
+
+	// current version of save procedure
+	_h5File.WriteAttribute(_path, StrConst::H5AttrSaveVersion, m_saveVersion);
+
+	_h5File.WriteData(_path, StrConst::PlotMngr_H5PlotName,  m_name);
+	_h5File.WriteData(_path, StrConst::PlotMngr_H5PlotXAxis, m_labelX);
+	_h5File.WriteData(_path, StrConst::PlotMngr_H5PlotYAxis, m_labelY);
+	_h5File.WriteData(_path, StrConst::PlotMngr_H5PlotZAxis, m_labelZ);
+
+	_h5File.WriteAttribute(_path, StrConst::PlotMngr_H5AttrCurvesNum, static_cast<int>(m_curves.size()));
+	const std::string curvesGroup = _h5File.CreateGroup(_path, StrConst::PlotMngr_H5GroupCurves);
+	for (size_t i = 0; i < m_curves.size(); ++i)
+	{
+		const std::string curvePath = _h5File.CreateGroup(curvesGroup, StrConst::PlotMngr_H5GroupCurveName + std::to_string(i));
+		m_curves[i]->SaveToFile(_h5File, curvePath);
+	}
+}
+
+void CPlot::LoadFromFile(CH5Handler& _h5File, const std::string& _path)
+{
+	Clear();
+
+	if (!_h5File.IsValid()) return;
+
+	// current version of save procedure
+	//const int version = _h5File.ReadAttribute(_path, StrConst::H5AttrSaveVersion);
+
+	_h5File.ReadData(_path, StrConst::PlotMngr_H5PlotName,  m_name);
+	_h5File.ReadData(_path, StrConst::PlotMngr_H5PlotXAxis, m_labelX);
+	_h5File.ReadData(_path, StrConst::PlotMngr_H5PlotYAxis, m_labelY);
+	_h5File.ReadData(_path, StrConst::PlotMngr_H5PlotZAxis, m_labelZ);
+
+	const size_t nCurves = _h5File.ReadAttribute(_path, StrConst::PlotMngr_H5AttrCurvesNum);
+	const std::string curvesGroup = _path + "/" + StrConst::PlotMngr_H5GroupCurves;
+	for (size_t i = 0; i < nCurves; ++i)
+	{
+		const std::string curvePath = curvesGroup + "/" + StrConst::PlotMngr_H5GroupCurveName + std::to_string(i);
+		AddCurve("")->LoadFromFile(_h5File, curvePath);
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // CPlotManager
 //
@@ -362,21 +397,21 @@ void CPlot::Clear()
 CPlot* CPlotManager::AddPlot(const std::string& _name)
 {
 	if (GetPlot(_name)) return nullptr;
-	m_plots.emplace_back(CPlot{ _name });
+	m_plots.emplace_back(new CPlot{ _name });
 	return m_plots.back().get();
 }
 
 CPlot* CPlotManager::AddPlot(const std::string& _name, const std::string& _labelX, const std::string& _labelY)
 {
 	if (GetPlot(_name)) return nullptr;
-	m_plots.emplace_back(CPlot{ _name, _labelX, _labelY });
+	m_plots.emplace_back(new CPlot{ _name, _labelX, _labelY });
 	return m_plots.back().get();
 }
 
 CPlot* CPlotManager::AddPlot(const std::string& _name, const std::string& _labelX, const std::string& _labelY, const std::string& _labelZ)
 {
 	if (GetPlot(_name)) return nullptr;
-	m_plots.emplace_back(CPlot{ _name, _labelX, _labelY, _labelZ });
+	m_plots.emplace_back(new CPlot{ _name, _labelX, _labelY, _labelZ });
 	return m_plots.back().get();
 }
 
@@ -395,7 +430,7 @@ CPlot* CPlotManager::GetPlot(const std::string& _name)
 
 void CPlotManager::RemovePlot(const std::string& _name)
 {
-	m_plots.erase(std::remove_if(m_plots.begin(), m_plots.end(), [&](std::unique_ptr<CPlot> s) { return s->GetName() == _name; }), m_plots.end());
+	m_plots.erase(std::remove_if(m_plots.begin(), m_plots.end(), [&](const std::unique_ptr<CPlot>& s) { return s->GetName() == _name; }), m_plots.end());
 }
 
 std::vector<const CPlot*> CPlotManager::GetAllPlots() const
@@ -445,3 +480,79 @@ void CPlotManager::LoadState()
 	for (size_t i = 0; i < m_plotsStored.size(); ++i)
 		*m_plots[i] = *m_plotsStored[i];
 }
+
+void CPlotManager::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
+{
+	if (!_h5File.IsValid()) return;
+
+	// current version of save procedure
+	_h5File.WriteAttribute(_path, StrConst::H5AttrSaveVersion, m_saveVersion);
+
+	_h5File.WriteAttribute(_path, StrConst::PlotMngr_H5AttrPlotsNum, static_cast<int>(m_plots.size()));
+	for (size_t i = 0; i < m_plots.size(); ++i)
+	{
+		const std::string plotPath = _h5File.CreateGroup(_path, StrConst::PlotMngr_H5GroupPlotName + std::to_string(i));
+		m_plots[i]->SaveToFile(_h5File, plotPath);
+	}
+}
+
+void CPlotManager::LoadFromFile(CH5Handler& _h5File, const std::string& _path)
+{
+	Clear();
+
+	if (!_h5File.IsValid()) return;
+
+	// current version of save procedure
+	//const int version = _h5File.ReadAttribute(_path, StrConst::H5AttrSaveVersion);
+
+	const size_t nPlots = _h5File.ReadAttribute(_path, StrConst::PlotMngr_H5AttrPlotsNum);
+	for (size_t i = 0; i < nPlots; ++i)
+	{
+		const std::string plotPath = _path + "/" + StrConst::PlotMngr_H5GroupPlotName + std::to_string(i);
+		AddPlot("")->LoadFromFile(_h5File, plotPath);
+	}
+}
+
+void CPlotManager::LoadFromFile_v0(const CH5Handler& _h5File, const std::string& _path)
+{
+	Clear();
+
+	if (!_h5File.IsValid()) return;
+
+	const size_t nPlots = _h5File.ReadAttribute(_path, StrConst::PlotMngr_H5AttrPlotsNum);
+	if (nPlots == static_cast<size_t>(-1)) return;
+	const std::string plotsPath = _path + "/" + StrConst::BUnit_H5GroupPlots + "/" + StrConst::PlotMngr_H5GroupPlotName;
+	for (size_t i = 0; i < nPlots; ++i)
+	{
+		const std::string plotPath = plotsPath + std::to_string(i);
+		auto* plot = AddPlot("");
+		std::string plotName;
+		_h5File.ReadData(plotPath, StrConst::BUnit_H5PlotName, plotName);
+		plot->SetName(plotName);
+		std::string axisX, axisY, axisZ;
+		_h5File.ReadData(plotPath, StrConst::BUnit_H5PlotXAxis, axisX);
+		_h5File.ReadData(plotPath, StrConst::BUnit_H5PlotYAxis, axisY);
+		_h5File.ReadData(plotPath, StrConst::BUnit_H5PlotZAxis, axisZ);
+		plot->SetLabels(axisX, axisY, axisZ);
+
+		const size_t nCurves = _h5File.ReadAttribute(plotPath, StrConst::BUnit_H5AttrCurvesNum);
+		if (nCurves == static_cast<size_t>(-1)) continue;
+		std::string curvesPath = plotPath + "/" + StrConst::BUnit_H5GroupCurves + "/" + StrConst::BUnit_H5GroupCurveName;
+		for (size_t j = 0; j < static_cast<size_t>(nCurves); ++j)
+		{
+			std::string curvePath = curvesPath + std::to_string(j);
+			auto* curve = plot->AddCurve("");
+			std::string curveName;
+			_h5File.ReadData(curvePath, StrConst::BUnit_H5CurveName, curveName);
+			curve->SetName(curveName);
+			std::vector<double> x, y;
+			_h5File.ReadData(curvePath, StrConst::BUnit_H5CurveX, x);
+			_h5File.ReadData(curvePath, StrConst::BUnit_H5CurveY, y);
+			curve->AddPoints(x, y);
+			double valueZ;
+			_h5File.ReadData(curvePath, StrConst::BUnit_H5CurveZ, valueZ);
+			curve->SetZValue(valueZ);
+		}
+	}
+}
+

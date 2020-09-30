@@ -195,7 +195,7 @@ void CPhase::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
 	m_distribution.SaveToFile(_h5File, _path + "/" + StrConst::Phase_H5Distribution);
 }
 
-void CPhase::LoadFromFile(CH5Handler& _h5File, const std::string& _path)
+void CPhase::LoadFromFile(const CH5Handler& _h5File, const std::string& _path)
 {
 	if (!_h5File.IsValid())	return;
 

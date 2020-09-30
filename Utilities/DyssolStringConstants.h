@@ -66,6 +66,69 @@ namespace StrConst
 
 
 //////////////////////////////////////////////////////////////////////////
+/// CUnitPort
+//////////////////////////////////////////////////////////////////////////
+	const char* const UPort_H5AttrPortsNum  = "PortsNumber";
+	const char* const UPort_H5GroupPortName = "Port";
+	const char* const UPort_H5PortsNames    = "UnitPortsNames";
+	const char* const UPort_H5PortsKeys     = "UnitPortsKeys";
+	const char* const UPort_H5Name          = "Name";
+	const char* const UPort_H5Type          = "Type";
+	const char* const UPort_H5StreamKey     = "StreamKey";
+
+
+//////////////////////////////////////////////////////////////////////////
+/// CStateVariable
+//////////////////////////////////////////////////////////////////////////
+	const char* const SVar_H5Name    = "Name";
+	const char* const SVar_H5Value   = "Value";
+	const char* const SVar_H5History = "History";
+
+
+//////////////////////////////////////////////////////////////////////////
+/// CStreamManager
+//////////////////////////////////////////////////////////////////////////
+	const char* const StrMngr_H5AttrFeedsInitNum   = "FeedsInitNumber";
+	const char* const StrMngr_H5AttrFeedsWorkNum   = "FeedsWorkNumber";
+	const char* const StrMngr_H5AttrHoldupsInitNum = "HoldupsInitNumber";
+	const char* const StrMngr_H5AttrHoldupsWorkNum = "HoldupsWorkNumber";
+	const char* const StrMngr_H5AttrStreamsWorkNum = "StreamsWorkNumber";
+	const char* const StrMngr_H5GroupFeedsInit     = "FeedsInit";
+	const char* const StrMngr_H5GroupFeedsWork     = "FeedsWork";
+	const char* const StrMngr_H5GroupHoldupsInit   = "HoldupsInit";
+	const char* const StrMngr_H5GroupHoldupsWork   = "HoldupsWork";
+	const char* const StrMngr_H5GroupStreamsWork   = "StreamsWork";
+	const char* const StrMngr_H5GroupFeedName      = "Feed";
+	const char* const StrMngr_H5GroupHoldupName    = "Holdup";
+	const char* const StrMngr_H5GroupStreamName    = "Stream";
+	const char* const StrMngr_H5Names              = "Names";
+
+
+//////////////////////////////////////////////////////////////////////////
+/// CPlotManager
+//////////////////////////////////////////////////////////////////////////
+	const char* const PlotMngr_H5AttrPlotsNum   = "PlotsNumber";
+	const char* const PlotMngr_H5GroupPlotName  = "Plot";
+	const char* const PlotMngr_H5PlotName       = "PlotName";
+	const char* const PlotMngr_H5PlotXAxis      = "XAxis";
+	const char* const PlotMngr_H5PlotYAxis      = "YAxis";
+	const char* const PlotMngr_H5PlotZAxis      = "ZAxis";
+	const char* const PlotMngr_H5AttrCurvesNum  = "CurvesNumber";
+	const char* const PlotMngr_H5GroupCurves    = "Curves";
+	const char* const PlotMngr_H5GroupCurveName = "Curve";
+	const char* const PlotMngr_H5CurveName      = "CurveName";
+	const char* const PlotMngr_H5CurveZValue    = "ZValue";
+	const char* const PlotMngr_H5CurveData      = "Data";
+
+
+//////////////////////////////////////////////////////////////////////////
+/// CStateVariablesManager
+//////////////////////////////////////////////////////////////////////////
+	const char* const SVMngr_H5AttrStateVarsNum  = "StateVarsNumber";
+	const char* const SVMngr_H5GroupStateVarName = "StateVariable";
+
+
+//////////////////////////////////////////////////////////////////////////
 /// CBaseUnit
 //////////////////////////////////////////////////////////////////////////
 	const char* const BUnit_DefaultPortName   = "Port";
@@ -81,9 +144,11 @@ namespace StrConst
 
 	const char* const BUnit_H5UnitKey			      = "UnitKey";
 	const char* const BUnit_H5GroupPorts			  = "Ports";
+	const char* const BUnit_H5GroupPortName			  = "Port";
 	const char* const BUnit_H5UnitPorts			      = "UnitPorts";
 	const char* const BUnit_H5UnitPortsKeys		      = "UnitPortsKeys";
 	const char* const BUnit_H5UnitPortsNames		  = "UnitPortsNames";
+	const char* const BUnit_H5GroupInternalMaterials  = "InternalMaterials";
 	const char* const BUnit_H5GroupHoldups	          = "Holdups";
 	const char* const BUnit_H5HoldupsNames	          = "HoldupsNames";
 	const char* const BUnit_H5GroupHoldupName	      = "Holdup";

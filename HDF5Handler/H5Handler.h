@@ -2,10 +2,11 @@
 
 #pragma once
 
-#include <string>
+#include "DyssolTypes.h"
 #include <vector>
 #include "H5Cpp.h"
 #include <regex>
+
 
 /**
  *	IO with HDF5 files. Two modes:
@@ -42,6 +43,8 @@ public:
 	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<unsigned>& _vData) const;
 	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<double>& _vData) const;
 	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<std::vector<double>>& _vvData) const;
+	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<STDValue>& _data) const;
+	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<CPoint>& _data) const;
 
 	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::string& _sData) const;
 	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, double& _dData) const;
@@ -54,6 +57,8 @@ public:
 	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<double>& _vData) const;
 	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<std::vector<double>>& _vvData) const;
 	void ReadDataOld(const std::string& _sPath, const std::string& _sDatasetName, std::vector<std::vector<double>>& _vvData) const;
+	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<STDValue>& _data) const;
+	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<CPoint>& _data) const;
 
 	bool IsValid() const;
 

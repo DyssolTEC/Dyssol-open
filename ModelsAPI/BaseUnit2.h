@@ -6,7 +6,7 @@
 #include "AgglomerationSolver.h"
 #include "PBMSolver.h"
 #include "PlotManager.h"
-#include "UnitPort.h"
+#include "UnitPorts.h"
 #include "StateVariable.h"
 #include "StreamManager.h"
 
@@ -48,11 +48,12 @@ private:
 	// Structural unit data
 	//
 
-	std::vector<std::unique_ptr<CUnitPort>> m_ports;																// Ports of the unit.
+	CPortsManager m_ports;																							// Ports of the unit.
 	CUnitParametersManager m_unitParameters;																		// Handler of unit parameters.
-	std::vector<std::unique_ptr<CStateVariable>> m_stateVariables;													// State variables of the unit.
+	CStateVariablesManager m_stateVariables;																		// State variables of the unit.
 	CStreamManager m_streams{ m_materialsDB, m_grid, m_compounds, m_overall, m_phases, m_cache, m_minFraction };	// Feeds, holdups and internal streams.
 	CPlotManager m_plots;																							// Plots.
+
 	CUnitLookupTables m_lookupTables{ &m_materialsDB, &m_compounds };												// Lookup tables to calculate TP-dependent properties.
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -107,10 +108,6 @@ public:
 	const CUnitPort* GetPort(const std::string& _portName) const;
 	// Returns a reference to the specified port of the unit.
 	CUnitPort* GetPort(const std::string& _portName);
-	// Returns pointers to all ports of the unit.
-	std::vector<CUnitPort*> GetPorts();
-	// Returns const pointers to all ports of the unit.
-	std::vector<const CUnitPort*> GetPorts() const;
 	// Returns a pointer to the stream connected to this port. If such port does not exist or empty, a logic_error exception is thrown.
 	CStream* GetPortStream(const std::string& _portName) const;
 
@@ -487,14 +484,17 @@ public:
 	// Loads the stored state of all time-dependent parameters before a restart of the simulation from that time point.
 	virtual void LoadState() {}
 
-private:
-	// TODO: remove
-	// Returns the names of all defined ports.
-	std::vector<std::string> AllPortNames() const;
+	////////////////////////////////////////////////////////////////////////////////
+	// Saving/loading
+	//
 
-	// Returns a const pointer to a state variable with the given name.
-	const CStateVariable* GetStateVariablePtr(const std::string& _name) const;
-	// Returns a pointer to a state variable with the given name.
-	CStateVariable* GetStateVariablePtr(const std::string& _name);
+	// Saves all parameters to HDF5 file.
+	void SaveToFile(CH5Handler& _h5File, const std::string& _path);
+	// Loads all parameters from HDF5 file.
+	void LoadFromFile(CH5Handler& _h5File, const std::string& _path);
+	// Loads all parameters from HDF5 file. A compatibility version.
+	void LoadFromFile_v2(const CH5Handler& _h5File, const std::string& _path);
+	// Loads all parameters from HDF5 file. A compatibility version.
+	void LoadFromFile_v1(const CH5Handler& _h5File, const std::string& _path);
 };
 

@@ -117,7 +117,7 @@ void CBaseConstUnitParameter<T>::SaveToFile(CH5Handler& _h5File, const std::stri
 }
 
 template<typename T>
-void CBaseConstUnitParameter<T>::LoadFromFile(CH5Handler& _h5File, const std::string& _path)
+void CBaseConstUnitParameter<T>::LoadFromFile(const CH5Handler& _h5File, const std::string& _path)
 {
 	if (!_h5File.IsValid()) return;
 
@@ -243,7 +243,7 @@ void CTDUnitParameter::SaveToFile(CH5Handler& _h5File, const std::string& _path)
 	_h5File.WriteData(_path, StrConst::UParam_H5Values, GetValues());
 }
 
-void CTDUnitParameter::LoadFromFile(CH5Handler& _h5File, const std::string& _path)
+void CTDUnitParameter::LoadFromFile(const CH5Handler& _h5File, const std::string& _path)
 {
 	if (!_h5File.IsValid()) return;
 
@@ -303,7 +303,7 @@ void CStringUnitParameter::SaveToFile(CH5Handler& _h5Saver, const std::string& _
 	_h5Saver.WriteData(_path, StrConst::UParam_H5StrValue, m_value);
 }
 
-void CStringUnitParameter::LoadFromFile(CH5Handler& _h5Loader, const std::string& _path)
+void CStringUnitParameter::LoadFromFile(const CH5Handler& _h5Loader, const std::string& _path)
 {
 	if (!_h5Loader.IsValid()) return;
 
@@ -358,7 +358,7 @@ void CCheckBoxUnitParameter::SaveToFile(CH5Handler& _h5Saver, const std::string&
 	_h5Saver.WriteData(_path, StrConst::UParam_H5Values, m_checked);
 }
 
-void CCheckBoxUnitParameter::LoadFromFile(CH5Handler& _h5Loader, const std::string& _path)
+void CCheckBoxUnitParameter::LoadFromFile(const CH5Handler& _h5Loader, const std::string& _path)
 {
 	if (!_h5Loader.IsValid()) return;
 
@@ -434,7 +434,7 @@ void CSolverUnitParameter::SaveToFile(CH5Handler& _h5Saver, const std::string& _
 	_h5Saver.WriteData(_path, StrConst::UParam_H5StrValue, m_key);
 }
 
-void CSolverUnitParameter::LoadFromFile(CH5Handler& _h5Loader, const std::string& _path)
+void CSolverUnitParameter::LoadFromFile(const CH5Handler& _h5Loader, const std::string& _path)
 {
 	if (!_h5Loader.IsValid()) return;
 
@@ -534,7 +534,7 @@ void CComboUnitParameter::SaveToFile(CH5Handler& _h5Saver, const std::string& _p
 	_h5Saver.WriteData(_path, StrConst::UParam_H5Values, static_cast<uint32_t>(m_selected));
 }
 
-void CComboUnitParameter::LoadFromFile(CH5Handler& _h5Loader, const std::string& _path)
+void CComboUnitParameter::LoadFromFile(const CH5Handler& _h5Loader, const std::string& _path)
 {
 	if (!_h5Loader.IsValid()) return;
 
@@ -589,7 +589,7 @@ void CCompoundUnitParameter::SaveToFile(CH5Handler& _h5Saver, const std::string&
 	_h5Saver.WriteData(_path, StrConst::UParam_H5Values, m_key);
 }
 
-void CCompoundUnitParameter::LoadFromFile(CH5Handler& _h5Loader, const std::string& _path)
+void CCompoundUnitParameter::LoadFromFile(const CH5Handler& _h5Loader, const std::string& _path)
 {
 	if (!_h5Loader.IsValid()) return;
 
@@ -1080,7 +1080,7 @@ void CUnitParametersManager::SaveToFile(CH5Handler& _h5Saver, const std::string&
 	_h5Saver.WriteData(_path, StrConst::UParam_H5Names, names);
 }
 
-void CUnitParametersManager::LoadFromFile(CH5Handler& _h5Loader, const std::string& _path)
+void CUnitParametersManager::LoadFromFile(const CH5Handler& _h5Loader, const std::string& _path)
 {
 	if (!_h5Loader.IsValid()) return;
 

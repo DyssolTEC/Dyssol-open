@@ -8,6 +8,8 @@
 // Manages streams in each unit.
 class CStreamManager
 {
+	static const unsigned m_saveVersion{ 1 };	// Current version of the saving procedure.
+
 	std::vector<std::unique_ptr<CStream>> m_feedsInit;		// Initial values of feeds defined in this unit. These will be displayed in holdups editor UI. Will not be changed during the simulation.
 	std::vector<std::unique_ptr<CStream>> m_feedsWork;		// Feeds defined in this unit that take part in the simulation, and are displayed in the results.
 
@@ -119,6 +121,15 @@ public:
 	// Sets up the stream structure (MD dimensions, phases, materials, etc.) the same as it is configured in the flowsheet.
 	void SetupStreamStructure(CBaseStream& _stream) const;
 
+	// Saves data to file.
+	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
+	// Loads data from file.
+	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
+	// Loads data from file. A compatibility version.
+	void LoadFromFile_v0(const CH5Handler& _h5File, const std::string& _path);
+	// Loads data from file. A compatibility version.
+	void LoadFromFile_v00(const CH5Handler& _h5File, const std::string& _path);
+
 private:
 	// Creates a new stream with proper structure (MD dimensions, phases, materials, etc.).
 	template<typename T>
@@ -134,11 +145,22 @@ private:
 	std::vector<T*> GetObjects(const std::vector<std::unique_ptr<T>>& _streams);
 	// Removes a stream with the specified name from the given list of streams.
 	template<typename T>
-	void RemoveObjects(const std::vector<std::unique_ptr<T>>& _streams, const std::string& _name);
+	void RemoveObjects(std::vector<std::unique_ptr<T>>& _streams, const std::string& _name);
+
+	// Saves all streams from the given list.
+	template<typename T>
+	void SaveObjects(CH5Handler& _h5File, const std::string& _path, const std::vector<std::unique_ptr<T>>& _streams, const std::string& _attribute, const std::string& _group, const std::string& _subgroup, const std::string& _namespath) const;
+	// Loads all streams from the given list.
+	template<typename T>
+	void LoadObjects(const CH5Handler& _h5File, const std::string& _path, const std::vector<std::unique_ptr<T>>& _streams, const std::string& _attribute, const std::string& _group, const std::string& _subgroup, const std::string& _namespath);
 
 	// Returns keys of all the streams from the list.
 	template<typename T>
-	std::vector<std::string> GetAllKeys(const std::vector<std::unique_ptr<T>>& _streams);
+	std::vector<std::string> GetAllKeys(const std::vector<std::unique_ptr<T>>& _streams) const;
+
+	// Returns names of all the streams from the list.
+	template<typename T>
+	std::vector<std::string> GetAllNames(const std::vector<std::unique_ptr<T>>& _streams) const;
 
 	// Returns pointers to all feeds, streams and holdups.
 	std::vector<CBaseStream*> AllObjects();

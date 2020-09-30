@@ -1,27 +1,25 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "StateVariable.h"
+#include "H5Handler.h"
+#include "DyssolStringConstants.h"
 
-CStateVariable::CStateVariable(std::string _name, double _initValue, bool _trackHistory) :
+////////////////////////////////////////////////////////////////////////////////
+// CStateVariable
+//
+
+CStateVariable::CStateVariable(std::string _name, double _initValue) :
 	m_name{ std::move(_name) },
-	m_value{ 0.0 },
-	m_trackHistory{ _trackHistory },
-	m_initValue{ _initValue },
+	m_value{ _initValue },
 	m_valueStored{ 0.0 }
 {
-}
-
-void CStateVariable::Initialize()
-{
-	// set current value, clear history, initialize history with current value
-	SetValue(0.0, m_initValue);
 }
 
 void CStateVariable::Clear()
 {
 	m_value = 0.0;
 	m_valueStored = 0.0;
-	m_data.clear();
+	m_history.clear();
 }
 
 std::string CStateVariable::GetName() const
@@ -50,16 +48,6 @@ void CStateVariable::SetValue(double _time, double _value)
 	AddToHistory(_time, _value);
 }
 
-bool CStateVariable::IsTrackHistory() const
-{
-	return m_trackHistory;
-}
-
-void CStateVariable::SetTrackHistory(const bool _trackHistory)
-{
-	m_trackHistory = _trackHistory;
-}
-
 void CStateVariable::SaveState()
 {
 	m_valueStored = m_value;
@@ -72,26 +60,191 @@ void CStateVariable::LoadState()
 
 bool CStateVariable::HasHistory() const
 {
-	return m_data.size() > 1;
+	return m_history.size() > 1;
 }
 
 std::vector<STDValue> CStateVariable::GetHistory() const
 {
-	return m_data;
+	return m_history;
+}
+
+void CStateVariable::SetHistory(const std::vector<STDValue>& _history)
+{
+	m_history = _history;
+}
+
+void CStateVariable::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
+{
+	if (!_h5File.IsValid()) return;
+
+	// current version of save procedure
+	_h5File.WriteAttribute(_path, StrConst::H5AttrSaveVersion, m_saveVersion);
+
+	_h5File.WriteData(_path, StrConst::SVar_H5Name,    m_name);
+	_h5File.WriteData(_path, StrConst::SVar_H5Value,   m_value);
+	_h5File.WriteData(_path, StrConst::SVar_H5History, m_history);
+}
+
+void CStateVariable::LoadFromFile(CH5Handler& _h5File, const std::string& _path)
+{
+	if (!_h5File.IsValid()) return;
+
+	// current version of save procedure
+	//const int version = _h5File.ReadAttribute(_path, StrConst::H5AttrSaveVersion);
+
+	_h5File.ReadData(_path, StrConst::SVar_H5Name,    m_name);
+	_h5File.ReadData(_path, StrConst::SVar_H5Value,   m_value);
+	_h5File.ReadData(_path, StrConst::SVar_H5History, m_history);
 }
 
 void CStateVariable::AddToHistory(double _time, double _value)
 {
 	if (_time < 0) return;
-	if (m_data.empty() || m_data.back().time < _time)		// time is larger as all already stored
-		m_data.emplace_back(_time , _value);				// add it to the end
-	else if (std::abs(m_data.back().time - _time) <= m_eps)	// this time is the last stored
-		m_data.back() = { _time, _value };					// replace it
-	else													// there are larger time points
+	if (m_history.empty() || m_history.back().time < _time)		// time is larger as all already stored
+		m_history.emplace_back(_time , _value);					// add it to the end
+	else if (std::abs(m_history.back().time - _time) <= m_eps)	// this time is the last stored
+		m_history.back() = { _time, _value };					// replace it
+	else														// there are larger time points
 	{
 		// clear larger time points
-		m_data.erase(std::lower_bound(m_data.begin(), m_data.end(), STDValue{ _time, 0.0 }), m_data.end());
+		m_history.erase(std::lower_bound(m_history.begin(), m_history.end(), STDValue{ _time, 0.0 }), m_history.end());
 		// add value
-		m_data.emplace_back(_time, _value);
+		m_history.emplace_back(_time, _value);
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// CStateVariablesManager
+//
+
+CStateVariable* CStateVariablesManager::AddStateVariable(const std::string& _name, double _initValue)
+{
+	if (GetStateVariable(_name)) return nullptr;
+	m_stateVariables.emplace_back(new CStateVariable{ _name, _initValue });
+	return m_stateVariables.back().get();
+}
+
+const CStateVariable* CStateVariablesManager::GetStateVariable(const std::string& _name) const
+{
+	for (const auto& v : m_stateVariables)
+		if (v->GetName() == _name)
+			return v.get();
+	return nullptr;
+}
+
+CStateVariable* CStateVariablesManager::GetStateVariable(const std::string& _name)
+{
+	return const_cast<CStateVariable*>(const_cast<const CStateVariablesManager&>(*this).GetStateVariable(_name));
+}
+
+std::vector<const CStateVariable*> CStateVariablesManager::GetAllStateVariables() const
+{
+	std::vector<const CStateVariable*> res;
+	for (const auto& v : m_stateVariables)
+		res.push_back(v.get());
+	return res;
+}
+
+std::vector<CStateVariable*> CStateVariablesManager::GetAllStateVariables()
+{
+	std::vector<CStateVariable*> res;
+	for (auto& v : m_stateVariables)
+		res.push_back(v.get());
+	return res;
+}
+
+size_t CStateVariablesManager::GetStateVariableNumber() const
+{
+	return m_stateVariables.size();
+}
+
+void CStateVariablesManager::ClearData()
+{
+	for (auto& v : m_stateVariables)
+		v->Clear();
+}
+
+void CStateVariablesManager::Clear()
+{
+	m_stateVariables.clear();
+}
+
+void CStateVariablesManager::SaveState()
+{
+	for (auto& var : m_stateVariables)
+		var->SaveState();
+}
+
+void CStateVariablesManager::LoadState()
+{
+	for (auto& var : m_stateVariables)
+		var->LoadState();
+}
+
+void CStateVariablesManager::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
+{
+	if (!_h5File.IsValid()) return;
+
+	// current version of save procedure
+	_h5File.WriteAttribute(_path, StrConst::H5AttrSaveVersion, m_saveVersion);
+
+	_h5File.WriteAttribute(_path, StrConst::SVMngr_H5AttrStateVarsNum, static_cast<int>(m_stateVariables.size()));
+	for (size_t i = 0; i < m_stateVariables.size(); ++i)
+	{
+		const std::string variablePath = _h5File.CreateGroup(_path, StrConst::SVMngr_H5GroupStateVarName + std::to_string(i));
+		m_stateVariables[i]->SaveToFile(_h5File, variablePath);
+	}
+}
+
+void CStateVariablesManager::LoadFromFile(CH5Handler& _h5File, const std::string& _path)
+{
+	Clear();
+
+	if (!_h5File.IsValid()) return;
+
+	// current version of save procedure
+	//const int version = _h5File.ReadAttribute(_path, StrConst::H5AttrSaveVersion);
+
+	const size_t nVariables = _h5File.ReadAttribute(_path, StrConst::SVMngr_H5AttrStateVarsNum);
+	for (size_t i = 0; i < nVariables; ++i)
+	{
+		const std::string variablePath = _path + "/" + StrConst::SVMngr_H5GroupStateVarName + std::to_string(i);
+		AddStateVariable("", {})->LoadFromFile(_h5File, variablePath);
+	}
+}
+
+void CStateVariablesManager::LoadFromFile_v0(const CH5Handler& _h5File, const std::string& _path)
+{
+	Clear();
+
+	if (!_h5File.IsValid()) return;
+
+	const size_t nVariables = _h5File.ReadAttribute(_path, StrConst::SVMngr_H5AttrStateVarsNum);
+	if (nVariables == static_cast<size_t>(-1)) return;
+	for (size_t i = 0; i < nVariables; ++i)
+	{
+		std::string variablePath = _path + "/" + StrConst::BUnit_H5GroupStateVars + "/" + StrConst::SVMngr_H5GroupStateVarName + std::to_string(i);
+		auto* variable = AddStateVariable("", {});
+		std::string name;
+		_h5File.ReadData(variablePath, StrConst::SVar_H5Name, name);
+		variable->SetName(name);
+		double value;
+		_h5File.ReadData(variablePath, StrConst::SVar_H5Value, value);
+		variable->SetValue(value);
+		bool hasHistory;
+		_h5File.ReadData(variablePath, StrConst::BUnit_H5StateVarIsSaved, hasHistory);
+		if (hasHistory)
+		{
+			std::vector<double> times, values;
+			_h5File.ReadData(variablePath, StrConst::BUnit_H5StateVarTimes, times);
+			_h5File.ReadData(variablePath, StrConst::BUnit_H5StateVarValues, values);
+			if (!times.empty() && times.size() == values.size())
+			{
+				std::vector<STDValue> data(times.size());
+				for (size_t i = 0; i < data.size(); ++i)
+					data[i] = { times[i], values[i] };
+				variable->SetHistory(data);
+			}
+		}
 	}
 }

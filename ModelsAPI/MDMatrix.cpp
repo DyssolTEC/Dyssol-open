@@ -1903,7 +1903,7 @@ void CMDMatrix::SaveMDBlockToFile(CH5Handler& _h5File, const std::string& _sPath
 	_h5File.WriteData(_sPath, StrConst::MDM_H5Data + std::to_string(static_cast<unsigned>(_iFirst / DATA_SAVE_BLOCK)), _vvBuf);
 }
 
-void CMDMatrix::LoadFromFile(CH5Handler& _h5File, const std::string& _sPath)
+void CMDMatrix::LoadFromFile(const CH5Handler& _h5File, const std::string& _sPath)
 {
 	Clear();
 
@@ -1936,7 +1936,7 @@ void CMDMatrix::LoadFromFile(CH5Handler& _h5File, const std::string& _sPath)
 		LoadMDBlockFromFile(_h5File, _sPath, iCnt * DATA_SAVE_BLOCK, iCnt * DATA_SAVE_BLOCK + nModulo - 1, vvBufData);
 }
 
-void CMDMatrix::LoadMDBlockFromFile(CH5Handler& _h5File, const std::string& _sPath, unsigned _iFirst, unsigned _iLast, std::vector<std::vector<double>>& vvBuf)
+void CMDMatrix::LoadMDBlockFromFile(const CH5Handler& _h5File, const std::string& _sPath, unsigned _iFirst, unsigned _iLast, std::vector<std::vector<double>>& vvBuf)
 {
 	_h5File.ReadData(_sPath, StrConst::MDM_H5Data + std::to_string(static_cast<unsigned>(_iFirst / DATA_SAVE_BLOCK)), vvBuf);
 	m_vTempValues.assign(m_vTimePoints.begin() + _iFirst, m_vTimePoints.begin() + _iLast + 1);

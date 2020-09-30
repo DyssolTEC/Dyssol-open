@@ -66,19 +66,16 @@ void CBaseUnit2::SetUniqueID(const std::string& _id)
 
 CUnitPort* CBaseUnit2::AddPort(const std::string& _portName, CUnitPort::EPortType2 _type)
 {
-	const std::string name = !_portName.empty() ? _portName : StrConst::BUnit_DefaultPortName + std::to_string(m_ports.size() + 1);
-	if (GetPort(name)) // already exists
-		throw std::logic_error(StrConst::BUnit_ErrAddPort(m_unitName, name, __func__));
-	m_ports.emplace_back(new CUnitPort{ name, _type });
-	return m_ports.back().get();
+	if (m_ports.GetPort(_portName)) // already exists
+		throw std::logic_error(StrConst::BUnit_ErrAddPort(m_unitName, _portName, __func__));
+	return m_ports.AddPort(_portName, _type);
 }
 
 const CUnitPort* CBaseUnit2::GetPort(const std::string& _portName) const
 {
-	for (const auto& p : m_ports)
-		if (p->GetName() == _portName)
-			return p.get();
-	return nullptr;
+	if (const auto* port = m_ports.GetPort(_portName))
+		return port;
+	throw std::logic_error(StrConst::BUnit_ErrGetPort(m_unitName, _portName, __func__));
 }
 
 CUnitPort* CBaseUnit2::GetPort(const std::string& _portName)
@@ -86,25 +83,9 @@ CUnitPort* CBaseUnit2::GetPort(const std::string& _portName)
 	return const_cast<CUnitPort*>(const_cast<const CBaseUnit2&>(*this).GetPort(_portName));
 }
 
-std::vector<CUnitPort*> CBaseUnit2::GetPorts()
-{
-	std::vector<CUnitPort*> res;
-	for (auto& p : m_ports)
-		res.push_back(p.get());
-	return res;
-}
-
-std::vector<const CUnitPort*> CBaseUnit2::GetPorts() const
-{
-	std::vector<const CUnitPort*> res;
-	for (const auto& p : m_ports)
-		res.push_back(p.get());
-	return res;
-}
-
 CStream* CBaseUnit2::GetPortStream(const std::string& _portName) const
 {
-	const auto* port = GetPort(_portName);
+	const auto* port = m_ports.GetPort(_portName);
 	if (!port)
 		throw std::logic_error(StrConst::BUnit_ErrGetPort(m_unitName, _portName, __func__));
 	if (!port->GetStream())
@@ -124,7 +105,7 @@ CStreamManager& CBaseUnit2::GetStreamsManager()
 
 CStream* CBaseUnit2::AddFeed(const std::string& _name)
 {
-	if (GetFeed(_name)) // already exists
+	if (m_streams.GetFeed(_name)) // already exists
 		throw std::logic_error(StrConst::BUnit_ErrAddFeed(m_unitName, _name, __func__));
 	return m_streams.AddFeed(_name);
 }
@@ -145,7 +126,7 @@ void CBaseUnit2::RemoveFeed(const std::string& _name)
 
 CHoldup* CBaseUnit2::AddHoldup(const std::string& _name)
 {
-	if (GetHoldup(_name)) // already exists
+	if (m_streams.GetHoldup(_name)) // already exists
 		throw std::logic_error(StrConst::BUnit_ErrAddHoldup(m_unitName, _name, __func__));
 	return m_streams.AddHoldup(_name);
 }
@@ -166,7 +147,7 @@ void CBaseUnit2::RemoveHoldup(const std::string& _name)
 
 CStream* CBaseUnit2::AddStream(const std::string& _name)
 {
-	if (GetStream(_name)) // already exists
+	if (m_streams.GetStream(_name)) // already exists
 		throw std::logic_error(StrConst::BUnit_ErrAddStream(m_unitName, _name, __func__));
 	return m_streams.AddStream(_name);
 }
@@ -378,22 +359,21 @@ CPBMSolver* CBaseUnit2::GetSolverPBM(const std::string& _name) const
 
 CStateVariable* CBaseUnit2::AddStateVariable(const std::string& _name, double _initValue)
 {
-	if (GetStateVariablePtr(_name)) // already exists
+	if (m_stateVariables.GetStateVariable(_name)) // already exists
 		throw std::logic_error(StrConst::BUnit_ErrAddSV(m_unitName, _name, __func__));
-	m_stateVariables.emplace_back(new CStateVariable{ _name, _initValue });
-	return m_stateVariables.back().get();
+	return m_stateVariables.AddStateVariable(_name, _initValue);
 }
 
 double CBaseUnit2::GetStateVariable(const std::string& _name) const
 {
-	if (const CStateVariable* variable = GetStateVariablePtr(_name))
+	if (const CStateVariable* variable = m_stateVariables.GetStateVariable(_name))
 		return variable->GetValue();
 	throw std::logic_error(StrConst::BUnit_ErrGetSV(m_unitName, _name, __func__));
 }
 
 void CBaseUnit2::SetStateVariable(const std::string& _name, double _value)
 {
-	if (CStateVariable* variable = GetStateVariablePtr(_name))
+	if (CStateVariable* variable = m_stateVariables.GetStateVariable(_name))
 		variable->SetValue(_value);
 	else
 		throw std::logic_error(StrConst::BUnit_ErrGetSV(m_unitName, _name, __func__));
@@ -401,7 +381,7 @@ void CBaseUnit2::SetStateVariable(const std::string& _name, double _value)
 
 void CBaseUnit2::SetStateVariable(const std::string& _name, double _time, double _value)
 {
-	if (CStateVariable* variable = GetStateVariablePtr(_name))
+	if (CStateVariable* variable = m_stateVariables.GetStateVariable(_name))
 		variable->SetValue(_time, _value);
 	else
 		throw std::logic_error(StrConst::BUnit_ErrGetSV(m_unitName, _name, __func__));
@@ -586,9 +566,8 @@ std::vector<double> CBaseUnit2::GetAllTimePointsClosed(double _timeBeg, double _
 std::vector<double> CBaseUnit2::GetInputTimePoints(double _timeBeg, double _timeEnd) const
 {
 	std::vector<double> res;
-	for (const auto& port : m_ports)
-		if (port->GetType() == CUnitPort::EPortType2::INPUT)
-			res = VectorsUnionSorted(res, port->GetStream()->GetTimePoints(_timeBeg, _timeEnd));
+	for (const auto& port : m_ports.GetAllInputPorts())
+		res = VectorsUnionSorted(res, port->GetStream()->GetTimePoints(_timeBeg, _timeEnd));
 	return res;
 }
 
@@ -1038,7 +1017,7 @@ void CBaseUnit2::InitializeUnit()
 	ClearError();
 	ClearWarning();
 	ClearInfo();
-	m_stateVariables.clear();
+	m_stateVariables.Clear();
 	m_plots.Clear();
 	m_streams.Initialize();
 	for (auto& param : m_unitParameters.GetAllSolverParameters())
@@ -1060,8 +1039,7 @@ void CBaseUnit2::SaveStateUnit(double _timeBeg, double _timeEnd)
 	SaveState();
 	for (auto& param : m_unitParameters.GetAllSolverParameters())
 		param->GetSolver()->SaveState();
-	for (auto& var : m_stateVariables)
-		var->SaveState();
+	m_stateVariables.SaveState();
 	m_streams.SaveState(_timeBeg, _timeEnd);
 	m_plots.SaveState();
 }
@@ -1071,8 +1049,7 @@ void CBaseUnit2::LoadStateUnit()
 	LoadState();
 	for (auto& param : m_unitParameters.GetAllSolverParameters())
 		param->GetSolver()->LoadState();
-	for (auto& var : m_stateVariables)
-		var->LoadState();
+	m_stateVariables.LoadState();
 	m_streams.LoadState();
 	m_plots.LoadState();
 }
@@ -1080,27 +1057,77 @@ void CBaseUnit2::LoadStateUnit()
 void CBaseUnit2::ClearSimulationResults()
 {
 	m_streams.ClearResults();
-	m_stateVariables.clear();
+	m_stateVariables.Clear();
 	m_plots.Clear();
 }
 
-std::vector<std::string> CBaseUnit2::AllPortNames() const
+void CBaseUnit2::SaveToFile(CH5Handler& _h5File, const std::string& _path)
 {
-	std::vector<std::string> res;
-	for (const auto& p : m_ports)
-		res.push_back(p->GetName());
-	return res;
+	if (!_h5File.IsValid()) return;
+
+	// current version of save procedure
+	_h5File.WriteAttribute(_path, StrConst::H5AttrSaveVersion, m_saveVersion);
+
+	_h5File.WriteData(_path, StrConst::BUnit_H5UnitKey, m_uniqueID);
+
+	m_ports.SaveToFile(_h5File, _h5File.CreateGroup(_path, StrConst::BUnit_H5GroupPorts));
+	m_streams.SaveToFile(_h5File, _h5File.CreateGroup(_path, StrConst::BUnit_H5GroupInternalMaterials));
+	m_unitParameters.SaveToFile(_h5File, _h5File.CreateGroup(_path, StrConst::BUnit_H5GroupParams));
+	m_stateVariables.SaveToFile(_h5File, _h5File.CreateGroup(_path, StrConst::BUnit_H5GroupStateVars));
+	m_plots.SaveToFile(_h5File, _h5File.CreateGroup(_path, StrConst::BUnit_H5GroupPlots));
 }
 
-const CStateVariable* CBaseUnit2::GetStateVariablePtr(const std::string& _name) const
+void CBaseUnit2::LoadFromFile(CH5Handler& _h5File, const std::string& _path)
 {
-	for (const auto& sv : m_stateVariables)
-		if (sv->GetName() == _name)
-			return sv.get();
-	return nullptr;
+	if (!_h5File.IsValid()) return;
+
+	// version of save procedure
+	const int version = _h5File.ReadAttribute(_path, StrConst::H5AttrSaveVersion);
+
+	// compatibility with older versions
+	if (version <= 1)
+	{
+		LoadFromFile_v1(_h5File, _path);
+		return;
+	}
+	if (version == 2)
+	{
+		LoadFromFile_v2(_h5File, _path);
+		return;
+	}
+
+	_h5File.ReadData(_path, StrConst::BUnit_H5UnitKey, m_uniqueID);
+
+	m_ports.LoadFromFile(_h5File, _path + "/" + StrConst::BUnit_H5GroupPorts);
+	m_streams.LoadFromFile(_h5File, _path + "/" + StrConst::BUnit_H5GroupInternalMaterials);
+	m_unitParameters.LoadFromFile(_h5File, _path + "/" + StrConst::BUnit_H5GroupParams);
+	m_stateVariables.LoadFromFile(_h5File, _path + "/" + StrConst::BUnit_H5GroupStateVars);
+	m_plots.LoadFromFile(_h5File, _path + "/" + StrConst::BUnit_H5GroupPlots);
 }
 
-CStateVariable* CBaseUnit2::GetStateVariablePtr(const std::string& _name)
+void CBaseUnit2::LoadFromFile_v2(const CH5Handler& _h5File, const std::string& _path)
 {
-	return const_cast<CStateVariable*>(const_cast<const CBaseUnit2&>(*this).GetStateVariablePtr(_name));
+	if (!_h5File.IsValid()) return;
+
+	_h5File.ReadData(_path, StrConst::BUnit_H5UnitKey, m_uniqueID);
+
+	m_ports.LoadFromFile_v0(_h5File, _path + "/" + StrConst::BUnit_H5GroupPorts);
+	m_streams.LoadFromFile_v0(_h5File, _path);
+	m_unitParameters.LoadFromFile(_h5File, _path + "/" + StrConst::BUnit_H5GroupParams);
+	m_stateVariables.LoadFromFile_v0(_h5File, _path);
+	m_plots.LoadFromFile_v0(_h5File, _path);
 }
+
+void CBaseUnit2::LoadFromFile_v1(const CH5Handler& _h5File, const std::string& _path)
+{
+	if (!_h5File.IsValid()) return;
+
+	_h5File.ReadData(_path, StrConst::BUnit_H5UnitKey, m_uniqueID);
+
+	m_ports.LoadFromFile_v00(_h5File, _path);
+	m_streams.LoadFromFile_v00(_h5File, _path);
+	m_unitParameters.LoadFromFile(_h5File, _path + "/" + StrConst::BUnit_H5GroupParams);
+	m_stateVariables.LoadFromFile_v0(_h5File, _path);
+	m_plots.LoadFromFile_v0(_h5File, _path);
+}
+

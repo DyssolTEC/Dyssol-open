@@ -164,7 +164,7 @@ void CTimeDependentValue::SaveToFile(CH5Handler& _h5File, const std::string& _pa
 	_h5File.WriteData(_path, StrConst::TDV_H5Data, data);
 }
 
-void CTimeDependentValue::LoadFromFile(CH5Handler& _h5File, const std::string& _path)
+void CTimeDependentValue::LoadFromFile(const CH5Handler& _h5File, const std::string& _path)
 {
 	if (!_h5File.IsValid())	return;
 

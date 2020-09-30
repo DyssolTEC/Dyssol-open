@@ -299,8 +299,8 @@ public:
 	void SaveToFile( CH5Handler& _h5File, const std::string& _sPath ) const;
 	void SaveMDBlockToFile(CH5Handler& _h5File, const std::string& _sPath, unsigned _iFirst, unsigned _iLast, std::vector<std::vector<double>>& _vvBuf) const;
 	/** Load data from file*/
-	void LoadFromFile( CH5Handler& _h5File, const std::string& _sPath );
-	void LoadMDBlockFromFile(CH5Handler& _h5File, const std::string& _sPath, unsigned _iFirst, unsigned _iLast, std::vector<std::vector<double>>& vvBuf);
+	void LoadFromFile(const CH5Handler& _h5File, const std::string& _sPath );
+	void LoadMDBlockFromFile(const CH5Handler& _h5File, const std::string& _sPath, unsigned _iFirst, unsigned _iLast, std::vector<std::vector<double>>& vvBuf);
 
 	void SetCachePath(const std::wstring& _sPath);
 	void SetCacheParams(bool _bEnabled, size_t _nWindow);

@@ -181,6 +181,42 @@ void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatas
 	h5Group.close();
 }
 
+void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<STDValue>& _data) const
+{
+	Group group(m_ph5File->openGroup(_sPath));
+
+	const hsize_t dims{ _data.size() };
+	DataSpace dataspace(1, &dims);
+	CompType type(sizeof(STDValue));
+	type.insertMember("time",  HOFFSET(STDValue, time),  PredType::NATIVE_DOUBLE);
+	type.insertMember("value", HOFFSET(STDValue, value), PredType::NATIVE_DOUBLE);
+	DataSet dataset = group.createDataSet(_sDatasetName, type, dataspace);
+	dataset.write(&_data, type);
+
+	dataset.close();
+	type.close();
+	dataspace.close();
+	group.close();
+}
+
+void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<CPoint>& _data) const
+{
+	Group group(m_ph5File->openGroup(_sPath));
+
+	const hsize_t dims{ _data.size() };
+	DataSpace dataspace(1, &dims);
+	CompType type(sizeof(CPoint));
+	type.insertMember("x", HOFFSET(CPoint, x), PredType::NATIVE_DOUBLE);
+	type.insertMember("y", HOFFSET(CPoint, y), PredType::NATIVE_DOUBLE);
+	DataSet dataset = group.createDataSet(_sDatasetName, type, dataspace);
+	dataset.write(&_data, type);
+
+	dataset.close();
+	type.close();
+	dataspace.close();
+	group.close();
+}
+
 void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::string& _sData) const
 {
 	auto** buf = new char*[1];
@@ -340,6 +376,40 @@ void CH5Handler::ReadDataOld(const std::string& _sPath, const std::string& _sDat
 	{
 		_vvData.clear();
 	}
+}
+
+void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<STDValue>& _data) const
+{
+	_data.resize(ReadSize(_sPath, _sDatasetName));
+	if (_data.empty()) return;
+
+	Group group(m_ph5File->openGroup(_sPath));
+	DataSet dataset = group.openDataSet(_sDatasetName);
+	CompType type(sizeof(STDValue));
+	type.insertMember("time",  HOFFSET(STDValue, time),  PredType::NATIVE_DOUBLE);
+	type.insertMember("value", HOFFSET(STDValue, value), PredType::NATIVE_DOUBLE);
+	dataset.read(&_data.front(), type);
+
+	type.close();
+	dataset.close();
+	group.close();
+}
+
+void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<CPoint>& _data) const
+{
+	_data.resize(ReadSize(_sPath, _sDatasetName));
+	if (_data.empty()) return;
+
+	Group group(m_ph5File->openGroup(_sPath));
+	DataSet dataset = group.openDataSet(_sDatasetName);
+	CompType type(sizeof(CPoint));
+	type.insertMember("x", HOFFSET(CPoint, x), PredType::NATIVE_DOUBLE);
+	type.insertMember("y", HOFFSET(CPoint, y), PredType::NATIVE_DOUBLE);
+	dataset.read(&_data.front(), type);
+
+	type.close();
+	dataset.close();
+	group.close();
 }
 
 bool CH5Handler::IsValid() const

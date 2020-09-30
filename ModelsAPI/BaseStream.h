@@ -351,9 +351,9 @@ public:
 	// Saves data to file.
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path);
 	// Loads data from file.
-	void LoadFromFile(CH5Handler& _h5File, const std::string& _path);
+	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
 	// Loads data from file of an older version.
-	void LoadFromFile_v1(CH5Handler& _h5File, const std::string& _path);
+	void LoadFromFile_v1(const CH5Handler& _h5File, const std::string& _path);
 
 protected:
 	using mix_type = std::tuple<std::map<EOverall, double>, std::map<EPhase, double>, std::map<EPhase, CDenseMDMatrix>>;

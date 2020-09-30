@@ -94,7 +94,7 @@ public:
 	// Saves data to file.
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
 	// Loads data from file
-	void LoadFromFile(CH5Handler& _h5File, const std::string& _path);
+	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
 
 private:
 	// Checks whether the specified compound is defined in the stream.
