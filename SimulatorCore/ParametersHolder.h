@@ -5,7 +5,7 @@
 #include "DyssolDefines.h"
 #include "H5Handler.h"
 
-class CFlowsheetParameters
+class CParametersHolder
 {
 private:
 	static const unsigned m_cnSaveVersion;
@@ -14,7 +14,7 @@ private:
 	template <class T>
 	class proxy
 	{
-		friend class CFlowsheetParameters;
+		friend class CParametersHolder;
 	private:
 		T data;
 		T operator=(const T& arg) { data = arg; return data; }
@@ -23,9 +23,9 @@ private:
 	};
 
 public:
-	CFlowsheetParameters();
+	CParametersHolder();
 
-	void Initialize();
+	void SetDefaultValues();
 
 	/// Save parameters to file.
 	void SaveToFile(CH5Handler& _h5File, const std::string& _sPath);
@@ -41,6 +41,10 @@ public:
 	// == Fractions
 	proxy<double> minFraction;				// minimal fraction that is taken into account in MDMatrix
 	void MinFraction(double val);
+
+	// == Time
+	proxy<double> endSimulationTime;		// the last time point which must be simulated.
+	void EndSimulationTime(double val);
 
 	// == Time windows
 	proxy<double> initTimeWindow;			// initial time window

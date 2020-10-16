@@ -997,6 +997,15 @@ std::vector<const CSolverUnitParameter*> CUnitParametersManager::GetAllSolverPar
 	return res;
 }
 
+std::vector<CSolverUnitParameter*> CUnitParametersManager::GetAllSolverParameters()
+{
+	std::vector<CSolverUnitParameter*> res;
+	for (auto& p : m_parameters)
+		if (p->GetType() == EUnitParameter::SOLVER)
+			res.push_back(dynamic_cast<CSolverUnitParameter*>(p.get()));
+	return res;
+}
+
 std::vector<double> CUnitParametersManager::GetAllTimePoints(double _tBeg, double _tEnd) const
 {
 	std::set<double> res;

@@ -5,13 +5,13 @@
 #include "BaseModel.h"
 #include "CalculationSequence.h"
 
-class CFlowsheetParameters;
+class CParametersHolder;
 
 /* Stores the whole information about the flowsheet. */
 class CFlowsheet
 {
 public:
-	CFlowsheetParameters* m_pParams;
+	CParametersHolder* m_pParams;
 	std::vector<std::vector<CStream>> m_vvInitTearStreams;	// List of streams used as initial values for tear streams for each partition.
 
 private:

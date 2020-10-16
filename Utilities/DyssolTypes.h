@@ -62,6 +62,13 @@ struct SCacheSettings
 	std::wstring path{ L"" };
 };
 
+struct SToleranceSettings
+{
+	double toleranceAbs{ DEFAULT_A_TOL };		// Absolute tolerance.
+	double toleranceRel{ DEFAULT_R_TOL };		// Relative tolerance.
+	double minFraction{ DEFAULT_MIN_FRACTION };	// Minimum considering fraction in MD distributions.
+};
+
 struct SPhaseDescriptor
 {
 	EPhase state;		// Phase state.
@@ -81,9 +88,14 @@ class CPoint
 public:
 	double x{};
 	double y{};
-	CPoint() {}
+	CPoint() = default;
 	CPoint(double _x, double _y) : x{ _x },	y{ _y } {}
 	static size_t Size() { return 2; }
 	double operator[](size_t _i) const { switch (_i) { case 0: return x; case 1: return y; default: throw std::out_of_range("CPoint::operator[size_t] : index is out of range"); } }
 	double& operator[](size_t _i) { switch (_i) { case 0: return x; case 1: return y; default: throw std::out_of_range("CPoint::operator[size_t] : index is out of range"); } }
+};
+
+enum class EDirection
+{
+	UP, DOWN
 };

@@ -12,8 +12,10 @@ CStream::CStream(const std::string& _key) :
 	m_overall[EOverall::OVERALL_MASS]->SetUnits("kg/s");
 }
 
-CStream::CStream(const std::string& _key, const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid) :
-	CBaseStream{ _key, _materialsDB, _grid }
+CStream::CStream(const std::string& _key, const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid,
+	const std::vector<std::string>* _compounds, const std::vector<SOverallDescriptor>* _overall, const std::vector<SPhaseDescriptor>* _phases,
+	const SCacheSettings* _cache, const SToleranceSettings* _tolerance) :
+	CBaseStream{ _key, _materialsDB, _grid, _compounds, _overall, _phases, _cache, _tolerance }
 {
 	m_overall[EOverall::OVERALL_MASS]->SetName("Mass flow");
 	m_overall[EOverall::OVERALL_MASS]->SetUnits("kg/s");

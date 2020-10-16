@@ -2,6 +2,7 @@
 
 #include "PlotManager.h"
 #include "H5Handler.h"
+#include "ContainerFunctions.h"
 #include "DyssolStringConstants.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -292,12 +293,12 @@ CCurve* CPlot::GetCurve(double _z)
 
 void CPlot::RemoveCurve(const std::string& _name)
 {
-	m_curves.erase(std::remove_if(m_curves.begin(), m_curves.end(), [&](const std::unique_ptr<CCurve>& s) { return s->GetName() == _name; }), m_curves.end());
+	VectorDelete(m_curves, [&](const std::unique_ptr<CCurve>& s) { return s->GetName() == _name; });
 }
 
 void CPlot::RemoveCurve(double _z)
 {
-	m_curves.erase(std::remove_if(m_curves.begin(), m_curves.end(), [&](const std::unique_ptr<CCurve>& s) { return s->GetZValue() == _z; }), m_curves.end());
+	VectorDelete(m_curves, [&](const std::unique_ptr<CCurve>& s) { return s->GetZValue() == _z; });
 }
 
 std::vector<const CCurve*> CPlot::GetAllCurves() const
@@ -430,7 +431,7 @@ CPlot* CPlotManager::GetPlot(const std::string& _name)
 
 void CPlotManager::RemovePlot(const std::string& _name)
 {
-	m_plots.erase(std::remove_if(m_plots.begin(), m_plots.end(), [&](const std::unique_ptr<CPlot>& s) { return s->GetName() == _name; }), m_plots.end());
+	VectorDelete(m_plots, [&](const std::unique_ptr<CPlot>& s) { return s->GetName() == _name; });
 }
 
 std::vector<const CPlot*> CPlotManager::GetAllPlots() const

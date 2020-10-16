@@ -11,14 +11,29 @@ bool VectorContains(const std::vector<T>& _vec, T _value)
 	return std::find(_vec.begin(), _vec.end(), _value) != _vec.end();
 }
 
+// Checks whether the vector contains a specified element.
+template<typename T, typename FUN>
+bool VectorContains(const std::vector<T>& _vec, const FUN& _fun)
+{
+	return std::find_if(_vec.begin(), _vec.end(), _fun) != _vec.end();
+}
+
 // Returns index of a specified element or -1 if it does not exist.
 template<typename T>
 size_t VectorFind(const std::vector<T>& _vec, T _val)
 {
-	for (size_t i = 0; i < _vec.size(); ++i)
-		if (_vec[i] == _val)
-			return i;
-	return -1;
+	const auto it = std::find(_vec.begin(), _vec.end(), _val);
+	if (it == _vec.end()) return -1;
+	return std::distance(_vec.begin(), it);
+}
+
+// Returns index of a specified element or -1 if it does not exist.
+template<typename T, typename FUN>
+size_t VectorFind(const std::vector<T>& _vec, const FUN& _fun)
+{
+	const auto it = std::find(_vec.begin(), _vec.end(), _fun);
+	if (it == _vec.end()) return -1;
+	return std::distance(_vec.begin(), it);
 }
 
 // Return the lowest element in vector.
@@ -108,5 +123,13 @@ std::vector<T> VectorsUnionSorted(const std::vector<T>& _v1, const std::vector<T
 {
 	std::vector<T> res;
 	VectorsUnionSorted(_v1, _v2, res);
+	return res;
+}
+
+// Returns a vector with reserved size.
+template<typename T> std::vector<T> ReservedVector(size_t _size)
+{
+	std::vector<T> res;
+	res.reserve(_size);
 	return res;
 }

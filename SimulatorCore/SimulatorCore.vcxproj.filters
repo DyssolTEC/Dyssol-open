@@ -27,9 +27,6 @@
     <ClInclude Include="Topology.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FlowsheetParameters.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SimulatorLog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -37,6 +34,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CalculationSequence.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ParametersHolder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Flowsheet2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -53,9 +59,6 @@
     <ClCompile Include="Topology.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FlowsheetParameters.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SimulatorLog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -63,6 +66,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CalculationSequence.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ParametersHolder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitContainer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Flowsheet2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

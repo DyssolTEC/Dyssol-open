@@ -1,7 +1,7 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "OptionsEditor.h"
-#include "FlowsheetParameters.h"
+#include "ParametersHolder.h"
 #include "DyssolUtilities.h"
 
 COptionsEditor::COptionsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pMaterialsDB, QWidget* parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
@@ -177,6 +177,7 @@ void COptionsEditor::ApplyChanges()
 	m_pParams->CacheFlagInternalAfterReload(ui.checkBoxCacheInternalFlag->isChecked());
 	m_pParams->FileSingleFlag(!ui.checkBoxSplitFile->isChecked());
 
+	m_pFlowsheet->UpdateToleranceSettings();
 	emit DataChanged();
 	QDialog::accept();
 }

@@ -26,13 +26,13 @@ class CStreamManager
 	double m_timeBegStored{ 0.0 };	// Begin of the time window that is currently stored in store streams.
 	double m_timeEndStored{ 0.0 };	// End of the time window that is currently stored in store streams.
 
-	const CMaterialsDatabase& m_materialsDB;			// Reference to a database of materials.
-	const CDistributionsGrid& m_grid;					// Reference to a distribution grid.
-	const std::vector<std::string>& m_compounds;		// Reference to compounds.
-	const std::vector<SOverallDescriptor>& m_overall;	// Reference to overall properties.
-	const std::vector<SPhaseDescriptor>& m_phases;		// Reference to phases.
-	const SCacheSettings& m_cache;						// Reference to cache settings.
-	double& m_minFraction;								// Reference to minimal fraction.
+	const CMaterialsDatabase* m_materialsDB{ nullptr };				// Reference to a database of materials.
+	const CDistributionsGrid* m_grid{ nullptr };					// Reference to a distribution grid.
+	const std::vector<std::string>* m_compounds{ nullptr };			// Reference to compounds.
+	const std::vector<SOverallDescriptor>* m_overall{ nullptr };	// Reference to overall properties.
+	const std::vector<SPhaseDescriptor>* m_phases{ nullptr };		// Reference to phases.
+	const SCacheSettings* m_cache{ nullptr };						// Reference to cache settings.
+	const SToleranceSettings* m_tolerances{ nullptr };				// Reference to tolerance settings.
 
 	// All streams of all types, to simplify massive operations.
 	std::vector<std::vector<std::unique_ptr<CStream>>*> m_allStreams{ &m_feedsInit, &m_feedsWork, &m_streamsWork, &m_streamsStored };
@@ -40,8 +40,10 @@ class CStreamManager
 	std::vector<std::vector<std::unique_ptr<CHoldup>>*> m_allHoldups{ &m_holdupsInit, &m_holdupsWork, &m_holdupsStored };
 
 public:
-	CStreamManager(const CMaterialsDatabase& _materialsDB, const CDistributionsGrid& _grid, const std::vector<std::string>& _compounds, const std::vector<SOverallDescriptor>& _overall,
-		const std::vector<SPhaseDescriptor>& _phases, const SCacheSettings& _cache, double& _minFraction);
+	// TODO: set it all in constructor and make them references when the same is done in BaseUnit.
+	// Sets pointers to all required data.
+	void SetPointers(const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid, const std::vector<std::string>* _compounds, const std::vector<SOverallDescriptor>* _overall,
+		const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerances);
 
 	// Initializes all defines feeds, holdups and streams before starting the simulation.
 	void Initialize();
@@ -72,9 +74,9 @@ public:
 	// Returns a holdup with the specified name. If such holdup does not exist, returns nullptr.
 	CHoldup* GetHoldup(const std::string& _name);
 	// Returns all defined initial holdups.
-	std::vector<const CHoldup*> GetHoldupInit() const;
+	std::vector<const CHoldup*> GetHoldupsInit() const;
 	// Returns all defined initial holdups.
-	std::vector<CHoldup*> GetHoldupInit();
+	std::vector<CHoldup*> GetHoldupsInit();
 	// Returns all defined holdups.
 	std::vector<const CHoldup*> GetHoldups() const;
 	// Returns all defined holdups.
@@ -93,6 +95,11 @@ public:
 	// Removes the specified stream.
 	void RemoveStream(const std::string& _name);
 
+	// Returns all defined initial feeds and holdups.
+	std::vector<const CBaseStream*> GetAllInit() const;
+	// Returns all defined initial feeds and holdups.
+	std::vector<CBaseStream*> GetAllInit();
+
 	// Stores the current state of all data at the given time interval.
 	void SaveState(double _timeBeg, double _timeEnd);
 	// Restores previously stored state of all data.
@@ -103,6 +110,11 @@ public:
 	// Removes a compound with the specified unique key from all streams.
 	void RemoveCompound(const std::string& _compoundKey);
 
+	// Adds an overall property to all streams.
+	void AddOverallProperty(EOverall _property, const std::string& _name, const std::string& _units);
+	// Removes an overall property from all streams.
+	void RemoveOverallProperty(EOverall _property);
+
 	// Adds the specified phase to all streams.
 	void AddPhase(EPhase _phase, const std::string& _name);
 	// Removes the specified phase from all streams.
@@ -110,8 +122,8 @@ public:
 
 	// Updates grids of distributed parameters in all streams.
 	void UpdateDistributionsGrid();
-	// Updates minimum fraction to be considered in MDMatrix of all streams.
-	void UpdateMinimumFraction();
+	// Updates tolerance settings in all units and streams.
+	void UpdateToleranceSettings();
 	// Updates cache settings in all streams.
 	void UpdateCacheSettings();
 

@@ -7,10 +7,10 @@
 // CUnitLookupTables
 //
 
-CUnitLookupTables::CUnitLookupTables(const CMaterialsDatabase* _materialsDB, const std::vector<std::string>* _compounds) :
-	m_materialsDB{ _materialsDB },
-	m_compounds{ _compounds }
+void CUnitLookupTables::SetPointers(const CMaterialsDatabase* _materialsDB, const std::vector<std::string>* _compounds)
 {
+	m_materialsDB = _materialsDB;
+	m_compounds = _compounds;
 }
 
 void CUnitLookupTables::Clear() const
@@ -76,9 +76,9 @@ void CUnitLookupTables::AddPropertyTable(ECompoundTPProperties _property, EDepen
 //
 
 CStreamLookupTables::CStreamLookupTables(const CBaseStream& _stream, const CMaterialsDatabase* _materialsDB, const std::vector<std::string>* _compounds) :
-	CUnitLookupTables{ _materialsDB, _compounds },
 	m_stream{ _stream }
 {
+	SetPointers(_materialsDB, _compounds);
 }
 
 void CStreamLookupTables::SetMaterialsDatabase(const CMaterialsDatabase* _materialsDB)

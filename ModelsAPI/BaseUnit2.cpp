@@ -10,36 +10,36 @@
 #include <stdexcept>
 #include <numeric>
 
-CBaseUnit2::CBaseUnit2(const CMaterialsDatabase& _materialsDB, const CDistributionsGrid& _grid, const std::vector<std::string>& _compounds, const std::vector<SOverallDescriptor>& _overall,
-	const std::vector<SPhaseDescriptor>& _phases, const SCacheSettings& _cache, double& _minFraction, double& _toleranceAbs, double& _toleranceRel) :
-	m_materialsDB{ _materialsDB },
-	m_grid{ _grid },
-	m_compounds{ _compounds },
-	m_overall{ _overall },
-	m_phases{ _phases },
-	m_cache{ _cache },
-	m_minFraction{ _minFraction },
-	m_toleranceAbs{ _toleranceAbs },
-	m_toleranceRel{ _toleranceRel }
+void CBaseUnit2::SetPointers(const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid, const std::vector<std::string>* _compounds, const std::vector<SOverallDescriptor>* _overall,
+	const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerance)
 {
+	m_materialsDB  = _materialsDB;
+	m_grid         = _grid;
+	m_compounds    = _compounds;
+	m_overall      = _overall;
+	m_phases       = _phases;
+	m_cache        = _cache;
+	m_tolerance    = _tolerance;
+	m_streams.SetPointers(m_materialsDB, m_grid, m_compounds, m_overall, m_phases, m_cache, m_tolerance);
+	m_lookupTables.SetPointers(m_materialsDB, m_compounds);
 }
 
-std::string CBaseUnit2::UnitName() const
+std::string CBaseUnit2::GetUnitName() const
 {
 	return m_unitName;
 }
 
-std::string CBaseUnit2::AuthorName() const
+std::string CBaseUnit2::GetAuthorName() const
 {
 	return m_authorName;
 }
 
-size_t CBaseUnit2::Version() const
+size_t CBaseUnit2::GetVersion() const
 {
 	return m_version;
 }
 
-std::string CBaseUnit2::UniqueID() const
+std::string CBaseUnit2::GetUniqueID() const
 {
 	return m_uniqueID;
 }
@@ -62,6 +62,16 @@ void CBaseUnit2::SetVersion(size_t _version)
 void CBaseUnit2::SetUniqueID(const std::string& _id)
 {
 	m_uniqueID = _id;
+}
+
+const CPortsManager& CBaseUnit2::GetPortsManager() const
+{
+	return m_ports;
+}
+
+CPortsManager& CBaseUnit2::GetPortsManager()
+{
+	return m_ports;
 }
 
 CUnitPort* CBaseUnit2::AddPort(const std::string& _portName, CUnitPort::EPortType2 _type)
@@ -170,8 +180,8 @@ void CBaseUnit2::SetupStream(CBaseStream* _stream) const
 {
 	if (!_stream) return;
 	_stream->Clear();
-	_stream->SetGrid(&m_grid);
-	_stream->SetMaterialsDatabase(&m_materialsDB);
+	_stream->SetGrid(m_grid);
+	_stream->SetMaterialsDatabase(m_materialsDB);
 	m_streams.SetupStreamStructure(*_stream);
 }
 
@@ -608,45 +618,55 @@ void CBaseUnit2::RemoveCompound(const std::string& _compoundKey)
 
 std::string CBaseUnit2::GetCompoundName(const std::string& _compoundKey) const
 {
-	if (const auto* compound = m_materialsDB.GetCompound(_compoundKey))
+	if (const auto* compound = m_materialsDB->GetCompound(_compoundKey))
 		return compound->GetName();
 	return {};
 }
 
 std::string CBaseUnit2::GetCompoundKey(const std::string& _compoundName) const
 {
-	if (const auto* compound = m_materialsDB.GetCompoundByName(_compoundName))
+	if (const auto* compound = m_materialsDB->GetCompoundByName(_compoundName))
 		return compound->GetKey();
 	return {};
 }
 
 std::vector<std::string> CBaseUnit2::GetAllCompounds() const
 {
-	return m_compounds;
+	return *m_compounds;
 }
 
 std::vector<std::string> CBaseUnit2::GetAllCompoundsNames() const
 {
 	std::vector<std::string> res;
-	res.reserve(m_compounds.size());
-	for (const auto& compound : m_compounds)
+	res.reserve(m_compounds->size());
+	for (const auto& compound : *m_compounds)
 		res.push_back(GetCompoundName(compound));
 	return res;
 }
 
 size_t CBaseUnit2::GetCompoundsNumber() const
 {
-	return m_compounds.size();
+	return m_compounds->size();
 }
 
 bool CBaseUnit2::IsCompoundDefined(const std::string& _compoundKey) const
 {
-	return VectorContains(m_compounds, _compoundKey);
+	return VectorContains(*m_compounds, _compoundKey);
 }
 
 bool CBaseUnit2::IsCompoundNameDefined(const std::string& _compoundName) const
 {
 	return VectorContains(GetAllCompoundsNames(), _compoundName);
+}
+
+void CBaseUnit2::AddOverallProperty(EOverall _property, const std::string& _name, const std::string& _units)
+{
+	m_streams.AddOverallProperty(_property, _name, _units);
+}
+
+void CBaseUnit2::RemoveOverallProperty(EOverall _property)
+{
+	m_streams.RemoveOverallProperty(_property);
 }
 
 void CBaseUnit2::AddPhase(EPhase _phase, const std::string& _name)
@@ -661,7 +681,7 @@ void CBaseUnit2::RemovePhase(EPhase _phase)
 
 std::string CBaseUnit2::GetPhaseName(EPhase _phase) const
 {
-	for (const auto& phase : m_phases)
+	for (const auto& phase : *m_phases)
 		if (phase.state == _phase)
 			return phase.name;
 	return {};
@@ -669,12 +689,12 @@ std::string CBaseUnit2::GetPhaseName(EPhase _phase) const
 
 size_t CBaseUnit2::GetPhasesNumber() const
 {
-	return m_phases.size();
+	return m_phases->size();
 }
 
 bool CBaseUnit2::IsPhaseDefined(EPhase _phase) const
 {
-	for (const auto& phase : m_phases)
+	for (const auto& phase : *m_phases)
 		if (phase.state == _phase)
 			return true;
 	return false;
@@ -687,82 +707,82 @@ void CBaseUnit2::UpdateDistributionsGrid()
 
 size_t CBaseUnit2::GetDistributionsNumber() const
 {
-	return m_grid.GetDistributionsNumber();
+	return m_grid->GetDistributionsNumber();
 }
 
 std::vector<EDistrTypes> CBaseUnit2::GetDistributionsTypes() const
 {
-	return m_grid.GetDistrTypes();
+	return m_grid->GetDistrTypes();
 }
 
 std::vector<size_t> CBaseUnit2::GetDistributionsClasses() const
 {
-	return vector_cast<size_t>(m_grid.GetClasses());
+	return vector_cast<size_t>(m_grid->GetClasses());
 }
 
 EGridEntry CBaseUnit2::GetDistributionGridType(EDistrTypes _distribution) const
 {
-	return m_grid.GetGridEntryByDistr(_distribution);
+	return m_grid->GetGridEntryByDistr(_distribution);
 }
 
 size_t CBaseUnit2::GetClassesNumber(EDistrTypes _distribution) const
 {
-	return m_grid.GetClassesByDistr(_distribution);
+	return m_grid->GetClassesByDistr(_distribution);
 }
 
 std::vector<double> CBaseUnit2::GetNumericGrid(EDistrTypes _distribution) const
 {
-	return m_grid.GetNumericGridByDistr(_distribution);
+	return m_grid->GetNumericGridByDistr(_distribution);
 }
 
 std::vector<std::string> CBaseUnit2::GetSymbolicGrid(EDistrTypes _distribution) const
 {
-	return m_grid.GetSymbolicGridByDistr(_distribution);
+	return m_grid->GetSymbolicGridByDistr(_distribution);
 }
 
 std::vector<double> CBaseUnit2::GetClassesSizes(EDistrTypes _distribution) const
 {
-	return m_grid.GetClassSizesByDistr(_distribution);
+	return m_grid->GetClassSizesByDistr(_distribution);
 }
 
 std::vector<double> CBaseUnit2::GetClassesMeans(EDistrTypes _distribution) const
 {
-	return m_grid.GetClassMeansByDistr(_distribution);
+	return m_grid->GetClassMeansByDistr(_distribution);
 }
 
 std::vector<double> CBaseUnit2::GetPSDGridDiameters() const
 {
-	return m_grid.GetNumericGridByDistr(DISTR_SIZE);
+	return m_grid->GetNumericGridByDistr(DISTR_SIZE);
 }
 
 std::vector<double> CBaseUnit2::GetPSDGridSurfaces() const
 {
-	return DiameterToSurface(m_grid.GetNumericGridByDistr(DISTR_SIZE));
+	return DiameterToSurface(m_grid->GetNumericGridByDistr(DISTR_SIZE));
 }
 
 std::vector<double> CBaseUnit2::GetPSDGridVolumes() const
 {
-	return DiameterToVolume(m_grid.GetNumericGridByDistr(DISTR_SIZE));
+	return DiameterToVolume(m_grid->GetNumericGridByDistr(DISTR_SIZE));
 }
 
 std::vector<double> CBaseUnit2::GetPSDMeanDiameters() const
 {
-	return m_grid.GetClassMeansByDistr(DISTR_SIZE);
+	return m_grid->GetClassMeansByDistr(DISTR_SIZE);
 }
 
 std::vector<double> CBaseUnit2::GetPSDMeanSurfaces() const
 {
-	return DiameterToSurface(m_grid.GetClassMeansByDistr(DISTR_SIZE));
+	return DiameterToSurface(m_grid->GetClassMeansByDistr(DISTR_SIZE));
 }
 
 std::vector<double> CBaseUnit2::GetPSDMeanVolumes() const
 {
-	return DiameterToVolume(m_grid.GetClassMeansByDistr(DISTR_SIZE));
+	return DiameterToVolume(m_grid->GetClassMeansByDistr(DISTR_SIZE));
 }
 
 bool CBaseUnit2::IsDistributionDefined(EDistrTypes _distribution) const
 {
-	return m_grid.IsDistrTypePresent(_distribution);
+	return m_grid->IsDistrTypePresent(_distribution);
 }
 
 void CBaseUnit2::CalculateTM(EDistrTypes _distribution, const std::vector<double>& _inValue, const std::vector<double>& _outValue, CTransformMatrix& _matrix) const
@@ -819,27 +839,27 @@ void CBaseUnit2::CalculateTM(EDistrTypes _distribution, const std::vector<double
 
 const CMaterialsDatabase* CBaseUnit2::GetMaterialsDatabase() const
 {
-	return &m_materialsDB;
+	return m_materialsDB;
 }
 
 const CDistributionsGrid* CBaseUnit2::GetGrid() const
 {
-	return &m_grid;
+	return m_grid;
 }
 
 double CBaseUnit2::GetAbsTolerance() const
 {
-	return m_toleranceAbs;
+	return m_tolerance->toleranceAbs;
 }
 
 double CBaseUnit2::GetRelTolerance() const
 {
-	return m_toleranceRel;
+	return m_tolerance->toleranceRel;
 }
 
-void CBaseUnit2::UpdateMinimumFraction()
+void CBaseUnit2::UpdateToleranceSettings()
 {
-	m_streams.UpdateMinimumFraction();
+	m_streams.UpdateToleranceSettings();
 }
 
 void CBaseUnit2::UpdateCacheSettings()
@@ -849,32 +869,32 @@ void CBaseUnit2::UpdateCacheSettings()
 
 double CBaseUnit2::GetCompoundConstProperty(const std::string& _compoundKey, ECompoundConstProperties _property) const
 {
-	return m_materialsDB.GetConstPropertyValue(_compoundKey, _property);
+	return m_materialsDB->GetConstPropertyValue(_compoundKey, _property);
 }
 
 double CBaseUnit2::GetCompoundTPProperty(const std::string& _compoundKey, ECompoundTPProperties _property, double _temperature, double _pressure) const
 {
-	return m_materialsDB.GetTPPropertyValue(_compoundKey, _property, _temperature, _pressure);
+	return m_materialsDB->GetTPPropertyValue(_compoundKey, _property, _temperature, _pressure);
 }
 
 double CBaseUnit2::GetCompoundInteractionProperty(const std::string& _compoundKey1, const std::string& _compoundKey2, EInteractionProperties _property, double _temperature, double _pressure) const
 {
-	return m_materialsDB.GetInteractionPropertyValue(_compoundKey1, _compoundKey2, _property, _temperature, _pressure);
+	return m_materialsDB->GetInteractionPropertyValue(_compoundKey1, _compoundKey2, _property, _temperature, _pressure);
 }
 
 bool CBaseUnit2::IsPropertyDefined(ECompoundConstProperties _property) const
 {
-	return m_materialsDB.IsPropertyDefined(_property);
+	return m_materialsDB->IsPropertyDefined(_property);
 }
 
 bool CBaseUnit2::IsPropertyDefined(ECompoundTPProperties _property) const
 {
-	return m_materialsDB.IsPropertyDefined(_property);
+	return m_materialsDB->IsPropertyDefined(_property);
 }
 
 bool CBaseUnit2::IsPropertyDefined(EInteractionProperties _property) const
 {
-	return m_materialsDB.IsPropertyDefined(_property);
+	return m_materialsDB->IsPropertyDefined(_property);
 }
 
 CUnitLookupTables* CBaseUnit2::GetLookupTables()
@@ -903,7 +923,7 @@ void CBaseUnit2::HeatExchange(double _time, CStream* _stream1, CStream* _stream2
 	// add up both enthalpy tables weighted with their respective mass fraction of total mass flow
 	const CLookupTable* lookup1 = _stream1->GetLookupTables()->GetLookupTable(ENTHALPY, EDependencyTypes::DEPENDENCE_TEMP);
 	const CLookupTable* lookup2 = _stream2->GetLookupTables()->GetLookupTable(ENTHALPY, EDependencyTypes::DEPENDENCE_TEMP);
-	CLookupTable lookupMix(&m_materialsDB, m_compounds, ENTHALPY, EDependencyTypes::DEPENDENCE_TEMP);
+	CLookupTable lookupMix(m_materialsDB, *m_compounds, ENTHALPY, EDependencyTypes::DEPENDENCE_TEMP);
 	lookupMix.Add(*lookup1, mass1 / massMix);
 	lookupMix.Add(*lookup2, mass2 / massMix);
 

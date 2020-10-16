@@ -1,19 +1,19 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "StreamManager.h"
-#include "DyssolStringConstants.h"
 #include "H5Handler.h"
+#include "ContainerFunctions.h"
+#include "DyssolStringConstants.h"
 
-CStreamManager::CStreamManager(const CMaterialsDatabase& _materialsDB, const CDistributionsGrid& _grid, const std::vector<std::string>& _compounds, const std::vector<SOverallDescriptor>& _overall,
-	const std::vector<SPhaseDescriptor>& _phases, const SCacheSettings& _cache, double& _minFraction) :
-	m_materialsDB{ _materialsDB },
-	m_grid{ _grid },
-	m_compounds{ _compounds },
-	m_overall{ _overall },
-	m_phases{ _phases },
-	m_cache{ _cache },
-	m_minFraction{ _minFraction }
+void CStreamManager::SetPointers(const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid, const std::vector<std::string>* _compounds, const std::vector<SOverallDescriptor>* _overall, const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerances)
 {
+	m_materialsDB = _materialsDB;
+	m_grid        = _grid;
+	m_compounds   = _compounds;
+	m_overall     = _overall;
+	m_phases      = _phases;
+	m_cache       = _cache;
+	m_tolerances  = _tolerances;
 }
 
 void CStreamManager::Initialize()
@@ -120,12 +120,12 @@ CHoldup* CStreamManager::GetHoldup(const std::string& _name)
 	return GetObject(m_holdupsWork, _name);
 }
 
-std::vector<const CHoldup*> CStreamManager::GetHoldupInit() const
+std::vector<const CHoldup*> CStreamManager::GetHoldupsInit() const
 {
 	return GetObjects(m_holdupsInit);
 }
 
-std::vector<CHoldup*> CStreamManager::GetHoldupInit()
+std::vector<CHoldup*> CStreamManager::GetHoldupsInit()
 {
 	return GetObjects(m_holdupsInit);
 }
@@ -177,6 +177,32 @@ void CStreamManager::RemoveStream(const std::string& _name)
 	RemoveObjects(m_streamsStored, _name);
 }
 
+std::vector<const CBaseStream*> CStreamManager::GetAllInit() const
+{
+	const auto& feeds = GetObjects(m_feedsInit);
+	const auto& holdups = GetObjects(m_holdupsInit);
+	std::vector<const CBaseStream*> res;
+	res.reserve(feeds.size() + holdups.size());
+	for (const auto& feed : feeds)
+		res.push_back(feed);
+	for (const auto& holdup : holdups)
+		res.push_back(holdup);
+	return res;
+}
+
+std::vector<CBaseStream*> CStreamManager::GetAllInit()
+{
+	const auto& feeds = GetObjects(m_feedsInit);
+	const auto& holdups = GetObjects(m_holdupsInit);
+	std::vector<CBaseStream*> res;
+	res.reserve(feeds.size() + holdups.size());
+	for (const auto& feed : feeds)
+		res.push_back(feed);
+	for (const auto& holdup : holdups)
+		res.push_back(holdup);
+	return res;
+}
+
 void CStreamManager::SaveState(double _timeBeg, double _timeEnd)
 {
 	for (size_t i = 0; i < m_holdupsWork.size(); ++i)
@@ -213,6 +239,18 @@ void CStreamManager::RemoveCompound(const std::string& _compoundKey)
 		stream->RemoveCompound(_compoundKey);
 }
 
+void CStreamManager::AddOverallProperty(EOverall _property, const std::string& _name, const std::string& _units)
+{
+	for (auto& stream : AllObjects())
+		stream->AddOverallProperty(_property, _name, _units);
+}
+
+void CStreamManager::RemoveOverallProperty(EOverall _property)
+{
+	for (auto& stream : AllObjects())
+		stream->RemoveOverallProperty(_property);
+}
+
 void CStreamManager::AddPhase(EPhase _phase, const std::string& _name)
 {
 	for (auto& stream : AllObjects())
@@ -231,16 +269,16 @@ void CStreamManager::UpdateDistributionsGrid()
 		stream->UpdateDistributionsGrid();
 }
 
-void CStreamManager::UpdateMinimumFraction()
+void CStreamManager::UpdateToleranceSettings()
 {
 	for (auto& stream : AllObjects())
-		stream->SetMinimumFraction(m_minFraction);
+		stream->SetToleranceSettings(*m_tolerances);
 }
 
 void CStreamManager::UpdateCacheSettings()
 {
 	for (auto& stream : AllObjects())
-		stream->SetCacheSettings(m_cache);
+		stream->SetCacheSettings(*m_cache);
 }
 
 void CStreamManager::ReduceTimePoints(double _timeBeg, double _timeEnd, double _step)
@@ -254,14 +292,14 @@ void CStreamManager::ReduceTimePoints(double _timeBeg, double _timeEnd, double _
 
 void CStreamManager::SetupStreamStructure(CBaseStream& _stream) const
 {
-	for (const auto& key : m_compounds)
+	for (const auto& key : *m_compounds)
 		_stream.AddCompound(key);
-	for (const auto& overall : m_overall)
+	for (const auto& overall : *m_overall)
 		_stream.AddOverallProperty(overall.type, overall.name, overall.units);
-	for (const auto& phase : m_phases)
+	for (const auto& phase : *m_phases)
 		_stream.AddPhase(phase.state, phase.name);
-	_stream.SetCacheSettings(m_cache);
-	_stream.SetMinimumFraction(m_minFraction);
+	_stream.SetCacheSettings(*m_cache);
+	_stream.SetToleranceSettings(*m_tolerances);
 }
 
 void CStreamManager::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
@@ -401,9 +439,8 @@ void CStreamManager::LoadFromFile_v00(const CH5Handler& _h5File, const std::stri
 template <typename T>
 T* CStreamManager::CreateObject(const std::string& _key, const std::string& _name) const
 {
-	auto* stream = new T{ _key, &m_materialsDB, &m_grid };
+	auto* stream = new T{ _key, &m_materialsDB, &m_grid, &m_compounds, &m_overall, &m_phases, &m_cache, &m_tolerances };
 	stream->SetName(_name);
-	SetupStreamStructure(*stream);
 	return stream;
 }
 
@@ -439,7 +476,7 @@ std::vector<T*> CStreamManager::GetObjects(const std::vector<std::unique_ptr<T>>
 template <typename T>
 void CStreamManager::RemoveObjects(std::vector<std::unique_ptr<T>>& _streams, const std::string& _name)
 {
-	_streams.erase(std::remove_if(_streams.begin(), _streams.end(), [&](const std::unique_ptr<T>& s) { return s->GetName() == _name; }), _streams.end());
+	VectorDelete(_streams, [&](const std::unique_ptr<T>& s) { return s->GetName() == _name; });
 }
 
 template <typename T>

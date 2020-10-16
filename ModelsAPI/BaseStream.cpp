@@ -17,12 +17,22 @@ CBaseStream::CBaseStream(const std::string& _key) :
 	m_overall.insert({ EOverall::OVERALL_MASS, std::make_unique<CTimeDependentValue>() });
 }
 
-CBaseStream::CBaseStream(const std::string& _key, const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid) :
+CBaseStream::CBaseStream(const std::string& _key, const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid,
+	const std::vector<std::string>* _compounds, const std::vector<SOverallDescriptor>* _overall, const std::vector<SPhaseDescriptor>* _phases,
+	const SCacheSettings* _cache, const SToleranceSettings* _tolerance) :
 	m_key{ _key.empty() ? StringFunctions::GenerateRandomKey() : _key },
 	m_materialsDB{ _materialsDB },
 	m_grid{ _grid }
 {
-	m_overall.insert({ EOverall::OVERALL_MASS, std::make_unique<CTimeDependentValue>() });
+	for (const auto& key : *_compounds)
+		AddCompound(key);
+	for (const auto& overall : *_overall)
+		AddOverallProperty(overall.type, overall.name, overall.units);
+	for (const auto& phase : *_phases)
+		AddPhase(phase.state, phase.name);
+	SetCacheSettings(*_cache);
+	SetToleranceSettings(*_tolerance);
+	m_lookupTables.SetMaterialsDatabase(_materialsDB);
 }
 
 CBaseStream::CBaseStream(const CBaseStream& _other) :
@@ -1230,11 +1240,11 @@ void CBaseStream::Add(double _timeBeg, double _timeEnd, const CBaseStream& _sour
 		SetMix(*this, timePoints[i], mix[i]);
 }
 
-bool CBaseStream::AreEqual(double _time, const CBaseStream& _stream1, const CBaseStream& _stream2, double _absTol, double _relTol)
+bool CBaseStream::AreEqual(double _time, const CBaseStream& _stream1, const CBaseStream& _stream2)
 {
 	const auto& Same = [&](double _v1, double _v2)
 	{
-		return std::fabs(_v1 - _v2) < std::fabs(_v1) * _relTol + _absTol;
+		return std::fabs(_v1 - _v2) < std::fabs(_v1) * _stream1.m_toleranceSettings.toleranceRel + _stream1.m_toleranceSettings.toleranceAbs;
 	};
 
 	if (!HaveSameStructure(_stream1, _stream2)) return false;
@@ -1255,7 +1265,7 @@ bool CBaseStream::AreEqual(double _time, const CBaseStream& _stream1, const CBas
 		const double* arr1 = distr1.GetDataPtr();
 		const double* arr2 = distr2.GetDataPtr();
 		for (size_t i = 0; i < distr1.GetDataLength(); ++i)
-			if (std::fabs(arr1[i] - arr2[i]) > std::fabs(arr1[i]) * _relTol + _absTol)
+			if (std::fabs(arr1[i] - arr2[i]) > std::fabs(arr1[i]) * _stream1.m_toleranceSettings.toleranceRel + _stream1.m_toleranceSettings.toleranceAbs)
 				return false;
 	}
 
@@ -1297,10 +1307,11 @@ void CBaseStream::SetCacheSettings(const SCacheSettings& _settings)
 		phase->SetCacheSettings(_settings);
 }
 
-void CBaseStream::SetMinimumFraction(double _fraction)
+void CBaseStream::SetToleranceSettings(const SToleranceSettings& _settings)
 {
+	m_toleranceSettings = _settings;
 	for (auto& [state, phase] : m_phases)
-		phase->MDDistr()->SetMinimalFraction(_fraction);
+		phase->MDDistr()->SetMinimalFraction(_settings.minFraction);
 }
 
 void CBaseStream::Extrapolate(double _timeExtra, double _time)

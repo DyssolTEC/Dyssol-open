@@ -1,22 +1,24 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
-#include "FlowsheetParameters.h"
+#include "ParametersHolder.h"
 #include "DyssolStringConstants.h"
 
-const unsigned CFlowsheetParameters::m_cnSaveVersion = 4;
+const unsigned CParametersHolder::m_cnSaveVersion = 4;
 
-CFlowsheetParameters::CFlowsheetParameters()
+CParametersHolder::CParametersHolder()
 {
 	cachePath = L"./cache/";
-	Initialize();
+	SetDefaultValues();
 }
 
-void CFlowsheetParameters::Initialize()
+void CParametersHolder::SetDefaultValues()
 {
 	absTol = DEFAULT_A_TOL;
 	relTol = DEFAULT_R_TOL;
 
 	minFraction = DEFAULT_MIN_FRACTION;
+
+	endSimulationTime = DEFAULT_SIMULATION_TIME;
 
 	initTimeWindow = DEFAULT_INIT_TIME_WINDOW;
 	minTimeWindow = DEFAULT_MIN_TIME_WINDOW;
@@ -48,7 +50,7 @@ void CFlowsheetParameters::Initialize()
 	fileSingleFlag = true;
 }
 
-void CFlowsheetParameters::SaveToFile(CH5Handler& _h5File, const std::string& _sPath)
+void CParametersHolder::SaveToFile(CH5Handler& _h5File, const std::string& _sPath)
 {
 	if (!_h5File.IsValid())	return;
 
@@ -61,6 +63,9 @@ void CFlowsheetParameters::SaveToFile(CH5Handler& _h5File, const std::string& _s
 
 	// save minimal fraction
 	_h5File.WriteData(_sPath, StrConst::FlPar_H5MinFrac, minFraction);
+
+	// save simulation time
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5SimTime, endSimulationTime);
 
 	// save time window parameters
 	_h5File.WriteData(_sPath, StrConst::FlPar_H5InitTimeWin, initTimeWindow);
@@ -95,7 +100,7 @@ void CFlowsheetParameters::SaveToFile(CH5Handler& _h5File, const std::string& _s
 	_h5File.WriteData(_sPath, StrConst::FlPar_H5InitTearStreamsFlag, initializeTearStreamsAutoFlag);
 }
 
-void CFlowsheetParameters::LoadFromFile(CH5Handler& _h5File, const std::string& _sPath)
+void CParametersHolder::LoadFromFile(CH5Handler& _h5File, const std::string& _sPath)
 {
 	// load version of save procedure
 	const int nVer = _h5File.ReadAttribute(_sPath, StrConst::FlPar_H5AttrSaveVersion);
@@ -106,6 +111,9 @@ void CFlowsheetParameters::LoadFromFile(CH5Handler& _h5File, const std::string& 
 
 	// load minimal fraction
 	_h5File.ReadData(_sPath, StrConst::FlPar_H5MinFrac, minFraction.data);
+
+	// load simulation time
+	_h5File.ReadData(_sPath, StrConst::FlPar_H5SimTime, endSimulationTime.data);
 
 	// load time window parameters
 	_h5File.ReadData(_sPath, StrConst::FlPar_H5InitTimeWin, initTimeWindow.data);
@@ -164,71 +172,76 @@ void CFlowsheetParameters::LoadFromFile(CH5Handler& _h5File, const std::string& 
 		_h5File.ReadData(_sPath, StrConst::FlPar_H5InitTearStreamsFlag, initializeTearStreamsAutoFlag.data);
 }
 
-void CFlowsheetParameters::AbsTol(double val)
+void CParametersHolder::AbsTol(double val)
 {
 	absTol = val > 0. ? val : 0.;
 }
 
-void CFlowsheetParameters::RelTol(double val)
+void CParametersHolder::RelTol(double val)
 {
 	relTol = val > 0. ? val : 0.;
 }
 
-void CFlowsheetParameters::MinFraction(double val)
+void CParametersHolder::MinFraction(double val)
 {
 	minFraction = val > 0. ? val : 0.;
 }
 
-void CFlowsheetParameters::InitTimeWindow(double val)
+void CParametersHolder::EndSimulationTime(double val)
+{
+	endSimulationTime = val > 0. ? val : 0.;
+}
+
+void CParametersHolder::InitTimeWindow(double val)
 {
 	if (val > 0)
 		initTimeWindow = val;
 }
 
-void CFlowsheetParameters::MinTimeWindow(double val)
+void CParametersHolder::MinTimeWindow(double val)
 {
 	if (val > 0)
 		minTimeWindow = val;
 }
 
-void CFlowsheetParameters::MaxTimeWindow(double val)
+void CParametersHolder::MaxTimeWindow(double val)
 {
 	if (val > 0)
 		maxTimeWindow = val;
 }
 
-void CFlowsheetParameters::MaxItersNumber(uint32_t val)
+void CParametersHolder::MaxItersNumber(uint32_t val)
 {
 	if (val > 0)
 		maxItersNumber = val;
 }
 
-void CFlowsheetParameters::ItersUpperLimit(uint32_t val)
+void CParametersHolder::ItersUpperLimit(uint32_t val)
 {
 	itersUpperLimit = val;
 }
 
-void CFlowsheetParameters::ItersLowerLimit(uint32_t val)
+void CParametersHolder::ItersLowerLimit(uint32_t val)
 {
 	itersLowerLimit = val;
 }
 
-void CFlowsheetParameters::Iters1stUpperLimit(uint32_t val)
+void CParametersHolder::Iters1stUpperLimit(uint32_t val)
 {
 	iters1stUpperLimit = val;
 }
 
-void CFlowsheetParameters::MagnificationRatio(double val)
+void CParametersHolder::MagnificationRatio(double val)
 {
 	magnificationRatio = val > 0. ? val : 1.;
 }
 
-void CFlowsheetParameters::ConvergenceMethod(EConvMethod val)
+void CParametersHolder::ConvergenceMethod(EConvMethod val)
 {
 	convergenceMethod = val;
 }
 
-void CFlowsheetParameters::WegsteinAccelParam(double val)
+void CParametersHolder::WegsteinAccelParam(double val)
 {
 	// [-5; 1]
 	if (val < -5)		wegsteinAccelParam = -5;
@@ -236,81 +249,81 @@ void CFlowsheetParameters::WegsteinAccelParam(double val)
 	else				wegsteinAccelParam = val;
 }
 
-void CFlowsheetParameters::RelaxationParam(double val)
+void CParametersHolder::RelaxationParam(double val)
 {
 	// (0; 1]
 	if ((val > 0) && (val <= 1))
 		relaxationParam = val;
 }
 
-void CFlowsheetParameters::ExtrapolationMethod(EExtrapMethod val)
+void CParametersHolder::ExtrapolationMethod(EExtrapMethod val)
 {
 	extrapolationMethod = val;
 }
 
-void CFlowsheetParameters::SaveTimeStep(double val)
+void CParametersHolder::SaveTimeStep(double val)
 {
 	saveTimeStep = val > 0. ? val : 0;
 }
 
-void CFlowsheetParameters::SaveTimeStepFlagHoldups(bool val)
+void CParametersHolder::SaveTimeStepFlagHoldups(bool val)
 {
 	saveTimeStepFlagHoldups = val;
 }
 
-void CFlowsheetParameters::CachePath(std::wstring val)
+void CParametersHolder::CachePath(std::wstring val)
 {
 	cachePath = val;
 }
 
-void CFlowsheetParameters::CacheFlagStreams(bool val)
+void CParametersHolder::CacheFlagStreams(bool val)
 {
 	cacheFlagStreams = val;
 }
 
-void CFlowsheetParameters::CacheFlagHoldups(bool val)
+void CParametersHolder::CacheFlagHoldups(bool val)
 {
 	cacheFlagHoldups = val;
 }
 
-void CFlowsheetParameters::CacheFlagInternal(bool val)
+void CParametersHolder::CacheFlagInternal(bool val)
 {
 	cacheFlagInternal = val;
 }
 
-void CFlowsheetParameters::CacheFlagStreamsAfterReload(bool val)
+void CParametersHolder::CacheFlagStreamsAfterReload(bool val)
 {
 	cacheFlagStreamsAfterReload = val;
 }
 
-void CFlowsheetParameters::CacheFlagHoldupsAfterReload(bool val)
+void CParametersHolder::CacheFlagHoldupsAfterReload(bool val)
 {
 	cacheFlagHoldupsAfterReload = val;
 }
 
-void CFlowsheetParameters::CacheFlagInternalAfterReload(bool val)
+void CParametersHolder::CacheFlagInternalAfterReload(bool val)
 {
 	cacheFlagInternalAfterReload = val;
 }
 
-void CFlowsheetParameters::CacheWindow(uint32_t val)
+void CParametersHolder::CacheWindow(uint32_t val)
 {
 	if (val > 0)
 		cacheWindow = val;
 }
 
-void CFlowsheetParameters::CacheWindowAfterReload(uint32_t val)
+void CParametersHolder::CacheWindowAfterReload(uint32_t val)
 {
 	if (val > 0)
 		cacheWindowAfterReload = val;
 }
 
-void CFlowsheetParameters::FileSingleFlag(bool val)
+void CParametersHolder::FileSingleFlag(bool val)
 {
 	fileSingleFlag = val;
 }
 
-void CFlowsheetParameters::InitializeTearStreamsAutoFlag(bool val)
+void CParametersHolder::InitializeTearStreamsAutoFlag(bool val)
 {
 	initializeTearStreamsAutoFlag = val;
 }

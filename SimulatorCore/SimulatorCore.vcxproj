@@ -21,22 +21,26 @@
   <ItemGroup>
     <ClInclude Include="BaseModel.h" />
     <ClInclude Include="CalculationSequence.h" />
+    <ClInclude Include="Flowsheet2.h" />
     <ClInclude Include="ModelsManager.h" />
     <ClInclude Include="Flowsheet.h" />
-    <ClInclude Include="FlowsheetParameters.h" />
+    <ClInclude Include="ParametersHolder.h" />
     <ClInclude Include="Simulator.h" />
     <ClInclude Include="SimulatorLog.h" />
     <ClInclude Include="Topology.h" />
+    <ClInclude Include="UnitContainer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseModel.cpp" />
     <ClCompile Include="CalculationSequence.cpp" />
+    <ClCompile Include="Flowsheet2.cpp" />
     <ClCompile Include="ModelsManager.cpp" />
     <ClCompile Include="Flowsheet.cpp" />
-    <ClCompile Include="FlowsheetParameters.cpp" />
+    <ClCompile Include="ParametersHolder.cpp" />
     <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="SimulatorLog.cpp" />
     <ClCompile Include="Topology.cpp" />
+    <ClCompile Include="UnitContainer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)CacheHandler\CacheHandler.vcxproj">

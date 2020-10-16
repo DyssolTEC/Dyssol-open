@@ -422,8 +422,10 @@ public:
 	// Returns value of a compound unit parameter with the specified _name. If such parameter does not exist or is not a compound parameter, returns "".
 	std::string GetCompoundParameterValue(const std::string& _name) const;
 
-	// Returns pointers to all specified solver unit parameters.
+	// Returns const pointers to all specified solver unit parameters.
 	std::vector<const CSolverUnitParameter*> GetAllSolverParameters() const;
+	// Returns pointers to all specified solver unit parameters.
+	std::vector<CSolverUnitParameter*> GetAllSolverParameters();
 	// Returns a sorted list of time points form given interval defined in all unit parameters.
 	std::vector<double> GetAllTimePoints(double _tBeg, double _tEnd) const;
 

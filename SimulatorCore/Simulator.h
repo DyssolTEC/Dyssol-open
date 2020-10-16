@@ -20,7 +20,7 @@ class CSimulator
 private:
 	CFlowsheet* m_pFlowsheet;
 	const CCalculationSequence* m_pSequence; // Calculation sequence.
-	CFlowsheetParameters* m_pParams;
+	CParametersHolder* m_pParams;
 	ESimulatorStatus m_nCurrentStatus;
 	std::map<std::string, bool> m_vInitialized;
 

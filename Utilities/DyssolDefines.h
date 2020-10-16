@@ -30,7 +30,7 @@
 #define DEFAULT_R_TOL	1e-3
 
 // Initial minimal fraction
-#define DEFAULT_MIN_FRACTION	1e-9
+#define DEFAULT_MIN_FRACTION	0
 
 //////////////////////////////////////////////////////////////////////////
 /// Aggregation states
@@ -213,7 +213,7 @@ enum class EPhase : uint32_t
 };
 
 // Identifiers of time-dependent overall parameters.
-enum class EOverall : unsigned
+enum class EOverall : uint32_t
 {
 	// TODO: rename when corresponding defines are removed
 	OVERALL_MASS,

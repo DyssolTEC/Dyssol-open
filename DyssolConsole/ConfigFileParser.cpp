@@ -2,7 +2,12 @@
 
 #include "ConfigFileParser.h"
 #include "DistributionsGrid.h"
+#include "ModelsManager.h"
+#include "Flowsheet2.h"
+#include "BaseUnit2.h"
 #include "StringFunctions.h"
+#include "FileSystem.h"
+#include "DyssolUtilities.h"
 #include "DyssolHelperDefines.h"
 #include "DyssolStringConstants.h"
 #include <fstream>
@@ -47,6 +52,191 @@ CConfigFileParser::CConfigFileParser()
 CConfigFileParser::~CConfigFileParser()
 {
 	ClearArguments();
+}
+
+void CConfigFileParser::SaveConfigFile(const std::wstring& _fileName, const std::wstring& _flowsheetFile, const CFlowsheet2& _flowsheet, const CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB)
+{
+	std::ofstream file(UnicodePath(_fileName));
+	if (file.fail()) return;
+
+	// file names
+	file << TO_ARG_STR(EArguments::SOURCE_FILE) << " " << WString2String(_flowsheetFile) << std::endl;
+	file << TO_ARG_STR(EArguments::RESULT_FILE) << " " << WString2String(FileSystem::FilePath(_flowsheetFile) + L"/" + FileSystem::FileName(_flowsheetFile) + L"_res." + FileSystem::FileExtension(_flowsheetFile)) << std::endl;
+
+	// models manager
+	for (size_t i = 0; i < _modelsManager.DirsNumber(); ++i)
+		if (_modelsManager.GetDirActivity(i))
+			file << TO_ARG_STR(EArguments::MODELS_PATH) << " " << WString2String(_modelsManager.GetDirPath(i)) << std::endl;
+
+	// materials database
+	file << TO_ARG_STR(EArguments::MATERIALS_DATABASE) << " " << WString2String(_materialsDB.GetFileName()) << std::endl;
+	file << std::endl;
+
+	// simulation time
+	file << TO_ARG_STR(EArguments::SIMULATION_TIME) << " " << _flowsheet.GetEndSimulationTime() << std::endl;
+	file << std::endl;
+
+	// simulation options
+	const auto& parmas = _flowsheet.GetParameters();
+	file << TO_ARG_STR(EArguments::RELATIVE_TOLERANCE) << " " << parmas->relTol << std::endl;
+	file << TO_ARG_STR(EArguments::ABSOLUTE_TOLERANCE) << " " << parmas->absTol << std::endl;
+	file << TO_ARG_STR(EArguments::MINIMAL_FRACTION)   << " " << parmas->minFraction << std::endl;
+	file << TO_ARG_STR(EArguments::INIT_TIME_WINDOW)   << " " << parmas->initTimeWindow << std::endl;
+	file << TO_ARG_STR(EArguments::MIN_TIME_WINDOW)    << " " << parmas->minTimeWindow << std::endl;
+	file << TO_ARG_STR(EArguments::MAX_TIME_WINDOW)    << " " << parmas->maxTimeWindow << std::endl;
+	file << TO_ARG_STR(EArguments::MAX_ITERATIONS_NUM) << " " << parmas->maxItersNumber << std::endl;
+	file << TO_ARG_STR(EArguments::WINDOW_CHANGE_RATE) << " " << parmas->magnificationRatio << std::endl;
+	file << TO_ARG_STR(EArguments::ITER_UPPER_LIMIT)   << " " << parmas->itersUpperLimit << std::endl;
+	file << TO_ARG_STR(EArguments::ITER_LOWER_LIMIT)   << " " << parmas->itersLowerLimit << std::endl;
+	file << TO_ARG_STR(EArguments::ITER_UPPER_LIMIT_1) << " " << parmas->iters1stUpperLimit << std::endl;
+	file << TO_ARG_STR(EArguments::CONVERGENCE_METHOD) << " " << parmas->convergenceMethod << std::endl;
+	file << TO_ARG_STR(EArguments::ACCEL_PARAMETER)    << " " << parmas->wegsteinAccelParam << std::endl;
+	file << TO_ARG_STR(EArguments::RELAX_PARAMETER)    << " " << parmas->relaxationParam << std::endl;
+	file << TO_ARG_STR(EArguments::EXTRAPOL_METHOD)    << " " << E2I(static_cast<EExtrapMethod>(parmas->extrapolationMethod)) << std::endl;
+	file << std::endl;
+
+	// distributions grid
+	const auto& grid = _flowsheet.GetDistributionsGrid();
+	for (size_t i = 0; i < grid->GetDistributionsNumber(); ++i)
+	{
+		const EGridEntry type = grid->GetGridEntryByIndex(i);
+		file << TO_ARG_STR(EArguments::DISTRIBUTION_GRID) << " " << i + 1 << " " << E2I(type) << " " << grid->GetClassesByIndex(i) << " ";
+		switch (type)
+		{
+		case EGridEntry::GRID_NUMERIC:
+			file << E2I(EGridFunction::GRID_FUN_MANUAL) << " ";
+			for (double v : grid->GetNumericGridByIndex(i))
+				file << " " << v;
+			break;
+		case EGridEntry::GRID_SYMBOLIC:
+			for (const std::string& v : grid->GetSymbolicGridByIndex(i))
+				file << " " << v;
+			break;
+		case EGridEntry::GRID_UNDEFINED:
+			break;
+		}
+		file << "\t" << StrConst::COMMENT_SYMBOL << " " << std::vector<std::string>{ DISTR_NAMES }[GetDistributionTypeIndex(grid->GetDistrType(i))] << std::endl;
+	}
+	file << std::endl;
+
+	// units parameters
+	const auto& units = _flowsheet.GetAllUnits();
+	for (size_t iUnit = 0; iUnit < units.size(); ++iUnit)
+	{
+		if (!units[iUnit]->GetModel()) continue;
+		const auto& params = units[iUnit]->GetModel()->GetUnitParametersManager().GetParameters();
+		for (size_t iParam = 0; iParam < params.size(); ++iParam)
+		{
+			file << TO_ARG_STR(EArguments::UNIT_PARAMETER) << " " << iUnit + 1 << " " << iParam + 1;
+			switch (params[iParam]->GetType())
+			{
+			case EUnitParameter::CONSTANT:			[[fallthrough]];
+			case EUnitParameter::CONSTANT_DOUBLE:	file << " " << dynamic_cast<const CConstRealUnitParameter*>(params[iParam])->GetValue();	break;
+			case EUnitParameter::CONSTANT_INT64:	file << " " << dynamic_cast<const CConstIntUnitParameter*>(params[iParam])->GetValue();		break;
+			case EUnitParameter::CONSTANT_UINT64:	file << " " << dynamic_cast<const CConstUIntUnitParameter*>(params[iParam])->GetValue();	break;
+			case EUnitParameter::TIME_DEPENDENT:	file << " " << dynamic_cast<const CTDUnitParameter*>(params[iParam])->GetTDData();			break;
+			case EUnitParameter::STRING:			file << " " << dynamic_cast<const CStringUnitParameter*>(params[iParam])->GetValue();		break;
+			case EUnitParameter::COMBO:				[[fallthrough]];
+			case EUnitParameter::GROUP:				file << " " << dynamic_cast<const CComboUnitParameter*>(params[iParam])->GetValue();		break;
+			case EUnitParameter::CHECKBOX:			file << " " << dynamic_cast<const CCheckBoxUnitParameter*>(params[iParam])->IsChecked();	break;
+			case EUnitParameter::COMPOUND:			file << " " << dynamic_cast<const CCompoundUnitParameter*>(params[iParam])->GetCompound();	break;
+			case EUnitParameter::SOLVER:			file << " " << WString2String(_modelsManager.GetSolverLibName(dynamic_cast<const CSolverUnitParameter*>(params[iParam])->GetKey()));	break;
+			case EUnitParameter::UNKNOWN:			break;
+			}
+			file << "\t" << StrConst::COMMENT_SYMBOL << " " << units[iUnit]->GetName() << " - " << params[iParam]->GetName() << " - <Values>" << std::endl;
+		}
+	}
+	file << std::endl;
+
+	// TODO: save also other overall properties
+	// mass/temperature/pressure of initial holdups/feeds
+	for (size_t iUnit = 0; iUnit < units.size(); ++iUnit)
+	{
+		if (!units[iUnit]->GetModel()) continue;
+		const auto& holdups = units[iUnit]->GetModel()->GetStreamsManager().GetAllInit();
+		for (size_t iHoldup = 0; iHoldup < holdups.size(); ++iHoldup)
+		{
+			const std::vector<double> tp = holdups[iHoldup]->GetAllTimePoints();
+			for (size_t iTime = 0; iTime < tp.size(); ++iTime)
+				file << TO_ARG_STR(EArguments::UNIT_HOLDUP_MTP) << " " << iUnit + 1 << " " << iHoldup + 1 << " " << iTime + 1 << " " <<
+				holdups[iHoldup]->GetMass(tp[iTime]) << " " << holdups[iHoldup]->GetTemperature(tp[iTime]) << " " << holdups[iHoldup]->GetPressure(tp[iTime]);
+			file << "\t" << StrConst::COMMENT_SYMBOL << " " << units[iUnit]->GetName() << " - " << holdups[iHoldup]->GetName() << " - <Mass> - <Temperature> - <Pressure>" << std::endl;
+		}
+	}
+	file << std::endl;
+
+	// phase fractions of initial holdups/feeds
+	for (size_t iUnit = 0; iUnit < units.size(); ++iUnit)
+	{
+		if (!units[iUnit]->GetModel()) continue;
+		const auto& holdups = units[iUnit]->GetModel()->GetStreamsManager().GetAllInit();
+		for (size_t iHoldup = 0; iHoldup < holdups.size(); ++iHoldup)
+		{
+			const std::vector<double> tp = holdups[iHoldup]->GetAllTimePoints();
+			for (size_t iTime = 0; iTime < tp.size(); ++iTime)
+			{
+				file << TO_ARG_STR(EArguments::UNIT_HOLDUP_PHASES) << " " << iUnit + 1 << " " << iHoldup + 1 << " " << iTime + 1;
+				for (const auto& phase : _flowsheet.GetPhases())
+					file << " " << holdups[iHoldup]->GetPhaseFraction(tp[iTime], phase.state);
+				file << "\t" << StrConst::COMMENT_SYMBOL << " " << units[iUnit]->GetName() << " - " << holdups[iHoldup]->GetName() << " - " << tp[iTime] << "[s]";
+				for (const auto& phase : _flowsheet.GetPhases())
+					file << " - " << phase.name;
+				file << std::endl;
+			}
+		}
+	}
+	file << std::endl;
+
+	// compounds fractions of initial holdups/feeds
+	for (size_t iUnit = 0; iUnit < units.size(); ++iUnit)
+	{
+		if (!units[iUnit]->GetModel()) continue;
+		const auto& holdups = units[iUnit]->GetModel()->GetStreamsManager().GetAllInit();
+		for (size_t iHoldup = 0; iHoldup < holdups.size(); ++iHoldup)
+		{
+			const std::vector<double> tp = holdups[iHoldup]->GetAllTimePoints();
+			const auto& phases = _flowsheet.GetPhases();
+			for (size_t iPhase = 0; iPhase < phases.size(); ++iPhase)
+				for (size_t iTime = 0; iTime < tp.size(); ++iTime)
+				{
+					file << TO_ARG_STR(EArguments::UNIT_HOLDUP_COMP) << " " << iUnit + 1 << " " << iHoldup + 1 << " " << iPhase + 1 << " " << iTime + 1;
+					for (const auto& compoundKey : _flowsheet.GetCompounds())
+						file << " " << holdups[iHoldup]->GetCompoundFraction(tp[iTime], compoundKey, phases[iPhase].state);
+					file << "\t" << StrConst::COMMENT_SYMBOL << " " << units[iUnit]->GetName() << " - " << holdups[iHoldup]->GetName() << " - " <<
+						phases[iPhase].name << " - " << tp[iTime] << "[s]";
+					for (const auto& compoundKey : _flowsheet.GetCompounds())
+						file << " - " << (_materialsDB.GetCompound(compoundKey) ? _materialsDB.GetCompound(compoundKey)->GetName() : "");
+					file << std::endl;
+				}
+		}
+	}
+	file << std::endl;
+
+	// distributions of initial holdups/feeds
+	for (size_t iUnit = 0; iUnit < units.size(); ++iUnit)
+	{
+		if (!units[iUnit]->GetModel()) continue;
+		const auto& holdups = units[iUnit]->GetModel()->GetStreamsManager().GetAllInit();
+		for (size_t iHoldup = 0; iHoldup < holdups.size(); ++iHoldup)
+		{
+			const std::vector<double> tp = holdups[iHoldup]->GetAllTimePoints();
+			const std::vector<EDistrTypes> distrs = grid->GetDistrTypes();
+			for (size_t iDistr = 1; iDistr < distrs.size(); ++iDistr)
+			{
+				const auto& compoundKey = _flowsheet.GetCompounds();
+				for (size_t iComp = 0; iComp < compoundKey.size(); ++iComp)
+					for (size_t iTime = 0; iTime < tp.size(); ++iTime)
+					{
+						file << TO_ARG_STR(EArguments::UNIT_HOLDUP_SOLID) << " " << iUnit + 1 << " " << iHoldup + 1 << " " << iDistr + 1 << " " << iComp + 1 << " " << iTime + 1 << " " <<
+							PSD_MassFrac << " " << E2I(EDistrFunction::Manual) << " " << E2I(EPSDGridType::DIAMETER);
+						for (auto v : holdups[iHoldup]->GetDistribution(tp[iTime], distrs[iDistr], compoundKey[iComp]))
+							file << " " << v;
+						file << "\t" << StrConst::COMMENT_SYMBOL << " " << units[iUnit]->GetName() << " - " << holdups[iHoldup]->GetName() << " - " <<
+							(_materialsDB.GetCompound(compoundKey[iComp]) ? _materialsDB.GetCompound(compoundKey[iComp])->GetName() : "") << " - " << tp[iTime] << "[s] - PSD_MassFrac - Manual - DIAMETER - <Values>" << std::endl;
+					}
+			}
+		}
+	}
 }
 
 bool CConfigFileParser::Parse(const std::string& _sFile)

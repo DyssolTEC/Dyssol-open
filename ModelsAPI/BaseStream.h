@@ -17,7 +17,6 @@ class CBaseStream;
 class CStream;
 class CHoldup;
 
-// TODO: make pure virtual.
 /* Base class for material flow description.*/
 class CBaseStream
 {
@@ -39,16 +38,23 @@ protected:
 	std::vector<std::string> m_compounds;										// Keys of chemical compounds defined in this stream.
 	CStreamLookupTables m_lookupTables{ *this, m_materialsDB, &m_compounds };	// Lookup tables to calculate TP-dependent properties.
 	SCacheSettings m_cacheSettings;												// Settings for caching in the stream.
+	SToleranceSettings m_toleranceSettings;										// Settings for tolerances in the stream.
 
 public:
 	// TODO: remove empty constructor, always set pointers to MDB and grid.
 	// Basic constructor.
 	CBaseStream(const std::string& _key = "");
-	// Basic constructor.
-	CBaseStream(const std::string& _key, const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid);
+	// Constructor configuring the whole structure.
+	CBaseStream(const std::string& _key, const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid,
+		const std::vector<std::string>* _compounds, const std::vector<SOverallDescriptor>* _overall, const std::vector<SPhaseDescriptor>* _phases,
+		const SCacheSettings* _cache, const SToleranceSettings* _tolerance);
 	// Copy constructor.
 	CBaseStream(const CBaseStream& _other);
 	virtual ~CBaseStream() = default;
+
+	CBaseStream(CBaseStream&& _other) = delete;
+	CBaseStream& operator=(const CBaseStream& _other) = delete;
+	CBaseStream& operator=(CBaseStream&& _other) = delete;
 
 	// Removes all existing data from the stream.
 	void Clear();
@@ -105,7 +111,6 @@ public:
 	// Overall parameters
 	//
 
-	// TODO: maybe add together with name and units.
 	// Adds new overall property to the stream, if it does not exist yet and returns a pointer to it or already existing property.
 	CTimeDependentValue* AddOverallProperty(EOverall _property, const std::string& _name, const std::string& _units);
 	// Removes an overall property from the stream, if it does exist.
@@ -316,7 +321,7 @@ public:
 	void Add(double _timeBeg, double _timeEnd, const CBaseStream& _source);
 
 	// Checks whether all values in the streams at the given time point are equal accurate to the specified tolerances.
-	static bool AreEqual(double _time, const CBaseStream& _stream1, const CBaseStream& _stream2, double _absTol, double _relTol);
+	static bool AreEqual(double _time, const CBaseStream& _stream1, const CBaseStream& _stream2);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Other
@@ -338,8 +343,8 @@ public:
 	// Sets new cache settings.
 	void SetCacheSettings(const SCacheSettings& _settings);
 
-	// Sets minimum fraction to be considered in MDMatrix.
-	void SetMinimumFraction(double _fraction);
+	// Sets tolerance settings.
+	void SetToleranceSettings(const SToleranceSettings& _settings);
 
 	// Performs nearest-neighbor extrapolation of all stream data.
 	void Extrapolate(double _timeExtra, double _time);

@@ -10,11 +10,12 @@
 #include "StateVariable.h"
 #include "StreamManager.h"
 
-// TODO: properly set solvers to solver parameters from BaseModel (UnitContainer).
+// TODO: rename to CBaseModel and create a type alias to CBaseUnit.
 
 class CStream;
 
-//Basic class for dynamic and steady-state units.
+/* Basic class for dynamic and steady-state units.
+ * Basically, it describes a mathematical Model. A bit misleading name of the class is kept for compatibility reasons. */
 class CBaseUnit2
 {
 	static const unsigned m_saveVersion{ 3 }; // Current version of the saving procedure.
@@ -34,27 +35,26 @@ private:
 	// References to flowsheet structural data and settings
 	//
 
-	const CMaterialsDatabase& m_materialsDB;			// Reference to a database of materials.
-	const CDistributionsGrid& m_grid;					// Reference to a distribution grid.
-	const std::vector<std::string>& m_compounds;		// Reference to compounds.
-	const std::vector<SOverallDescriptor>& m_overall;	// Reference to overall properties.
-	const std::vector<SPhaseDescriptor>& m_phases;		// Reference to phases.
-	const SCacheSettings& m_cache;						// Reference to cache settings.
-	double& m_minFraction;								// Reference to minimal fraction.
-	double& m_toleranceAbs;								// Reference to absolute tolerance.
-	double& m_toleranceRel;								// Reference to relative tolerance.
+	// TODO: gather them in some global structure.
+	const CMaterialsDatabase* m_materialsDB{ nullptr };				// Reference to a database of materials.
+	const CDistributionsGrid* m_grid{ nullptr };					// Reference to a distribution grid.
+	const std::vector<std::string>* m_compounds{ nullptr };			// Reference to compounds.
+	const std::vector<SOverallDescriptor>* m_overall{ nullptr };	// Reference to overall properties.
+	const std::vector<SPhaseDescriptor>* m_phases{ nullptr };		// Reference to phases.
+	const SCacheSettings* m_cache{ nullptr };						// Reference to cache settings.
+	const SToleranceSettings* m_tolerance{ nullptr };				// Reference to tolerance settings.
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Structural unit data
 	//
 
-	CPortsManager m_ports;																							// Ports of the unit.
-	CUnitParametersManager m_unitParameters;																		// Handler of unit parameters.
-	CStateVariablesManager m_stateVariables;																		// State variables of the unit.
-	CStreamManager m_streams{ m_materialsDB, m_grid, m_compounds, m_overall, m_phases, m_cache, m_minFraction };	// Feeds, holdups and internal streams.
-	CPlotManager m_plots;																							// Plots.
+	CPortsManager m_ports;						// Ports of the unit.
+	CUnitParametersManager m_unitParameters;	// Handler of unit parameters.
+	CStateVariablesManager m_stateVariables;	// State variables of the unit.
+	CStreamManager m_streams;					// Feeds, holdups and internal streams.
+	CPlotManager m_plots;						// Plots.
 
-	CUnitLookupTables m_lookupTables{ &m_materialsDB, &m_compounds };												// Lookup tables to calculate TP-dependent properties.
+	CUnitLookupTables m_lookupTables;			// Lookup tables to calculate TP-dependent properties.
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Generated messages
@@ -68,27 +68,34 @@ private:
 	std::string m_infoMessage;		// Description of the last info.
 
 public:
-	CBaseUnit2(const CMaterialsDatabase& _materialsDB, const CDistributionsGrid& _grid, const std::vector<std::string>& _compounds, const std::vector<SOverallDescriptor>& _overall,
-		const std::vector<SPhaseDescriptor>& _phases, const SCacheSettings& _cache, double& _minFraction, double& _toleranceAbs, double& _toleranceRel);
+	// TODO: initialize all pointers in constructor and make them references.
+	CBaseUnit2()                                     = default;
 	CBaseUnit2(const CBaseUnit2& _other)             = delete;
 	CBaseUnit2(CBaseUnit2 && _other)                 = delete;
 	CBaseUnit2& operator=(const CBaseUnit2 & _other) = delete;
 	CBaseUnit2& operator=(CBaseUnit2 && _other)      = delete;
-	virtual ~CBaseUnit2()                            = default;
+	virtual ~CBaseUnit2()                            = 0;
+
+	// TODO: set it all in constructor and make them references.
+	// Sets pointers to all required data.
+	void SetPointers(const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid, const std::vector<std::string>* _compounds, const std::vector<SOverallDescriptor>* _overall,
+		const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerance);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Basic unit information
 	//
 
+	// TODO: rename to ModelName() and add an alias to GetUnitName().
 	// Returns the name of the unit.
-	std::string UnitName() const;
+	std::string GetUnitName() const;
 	// Returns the name of unit's author.
-	std::string AuthorName() const;
+	std::string GetAuthorName() const;
 	// Returns the version of the unit.
-	size_t Version() const;
+	size_t GetVersion() const;
 	// Returns the unique identifier of the unit.
-	std::string UniqueID() const;
+	std::string GetUniqueID() const;
 
+	// TODO: rename to SetModelName() and add an alias to SetUnitName().
 	// Returns the name of the unit.
 	void SetUnitName(const std::string& _name);
 	// Returns the name of unit's author.
@@ -101,6 +108,11 @@ public:
 	////////////////////////////////////////////////////////////////////////////////
 	// Ports
 	//
+
+	// Returns a const reference to ports manager.
+	const CPortsManager& GetPortsManager() const;
+	// Returns a reference to ports manager.
+	CPortsManager& GetPortsManager();
 
 	// Adds a port to the unit and returns a pointer to it. If the unit already has a port with the same name, a logic_error exception is thrown.
 	CUnitPort* AddPort(const std::string& _portName, CUnitPort::EPortType2 _type);
@@ -286,7 +298,7 @@ public:
 	// Compounds
 	//
 
-	// Adds a compound with the specified unique key to all feeds, holdups and streams in the unit.
+	// Adds a compound with the specified unique key to all feeds, holdups and streams in the unit, if it does not exist yet.
 	void AddCompound(const std::string& _compoundKey);
 	// Removes a compound with the specified unique key from all feeds, holdups and streams in the unit.
 	void RemoveCompound(const std::string& _compoundKey);
@@ -304,6 +316,15 @@ public:
 	bool IsCompoundDefined(const std::string& _compoundKey) const;
 	// Checks if a compound with the specified name is defined.
 	bool IsCompoundNameDefined(const std::string& _compoundName) const;
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Overall properties
+	//
+
+	// Adds new overall property to all feeds, holdups and streams in the unit, if it does not exist yet.
+	void AddOverallProperty(EOverall _property, const std::string& _name, const std::string& _units);
+	// Removes an overall property from all feeds, holdups and streams in the unit.
+	void RemoveOverallProperty(EOverall _property);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Phases
@@ -382,8 +403,8 @@ public:
 	// Returns the global relative tolerance.
 	double GetRelTolerance() const;
 
-	// Updates minimum fraction to be considered in MDMatrix of all streams.
-	void UpdateMinimumFraction();
+	// Updates tolerance settings in all units and streams.
+	void UpdateToleranceSettings();
 
 	// Updates cache settings in all streams.
 	void UpdateCacheSettings();
@@ -488,13 +509,13 @@ public:
 	// Saving/loading
 	//
 
-	// Saves all parameters to HDF5 file.
+	// Saves unit to HDF5 file.
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path);
-	// Loads all parameters from HDF5 file.
+	// Loads unit from HDF5 file.
 	void LoadFromFile(CH5Handler& _h5File, const std::string& _path);
-	// Loads all parameters from HDF5 file. A compatibility version.
+	// Loads unit from HDF5 file. A compatibility version.
 	void LoadFromFile_v2(const CH5Handler& _h5File, const std::string& _path);
-	// Loads all parameters from HDF5 file. A compatibility version.
+	// Loads unit from HDF5 file. A compatibility version.
 	void LoadFromFile_v1(const CH5Handler& _h5File, const std::string& _path);
 };
 

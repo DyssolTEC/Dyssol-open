@@ -19,12 +19,14 @@ class CUnitLookupTables
 	mutable std::map<ECompoundTPProperties, std::unique_ptr<CLookupTable>> m_tablesP;	// Map with all lookup tables for pressure.
 
 protected:
-	// TODO: make const references when MDB is initialized in stream's constructor
-	const CMaterialsDatabase* m_materialsDB;		// Reference to a database of materials.
-	const std::vector<std::string>* m_compounds;	// Reference to compounds.
+	// TODO: make const references when MDB is initialized in stream's and unit's constructor
+	const CMaterialsDatabase* m_materialsDB{ nullptr };		// Reference to a database of materials.
+	const std::vector<std::string>* m_compounds{ nullptr };	// Reference to compounds.
 
 public:
-	CUnitLookupTables(const CMaterialsDatabase* _materialsDB, const std::vector<std::string>* _compounds);
+	// TODO: set it all in constructor and make them references when the same is done in BaseUnit.
+	// Sets pointers to all required data.
+	void SetPointers(const CMaterialsDatabase* _materialsDB, const std::vector<std::string>* _compounds);
 
 	// Clears all calculated lookup tables.
 	void Clear() const;

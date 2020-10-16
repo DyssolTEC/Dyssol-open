@@ -3,7 +3,7 @@
 // TODO: define in project settings
 #define NOMINMAX
 #include "Simulator.h"
-#include "FlowsheetParameters.h"
+#include "ParametersHolder.h"
 #include "Stream.h"
 #include "Phase.h"
 #include "DyssolStringConstants.h"
@@ -363,7 +363,7 @@ bool CSimulator::CompareStreams(const CStream& _str1, const CStream& _str2, doub
 
 	// compare
 	for (auto t : vTimePoints)
-		if (!CBaseStream::AreEqual(t, _str1, _str2, m_pParams->relTol, m_pParams->absTol))
+		if (!CBaseStream::AreEqual(t, _str1, _str2))
 			return false;
 
 	return true;

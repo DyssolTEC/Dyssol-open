@@ -8,14 +8,17 @@ class CH5Handler;
 
 /** This class contains information about the way how calculations of models should be performed.
  *	Each Partition is the list of units in separate recycle loop. They should be calculated together.
- *	Afterwards, the convergence in the list of corresponding tear streams has to be analyzed. */
+ *	Afterwards, the convergence in the list of corresponding tear streams has to be analyzed.
+ *	Additionally, for each partition, it maintains a list a streams, which are used as initials for tear streams.
+ */
 class CCalculationSequence
 {
 public:
+	// TODO: get rid of this struct and use only keys.
 	struct SPartition
 	{
-		std::vector<CBaseModel*> models;           // List of pointers to models of this partition.
-		std::vector<CStream*> tearStreams; // List of pointers to tear streams of this partition.
+		std::vector<CBaseModel*> models;	// List of pointers to models belonging to this partition.
+		std::vector<CStream*> tearStreams;	// List of pointers to tear streams belonging to this partition.
 	};
 
 private:
@@ -25,18 +28,21 @@ private:
 		std::vector<std::string> tearStreams; // List of tear streams' keys for each partition.
 	};
 
-	static const int m_cnSaveVersion;
+	static const unsigned m_saveVersion{ 2 };	// Current version of the saving procedure.
+
+
+	const std::vector<std::unique_ptr<CBaseModel>>* m_models{};	// Pointer to a vector of available models.
+	const std::vector<std::unique_ptr<CStream>>* m_streams{};	// Pointer to a vector of available streams.
 
 	std::vector<SPartitionKeys> m_partitions;       // List of defined partitions.
 
-	const std::vector<CBaseModel*>* m_models{};       // Pointer to a vector of available models.
-	const std::vector<CStream*>* m_streams{}; // Pointer to a vector of available streams.
+	std::vector<std::vector<std::unique_ptr<CStream>>> m_initialTearStreams;	// Streams needed for initialization of tear streams.
 
 public:
 	// Sets pointers to all existing models and streams.
-	CCalculationSequence(const std::vector<CBaseModel*>* _allModels, const std::vector<CStream*>* _allStreams);
+	CCalculationSequence(const std::vector<std::unique_ptr<CBaseModel>>* _allModels, const std::vector<std::unique_ptr<CStream>>* _allStreams);
 
-	// Clear calculation sequence.
+	// Clear calculation sequence and all initial tear streams.
 	void Clear();
 	// Sets partitions using indices of models and streams for each partition.
 	void SetSequence(const std::vector<std::vector<std::string>>& _modelsKeys, const std::vector<std::vector<std::string>>& _streamsKeys);
@@ -96,9 +102,41 @@ public:
 	// Check for errors in the sequence.
 	std::string Check() const;
 
+	// Creates the required number of initial streams according to a current calculation sequence and configures their structure, preparing for simulation start.
+	void CreateInitialStreams();
+	// Clears all time points in initial tear streams.
+	void ClearInitialStreamsData();
+	// Copies initial streams to tear streams to initialize them.
+	void InitializeTearStreams(double _timeWindow);
+	// Copies current data of tear streams to initial streams.
+	void UpdateInitialStreams(double _timeWindow);
+
+	// Adds a compound with the specified unique key to all streams.
+	void AddCompound(const std::string& _compoundKey);
+	// Removes a compound with the specified unique key from all streams.
+	void RemoveCompound(const std::string& _compoundKey);
+
+	// Adds an overall property to all streams.
+	void AddOverallProperty(EOverall _property, const std::string& _name, const std::string& _units);
+	// Removes an overall property from all streams.
+	void RemoveOverallProperty(EOverall _property);
+
+	// Adds the specified phase to all streams.
+	void AddPhase(EPhase _phase, const std::string& _name);
+	// Removes the specified phase from all streams.
+	void RemovePhase(EPhase _phase);
+
+	// Updates grids of distributed parameters in all streams.
+	void UpdateDistributionsGrid();
+	// Updates cache settings in all streams.
+	void UpdateCacheSettings(const SCacheSettings& _cache);
+	// Updates tolerance settings in all units and streams.
+	void UpdateToleranceSettings(const SToleranceSettings& _tolerance);
+
 	void SaveToFile(CH5Handler& _h5Saver, const std::string& _path);
 	void LoadFromFile(CH5Handler& _h5Loader, const std::string& _path);
-	void LoadFromFileOld(CH5Handler& _h5Loader, const std::string& _path);
+	void LoadFromFile_v1(CH5Handler& _h5Loader, const std::string& _path);
+	void LoadFromFile_v0(CH5Handler& _h5Loader, const std::string& _path);
 
 private:
 	// Check whether a model with the key _modelKey is presented in the sequence.

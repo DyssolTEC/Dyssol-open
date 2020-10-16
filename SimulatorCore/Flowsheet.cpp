@@ -1,7 +1,7 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "Flowsheet.h"
-#include "FlowsheetParameters.h"
+#include "ParametersHolder.h"
 #include "Topology.h"
 #include "Stream.h"
 #include "DyssolStringConstants.h"
@@ -14,7 +14,7 @@
 const unsigned CFlowsheet::m_cnSaveVersion = 3;
 
 CFlowsheet::CFlowsheet() :
-	m_pParams{ new CFlowsheetParameters() },
+	m_pParams{ new CParametersHolder() },
 	m_pMaterialsDatabase{ nullptr },
 	m_pModelsManager{ nullptr },
 	m_topologyModified{ false },
@@ -74,7 +74,7 @@ void CFlowsheet::Clear()
 	m_pDistributionsGrid->Clear();
 
 	// set parameters to default
-	m_pParams->Initialize();
+	m_pParams->SetDefaultValues();
 
 	// initialize flowsheet with default values
 	InitializeFlowsheet();
@@ -753,12 +753,12 @@ bool CFlowsheet::SaveToFile(CH5Handler& _h5Saver, const std::wstring& _sFileName
 	_h5Saver.WriteAttribute("/", StrConst::Flow_H5AttrSaveVersion, m_cnSaveVersion);
 
 	// save models
-	_h5Saver.WriteAttribute("/", StrConst::Flow_H5AttrModelsNum, (int)m_vpModels.size());
-	_h5Saver.CreateGroup("/", StrConst::Flow_H5GroupModels);
+	_h5Saver.WriteAttribute("/", StrConst::Flow_H5AttrUnitsNum, (int)m_vpModels.size());
+	_h5Saver.CreateGroup("/", StrConst::Flow_H5GroupUnits);
 	for (size_t i = 0; i < m_vpModels.size(); ++i)
 	{
-		const std::string sPath = _h5Saver.CreateGroup("/" + std::string(StrConst::Flow_H5GroupModels), StrConst::Flow_H5GroupModelName + std::to_string(i));
-		_h5Saver.WriteData(sPath, StrConst::Flow_H5UnitKey, m_vpModels[i]->GetUnitKey());
+		const std::string sPath = _h5Saver.CreateGroup("/" + std::string(StrConst::Flow_H5GroupUnits), StrConst::Flow_H5GroupUnitName + std::to_string(i));
+		_h5Saver.WriteData(sPath, StrConst::Flow_H5ModelKey, m_vpModels[i]->GetUnitKey());
 		m_vpModels[i]->SaveToFile(_h5Saver, sPath);
 	}
 
@@ -859,15 +859,15 @@ bool CFlowsheet::LoadFromFile(CH5Handler& _h5Loader, const std::wstring& _sFileN
 	EnsureUniqueStreamsKeys();
 
 	// load models
-	const int nModelsNum = _h5Loader.ReadAttribute("/", StrConst::Flow_H5AttrModelsNum);
+	const int nModelsNum = _h5Loader.ReadAttribute("/", StrConst::Flow_H5AttrUnitsNum);
 	if (nModelsNum != -1)
 	{
 		for (size_t i = 0; i < static_cast<size_t>(nModelsNum); ++i)
 		{
 			AddModel("TempKey");
-			const std::string sPath = "/" + std::string(StrConst::Flow_H5GroupModels) + "/" + std::string(StrConst::Flow_H5GroupModelName) + std::to_string(i);
+			const std::string sPath = "/" + std::string(StrConst::Flow_H5GroupUnits) + "/" + std::string(StrConst::Flow_H5GroupUnitName) + std::to_string(i);
 			std::string sUnitKey;
-			_h5Loader.ReadData(sPath, StrConst::Flow_H5UnitKey, sUnitKey);
+			_h5Loader.ReadData(sPath, StrConst::Flow_H5ModelKey, sUnitKey);
 			m_vpModels[i]->SetUnit(sUnitKey);
 			m_vpModels[i]->SetMaterialsDatabase(m_pMaterialsDatabase);
 			m_vpModels[i]->SetDistributionsGrid(m_pDistributionsGrid);

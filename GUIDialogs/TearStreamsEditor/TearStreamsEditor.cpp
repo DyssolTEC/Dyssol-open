@@ -2,7 +2,7 @@
 
 #include "TearStreamsEditor.h"
 #include "Stream.h"
-#include "FlowsheetParameters.h"
+#include "ParametersHolder.h"
 #include "DyssolStringConstants.h"
 #include <QMessageBox>
 

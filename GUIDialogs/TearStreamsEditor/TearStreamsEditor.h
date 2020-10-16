@@ -11,6 +11,7 @@ private:
 	Ui::CTearStreamsEditorClass ui;
 
 	CFlowsheet* m_pFlowsheet;	             // Pointer to the flowsheet.
+	CParametersHolder& m_parameters;
 	const CCalculationSequence* m_pSequence; // Pointer to the calculation sequence.
 
 public:

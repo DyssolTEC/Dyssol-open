@@ -66,6 +66,15 @@ namespace StrConst
 
 
 //////////////////////////////////////////////////////////////////////////
+/// CUnitContainer
+//////////////////////////////////////////////////////////////////////////
+	const char* const BCont_H5UnitName   = "UnitName";
+	const char* const BCont_H5UnitKey    = "UnitKey";
+	const char* const BCont_H5ModelKey   = "ModelKey";
+	const char* const BCont_H5GroupModel = "Unit";
+
+
+//////////////////////////////////////////////////////////////////////////
 /// CUnitPort
 //////////////////////////////////////////////////////////////////////////
 	const char* const UPort_H5AttrPortsNum  = "PortsNumber";
@@ -355,10 +364,10 @@ namespace StrConst
 //////////////////////////////////////////////////////////////////////////
 /// CFlowsheet
 //////////////////////////////////////////////////////////////////////////
-	const char* const Flow_H5AttrModelsNum		     = "ModelsNumber";
-	const char* const Flow_H5GroupModels		     = "Models";
-	const char* const Flow_H5GroupModelName		     = "Model";
-	const char* const Flow_H5UnitKey			     = "UnitKey";
+	const char* const Flow_H5AttrUnitsNum		     = "ModelsNumber";
+	const char* const Flow_H5GroupUnits		         = "Models";
+	const char* const Flow_H5GroupUnitName		     = "Model";
+	const char* const Flow_H5ModelKey			     = "UnitKey";
 	const char* const Flow_H5AttrStreamsNum		     = "StreamsNumber";
 	const char* const Flow_H5GroupStreams		     = "Streams";
 	const char* const Flow_H5GroupStreamName	     = "Stream";
@@ -366,17 +375,29 @@ namespace StrConst
 	const char* const Flow_H5GroupInitTearStreams	 = "InitTearStreams";
 	const char* const Flow_H5GroupPartitionName	     = "Partition";
 	const char* const Flow_H5GroupInitTearStreamName = "InitTearStream";
-	const char* const Flow_H5Compounds			     = "Compounds";
 	const char* const Flow_H5GroupDistrGrid		     = "DistrGrid";
+	const char* const Flow_H5Compounds			     = "Compounds";
+	const char* const Flow_H5AttrOverallsNum         = "OverallsNumber";
+	const char* const Flow_H5GroupOveralls           = "OverallProperties";
+	const char* const Flow_H5GroupOverallName        = "OverallProperty";
+	const char* const Flow_H5OverallType             = "Type";
+	const char* const Flow_H5OverallName             = "Name";
+	const char* const Flow_H5OverallUnits            = "Units";
+	const char* const Flow_H5AttrPhasesNum           = "PhasesNumber";
 	const char* const Flow_H5GroupPhases		     = "Phases";
+	const char* const Flow_H5GroupPhaseName          = "Phase";
+	const char* const Flow_H5PhaseType               = "Type";
+	const char* const Flow_H5PhaseName               = "Name";
 	const char* const Flow_H5PhasesNames		     = "PhaseNames";
 	const char* const Flow_H5PhasesSOA			     = "PhaseAggregationStates";
 	const char* const Flow_H5GroupOptions		     = "Options";
 	const char* const Flow_H5OptionSimTime		     = "SimulationTime";
 	const char* const Flow_H5AttrSaveVersion	     = "SaveVersion";
 
-	inline std::string  Flow_ErrEmptyFeed(const std::string& s1) { return std::string("Holdup of feed '" + s1 + "' is empty."); }
-	inline std::string  Flow_ErrEmptyUnit(const std::string& s1) { return std::string("Unit '" + s1 + "' is not assigned to a model."); }
+	inline std::string  Flow_ErrEmptyHoldup(const std::string& s1, const std::string& s2) {
+		return std::string("Holdup '" + s2 + "' in unit '" + s1 + "' is empty."); }
+	inline std::string  Flow_ErrEmptyUnit(const std::string& s1) {
+		return std::string("No model is assigned to unit '" + s1 + "'."); }
 	const char* const	Flow_ErrEmptyMDB = "Materials database file has not been loaded or empty.";
 	const char* const	Flow_ErrEmptySequence = "Calculation sequence is empty.";
 	const char* const	Flow_ErrWrongSequence = "Wrong calculation sequence.";
@@ -384,12 +405,15 @@ namespace StrConst
 	const char* const	Flow_ErrMultSolids = "More than 1 solid phase has been defined.";
 	const char* const	Flow_ErrMultVapors = "More than 1 vapor phase has been defined.";
 	const char* const	Flow_ErrNoCompounds = "No compounds specified.";
-	inline std::string	Flow_ErrWrongCompound(const std::string& s1) { return std::string("Cannot find the compound '" + s1 + "' in the materials database."); }
+	inline std::string	Flow_ErrWrongCompound(const std::string& s1) {
+		return std::string("Cannot find compound '" + s1 + "' in the loaded materials database.");	}
 	const char* const	Flow_ErrNoPhases = "No phases specified.";
-	inline std::string  Flow_ErrUnconnectedPorts(const std::string& s1) { return std::string("Some ports of unit '" + s1 + "' are still unconnected."); }
-	inline std::string	Flow_ErrWrongStreams(const std::string& s1) { return std::string("Stream '" + s1 + "' is not correctly connected! Each stream must be connected to one input and to one output port."); }
-	inline std::string  Flow_ErrSolverKeyEmpty(const std::string& s1, const std::string& s2) { return std::string("External solver '" + s1 + "' in unit '" + s2 + "' has not been chosen in unit parameters."); }
-	inline std::string  Flow_ErrCannotLoadSolverLib(const std::string& s1, const std::string& s2) { return std::string("External solver '" + s1 + "' in unit '" + s2 + "' can not be found or loaded."); }
+	inline std::string  Flow_ErrUnconnectedPorts(const std::string& s1, const std::string& s2) {
+		return "Port '" + s2 + "' in unit '" + s1 + "' is unconnected."; }
+	inline std::string	Flow_ErrWrongStreams(const std::string& s1) {
+		return std::string("Stream '" + s1 + "' is not correctly connected. Each stream must be connected to one input and to one output port."); }
+	inline std::string  Flow_ErrSolverKeyEmpty(const std::string& s1, const std::string& s2) { return std::string("Solver '" + s1 + "' in unit '" + s2 + "' has not been chosen in unit parameters."); }
+	inline std::string  Flow_ErrCannotLoadSolverLib(const std::string& s1, const std::string& s2) { return std::string("Solver '" + s1 + "' in unit '" + s2 + "' can not be found or loaded."); }
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -401,6 +425,8 @@ namespace StrConst
 	const char* const Seq_H5ModelsKeys         = "ModelsKeys";
 	const char* const Seq_H5TearStreamsKeys    = "TearStreamsKeys";
 	const char* const Seq_H5AttrSaveVersion    = "SaveVersion";
+	const char* const Seq_H5GroupInitTears     = "InitialTearStreams";
+	const char* const Seq_H5GroupInitTearName  = "Stream";
 
 	const char* const  Seq_ErrEmptySequence = "Calculation sequence is empty.";
 	const char* const  Seq_ErrEmptyModel    = "Some model in calculation sequence is empty.";
@@ -409,11 +435,12 @@ namespace StrConst
 
 
 //////////////////////////////////////////////////////////////////////////
-/// CFlowsheetParameters
+/// CParametersHolder
 //////////////////////////////////////////////////////////////////////////
 	const char* const FlPar_H5ATol		              = "AbsTolerance";
 	const char* const FlPar_H5RTol		              = "RelTolerance";
 	const char* const FlPar_H5MinFrac	              = "MinimalFraction";
+	const char* const FlPar_H5SimTime                 = "SimulationTime";
 	const char* const FlPar_H5InitTimeWin             = "InitialTimeWindow";
 	const char* const FlPar_H5MinTimeWin	          = "MinTimeWindow";
 	const char* const FlPar_H5MaxTimeWin	          = "MaxTimeWindow";

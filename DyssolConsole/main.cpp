@@ -1,9 +1,10 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "ConfigFileParser.h"
-#include "FlowsheetParameters.h"
+#include "ParametersHolder.h"
 #include "Simulator.h"
 #include "ModelsManager.h"
+#include "DistributionsGrid.h"
 #include "DyssolUtilities.h"
 #include "StringFunctions.h"
 #include "ThreadPool.h"
