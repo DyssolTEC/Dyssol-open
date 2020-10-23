@@ -3,8 +3,8 @@
 #include "ConfigFileParser.h"
 #include "DistributionsGrid.h"
 #include "ModelsManager.h"
-#include "Flowsheet2.h"
-#include "BaseUnit2.h"
+#include "Flowsheet.h"
+#include "BaseUnit.h"
 #include "StringFunctions.h"
 #include "FileSystem.h"
 #include "DyssolUtilities.h"
@@ -54,7 +54,7 @@ CConfigFileParser::~CConfigFileParser()
 	ClearArguments();
 }
 
-void CConfigFileParser::SaveConfigFile(const std::wstring& _fileName, const std::wstring& _flowsheetFile, const CFlowsheet2& _flowsheet, const CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB)
+void CConfigFileParser::SaveConfigFile(const std::wstring& _fileName, const std::wstring& _flowsheetFile, const CFlowsheet& _flowsheet, const CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB)
 {
 	std::ofstream file(UnicodePath(_fileName));
 	if (file.fail()) return;
@@ -72,12 +72,9 @@ void CConfigFileParser::SaveConfigFile(const std::wstring& _fileName, const std:
 	file << TO_ARG_STR(EArguments::MATERIALS_DATABASE) << " " << WString2String(_materialsDB.GetFileName()) << std::endl;
 	file << std::endl;
 
-	// simulation time
-	file << TO_ARG_STR(EArguments::SIMULATION_TIME) << " " << _flowsheet.GetEndSimulationTime() << std::endl;
-	file << std::endl;
-
 	// simulation options
 	const auto& parmas = _flowsheet.GetParameters();
+	file << TO_ARG_STR(EArguments::SIMULATION_TIME)    << " " << parmas->endSimulationTime << std::endl;
 	file << TO_ARG_STR(EArguments::RELATIVE_TOLERANCE) << " " << parmas->relTol << std::endl;
 	file << TO_ARG_STR(EArguments::ABSOLUTE_TOLERANCE) << " " << parmas->absTol << std::endl;
 	file << TO_ARG_STR(EArguments::MINIMAL_FRACTION)   << " " << parmas->minFraction << std::endl;

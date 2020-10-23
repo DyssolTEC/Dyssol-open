@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <vector>
 
-class CFlowsheet2;
+class CFlowsheet;
 class CModelsManager;
 class CMaterialsDatabase;
 
@@ -65,7 +65,7 @@ public:
 	CConfigFileParser& operator=(CConfigFileParser&& _other) noexcept = delete;
 
 	// Saves the flowsheet file as a config file.
-	static void SaveConfigFile(const std::wstring& _fileName, const std::wstring& _flowsheetFile, const CFlowsheet2& _flowsheet, const CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB);
+	static void SaveConfigFile(const std::wstring& _fileName, const std::wstring& _flowsheetFile, const CFlowsheet& _flowsheet, const CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB);
 
 	bool Parse(const std::string& _sFile);				// Parses config file and returns true on success.
 	bool IsValueDefined(const EArguments& _key) const;	// Returns true if specified argument was set by user.

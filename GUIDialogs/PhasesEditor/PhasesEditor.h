@@ -3,9 +3,10 @@
 #pragma once
 
 #include "ui_PhasesEditor.h"
-#include "Flowsheet.h"
 #include <QDialog>
 #include <QComboBox>
+
+class CFlowsheet;
 
 class CPhasesEditor : public QDialog
 {

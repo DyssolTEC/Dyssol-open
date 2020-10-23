@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BaseUnit.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DenseMDMatrix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -75,9 +72,6 @@
     <ClCompile Include="Stream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BaseUnit2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="StateVariable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -90,11 +84,11 @@
     <ClCompile Include="UnitPorts.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BaseUnit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BaseUnit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DenseMDMatrix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -161,9 +155,6 @@
     <ClInclude Include="Stream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BaseUnit2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="StateVariable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -174,6 +165,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UnitPorts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseUnit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

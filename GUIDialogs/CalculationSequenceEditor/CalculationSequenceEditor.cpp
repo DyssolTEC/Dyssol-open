@@ -1,6 +1,7 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "CalculationSequenceEditor.h"
+#include "Flowsheet.h"
 #include "Stream.h"
 #include <QComboBox>
 #include <QMessageBox>
@@ -45,19 +46,23 @@ void CCalculationSequenceEditor::UpdatePartitionsList() const
 	ui.treeWidget->clear();
 
 	// prepare data
-	std::vector<QString> modelsNames(m_pFlowsheet->GetModelsCount());   // names of all models for combo boxes
-	std::vector<QVariant> modelsKeys(m_pFlowsheet->GetModelsCount());   // user data for each model - unique key
-	std::vector<QString> streamsNames(m_pFlowsheet->GetStreamsCount()); // names of all streams for combo boxes
-	std::vector<QVariant> streamsKeys(m_pFlowsheet->GetStreamsCount()); // user data for each stream - unique key
-	for (size_t i = 0; i < m_pFlowsheet->GetModelsCount(); ++i)
+	std::vector<QString> modelsNames;  // names of all models for combo boxes
+	std::vector<QVariant> modelsKeys;  // user data for each model - unique key
+	std::vector<QString> streamsNames; // names of all streams for combo boxes
+	std::vector<QVariant> streamsKeys; // user data for each stream - unique key
+	modelsNames.reserve(m_pFlowsheet->GetUnitsNumber());
+	modelsKeys.reserve(m_pFlowsheet->GetUnitsNumber());
+	streamsNames.reserve(m_pFlowsheet->GetStreamsNumber());
+	streamsKeys.reserve(m_pFlowsheet->GetStreamsNumber());
+	for (const auto& unit : m_pFlowsheet->GetAllUnits())
 	{
-		modelsNames[i] = QString::fromStdString(m_pFlowsheet->GetModel(i)->GetModelName());
-		modelsKeys[i] = QString::fromStdString(m_pFlowsheet->GetModel(i)->GetModelKey());
+		modelsNames.push_back(QString::fromStdString(unit->GetName()));
+		modelsKeys.push_back(QString::fromStdString(unit->GetKey()));
 	}
-	for (size_t i = 0; i < m_pFlowsheet->GetStreamsCount(); ++i)
+	for (const auto& stream : m_pFlowsheet->GetAllStreams())
 	{
-		streamsNames[i] = QString::fromStdString(m_pFlowsheet->GetStream(i)->GetName());
-		streamsKeys[i] = QString::fromStdString(m_pFlowsheet->GetStream(i)->GetKey());
+		streamsNames.push_back(QString::fromStdString(stream->GetName()));
+		streamsKeys.push_back(QString::fromStdString(stream->GetKey()));
 	}
 
 	// create tree table
@@ -69,12 +74,12 @@ void CCalculationSequenceEditor::UpdatePartitionsList() const
 		// models
 		QTreeWidgetItem* modelsItem = ui.treeWidget->AddChildItem(partitionItem, 0, StrConst::CSE_Models, i);
 		for (const auto& model : m_pSequence->PartitionModels(i))
-			ui.treeWidget->AddChildItemComboBox(modelsItem, 0, modelsNames, modelsKeys, model ? static_cast<int>(m_pFlowsheet->GetModelIndex(model->GetModelKey())) : -1);
+			ui.treeWidget->AddChildItemComboBox(modelsItem, 0, modelsNames, modelsKeys, model ? QString::fromStdString(model->GetKey()) : "");
 
 		// tear streams
 		QTreeWidgetItem* streamsItem = ui.treeWidget->AddChildItem(partitionItem, 0, StrConst::CSE_Streams, i);
 		for (const auto& stream : m_pSequence->PartitionTearStreams(i))
-			ui.treeWidget->AddChildItemComboBox(streamsItem, 0, streamsNames, streamsKeys, stream ? static_cast<int>(m_pFlowsheet->GetStreamIndex(stream->GetKey())) : -1);
+			ui.treeWidget->AddChildItemComboBox(streamsItem, 0, streamsNames, streamsKeys, stream ? QString::fromStdString(stream->GetKey()) : "");
 	}
 
 	ui.treeWidget->expandAll();
@@ -84,13 +89,13 @@ void CCalculationSequenceEditor::UpdatePartitionsList() const
 void CCalculationSequenceEditor::CalculateSequence()
 {
 	m_pFlowsheet->SetStreamsToPorts();
-	const std::string err = m_pFlowsheet->CheckConnections();
+	const std::string err = m_pFlowsheet->CheckPortsConnections();
 	if (!err.empty())
 	{
 		QMessageBox::warning(this, "Error", QString::fromStdString(err));
 		return;
 	}
-	m_pFlowsheet->AnalyzeTopology();
+	m_pFlowsheet->DetermineCalculationSequence();
 	UpdateWholeView();
 	emit DataChanged();
 }

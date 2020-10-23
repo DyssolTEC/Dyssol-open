@@ -1,8 +1,12 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "UnitsViewer.h"
+#include "BasicStreamsViewer.h"
+#include "PlotsViewer.h"
+#include "Flowsheet.h"
+#include "BaseUnit.h"
 
-CUnitsViewer::CUnitsViewer( CFlowsheet* _pFlowsheet, QWidget *parent, Qt::WindowFlags flags )
+CUnitsViewer::CUnitsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDatabase, QWidget* parent, Qt::WindowFlags flags)
 	: QWidget(parent, flags)
 {
 	ui.setupUi(this);
@@ -29,7 +33,7 @@ CUnitsViewer::CUnitsViewer( CFlowsheet* _pFlowsheet, QWidget *parent, Qt::Window
 	m_pTabWidget->addTab( m_pTableWidget, "Table view" );
 	m_pTabWidget->addTab( m_pPlot, "Plot view" );
 
-	m_pStreamsViewer = new CBasicStreamsViewer(m_pFlowsheet, m_pStackedWidget);
+	m_pStreamsViewer = new CBasicStreamsViewer(m_pFlowsheet, _materialsDatabase, m_pStackedWidget);
 
 	m_pPlotsViewer = new CPlotsViewer( m_pStackedWidget );
 
@@ -73,29 +77,30 @@ void CUnitsViewer::UpdateUnitsView()
 
 	int nOldSelected = ui.listWidgetUnits->currentRow();
 	ui.listWidgetUnits->clear();
-	for (unsigned i = 0; i < m_pFlowsheet->GetModelsCount(); i++)
-		ui.listWidgetUnits->insertItem(i, new QListWidgetItem(QString::fromStdString(m_pFlowsheet->GetModel(i)->GetModelName())));
+	for (const auto& unit : m_pFlowsheet->GetAllUnits())
+		ui.listWidgetUnits->insertItem(ui.listWidgetUnits->count(), new QListWidgetItem(QString::fromStdString(unit->GetName())));
 
 	m_bAvoidSignal = false;
 
-	if (nOldSelected < (int)m_pFlowsheet->GetModelsCount())
+	if (nOldSelected < (int)m_pFlowsheet->GetUnitsNumber())
 		ui.listWidgetUnits->setCurrentRow(nOldSelected);
 }
 
 void CUnitsViewer::UpdateVariablesView()
 {
 	if (m_bAvoidSignal) return;
-	if (m_pSelectedModel == NULL) return;
+	if (m_pSelectedModel == NULL || !m_pSelectedModel->GetModel()) return;
 	m_bAvoidSignal = true;
 
+	const auto& manager = m_pSelectedModel->GetModel()->GetStateVariablesManager();
 	int nOldSelected = ui.listWidgetVariables->currentRow();
 	ui.listWidgetVariables->clear();
-	for (unsigned i = 0; i < m_pSelectedModel->GetStoredStateVariablesNumber(); i++)
-		ui.listWidgetVariables->insertItem(i, new QListWidgetItem(QString::fromStdString(m_pSelectedModel->GetStoredStateVariableName(i))));
+	for (const auto& variable : manager.GetAllStateVariablesWithHistory())
+		ui.listWidgetVariables->insertItem(ui.listWidgetVariables->count(), new QListWidgetItem(QString::fromStdString(variable->GetName())));
 
-	if ((nOldSelected != -1) && (nOldSelected < (int)m_pSelectedModel->GetStoredStateVariablesNumber()))
+	if ((nOldSelected != -1) && (nOldSelected < (int)manager.GetAllStateVariablesWithHistory().size()))
 		ui.listWidgetVariables->setCurrentRow(nOldSelected);
-	else if (m_pSelectedModel->GetStoredStateVariablesNumber() > 0)
+	else if (manager.GetAllStateVariablesWithHistory().size() > 0)
 		ui.listWidgetVariables->setCurrentRow(0);
 	else
 		ui.listWidgetVariables->setCurrentRow(-1);
@@ -106,7 +111,7 @@ void CUnitsViewer::UpdateVariablesView()
 void CUnitsViewer::UpdateValuesView()
 {
 	if (m_bAvoidSignal) return;
-	if(!m_pSelectedModel || m_nSelectedVariable == -1 || m_pSelectedModel->GetStoredStateVariablesNumber() == 0)
+	if(!m_pSelectedModel || !m_pSelectedModel->GetModel() || m_nSelectedVariable == -1 || m_pSelectedModel->GetModel()->GetStateVariablesManager().GetAllStateVariablesWithHistory().empty())
 	{
 		m_pTabWidget->setEnabled(false);
 		if (m_pTabWidget->currentIndex() == 0)
@@ -117,26 +122,30 @@ void CUnitsViewer::UpdateValuesView()
 	}
 	m_pTabWidget->setEnabled(true);
 
+	const auto& variables = m_pSelectedModel->GetModel()->GetStateVariablesManager().GetAllStateVariablesWithHistory();
 	if (m_pTabWidget->currentIndex() == 0)
 	{
 		m_pTableWidget->setRowCount(0);
-		std::vector<double> vTimes;
-		std::vector<double> vValues;
-		m_pSelectedModel->GetStoredStateVariableData(m_nSelectedVariable, &vTimes, &vValues);
-		for (unsigned i = 0; i < vTimes.size(); ++i)
+		const auto data = variables[m_nSelectedVariable]->GetHistory();
+		for (unsigned i = 0; i < data.size(); ++i)
 		{
 			m_pTableWidget->insertRow(i);
-			m_pTableWidget->setItem(i, 0, new QTableWidgetItem(QString::number(vTimes[i])));
-			m_pTableWidget->setItem(i, 1, new QTableWidgetItem(QString::number(vValues[i])));
+			m_pTableWidget->setItem(i, 0, new QTableWidgetItem(QString::number(data[i].time)));
+			m_pTableWidget->setItem(i, 1, new QTableWidgetItem(QString::number(data[i].value)));
 		}
 	}
 	else
 	{
 		m_pPlot->ClearCurve(0);
-		m_pPlot->SetCurveName(0, QString::fromStdString(m_pSelectedModel->GetStoredStateVariableName(m_nSelectedVariable)));
-		std::vector<double> vTimes;
-		std::vector<double> vValues;
-		m_pSelectedModel->GetStoredStateVariableData(m_nSelectedVariable, &vTimes, &vValues);
+		m_pPlot->SetCurveName(0, QString::fromStdString(variables[m_nSelectedVariable]->GetName()));
+		const auto& data = variables[m_nSelectedVariable]->GetHistory();
+		std::vector<double> vTimes;		vTimes.reserve(data.size());
+		std::vector<double> vValues;	vValues.reserve(data.size());
+		for (const auto& entry : data)
+		{
+			vTimes.push_back(entry.time);
+			vValues.push_back(entry.value);
+		}
 		m_pPlot->AddPoints(0, vTimes, vValues);
 		if (vTimes.size() == 1)
 			m_pPlot->SetCurveLinesVisibility(0, false);
@@ -146,17 +155,18 @@ void CUnitsViewer::UpdateValuesView()
 void CUnitsViewer::UpdateHoldupsView()
 {
 	if (m_bAvoidSignal) return;
-	if (!m_pSelectedModel) return;
+	if (!m_pSelectedModel || !m_pSelectedModel->GetModel()) return;
 	m_bAvoidSignal = true;
 
+	const auto& manager = m_pSelectedModel->GetModel()->GetStreamsManager();
 	int nOldSelected = ui.listWidgetHoldups->currentRow();
 	ui.listWidgetHoldups->clear();
-	for (unsigned i = 0; i < m_pSelectedModel->GetHoldupsCount(); ++i)
-		ui.listWidgetHoldups->insertItem(i, new QListWidgetItem(QString::fromStdString(m_pSelectedModel->GetHoldup(i)->GetName())));
+	for (const auto& holdup : manager.GetHoldups())
+		ui.listWidgetHoldups->insertItem(ui.listWidgetHoldups->count(), new QListWidgetItem(QString::fromStdString(holdup->GetName())));
 
-	if ((nOldSelected != -1) && (nOldSelected < (int)m_pSelectedModel->GetHoldupsCount()))
+	if ((nOldSelected != -1) && (nOldSelected < (int)manager.GetHoldupsNumber()))
 		ui.listWidgetHoldups->setCurrentRow(nOldSelected);
-	else if (m_pSelectedModel->GetHoldupsCount() > 0)
+	else if (manager.GetHoldupsNumber() > 0)
 		ui.listWidgetHoldups->setCurrentRow(0);
 	else
 		ui.listWidgetHoldups->setCurrentRow(-1);
@@ -167,7 +177,7 @@ void CUnitsViewer::UpdateHoldupsView()
 void CUnitsViewer::UpdatePlotsView()
 {
 	if (m_bAvoidSignal) return;
-	if (!m_pSelectedModel)
+	if (!m_pSelectedModel || !m_pSelectedModel->GetModel())
 	{
 		ui.listWidgetPlots->clear();
 		UpdateCurvesView();
@@ -175,14 +185,15 @@ void CUnitsViewer::UpdatePlotsView()
 	}
 	m_bAvoidSignal = true;
 
+	const auto& manager = m_pSelectedModel->GetModel()->GetPlotsManager();
 	int nOldSelected = ui.listWidgetPlots->currentRow();
 	ui.listWidgetPlots->clear();
-	for (unsigned i = 0; i < m_pSelectedModel->GetPlotsNumber(); ++i)
-		ui.listWidgetPlots->insertItem(i, new QListWidgetItem(QString::fromStdString(m_pSelectedModel->GetPlotName(i))));
+	for (const auto& plot : manager.GetAllPlots())
+		ui.listWidgetPlots->insertItem(ui.listWidgetPlots->count(), new QListWidgetItem(QString::fromStdString(plot->GetName())));
 
 	m_bAvoidSignal = false;
 
-	if ((nOldSelected != -1) && (nOldSelected < (int)m_pSelectedModel->GetPlotsNumber()))
+	if ((nOldSelected != -1) && (nOldSelected < (int)manager.GetPlotsNumber()))
 		ui.listWidgetPlots->setCurrentRow(nOldSelected);
 	else if (ui.listWidgetPlots->count() > 0)
 		ui.listWidgetPlots->setCurrentRow(0);
@@ -196,23 +207,24 @@ void CUnitsViewer::UpdateCurvesView()
 {
 	if( m_bAvoidSignal ) return;
 	int iPlot = ui.listWidgetPlots->currentRow();
-	if(( !m_pSelectedModel ) || (iPlot == -1))
+	if(( !m_pSelectedModel ) || !m_pSelectedModel->GetModel() || (iPlot == -1))
 	{
 		ui.listWidgetCurves->clear();
 		return;
 	}
 	m_bAvoidSignal = true;
 
+	const auto& plot = m_pSelectedModel->GetModel()->GetPlotsManager().GetAllPlots()[iPlot];
 	int nOldSelected = ui.listWidgetCurves->currentRow();
 	ui.listWidgetCurves->clear();
-	for( unsigned i=0; i<m_pSelectedModel->GetCurvesNumber(iPlot); ++i )
-		ui.listWidgetCurves->insertItem( i, new QListWidgetItem( QString::fromStdString( m_pSelectedModel->GetCurveName( iPlot, i ) ) ) );
+	for (const auto& curve : plot->GetAllCurves())
+		ui.listWidgetCurves->insertItem(ui.listWidgetCurves->count(), new QListWidgetItem(QString::fromStdString(curve->GetName())));
 
 	m_bAvoidSignal = false;
 
 	if(( nOldSelected == -1 ) && (ui.listWidgetCurves->count() > 0))
 		ui.listWidgetCurves->setCurrentRow(0);
-	else if ( nOldSelected < (int)m_pSelectedModel->GetCurvesNumber(iPlot) )
+	else if ( nOldSelected < plot->GetCurvesNumber() )
 		ui.listWidgetCurves->setCurrentRow( nOldSelected );
 	else if(ui.listWidgetCurves->count() > 0)
 		ui.listWidgetCurves->setCurrentRow(0);
@@ -220,7 +232,10 @@ void CUnitsViewer::UpdateCurvesView()
 
 void CUnitsViewer::UnitChanged()
 {
-	m_pSelectedModel = m_pFlowsheet->GetModel( ui.listWidgetUnits->currentRow() );
+	if (ui.listWidgetUnits->currentRow() > 0 && ui.listWidgetUnits->currentRow() < m_pFlowsheet->GetUnitsNumber())
+		m_pSelectedModel = m_pFlowsheet->GetAllUnits()[ui.listWidgetUnits->currentRow()];
+	else
+		m_pSelectedModel = nullptr;
 	m_pPlotsViewer->SetSelectedModel( m_pSelectedModel );
 	UpdateVariablesView();
 	UpdateValuesView();
@@ -231,19 +246,20 @@ void CUnitsViewer::UnitChanged()
 void CUnitsViewer::VariableChanged()
 {
 	m_nSelectedVariable = ui.listWidgetVariables->currentRow();
-	if ((m_nSelectedVariable == -1) && (m_pSelectedModel->GetStoredStateVariablesNumber() > 0))
+	if (m_nSelectedVariable == -1 && !m_pSelectedModel->GetModel()->GetStateVariablesManager().GetAllStateVariablesWithHistory().empty())
 		m_nSelectedVariable = 0;
 	UpdateValuesView();
 }
 
 void CUnitsViewer::HoldupChanged()
 {
-	if( !m_pSelectedModel ) return;
+	if( !m_pSelectedModel || !m_pSelectedModel->GetModel()) return;
 	QModelIndexList indexes = ui.listWidgetHoldups->selectionModel()->selection().indexes();
+	const auto& holdupsList = m_pSelectedModel->GetModel()->GetStreamsManager().GetHoldups();
 	std::vector<const CBaseStream*> vHoldups;
 	for( int i=0; i<indexes.size(); ++i )
-		if( ( indexes[i].row() >= 0 ) && ( indexes[i].row() < (int)m_pSelectedModel->GetHoldupsCount() ) )
-			vHoldups.push_back(m_pSelectedModel->GetHoldup(indexes[i].row()));
+		if( ( indexes[i].row() >= 0 ) && ( indexes[i].row() < (int)holdupsList.size() ) )
+			vHoldups.push_back(holdupsList[indexes[i].row()]);
 	m_pStreamsViewer->SetStreams(vHoldups);
 }
 

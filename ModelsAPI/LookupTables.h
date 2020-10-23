@@ -5,7 +5,7 @@
 #include "DefinesMDB.h"
 #include "LookupTable.h"
 
-class CBaseUnit2;
+class CBaseUnit;
 class CBaseStream;
 class CMaterialsDatabase;
 

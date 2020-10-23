@@ -65,6 +65,11 @@ void CStreamManager::Clear()
 		holdups->clear();
 }
 
+size_t CStreamManager::GetFeedsNumber() const
+{
+	return m_feedsWork.size();
+}
+
 CStream* CStreamManager::AddFeed(const std::string& _name)
 {
 	if (GetFeed(_name)) return nullptr; // already exists
@@ -105,6 +110,11 @@ void CStreamManager::RemoveFeed(const std::string& _name)
 	RemoveObjects(m_feedsWork, _name);
 }
 
+size_t CStreamManager::GetHoldupsNumber() const
+{
+	return m_holdupsWork.size();
+}
+
 CHoldup* CStreamManager::AddHoldup(const std::string& _name)
 {
 	if (GetHoldup(_name)) return nullptr; // already exists
@@ -113,6 +123,11 @@ CHoldup* CStreamManager::AddHoldup(const std::string& _name)
 	m_holdupsWork.emplace_back(CreateObject<CHoldup>(key, _name));
 	m_holdupsStored.emplace_back(CreateObject<CHoldup>(key, _name));
 	return m_holdupsWork.back().get();
+}
+
+const CHoldup* CStreamManager::GetHoldup(const std::string& _name) const
+{
+	return GetObject(m_holdupsWork, _name);
 }
 
 CHoldup* CStreamManager::GetHoldup(const std::string& _name)
@@ -147,6 +162,11 @@ void CStreamManager::RemoveHoldup(const std::string& _name)
 	RemoveObjects(m_holdupsStored, _name);
 }
 
+size_t CStreamManager::GetStreamsNumber() const
+{
+	return m_streamsWork.size();
+}
+
 CStream* CStreamManager::AddStream(const std::string& _name)
 {
 	if (GetStream(_name)) return nullptr; // already exists
@@ -154,6 +174,11 @@ CStream* CStreamManager::AddStream(const std::string& _name)
 	m_streamsWork.emplace_back(CreateObject<CStream>(key, _name));
 	m_streamsStored.emplace_back(CreateObject<CStream>(key, _name));
 	return m_streamsWork.back().get();
+}
+
+const CStream* CStreamManager::GetStream(const std::string& _name) const
+{
+	return GetObject(m_streamsWork, _name);
 }
 
 CStream* CStreamManager::GetStream(const std::string& _name)
@@ -439,18 +464,24 @@ void CStreamManager::LoadFromFile_v00(const CH5Handler& _h5File, const std::stri
 template <typename T>
 T* CStreamManager::CreateObject(const std::string& _key, const std::string& _name) const
 {
-	auto* stream = new T{ _key, &m_materialsDB, &m_grid, &m_compounds, &m_overall, &m_phases, &m_cache, &m_tolerances };
+	auto* stream = new T{ _key, m_materialsDB, m_grid, m_compounds, m_overall, m_phases, m_cache, m_tolerances };
 	stream->SetName(_name);
 	return stream;
 }
 
 template <typename T>
-T* CStreamManager::GetObject(const std::vector<std::unique_ptr<T>>& _streams, const std::string& _name)
+const T* CStreamManager::GetObject(const std::vector<std::unique_ptr<T>>& _streams, const std::string& _name) const
 {
 	for (auto& stream : _streams)
 		if (stream->GetName() == _name)
 			return stream.get();
 	return nullptr;
+}
+
+template <typename T>
+T* CStreamManager::GetObject(const std::vector<std::unique_ptr<T>>& _streams, const std::string& _name)
+{
+	return const_cast<T*>(static_cast<const CStreamManager&>(*this).GetObject(_streams, _name));
 }
 
 template <typename T>

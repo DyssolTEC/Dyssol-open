@@ -4,6 +4,9 @@
 
 #include "ui_TearStreamsEditor.h"
 
+class CCalculationSequence;
+class CParametersHolder;
+
 class CTearStreamsEditor : public QDialog
 {
 	Q_OBJECT
@@ -11,11 +14,10 @@ private:
 	Ui::CTearStreamsEditorClass ui;
 
 	CFlowsheet* m_pFlowsheet;	             // Pointer to the flowsheet.
-	CParametersHolder& m_parameters;
 	const CCalculationSequence* m_pSequence; // Pointer to the calculation sequence.
 
 public:
-	CTearStreamsEditor(CFlowsheet* _pFlowsheet, QWidget *parent = Q_NULLPTR);
+	CTearStreamsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, QWidget *parent = Q_NULLPTR);
 
 	void InitializeConnections();
 	void UpdateWholeView();

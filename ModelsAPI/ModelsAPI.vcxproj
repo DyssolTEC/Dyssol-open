@@ -119,7 +119,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseUnit.cpp" />
-    <ClCompile Include="BaseUnit2.cpp" />
     <ClCompile Include="CachedMap.cpp" />
     <ClCompile Include="PlotManager.cpp" />
     <ClCompile Include="StateVariable.cpp" />
@@ -146,7 +145,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseUnit.h" />
-    <ClInclude Include="BaseUnit2.h" />
     <ClInclude Include="CachedMap.h" />
     <ClInclude Include="Holdup.h" />
     <ClInclude Include="LookupTables.h" />

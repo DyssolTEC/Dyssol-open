@@ -3,9 +3,15 @@
 #pragma once
 
 #include "ui_UnitsViewer.h"
-#include "BasicStreamsViewer.h"
-#include "PlotsViewer.h"
+#include "QtPlot.h"
 #include <QStackedWidget>
+
+class CPlotsViewer;
+class CBasicStreamsViewer;
+class CQtTable;
+class CMaterialsDatabase;
+class CFlowsheet;
+class CUnitContainer;
 
 class CUnitsViewer : public QWidget
 {
@@ -18,7 +24,7 @@ private:
 	QTabWidget *m_pTabWidget;
 	CBasicStreamsViewer *m_pStreamsViewer;	// streams viewer
 	bool m_bAvoidSignal;
-	CBaseModel* m_pSelectedModel;
+	CUnitContainer* m_pSelectedModel;
 	int m_nSelectedVariable;
 	QtPlot::CQtPlot *m_pPlot;
 	CQtTable *m_pTableWidget;
@@ -32,7 +38,7 @@ private:
 	int m_nLastCurve;
 
 public:
-	CUnitsViewer( CFlowsheet* _pFlowsheet, QWidget *parent = 0, Qt::WindowFlags flags = {} );
+	CUnitsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDatabase, QWidget* parent = 0, Qt::WindowFlags flags = {});
 	~CUnitsViewer();
 
 	void InitializeConnections();

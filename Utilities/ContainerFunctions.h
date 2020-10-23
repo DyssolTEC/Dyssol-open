@@ -31,7 +31,7 @@ size_t VectorFind(const std::vector<T>& _vec, T _val)
 template<typename T, typename FUN>
 size_t VectorFind(const std::vector<T>& _vec, const FUN& _fun)
 {
-	const auto it = std::find(_vec.begin(), _vec.end(), _fun);
+	const auto it = std::find_if(_vec.begin(), _vec.end(), _fun);
 	if (it == _vec.end()) return -1;
 	return std::distance(_vec.begin(), it);
 }

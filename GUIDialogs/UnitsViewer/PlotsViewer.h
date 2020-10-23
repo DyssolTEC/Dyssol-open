@@ -3,18 +3,19 @@
 #pragma once
 
 #include "ui_PlotsViewer.h"
-#include "BaseModel.h"
 #include "QtTable.h"
 #include "QtPlot.h"
 
 #define PLOT_LINE_WIDTH	3
+
+class CUnitContainer;
 
 class CPlotsViewer : public QWidget
 {
 	Q_OBJECT
 
 private:
-	CBaseModel *m_pModel;
+	CUnitContainer* m_pModel;
 	CQtTable *m_pTableWidget;	// table for distributions' visualization
 	QtPlot::CQtPlot *m_pPlot;	// plot for distributions' visualization
 	bool m_bAvoidSignal;
@@ -28,7 +29,7 @@ public:
 	CPlotsViewer( QWidget *parent = 0 );
 	~CPlotsViewer();
 
-	void SetSelectedModel( CBaseModel *_pModel );
+	void SetSelectedModel(CUnitContainer* _pModel);
 	void SetSelectedPlot( int _nIndex );
 	void SetSelectedCurve( int _nIndex );
 	void SetSelectedCurve( const std::vector<int>& _vIndexes );

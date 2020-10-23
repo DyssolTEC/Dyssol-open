@@ -11,7 +11,7 @@ class CDDTable : public QWidget
 	Q_OBJECT
 
 private:
-	CTimeDependentValue* m_pData;
+	std::vector<CTimeDependentValue*> m_pData;
 	CQtTable* m_pTable;
 	bool m_bAvoidSignal;
 	bool m_bNormalize;
@@ -21,7 +21,7 @@ public:
 	CDDTable( QWidget *parent = 0, Qt::WindowFlags flags = {} );
 	~CDDTable();
 
-	void SetDistribution(CTimeDependentValue* _pDistribution );
+	void SetDistribution(const std::vector<CTimeDependentValue*>& _values);
 	void SetNormalizationCheck( bool _bAnalyse );
 	void SetEditable(bool _bEditable);				// Turn on/off edit possibility.
 

@@ -1,11 +1,14 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "CalculationSequence.h"
+#include "UnitContainer.h"
 #include "Stream.h"
+#include "TimeDependentValue.h"
+#include "Phase.h"
 #include "ContainerFunctions.h"
 #include "DyssolStringConstants.h"
 
-CCalculationSequence::CCalculationSequence(const std::vector<std::unique_ptr<CBaseModel>>* _allModels, const std::vector<std::unique_ptr<CStream>>* _allStreams)
+CCalculationSequence::CCalculationSequence(const std::vector<std::unique_ptr<CUnitContainer>>* _allModels, const std::vector<std::unique_ptr<CStream>>* _allStreams)
 {
 	m_models = _allModels;
 	m_streams = _allStreams;
@@ -135,13 +138,13 @@ void CCalculationSequence::ShiftStreamDown(size_t _iPartition, size_t _iStream)
 	std::iter_swap(m_partitions[_iPartition].tearStreams.begin() + _iStream, m_partitions[_iPartition].tearStreams.begin() + _iStream + 1);
 }
 
-std::vector<CBaseModel*> CCalculationSequence::PartitionModels(size_t _iPartition) const
+std::vector<CUnitContainer*> CCalculationSequence::PartitionModels(size_t _iPartition) const
 {
 	if (_iPartition >= m_partitions.size()) return {};
-	std::vector<CBaseModel*> res{ m_partitions[_iPartition].models.size(), nullptr };
+	std::vector<CUnitContainer*> res{ m_partitions[_iPartition].models.size(), nullptr };
 	for (size_t i = 0; i < m_partitions[_iPartition].models.size(); ++i)
 		for (const auto& model : *m_models)
-			if (model && model->GetModelKey() == m_partitions[_iPartition].models[i])
+			if (model && model->GetKey() == m_partitions[_iPartition].models[i])
 				res[i] = model.get();
 	return res;
 }
@@ -212,8 +215,8 @@ std::string CCalculationSequence::Check() const
 	}
 
 	for (const auto& model : *m_models)
-		if (!IsModelInSequence(model->GetModelKey()))
-			return StrConst::Seq_ErrMissingUnit(model->GetModelName());
+		if (!IsModelInSequence(model->GetKey()))
+			return StrConst::Seq_ErrMissingUnit(model->GetName());
 
 	return {};
 }
@@ -264,6 +267,24 @@ void CCalculationSequence::UpdateInitialStreams(double _timeWindow)
 	for (size_t i = 0; i < PartitionsNumber(); ++i)
 		for (size_t j = 0; j < TearStreamsNumber(i); ++j)
 			m_initialTearStreams[i][j]->CopyFromStream(0.0, _timeWindow, PartitionTearStreams(i)[j]);
+}
+
+std::vector<std::vector<const CStream*>> CCalculationSequence::GetAllInitialStreams() const
+{
+	std::vector<std::vector<const CStream*>> res(PartitionsNumber());
+	for (size_t i = 0; i < PartitionsNumber(); ++i)
+		for (size_t j = 0; j < TearStreamsNumber(i); ++j)
+			res[i].push_back(m_initialTearStreams[i][j].get());
+	return res;
+}
+
+std::vector<std::vector<CStream*>> CCalculationSequence::GetAllInitialStreams()
+{
+	std::vector<std::vector<CStream*>> res(PartitionsNumber());
+	for (size_t i = 0; i < PartitionsNumber(); ++i)
+		for (size_t j = 0; j < TearStreamsNumber(i); ++j)
+			res[i].push_back(m_initialTearStreams[i][j].get());
+	return res;
 }
 
 void CCalculationSequence::AddCompound(const std::string& _compoundKey)

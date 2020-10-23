@@ -1,6 +1,7 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "GridEditor.h"
+#include "Flowsheet.h"
 #include <QMessageBox>
 #include <QStandardItem>
 
@@ -187,7 +188,7 @@ bool CGridEditor::ApplyChanges()
 		CDimensionParameters* item = static_cast<CDimensionParameters*>(ui.listWidgetParams->itemWidget(ui.listWidgetParams->item(i)));
 		m_pGrid->AddDimension(item->GetGrid());
 	}
-	m_pFlowsheet->SetDistributionsGrid();
+	m_pFlowsheet->UpdateDistributionsGrid();
 
 	emit DataChanged();
 

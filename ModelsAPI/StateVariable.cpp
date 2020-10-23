@@ -153,7 +153,25 @@ std::vector<CStateVariable*> CStateVariablesManager::GetAllStateVariables()
 	return res;
 }
 
-size_t CStateVariablesManager::GetStateVariableNumber() const
+std::vector<const CStateVariable*> CStateVariablesManager::GetAllStateVariablesWithHistory() const
+{
+	std::vector<const CStateVariable*> res;
+	for (const auto& v : m_stateVariables)
+		if (v->HasHistory())
+			res.push_back(v.get());
+	return res;
+}
+
+std::vector<CStateVariable*> CStateVariablesManager::GetAllStateVariablesWithHistory()
+{
+	std::vector<CStateVariable*> res;
+	for (const auto& v : m_stateVariables)
+		if (v->HasHistory())
+			res.push_back(v.get());
+	return res;
+}
+
+size_t CStateVariablesManager::GetStateVariablesNumber() const
 {
 	return m_stateVariables.size();
 }

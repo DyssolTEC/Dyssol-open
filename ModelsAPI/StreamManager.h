@@ -54,6 +54,8 @@ public:
 	// Removes all defined streams.
 	void Clear();
 
+	// Returns the number of defined feeds.
+	size_t GetFeedsNumber() const;
 	// Adds new feed, setups its structure (MD dimensions, phases, materials, etc.), and returns a pointer to it. If a feed with the given name already exists, does nothing, and returns nullptr.
 	CStream* AddFeed(const std::string& _name);
 	// Returns a feed with the specified name. If such feed does not exist, returns nullptr.
@@ -69,8 +71,12 @@ public:
 	// Removes the specified feed.
 	void RemoveFeed(const std::string& _name);
 
+	// Returns the number of defined holdups.
+	size_t GetHoldupsNumber() const;
 	// Adds new holdup, setups its structure (MD dimensions, phases, materials, etc.), and returns a pointer to it. If a holdup with the given name already exists, does nothing, and returns nullptr.
 	CHoldup* AddHoldup(const std::string& _name);
+	// Returns a holdup with the specified name. If such holdup does not exist, returns nullptr.
+	const CHoldup* GetHoldup(const std::string& _name) const;
 	// Returns a holdup with the specified name. If such holdup does not exist, returns nullptr.
 	CHoldup* GetHoldup(const std::string& _name);
 	// Returns all defined initial holdups.
@@ -84,8 +90,12 @@ public:
 	// Removes the specified holdup.
 	void RemoveHoldup(const std::string& _name);
 
+	// Returns the number of defined streams.
+	size_t GetStreamsNumber() const;
 	// Adds new stream, setups its structure (MD dimensions, phases, materials, etc.), and returns a pointer to it. If a stream with the given name already exists, does nothing, and returns nullptr.
 	CStream* AddStream(const std::string& _name);
+	// Returns a stream with the specified name. If such stream does not exist, returns nullptr.
+	const CStream* GetStream(const std::string& _name) const;
 	// Returns a stream with the specified name. If such stream does not exist, returns nullptr.
 	CStream* GetStream(const std::string& _name);
 	// Returns all defined streams.
@@ -146,6 +156,9 @@ private:
 	// Creates a new stream with proper structure (MD dimensions, phases, materials, etc.).
 	template<typename T>
 	T* CreateObject(const std::string& _key, const std::string& _name) const;
+	// Looks for a stream with the specified name in the given list of streams, and returns a pointer to it. If such stream does not exist, returns nullptr.
+	template<typename T>
+	const T* GetObject(const std::vector<std::unique_ptr<T>>& _streams, const std::string& _name) const;
 	// Looks for a stream with the specified name in the given list of streams, and returns a pointer to it. If such stream does not exist, returns nullptr.
 	template<typename T>
 	T* GetObject(const std::vector<std::unique_ptr<T>>& _streams, const std::string& _name);

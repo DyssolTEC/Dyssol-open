@@ -8,9 +8,9 @@ class CSteadyStateUnit : public CBaseUnit
 {
 public:
 	CSteadyStateUnit();
-	~CSteadyStateUnit();
+	virtual ~CSteadyStateUnit();
 
 	/**	Calculates unit on a time point (for steady-state units).
 	 *	\param _dTime Time point to calculate*/
-	virtual void Simulate(double _dTime) = 0;
+	void Simulate(double _dTime) override = 0;
 };

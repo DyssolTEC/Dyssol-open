@@ -3,10 +3,15 @@
 #pragma once
 
 #include "ui_BasicStreamsViewer.h"
-#include "Flowsheet.h"
-#include "MDMatrix.h"
+#include "DyssolDefines.h"
 
 #define PLOT_LINE_WIDTH	3
+
+class CMaterialsDatabase;
+class CFlowsheet;
+class CBaseStream;
+class CTimeDependentValue;
+class CMDMatrix;
 
 class CBasicStreamsViewer : public QWidget
 {
@@ -19,6 +24,7 @@ private:
 	enum class ETabType : int { Table, Plot };
 
 	CFlowsheet* m_pFlowsheet;	/// Pointer to the flowsheet.
+	CMaterialsDatabase* m_materialsDB;	// Pointer to materials database.
 
 	std::vector<const CBaseStream*> m_vSelectedStreams;	/// Currently selected streams.
 	std::vector<const CTimeDependentValue*> m_vSelected2D;	/// Currently selected 2D distributions from all selected streams.
@@ -28,7 +34,7 @@ private:
 	double m_dCurrentTime;								/// Currently chosen time point.
 
 public:
-	CBasicStreamsViewer(CFlowsheet* _pFlowsheet, QWidget* parent = nullptr);
+	CBasicStreamsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, QWidget* parent = nullptr);
 
 	void InitializeConnections() const;
 

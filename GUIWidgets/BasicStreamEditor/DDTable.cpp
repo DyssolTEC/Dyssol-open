@@ -1,11 +1,11 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "DDTable.h"
+#include "ContainerFunctions.h"
 #include <QHeaderView>
 
 CDDTable::CDDTable( QWidget *parent, Qt::WindowFlags flags ) : QWidget(parent, flags)
 {
-	m_pData = NULL;
 	m_bNormalize = false;
 
 	m_pTable = new CQtTable( this );
@@ -20,14 +20,14 @@ CDDTable::CDDTable( QWidget *parent, Qt::WindowFlags flags ) : QWidget(parent, f
 
 CDDTable::~CDDTable()
 {
-	m_pData = NULL;
+	m_pData.clear();
 }
 
-void CDDTable::SetDistribution(CTimeDependentValue* _pDistribution )
+void CDDTable::SetDistribution(const std::vector<CTimeDependentValue*>& _values)
 {
-	m_pData = _pDistribution;
+	m_pData = _values;
 
-	m_pTable->setColumnCount( 1 + 1 );
+	m_pTable->setColumnCount(static_cast<int>(m_pData.size()) + 1 );
 	SetHeaders();
 
 	UpdateWholeView();
@@ -46,54 +46,67 @@ void CDDTable::SetEditable(bool _bEditable)
 
 void CDDTable::SetHeaders()
 {
-	if( m_pData == NULL ) return;
+	if (m_pData.empty()) return;
 
 	m_pTable->setHorizontalHeaderItem( 0, new QTableWidgetItem("Time [s]") );
-	for( int i=0; i<1; ++i )
+	for (int i = 0; i < static_cast<int>(m_pData.size()); ++i)
 	{
 		if( m_pTable->columnCount() < i+2 )
 			m_pTable->insertColumn( i+2 );
-		m_pTable->setHorizontalHeaderItem( i+1, new QTableWidgetItem( QString::fromUtf8( (m_pData->GetName() + " ["  + m_pData->GetUnits() + "]").c_str()) ) );
+		m_pTable->setHorizontalHeaderItem( i+1, new QTableWidgetItem( QString::fromUtf8( (m_pData[i]->GetName() + " ["  + m_pData[i]->GetUnits() + "]").c_str()) ) );
 	}
 }
 
 void CDDTable::CheckNormalization()
 {
-	const auto data = m_pData->GetRawData();
-	for( unsigned i=0; i< data.front().size(); ++i )
+	if (m_pData.empty()) return;
+
+	std::vector<std::vector<std::vector<double>>> data;
+	for (auto& value : m_pData)
+		data.push_back(value->GetRawData());
+
+	for (size_t i = 0; i < m_pData.front()->GetTimePointsNumber(); ++i)
 	{
-		std::vector<double> vTemp = std::vector<double>(1, data[1][i]);
+		std::vector<double> vTemp;
+		for (size_t j = 0; j < m_pData.size(); ++j)
+			vTemp.push_back(data[j][i][1]);
+
 		double dSum = 0;
 		for( unsigned j=0; j<vTemp.size(); ++j )
 			dSum += vTemp[j];
 		if( dSum != 1 )
 			for( int j=0; j<m_pTable->columnCount(); ++j )
-				m_pTable->item( i, j )->setBackground( Qt::lightGray );
+				m_pTable->item( static_cast<int>(i), j )->setBackground( Qt::lightGray );
 		else
 			for( int j=0; j<m_pTable->columnCount(); ++j )
-				m_pTable->item( i, j )->setBackground( Qt::white );
+				m_pTable->item( static_cast<int>(i), j )->setBackground( Qt::white );
 	}
 }
 
 void CDDTable::UpdateWholeView()
 {
-	if( m_pData == NULL ) return;
+	if (m_pData.empty()) return;
 
 	m_bAvoidSignal = true;
 
-	const auto data = m_pData->GetRawData();
-	int iRow;
-	for( iRow=0; iRow< data.front().size(); ++iRow )
+	std::vector<std::vector<std::vector<double>>> data;
+	for (auto& value : m_pData)
+		data.push_back(value->GetRawData());
+
+	for (int iRow = 0; iRow < static_cast<int>(m_pData.front()->GetTimePointsNumber()); ++iRow)
 	{
 		if( iRow >= m_pTable->rowCount() )
 			m_pTable->insertRow(iRow);
-		std::vector<double> vTemp = std::vector<double>(1, data[1][iRow]);
-		m_pTable->setItem( iRow, 0, new QTableWidgetItem( QString::number(data[0][iRow]) ));
+
+		std::vector<double> vTemp;
+		for (size_t j = 0; j < m_pData.size(); ++j)
+			vTemp.push_back(data[j][iRow][1]);
+		m_pTable->setItem( iRow, 0, new QTableWidgetItem( QString::number(data.front()[iRow][0] ) ));
 		m_pTable->item( iRow, 0 )->setFlags( m_pTable->item( iRow, 0 )->flags() & ~Qt::ItemIsEditable );
 		for( unsigned i=0; i<vTemp.size(); ++i )
 			m_pTable->setItem( iRow, i+1, new QTableWidgetItem( QString::number( vTemp[i] ) ));
 	}
-	while( m_pTable->rowCount() > (int)m_pData->GetTimePointsNumber())
+	while( m_pTable->rowCount() > (int)m_pData.front()->GetTimePointsNumber())
 		m_pTable->removeRow( m_pTable->rowCount()-1 );
 
 	if( m_bNormalize )
@@ -114,11 +127,11 @@ void CDDTable::ItemWasChanged( QTableWidgetItem* _pItem )
 	if( m_bAvoidSignal ) return;
 
 	unsigned nTimeIndex = _pItem->row();
-	double time = m_pTable->item(nTimeIndex, 0)->text().toDouble();
+	const double time = m_pTable->item(nTimeIndex, 0)->text().toDouble();
 	unsigned nDimIndex = _pItem->column() - 1;
 	double dVal = _pItem->text().toDouble();
 	if( dVal < 0 ) dVal = 0;
-	m_pData->SetValue(time, dVal );
+	m_pData[nDimIndex]->SetValue(time, dVal);
 
 	UpdateWholeView();
 

@@ -1,6 +1,9 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "PhasesEditor.h"
+#include "Flowsheet.h"
+#include "ContainerFunctions.h"
+#include "DyssolUtilities.h"
 #include <QMessageBox>
 
 CPhasesEditor::CPhasesEditor( CFlowsheet* _pFlowsheet, QWidget *parent, Qt::WindowFlags flags )
@@ -91,11 +94,12 @@ void CPhasesEditor::UpdateWholeView()
 		delete m_vCombos[i];
 	m_vCombos.clear();
 
-	for( unsigned i=0; i<m_pFlowsheet->GetPhasesNumber(); ++i )
+	size_t index = 0;
+	for (const auto& phase : m_pFlowsheet->GetPhases())
 	{
 		AddPhase();
-		ui.tableWidget->item( ui.tableWidget->rowCount()-1, 0 )->setText( QString::fromStdString(m_pFlowsheet->GetPhaseName(i)) );
-		m_vCombos[i]->setCurrentIndex( m_pFlowsheet->GetPhaseAggregationState(i) );
+		ui.tableWidget->item( ui.tableWidget->rowCount()-1, 0 )->setText( QString::fromStdString(phase.name) );
+		m_vCombos[index++]->setCurrentIndex(E2I(phase.state));
 	}
 }
 
@@ -119,10 +123,9 @@ void CPhasesEditor::AddPhase()
 	ui.tableWidget->setItem( nCurrRow, 0, new QTableWidgetItem( "Phase" + QString::number(nCurrRow+1) ) );
 	QComboBox *pCombo = new QComboBox();
 	m_vCombos.push_back( pCombo );
-	pCombo->insertItem( SOA_SOLID, "Solid" );
-	pCombo->insertItem( SOA_LIQUID, "Liquid" );
-	pCombo->insertItem( SOA_LIQUID2, "Liquid2" );
-	pCombo->insertItem( SOA_VAPOR, "Vapor" );
+	pCombo->insertItem(E2I(EPhase::SOLID), "Solid" );
+	pCombo->insertItem(E2I(EPhase::LIQUID), "Liquid" );
+	pCombo->insertItem(E2I(EPhase::VAPOR), "Vapor" );
 	ui.tableWidget->setCellWidget( nCurrRow, 1, pCombo );
 }
 
@@ -160,26 +163,31 @@ bool CPhasesEditor::ApplyChanges()
 	if( !ValidateInput() )
 		return false;
 
-	std::vector<int> vNewPhases;
+	std::vector<EPhase> vNewPhases;
 	// add or rename phases
 	for( int i=0; i<ui.tableWidget->rowCount(); ++i )
 	{
 		std::string sPhaseName = ui.tableWidget->item( i, 0 )->text().toStdString();
-		int nPhaseSOA = m_vCombos[i]->currentIndex();
-		vNewPhases.push_back( nPhaseSOA );
-		if( m_pFlowsheet->IsPhaseDefined( nPhaseSOA ) )
+		auto state = static_cast<EPhase>(m_vCombos[i]->currentIndex());
+		vNewPhases.push_back(state);
+		if (m_pFlowsheet->IsPhaseDefined(state))
 		{
-			if( m_pFlowsheet->GetPhaseName( m_pFlowsheet->GetPhaseIndex( nPhaseSOA ) ) != sPhaseName )
-				m_pFlowsheet->ChangePhase( m_pFlowsheet->GetPhaseIndex( nPhaseSOA ), sPhaseName, nPhaseSOA );
+			const auto& phases = m_pFlowsheet->GetPhases();
+			const size_t index = VectorFind(phases, [&](const auto& p) { return p.state == state; });
+			if (phases[index].name != sPhaseName)
+			{
+				m_pFlowsheet->RemovePhase(state);
+				m_pFlowsheet->AddPhase(state, sPhaseName);
+			}
 		}
 		else
-			m_pFlowsheet->AddPhase( sPhaseName, nPhaseSOA );
+			m_pFlowsheet->AddPhase(state, sPhaseName);
 	}
 
 	// remove phases
-	for( unsigned i=0; i<m_pFlowsheet->GetPhasesNumber(); ++i )
-		if( std::find( vNewPhases.begin(), vNewPhases.end(), m_pFlowsheet->GetPhaseAggregationState(i) ) == vNewPhases.end() )
-			m_pFlowsheet->RemovePhase(i);
+	for (const auto& phase : m_pFlowsheet->GetPhases())
+		if (!VectorContains(vNewPhases, phase.state))
+			m_pFlowsheet->RemovePhase(phase.state);
 
 	//m_pFlowsheet->ClearPhases();
 

@@ -328,6 +328,15 @@ std::vector<double> CPlot::GetZValues() const
 	return res;
 }
 
+bool CPlot::Is2D() const
+{
+	const auto zValues = GetZValues();
+	if (zValues.empty()) return true;
+	if (zValues.size() == 1 && zValues.front() != 0.0) return false;
+	// check that all z values are the same
+	return std::adjacent_find(zValues.begin(), zValues.end(), std::not_equal_to<>()) == zValues.end();
+}
+
 size_t CPlot::GetCurvesNumber() const
 {
 	return m_curves.size();

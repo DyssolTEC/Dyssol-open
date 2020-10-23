@@ -8,10 +8,10 @@ class CDynamicUnit : public CBaseUnit
 {
 public:
 	CDynamicUnit();
-	~CDynamicUnit();
+	virtual ~CDynamicUnit();
 
 	/** Calculates unit on specified time interval (for dynamic units).
 	 *	\param _dStartTime Start of the time interval
 	 *	\param _dEndTime End of the time interval*/
-	virtual void Simulate(double _dStartTime, double _dEndTime) = 0;
+	void Simulate(double _dStartTime, double _dEndTime) override = 0;
 };

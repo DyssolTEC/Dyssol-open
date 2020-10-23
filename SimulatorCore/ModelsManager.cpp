@@ -1,6 +1,7 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "ModelsManager.h"
+#include "DynamicUnit.h"
 #include "FileSystem.h"
 #include "DyssolStringConstants.h"
 #include "ContainerFunctions.h"
@@ -106,7 +107,7 @@ CBaseUnit* CModelsManager::InstantiateUnit(const std::string& _key)
 			const DYSSOL_LIBRARY_INSTANCE hLibrary = LoadDyssolLibrary(u.fileLocation);
 			if (!hLibrary) return nullptr;
 			// get constructor function
-			const CreateUnit createUnitFunc = reinterpret_cast<CreateUnit>(LoadDyssolLibraryConstructor(hLibrary, DYSSOL_CREATE_MODEL_FUN_NAME));
+			const CreateUnit2 createUnitFunc = reinterpret_cast<CreateUnit2>(LoadDyssolLibraryConstructor(hLibrary, DYSSOL_CREATE_MODEL_FUN_NAME));
 			if (!createUnitFunc)
 			{
 				CloseDyssolLibrary(hLibrary);
@@ -275,7 +276,7 @@ std::pair<std::vector<SUnitDescriptor>, std::vector<SSolverDescriptor>> CModelsM
 SUnitDescriptor CModelsManager::TryGetUnitDescriptor(const std::wstring& _pathToUnit, DYSSOL_LIBRARY_INSTANCE _library)
 {
 	// try to get constructor
-	const CreateUnit createUnitFunc = reinterpret_cast<CreateUnit>(LoadDyssolLibraryConstructor(_library, DYSSOL_CREATE_MODEL_FUN_NAME));
+	const CreateUnit2 createUnitFunc = reinterpret_cast<CreateUnit2>(LoadDyssolLibraryConstructor(_library, DYSSOL_CREATE_MODEL_FUN_NAME));
 	if (!createUnitFunc)
 		return {};
 
@@ -289,12 +290,6 @@ SUnitDescriptor CModelsManager::TryGetUnitDescriptor(const std::wstring& _pathTo
 		return {};
 	}
 
-	// validate unit
-	if (pUnit->m_nCompilerVer != COMPILER_VERSION) {
-		delete pUnit;
-		return {};
-	}
-
 	SUnitDescriptor unitDescriptor;
 
 	// obtain descriptor information
@@ -302,8 +297,8 @@ SUnitDescriptor CModelsManager::TryGetUnitDescriptor(const std::wstring& _pathTo
 		unitDescriptor.uniqueID = pUnit->GetUniqueID();
 		unitDescriptor.name = pUnit->GetUnitName();
 		unitDescriptor.author = pUnit->GetAuthorName();
-		unitDescriptor.version = pUnit->GetUnitVersion();
-		unitDescriptor.isDynamic = pUnit->IsDynamicUnit();
+		unitDescriptor.version = pUnit->GetVersion();
+		unitDescriptor.isDynamic = dynamic_cast<CDynamicUnit*>(pUnit);
 		unitDescriptor.fileLocation = StringFunctions::UnifyPath(_pathToUnit);
 	}
 	catch (...) {

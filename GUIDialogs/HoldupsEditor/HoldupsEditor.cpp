@@ -1,9 +1,11 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "HoldupsEditor.h"
+#include "Flowsheet.h"
+#include "BaseUnit.h"
 #include "BaseStream.h"
 
-CHoldupsEditor::CHoldupsEditor(CFlowsheet* _pFlowsheet, QWidget *parent) :
+CHoldupsEditor::CHoldupsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, QWidget *parent) :
 	QDialog(parent),
 	m_pFlowsheet{ _pFlowsheet },
 	m_pSelectedModel{ nullptr },
@@ -12,7 +14,7 @@ CHoldupsEditor::CHoldupsEditor(CFlowsheet* _pFlowsheet, QWidget *parent) :
 
 {
 	ui.setupUi(this);
-	ui.widgetHoldupsEditor->SetFlowsheet(_pFlowsheet);
+	ui.widgetHoldupsEditor->SetFlowsheet(_pFlowsheet, _materialsDB);
 	setWindowFlags(windowFlags() | Qt::WindowMaximizeButtonHint | Qt::WindowMinimizeButtonHint);
 }
 
@@ -37,15 +39,13 @@ void CHoldupsEditor::UpdateHoldupsList()
 	ui.holdupsList->setColumnCount(1);
 	ui.holdupsList->setRowCount(0);
 
-	m_pSelectedModel = ui.modelsList->currentRow() != -1 ? m_pFlowsheet->GetModel(ui.modelsList->GetItemUserData(ui.modelsList->currentRow(), 0).toStdString()) : nullptr;
-	if (m_pSelectedModel)
+	m_pSelectedModel = ui.modelsList->currentRow() != -1 ? m_pFlowsheet->GetUnit(ui.modelsList->GetItemUserData(ui.modelsList->currentRow(), 0).toStdString()) : nullptr;
+	if (m_pSelectedModel && m_pSelectedModel->GetModel())
 	{
-		for (size_t i = 0; i < m_pSelectedModel->GetHoldupsCount(); ++i)
+		for (const auto& stream : m_pSelectedModel->GetModel()->GetStreamsManager().GetAllInit())
 		{
-			ui.holdupsList->insertRow(int(i));
-			const CBaseStream* pStream = m_pSelectedModel->GetHoldupInit(i);
-			if (pStream)
-				ui.holdupsList->SetItemNotEditable(int(i), 0, pStream->GetName());
+			ui.holdupsList->insertRow(ui.holdupsList->rowCount());
+			ui.holdupsList->SetItemNotEditable(ui.holdupsList->rowCount() - 1, 0, stream->GetName());
 		}
 	}
 
@@ -61,13 +61,12 @@ void CHoldupsEditor::UpdateUnitsList() const
 	ui.modelsList->setColumnCount(1);
 	ui.modelsList->setRowCount(0);
 
-	for (size_t i = 0; i < m_pFlowsheet->GetModelsCount(); ++i)
+	for (const auto& unit : m_pFlowsheet->GetAllUnits())
 	{
-		const CBaseModel* m_pModel = m_pFlowsheet->GetModel(i);
-		if (m_pModel && m_pModel->GetHoldupsCount() != 0)
+		if (unit && unit->GetModel() && !unit->GetModel()->GetStreamsManager().GetAllInit().empty())
 		{
 			ui.modelsList->insertRow(ui.modelsList->rowCount());
-			ui.modelsList->SetItemNotEditable(ui.modelsList->rowCount() - 1, 0, m_pModel->GetModelName(), QString::fromStdString(m_pModel->GetModelKey()));
+			ui.modelsList->SetItemNotEditable(ui.modelsList->rowCount() - 1, 0, unit->GetName(), QString::fromStdString(unit->GetKey()));
 		}
 	}
 	ui.modelsList->RestoreSelectedCell(oldPos);
@@ -107,8 +106,8 @@ void CHoldupsEditor::NewHoldupSelected() const
 {
 	CBaseStream* pSelectedHoldup = nullptr;
 	if (m_pSelectedModel != nullptr)
-		if (ui.holdupsList->currentRow() >= 0 && int(m_pSelectedModel->GetHoldupsCount()) > ui.holdupsList->currentRow())
-			pSelectedHoldup = m_pSelectedModel->GetHoldupInit(ui.holdupsList->currentRow());
+		if (ui.holdupsList->currentRow() >= 0 && m_pSelectedModel->GetModel() && int(m_pSelectedModel->GetModel()->GetStreamsManager().GetAllInit().size()) > ui.holdupsList->currentRow())
+			pSelectedHoldup = m_pSelectedModel->GetModel()->GetStreamsManager().GetAllInit()[ui.holdupsList->currentRow()];
 
 	ui.widgetHoldupsEditor->SetStream(pSelectedHoldup);
 }

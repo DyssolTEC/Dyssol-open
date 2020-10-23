@@ -2,9 +2,16 @@
 
 #pragma once
 
-#include "BaseModel.h"
+#include "DyssolDefines.h"
+#include <string>
+#include <vector>
+#include <memory>
 
+class CUnitContainer;
+class CStream;
 class CH5Handler;
+struct SCacheSettings;
+struct SToleranceSettings;
 
 /** This class contains information about the way how calculations of models should be performed.
  *	Each Partition is the list of units in separate recycle loop. They should be calculated together.
@@ -17,7 +24,7 @@ public:
 	// TODO: get rid of this struct and use only keys.
 	struct SPartition
 	{
-		std::vector<CBaseModel*> models;	// List of pointers to models belonging to this partition.
+		std::vector<CUnitContainer*> models;	// List of pointers to models belonging to this partition.
 		std::vector<CStream*> tearStreams;	// List of pointers to tear streams belonging to this partition.
 	};
 
@@ -31,7 +38,7 @@ private:
 	static const unsigned m_saveVersion{ 2 };	// Current version of the saving procedure.
 
 
-	const std::vector<std::unique_ptr<CBaseModel>>* m_models{};	// Pointer to a vector of available models.
+	const std::vector<std::unique_ptr<CUnitContainer>>* m_models{};	// Pointer to a vector of available models.
 	const std::vector<std::unique_ptr<CStream>>* m_streams{};	// Pointer to a vector of available streams.
 
 	std::vector<SPartitionKeys> m_partitions;       // List of defined partitions.
@@ -40,7 +47,7 @@ private:
 
 public:
 	// Sets pointers to all existing models and streams.
-	CCalculationSequence(const std::vector<std::unique_ptr<CBaseModel>>* _allModels, const std::vector<std::unique_ptr<CStream>>* _allStreams);
+	CCalculationSequence(const std::vector<std::unique_ptr<CUnitContainer>>* _allModels, const std::vector<std::unique_ptr<CStream>>* _allStreams);
 
 	// Clear calculation sequence and all initial tear streams.
 	void Clear();
@@ -82,7 +89,7 @@ public:
 	void ShiftStreamDown(size_t _iPartition, size_t _iStream);
 
 	// Get pointers to models from the specified partition.
-	std::vector<CBaseModel*> PartitionModels(size_t _iPartition) const;
+	std::vector<CUnitContainer*> PartitionModels(size_t _iPartition) const;
 	// Get pointers to tear streams from the specified partition.
 	std::vector<CStream*> PartitionTearStreams(size_t _iPartition) const;
 	// Get the specified partitions.
@@ -110,6 +117,11 @@ public:
 	void InitializeTearStreams(double _timeWindow);
 	// Copies current data of tear streams to initial streams.
 	void UpdateInitialStreams(double _timeWindow);
+
+	// Returns all initial tear streams.
+	std::vector<std::vector<const CStream*>> GetAllInitialStreams() const;
+	// Returns all initial tear streams.
+	std::vector<std::vector<CStream*>> GetAllInitialStreams();
 
 	// Adds a compound with the specified unique key to all streams.
 	void AddCompound(const std::string& _compoundKey);

@@ -4,7 +4,8 @@
 
 #include "ui_GridEditor.h"
 #include "DimensionParameters.h"
-#include "Flowsheet.h"
+
+class CFlowsheet;
 
 class CGridEditor : public QDialog
 {

@@ -3,7 +3,9 @@
 #include "ConfigFileParser.h"
 #include "ParametersHolder.h"
 #include "Simulator.h"
+#include "Flowsheet.h"
 #include "ModelsManager.h"
+#include "BaseUnit.h"
 #include "DistributionsGrid.h"
 #include "DyssolUtilities.h"
 #include "StringFunctions.h"
@@ -33,11 +35,7 @@ void RunSimulation(const CConfigFileParser& _parser)
 		modelsManager.AddDir(dir);
 
 	// create flowsheet
-	CFlowsheet flowsheet;
-	// set models manager
-	flowsheet.SetModelsManager(&modelsManager);
-	// set material database
-	flowsheet.SetMaterialsDatabase(&materialsDB);
+	CFlowsheet flowsheet{ modelsManager, materialsDB };
 
 	// load flowsheet
 	std::cout << "Loading flowsheet..." << std::endl;
@@ -49,22 +47,23 @@ void RunSimulation(const CConfigFileParser& _parser)
 	}
 
 	// set parameters
-	if (_parser.IsValueDefined(EArguments::SIMULATION_TIME))	flowsheet.SetSimulationTime(_parser.GetValue<double>(EArguments::SIMULATION_TIME));
-	if (_parser.IsValueDefined(EArguments::RELATIVE_TOLERANCE))	flowsheet.m_pParams->RelTol(_parser.GetValue<double>(EArguments::RELATIVE_TOLERANCE));
-	if (_parser.IsValueDefined(EArguments::ABSOLUTE_TOLERANCE))	flowsheet.m_pParams->AbsTol(_parser.GetValue<double>(EArguments::ABSOLUTE_TOLERANCE));
-	if (_parser.IsValueDefined(EArguments::MINIMAL_FRACTION))	flowsheet.m_pParams->MinFraction(_parser.GetValue<double>(EArguments::MINIMAL_FRACTION));
-	if (_parser.IsValueDefined(EArguments::INIT_TIME_WINDOW))	flowsheet.m_pParams->InitTimeWindow(_parser.GetValue<double>(EArguments::INIT_TIME_WINDOW));
-	if (_parser.IsValueDefined(EArguments::MIN_TIME_WINDOW))	flowsheet.m_pParams->MinTimeWindow(_parser.GetValue<double>(EArguments::MIN_TIME_WINDOW));
-	if (_parser.IsValueDefined(EArguments::MAX_TIME_WINDOW))	flowsheet.m_pParams->MaxTimeWindow(_parser.GetValue<double>(EArguments::MAX_TIME_WINDOW));
-	if (_parser.IsValueDefined(EArguments::MAX_ITERATIONS_NUM))	flowsheet.m_pParams->MaxItersNumber(_parser.GetValue<unsigned>(EArguments::MAX_ITERATIONS_NUM));
-	if (_parser.IsValueDefined(EArguments::WINDOW_CHANGE_RATE))	flowsheet.m_pParams->MagnificationRatio(_parser.GetValue<double>(EArguments::WINDOW_CHANGE_RATE));
-	if (_parser.IsValueDefined(EArguments::ITER_UPPER_LIMIT))	flowsheet.m_pParams->ItersUpperLimit(_parser.GetValue<unsigned>(EArguments::ITER_UPPER_LIMIT));
-	if (_parser.IsValueDefined(EArguments::ITER_LOWER_LIMIT))	flowsheet.m_pParams->ItersLowerLimit(_parser.GetValue<unsigned>(EArguments::ITER_LOWER_LIMIT));
-	if (_parser.IsValueDefined(EArguments::ITER_UPPER_LIMIT_1))	flowsheet.m_pParams->Iters1stUpperLimit(_parser.GetValue<unsigned>(EArguments::ITER_UPPER_LIMIT_1));
-	if (_parser.IsValueDefined(EArguments::CONVERGENCE_METHOD))	flowsheet.m_pParams->ConvergenceMethod(static_cast<EConvMethod>(_parser.GetValue<unsigned>(EArguments::CONVERGENCE_METHOD)));
-	if (_parser.IsValueDefined(EArguments::ACCEL_PARAMETER))	flowsheet.m_pParams->WegsteinAccelParam(_parser.GetValue<double>(EArguments::ACCEL_PARAMETER));
-	if (_parser.IsValueDefined(EArguments::RELAX_PARAMETER))	flowsheet.m_pParams->RelaxationParam(_parser.GetValue<double>(EArguments::RELAX_PARAMETER));
-	if (_parser.IsValueDefined(EArguments::EXTRAPOL_METHOD))	flowsheet.m_pParams->ExtrapolationMethod(static_cast<EExtrapMethod>(_parser.GetValue<unsigned>(EArguments::EXTRAPOL_METHOD)));
+	auto* params = flowsheet.GetParameters();
+	if (_parser.IsValueDefined(EArguments::SIMULATION_TIME))	params->EndSimulationTime(_parser.GetValue<double>(EArguments::SIMULATION_TIME));
+	if (_parser.IsValueDefined(EArguments::RELATIVE_TOLERANCE))	params->RelTol(_parser.GetValue<double>(EArguments::RELATIVE_TOLERANCE));
+	if (_parser.IsValueDefined(EArguments::ABSOLUTE_TOLERANCE))	params->AbsTol(_parser.GetValue<double>(EArguments::ABSOLUTE_TOLERANCE));
+	if (_parser.IsValueDefined(EArguments::MINIMAL_FRACTION))	params->MinFraction(_parser.GetValue<double>(EArguments::MINIMAL_FRACTION));
+	if (_parser.IsValueDefined(EArguments::INIT_TIME_WINDOW))	params->InitTimeWindow(_parser.GetValue<double>(EArguments::INIT_TIME_WINDOW));
+	if (_parser.IsValueDefined(EArguments::MIN_TIME_WINDOW))	params->MinTimeWindow(_parser.GetValue<double>(EArguments::MIN_TIME_WINDOW));
+	if (_parser.IsValueDefined(EArguments::MAX_TIME_WINDOW))	params->MaxTimeWindow(_parser.GetValue<double>(EArguments::MAX_TIME_WINDOW));
+	if (_parser.IsValueDefined(EArguments::MAX_ITERATIONS_NUM))	params->MaxItersNumber(_parser.GetValue<unsigned>(EArguments::MAX_ITERATIONS_NUM));
+	if (_parser.IsValueDefined(EArguments::WINDOW_CHANGE_RATE))	params->MagnificationRatio(_parser.GetValue<double>(EArguments::WINDOW_CHANGE_RATE));
+	if (_parser.IsValueDefined(EArguments::ITER_UPPER_LIMIT))	params->ItersUpperLimit(_parser.GetValue<unsigned>(EArguments::ITER_UPPER_LIMIT));
+	if (_parser.IsValueDefined(EArguments::ITER_LOWER_LIMIT))	params->ItersLowerLimit(_parser.GetValue<unsigned>(EArguments::ITER_LOWER_LIMIT));
+	if (_parser.IsValueDefined(EArguments::ITER_UPPER_LIMIT_1))	params->Iters1stUpperLimit(_parser.GetValue<unsigned>(EArguments::ITER_UPPER_LIMIT_1));
+	if (_parser.IsValueDefined(EArguments::CONVERGENCE_METHOD))	params->ConvergenceMethod(static_cast<EConvMethod>(_parser.GetValue<unsigned>(EArguments::CONVERGENCE_METHOD)));
+	if (_parser.IsValueDefined(EArguments::ACCEL_PARAMETER))	params->WegsteinAccelParam(_parser.GetValue<double>(EArguments::ACCEL_PARAMETER));
+	if (_parser.IsValueDefined(EArguments::RELAX_PARAMETER))	params->RelaxationParam(_parser.GetValue<double>(EArguments::RELAX_PARAMETER));
+	if (_parser.IsValueDefined(EArguments::EXTRAPOL_METHOD))	params->ExtrapolationMethod(static_cast<EExtrapMethod>(_parser.GetValue<unsigned>(EArguments::EXTRAPOL_METHOD)));
 
 	// setup grid
 	if (_parser.IsValueDefined(EArguments::DISTRIBUTION_GRID))
@@ -79,23 +78,34 @@ void RunSimulation(const CConfigFileParser& _parser)
 			dim.strGrid = g.vStrGrid;
 			flowsheet.GetDistributionsGrid()->SetDimension(dim);
 		}
-		flowsheet.SetDistributionsGrid();
+		flowsheet.UpdateDistributionsGrid();
 	}
+
+	auto units = flowsheet.GetAllUnits();
+	const auto phases = flowsheet.GetPhases();
+	const auto compounds = flowsheet.GetCompounds();
 
 	// setup unit parameters
 	if (_parser.IsValueDefined(EArguments::UNIT_PARAMETER))
 	{
 		for (const auto& u : _parser.GetValue<std::vector<SUnitParameterEx>>(EArguments::UNIT_PARAMETER))
 		{
-			CBaseModel* pModel = flowsheet.GetModel(u.iUnit);
-			if (!pModel) continue;
-			CBaseUnitParameter* pParam = pModel->GetUnitParametersManager()->GetParameter(u.iParam);
+			CUnitContainer* pModel = units[u.iUnit];
+			if (!pModel || !pModel->GetModel()) continue;
+			CBaseUnitParameter* pParam = pModel->GetModel()->GetUnitParametersManager().GetParameter(u.iParam);
 			if (!pParam) continue;
 			pParam->Clear();
 			switch (pParam->GetType())
 			{
 			case EUnitParameter::CONSTANT:
-				dynamic_cast<CConstUnitParameter*>(pParam)->SetValue(u.dValue);
+			case EUnitParameter::CONSTANT_DOUBLE:
+				dynamic_cast<CConstRealUnitParameter*>(pParam)->SetValue(u.dValue);
+				break;
+			case EUnitParameter::CONSTANT_INT64:
+				dynamic_cast<CConstIntUnitParameter*>(pParam)->SetValue(static_cast<int64_t>(u.dValue));
+				break;
+			case EUnitParameter::CONSTANT_UINT64:
+				dynamic_cast<CConstUIntUnitParameter*>(pParam)->SetValue(static_cast<int64_t>(u.dValue));
 				break;
 			case EUnitParameter::TIME_DEPENDENT:
 				for (const auto td : u.tdValue)
@@ -105,16 +115,14 @@ void RunSimulation(const CConfigFileParser& _parser)
 				dynamic_cast<CStringUnitParameter*>(pParam)->SetValue(u.sValue);
 				break;
 			case EUnitParameter::CHECKBOX:
-				dynamic_cast<CCheckboxUnitParameter*>(pParam)->SetChecked(u.dValue != 0);
+				dynamic_cast<CCheckBoxUnitParameter*>(pParam)->SetChecked(u.dValue != 0);
 				break;
 			case EUnitParameter::SOLVER:
 				dynamic_cast<CSolverUnitParameter*>(pParam)->SetKey(modelsManager.GetSolverDescriptor(StringFunctions::String2WString(u.sValue)).uniqueID);
 				break;
 			case EUnitParameter::COMBO:
-				dynamic_cast<CComboUnitParameter*>(pParam)->SetValue(static_cast<size_t>(u.dValue));
-				break;
 			case EUnitParameter::GROUP:
-				dynamic_cast<CGroupUnitParameter*>(pParam)->SetValue(static_cast<size_t>(u.dValue));
+				dynamic_cast<CComboUnitParameter*>(pParam)->SetValue(static_cast<size_t>(u.dValue));
 				break;
 			case EUnitParameter::COMPOUND:
 				dynamic_cast<CCompoundUnitParameter*>(pParam)->SetCompound(u.sValue);
@@ -127,10 +135,11 @@ void RunSimulation(const CConfigFileParser& _parser)
 	// setup holdups MTP
 	for (auto h : _parser.GetValue<std::vector<SHoldupParam>>(EArguments::UNIT_HOLDUP_MTP))
 	{
-		CBaseModel* pModel = flowsheet.GetModel(h.iUnit);
-		if (!pModel) continue;
-		if (h.iHoldup >= pModel->GetHoldupsCount()) continue;
-		CHoldup* pHoldup = pModel->GetHoldupInit(h.iHoldup);
+		CUnitContainer* pModel = units[h.iUnit];
+		if (!pModel || !pModel->GetModel()) continue;
+		auto holdups = pModel->GetModel()->GetStreamsManager().GetAllInit();
+		if (h.iHoldup >= holdups.size()) continue;
+		CBaseStream* pHoldup = holdups[h.iHoldup];
 		if (!pHoldup) continue;
 		std::vector<double> values = h.vValues;
 		values.resize(3); // to ensure it is of required length
@@ -144,45 +153,48 @@ void RunSimulation(const CConfigFileParser& _parser)
 	// setup holdups phase fractions
 	for (auto h : _parser.GetValue<std::vector<SHoldupParam>>(EArguments::UNIT_HOLDUP_PHASES))
 	{
-		CBaseModel* pModel = flowsheet.GetModel(h.iUnit);
-		if (!pModel) continue;
-		if (h.iHoldup >= pModel->GetHoldupsCount()) continue;
-		CHoldup* pHoldup = pModel->GetHoldupInit(h.iHoldup);
+		CUnitContainer* pModel = units[h.iUnit];
+		if (!pModel || !pModel->GetModel()) continue;
+		auto holdups = pModel->GetModel()->GetStreamsManager().GetAllInit();
+		if (h.iHoldup >= holdups.size()) continue;
+		CBaseStream* pHoldup = holdups[h.iHoldup];
 		if (!pHoldup) continue;
 		std::vector<double> values = h.vValues;
 		values.resize(flowsheet.GetPhasesNumber()); // to ensure it is of required length
 		std::vector<double> vTPs = pHoldup->GetAllTimePoints();
 		if (h.iTimePoint >= vTPs.size()) continue;
-		for (unsigned i = 0; i < flowsheet.GetPhasesNumber(); ++i)
-			pHoldup->SetSinglePhaseProp(vTPs[h.iTimePoint], PHASE_FRACTION, flowsheet.GetPhaseAggregationState(i), values[i]);
+		for (unsigned i = 0; i < phases.size(); ++i)
+			pHoldup->SetPhaseFraction(vTPs[h.iTimePoint], phases[i].state, values[i]);
 	}
 
 	// setup holdups compound fractions
 	for (auto h : _parser.GetValue<std::vector<SHoldupParam>>(EArguments::UNIT_HOLDUP_COMP))
 	{
-		CBaseModel* pModel = flowsheet.GetModel(h.iUnit);
-		if (!pModel) continue;
-		if (h.iHoldup >= pModel->GetHoldupsCount()) continue;
-		CHoldup* pHoldup = pModel->GetHoldupInit(h.iHoldup);
+		CUnitContainer* pModel = units[h.iUnit];
+		if (!pModel || !pModel->GetModel()) continue;
+		auto holdups = pModel->GetModel()->GetStreamsManager().GetAllInit();
+		if (h.iHoldup >= holdups.size()) continue;
+		CBaseStream* pHoldup = holdups[h.iHoldup];
 		if (!pHoldup) continue;
 		if (h.iPhase >= flowsheet.GetPhasesNumber()) continue;
 		std::vector<double> values = h.vValues;
 		values.resize(flowsheet.GetCompoundsNumber()); // to ensure it is of required length
 		std::vector<double> vTPs = pHoldup->GetAllTimePoints();
 		if (h.iTimePoint >= vTPs.size()) continue;
-		for (unsigned i = 0; i < flowsheet.GetCompoundsNumber(); ++i)
-			pHoldup->SetCompoundPhaseFraction(vTPs[h.iTimePoint], flowsheet.GetCompoundKey(i), flowsheet.GetPhaseAggregationState((unsigned)h.iPhase), values[i]);
+		for (unsigned i = 0; i < compounds.size(); ++i)
+			pHoldup->SetCompoundFraction(vTPs[h.iTimePoint], compounds[i], phases[h.iPhase].state, values[i]);
 	}
 
 	// setup holdups solids distributions
 	for (auto h : _parser.GetValue<std::vector<SHoldupParam>>(EArguments::UNIT_HOLDUP_SOLID))
 	{
-		CBaseModel* pModel = flowsheet.GetModel(h.iUnit);
-		if (!pModel) continue;
-		if (h.iHoldup >= pModel->GetHoldupsCount()) continue;
-		CHoldup* pHoldup = pModel->GetHoldupInit(h.iHoldup);
+		CUnitContainer* pModel = units[h.iUnit];
+		if (!pModel || !pModel->GetModel()) continue;
+		auto holdups = pModel->GetModel()->GetStreamsManager().GetAllInit();
+		if (h.iHoldup >= holdups.size()) continue;
+		CBaseStream* pHoldup = holdups[h.iHoldup];
 		if (!pHoldup) continue;
-		if (!flowsheet.IsPhaseDefined(SOA_SOLID)) continue;
+		if (!flowsheet.IsPhaseDefined(EPhase::SOLID)) continue;
 		const CDistributionsGrid* pGrid = flowsheet.GetDistributionsGrid();
 		if (h.iDistribution >= pGrid->GetDistributionsNumber()) continue;
 		const std::vector<double> vTPs = pHoldup->GetAllTimePoints();
@@ -202,12 +214,12 @@ void RunSimulation(const CConfigFileParser& _parser)
 		values.resize(pGrid->GetClassesByIndex(h.iDistribution)); // to ensure it is of required length
 		if (pGrid->GetDistrType(h.iDistribution) == DISTR_SIZE)
 			if (h.iCompound < flowsheet.GetCompoundsNumber())
-				pHoldup->SetPSD(vTPs[h.iTimePoint], h.psdType, flowsheet.GetCompoundKey(h.iCompound), values);
+				pHoldup->SetPSD(vTPs[h.iTimePoint], h.psdType, compounds[h.iCompound], values);
 			else
 				pHoldup->SetPSD(vTPs[h.iTimePoint], h.psdType, values);
 		else
 			if (h.iCompound < flowsheet.GetCompoundsNumber())
-				pHoldup->SetDistribution(vTPs[h.iTimePoint], pGrid->GetDistrType(h.iDistribution), flowsheet.GetCompoundKey(h.iCompound), values);
+				pHoldup->SetDistribution(vTPs[h.iTimePoint], pGrid->GetDistrType(h.iDistribution), compounds[h.iCompound], values);
 			else
 				pHoldup->SetDistribution(vTPs[h.iTimePoint], pGrid->GetDistrType(h.iDistribution), values);
 	}

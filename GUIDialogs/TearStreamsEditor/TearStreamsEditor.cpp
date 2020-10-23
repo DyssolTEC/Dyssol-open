@@ -1,15 +1,16 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "TearStreamsEditor.h"
+#include "Flowsheet.h"
 #include "Stream.h"
 #include "ParametersHolder.h"
 #include "DyssolStringConstants.h"
 #include <QMessageBox>
 
-CTearStreamsEditor::CTearStreamsEditor(CFlowsheet* _pFlowsheet, QWidget *parent) : QDialog(parent)
+CTearStreamsEditor::CTearStreamsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, QWidget *parent) : QDialog(parent)
 {
 	ui.setupUi(this);
-	ui.widgetStreamsEditor->SetFlowsheet(_pFlowsheet);
+	ui.widgetStreamsEditor->SetFlowsheet(_pFlowsheet, _materialsDB);
 	setWindowFlags(windowFlags() | Qt::WindowMaximizeButtonHint | Qt::WindowMinimizeButtonHint);
 
 	m_pFlowsheet = _pFlowsheet;
@@ -84,7 +85,7 @@ void CTearStreamsEditor::UpdateStreamsList()
 
 void CTearStreamsEditor::UpdateMode()
 {
-	if (m_pFlowsheet->m_pParams->initializeTearStreamsAutoFlag)
+	if (m_pFlowsheet->GetParameters()->initializeTearStreamsAutoFlag)
 		ui.radioButtonAuto->setChecked(true);
 	else
 		ui.radioButtonUser->setChecked(true);
@@ -96,9 +97,10 @@ void CTearStreamsEditor::NewStreamSelected()
 	const int iPartition = ui.tablePartitions->currentRow();
 	if (iPartition >= 0 && iPartition < static_cast<int>(m_pSequence->PartitionsNumber()))
 	{
+		const auto initStreams = m_pFlowsheet->GetCalculationSequence()->GetAllInitialStreams();
 		const int iStream = ui.tableStreams->currentRow();
-		if (iStream >= 0 && iStream < static_cast<int>(m_pFlowsheet->m_vvInitTearStreams[iPartition].size()))
-			pSelectedStream = &m_pFlowsheet->m_vvInitTearStreams[iPartition][iStream];
+		if (iStream >= 0 && iStream < static_cast<int>(initStreams[iPartition].size()))
+			pSelectedStream = initStreams[iPartition][iStream];
 
 	}
 	ui.widgetStreamsEditor->SetStream(pSelectedStream);
@@ -119,9 +121,7 @@ void CTearStreamsEditor::ClearAllStreams()
 	{
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 
-		for (auto& part : m_pFlowsheet->m_vvInitTearStreams)
-			for (auto& str : part)
-				str.RemoveAllTimePoints();
+		m_pFlowsheet->GetCalculationSequence()->ClearInitialStreamsData();
 		NewStreamSelected();
 		QApplication::restoreOverrideCursor();
 
@@ -136,7 +136,7 @@ void CTearStreamsEditor::SetEditable()
 	//if (bEnable != m_pFlowsheet->m_pParams->initializeTearStreamsAutoFlag)
 	//	return;
 
-	m_pFlowsheet->m_pParams->InitializeTearStreamsAutoFlag(!bEnable);
+	m_pFlowsheet->GetParameters()->InitializeTearStreamsAutoFlag(!bEnable);
 
 	ui.pushButtonClearAll->setEnabled(bEnable);
 	ui.widgetStreamsEditor->SetEditable(bEnable);

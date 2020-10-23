@@ -3,11 +3,16 @@
 #pragma once
 
 #include "ModelsManager.h"
+#include "DyssolTypes.h"
+
+class CDistributionsGrid;
+class CMaterialsDatabase;
+class CH5Handler;
 
 // TODO: rename to CUnit.
 
 /* A container wrapping a unit's model in the flowsheet structure. Is responsible for loading/unloading units and solvers from dynamic libraries.
- * This is actually a Unit - an entity of the flowsheet. Each Unit is filled with a Model (CBaseUnit2) that represents its structure and functionality. */
+ * This is actually a Unit - an entity of the flowsheet. Each Unit is filled with a Model (CBaseUnit) that represents its structure and functionality. */
 class CUnitContainer
 {
 	static const unsigned m_saveVersion{ 2 }; // Current version of the saving procedure.
@@ -15,7 +20,7 @@ class CUnitContainer
 	std::string m_name{ "Unit" };		// Name of the unit container - a unit name displayed in the flowsheet.
 	std::string m_uniqueID;				// The unique identifier of the unit.
 
-	CBaseUnit2* m_model{ nullptr };		// Pointer to a contained model.
+	CBaseUnit* m_model{ nullptr };		// Pointer to a contained model.
 
 	CModelsManager& m_modelsManager;	// A holder of all accessible models.
 
@@ -50,16 +55,16 @@ public:
 	void SetName(const std::string& _name);
 
 	// Returns a unique key of the unit.
-	std::string GetUniqueID() const;
+	std::string GetKey() const;
 	// Sets a new unique key of the unit.
-	void SetUniqueID(const std::string& _id);
+	void SetKey(const std::string& _id);
 
 	// Sets new model with a specified unique ID. If the unit already contains a model, it is removed and a new instance is created.
 	void SetModel(const std::string& _uniqueID);
 	// Returns a pointer to a contained model.
-	const CBaseUnit2* GetModel() const;
+	const CBaseUnit* GetModel() const;
 	// Returns a pointer to a contained model.
-	CBaseUnit2* GetModel();
+	CBaseUnit* GetModel();
 
 	// Initializes all solvers chosen in unit parameters by loading them from corresponding dynamic libraries. Returns an empty string on success, otherwise returns an error description.
 	std::string InitializeExternalSolvers() const;

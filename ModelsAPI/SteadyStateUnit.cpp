@@ -4,7 +4,6 @@
 
 CSteadyStateUnit::CSteadyStateUnit()
 {
-	SetDynamicUnit(false);
 }
 
 CSteadyStateUnit::~CSteadyStateUnit()

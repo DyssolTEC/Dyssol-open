@@ -67,6 +67,15 @@ size_t CTimeDependentValue::GetTimePointsNumber() const
 	return m_data.size();
 }
 
+std::vector<double> CTimeDependentValue::GetAllTimePoints() const
+{
+	std::vector<double> res;
+	res.reserve(m_data.size());
+	for (const auto& entry : m_data)
+		res.push_back(entry.time);
+	return res;
+}
+
 void CTimeDependentValue::SetValue(double _time, double _value)
 {
 	if (_time < 0) return;

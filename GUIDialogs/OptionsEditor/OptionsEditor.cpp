@@ -1,13 +1,14 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "OptionsEditor.h"
+#include "Flowsheet.h"
 #include "ParametersHolder.h"
 #include "DyssolUtilities.h"
 
 COptionsEditor::COptionsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pMaterialsDB, QWidget* parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	: QDialog(parent, flags),
 	m_pFlowsheet(_pFlowsheet),
-	m_pParams(m_pFlowsheet->m_pParams),
+	m_pParams(m_pFlowsheet->GetParameters()),
 	m_pMaterialsDB(_pMaterialsDB)
 {
 	ui.setupUi(this);

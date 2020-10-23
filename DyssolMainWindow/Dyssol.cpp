@@ -1,9 +1,11 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "Dyssol.h"
+#include "SimulatorTab.h"
+#include "StatusWindow.h"
 #include "AboutWindow.h"
-#include "ParametersHolder.h"
-#include "../DyssolConsole/ConfigFileParser.h"
+#include "Stream.h"
+#include "ConfigFileParser.h"
 #include "FileSystem.h"
 #include "DyssolStringConstants.h"
 #include "DyssolSystemFunctions.h"
@@ -11,7 +13,6 @@
 #include <QCloseEvent>
 #include <QFileDialog>
 #include <QDesktopServices>
-#include <QMessageBox>
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -25,8 +26,6 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	SetFlowsheetModified(false);
 
 	// setup flowsheet and simulator
-	m_Flowsheet.SetModelsManager(&m_ModelsManager);
-	m_Flowsheet.SetMaterialsDatabase(&m_MaterialsDatabase);
 	m_Simulator.SetFlowsheet(&m_Flowsheet);
 
 	// setup config file
@@ -48,16 +47,16 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	m_pCalcSequenceEditor   = new CCalculationSequenceEditor(&m_Flowsheet, this);
 	m_pMaterialsDatabaseTab = new CMaterialsDatabaseTab(&m_MaterialsDatabase, m_pSettings, this);
 	m_pCompoundsManager     = new CCompoundsManager(&m_Flowsheet, &m_MaterialsDatabase, this);
-	m_pFlowsheetEditor      = new CFlowsheetEditor(&m_Flowsheet, this);
+	m_pFlowsheetEditor      = new CFlowsheetEditor(&m_Flowsheet, &m_MaterialsDatabase, &m_ModelsManager, this);
 	m_pGridEditor           = new CGridEditor(&m_Flowsheet, this);
-	m_pHoldupsEditor        = new CHoldupsEditor(&m_Flowsheet, this);
+	m_pHoldupsEditor        = new CHoldupsEditor(&m_Flowsheet, &m_MaterialsDatabase, this);
 	m_pOptionsEditor        = new COptionsEditor(&m_Flowsheet, &m_MaterialsDatabase, this);
 	m_pPhasesEditor         = new CPhasesEditor(&m_Flowsheet, this);
 	m_pSimulatorTab         = new CSimulatorTab(&m_Flowsheet, &m_Simulator, this);
-	m_pStreamsViewer        = new CStreamsViewer(&m_Flowsheet, this);
-	m_pUnitsViewer          = new CUnitsViewer(&m_Flowsheet, this);
-	m_pTearStreamsEditor    = new CTearStreamsEditor(&m_Flowsheet, this);
-	m_pDustTesterTab		= new CDustFormationTesterTab(&m_Flowsheet, this);
+	m_pStreamsViewer        = new CStreamsViewer(&m_Flowsheet, &m_MaterialsDatabase, this);
+	m_pUnitsViewer          = new CUnitsViewer(&m_Flowsheet, &m_MaterialsDatabase, this);
+	m_pTearStreamsEditor    = new CTearStreamsEditor(&m_Flowsheet, &m_MaterialsDatabase, this);
+	m_pDustTesterTab		= new CDustFormationTesterTab(&m_Flowsheet, &m_MaterialsDatabase, this);
 	m_pSettingsEditor		= new CSettingsEditor(m_pSettings, this);
 
 	// setup main window: add tabs to mainTabWidget
@@ -281,9 +280,9 @@ void Dyssol::SetupCache()
 	// setup cache path
 	const QString cachePath = m_pSettings->value(StrConst::Dyssol_ConfigCachePath).toString();
 #if _DEBUG
-	m_Flowsheet.m_pParams->CachePath((cachePath + StrConst::Dyssol_CacheDirDebug).toStdWString());
+	m_Flowsheet.GetParameters()->CachePath((cachePath + StrConst::Dyssol_CacheDirDebug).toStdWString());
 #else
-	m_Flowsheet.m_pParams->CachePath((cachePath + StrConst::Dyssol_CacheDirRelease).toStdWString());
+	m_Flowsheet.GetParameters()->CachePath((cachePath + StrConst::Dyssol_CacheDirRelease).toStdWString());
 #endif
 
 	// check whether the cache path is accessible
@@ -452,7 +451,7 @@ void Dyssol::AddFileToRecentList(const QString& _fileToAdd)
 
 bool Dyssol::CheckAndAskUnsaved()
 {
-	if (m_Flowsheet.Empty() || !IsFlowsheetModified()) return true;
+	if (m_Flowsheet.IsEmpty() || !IsFlowsheetModified()) return true;
 
 	const QMessageBox::StandardButtons buttons = QMessageBox::Yes | QMessageBox::Cancel | QMessageBox::No;
 	const QMessageBox::StandardButton reply = QMessageBox::question(this, StrConst::Dyssol_MainWindowName, StrConst::Dyssol_SaveMessageBoxText, buttons);

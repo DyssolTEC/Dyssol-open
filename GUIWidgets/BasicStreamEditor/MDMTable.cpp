@@ -23,7 +23,7 @@ CMDMTable::~CMDMTable()
 	m_pData = NULL;
 }
 
-void CMDMTable::SetDistribution( CMDMatrix* _pDistribution, std::vector<std::string>& _sNames )
+void CMDMTable::SetDistribution( CMDMatrix* _pDistribution, const std::vector<std::string>& _sNames )
 {
 	m_pData = _pDistribution;
 
@@ -41,19 +41,21 @@ void CMDMTable::SetEditable(bool _bEditable)
 	m_pTable->SetEditable(_bEditable);
 }
 
-void CMDMTable::SetHeaders( std::vector<std::string>& _sNames )
+void CMDMTable::SetHeaders(const std::vector<std::string>& _sNames)
 {
 	if( m_pData == NULL ) return;
 
+	auto names = _sNames;
+
 	m_pTable->setHorizontalHeaderItem( 0, new QTableWidgetItem( "Time [s]" ) );
 	int nCompoundsNumber = (int)m_pData->GetDimensionSizeByType( DISTR_COMPOUNDS );
-	if( _sNames.size() != nCompoundsNumber )
-		_sNames.resize( nCompoundsNumber );
+	if(names.size() != nCompoundsNumber )
+		names.resize( nCompoundsNumber );
 	for( int i=0; i<nCompoundsNumber; ++i )
 	{
 		if( m_pTable->columnCount() < i+2 )
 			m_pTable->insertColumn( i+2 );
-		m_pTable->setHorizontalHeaderItem( i+1, new QTableWidgetItem( QString::fromUtf8( _sNames[i].c_str() ) ) );
+		m_pTable->setHorizontalHeaderItem( i+1, new QTableWidgetItem( QString::fromUtf8(names[i].c_str() ) ) );
 	}
 }
 

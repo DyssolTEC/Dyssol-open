@@ -4,7 +4,6 @@
 
 CDynamicUnit::CDynamicUnit()
 {
-	SetDynamicUnit(true);
 }
 
 CDynamicUnit::~CDynamicUnit()

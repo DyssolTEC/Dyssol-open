@@ -2,6 +2,10 @@
 
 #include "SolidDistributionsEditor.h"
 #include "ParamsItem.h"
+#include "MaterialsDatabase.h"
+#include "Flowsheet.h"
+#include "BaseStream.h"
+#include "MDMatrix.h"
 #include "DyssolUtilities.h"
 #include "ContainerFunctions.h"
 #include "DyssolStringConstants.h"
@@ -43,8 +47,9 @@ CSolidDistributionsEditor::~CSolidDistributionsEditor()
 	m_pStream = nullptr;
 }
 
-void CSolidDistributionsEditor::SetFlowsheet(CFlowsheet* _pFlowsheet)
+void CSolidDistributionsEditor::SetFlowsheet(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB)
 {
+	m_materialsDB = _materialsDB;
 	m_pFlowsheet = _pFlowsheet;
 	m_pGrid = m_pFlowsheet->GetDistributionsGrid();
 }
@@ -160,8 +165,8 @@ void CSolidDistributionsEditor::UpdateCombos()
 	QSignalBlocker blocker3(ui.comboBoxRows);
 	ui.comboBoxCompound->clear();
 	ui.comboBoxCompound->addItem(StrConst::SDE_CompoundsMixture, "");
-	for (size_t i = 0; i < m_pFlowsheet->GetCompoundsNumber(); ++i)
-		ui.comboBoxCompound->addItem(QString::fromStdString(m_pFlowsheet->GetCompoundName(i)), QString::fromStdString(m_pFlowsheet->GetCompoundKey(i)));
+	for (const auto& key : m_pFlowsheet->GetCompounds())
+		ui.comboBoxCompound->addItem(QString::fromStdString(m_materialsDB->GetCompound(key) ? m_materialsDB->GetCompound(key)->GetName() : ""), QString::fromStdString(key));
 }
 
 void CSolidDistributionsEditor::UpdateTimeLabel() const
@@ -184,7 +189,7 @@ void CSolidDistributionsEditor::UpdateFractionsTable() const
 	ui.tableWidgetCompoundsFractions->SetGeometry(1, static_cast<int>(compoundsNum));
 
 	// set headers
-	ui.tableWidgetCompoundsFractions->SetColHeaderItems(0, m_pFlowsheet->GetCompoundsNames());
+	ui.tableWidgetCompoundsFractions->SetColHeaderItems(0, m_materialsDB->GetCompoundsNames(m_pFlowsheet->GetCompounds()));
 	ui.tableWidgetCompoundsFractions->SetRowHeaderItem(0, StrConst::BSV_TableHeaderMassFrac);
 
 	// set data

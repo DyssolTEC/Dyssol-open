@@ -2,136 +2,208 @@
 
 #pragma once
 
-#include "BaseModel.h"
 #include "CalculationSequence.h"
-
-class CParametersHolder;
+#include "UnitContainer.h"
+#include "DistributionsGrid.h"
+#include "DyssolTypes.h"
+#include "ParametersHolder.h"
 
 /* Stores the whole information about the flowsheet. */
 class CFlowsheet
 {
+	static const unsigned m_saveVersion{ 4 }; // Current version of the saving procedure.
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Global structural data and settings
+	//
+	const CMaterialsDatabase& m_materialsDB;	// Reference to a global database of materials.
+	CModelsManager& m_modelsManager;			// Reference to a global models manager.
+	// TODO: move it out of the flowsheet and save/load independently.
+	CParametersHolder m_parameters;				// Holder of different flowsheet settings.
+	// TODO: move it out of the flowsheet and save/load independently.
+	CDistributionsGrid m_grid;					// Global distribution grid.
+	std::vector<std::string> m_compounds;		// List of all defined compound keys.
+	std::vector<SOverallDescriptor> m_overall;	// List of all defined overall properties.
+	std::vector<SPhaseDescriptor> m_phases;		// List of all defined phases.
+	SCacheSettings m_cacheStreams{ m_parameters.cacheFlagStreams, m_parameters.cacheWindow, m_parameters.cachePath };	// Global cache settings for streams.
+	SCacheSettings m_cacheHoldups{ m_parameters.cacheFlagHoldups, m_parameters.cacheWindow, m_parameters.cachePath };	// Global cache settings for holdups in models.
+	SToleranceSettings m_tolerance{ m_parameters.absTol, m_parameters.relTol, m_parameters.minFraction };				// Global tolerance settings.
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Flowsheet structure
+	//
+	std::vector<std::unique_ptr<CUnitContainer>> m_units;	// All defined units.
+	std::vector<std::unique_ptr<CStream>> m_streams;		// All defined streams.
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Topology
+	//
+	CCalculationSequence m_calculationSequence{ &m_units, &m_streams }; // Unit simulation sequence.
+	// TODO: perform the corresponding check in CalculationSequence.
+	bool m_topologyModified{ false };	// Indicates whether the flowsheet structure has changed since the last run of the calculation sequence analysis.
+
 public:
-	CParametersHolder* m_pParams;
-	std::vector<std::vector<CStream>> m_vvInitTearStreams;	// List of streams used as initial values for tear streams for each partition.
+	// Basic constructor
+	CFlowsheet(CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB);
 
-private:
-	static const unsigned m_cnSaveVersion;
+	// Makes initial preparations of the flowsheet structure.
+	void Create();
+	// Removes all existing data and sets parameters to their default values.
+	void Clear();
+	// Checks if the flowsheet is empty.
+	bool IsEmpty() const;
 
-	CMaterialsDatabase* m_pMaterialsDatabase;
-	CModelsManager* m_pModelsManager;
-	std::vector<CBaseModel*> m_vpModels;
-	std::vector<CStream*> m_vpStreams;
-	CCalculationSequence m_calculationSequence{ &m_vpModels , &m_vpStreams };
-	bool m_topologyModified; // Determines whether the flowsheet structure has been changed since the last topology analysis.
+	////////////////////////////////////////////////////////////////////////////////
+	// Units
+	//
 
-	std::vector<std::string> m_vPhasesNames;
-	std::vector<unsigned> m_vPhasesSOA;
+	// Returns the number of defined units.
+	size_t GetUnitsNumber() const;
 
-	std::vector<std::string> m_vCompoundsKeys; // keys of the chemical compounds which are used in this flowsheet
-	CDistributionsGrid* m_pDistributionsGrid;
-	double m_dSimulationTime;
+	// Adds a new unit to the flowsheet and returns a pointer to it.
+	CUnitContainer* AddUnit(const std::string& _key = "");
+	// Removes a unit with the specified unique key.
+	void DeleteUnit(const std::string& _key);
+	// Moves a unit with the specified unique key upwards/downwards in the list of units.
+	void ShiftUnit(const std::string& _key, EDirection _direction);
 
-public:
-	CFlowsheet();
-	~CFlowsheet();
+	// Returns a unit with the specified unique key. If no such unit has been defined, returns nullptr.
+	const CUnitContainer* GetUnit(const std::string& _key) const;
+	// Returns a unit with the specified unique key. If no such unit has been defined, returns nullptr.
+	CUnitContainer* GetUnit(const std::string& _key) ;
+	// Returns const pointers to all defined units.
+	std::vector<const CUnitContainer*> GetAllUnits() const;
+	// Returns pointers to all defined units.
+	std::vector<CUnitContainer*> GetAllUnits();
 
-	void InitializeFlowsheet();
-	void Clear(); // removes all existing models
-	bool AnalyzeTopology();
-	void CreateInitTearStreams();
-	void SetTopologyModified(bool _modified);
+	////////////////////////////////////////////////////////////////////////////////
+	// Streams
+	//
 
-	void SetMaterialsDatabase( CMaterialsDatabase* _pNewDatabase );
-	const CMaterialsDatabase* GetMaterialsDatabase() const;
-	CDistributionsGrid* GetDistributionsGrid() const;
-	void SetDistributionsGrid( /*CDistributionsGrid* _pNewGrid*/ );
-	CModelsManager* GetModelsManager() const;
-	void SetModelsManager(CModelsManager* _pModelsManager);
+	// Returns the number of defined streams.
+	size_t GetStreamsNumber() const;
+
+	// Adds a new stream to the flowsheet and returns a pointer to it.
+	CStream* AddStream(const std::string& _key = "");
+	// Removes a stream with the specified unique key.
+	void DeleteStream(const std::string& _key);
+	// Moves a stream with the specified unique key upwards/downwards in the list of streams.
+	void ShiftStream(const std::string& _key, EDirection _direction);
+
+	// Returns a stream with the specified unique key. If no such stream has been defined, returns nullptr.
+	const CStream* GetStream(const std::string& _key) const;
+	// Returns a stream with the specified unique key. If no such stream has been defined, returns nullptr.
+	CStream* GetStream(const std::string& _key);
+	// Returns const pointers to all defined streams.
+	std::vector<const CStream*> GetAllStreams() const;
+	// Returns pointers to all defined streams.
+	std::vector<CStream*> GetAllStreams();
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Topology
+	//
+
+	// Determines the calculation sequence. Returns true if the analysis is successful.
+	bool DetermineCalculationSequence();
+	// Sets the flag indicating whether the flowsheet structure has changed since the last run of the calculation sequence analysis.
+	void SetTopologyModified(bool _flag);
+	// Returns a const pointer to calculation sequence.
 	const CCalculationSequence* GetCalculationSequence() const;
+	// Returns a pointer to calculation sequence.
 	CCalculationSequence* GetCalculationSequence();
 
-	void SetSimulationTime( double _dSimulationTime );
-	double GetSimulationTime();
+	////////////////////////////////////////////////////////////////////////////////
+	// Compounds
+	//
 
-	// Initializes flowsheet before simulation and checks for errors. On error returns error description, or empty string otherwise.
+	// Returns the number of defined compounds.
+	size_t GetCompoundsNumber() const;
+	// Adds a new compound with the specified unique key to the flowsheet, if it does not exist yet.
+	void AddCompound(const std::string& _key);
+	// Remove a compound with the specified unique key from the flowsheet.
+	void RemoveCompound(const std::string& _key);
+	// Returns unique keys of all defined compounds.
+	std::vector<std::string> GetCompounds() const;
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Overall properties
+	//
+
+	// Returns the number of defined overall properties.
+	size_t GetOverallPropertiesNumber() const;
+	// Adds a new overall property with the specified parameters to the flowsheet, if it does not exist yet.
+	void AddOverallProperty(EOverall _property, const std::string& _name, const std::string& _units);
+	// Remove an overall property with the specified type from the flowsheet.
+	void RemoveOverallProperty(EOverall _property);
+	// Returns descriptors of all defined overall properties.
+	std::vector<SOverallDescriptor> GetOveralProperties() const;
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Phases
+	//
+
+	// Returns the number of defined phases.
+	size_t GetPhasesNumber() const;
+	// Adds a new phase with the specified parameters to the flowsheet, if it does not exist yet.
+	void AddPhase(EPhase _phase, const std::string& _name);
+	// Remove a phase with the specified type from the flowsheet.
+	void RemovePhase(EPhase _phase);
+	// Returns descriptors of all defined phases.
+	std::vector<SPhaseDescriptor> GetPhases() const;
+	// Checks if a phase of the specified type exists in the flowsheet.
+	bool IsPhaseDefined(EPhase _phase);
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Related to simulation
+	//
+
+	// Initializes flowsheet before simulation and checks for errors. Returns an error description on error, or an empty string otherwise.
 	std::string Initialize();
-	// Checks connections of ports. On error returns error description, or empty string otherwise.
-	std::string CheckConnections();
-	// Sets pointers to all input and output streams directly to the units. Is called before simulation.
+	// Sets pointers to streams into units' ports.
 	void SetStreamsToPorts();
+	// Checks that all units' ports are properly connected. Returns an error description on error, or an empty string otherwise.
+	std::string CheckPortsConnections();
 
+	// Clears all simulation results.
 	void ClearSimulationResults();
-	bool Empty() const;
 
-	// ========== Functions to work with PHASES
+	////////////////////////////////////////////////////////////////////////////////
+	// Other
+	//
 
-	void AddPhase( const std::string& _sName, unsigned _nAggregationState );
-	void RemovePhase( unsigned _nIndex );
-	void ChangePhase( unsigned _nIndex, const std::string& _sName, unsigned _nAggregationState );
-	unsigned GetPhasesNumber();
-	const std::vector<std::string>& GetPhasesNames() const;
-	std::string GetPhaseName( unsigned _nIndex );
-	std::vector<unsigned>* GetPhasesAggregationStates();
-	int GetPhaseAggregationState( unsigned _nIndex );
-	void ClearPhases();
-	bool IsPhaseDefined( unsigned _nSOA );
-	int GetPhaseIndex( unsigned _nSOA ); // returns index of the specified phase, -1 if no such phase has been defined
+	// Updates grids of distributed parameters in all units and streams.
+	void UpdateDistributionsGrid();
+	// Updates cache settings in all units and streams.
+	void UpdateCacheSettings();
+	// Updates tolerance settings in all units and streams.
+	void UpdateToleranceSettings();
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// ========== Functions to work with COMPOUNDS
+	// TODO: remove them when grid is moved out of scope of the flowsheet.
+	// Returns a const pointer to distributions grid.
+	const CDistributionsGrid* GetDistributionsGrid() const;
+	// Returns a pointer to distributions grid.
+	CDistributionsGrid* GetDistributionsGrid();
 
-	size_t GetCompoundsNumber() const;									// Returns the number of defined compounds.
-	void AddCompound(const std::string& _sCompoundKey);					// Adds new compound with the specified unique key to the flowsheet.
-	void RemoveCompound(const std::string& _sCompoundKey);				// Remove compound with the specified unique key from the flowsheet.
-	std::vector<std::string> GetCompounds() const;						// Returns unique keys of all defined compounds.
-	std::vector<std::string> GetCompoundsNames() const;					// Returns names of all defined compounds.
-	std::string GetCompoundName(size_t _iCompound) const;				// Returns name of the specified compound.
-	std::string GetCompoundKey(size_t _iCompound) const;				// Returns unique key of the compound with the specified index.
-	size_t GetCompoundIndex(const std::string& _sCompoundKey) const;	// Returns index of the specified compound. If no such compound was defined, returns -1.
+	// Returns a const pointer to parameters settings.
+	const CParametersHolder* GetParameters() const;
+	// Returns a pointer to parameters settings.
+	CParametersHolder* GetParameters();
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// ========== Interface functions to work with MODELS
+	////////////////////////////////////////////////////////////////////////////////
+	// File I/O
+	//
 
-	size_t GetModelsCount() const;										// Returns the number of defined models.
-	CBaseModel* AddModel(const std::string& _modelKey = "");			// Adds new model to the flowsheet and returns pointer to it.
-	void DeleteModel(const std::string& _sModelKey);					// Removes model with the specified unique key.
-	const CBaseModel* GetModel(size_t _index) const;					// Returns model with the specified index. If no such model was defined, returns nullptr.
-	CBaseModel* GetModel(size_t _index);								// Returns model with the specified index. If no such model was defined, returns nullptr.
-	const CBaseModel* GetModel(const std::string& _sModelKey) const;	// Returns model with specified unique key. If no such model was defined, returns nullptr.
-	CBaseModel* GetModel(const std::string& _sModelKey);				// Returns model with specified unique key. If no such model was defined, returns nullptr.
-	void ShiftModelUp(const std::string& _sModelKey);					// Moves upwards model with the specified unique key.
-	void ShiftModelDown(const std::string& _sModelKey);					// Moves downwards model with the specified unique key.
-	size_t GetModelIndex(const std::string& _sModelKey) const;			// Returns index of the model with the specified unique key. If no such model was defined, returns -1.
-	void InitializeModel(const std::string& _sModelKey);				// Initializes model with the specified unique key.
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// ========== Interface functions to work with MATERIAL STREAMS
-
-	size_t GetStreamsCount() const;											// Returns the number of defined material streams.
-	CStream* AddStream(const std::string& _streamKey = "");		// Adds new stream to the flowsheet and returns pointer to it.
-	void DeleteStream(const std::string& _sStreamKey);						// Removes material stream with the specified unique key.
-	const CStream* GetStream(size_t _index) const;					// Returns material stream with the specified index. If no such stream was defined, returns nullptr.
-	CStream* GetStream(size_t _index);								// Returns material stream with the specified index. If no such stream was defined, returns nullptr.
-	const CStream* GetStream(const std::string& _sStreamKey) const;	// Returns stream with the specified unique key. If no such stream was defined, returns nullptr.
-	CStream* GetStream(const std::string& _sStreamKey);				// Returns stream with the specified unique key. If no such stream was defined, returns nullptr.
-	void ShiftStreamUp(const std::string& _sStreamKey);						// Moves upwards material stream with the specified unique key.
-	void ShiftStreamDown(const std::string& _sStreamKey);					// Moves downwards material stream with the specified unique key.
-	size_t GetStreamIndex(const std::string& _sStreamKey) const;			// Returns index of the material stream with the specified unique key. If no such stream was defined, returns -1.
-
-	// ========== SAVE/LOAD flowsheet from the files
-
-	bool SaveToFile(CH5Handler& _h5Saver, const std::wstring& _sFileName);
-	bool LoadFromFile(CH5Handler& _h5Loader, const std::wstring& _sFileName);
-	void LoadInitTearStreamsOld(CH5Handler& _h5Loader);
-
-	void SaveConfigFile(const std::wstring& _fileName, const std::wstring& _flowsheetFile) const;
-
-	static EPhase PhaseSOA2EPhase(unsigned _soa);
+	// Saves the flowsheet into the HDF5 file.
+	bool SaveToFile(CH5Handler& _h5File, const std::wstring& _fileName);
+	// Loads the flowsheet from the HDF5 file.
+	bool LoadFromFile(CH5Handler& _h5File, const std::wstring& _fileName);
+	// Loads the flowsheet from the HDF5 file. A compatibility version.
+	bool LoadFromFile_v3(CH5Handler& _h5File, const std::string& _path);
 
 private:
-	std::string GenerateUniqueModelKey(const std::string& _key = "") const;		// Generates a unique key for a model.
-	std::string GenerateUniqueStreamKey(const std::string& _key = "") const;	// Generates a unique key for a stream.
-	void EnsureUniqueModelsKeys();	// Checks keys of models and replaces them if they have duplicates.
-	void EnsureUniqueStreamsKeys();	// Checks keys of streams and replaces them if they have duplicates.
-
+	// Returns unique keys of all defined units.
+	std::vector<std::string> GetAllUnitsKeys() const;
+	// Returns unique keys of all defined streams.
+	std::vector<std::string> GetAllStreamsKeys() const;
 };
+

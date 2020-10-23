@@ -23,14 +23,19 @@ QTreeWidgetItem* CQtTree::AddChildItem(QTreeWidgetItem* _parent, int _col, const
 	return item;
 }
 
-QComboBox* CQtTree::AddChildItemComboBox(QTreeWidgetItem* _parent, int _col, const std::vector<QString>& _names, const std::vector<QVariant>& _userData, int _iSelected)
+QComboBox* CQtTree::AddChildItemComboBox(QTreeWidgetItem* _parent, int _col, const std::vector<QString>& _names, const std::vector<QVariant>& _userData, const QVariant& _selected)
 {
 	auto* item = new QTreeWidgetItem(_parent);
 	auto* combo = new QComboBox();
 	setItemWidget(item, _col, combo);
+	int iSelected = -1;
 	for (size_t i = 0; i < _names.size(); ++i)
+	{
 		combo->insertItem(combo->count(), _names[i], i < _userData.size() ? _userData[i] : QVariant());
-	combo->setCurrentIndex(_iSelected);
+		if (_userData[i] == _selected)
+			iSelected = static_cast<int>(i);
+	}
+	combo->setCurrentIndex(iSelected);
 	combo->installEventFilter(this);
 	item->setSizeHint(_col, { combo->sizeHint().width() + 10, combo->sizeHint().height() });
 	connect(combo, QOverload<int>::of(&QComboBox::highlighted), this, [=] { setCurrentItem(item); });

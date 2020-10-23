@@ -131,6 +131,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BuildVersion.h" />
+    <ClInclude Include="ConfigFileParser.h" />
     <ClInclude Include="ContainerFunctions.h" />
     <ClInclude Include="DyssolHelperDefines.h" />
     <ClInclude Include="DyssolStringConstants.h" />
@@ -147,6 +148,7 @@
     <ClInclude Include="ThreadTask.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ConfigFileParser.cpp" />
     <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="StringFunctions.cpp" />
     <ClCompile Include="ThreadPool.cpp" />

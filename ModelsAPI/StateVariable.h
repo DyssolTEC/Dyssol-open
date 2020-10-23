@@ -67,13 +67,19 @@ public:
 	const CStateVariable* GetStateVariable(const std::string& _name) const;
 	// Returns a state variable with the specified name.
 	CStateVariable* GetStateVariable(const std::string& _name);
+
 	// Returns const pointers to all defined state variables.
 	std::vector<const CStateVariable*> GetAllStateVariables() const;
 	// Returns const pointers to all defined state variables.
 	std::vector<CStateVariable*> GetAllStateVariables();
 
+	// Returns const pointers to all defined state variables that track history of changes.
+	std::vector<const CStateVariable*> GetAllStateVariablesWithHistory() const;
+	// Returns const pointers to all defined state variables that track history of changes.
+	std::vector<CStateVariable*> GetAllStateVariablesWithHistory();
+
 	// Returns a number of defined state variables.
-	size_t GetStateVariableNumber() const;
+	size_t GetStateVariablesNumber() const;
 
 	// Removes all defined state variables.
 	void ClearData();

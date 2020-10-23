@@ -665,6 +665,17 @@ const CCompound* CMaterialsDatabase::GetCompoundByName(const std::string& _sComp
 	return nullptr;
 }
 
+std::vector<std::string> CMaterialsDatabase::GetCompoundsNames(const std::vector<std::string>& _keys) const
+{
+	std::vector<std::string> res;
+	for (const auto& key : _keys)
+	{
+		const auto* compound = GetCompound(key);
+		res.push_back(compound ? compound->GetName() : "");
+	}
+	return res;
+}
+
 double CMaterialsDatabase::GetConstPropertyValue(const std::string& _sCompoundUniqueKey, ECompoundConstProperties _nConstPropType) const
 {
 	if(const CCompound *comp = GetCompound(_sCompoundUniqueKey))

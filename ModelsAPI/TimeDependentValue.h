@@ -33,8 +33,8 @@ public:
 	void RemoveAllTimePoints();									// Removes all existing time points.
 
 	// TODO: remove
-	size_t GetTimePointsNumber() const;		// Returns the number of defined time points.
-	//std::vector<double> GetAllTimePoints() const;
+	size_t GetTimePointsNumber() const;				// Returns the number of defined time points.
+	std::vector<double> GetAllTimePoints() const;	// Returns all defined time points.
 
 	void SetValue(double _time, double _value);	// Sets new value at the given time point. Creates a new time point if needed.
 	double GetValue(double _time) const;		// Returns the value at the given time point.

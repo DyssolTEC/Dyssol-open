@@ -3,8 +3,11 @@
 #pragma once
 
 #include "ui_OptionsEditor.h"
-#include "Flowsheet.h"
 #include <QMessageBox>
+
+class CFlowsheet;
+class CMaterialsDatabase;
+class CParametersHolder;
 
 class COptionsEditor : public QDialog
 {

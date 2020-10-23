@@ -1,7 +1,7 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "UnitContainer.h"
-#include "BaseUnit2.h"
+#include "BaseUnit.h"
 #include "DyssolStringConstants.h"
 
 CUnitContainer::CUnitContainer(const std::string& _id, CModelsManager& _modelsManager,
@@ -35,12 +35,12 @@ void CUnitContainer::SetName(const std::string& _name)
 	m_name = _name;
 }
 
-std::string CUnitContainer::GetUniqueID() const
+std::string CUnitContainer::GetKey() const
 {
 	return m_uniqueID;
 }
 
-void CUnitContainer::SetUniqueID(const std::string& _id)
+void CUnitContainer::SetKey(const std::string& _id)
 {
 	m_uniqueID = _id;
 }
@@ -53,12 +53,12 @@ void CUnitContainer::SetModel(const std::string& _uniqueID)
 		m_model->SetPointers(&m_materialsDB, &m_grid, &m_compounds, &m_overall, &m_phases, &m_cache, &m_tolerance);
 }
 
-const CBaseUnit2* CUnitContainer::GetModel() const
+const CBaseUnit* CUnitContainer::GetModel() const
 {
 	return m_model;
 }
 
-CBaseUnit2* CUnitContainer::GetModel()
+CBaseUnit* CUnitContainer::GetModel()
 {
 	return m_model;
 }
@@ -90,6 +90,7 @@ std::string CUnitContainer::InitializeExternalSolvers() const
 
 void CUnitContainer::ClearExternalSolvers() const
 {
+	if (!m_model) return;
 	for (auto& parameter : m_model->GetUnitParametersManager().GetAllSolverParameters())
 		m_modelsManager.FreeSolver(parameter->GetSolver());
 }

@@ -1,6 +1,7 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "SaveLoadThread.h"
+#include "Flowsheet.h"
 
 CSaveLoadThread::CSaveLoadThread(CFlowsheet* _pFlowsheet, bool _bSaver, QObject* parent /*= nullptr*/)
 	: CBasicThread(parent),

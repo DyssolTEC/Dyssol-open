@@ -2,8 +2,12 @@
 
 #pragma once
 
-#include "BaseUnit.h"
+#include "BaseSolver.h"
+#include <map>
+#include <vector>
+
 #ifdef _MSC_VER
+#define NOMINMAX
 #include <Windows.h>
 typedef HINSTANCE DYSSOL_LIBRARY_INSTANCE;
 typedef FARPROC DYSSOL_CREATE_FUNCTION_TYPE;
@@ -11,6 +15,8 @@ typedef FARPROC DYSSOL_CREATE_FUNCTION_TYPE;
 typedef void* DYSSOL_LIBRARY_INSTANCE;
 typedef void* DYSSOL_CREATE_FUNCTION_TYPE;
 #endif
+
+class CBaseUnit;
 
 /// Structure to load, instantiate, free and unload models (units or solvers) from DLL (SO) files.
 struct SModelDescriptor
@@ -20,7 +26,7 @@ struct SModelDescriptor
 	std::string name;		   // Model's name.
 	std::string author;        // Name of model's author.
 	std::string dirKey;        // Unique key of the dir, where it stored.
-	double version{};		   // Model's version.
+	size_t version{};		   // Model's version.
 	size_t position{};         // Needed to sort models according to the list of dirs.
 
 	bool operator<(const SModelDescriptor& _other) const

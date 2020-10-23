@@ -147,6 +147,9 @@ public:
 	// Returns Z values of all defined curves.
 	std::vector<double> GetZValues() const;
 
+	// Checks if the plot is a 2D plot, based on the presence of Z values.
+	bool Is2D() const;
+
 	// Returns a number of defined curves.
 	size_t GetCurvesNumber() const;
 
