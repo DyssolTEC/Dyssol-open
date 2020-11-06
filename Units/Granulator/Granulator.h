@@ -44,8 +44,8 @@ public:
 	std::vector<double> m_dPreCalc;		// Vector of precalculated values
 
 public:
-	CSimpleGranulator();
-
+	void CreateBasicInfo() override;
+	void CreateStructure() override;
 	void Initialize(double _dTime) override;
 	void SaveState() override;
 	void LoadState() override;

@@ -11,13 +11,16 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 //////////////////////////////////////////////////////////////////////////
 /// Unit
 
-CUnit::CUnit()
+void CUnit::CreateBasicInfo()
 {
 	/// Basic unit's info ///
 	m_sUnitName = "DummyUnit1";
 	m_sAuthorName = "Author";
 	m_sUniqueID = "00000000000000000000000000000100";
+}
 
+void CUnit::CreateStructure()
+{
 	/// Add ports ///
 	AddPort("InPort", INPUT_PORT);
 	AddPort("OutPort", OUTPUT_PORT);
@@ -26,11 +29,6 @@ CUnit::CUnit()
 	AddTDParameter("ParamTD", 0, 1e+6, 0, "kg", "Unit parameter description");
 	AddConstParameter("ParamConst", 0, 1e+6, 0, "s", "Unit parameter description");
 	AddStringParameter("ParamString", "Initial value", "Unit parameter description");
-}
-
-CUnit::~CUnit()
-{
-
 }
 
 void CUnit::Initialize(double _dTime)

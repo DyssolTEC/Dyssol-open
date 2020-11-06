@@ -11,13 +11,16 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 //////////////////////////////////////////////////////////////////////////
 /// Unit
 
-CBunker::CBunker()
+void CBunker::CreateBasicInfo()
 {
 	/// Basic unit's info ///
 	m_sUnitName = "Bunker";
 	m_sAuthorName = "SPE TUHH";
 	m_sUniqueID = "A5D7F41322C949EC86C96C583A35501F";
+}
 
+void CBunker::CreateStructure()
+{
 	/// Add ports ///
 	AddPort("Inflow", INPUT_PORT);
 	AddPort("Outflow", OUTPUT_PORT);

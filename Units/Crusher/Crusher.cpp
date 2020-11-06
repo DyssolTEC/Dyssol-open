@@ -8,14 +8,17 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 	return new CCrusher();
 }
 
-CCrusher::CCrusher()
+void CCrusher::CreateBasicInfo()
 {
 	/// Basic unit's info ///
 	m_sUnitName = "Crusher";
 	m_sAuthorName = "SPE TUHH";
 	m_sUniqueID = "4E2C9FB3BFA44B8E829AC393042F2BE3";
+}
 
-	/// Add ports ///
+void CCrusher::CreateStructure()
+{
+		/// Add ports ///
 	AddPort("Input", INPUT_PORT);
 	AddPort("Output", OUTPUT_PORT);
 

@@ -39,8 +39,8 @@ public:
 	std::vector<double> m_vSizes;		// Class sizes for PSD
 
 public:
-	CAgglomerator();
-
+	void CreateBasicInfo() override;
+	void CreateStructure() override;
 	void Initialize(double _dTime) override;
 	void SaveState() override;
 	void LoadState() override;

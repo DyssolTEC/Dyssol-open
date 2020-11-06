@@ -11,14 +11,17 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 //////////////////////////////////////////////////////////////////////////
 /// Unit
 
-CCrusherPBMTM::CCrusherPBMTM()
+void CCrusherPBMTM::CreateBasicInfo()
 {
 	/// Basic unit's info ///
 	m_sUnitName = "Crusher PBM TM";
 	m_sAuthorName = "SPE TUHH";
 	m_sUniqueID = "2FD8955A80D341288031E1063B9FC822";
+}
 
-	/// Add ports ///
+void CCrusherPBMTM::CreateStructure()
+{
+		/// Add ports ///
 	AddPort("Input", INPUT_PORT);
 	AddPort("Output", OUTPUT_PORT);
 

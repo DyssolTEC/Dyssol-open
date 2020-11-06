@@ -8,27 +8,30 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 	return new CAgglomerator();
 }
 
-CAgglomerator::CAgglomerator()
+void CAgglomerator::CreateBasicInfo()
 {
 	/// Set basic unit info ///
 	m_sUnitName = "Agglomerator";
 	m_sAuthorName = "SPE TUHH";
 	m_sUniqueID = "9F37215AA74D4B1699B7EC648F366219";
+}
 
+void CAgglomerator::CreateStructure()
+{
 	/// Add ports ///
 	AddPort("Input", INPUT_PORT);
 	AddPort("Output", OUTPUT_PORT);
 
 	/// Add unit parameters ///
 	AddConstParameter("Beta0", 0, 1e+20, 1, "-", "Rate factor");
-	AddConstParameter("Step",  0, 1e+9,  0, "s", "Max time step in DAE solver");
+	AddConstParameter("Step", 0, 1e+9, 0, "s", "Max time step in DAE solver");
 	/// Add possibility to choose external agglomeration calculator ///
 	AddSolverAgglomeration("Solver", "Agglomeration solver");
 	AddComboParameter("Kernel", CAgglomerationSolver::EKernels::BROWNIAN,
 		{ CAgglomerationSolver::EKernels::CONSTANT, CAgglomerationSolver::EKernels::SUM, CAgglomerationSolver::EKernels::PRODUCT, CAgglomerationSolver::EKernels::BROWNIAN, CAgglomerationSolver::EKernels::SHEAR, CAgglomerationSolver::EKernels::PEGLOW, CAgglomerationSolver::EKernels::COAGULATION, CAgglomerationSolver::EKernels::GRAVITATIONAL, CAgglomerationSolver::EKernels::EKE, CAgglomerationSolver::EKernels::THOMPSON },
 		{ "Constant","Sum","Product","Brownian","Shear","Peglow","Coagulation","Gravitational","Kinetic energy","Thompson" },
 		"Agglomeration kernel");
-	AddConstParameter("Rank",   1, 10,   3, "",  "Rank of the kernel (for FFT solver)");
+	AddConstParameter("Rank", 1, 10, 3, "", "Rank of the kernel (for FFT solver)");
 
 	/// Add holdups ///
 	AddHoldup("Holdup");

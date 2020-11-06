@@ -18,7 +18,7 @@ if (name.empty() || name.size() != dim1 || name.front().size() != dim2) { \
 class CAgglomerationFFT : public CAgglomerationSolver
 {
 	size_t n;				// Number of intervals.
-	size_t m_rank;			// Rank is arbitrary.
+	size_t m_rank{ 3 };		// Rank is arbitrary.
 	double m_dResizeFactor, m_dTransformFactor; // Scaling factors.
 
 	std::vector<std::vector<double>> alpha, beta;
@@ -28,8 +28,7 @@ class CAgglomerationFFT : public CAgglomerationSolver
 	std::vector<kiss_fftr_cfg> m_FFTConfigB; // FFT solver configuration for each rank in backward direction.
 
 public:
-	CAgglomerationFFT();
-
+	void CreateBasicInfo() override;
 	void Initialize(const std::vector<double>& _vGrid, double _beta0, EKernels _kernel, size_t _rank, const std::vector<double>& vParams) override;
 	bool Calculate(const std::vector<double>& _vN, std::vector<double>& _vBRate, std::vector<double>& _vDRate) override;
 	void Finalize() override;

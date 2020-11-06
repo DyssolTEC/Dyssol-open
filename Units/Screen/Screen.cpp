@@ -11,14 +11,17 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 //////////////////////////////////////////////////////////////////////////
 /// Unit
 
-CScreen::CScreen()
+void CScreen::CreateBasicInfo()
 {
 	/// Basic unit's info ///
-	m_sUnitName   = "Screen";
+	m_sUnitName = "Screen";
 	m_sAuthorName = "SPE TUHH";
-	m_sUniqueID   = "F231006AE5AA46C6978B2DB563F31119";
+	m_sUniqueID = "F231006AE5AA46C6978B2DB563F31119";
+}
 
-	/// Add ports ///
+void CScreen::CreateStructure()
+{
+		/// Add ports ///
 	AddPort("Input",  INPUT_PORT);
 	AddPort("Coarse", OUTPUT_PORT);
 	AddPort("Fine",   OUTPUT_PORT);

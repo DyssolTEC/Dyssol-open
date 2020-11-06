@@ -8,12 +8,15 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 	return new CInlet();
 }
 
-CInlet::CInlet()
+void CInlet::CreateBasicInfo()
 {
 	m_sUnitName = "InletFlow";
 	m_sAuthorName = "SPE TUHH";
 	m_sUniqueID = "C55E0B290D8944C0832689B391867977";
+}
 
+void CInlet::CreateStructure()
+{
 	AddPort("InletMaterial", OUTPUT_PORT);
 
 	AddFeed("InputMaterial", "ECFA7F77A5DF46b9A4E8CC3344D9397E");

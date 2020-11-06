@@ -105,6 +105,10 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile />
     <Link />
+    <Link />
+    <ClCompile>
+      <SDLCheck>false</SDLCheck>
+    </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>

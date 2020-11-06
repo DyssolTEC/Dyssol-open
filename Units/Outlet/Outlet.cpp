@@ -8,15 +8,18 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 	return new COutlet();
 }
 
-COutlet::COutlet()
+void COutlet::CreateBasicInfo()
 {
 	m_sUnitName = "OutletFlow";
 	m_sAuthorName = "SPE TUHH";
 	m_sUniqueID = "40A70301168D4F9F84DF08918DA6F5E2";
+}
 
+void COutlet::CreateStructure()
+{
 	AddPort("In", INPUT_PORT);
 }
 
-void COutlet::Simulate(double _dStartTime, double _dEndTime)
+void COutlet::Simulate(double _timeBeg, double _timeEnd)
 {
 }

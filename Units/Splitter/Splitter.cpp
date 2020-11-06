@@ -8,12 +8,15 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 	return new CSplitter();
 }
 
-CSplitter::CSplitter()
+void CSplitter::CreateBasicInfo()
 {
 	m_sUnitName = "Splitter";
 	m_sAuthorName = "SPE TUHH";
 	m_sUniqueID = "85C77D52955242DCA863D43336A90B51";
+}
 
+void CSplitter::CreateStructure()
+{
 	AddPort("In", INPUT_PORT);
 	AddPort("Out1", OUTPUT_PORT);
 	AddPort("Out2", OUTPUT_PORT);

@@ -28,8 +28,8 @@ private:
 	CDAESolver m_Solver;		// Solver of DAE
 
 public:
-	CBunker();
-
+	void CreateBasicInfo() override;
+	void CreateStructure() override;
 	void Initialize(double _dTime) override;
 	void Simulate(double _dStartTime, double _dEndTime) override;
 	void SaveState() override;

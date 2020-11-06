@@ -11,13 +11,16 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 //////////////////////////////////////////////////////////////////////////
 /// Unit
 
-CUnit::CUnit()
+void CUnit::CreateBasicInfo()
 {
 	/// Basic unit's info ///
 	m_sUnitName = "DummyUnit4";
 	m_sAuthorName = "Author";
 	m_sUniqueID = "00000000000000000000000000000400";
+}
 
+void CUnit::CreateStructure()
+{
 	/// Add ports ///
 	AddPort("InPort", INPUT_PORT);
 	AddPort("OutPort", OUTPUT_PORT);
@@ -32,11 +35,6 @@ CUnit::CUnit()
 
 	/// Set this unit as user data of model ///
 	m_Model.SetUserData(this);
-}
-
-CUnit::~CUnit()
-{
-
 }
 
 void CUnit::Initialize(double _dTime)

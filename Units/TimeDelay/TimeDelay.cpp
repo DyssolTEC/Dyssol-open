@@ -11,13 +11,16 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 //////////////////////////////////////////////////////////////////////////
 /// Unit
 
-CTimeDelay::CTimeDelay()
+void CTimeDelay::CreateBasicInfo()
 {
 	/// Basic unit's info ///
 	m_sUnitName = "Time delay";
 	m_sAuthorName = "SPE TUHH";
 	m_sUniqueID = "56D734DFB1EA441B859C2C70D6F43BBC";
+}
 
+void CTimeDelay::CreateStructure()
+{
 	/// Add ports ///
 	AddPort("In", INPUT_PORT);
 	AddPort("Out", OUTPUT_PORT);
@@ -42,7 +45,7 @@ void CTimeDelay::Initialize(double _dTime)
 	m_Model.ClearVariables();
 
 	/// Add state variables to the model ///
-	m_Model.m_nMflow = m_Model.AddDAEVariable(true, 0, 0, 0);
+	m_Model.m_nMflow      = m_Model.AddDAEVariable(true, 0, 0, 0);
 	m_Model.m_nNormMflow  = m_Model.AddDAEVariable(true, 1, 0, 0);
 	m_Model.m_nNormT      = m_Model.AddDAEVariable(true, 1, 0, 0);
 	m_Model.m_nNormP      = m_Model.AddDAEVariable(true, 1, 0, 0);

@@ -20,8 +20,8 @@ class CCrusher : public CSteadyStateUnit
 	EModels m_model;									// Chosen crusher model.
 
 public:
-	CCrusher();
-
+	void CreateBasicInfo() override;
+	void CreateStructure() override;
 	void Initialize(double _time) override;
 	void Simulate(double _time) override;
 
