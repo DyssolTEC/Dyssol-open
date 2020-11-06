@@ -12,7 +12,8 @@ CMDMatrix::CMDMatrix(const CMDMatrix& _other) :
 	m_bCacheEnabled{ _other.m_bCacheEnabled },
 	m_nCacheWindow{ _other.m_nCacheWindow }
 {
-	m_cacheHandler.Initialize();
+	SetCachePath(_other.m_sCachePath);
+	SetCacheParams(_other.m_bCacheEnabled, _other.m_nCacheWindow);
 	if (!_other.m_vTimePoints.empty())
 	{
 		CopyFrom(_other, _other.m_vTimePoints.front(), _other.m_vTimePoints.back());
@@ -2918,8 +2919,8 @@ bool CMDMatrix::CheckNormalizationRecursive( sFraction *_pFraction, unsigned _nN
 		for( unsigned j=0; j<m_vClasses[_nNesting]; ++j )
 			dSum += vValues[j][i];
 
-		double dCompValue = m_dMinFraction == 0 ? DEFAULT_MIN_FRACTION*10 : m_dMinFraction*10;
-		if( ( dSum != 0 ) && (std::fabs(1 - dSum) >= dCompValue ) )
+		const double dCompValue = m_dMinFraction == 0.0 ? 1e-8 : m_dMinFraction * 10;
+		if (dSum != 0.0 && std::fabs(1 - dSum) > dCompValue)
 			return false;
 	}
 
@@ -3299,6 +3300,12 @@ void CMDMatrix::CacheData() const
 void CMDMatrix::CorrectWinBoundary() const
 {
 	if( !m_bCacheEnabled ) return;
+
+	if (m_vTimePoints.size() == 1 && m_nNonCachedTPNum == 1)
+	{
+		m_dCurrWinStart = m_dCurrWinEnd = m_vTimePoints[0];
+		return;
+	}
 
 	if( ( m_vTimePoints.size() > 1 ) && ( m_dCurrWinEnd == m_vTimePoints[m_vTimePoints.size()-2] ) )
 		m_dCurrWinEnd = m_vTimePoints.back();

@@ -9,7 +9,7 @@
 // CUnitPort
 //
 
-CUnitPort::CUnitPort(std::string _name, EPortType2 _type) :
+CUnitPort::CUnitPort(std::string _name, EUnitPort _type) :
 	m_name{ std::move(_name) },
 	m_type{ _type }
 {
@@ -25,12 +25,12 @@ void CUnitPort::SetName(const std::string& _name)
 	m_name = _name;
 }
 
-CUnitPort::EPortType2 CUnitPort::GetType() const
+EUnitPort CUnitPort::GetType() const
 {
 	return m_type;
 }
 
-void CUnitPort::SetType(EPortType2 _type)
+void CUnitPort::SetType(EUnitPort _type)
 {
 	m_type = _type;
 }
@@ -82,7 +82,7 @@ void CUnitPort::LoadFromFile(CH5Handler& _h5File, const std::string& _path)
 // CPortsManager
 //
 
-CUnitPort* CPortsManager::AddPort(const std::string& _name, CUnitPort::EPortType2 _type)
+CUnitPort* CPortsManager::AddPort(const std::string& _name, EUnitPort _type)
 {
 	if (GetPort(_name)) return nullptr;
 	m_ports.emplace_back(new CUnitPort{ _name, _type });
@@ -122,7 +122,7 @@ std::vector<CUnitPort*> CPortsManager::GetAllInputPorts()
 {
 	std::vector<CUnitPort*> res;
 	for (auto& p : m_ports)
-		if (p->GetType() == CUnitPort::EPortType2::INPUT)
+		if (p->GetType() == EUnitPort::INPUT)
 			res.push_back(p.get());
 	return res;
 }
@@ -131,7 +131,7 @@ std::vector<const CUnitPort*> CPortsManager::GetAllInputPorts() const
 {
 	std::vector<const CUnitPort*> res;
 	for (const auto& p : m_ports)
-		if (p->GetType() == CUnitPort::EPortType2::INPUT)
+		if (p->GetType() == EUnitPort::INPUT)
 			res.push_back(p.get());
 	return res;
 }
@@ -140,7 +140,7 @@ std::vector<CUnitPort*> CPortsManager::GetAllOutputPorts()
 {
 	std::vector<CUnitPort*> res;
 	for (auto& p : m_ports)
-		if (p->GetType() == CUnitPort::EPortType2::OUTPUT)
+		if (p->GetType() == EUnitPort::OUTPUT)
 			res.push_back(p.get());
 	return res;
 }
@@ -149,7 +149,7 @@ std::vector<const CUnitPort*> CPortsManager::GetAllOutputPorts() const
 {
 	std::vector<const CUnitPort*> res;
 	for (const auto& p : m_ports)
-		if (p->GetType() == CUnitPort::EPortType2::OUTPUT)
+		if (p->GetType() == EUnitPort::OUTPUT)
 			res.push_back(p.get());
 	return res;
 }

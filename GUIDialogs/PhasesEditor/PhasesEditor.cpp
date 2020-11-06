@@ -99,7 +99,7 @@ void CPhasesEditor::UpdateWholeView()
 	{
 		AddPhase();
 		ui.tableWidget->item( ui.tableWidget->rowCount()-1, 0 )->setText( QString::fromStdString(phase.name) );
-		m_vCombos[index++]->setCurrentIndex(E2I(phase.state));
+		m_vCombos[index++]->setCurrentIndex(E2I(phase.state) - 1);
 	}
 }
 
@@ -168,7 +168,7 @@ bool CPhasesEditor::ApplyChanges()
 	for( int i=0; i<ui.tableWidget->rowCount(); ++i )
 	{
 		std::string sPhaseName = ui.tableWidget->item( i, 0 )->text().toStdString();
-		auto state = static_cast<EPhase>(m_vCombos[i]->currentIndex());
+		auto state = static_cast<EPhase>(m_vCombos[i]->currentIndex() + 1);
 		vNewPhases.push_back(state);
 		if (m_pFlowsheet->IsPhaseDefined(state))
 		{

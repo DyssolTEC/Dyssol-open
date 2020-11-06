@@ -552,16 +552,26 @@ void CBasicStreamsViewer::SetPhaseFractionsToTable()
 {
 	if (m_vSelected2D.empty()) return;
 
-	const int colNum = static_cast<int>(m_vSelected2D.size());
-	ui.tabTable->SetGeometry(static_cast<int>(m_vSelectedTP.size()), colNum + 1);
+	const int distrNum = static_cast<int>(m_vSelected2D.size());
+	const int distrPerStream = distrNum / (int)m_vSelectedStreams.size();
+	ui.tabTable->SetGeometry(static_cast<int>(m_vSelectedTP.size()), distrNum + 1);
 	ui.tabTable->SetColHeaderItem(0, StrConst::BSV_TableHeaderTime);
 	ui.tabTable->SetItemsColNotEditable(0, 0, m_vSelectedTP);
 
-	for (int i = 0; i < colNum; ++i)
+	for (int i = 0; i < (int)m_vSelectedStreams.size(); ++i)
 	{
-		ui.tabTable->SetColHeaderItem(i + 1, m_vSelectedStreams[i]->GetName() + "\n" + m_vSelected2D[i]->GetName() + " [" + m_vSelected2D[i]->GetUnits() + "]");
-		for (int iTP = 0; iTP < static_cast<int>(m_vSelectedTP.size()); ++iTP)
-			ui.tabTable->SetItemNotEditable(iTP, i + 1, m_vSelected2D[i]->GetValue(m_vSelectedTP[iTP]));
+		for (int j = 0; j < distrPerStream; ++j)
+			ui.tabTable->SetColHeaderItem(i * distrPerStream + j + 1, m_vSelectedStreams[i]->GetName() + "\n" + m_vSelected2D[i]->GetName() + " [" + m_vSelected2D[i]->GetUnits() + "]");
+
+		std::vector<std::vector<double>> data(distrPerStream);
+		for (int j = 0; j < distrPerStream; ++j)
+		{
+			data[j].reserve(m_vSelectedTP.size());
+			for (double iTP : m_vSelectedTP)
+				data[j].push_back(m_vSelected2D[i * distrPerStream + j]->GetValue(iTP));
+		}
+		for (int j = 0; j < distrPerStream; ++j)
+			ui.tabTable->SetItemsColNotEditable(0, i * distrPerStream + j + 1, data[j]);
 	}
 }
 
@@ -771,25 +781,26 @@ void CBasicStreamsViewer::SetPhaseFractionsToPlot()
 {
 	if (m_vSelected2D.empty())	return;
 
-	const unsigned dimsNum = 1;
+	const int distrNum = static_cast<int>(m_vSelected2D.size());
+	const int distrPerStream = distrNum / (int)m_vSelectedStreams.size();
 
 	for (size_t i = 0; i < m_vSelectedStreams.size(); ++i)
-		for (unsigned j = 0; j < dimsNum; ++j)
+		for (unsigned j = 0; j < (unsigned)distrPerStream; ++j)
 		{
-			const std::string name = m_vSelectedStreams[i]->GetName() + " - " + m_vSelected2D[i]->GetName() + " [" + m_vSelected2D[i]->GetUnits() + "]";
-			const QColor color = Qt::GlobalColor(Qt::red + (i * dimsNum + j) % (Qt::transparent - Qt::red));
+			const std::string name = m_vSelectedStreams[i]->GetName() + " - " + m_vSelected2D[i * distrPerStream + j]->GetName() + " [" + m_vSelected2D[i * distrPerStream + j]->GetUnits() + "]";
+			const QColor color = static_cast<Qt::GlobalColor>(Qt::red + (i * distrPerStream + j) % (Qt::transparent - Qt::red));
 			auto* curve = new QtPlot::SCurve(name, color, QtPlot::LABEL_TIME, QtPlot::LABEL_MASS_FRACTION);
 			const unsigned iCurve = ui.tabPlot->AddCurve(curve);
 			std::vector<double> times = m_vSelectedStreams[i]->GetAllTimePoints();
 			std::vector<double> values;
 			values.reserve(times.size());
 			for (double t : times)
-				values.push_back(m_vSelected2D[i]->GetValue(t));
+				values.push_back(m_vSelected2D[i * distrPerStream + j]->GetValue(t));
 			ui.tabPlot->AddPoints(iCurve, times, values);
 		}
 
 	if (m_vSelected2D.size() == 1 && m_vSelectedStreams.front()->GetAllTimePoints().size() == 1)
-		for (unsigned i = 0; i < dimsNum; ++i)
+		for (unsigned i = 0; i < (unsigned)distrPerStream; ++i)
 			ui.tabPlot->SetCurveLinesVisibility(i, false);
 }
 

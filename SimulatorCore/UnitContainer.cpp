@@ -50,7 +50,11 @@ void CUnitContainer::SetModel(const std::string& _uniqueID)
 	m_modelsManager.FreeUnit(m_model);
 	m_model = m_modelsManager.InstantiateUnit(_uniqueID);
 	if (m_model)
+	{
 		m_model->SetPointers(&m_materialsDB, &m_grid, &m_compounds, &m_overall, &m_phases, &m_cache, &m_tolerance);
+		// TODO: catch exceptions from Add-functions
+		m_model->CreateStructure();
+	}
 }
 
 const CBaseUnit* CUnitContainer::GetModel() const

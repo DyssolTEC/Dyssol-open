@@ -110,6 +110,11 @@ public:
 	// Returns all defined initial feeds and holdups.
 	std::vector<CBaseStream*> GetAllInit();
 
+	// Returns all defined work feeds, holdups and streams.
+	std::vector<const CBaseStream*> GetAllWork() const;
+	// Returns all defined work feeds, holdups and streams.
+	std::vector<CBaseStream*> GetAllWork();
+
 	// Stores the current state of all data at the given time interval.
 	void SaveState(double _timeBeg, double _timeEnd);
 	// Restores previously stored state of all data.

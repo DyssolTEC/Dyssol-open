@@ -44,8 +44,27 @@ public:
 	// TODO: move it somewhere
 	////////////////////////////////////////////////////////////////////////////////
 	/// Deprecated functions
+	[[deprecated("WARNING! CopyFromHoldup(const CHoldup*, double,) is deprecated. Use CopyFromHoldup(double, const CHoldup*) instead.")]]
+	void CopyFromHoldup(const CHoldup* _source, double _time);
 	[[deprecated("WARNING! AddStream(const CStream*, double, double) is deprecated. Use AddStream(double, const CStream*), AddStream(double, double, const CStream*) or AddStreamInterval(double, double, const CStream*) instead.")]]
 	void AddStream(const CStream* _source, double _timeBeg, double _timeEnd);
 	[[deprecated("WARNING! AddStream2(const CStream*, double, double) is deprecated. Use AddStream(double, double, const CStream*) instead.")]]
 	void AddStream2(const CStream* _source, double _timeBeg, double _timeEnd);
+	[[deprecated("WARNING! GetMass(double, eValueBasises) is deprecated. Use GetMass(double) or GetMol(double) instead.")]]
+	double GetMass(double _time, unsigned _basis) const;
+	[[deprecated("WARNING! SetMass(double, double, eValueBasises) is deprecated. Use SetMass(double, double) or SetMol(double, double) instead.")]]
+	void SetMass(double _time, double _value, unsigned _basis);
+	[[deprecated("WARNING! GetCompoundMass(double, const std::string&, EPhaseTypes, eValueBasises) is deprecated. Use GetCompoundMass(double, const std::string&, EPhase) or GetCompoundMol(double, const std::string&, EPhase) instead.")]]
+	double GetCompoundMass(double _time, const std::string& _compoundKey, unsigned _soa, unsigned _basis = BASIS_MASS) const;
+	[[deprecated("WARNING! GetPhaseMass(double, EPhaseTypes, eValueBasises) is deprecated. Use GetPhaseMass(double, EPhase) or GetPhaseMol(double, EPhase) instead.")]]
+	double GetPhaseMass(double _time, unsigned _soa, unsigned _basis = BASIS_MASS) const;
+	[[deprecated("WARNING! SetPhaseMass(double, EPhaseTypes, double, eValueBasises) is deprecated. Use SetPhaseMass(double, EPhase, double) or SetPhaseMol(double, EPhase, double) instead.")]]
+	void SetPhaseMass(double _time, unsigned _soa, double _value, unsigned _basis = BASIS_MASS);
+
+	// Is required, so that deprecated functions do not hide CBaseStream functions
+	using CBaseStream::GetMass;
+	using CBaseStream::SetMass;
+	using CBaseStream::GetPhaseMass;
+	using CBaseStream::SetPhaseMass;
+	using CBaseStream::GetCompoundMass;
 };

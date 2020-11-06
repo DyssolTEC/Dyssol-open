@@ -24,14 +24,14 @@ CBaseStream::CBaseStream(const std::string& _key, const CMaterialsDatabase* _mat
 	m_materialsDB{ _materialsDB },
 	m_grid{ _grid }
 {
+	SetCacheSettings(*_cache);
+	SetToleranceSettings(*_tolerance);
 	for (const auto& key : *_compounds)
 		AddCompound(key);
 	for (const auto& overall : *_overall)
 		AddOverallProperty(overall.type, overall.name, overall.units);
 	for (const auto& phase : *_phases)
 		AddPhase(phase.state, phase.name);
-	SetCacheSettings(*_cache);
-	SetToleranceSettings(*_tolerance);
 	m_lookupTables.SetMaterialsDatabase(_materialsDB);
 }
 
@@ -58,20 +58,20 @@ void CBaseStream::Clear()
 	m_lookupTables.Clear();
 }
 
-void CBaseStream::SetupStructure(const CBaseStream& _other)
+void CBaseStream::SetupStructure(const CBaseStream* _other)
 {
 	Clear();
-	SetMaterialsDatabase(_other.m_materialsDB);
-	m_grid = _other.m_grid;
-	m_compounds = _other.m_compounds;
-	for (const auto& [type, old] : _other.m_overall)
+	SetMaterialsDatabase(_other->m_materialsDB);
+	SetCacheSettings(_other->m_cacheSettings);
+	m_grid = _other->m_grid;
+	m_compounds = _other->m_compounds;
+	for (const auto& [type, old] : _other->m_overall)
 		AddOverallProperty(type, old->GetName(), old->GetUnits());
-	for (const auto& [type, old] : _other.m_phases)
+	for (const auto& [type, old] : _other->m_phases)
 	{
 		auto* phase = AddPhase(type, old->GetName());
 		phase->MDDistr()->SetMinimalFraction(old->MDDistr()->GetMinimalFraction());
 	}
-	SetCacheSettings(_other.m_cacheSettings);
 }
 
 bool CBaseStream::HaveSameStructure(const CBaseStream& _stream1, const CBaseStream& _stream2)
@@ -290,6 +290,19 @@ double CBaseStream::GetMass(double _time) const
 	return GetOverallProperty(_time, EOverall::OVERALL_MASS);
 }
 
+double CBaseStream::GetMol(double _time) const
+{
+	double res = 0.0;
+	for (const auto& [state, phase] : m_phases)
+		res += GetPhaseMol(_time, state);
+	return res;
+}
+
+void CBaseStream::SetMol(double _time, double _value)
+{
+	SetMass(_time, GetMass(_time) * _value / GetMol(_time));
+}
+
 double CBaseStream::GetTemperature(double _time) const
 {
 	return GetOverallProperty(_time, EOverall::OVERALL_TEMPERATURE);
@@ -375,13 +388,11 @@ double CBaseStream::GetCompoundFraction(double _time, const std::string& _compou
 	return m_phases.at(_phase)->GetCompoundFraction(_time, CompoundIndex(_compoundKey));
 }
 
-double CBaseStream::GetCompoundFractionMoll(double _time, const std::string& _compoundKey, EPhase _phase) const
+double CBaseStream::GetCompoundMass(double _time, const std::string& _compoundKey) const
 {
-	if (!HasCompound(_compoundKey) || !HasPhase(_phase)) return {};
+	if (!HasCompound(_compoundKey)) return {};
 
-	const double molarMass = GetCompoundConstProperty(_compoundKey, MOLAR_MASS);
-	if (molarMass == 0.0) return {};
-	return m_phases.at(_phase)->GetCompoundFraction(_time, CompoundIndex(_compoundKey)) / molarMass * GetPhaseProperty(_time, _phase, MOLAR_MASS);
+	return GetCompoundFraction(_time, _compoundKey) * GetMass(_time);
 }
 
 double CBaseStream::GetCompoundMass(double _time, const std::string& _compoundKey, EPhase _phase) const
@@ -427,6 +438,27 @@ void CBaseStream::SetCompoundsFractions(double _time, EPhase _phase, const std::
 	if (!HasPhase(_phase)) return;
 
 	m_phases[_phase]->SetCompoundsDistribution(_time, _value);
+}
+
+double CBaseStream::GetCompoundMolFraction(double _time, const std::string& _compoundKey, EPhase _phase) const
+{
+	if (!HasCompound(_compoundKey) || !HasPhase(_phase)) return {};
+
+	return GetCompoundMol(_time, _compoundKey, _phase) / GetPhaseMol(_time, _phase);
+}
+
+double CBaseStream::GetCompoundMol(double _time, const std::string& _compoundKey, EPhase _phase) const
+{
+	return GetCompoundMass(_time, _compoundKey, _phase) / GetCompoundProperty(_compoundKey, MOLAR_MASS);
+}
+
+void CBaseStream::SetCompoundMolFraction(double _time, const std::string& _compoundKey, EPhase _phase, double _value)
+{
+	const double f = GetCompoundFraction(_time, _compoundKey, _phase);
+	const double m = GetPhaseMass(_time, _phase);
+	const double M = GetCompoundProperty(_compoundKey, MOLAR_MASS);
+	const double n = GetPhaseMol(_time, _phase);
+	SetCompoundFraction(_time, _compoundKey, _phase, f * M * n / m);
 }
 
 CPhase* CBaseStream::AddPhase(EPhase _phase, const std::string& _name)
@@ -483,7 +515,7 @@ double CBaseStream::GetPhaseMass(double _time, EPhase _phase) const
 {
 	if (!HasPhase(_phase)) return {};
 
-	return GetMass(_time) * m_phases.at(_phase)->GetFraction(_time);
+	return m_phases.at(_phase)->GetFraction(_time) * GetMass(_time);
 }
 
 double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, EOverall _property) const
@@ -505,7 +537,7 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundConst
 		double res = 0.0;
 		for (const auto& c : m_compounds)
 		{
-			const double molarMass = GetCompoundConstProperty(c, MOLAR_MASS);
+			const double molarMass = GetCompoundProperty(c, MOLAR_MASS);
 			if (molarMass != 0.0)
 				res += GetCompoundFraction(_time, c, _phase) / molarMass;
 		}
@@ -552,8 +584,8 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 			for (const auto& c : m_compounds)
 			{
 				const double visco = m_materialsDB->GetTPPropertyValue(c, _property, T, P);
-				const double mollMass = GetCompoundConstProperty(c, MOLAR_MASS);
-				const double mollFrac = GetCompoundFractionMoll(_time, c, _phase);
+				const double mollMass = GetCompoundProperty(c, MOLAR_MASS);
+				const double mollFrac = GetCompoundMolFraction(_time, c, _phase);
 				numerator += mollFrac * visco * std::sqrt(mollMass);
 				denominator += mollFrac * std::sqrt(mollMass);
 			}
@@ -573,7 +605,7 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 		{
 		case EPhase::LIQUID:
 			for (const auto& c : m_compounds)
-				res += GetCompoundFractionMoll(_time, c, _phase) / std::pow(m_materialsDB->GetTPPropertyValue(c, _property, T, P), 2.0);
+				res += GetCompoundMolFraction(_time, c, _phase) / std::pow(m_materialsDB->GetTPPropertyValue(c, _property, T, P), 2.0);
 			if (res != 0.0)
 				return 1.0 / std::sqrt(res);
 			break;
@@ -581,15 +613,15 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 			for (const auto& c1 : m_compounds)
 			{
 				const double conduct1 = m_materialsDB->GetTPPropertyValue(c1, _property, T, P);
-				const double mollMass1 = GetCompoundConstProperty(c1, MOLAR_MASS);
-				const double numerator = GetCompoundFractionMoll(_time, c1, _phase) * conduct1;
+				const double mollMass1 = GetCompoundProperty(c1, MOLAR_MASS);
+				const double numerator = GetCompoundMolFraction(_time, c1, _phase) * conduct1;
 				double denominator = 0.0;
 				for (const auto& c2 : m_compounds)
 				{
 					const double conduct2 = m_materialsDB->GetTPPropertyValue(c2, _property, T, P);
-					const double mollMass2 = GetCompoundConstProperty(c2, MOLAR_MASS);
+					const double mollMass2 = GetCompoundProperty(c2, MOLAR_MASS);
 					const double f = std::pow((1 + std::sqrt(conduct1 / conduct2) * std::pow(mollMass2 / mollMass1, 1.0 / 4.0)), 2) / std::sqrt(8 * (1 + mollMass1 / mollMass2));
-					denominator += GetCompoundFractionMoll(_time, c2, _phase) * f;
+					denominator += GetCompoundMolFraction(_time, c2, _phase) * f;
 				}
 				if (denominator != 0.0)
 					res += numerator / denominator;
@@ -611,7 +643,7 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 			const std::vector<double> vPorosities = m_grid->GetClassMeansByDistr(DISTR_PART_POROSITY);
 			for (size_t iCompound = 0; iCompound < nCompounds; ++iCompound)
 			{
-				const double density = GetCompoundTPProperty(_time, m_compounds[iCompound], DENSITY);
+				const double density = GetCompoundProperty(_time, m_compounds[iCompound], DENSITY);
 				for (size_t iPoros = 0; iPoros < nPorosities; ++iPoros)
 					res += density * (1 - vPorosities[iPoros]) * distr[iCompound][iPoros];
 			}
@@ -693,6 +725,34 @@ void CBaseStream::SetPhaseMass(double _time, EPhase _phase, double _value)
 	SetMass(_time, totalMass);
 }
 
+double CBaseStream::GetPhaseMolFraction(double _time, EPhase _phase) const
+{
+	if (!HasPhase(_phase)) return {};
+
+	return GetPhaseMol(_time, _phase) / GetMol(_time);
+}
+
+double CBaseStream::GetPhaseMol(double _time, EPhase _phase) const
+{
+	if (!HasPhase(_phase)) return {};
+
+	double res = 0.0;
+	for (const auto& c : m_compounds)
+		res += GetCompoundMol(_time, c, _phase);
+
+	return res;
+}
+
+void CBaseStream::SetPhaseMolFraction(double _time, EPhase _phase, double _value)
+{
+	SetPhaseFraction(_time, _phase, _value * GetPhaseFraction(_time, _phase) / GetPhaseMolFraction(_time, _phase));
+}
+
+void CBaseStream::SetPhaseMol(double _time, EPhase _phase, double _value)
+{
+	SetPhaseMass(_time, _phase, _value * GetPhaseMass(_time, _phase) / GetPhaseMol(_time, _phase));
+}
+
 double CBaseStream::GetMixtureProperty(double _time, EOverall _property) const
 {
 	return GetOverallProperty(_time, _property);
@@ -719,35 +779,35 @@ void CBaseStream::SetMixtureProperty(double _time, EOverall _property, double _v
 	SetOverallProperty(_time, _property, _value);
 }
 
-double CBaseStream::GetCompoundConstProperty(const std::string& _compoundKey, ECompoundConstProperties _property) const
+double CBaseStream::GetCompoundProperty(const std::string& _compoundKey, ECompoundConstProperties _property) const
 {
 	if (!m_materialsDB) return {};
 
 	return m_materialsDB->GetConstPropertyValue(_compoundKey, _property);
 }
 
-double CBaseStream::GetCompoundTPProperty(const std::string& _compoundKey, ECompoundTPProperties _property, double _temperature, double _pressure) const
+double CBaseStream::GetCompoundProperty(const std::string& _compoundKey, ECompoundTPProperties _property, double _temperature, double _pressure) const
 {
 	if (!m_materialsDB) return {};
 
 	return m_materialsDB->GetTPPropertyValue(_compoundKey, _property, _temperature, _pressure);
 }
 
-double CBaseStream::GetCompoundTPProperty(double _time, const std::string& _compoundKey, ECompoundTPProperties _property) const
+double CBaseStream::GetCompoundProperty(double _time, const std::string& _compoundKey, ECompoundTPProperties _property) const
 {
-	return GetCompoundTPProperty(_compoundKey, _property, GetTemperature(_time), GetPressure(_time));
+	return GetCompoundProperty(_compoundKey, _property, GetTemperature(_time), GetPressure(_time));
 }
 
-double CBaseStream::GetCompoundInteractionProperty(const std::string& _compoundKey1, const std::string& _compoundKey2, EInteractionProperties _property, double _temperature, double _pressure) const
+double CBaseStream::GetCompoundProperty(const std::string& _compoundKey1, const std::string& _compoundKey2, EInteractionProperties _property, double _temperature, double _pressure) const
 {
 	if (!m_materialsDB) return {};
 
 	return m_materialsDB->GetInteractionPropertyValue(_compoundKey1, _compoundKey2, _property, _temperature, _pressure);
 }
 
-double CBaseStream::GetCompoundInteractionProperty(double _time, const std::string& _compoundKey1, const std::string& _compoundKey2, EInteractionProperties _property) const
+double CBaseStream::GetCompoundProperty(double _time, const std::string& _compoundKey1, const std::string& _compoundKey2, EInteractionProperties _property) const
 {
-	return GetCompoundInteractionProperty(_compoundKey1, _compoundKey2, _property, GetTemperature(_time), GetPressure(_time));
+	return GetCompoundProperty(_compoundKey1, _compoundKey2, _property, GetTemperature(_time), GetPressure(_time));
 }
 
 double CBaseStream::GetFraction(double _time, const std::vector<size_t>& _coords) const
@@ -1656,13 +1716,12 @@ CDenseMDMatrix CBaseStream::CalculateMixDistribution(double _time1, const CBaseS
 	const double phaseFrac2 = phase2->GetFraction(_time2);
 	CDenseMDMatrix distr1 = phase1->MDDistr()->GetDistribution(_time1);
 	CDenseMDMatrix distr2 = phase2->MDDistr()->GetDistribution(_time2);
-	CDenseMDMatrix mix = distr1 * _mass1 * phaseFrac1 + distr2 * _mass2 * phaseFrac2;
-
 	// TODO: more elegant/effective solution
-	// hack to save compounds distributions, if all compounds are set to 0
-	//std::vector<double> compFracs = mix.GetVectorValue(DISTR_COMPOUNDS);
-	//if (std::all_of(compFracs.begin(), compFracs.end(), [](double d) { return d == 0.0; })) // all are equal to 0
-	//	mix = distr1 * _mass1 + distr2 * _mass2; // TODO: all secondary dimensions will be also recalculated
+	CDenseMDMatrix mix;
+	if (phaseFrac1 != 0.0 || phaseFrac2 != 0.0) // normal calculation
+		mix = distr1 * _mass1 * phaseFrac1 + distr2 * _mass2 * phaseFrac2;
+	else // preserve compounds distributions, if phase fractions are zero
+		mix = distr1 * _mass1 + distr2 * _mass2;
 
 	mix.Normalize();
 	return mix;
@@ -1797,7 +1856,7 @@ std::vector<double> CBaseStream::GetPSDNumber(double _time, const std::vector<st
 		for (size_t iCompound = 0; iCompound < activeCompounds.size(); ++iCompound)
 		{
 			std::vector<double> vec(nSizeClasses);
-			const double density = GetCompoundTPProperty(_time, activeCompounds[iCompound], DENSITY);
+			const double density = GetCompoundProperty(_time, activeCompounds[iCompound], DENSITY);
 			if (density == 0.0) return std::vector<double>(nSizeClasses, 0.0);
 			for (size_t iSize = 0; iSize < nSizeClasses; ++iSize)
 			{
@@ -1833,7 +1892,7 @@ std::vector<double> CBaseStream::GetPSDNumber(double _time, const std::vector<st
 		std::vector<double> res(nSizeClasses);
 		for (size_t iComp = 0; iComp < activeCompounds.size(); ++iComp)
 		{
-			const double density = GetCompoundTPProperty(_time, activeCompounds[iComp], DENSITY);
+			const double density = GetCompoundProperty(_time, activeCompounds[iComp], DENSITY);
 			if (density == 0.0) return std::vector<double>(nSizeClasses, 0.0);
 			for (size_t iSize = 0; iSize < nSizeClasses; ++iSize)
 				if (volumes[iSize] != 0.0)
@@ -1843,41 +1902,154 @@ std::vector<double> CBaseStream::GetPSDNumber(double _time, const std::vector<st
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/// Deprecated functions
+
+std::string CBaseStream::GetStreamName() const
+{
+	return GetName();
+}
+
+void CBaseStream::SetupStream(const CBaseStream* _stream)
+{
+	SetupStructure(_stream);
+}
+
 std::vector<double> CBaseStream::GetTimePointsForInterval(double _timeBeg, double _timeEnd, bool _inclusive) const
 {
 	return _inclusive ? GetTimePointsClosed(_timeBeg, _timeEnd) : GetTimePoints(_timeBeg, _timeEnd);
 }
 
-double CBaseStream::GetCompoundPhaseFraction(double _time, const std::string& _compound, unsigned _soa) const
+double CBaseStream::GetOverallProperty(double _time, unsigned _property) const
 {
-	return GetCompoundFraction(_time, _compound, PhaseSOA2EPhase(_soa));
+	switch (_property)
+	{
+	case FLOW:
+	case TOTAL_FLOW:		return GetMass(_time);
+	case TEMPERATURE:		return GetTemperature(_time);
+	case PRESSURE:			return GetPressure(_time);
+	default:				break;
+	}
+	if (_property >= 100 && _property < 200)
+		return GetMixtureProperty(_time, static_cast<ECompoundConstProperties>(_property));
+	if (_property >= 200 && _property < 300)
+		return GetMixtureProperty(_time, static_cast<ECompoundTPProperties>(_property));
+	return 0.0;
+}
+
+double CBaseStream::GetMass_Base(double _time) const
+{
+	return GetMass(_time);
+}
+
+void CBaseStream::SetMass_Base(double _time, double _value)
+{
+	SetMass(_time, _value);
+}
+
+std::vector<std::string> CBaseStream::GetCompoundsList() const
+{
+	return m_compounds;
+}
+
+std::vector<std::string> CBaseStream::GetCompoundsNames() const
+{
+	std::vector<std::string> res;
+	res.reserve(m_compounds.size());
+	for (const auto& key : m_compounds)
+		if (const auto* compound = m_materialsDB->GetCompound(key))
+			res.push_back(compound->GetName());
+	return res;
+}
+
+size_t CBaseStream::GetCompoundsNumber() const
+{
+	return m_compounds.size();
+}
+
+double CBaseStream::GetCompoundPhaseFraction(double _time, const std::string& _compoundKey, unsigned _soa) const
+{
+	return GetCompoundFraction(_time, _compoundKey, SOA2EPhase(_soa));
 }
 
 double CBaseStream::GetCompoundPhaseFraction(double _time, unsigned _index, unsigned _soa) const
 {
 	if (_index >= m_compounds.size()) return {};
-
-	return GetCompoundFraction(_time, m_compounds[_index], PhaseSOA2EPhase(_soa));
+	return GetCompoundFraction(_time, m_compounds[_index], SOA2EPhase(_soa));
 }
 
-void CBaseStream::SetCompoundPhaseFraction(double _time, const std::string& _compound, unsigned _soa, double _value)
+void CBaseStream::SetCompoundPhaseFraction(double _time, const std::string& _compoundKey, unsigned _soa, double _value, unsigned _basis)
 {
-	SetCompoundFraction(_time, _compound, PhaseSOA2EPhase(_soa), _value);
+	if (_basis == 0)
+		SetCompoundFraction(_time, _compoundKey, SOA2EPhase(_soa), _value);
+	else
+		SetCompoundMolFraction(_time, _compoundKey, SOA2EPhase(_soa), _value);
 }
 
-double CBaseStream::GetCompoundConstant(const std::string& _compound, unsigned _key) const
+double CBaseStream::GetPhaseMass_Base(double _time, unsigned _soa) const
 {
-	return GetCompoundConstProperty(_compound, static_cast<ECompoundConstProperties>(_key));
+	return GetPhaseMass(_time, SOA2EPhase(_soa));
 }
 
-double CBaseStream::GetPhaseMass(double _time, unsigned _soa) const
+void CBaseStream::SetPhaseMass_Base(double _time, unsigned _soa, double _value)
 {
-	return GetPhaseMass(_time, PhaseSOA2EPhase(_soa));
+	SetPhaseMass(_time, SOA2EPhase(_soa), _value);
 }
 
-void CBaseStream::SetPhaseMass(double _time, unsigned _soa, double _value)
+unsigned CBaseStream::GetPhaseSOA(unsigned _index) const
 {
-	SetPhaseMass(_time, PhaseSOA2EPhase(_soa), _value);
+	if (_index >= m_phases.size()) return {};
+	auto it = m_phases.begin();
+	std::advance(it, _index);
+	return EPhase2SOA(it->first);
+}
+
+unsigned CBaseStream::GetPhaseIndex(unsigned _soa) const
+{
+	return static_cast<unsigned>(std::distance(m_phases.begin(), m_phases.find(SOA2EPhase(_soa))));
+}
+
+size_t CBaseStream::GetPhasesNumber() const
+{
+	return m_phases.size();
+}
+
+double CBaseStream::GetCompoundConstant(const std::string& _compoundKey, unsigned _property) const
+{
+	return GetCompoundProperty(_compoundKey, static_cast<ECompoundConstProperties>(_property));
+}
+
+double CBaseStream::GetCompoundTPDProp(double _time, const std::string& _compoundKey, unsigned _property) const
+{
+	return GetCompoundProperty(_time, _compoundKey, static_cast<ECompoundTPProperties>(_property));
+}
+
+double CBaseStream::GetCompoundTPDProp(const std::string& _compoundKey, unsigned _property, double _temperature, double _pressure) const
+{
+	return GetCompoundProperty(_compoundKey, static_cast<ECompoundTPProperties>(_property), _temperature, _pressure);
+}
+
+double CBaseStream::GetCompoundInteractionProp(double _time, const std::string& _compoundKey1, const std::string& _compoundKey2, unsigned _property) const
+{
+	return GetCompoundProperty(_time, _compoundKey1, _compoundKey2, static_cast<EInteractionProperties>(_property));
+}
+
+double CBaseStream::GetCompoundInteractionProp(const std::string& _compoundKey1, const std::string& _compoundKey2, unsigned _property, double _temperature, double _pressure) const
+{
+	return GetCompoundProperty(_compoundKey1, _compoundKey2, static_cast<EInteractionProperties>(_property), _temperature, _pressure);
+}
+
+bool CBaseStream::GetDistribution(double _time, EDistrTypes _distribution, std::vector<double>& _result) const
+{
+	_result = GetDistribution(_time, _distribution);
+	return true;
+}
+
+void CBaseStream::CopyFromStream_Base(const CBaseStream& _source, double _time, bool _deleteDataAfter)
+{
+	Copy(_time, _source);
+	if (_deleteDataAfter)
+		RemoveTimePointsAfter(_time);
 }
 
 void CBaseStream::AddStream_Base(const CBaseStream& _source, double _time)
@@ -1885,44 +2057,55 @@ void CBaseStream::AddStream_Base(const CBaseStream& _source, double _time)
 	Add(_time, _source);
 }
 
-double CBaseStream::GetSinglePhaseProp(double _time, unsigned _property, unsigned _soa)
+double CBaseStream::GetSinglePhaseProp(double _time, unsigned _property, unsigned _soa) const
 {
 	if (_property == PHASE_FRACTION || _property == FRACTION)
-		return GetPhaseFraction(_time, PhaseSOA2EPhase(_soa));
+		return GetPhaseFraction(_time, SOA2EPhase(_soa));
 	if (_property == FLOW)
-		return GetPhaseMass(_time, PhaseSOA2EPhase(_soa));
+		return GetPhaseMass(_time, SOA2EPhase(_soa));
 	if (_property == TEMPERATURE)
-		return GetPhaseProperty(_time, PhaseSOA2EPhase(_soa), EOverall::OVERALL_TEMPERATURE);
+		return GetPhaseProperty(_time, SOA2EPhase(_soa), EOverall::OVERALL_TEMPERATURE);
 	if (_property == PRESSURE)
-		return GetPhaseProperty(_time, PhaseSOA2EPhase(_soa), EOverall::OVERALL_PRESSURE);
+		return GetPhaseProperty(_time, SOA2EPhase(_soa), EOverall::OVERALL_PRESSURE);
 	if (100 <= _property && _property <= 199)
-		return GetPhaseProperty(_time, PhaseSOA2EPhase(_soa), static_cast<ECompoundConstProperties>(_property));
+		return GetPhaseProperty(_time, SOA2EPhase(_soa), static_cast<ECompoundConstProperties>(_property));
 	if (200 <= _property && _property <= 299)
-		return GetPhaseProperty(_time, PhaseSOA2EPhase(_soa), static_cast<ECompoundTPProperties>(_property));
+		return GetPhaseProperty(_time, SOA2EPhase(_soa), static_cast<ECompoundTPProperties>(_property));
 	return {};
 }
 
-double CBaseStream::GetPhaseTPDProp(double _time, unsigned _property, unsigned _soa)
+double CBaseStream::GetPhaseTPDProp(double _time, unsigned _property, unsigned _soa) const
 {
-	return GetPhaseProperty(_time, PhaseSOA2EPhase(_soa), static_cast<ECompoundTPProperties>(_property));
+	return GetPhaseProperty(_time, SOA2EPhase(_soa), static_cast<ECompoundTPProperties>(_property));
 }
 
 void CBaseStream::SetSinglePhaseProp(double _time, unsigned _property, unsigned _soa, double _value)
 {
 	if (_property == PHASE_FRACTION || _property == FRACTION)
-		SetPhaseFraction(_time, PhaseSOA2EPhase(_soa), _value);
+		SetPhaseFraction(_time, SOA2EPhase(_soa), _value);
 	else if (_property == FLOW)
-		SetPhaseMass(_time, PhaseSOA2EPhase(_soa), _value);
+		SetPhaseMass(_time, SOA2EPhase(_soa), _value);
 }
 
-EPhase CBaseStream::PhaseSOA2EPhase(unsigned _soa)
+EPhase CBaseStream::SOA2EPhase(unsigned _soa)
 {
 	switch (_soa)
 	{
-	case SOA_SOLID:		return EPhase::SOLID;
-	case SOA_LIQUID:	return EPhase::LIQUID;
-	case SOA_VAPOR:		return EPhase::VAPOR;
-	default:			return EPhase::UNDEFINED;
+	case 0:		return EPhase::SOLID;
+	case 1:		return EPhase::LIQUID;
+	case 2:		return EPhase::VAPOR;
+	default:	return EPhase::UNDEFINED;
 	}
 }
 
+unsigned CBaseStream::EPhase2SOA(EPhase _phase)
+{
+	switch (_phase)
+	{
+	case EPhase::SOLID:		return 0;
+	case EPhase::LIQUID:	return 1;
+	case EPhase::VAPOR:		return 2;
+	case EPhase::UNDEFINED:	return 4;
+	}
+	return 4;
+}

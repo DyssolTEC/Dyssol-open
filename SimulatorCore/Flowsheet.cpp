@@ -18,6 +18,9 @@ void CFlowsheet::Create()
 {
 	m_grid.AddDimension(DISTR_COMPOUNDS, EGridEntry::GRID_SYMBOLIC, {}, {});
 	m_overall.emplace_back(SOverallDescriptor{ EOverall::OVERALL_MASS, "Mass flow" , "kg/s" });
+	// TODO: remove when added by user
+	m_overall.emplace_back(SOverallDescriptor{ EOverall::OVERALL_TEMPERATURE, "Temperature" , "K" });
+	m_overall.emplace_back(SOverallDescriptor{ EOverall::OVERALL_PRESSURE, "Pressure" , "Pa" });
 }
 
 void CFlowsheet::Clear()
@@ -556,6 +559,9 @@ void CFlowsheet::UpdateDistributionsGrid()
 
 void CFlowsheet::UpdateCacheSettings()
 {
+	m_cacheStreams = { m_parameters.cacheFlagStreams, m_parameters.cacheWindow, m_parameters.cachePath };
+	m_cacheHoldups = { m_parameters.cacheFlagHoldups, m_parameters.cacheWindow, m_parameters.cachePath };
+
 	for (auto& stream : m_streams)
 		stream->SetCacheSettings(m_cacheStreams);
 	for (auto& unit : m_units)
@@ -566,6 +572,8 @@ void CFlowsheet::UpdateCacheSettings()
 
 void CFlowsheet::UpdateToleranceSettings()
 {
+	m_tolerance = { m_parameters.absTol, m_parameters.relTol, m_parameters.minFraction };
+
 	for (auto& stream : m_streams)
 		stream->SetToleranceSettings(m_tolerance);
 	for (auto& unit : m_units)
@@ -676,6 +684,8 @@ bool CFlowsheet::LoadFromFile(CH5Handler& _h5File, const std::wstring& _fileName
 
 	// parameters
 	m_parameters.LoadFromFile(_h5File, root + StrConst::Flow_H5GroupOptions);
+	UpdateToleranceSettings();	// needed to fill global tolerance structure with possibly updated data
+	UpdateCacheSettings();		// needed to fill global cache structure with possibly updated data
 
 	// distributions grid
 	m_grid.LoadFromFile(_h5File, root + StrConst::Flow_H5GroupDistrGrid);
@@ -734,6 +744,8 @@ bool CFlowsheet::LoadFromFile_v3(CH5Handler& _h5File, const std::string& _path)
 
 	// parameters
 	m_parameters.LoadFromFile(_h5File, root + StrConst::Flow_H5GroupOptions);
+	UpdateToleranceSettings();	// needed to fill global tolerance structure with possibly updated data
+	UpdateCacheSettings();		// needed to fill global cache structure with possibly updated data
 
 	// distributions grid
 	m_grid.LoadFromFile(_h5File, root + StrConst::Flow_H5GroupDistrGrid);

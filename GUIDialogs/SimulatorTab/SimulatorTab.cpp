@@ -186,7 +186,7 @@ void CSimulatorTab::UpdateLog() const
 	ui.tableLog->SetItemNotEditable(EStatTable::TIME_WIN_LENGTH,  0, m_pSimulator->m_dTWLength);
 	ui.tableLog->SetItemNotEditable(EStatTable::ITERATION_NUMBER, 0, m_pSimulator->m_iTWIterationFull);
 	ui.tableLog->SetItemNotEditable(EStatTable::WINDOW_NUMBER,    0, m_pSimulator->m_iWindowNumber);
-	ui.tableLog->SetItemNotEditable(EStatTable::UNIT_NAME,        0, m_pSimulator->m_sUnitName);
+	ui.tableLog->SetItemNotEditable(EStatTable::UNIT_NAME,        0, m_pSimulator->m_unitName);
 	ui.tableLog->SetItemNotEditable(EStatTable::ELAPSED_TIME,     0, QDateTime::fromTime_t(m_simulationTimer.elapsed() / 1000).toUTC().toString("hh:mm:ss"));
 }
 

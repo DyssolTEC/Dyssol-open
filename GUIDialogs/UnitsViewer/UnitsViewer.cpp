@@ -161,12 +161,12 @@ void CUnitsViewer::UpdateHoldupsView()
 	const auto& manager = m_pSelectedModel->GetModel()->GetStreamsManager();
 	int nOldSelected = ui.listWidgetHoldups->currentRow();
 	ui.listWidgetHoldups->clear();
-	for (const auto& holdup : manager.GetHoldups())
+	for (const auto& holdup : manager.GetAllWork())
 		ui.listWidgetHoldups->insertItem(ui.listWidgetHoldups->count(), new QListWidgetItem(QString::fromStdString(holdup->GetName())));
 
-	if ((nOldSelected != -1) && (nOldSelected < (int)manager.GetHoldupsNumber()))
+	if (nOldSelected != -1 && nOldSelected < (int)manager.GetAllWork().size())
 		ui.listWidgetHoldups->setCurrentRow(nOldSelected);
-	else if (manager.GetHoldupsNumber() > 0)
+	else if (manager.GetAllWork().size() > 0)
 		ui.listWidgetHoldups->setCurrentRow(0);
 	else
 		ui.listWidgetHoldups->setCurrentRow(-1);
@@ -232,7 +232,7 @@ void CUnitsViewer::UpdateCurvesView()
 
 void CUnitsViewer::UnitChanged()
 {
-	if (ui.listWidgetUnits->currentRow() > 0 && ui.listWidgetUnits->currentRow() < m_pFlowsheet->GetUnitsNumber())
+	if (ui.listWidgetUnits->currentRow() >= 0 && ui.listWidgetUnits->currentRow() < m_pFlowsheet->GetUnitsNumber())
 		m_pSelectedModel = m_pFlowsheet->GetAllUnits()[ui.listWidgetUnits->currentRow()];
 	else
 		m_pSelectedModel = nullptr;
@@ -255,7 +255,7 @@ void CUnitsViewer::HoldupChanged()
 {
 	if( !m_pSelectedModel || !m_pSelectedModel->GetModel()) return;
 	QModelIndexList indexes = ui.listWidgetHoldups->selectionModel()->selection().indexes();
-	const auto& holdupsList = m_pSelectedModel->GetModel()->GetStreamsManager().GetHoldups();
+	const auto& holdupsList = m_pSelectedModel->GetModel()->GetStreamsManager().GetAllWork();
 	std::vector<const CBaseStream*> vHoldups;
 	for( int i=0; i<indexes.size(); ++i )
 		if( ( indexes[i].row() >= 0 ) && ( indexes[i].row() < (int)holdupsList.size() ) )

@@ -9,7 +9,7 @@ CBaseSolver::CBaseSolver():
 	m_solverName(""),
 	m_authorName(""),
 	m_solverUniqueKey(""),
-	m_solverVersion(1)
+	m_solverVersion(0)
 {
 }
 

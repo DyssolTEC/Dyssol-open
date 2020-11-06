@@ -7,8 +7,8 @@
 class CDynamicUnit : public CBaseUnit
 {
 public:
-	CDynamicUnit();
-	virtual ~CDynamicUnit();
+	CDynamicUnit() = default;
+	~CDynamicUnit() override = default;
 
 	/** Calculates unit on specified time interval (for dynamic units).
 	 *	\param _dStartTime Start of the time interval

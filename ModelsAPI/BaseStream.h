@@ -60,7 +60,7 @@ public:
 	void Clear();
 
 	// Sets up the stream structure (MD dimensions, phases, materials, etc.) the same as an in the given stream. Removes all existing data.
-	void SetupStructure(const CBaseStream& _other);
+	void SetupStructure(const CBaseStream* _other);
 
 	// Checks whether both streams have the same structure (phases, dimensions, etc.).
 	static bool HaveSameStructure(const CBaseStream& _stream1, const CBaseStream& _stream2);
@@ -124,7 +124,7 @@ public:
 
 	// Returns a value of the specified overall property at the given time point. Returns default value if such overall property has not been defined.
 	double GetOverallProperty(double _time, EOverall _property) const;
-	// Returns a value of the overall mass at the given time point. Returns 0 if mass overall property has not been defined.
+	// Returns a value of the overall mass at the given time point.
 	double GetMass(double _time) const;
 	// Returns a value of the overall temperature at the given time point. Returns standard condition temperature if temperature overall property has not been defined.
 	double GetTemperature(double _time) const;
@@ -133,12 +133,17 @@ public:
 
 	// Sets a value of the specified overall property at the given time point if such property exists.
 	void SetOverallProperty(double _time, EOverall _property, double _value);
-	// Sets a value of the overall mass at the given time point if such property exists.
+	// Sets a value of the overall mass at the given time point.
 	void SetMass(double _time, double _value);
 	// Sets a value of the overall temperature at the given time point if such property exists.
 	void SetTemperature(double _time, double _value);
 	// Sets a value of the overall pressure at the given time point if such property exists.
 	void SetPressure(double _time, double _value);
+
+	// Returns a value of the overall amount of substance at the given time point.
+	double GetMol(double _time) const;
+	// Sets a value of the overall amount of substance at the given time point.
+	void SetMol(double _time, double _value);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Compounds
@@ -158,8 +163,8 @@ public:
 	double GetCompoundFraction(double _time, const std::string& _compoundKey) const;
 	// Returns the mass fraction of the compound in the specified phase at the given time point.
 	double GetCompoundFraction(double _time, const std::string& _compoundKey, EPhase _phase) const;
-	// Returns the mass fraction of the compound in the specified phase at the given time point in moll basis.
-	double GetCompoundFractionMoll(double _time, const std::string& _compoundKey, EPhase _phase) const;
+	// Returns the mass of the compound in the total mixture at the given time point.
+	double GetCompoundMass(double _time, const std::string& _compoundKey) const;
 	// Returns the mass of the compound in the specified phase at the given time point.
 	double GetCompoundMass(double _time, const std::string& _compoundKey, EPhase _phase) const;
 	// Returns mass fraction of all defined compounds at the given time point.
@@ -173,6 +178,13 @@ public:
 	void SetCompoundsFractions(double _time, const std::vector<double>& _value);
 	// Sets mass fraction of all defined compounds in the specified phase at the given time point.
 	void SetCompoundsFractions(double _time, EPhase _phase, const std::vector<double>& _value);
+
+	// Returns the molar fraction of the compound in the specified phase at the given time point.
+	double GetCompoundMolFraction(double _time, const std::string& _compoundKey, EPhase _phase) const;
+	// Returns the amount of substance of the compound in the specified phase at the given time point.
+	double GetCompoundMol(double _time, const std::string& _compoundKey, EPhase _phase) const;
+	// Sets the molar fraction of the compound in the specified phase at the given time point.
+	void SetCompoundMolFraction(double _time, const std::string& _compoundKey, EPhase _phase, double _value);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Phases
@@ -208,6 +220,15 @@ public:
 	// Sets the mass of the specified phase at the given time point. Total mass of the stream is correspondingly adjusted, masses of other phases remain the same.
 	void SetPhaseMass(double _time, EPhase _phase, double _value);
 
+	// Returns the mass fraction of the specified phase at the given time point.
+	double GetPhaseMolFraction(double _time, EPhase _phase) const;
+	// Returns the amount of substance of the specified phase at the given time point.
+	double GetPhaseMol(double _time, EPhase _phase) const;
+	// Sets the molar fraction of the specified phase at the given time point.
+	void SetPhaseMolFraction(double _time, EPhase _phase, double _value);
+	// Sets the amount of substance of the specified phase at the given time point. Total mass of the stream is correspondingly adjusted, masses of other phases remain the same.
+	void SetPhaseMol(double _time, EPhase _phase, double _value);
+
 	////////////////////////////////////////////////////////////////////////////////
 	// Properties of the total mixture
 	//
@@ -226,17 +247,16 @@ public:
 	// Material database
 	//
 
-	// TODO: rename, make the same
 	// Returns the value of the constant physical property (CRITICAL_TEMPERATURE, MOLAR_MASS, etc) of the specified compound.
-	double GetCompoundConstProperty(const std::string& _compoundKey, ECompoundConstProperties _property) const;
+	double GetCompoundProperty(const std::string& _compoundKey, ECompoundConstProperties _property) const;
 	// Returns the value of the temperature/pressure-dependent physical property (DENSITY, ENTHALPY, etc) of the specified compound with the given temperature [K] and pressure [Pa].
-	double GetCompoundTPProperty(const std::string& _compoundKey, ECompoundTPProperties _property, double _temperature, double _pressure) const;
+	double GetCompoundProperty(const std::string& _compoundKey, ECompoundTPProperties _property, double _temperature, double _pressure) const;
 	// Returns the value of the temperature/pressure-dependent physical property (DENSITY, ENTHALPY, etc) of the specified compound at temperature and pressure at the given time point.
-	double GetCompoundTPProperty(double _time, const std::string& _compoundKey, ECompoundTPProperties _property) const;
+	double GetCompoundProperty(double _time, const std::string& _compoundKey, ECompoundTPProperties _property) const;
 	// Returns the value of the interaction physical property (INTERFACE_TENSION, etc) between the specified compounds with the given specified temperature [K] and pressure [Pa].
-	double GetCompoundInteractionProperty(const std::string& _compoundKey1, const std::string& _compoundKey2, EInteractionProperties _property, double _temperature, double _pressure) const;
+	double GetCompoundProperty(const std::string& _compoundKey1, const std::string& _compoundKey2, EInteractionProperties _property, double _temperature, double _pressure) const;
 	// Returns the value of the interaction physical property (INTERFACE_TENSION, etc) between the specified compounds at temperature and pressure at the given time point.
-	double GetCompoundInteractionProperty(double _time, const std::string& _compoundKey1, const std::string& _compoundKey2, EInteractionProperties _property) const;
+	double GetCompoundProperty(double _time, const std::string& _compoundKey1, const std::string& _compoundKey2, EInteractionProperties _property) const;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Distributed properties of the solid phase
@@ -407,30 +427,63 @@ private:
 	////////////////////////////////////////////////////////////////////////////////
 	/// Deprecated functions
 public:
-	[[deprecated("WARNING! GetTimePointsForInterval(double, double, bool) is deprecated. Use the GetTimePoints(double, double) or GetTimePointsClosed(double, double) instead.")]]
+	[[deprecated("WARNING! GetStreamName() is deprecated. Use GetName() instead.")]]
+	std::string GetStreamName() const;
+	[[deprecated("WARNING! SetupStream(const CBaseStream*) is deprecated. Use SetupStructure(const CBaseStream*) instead.")]]
+	void SetupStream(const CBaseStream* _stream);
+	[[deprecated("WARNING! GetTimePointsForInterval(double, double, bool) is deprecated. Use GetTimePoints(double, double) or GetTimePointsClosed(double, double) instead.")]]
 	std::vector<double> GetTimePointsForInterval(double _timeBeg, double _timeEnd, bool _inclusive) const;
-	[[deprecated("WARNING! GetCompoundsList() is deprecated. Use the unit-level version GetCompoundsList() instead.")]]
-	static std::vector<std::string> GetCompoundsList() { return {}; }
-	[[deprecated("WARNING! GetCompoundPhaseFraction(double, const std::string&, unsigned) is deprecated. Use GetCompoundFraction(double, const std::string&, EPhase) or GetCompoundsFractions(_time, EPhase) instead.")]]
-	double GetCompoundPhaseFraction(double _time, const std::string& _compound, unsigned _soa) const;
-	[[deprecated("WARNING! GetCompoundPhaseFraction(double, unsigned, unsigned) is deprecated. Use GetCompoundFraction(double, const std::string&, EPhase) or GetCompoundsFractions(_time, EPhase) instead.")]]
+	[[deprecated("WARNING! GetOverallProperty(double, unsigned) is deprecated. Use GetOverallProperty(double, EOverall), GetMixtureProperty(double, EOverall), GetMixtureProperty(double, ECompoundConstProperties) or GetMixtureProperty(double, ECompoundTPProperties) instead.")]]
+	double GetOverallProperty(double _time, unsigned _property) const;
+	[[deprecated("WARNING! GetMass_Base(double) is deprecated. Use GetMass(double) instead.")]]
+	double GetMass_Base(double _time) const;
+	[[deprecated("WARNING! SetMass_Base(double, double) is deprecated. Use SetMass(double, double) instead.")]]
+	void SetMass_Base(double _time, double _value);
+	[[deprecated("WARNING! GetCompoundsList() is deprecated. Use a unit-level version CBaseUnit::GetCompoundsList() instead.")]]
+	std::vector<std::string> GetCompoundsList() const;
+	[[deprecated("WARNING! GetCompoundsNames() is deprecated. Use a unit-level version CBaseUnit::GetAllCompoundsNames(), CBaseUnit::GetCompoundName(const std::string&) or CBaseUnit::GetCompoundName(size_t) instead.")]]
+	std::vector<std::string> GetCompoundsNames() const;
+	[[deprecated("WARNING! GetCompoundsNumber() is deprecated. Use a unit-level version CBaseUnit::GetCompoundsNumber() instead.")]]
+	size_t GetCompoundsNumber() const;
+	[[deprecated("WARNING! GetCompoundPhaseFraction(double, const std::string&, EPhaseTypes) is deprecated. Use GetCompoundFraction(double, const std::string&, EPhase) or GetCompoundsFractions(_time, EPhase) instead.")]]
+	double GetCompoundPhaseFraction(double _time, const std::string& _compoundKey, unsigned _soa) const;
+	[[deprecated("WARNING! GetCompoundPhaseFraction(double, unsigned, EPhaseTypes) is deprecated. Use GetCompoundFraction(double, const std::string&, EPhase) or GetCompoundsFractions(_time, EPhase) instead.")]]
 	double GetCompoundPhaseFraction(double _time, unsigned _index, unsigned _soa) const;
-	[[deprecated("WARNING! SetCompoundPhaseFraction(double, const std::string&, unsigned, double) is deprecated. Use SetCompoundFraction(double, const std::string&, EPhase, double) instead.")]]
-	void SetCompoundPhaseFraction(double _time, const std::string& _compound, unsigned _soa, double _value);
-	[[deprecated("WARNING! GetCompoundConstant(const std::string&, unsigned) is deprecated. Use GetCompoundConstProperty(const std::string&, ECompoundConstProperties) instead.")]]
-	double GetCompoundConstant(const std::string& _compound, unsigned _key) const;
-	[[deprecated("WARNING! GetPhaseMass(double, unsigned) is deprecated. Use GetPhaseMass(double, EPhase) instead.")]]
-	double GetPhaseMass(double _time, unsigned _soa) const;
-	[[deprecated("WARNING! SetPhaseMass(double, unsigned, double) is deprecated. Use SetPhaseMass(double, EPhase, double) instead.")]]
-	void SetPhaseMass(double _time, unsigned _soa, double _value);
+	[[deprecated("WARNING! SetCompoundPhaseFraction(double, const std::string&, EPhaseTypes, double, eValueBasises) is deprecated. Use SetCompoundFraction(double, const std::string&, EPhase, double) or SetCompoundMolFraction(double, const std::string&, EPhase, double) instead.")]]
+	void SetCompoundPhaseFraction(double _time, const std::string& _compoundKey, unsigned _soa, double _value, unsigned _basis = BASIS_MASS);
+	[[deprecated("WARNING! GetPhaseMass_Base(double, EPhaseTypes) is deprecated. Use GetPhaseMass(double, EPhase) instead.")]]
+	double GetPhaseMass_Base(double _time, unsigned _soa) const;
+	[[deprecated("WARNING! SetPhaseMass_Base(double, EPhaseTypes, double) is deprecated. Use SetPhaseMass(double, EPhase, double) instead.")]]
+	void SetPhaseMass_Base(double _time, unsigned _soa, double _value);
+	[[deprecated("WARNING! GetPhaseSOA(unsigned) is deprecated. Use a unit-level version CBaseUnit::GetPhaseType(size_t) instead.")]]
+	unsigned GetPhaseSOA(unsigned _index) const;
+	[[deprecated("WARNING! GetPhaseIndex(EPhaseTypes) is deprecated. Access phases by their type.")]]
+	unsigned GetPhaseIndex(unsigned _soa) const;
+	[[deprecated("WARNING! GetPhasesNumber() is deprecated. Use a unit-level version CBaseUnit::GetPhasesNumber() instead.")]]
+	size_t GetPhasesNumber() const;
+	[[deprecated("WARNING! GetCompoundConstant(const std::string&, unsigned) is deprecated. Use GetCompoundProperty(const std::string&, ECompoundConstProperties) instead.")]]
+	double GetCompoundConstant(const std::string& _compoundKey, unsigned _property) const;
+	[[deprecated("WARNING! GetCompoundTPDProp(double, const std::string&, unsigned) is deprecated. Use GetCompoundProperty(double, const std::string&, ECompoundTPProperties) instead.")]]
+	double GetCompoundTPDProp(double _time, const std::string& _compoundKey, unsigned _property) const;
+	[[deprecated("WARNING! GetCompoundTPDProp(const std::string&, unsigned, double, double) is deprecated. Use GetCompoundProperty(const std::string&, ECompoundTPProperties, double, double) instead.")]]
+	double GetCompoundTPDProp(const std::string& _compoundKey, unsigned _property, double _temperature, double _pressure) const;
+	[[deprecated("WARNING! GetCompoundInteractionProp(double, const std::string&, const std::string&, unsigned) is deprecated. Use GetCompoundProperty(double, const std::string&, const std::string&, ECompoundTPProperties) instead.")]]
+	double GetCompoundInteractionProp(double _time, const std::string& _compoundKey1, const std::string& _compoundKey2, unsigned _property) const;
+	[[deprecated("WARNING! GetCompoundInteractionProp(const std::string&, const std::string&, unsigned, double, double) is deprecated. Use GetCompoundProperty(const std::string&, const std::string&, ECompoundTPProperties, double, double) instead.")]]
+	double GetCompoundInteractionProp(const std::string& _compoundKey1, const std::string& _compoundKey2, unsigned _property, double _temperature, double _pressure) const;
+	[[deprecated("WARNING! GetDistribution(double, EDistrTypes, std::vector<double>&) is deprecated. Use GetDistribution(double, EDistrTypes) instead.")]]
+	bool GetDistribution(double _time, EDistrTypes _distribution, std::vector<double>& _result) const;
+	[[deprecated("WARNING! CopyFromStream_Base(const CBaseStream&, double, bool) is deprecated. Use Copy(double, const CBaseStream&) instead.")]]
+	void CopyFromStream_Base(const CBaseStream& _source, double _time, bool _deleteDataAfter = true);
 	[[deprecated("WARNING! AddStream_Base(const CBaseStream&, double) is deprecated. Use Add(double, const CBaseStream&) instead.")]]
 	void AddStream_Base(const CBaseStream& _source, double _time);
-	[[deprecated("WARNING! GetSinglePhaseProp(double, unsigned, unsigned) is deprecated. Use GetPhaseFraction(double, EPhase), GetPhaseMass(double, EPhase), GetPhaseProperty(double, EPhase, EOverall), GetPhaseProperty(double, EPhase, ECompoundConstProperties) or GetPhaseProperty(double, EPhase, ECompoundTPProperties) instead.")]]
-	double GetSinglePhaseProp(double _time, unsigned _property, unsigned _soa);
-	[[deprecated("WARNING! GetPhaseTPDProp(double, unsigned, unsigned) is deprecated. Use GetPhaseProperty(double, EPhase, ECompoundTPProperties) instead.")]]
-	double GetPhaseTPDProp(double _time, unsigned _property, unsigned _soa);
-	[[deprecated("WARNING! SetSinglePhaseProp(double, unsigned, unsigned, double) is deprecated. Use SetPhaseFraction(double, EPhase, double) or SetPhaseMass(double, EPhase, double) instead.")]]
+	[[deprecated("WARNING! GetSinglePhaseProp(double, unsigned, EPhaseTypes) is deprecated. Use GetPhaseFraction(double, EPhase), GetPhaseMass(double, EPhase), GetPhaseProperty(double, EPhase, EOverall), GetPhaseProperty(double, EPhase, ECompoundConstProperties) or GetPhaseProperty(double, EPhase, ECompoundTPProperties) instead.")]]
+	double GetSinglePhaseProp(double _time, unsigned _property, unsigned _soa) const;
+	[[deprecated("WARNING! GetPhaseTPDProp(double, unsigned, EPhaseTypes) is deprecated. Use GetPhaseProperty(double, EPhase, ECompoundTPProperties) instead.")]]
+	double GetPhaseTPDProp(double _time, unsigned _property, unsigned _soa) const;
+	[[deprecated("WARNING! SetSinglePhaseProp(double, unsigned, EPhaseTypes, double) is deprecated. Use SetPhaseFraction(double, EPhase, double) or SetPhaseMass(double, EPhase, double) instead.")]]
 	void SetSinglePhaseProp(double _time, unsigned _property, unsigned _soa, double _value);
 protected:
-	static EPhase PhaseSOA2EPhase(unsigned _soa);
+	static EPhase SOA2EPhase(unsigned _soa);
+	static unsigned EPhase2SOA(EPhase _phase);
 };

@@ -120,6 +120,7 @@ CBaseUnit* CModelsManager::InstantiateUnit(const std::string& _key)
 				CloseDyssolLibrary(hLibrary);
 				continue; // seek further
 			}
+			pUnit->CreateBasicInfo();
 			// save created unit and its library
 			m_loadedUnits[pUnit] = hLibrary;
 			// return instantiated unit
@@ -150,6 +151,7 @@ CBaseSolver* CModelsManager::InstantiateSolver(const std::string& _key)
 				CloseDyssolLibrary(hLibrary);
 				continue; // seek further
 			}
+			pSolver->CreateBasicInfo();
 			// save created solver and its library
 			m_loadedSolvers[pSolver] = hLibrary;
 			// return instantiated solver
@@ -290,6 +292,18 @@ SUnitDescriptor CModelsManager::TryGetUnitDescriptor(const std::wstring& _pathTo
 		return {};
 	}
 
+	// do not allow code in constructor, as in previous versions
+	try {
+		if (!pUnit->GetUnitName().empty() || !pUnit->GetUniqueID().empty() || !pUnit->GetAuthorName().empty() || pUnit->GetVersion() != 0)
+			return {};
+	}
+	catch (const std::logic_error& e) {
+		std::cerr << e.what() << std::endl;
+		return {};
+	}
+
+	pUnit->CreateBasicInfo();
+
 	SUnitDescriptor unitDescriptor;
 
 	// obtain descriptor information
@@ -330,6 +344,17 @@ SSolverDescriptor CModelsManager::TryGetSolverDescriptor(const std::wstring& _pa
 		catch (const std::logic_error&) {
 			continue;
 		}
+
+		// do not allow code in constructor, as in previous versions
+		try {
+			if (!pSolver->GetName().empty() || !pSolver->GetUniqueID().empty() || !pSolver->GetAuthorName().empty() || pSolver->GetVersion() != 0)
+				continue;
+		}
+		catch (const std::logic_error&) {
+			continue;
+		}
+
+		pSolver->CreateBasicInfo();
 
 		// validate solver
 		if (pSolver->m_nCompilerVer != COMPILER_VERSION)

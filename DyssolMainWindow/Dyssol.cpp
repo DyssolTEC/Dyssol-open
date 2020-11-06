@@ -292,6 +292,8 @@ void Dyssol::SetupCache()
 		m_pLoadingThread->Block();
 		QMessageBox::critical(this, StrConst::Dyssol_MainWindowName, "Unable to access the selected cache path because it is write-protected:\n'" + cachePath + "'\nPlease choose another path using Tools -> Settings -> Change path...\nSaving/loading of flowsheets is blocked until that.");
 	}
+
+	m_Flowsheet.UpdateCacheSettings();
 }
 
 void Dyssol::ClearCache()

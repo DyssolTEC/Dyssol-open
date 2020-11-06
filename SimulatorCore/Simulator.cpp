@@ -1,7 +1,5 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
-// TODO: define in project settings
-//#define NOMINMAX
 #include "Simulator.h"
 #include "Flowsheet.h"
 #include "ParametersHolder.h"
@@ -76,7 +74,7 @@ void CSimulator::Simulate()
 		for (auto& model : partition.models)
 		{
 			m_log.WriteInfo(StrConst::Sim_InfoUnitFinalization(model->GetName(), model->GetModel()->GetUnitName()));
-			model->GetModel()->Finalize();
+			model->GetModel()->FinalizeUnit();
 		}
 	}
 
@@ -240,7 +238,7 @@ void CSimulator::SimulateUnits(const CCalculationSequence::SPartition& _partitio
 	for (auto& model : _partition.models)
 	{
 		// current model
-		m_sUnitName = model->GetName();
+		m_unitName = model->GetName();
 
 		// initialize unit if not yet initialized
 		if (!m_vInitialized[model->GetKey()])
@@ -253,7 +251,7 @@ void CSimulator::SimulateUnits(const CCalculationSequence::SPartition& _partitio
 		if (m_nCurrentStatus == ESimulatorStatus::SIMULATOR_SHOULD_BE_STOPPED) break;
 
 		// write log
-		m_log.WriteInfo(StrConst::Sim_InfoUnitSimulation(m_sUnitName, model->GetModel()->GetUnitName(), _t1, _t2));
+		m_log.WriteInfo(StrConst::Sim_InfoUnitSimulation(m_unitName, model->GetModel()->GetUnitName(), _t1, _t2));
 
 		// load previous state
 		model->GetModel()->LoadStateUnit();
@@ -324,9 +322,9 @@ void CSimulator::SimulateUnit(CUnitContainer& _model, double _t1, double _t2 /*=
 void CSimulator::InitializeUnit(CUnitContainer& _model, double _t)
 {
 	// write log
-	m_log.WriteInfo(StrConst::Sim_InfoUnitInitialization(m_sUnitName, _model.GetModel()->GetUnitName()));
+	m_log.WriteInfo(StrConst::Sim_InfoUnitInitialization(m_unitName, _model.GetModel()->GetUnitName()));
 	try {
-		_model.GetModel()->Initialize();
+		_model.GetModel()->InitializeUnit();
 	}
 	catch (const std::logic_error& e) {
 		RaiseError(e.what());
@@ -338,7 +336,7 @@ void CSimulator::InitializeUnit(CUnitContainer& _model, double _t)
 	// check unit parameters
 	for (const CBaseUnitParameter* param : _model.GetModel()->GetUnitParametersManager().GetParameters())
 		if (!param->IsInBounds())
-			m_log.WriteWarning(StrConst::Sim_WarningParamOutOfRange(_model.GetModel()->GetUnitName(), m_sUnitName, param->GetName()));
+			m_log.WriteWarning(StrConst::Sim_WarningParamOutOfRange(_model.GetModel()->GetUnitName(), m_unitName, param->GetName()));
 }
 
 bool CSimulator::CheckConvergence(const std::vector<CStream*>& _vStreams1, const std::vector<CStream*>& _vStreams2, double _t1, double _t2) const
@@ -380,7 +378,7 @@ void CSimulator::ClearLogState()
 	m_dTWEnd = 0;
 	m_iTWIterationFull = 0;
 	m_iWindowNumber = 0;
-	m_sUnitName.clear();
+	m_unitName.clear();
 	m_log.Clear();
 }
 
@@ -504,8 +502,8 @@ void CSimulator::ReduceData(const CCalculationSequence::SPartition& _partition, 
 {
 	if (m_pParams->saveTimeStep > 0.)
 	{
-		const double dStart = std::min(_t1, _t2 - m_pParams->saveTimeStep);
-		for (auto model : _partition.models)
+		const double dStart = std::max(std::min(_t1, _t2 - 2 * m_pParams->saveTimeStep), 0.0);
+		for (auto* model : _partition.models)
 			if (model->GetModel()->GetStreamsManager().GetFeedsInit().empty()) // TODO: proper check for feed unit
 			{
 				for (auto& p : model->GetModel()->GetPortsManager().GetAllOutputPorts())

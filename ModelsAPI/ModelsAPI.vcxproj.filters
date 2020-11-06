@@ -24,16 +24,10 @@
     <ClCompile Include="DistributionsGrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DynamicUnit.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LookupTable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MDMatrix.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SteadyStateUnit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TDArray.cpp">

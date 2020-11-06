@@ -324,7 +324,7 @@ inline void CloseInterval(std::vector<double>& _v, double _l, double _r)
 // Adds start and end values to the ends of the sorted vector, if missing, to create a closed interval.
 inline std::vector<double> CloseInterval(const std::vector<double>& _v, double _l, double _r)
 {
-	std::vector<double> res;
+	std::vector<double> res = _v;
 	CloseInterval(res, _l, _r);
 	return res;
 }

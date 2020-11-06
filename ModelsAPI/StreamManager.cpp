@@ -204,7 +204,7 @@ void CStreamManager::RemoveStream(const std::string& _name)
 
 std::vector<const CBaseStream*> CStreamManager::GetAllInit() const
 {
-	const auto& feeds = GetObjects(m_feedsInit);
+	const auto& feeds   = GetObjects(m_feedsInit);
 	const auto& holdups = GetObjects(m_holdupsInit);
 	std::vector<const CBaseStream*> res;
 	res.reserve(feeds.size() + holdups.size());
@@ -217,7 +217,7 @@ std::vector<const CBaseStream*> CStreamManager::GetAllInit() const
 
 std::vector<CBaseStream*> CStreamManager::GetAllInit()
 {
-	const auto& feeds = GetObjects(m_feedsInit);
+	const auto& feeds   = GetObjects(m_feedsInit);
 	const auto& holdups = GetObjects(m_holdupsInit);
 	std::vector<CBaseStream*> res;
 	res.reserve(feeds.size() + holdups.size());
@@ -225,6 +225,38 @@ std::vector<CBaseStream*> CStreamManager::GetAllInit()
 		res.push_back(feed);
 	for (const auto& holdup : holdups)
 		res.push_back(holdup);
+	return res;
+}
+
+std::vector<const CBaseStream*> CStreamManager::GetAllWork() const
+{
+	const auto& feeds   = GetObjects(m_feedsWork);
+	const auto& holdups = GetObjects(m_holdupsWork);
+	const auto& streams = GetObjects(m_streamsWork);
+	std::vector<const CBaseStream*> res;
+	res.reserve(feeds.size() + holdups.size() + streams.size());
+	for (const auto& feed : feeds)
+		res.push_back(feed);
+	for (const auto& holdup : holdups)
+		res.push_back(holdup);
+	for (const auto& stream : streams)
+		res.push_back(stream);
+	return res;
+}
+
+std::vector<CBaseStream*> CStreamManager::GetAllWork()
+{
+	const auto& feeds   = GetObjects(m_feedsWork);
+	const auto& holdups = GetObjects(m_holdupsWork);
+	const auto& streams = GetObjects(m_streamsWork);
+	std::vector<CBaseStream*> res;
+	res.reserve(feeds.size() + holdups.size() + streams.size());
+	for (const auto& feed : feeds)
+		res.push_back(feed);
+	for (const auto& holdup : holdups)
+		res.push_back(holdup);
+	for (const auto& stream : streams)
+		res.push_back(stream);
 	return res;
 }
 
@@ -317,14 +349,14 @@ void CStreamManager::ReduceTimePoints(double _timeBeg, double _timeEnd, double _
 
 void CStreamManager::SetupStreamStructure(CBaseStream& _stream) const
 {
+	_stream.SetCacheSettings(*m_cache);
+	_stream.SetToleranceSettings(*m_tolerances);
 	for (const auto& key : *m_compounds)
 		_stream.AddCompound(key);
 	for (const auto& overall : *m_overall)
 		_stream.AddOverallProperty(overall.type, overall.name, overall.units);
 	for (const auto& phase : *m_phases)
 		_stream.AddPhase(phase.state, phase.name);
-	_stream.SetCacheSettings(*m_cache);
-	_stream.SetToleranceSettings(*m_tolerances);
 }
 
 void CStreamManager::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
@@ -358,9 +390,9 @@ void CStreamManager::LoadFromFile(const CH5Handler& _h5File, const std::string& 
 
 	// properly configure store streams
 	for (size_t i = 0; i < m_holdupsStored.size(); ++i)
-		m_holdupsStored[i]->SetupStructure(*m_holdupsWork[i]);
+		m_holdupsStored[i]->SetupStructure(m_holdupsWork[i].get());
 	for (size_t i = 0; i < m_streamsStored.size(); ++i)
-		m_streamsStored[i]->SetupStructure(*m_streamsWork[i]);
+		m_streamsStored[i]->SetupStructure(m_streamsWork[i].get());
 }
 
 void CStreamManager::LoadFromFile_v0(const CH5Handler& _h5File, const std::string& _path)
@@ -371,7 +403,7 @@ void CStreamManager::LoadFromFile_v0(const CH5Handler& _h5File, const std::strin
 		_h5File.ReadData(_path + "/" + _group, _namespath, names);
 		std::vector<bool> holdupsReaded(names.size(), false);
 		std::vector<bool> holdupsLoaded(_holdups.size(), false);
-		std::vector<bool> feedsLoaded(_holdups.size(), false);
+		std::vector<bool> feedsLoaded(_feeds.size(), false);
 		const std::string holdupPath = _path + "/" + _group + "/" + _subgroup;
 		// try to load holdups by names
 		for (size_t iExist = 0; iExist < _holdups.size(); ++iExist)
@@ -421,9 +453,9 @@ void CStreamManager::LoadFromFile_v0(const CH5Handler& _h5File, const std::strin
 
 	// properly configure store streams
 	for (size_t i = 0; i < m_holdupsStored.size(); ++i)
-		m_holdupsStored[i]->SetupStructure(*m_holdupsWork[i]);
+		m_holdupsStored[i]->SetupStructure(m_holdupsWork[i].get());
 	for (size_t i = 0; i < m_streamsStored.size(); ++i)
-		m_streamsStored[i]->SetupStructure(*m_streamsWork[i]);
+		m_streamsStored[i]->SetupStructure(m_streamsWork[i].get());
 }
 
 void CStreamManager::LoadFromFile_v00(const CH5Handler& _h5File, const std::string& _path)
@@ -456,15 +488,19 @@ void CStreamManager::LoadFromFile_v00(const CH5Handler& _h5File, const std::stri
 
 	// properly configure store streams
 	for (size_t i = 0; i < m_holdupsStored.size(); ++i)
-		m_holdupsStored[i]->SetupStructure(*m_holdupsWork[i]);
+		m_holdupsStored[i]->SetupStructure(m_holdupsWork[i].get());
 	for (size_t i = 0; i < m_streamsStored.size(); ++i)
-		m_streamsStored[i]->SetupStructure(*m_streamsWork[i]);
+		m_streamsStored[i]->SetupStructure(m_streamsWork[i].get());
 }
 
 template <typename T>
 T* CStreamManager::CreateObject(const std::string& _key, const std::string& _name) const
 {
-	auto* stream = new T{ _key, m_materialsDB, m_grid, m_compounds, m_overall, m_phases, m_cache, m_tolerances };
+	T* stream;
+	if (m_materialsDB && m_grid && m_compounds && m_overall && m_phases && m_cache && m_tolerances) // should be usually the case
+		stream = new T{ _key, m_materialsDB, m_grid, m_compounds, m_overall, m_phases, m_cache, m_tolerances };
+	else // for the case of old models, which add holdups in constructor - just create a placeholder, since the loading of the model will be discarded
+		stream = new T{};
 	stream->SetName(_name);
 	return stream;
 }

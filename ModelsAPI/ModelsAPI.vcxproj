@@ -134,10 +134,8 @@
     <ClCompile Include="DenseMDMatrix.cpp" />
     <ClCompile Include="DependentValues.cpp" />
     <ClCompile Include="DistributionsGrid.cpp" />
-    <ClCompile Include="DynamicUnit.cpp" />
     <ClCompile Include="LookupTable.cpp" />
     <ClCompile Include="MDMatrix.cpp" />
-    <ClCompile Include="SteadyStateUnit.cpp" />
     <ClCompile Include="TDArray.cpp" />
     <ClCompile Include="TransformMatrix.cpp" />
     <ClCompile Include="UnitParameters.cpp" />

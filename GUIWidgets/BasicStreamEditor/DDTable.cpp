@@ -69,7 +69,7 @@ void CDDTable::CheckNormalization()
 	{
 		std::vector<double> vTemp;
 		for (size_t j = 0; j < m_pData.size(); ++j)
-			vTemp.push_back(data[j][i][1]);
+			vTemp.push_back(data[j][1][i]);
 
 		double dSum = 0;
 		for( unsigned j=0; j<vTemp.size(); ++j )
@@ -93,15 +93,15 @@ void CDDTable::UpdateWholeView()
 	for (auto& value : m_pData)
 		data.push_back(value->GetRawData());
 
-	for (int iRow = 0; iRow < static_cast<int>(m_pData.front()->GetTimePointsNumber()); ++iRow)
+	for (int iRow = 0; iRow < static_cast<int>(data.front()[0].size()); ++iRow)
 	{
 		if( iRow >= m_pTable->rowCount() )
 			m_pTable->insertRow(iRow);
 
 		std::vector<double> vTemp;
 		for (size_t j = 0; j < m_pData.size(); ++j)
-			vTemp.push_back(data[j][iRow][1]);
-		m_pTable->setItem( iRow, 0, new QTableWidgetItem( QString::number(data.front()[iRow][0] ) ));
+			vTemp.push_back(data[j][1][iRow]);
+		m_pTable->setItem(iRow, 0, new QTableWidgetItem(QString::number(data.front()[0][iRow])));
 		m_pTable->item( iRow, 0 )->setFlags( m_pTable->item( iRow, 0 )->flags() & ~Qt::ItemIsEditable );
 		for( unsigned i=0; i<vTemp.size(); ++i )
 			m_pTable->setItem( iRow, i+1, new QTableWidgetItem( QString::number( vTemp[i] ) ));

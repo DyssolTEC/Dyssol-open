@@ -52,7 +52,9 @@ public:
 	CBaseSolver();
 	virtual ~CBaseSolver() = default;
 
-	/// Will be called once during initialization of unit.
+	/// Will be called once during creation of the solver (name, author, key, version).
+	virtual void CreateBasicInfo() = 0;
+	/// Will be called once during initialization of the solver.
 	virtual void Initialize();
 	/// Will be called once after the whole simulation is finished.
 	virtual void Finalize();

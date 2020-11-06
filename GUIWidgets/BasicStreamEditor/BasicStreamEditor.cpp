@@ -113,25 +113,26 @@ void CBasicStreamEditor::UpdateTabs()
 	int index = 0;
 	for (const auto& phase : phases)
 	{
-		if (phase.state == EPhase::SOLID)
-		{
-			//m_pSolidDistrEditor = new CSolidDistributionsEditor(ui.mainTabWidget);
-			m_pSolidDistrEditor->SetFlowsheet(m_pFlowsheet, m_materialsDB);
-			if(m_pSelectedHoldup)
-				m_pSolidDistrEditor->SetDistribution(m_pSelectedHoldup->GetPhase(phase.state)->MDDistr(), m_pSelectedHoldup);
-			else
-				m_pSolidDistrEditor->SetDistribution(nullptr, nullptr);
-			m_pSolidDistrEditor->SetViewState(m_vLastCombos, m_vLastSliders);
-			connect(m_pSolidDistrEditor, SIGNAL(DataChanged()), this, SLOT(ChangeData()));
-		}
-		else
+		if (phase.state != EPhase::SOLID)
 		{
 			CMDMTable *pMDMTable = new CMDMTable(ui.mainTabWidget);
 			m_vMDMTablePhases.push_back(pMDMTable);
 			ui.mainTabWidget->insertTab(index + 2, pMDMTable, QString::fromStdString(phase.name));
 			connect(pMDMTable, SIGNAL(DataChanged()), this, SLOT(ChangeData()));
+			++index;
 		}
-		++index;
+	}
+
+	if (m_pFlowsheet->IsPhaseDefined(EPhase::SOLID))
+	{
+		//m_pSolidDistrEditor = new CSolidDistributionsEditor(ui.mainTabWidget);
+		m_pSolidDistrEditor->SetFlowsheet(m_pFlowsheet, m_materialsDB);
+		if (m_pSelectedHoldup)
+			m_pSolidDistrEditor->SetDistribution(m_pSelectedHoldup->GetPhase(EPhase::SOLID)->MDDistr(), m_pSelectedHoldup);
+		else
+			m_pSolidDistrEditor->SetDistribution(nullptr, nullptr);
+		m_pSolidDistrEditor->SetViewState(m_vLastCombos, m_vLastSliders);
+		connect(m_pSolidDistrEditor, SIGNAL(DataChanged()), this, SLOT(ChangeData()));
 	}
 
 	const size_t iSolid = VectorFind(phases, [&](const auto& p) { return p.state == EPhase::SOLID; });
@@ -296,7 +297,7 @@ void CBasicStreamEditor::AddTimePoint()
 
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 
-	double dLastTP = m_pSelectedHoldup->GetLastTimePoint();
+	double dLastTP = m_pSelectedHoldup->GetAllTimePoints().empty() ? -1.0 : m_pSelectedHoldup->GetLastTimePoint();
 	m_pSelectedHoldup->AddTimePoint(dLastTP + 1);
 	if (dLastTP == -1)
 	{

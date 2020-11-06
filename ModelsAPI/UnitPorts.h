@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "DyssolDefines.h"
 #include <memory>
 #include <string>
 #include <vector>
@@ -18,30 +19,20 @@ class CUnitPort
 {
 	static const unsigned m_saveVersion{ 1 };	// Current version of the saving procedure.
 
-public:
-	// TODO: rename
-	// Types of unit ports.
-	enum class EPortType2 : uint32_t
-	{
-		INPUT = 0,
-		OUTPUT = 1,
-		UNDEFINED = 2
-	};
-
 private:
 	std::string m_name;							// The name of the port, should be unique for the unit.
-	EPortType2 m_type{ EPortType2::UNDEFINED };	// Port type: INPUT or OUTPUT.
+	EUnitPort m_type{ EUnitPort::UNDEFINED };	// Port type: INPUT or OUTPUT.
 	std::string m_streamKey;					// The key of the stream which is connected to this port.
 	CStream* m_stream{ nullptr };				// Pointer to the connected material stream.
 
 public:
-	CUnitPort(std::string _name, EPortType2 _type);
+	CUnitPort(std::string _name, EUnitPort _type);
 
 	std::string GetName() const;				// Returns port's name.
 	void SetName(const std::string& _name);		// Sets port's name.
 
-	EPortType2 GetType() const;					// Returns port's type.
-	void SetType(EPortType2 _type);				// Sets port's type.
+	EUnitPort GetType() const;					// Returns port's type.
+	void SetType(EUnitPort _type);				// Sets port's type.
 
 	std::string GetStreamKey() const;			// Returns key of the stream, connected to this port.
 	void SetStreamKey(const std::string& _key);	// Sets key of the stream, connected to this port.
@@ -65,7 +56,7 @@ class CPortsManager
 
 public:
 	// Adds a port and returns a pointer to it. If a port with this name already exist, does nothing and return nullptr.
-	CUnitPort* AddPort(const std::string& _name, CUnitPort::EPortType2 _type);
+	CUnitPort* AddPort(const std::string& _name, EUnitPort _type);
 	// Returns a port with the specified name.
 	const CUnitPort* GetPort(const std::string& _name) const;
 	// Returns a port with the specified name.

@@ -12,11 +12,19 @@
 
 #ifdef _DEBUG
 #define DYSSOL_CREATE_MODEL_FUN CreateDYSSOLUnitV3_DEBUG
-#define DYSSOL_CREATE_MODEL_FUN_NAME "CreateDYSSOLUnitV3_DEBUG"
 #else
 #define DYSSOL_CREATE_MODEL_FUN CreateDYSSOLUnitV3
-#define DYSSOL_CREATE_MODEL_FUN_NAME "CreateDYSSOLUnitV3"
 #endif
+#define DYSSOL_CREATE_MODEL_FUN_NAME MACRO_TOSTRING(DYSSOL_CREATE_MODEL_FUN)
+
+// TODO: move it somewhere
+////////////////////////////////////////////////////////////////////////////////
+/// Deprecated defines for compatibility
+#define m_sUnitName		GetNameRef()
+#define m_sAuthorName	GetAuthorRef()
+#define m_dUnitVersion	GetVersionRef()
+#define m_sUniqueID		GetKeyRef()
+#define m_pMaterialsDB	GetMaterialsDBRef()
 
 class CStream;
 
@@ -33,9 +41,9 @@ protected:
 	// Basic unit information
 	//
 
-	std::string m_unitName;		// Name of the unit.
-	std::string m_uniqueID;		// Unique identifier of the unit.
-	std::string m_authorName;	// Name of the unit's author.
+	std::string m_unitName{};	// Name of the unit.
+	std::string m_uniqueID{};	// Unique identifier of the unit.
+	std::string m_authorName{};	// Name of the unit's author.
 	size_t m_version{ 0 };		// Version of the unit.
 
 private:
@@ -77,12 +85,12 @@ private:
 
 public:
 	// TODO: initialize all pointers in constructor and make them references.
-	CBaseUnit()                                     = default;
+	CBaseUnit()                                    = default;
 	CBaseUnit(const CBaseUnit& _other)             = delete;
 	CBaseUnit(CBaseUnit && _other)                 = delete;
 	CBaseUnit& operator=(const CBaseUnit & _other) = delete;
 	CBaseUnit& operator=(CBaseUnit && _other)      = delete;
-	virtual ~CBaseUnit()                            = 0;
+	virtual ~CBaseUnit()                           = default;
 
 	// TODO: set it all in constructor and make them references.
 	// Sets pointers to all required data.
@@ -123,7 +131,7 @@ public:
 	CPortsManager& GetPortsManager();
 
 	// Adds a port to the unit and returns a pointer to it. If the unit already has a port with the same name, a logic_error exception is thrown.
-	CUnitPort* AddPort(const std::string& _portName, CUnitPort::EPortType2 _type);
+	CUnitPort* AddPort(const std::string& _portName, EUnitPort _type);
 	// Returns a const reference to the specified port of the unit.
 	const CUnitPort* GetPort(const std::string& _portName) const;
 	// Returns a reference to the specified port of the unit.
@@ -234,7 +242,7 @@ public:
 	// Sets new value of a state variable. If a state variable with the given name does not exist in this unit, logic_error exception is thrown.
 	void SetStateVariable(const std::string& _name, double _value);
 	// Sets new value of a state variable and adds its value to the history of time-dependent changes. If a state variable with the given name does not exist in this unit, logic_error exception is thrown.
-	void SetStateVariable(const std::string& _name, double _time, double _value);
+	void SetStateVariable(const std::string& _name, double _value, double _time);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Plots
@@ -319,6 +327,10 @@ public:
 	std::string GetCompoundName(const std::string& _compoundKey) const;
 	// Returns the unique key of the compound with the specified name.
 	std::string GetCompoundKey(const std::string& _compoundName) const;
+	// Returns the name of the compound with the specified index.
+	std::string GetCompoundName(size_t _index) const;
+	// Returns the unique key of the compound with the specified index.
+	std::string GetCompoundKey(size_t _index) const;
 	// Returns unique keys of all defined materials.
 	std::vector<std::string> GetAllCompounds() const;
 	// Returns names of all defined materials.
@@ -349,6 +361,10 @@ public:
 	void RemovePhase(EPhase _phase);
 	// Returns the name of the specified phase.
 	std::string GetPhaseName(EPhase _phase) const;
+	// Returns the type of the phase with the specified index.
+	EPhase GetPhaseType(size_t _index) const;
+	// Returns types of all defined phases.
+	std::vector<EPhase> GetAllPhases() const;
 	// Returns the number of defined phases.
 	size_t GetPhasesNumber() const;
 	// Checks if a specified phase is defined.
@@ -399,7 +415,7 @@ public:
 
 	// TODO: return by value.
 	// Calculates a transformation matrix needed to obtain the output distribution from the input one.
-	void CalculateTM(EDistrTypes _distribution, const std::vector<double>& _inValue, const std::vector<double>& _outValue, CTransformMatrix& _matrix) const;
+	static void CalculateTM(EDistrTypes _distribution, const std::vector<double>& _inValue, const std::vector<double>& _outValue, CTransformMatrix& _matrix);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Global flowsheet data and settings
@@ -426,13 +442,12 @@ public:
 	// Materials database
 	//
 
-	// TODO: rename, make the same
 	// Returns the value of the constant physical property (CRITICAL_TEMPERATURE, MOLAR_MASS, etc) of the specified compound.
-	double GetCompoundConstProperty(const std::string& _compoundKey, ECompoundConstProperties _property) const;
+	double GetCompoundProperty(const std::string& _compoundKey, ECompoundConstProperties _property) const;
 	// Returns the value of the temperature/pressure-dependent physical property (DENSITY, ENTHALPY, etc) of the specified compound with the given temperature [K] and pressure [Pa].
-	double GetCompoundTPProperty(const std::string& _compoundKey, ECompoundTPProperties _property, double _temperature = STANDARD_CONDITION_T, double _pressure = STANDARD_CONDITION_P) const;
+	double GetCompoundProperty(const std::string& _compoundKey, ECompoundTPProperties _property, double _temperature = STANDARD_CONDITION_T, double _pressure = STANDARD_CONDITION_P) const;
 	// Returns the value of the interaction physical property (INTERFACE_TENSION, etc) between the specified compounds with the given specified temperature [K] and pressure [Pa].
-	double GetCompoundInteractionProperty(const std::string& _compoundKey1, const std::string& _compoundKey2, EInteractionProperties _property, double _temperature = STANDARD_CONDITION_T, double _pressure = STANDARD_CONDITION_P) const;
+	double GetCompoundProperty(const std::string& _compoundKey1, const std::string& _compoundKey2, EInteractionProperties _property, double _temperature = STANDARD_CONDITION_T, double _pressure = STANDARD_CONDITION_P) const;
 
 	// Checks if a constant physical property with the specified key is present in the materials database.
 	bool IsPropertyDefined(ECompoundConstProperties _property) const;
@@ -448,8 +463,17 @@ public:
 	// Returns a pointer to lookup tables.
 	CUnitLookupTables* GetLookupTables();
 
+	// Calculates temperature using a lookup table of the corresponding property for the specified property value and the compound fractions.
+	double CalculateTemperatureFromProperty(ECompoundTPProperties _property, double _value, const std::vector<double>& _fractions) const;
+	// Calculates pressure using a lookup table of the corresponding property for the specified property value and the compound fractions.
+	double CalculatePressureFromProperty(ECompoundTPProperties _property, double _value, const std::vector<double>& _fractions) const;
+	// Calculates the value of the corresponding property for the given temperature and compound fractions using a lookup table.
+	double CalculatePropertyFromTemperature(ECompoundTPProperties _property, double _T, const std::vector<double>& _fractions) const;
+	// Calculates the value of the corresponding property for the given pressure and compound fractions using a lookup table.
+	double CalculatePropertyFromPressure(ECompoundTPProperties _property, double _P, const std::vector<double>& _fractions) const;
+
 	// Performs a heat exchange between two streams at the specified time point with a specified efficiency (0..1].
-	void HeatExchange(double _time, CStream* _stream1, CStream* _stream2, double _efficiency) const;
+	void HeatExchange(double _time, CBaseStream* _stream1, CBaseStream* _stream2, double _efficiency) const;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Errors and warnings
@@ -503,19 +527,21 @@ public:
 	// User-overloaded functions
 	//
 
-	// Setups the structure of the unit and its basic parameters.
-	//virtual void Configure() {}
-	// Calculates the unit on the given time point.
-	virtual void Simulate(double _dTime) {}
-	// Calculates the unit on the given time interval.
+	// Setup basic parameters of the unit (name, author, key, version).
+	virtual void CreateBasicInfo() = 0;
+	// Setup the structure of the unit (ports, unit parameters, holdups, internal streams).
+	virtual void CreateStructure() = 0;
+	// Initialize unit for at time point 0 before starting the simulation.
+	virtual void Initialize(double _time) {}
+	// Calculate the unit on the given time point.
+	virtual void Simulate(double _time) {}
+	// Calculate the unit on the given time interval.
 	virtual void Simulate(double _timeBeg, double _timeEnd) {}
-	// Initializes unit for at time point 0 before starting the simulation.
-	virtual void Initialize() {}
 	// Is called once at the end of the simulation to finalize the unit.
 	virtual void Finalize() {}
-	// Saves the current state of all time-dependent parameters for a possible restart of the simulation from this time point.
+	// Save the current state of all time-dependent parameters for a possible restart of the simulation from this time point.
 	virtual void SaveState() {}
-	// Loads the stored state of all time-dependent parameters before a restart of the simulation from that time point.
+	// Load the stored state of all time-dependent parameters before a restart of the simulation from that time point.
 	virtual void LoadState() {}
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -530,6 +556,109 @@ public:
 	void LoadFromFile_v2(const CH5Handler& _h5File, const std::string& _path);
 	// Loads unit from HDF5 file. A compatibility version.
 	void LoadFromFile_v1(const CH5Handler& _h5File, const std::string& _path);
+
+	// TODO: move it somewhere
+	////////////////////////////////////////////////////////////////////////////////
+	/// Deprecated functions
+	[[deprecated("WARNING! m_sUnitName is deprecated. Use SetUnitName(const std::string&) instead.")]]
+	std::string& GetNameRef();
+	[[deprecated("WARNING! m_sAuthorName is deprecated. Use SetAuthorName(const std::string&) instead.")]]
+	std::string& GetAuthorRef();
+	[[deprecated("WARNING! m_dUnitVersion is deprecated. Use SetVersion(size_t) instead.")]]
+	size_t& GetVersionRef();
+	[[deprecated("WARNING! m_sUniqueID is deprecated. Use SetUniqueID(const std::string&) instead.")]]
+	std::string& GetKeyRef();
+	[[deprecated("WARNING! m_pMaterialsDB is deprecated. Use GetMaterialsDatabase() instead.")]]
+	const CMaterialsDatabase* GetMaterialsDBRef() const;
+	[[deprecated("WARNING! SetDynamicUnit(bool) is deprecated and not needed anymore.")]]
+	static void SetDynamicUnit(bool _flag) {}
+	[[deprecated("WARNING! AddPort(const std::string&, EPortType) is deprecated. Use AddPort(const std::string&, EUnitPort) instead.")]]
+	unsigned AddPort(const std::string& _name, unsigned _type);
+	[[deprecated("WARNING! GetPortStream(unsigned) is deprecated. Use GetPortStream(const std::string&) or CUnitPort::GetStream() instead.")]]
+	CStream* GetPortStream(unsigned _index) const;
+	[[deprecated("WARNING! AddFeed(const std::string&, const std::string&) is deprecated. Use AddFeed(const std::string&) instead.")]]
+	CStream* AddFeed(const std::string& _name, const std::string& _key);
+	[[deprecated("WARNING! AddMaterialStream(const std::string&, const std::string&) is deprecated. Use AddStream(const std::string&) instead.")]]
+	CStream* AddMaterialStream(const std::string& _name, const std::string& key = "");
+	[[deprecated("WARNING! GetMaterialStream(const std::string&) is deprecated. Use GetStream(const std::string&) instead.")]]
+	CStream* GetMaterialStream(const std::string& _name);
+	[[deprecated("WARNING! AddConstParameter(const std::string&, double, double, double, const std::string&, const std::string&) is deprecated. Use AddConstRealParameter(const std::string&, double, const std::string&, const std::string& _description, double, double), AddConstIntParameter(const std::string&, int64_t, const std::string&, const std::string& _description, int64_t, int64_t), or AddConstUIntParameter(const std::string&, uint64_t, const std::string&, const std::string& _description, uint64_t, uint64_t) instead.")]]
+	void AddConstParameter(const std::string& _name, double _minValue, double _maxValue, double _initValue, const std::string& _units, const std::string& _description);
+	[[deprecated("WARNING! AddTDParameter(const std::string&, double, double, double, const std::string&, const std::string&) is deprecated. Use AddTDParameter(const std::string&, double, const std::string&, const std::string&, double, double) instead.")]]
+	void AddTDParameter(const std::string& _name, double _minValue, double _maxValue, double _initValue, const std::string& _units, const std::string& _description);
+	[[deprecated("WARNING! AddGroupParameter(const std::string&, size_t, sonct std::vector<size_t>&, const std::vector<std::string>&, const std::string&) is deprecated. Use AddComboParameter(const std::string&, size_t, const std::vector<size_t>&, const std::vector<std::string>&, const std::string&) instead.")]]
+	void AddGroupParameter(const std::string& _name, size_t _initValue, const std::vector<size_t>& _values, const std::vector<std::string>& _valuesNames, const std::string& _description);
+	[[deprecated("WARNING! GetConstParameterValue(const std::string&) is deprecated. Use GetConstRealParameterValue(const std::string&), GetConstIntParameterValue(const std::string&), or GetConstUIntParameterValue(const std::string&) instead.")]]
+	double GetConstParameterValue(const std::string& _name) const;
+	[[deprecated("WARNING! GetGroupParameterValue(const std::string&) is deprecated. Use GetComboParameterValue(const std::string&) instead.")]]
+	size_t GetGroupParameterValue(const std::string& _name) const;
+	[[deprecated("WARNING! AddStateVariable(const std::string&, double, bool) is deprecated. Use AddStateVariable(const std::string&, double) instead.")]]
+	unsigned AddStateVariable(const std::string& _name, double _initValue, bool _saveHistory);
+	[[deprecated("WARNING! SetStateVariable(unsigned, double) is deprecated. Use SetStateVariable(const std::string&, double, double) or SetStateVariable(const std::string&, double) instead.")]]
+	void SetStateVariable(unsigned _index, double _value);
+	[[deprecated("WARNING! SaveStateVariables(double) is deprecated. Use SetStateVariable(const std::string&, double, double) instead when setting a value.")]]
+	void SaveStateVariables(double _time);
+	[[deprecated("WARNING! AddPointOnCurve(const std::string&, const std::string&, const std::vector<double>&, const std::vector<double>&) is deprecated. Use AddPointsOnCurve(const std::string&, const std::string&, const std::vector<double>&, const std::vector<double>&) instead.")]]
+	void AddPointOnCurve(const std::string& _plotName, const std::string& _curveName, const std::vector<double>& _x, const std::vector<double>& _y);
+	[[deprecated("WARNING! AddPointOnCurve(const std::string&, _valueZ, const std::vector<double>&, const std::vector<double>&) is deprecated. Use AddPointsOnCurve(const std::string&, _valueZ, const std::vector<double>&, const std::vector<double>&) instead.")]]
+	void AddPointOnCurve(const std::string& _plotName, double _valueZ, const std::vector<double>& _x, const std::vector<double>& _y);
+	[[deprecated("WARNING! GetPlotsNumber() is deprecated. Use GetPlotsManager().GetPlotsNumber() instead.")]]
+	unsigned GetPlotsNumber() const;
+	[[deprecated("WARNING! GetCurvesNumber(size_t) is deprecated. Use GetPlotsManager().GetPlot(const std::string&)->GetCurvesNumber() instead.")]]
+	unsigned GetCurvesNumber(size_t _iPlot) const;
+	[[deprecated("WARNING! GetPlotName(size_t) is deprecated. Use GetPlotsManager().GetPlot(const std::string&)->GetName() instead.")]]
+	std::string GetPlotName(size_t _iPlot) const;
+	[[deprecated("WARNING! GetPlotXAxisName(unsigned) is deprecated. Use GetPlotsManager().GetPlot(const std::string&)->GetLabelX() instead.")]]
+	std::string GetPlotXAxisName(unsigned _iPlot) const;
+	[[deprecated("WARNING! GetPlotYAxisName(unsigned) is deprecated. Use GetPlotsManager().GetPlot(const std::string&)->GetLabelY() instead.")]]
+	std::string GetPlotYAxisName(unsigned _iPlot) const;
+	[[deprecated("WARNING! GetPlotZAxisName(unsigned) is deprecated. Use GetPlotsManager().GetPlot(const std::string&)->GetLabelZ() instead.")]]
+	std::string GetPlotZAxisName(unsigned _iPlot) const;
+	[[deprecated("WARNING! GetCurveName(unsigned, unsigned) is deprecated. Use GetPlotsManager().GetPlot(const std::string&)->GetCurve(const std::string&)->GetName() or GetPlotsManager().GetPlot(const std::string&)->GetCurve(double)->GetName() instead.")]]
+	std::string GetCurveName(unsigned _iPlot, unsigned _iCurve) const;
+	[[deprecated("WARNING! GetCurveX(unsigned, unsigned) is deprecated. Use GetPlotsManager().GetPlot(const std::string&)->GetCurve(const std::string&)->GetXValues() or GetPlotsManager().GetPlot(const std::string&)->GetCurve(double)->GetXValues() instead.")]]
+	std::vector<double> GetCurveX(unsigned _iPlot, unsigned _iCurve) const;
+	[[deprecated("WARNING! GetCurveY(unsigned, unsigned) is deprecated. Use GetPlotsManager().GetPlot(const std::string&)->GetCurve(const std::string&)->GetYValues() or GetPlotsManager().GetPlot(const std::string&)->GetCurve(double)->GetYValues() instead.")]]
+	std::vector<double> GetCurveY(unsigned _iPlot, unsigned _iCurve) const;
+	[[deprecated("WARNING! GetCurveZ(size_t, size_t) is deprecated. Use GetPlotsManager().GetPlot(const std::string&)->GetCurve(const std::string&)->GetZValue() or GetPlotsManager().GetPlot(const std::string&)->GetCurve(double)->GetZValue() instead.")]]
+	double GetCurveZ(size_t _iPlot, size_t _iCurve) const;
+	[[deprecated("WARNING! IsPlot2D(unsigned) is deprecated. Use GetPlotsManager().GetPlot(const std::string&)->Is2D() instead.")]]
+	bool IsPlot2D(unsigned _iPlot);
+	[[deprecated("WARNING! GetAllDefinedTimePoints(double, double, bool, bool) is deprecated. Use GetAllTimePoints(double, double) or GetAllTimePointsClosed(double, double) instead.")]]
+	std::vector<double> GetAllDefinedTimePoints(double _timeBeg, double _timeEnd, bool _forceStartBoundary = false, bool _forceEndBoundary = false) const;
+	[[deprecated("WARNING! GetAllInputTimePoints(double, double, bool, bool) is deprecated. Use GetInputTimePoints(double, double) or GetInputTimePointsClosed(double, double) instead.")]]
+	std::vector<double> GetAllInputTimePoints(double _timeBeg, double _timeEnd, bool _forceStartBoundary = false, bool _forceEndBoundary = false) const;
+	[[deprecated("WARNING! GetAllStreamsTimePoints(const std::vector<CStream*>&, double, double) is deprecated. Use GetStreamsTimePoints(double, double, const std::vector<CStream*>&) or GetStreamsTimePointsClosed(double, double, const std::vector<CStream*>&) instead.")]]
+	std::vector<double> GetAllStreamsTimePoints(const std::vector<CStream*>& _srteams, double _timeBeg, double _timeEnd) const;
+	[[deprecated("WARNING! GetCompoundsList() is deprecated. Use GetAllCompounds() instead.")]]
+	std::vector<std::string> GetCompoundsList() const;
+	[[deprecated("WARNING! GetCompoundsNames() is deprecated. Use GetAllCompoundsNames(), GetCompoundName(const std::string&) or GetCompoundName(size_t) instead.")]]
+	std::vector<std::string> GetCompoundsNames() const;
+	[[deprecated("WARNING! IsCompoundKeyDefined(const std::string&) is deprecated. Use IsCompoundDefined(const std::string&) instead.")]]
+	bool IsCompoundKeyDefined(const std::string& _compoundKey) const;
+	[[deprecated("WARNING! GetPhaseIndex(EPhaseTypes) is deprecated. Access phases by their type.")]]
+	unsigned GetPhaseIndex(unsigned _soa) const;
+	[[deprecated("WARNING! GetPhaseSOA(unsigned) is deprecated. Use GetPhaseType(size_t) instead.")]]
+	unsigned GetPhaseSOA(unsigned _index) const;
+	[[deprecated("WARNING! IsPhaseDefined(EPhaseTypes) is deprecated. Use IsPhaseDefined(EPhase) instead.")]]
+	bool IsPhaseDefined(unsigned _soa) const;
+	[[deprecated("WARNING! GetCompoundConstant(const std::string&, ECompoundConstProperties) is deprecated. Use GetCompoundProperty(const std::string&, ECompoundConstProperties) instead.")]]
+	double GetCompoundConstant(const std::string& _compoundKey, unsigned _property) const;
+	[[deprecated("WARNING! GetCompoundTPDProp(const std::string&, ECompoundTPProperties) is deprecated. Use GetCompoundProperty(const std::string&, ECompoundTPProperties, double, double) instead.")]]
+	double GetCompoundTPDProp(const std::string& _compoundKey, unsigned _property, double _temperature, double _pressure) const;
+	[[deprecated("WARNING! GetCompoundsInteractionProp(const std::string&, const std::string&, EInteractionProperties, double, double) is deprecated. Use GetCompoundProperty(const std::string&, const std::string&, EInteractionProperties, double, double) instead.")]]
+	double GetCompoundsInteractionProp(const std::string& _compoundKey1, const std::string& _compoundKey2, unsigned _property, double _temperature = STANDARD_CONDITION_T, double _pressure = STANDARD_CONDITION_P) const;
+	[[deprecated("WARNING! CalcTemperatureFromProperty(ECompoundTPProperties, const std::vector<double>&, double) is deprecated. Use CalculateTemperatureFromProperty(ECompoundTPProperties, double, const std::vector<double>&) instead.")]]
+	double CalcTemperatureFromProperty(ECompoundTPProperties _property, const std::vector<double>& _fractions, double _value) const;
+	[[deprecated("WARNING! CalcPressureFromProperty(ECompoundTPProperties, const std::vector<double>&, double) is deprecated. Use CalculatePressureFromProperty(ECompoundTPProperties, double, const std::vector<double>&) instead.")]]
+	double CalcPressureFromProperty(ECompoundTPProperties _property, const std::vector<double>& _fractions, double _value) const;
+	[[deprecated("WARNING! HeatExchange(CMaterialStream*, CMaterialStream*, double, double) is deprecated. Use HeatExchange(double, CBaseStream*, CBaseStream*, double) instead.")]]
+	void HeatExchange(CStream* _stream1, CStream* _stream2, double _time, double _efficiency) const;
+	[[deprecated("WARNING! CheckError() is deprecated. Use HasError() instead.")]]
+	bool CheckError() const;
+private:
+	static EPhase SOA2EPhase(unsigned _soa);
+	static unsigned EPhase2SOA(EPhase _phase);
 };
 
 typedef DECLDIR CBaseUnit* (*CreateUnit2)();

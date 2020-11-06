@@ -239,7 +239,7 @@ void CCalculationSequence::CreateInitialStreams()
 		for (size_t j = 0; j < m_initialTearStreams[i].size(); ++j)
 		{
 			if (!CBaseStream::HaveSameStructure(*m_initialTearStreams[i][j], *PartitionTearStreams(i)[j]))	// TODO: check whether it is needed
-				m_initialTearStreams[i][j]->SetupStructure(*PartitionTearStreams(i)[j]);
+				m_initialTearStreams[i][j]->SetupStructure(PartitionTearStreams(i)[j]);
 		}
 	}
 }

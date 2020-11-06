@@ -74,7 +74,7 @@ CPortsManager& CBaseUnit::GetPortsManager()
 	return m_ports;
 }
 
-CUnitPort* CBaseUnit::AddPort(const std::string& _portName, CUnitPort::EPortType2 _type)
+CUnitPort* CBaseUnit::AddPort(const std::string& _portName, EUnitPort _type)
 {
 	if (m_ports.GetPort(_portName)) // already exists
 		throw std::logic_error(StrConst::BUnit_ErrAddPort(m_unitName, _portName, __func__));
@@ -399,7 +399,7 @@ void CBaseUnit::SetStateVariable(const std::string& _name, double _value)
 		throw std::logic_error(StrConst::BUnit_ErrGetSV(m_unitName, _name, __func__));
 }
 
-void CBaseUnit::SetStateVariable(const std::string& _name, double _time, double _value)
+void CBaseUnit::SetStateVariable(const std::string& _name, double _value, double _time)
 {
 	if (CStateVariable* variable = m_stateVariables.GetStateVariable(_name))
 		variable->SetValue(_time, _value);
@@ -509,7 +509,7 @@ void CBaseUnit::CopyStreamToPort(double _time, const CStream* _stream, CUnitPort
 {
 	if (!_port->GetStream())
 		throw std::logic_error(StrConst::BUnit_ErrGetPortEmpty(m_unitName, "", __func__));
-	if (_port->GetType() != CUnitPort::EPortType2::OUTPUT)
+	if (_port->GetType() != EUnitPort::OUTPUT)
 		throw std::logic_error(StrConst::BUnit_ErrCopyToPort(m_unitName, _stream->GetName(), _port->GetName(), __func__));
 	_port->GetStream()->CopyFromStream(_time, _stream);
 }
@@ -526,7 +526,7 @@ void CBaseUnit::CopyStreamToPort(double _timeBeg, double _timeEnd, const CStream
 {
 	if (!_port->GetStream())
 		throw std::logic_error(StrConst::BUnit_ErrGetPortEmpty(m_unitName, "", __func__));
-	if (_port->GetType() != CUnitPort::EPortType2::OUTPUT)
+	if (_port->GetType() != EUnitPort::OUTPUT)
 		throw std::logic_error(StrConst::BUnit_ErrCopyToPort(m_unitName, _stream->GetName(), _port->GetName(), __func__));
 	_port->GetStream()->CopyFromStream(_timeBeg, _timeEnd, _stream);
 }
@@ -543,7 +543,7 @@ void CBaseUnit::CopyPortToStream(double _time, const CUnitPort* _port, CStream* 
 {
 	if (!_port->GetStream())
 		throw std::logic_error(StrConst::BUnit_ErrGetPortEmpty(m_unitName, "", __func__));
-	if (_port->GetType() != CUnitPort::EPortType2::INPUT)
+	if (_port->GetType() != EUnitPort::INPUT)
 		throw std::logic_error(StrConst::BUnit_ErrCopyFromPort(m_unitName, _stream->GetName(), _port->GetName(), __func__));
 	_port->GetStream()->CopyFromStream(_time, _stream);
 }
@@ -560,7 +560,7 @@ void CBaseUnit::CopyPortToStream(double _timeBeg, double _timeEnd, const CUnitPo
 {
 	if (!_port->GetStream())
 		throw std::logic_error(StrConst::BUnit_ErrGetPortEmpty(m_unitName, "", __func__));
-	if (_port->GetType() != CUnitPort::EPortType2::INPUT)
+	if (_port->GetType() != EUnitPort::INPUT)
 		throw std::logic_error(StrConst::BUnit_ErrCopyFromPort(m_unitName, _stream->GetName(), _port->GetName(), __func__));
 	_port->GetStream()->CopyFromStream(_timeBeg, _timeEnd, _stream);
 }
@@ -640,6 +640,18 @@ std::string CBaseUnit::GetCompoundKey(const std::string& _compoundName) const
 	return {};
 }
 
+std::string CBaseUnit::GetCompoundName(size_t _index) const
+{
+	if (_index >= m_compounds->size()) return {};
+	return GetCompoundName(m_compounds->at(_index));
+}
+
+std::string CBaseUnit::GetCompoundKey(size_t _index) const
+{
+	if (_index >= m_compounds->size()) return {};
+	return GetCompoundKey(m_compounds->at(_index));
+}
+
 std::vector<std::string> CBaseUnit::GetAllCompounds() const
 {
 	return *m_compounds;
@@ -695,6 +707,20 @@ std::string CBaseUnit::GetPhaseName(EPhase _phase) const
 		if (phase.state == _phase)
 			return phase.name;
 	return {};
+}
+
+EPhase CBaseUnit::GetPhaseType(size_t _index) const
+{
+	if (_index >= m_phases->size()) return EPhase::UNDEFINED;
+	return m_phases->at(_index).state;
+}
+
+std::vector<EPhase> CBaseUnit::GetAllPhases() const
+{
+	std::vector<EPhase> res;
+	for (const auto& phase : *m_phases)
+		res.push_back(phase.state);
+	return res;
 }
 
 size_t CBaseUnit::GetPhasesNumber() const
@@ -795,7 +821,7 @@ bool CBaseUnit::IsDistributionDefined(EDistrTypes _distribution) const
 	return m_grid->IsDistrTypePresent(_distribution);
 }
 
-void CBaseUnit::CalculateTM(EDistrTypes _distribution, const std::vector<double>& _inValue, const std::vector<double>& _outValue, CTransformMatrix& _matrix) const
+void CBaseUnit::CalculateTM(EDistrTypes _distribution, const std::vector<double>& _inValue, const std::vector<double>& _outValue, CTransformMatrix& _matrix)
 {
 	if (_inValue.empty() || _inValue.size() != _outValue.size()) return;
 
@@ -877,17 +903,17 @@ void CBaseUnit::UpdateCacheSettings()
 	m_streams.UpdateCacheSettings();
 }
 
-double CBaseUnit::GetCompoundConstProperty(const std::string& _compoundKey, ECompoundConstProperties _property) const
+double CBaseUnit::GetCompoundProperty(const std::string& _compoundKey, ECompoundConstProperties _property) const
 {
 	return m_materialsDB->GetConstPropertyValue(_compoundKey, _property);
 }
 
-double CBaseUnit::GetCompoundTPProperty(const std::string& _compoundKey, ECompoundTPProperties _property, double _temperature, double _pressure) const
+double CBaseUnit::GetCompoundProperty(const std::string& _compoundKey, ECompoundTPProperties _property, double _temperature, double _pressure) const
 {
 	return m_materialsDB->GetTPPropertyValue(_compoundKey, _property, _temperature, _pressure);
 }
 
-double CBaseUnit::GetCompoundInteractionProperty(const std::string& _compoundKey1, const std::string& _compoundKey2, EInteractionProperties _property, double _temperature, double _pressure) const
+double CBaseUnit::GetCompoundProperty(const std::string& _compoundKey1, const std::string& _compoundKey2, EInteractionProperties _property, double _temperature, double _pressure) const
 {
 	return m_materialsDB->GetInteractionPropertyValue(_compoundKey1, _compoundKey2, _property, _temperature, _pressure);
 }
@@ -912,15 +938,35 @@ CUnitLookupTables* CBaseUnit::GetLookupTables()
 	return &m_lookupTables;
 }
 
-void CBaseUnit::HeatExchange(double _time, CStream* _stream1, CStream* _stream2, double _efficiency) const
+double CBaseUnit::CalculateTemperatureFromProperty(ECompoundTPProperties _property, double _value, const std::vector<double>& _fractions) const
+{
+	return m_lookupTables.CalcTemperature(_property, _value, _fractions);
+}
+
+double CBaseUnit::CalculatePressureFromProperty(ECompoundTPProperties _property, double _value, const std::vector<double>& _fractions) const
+{
+	return m_lookupTables.CalcPressure(_property, _value, _fractions);
+}
+
+double CBaseUnit::CalculatePropertyFromTemperature(ECompoundTPProperties _property, double _T, const std::vector<double>& _fractions) const
+{
+	return m_lookupTables.CalcFromTemperature(_property, _T, _fractions);
+}
+
+double CBaseUnit::CalculatePropertyFromPressure(ECompoundTPProperties _property, double _P, const std::vector<double>& _fractions) const
+{
+	return m_lookupTables.CalcFromPressure(_property, _P, _fractions);
+}
+
+void CBaseUnit::HeatExchange(double _time, CBaseStream* _stream1, CBaseStream* _stream2, double _efficiency) const
 {
 	// no heat transfer if efficiency is bigger then 1 or smaller/equal to 0
 	if (_efficiency <= 0.0 || _efficiency > 1.0)
 		return;
 
 	// mass flows and temperatures of both streams
-	const double mass1 = _stream1->GetMassFlow(_time);
-	const double mass2 = _stream2->GetMassFlow(_time);
+	const double mass1 = _stream1->GetMass(_time);
+	const double mass2 = _stream2->GetMass(_time);
 	const double massMix = mass1 + mass2;
 	if (massMix == 0.0)
 		return;
@@ -1052,7 +1098,7 @@ void CBaseUnit::InitializeUnit()
 	m_streams.Initialize();
 	for (auto& param : m_unitParameters.GetAllSolverParameters())
 		param->GetSolver()->Initialize();
-	Initialize();
+	Initialize(0.0);
 	SaveStateUnit(0.0, std::numeric_limits<double>::max());
 }
 
@@ -1159,5 +1205,314 @@ void CBaseUnit::LoadFromFile_v1(const CH5Handler& _h5File, const std::string& _p
 	m_unitParameters.LoadFromFile(_h5File, _path + "/" + StrConst::BUnit_H5GroupParams);
 	m_stateVariables.LoadFromFile_v0(_h5File, _path);
 	m_plots.LoadFromFile_v0(_h5File, _path);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/// Deprecated functions
+
+std::string& CBaseUnit::GetNameRef()
+{
+	return m_unitName;
+}
+
+std::string& CBaseUnit::GetAuthorRef()
+{
+	return m_authorName;
+}
+
+size_t& CBaseUnit::GetVersionRef()
+{
+	return m_version;
+}
+
+std::string& CBaseUnit::GetKeyRef()
+{
+	return m_uniqueID;
+}
+
+const CMaterialsDatabase* CBaseUnit::GetMaterialsDBRef() const
+{
+	return m_materialsDB;
+}
+
+unsigned CBaseUnit::AddPort(const std::string& _name, unsigned _type)
+{
+	switch (_type)
+	{
+	case 0:		AddPort(_name, EUnitPort::INPUT);		break;
+	case 1:		AddPort(_name, EUnitPort::OUTPUT);		break;
+	default:	AddPort(_name, EUnitPort::UNDEFINED);	break;
+	}
+	return static_cast<unsigned>(m_ports.GetPortsNumber()) - 1;
+}
+
+CStream* CBaseUnit::GetPortStream(unsigned _index) const
+{
+	if (_index >= m_ports.GetPortsNumber()) return nullptr;
+	return m_ports.GetAllPorts()[_index]->GetStream();
+}
+
+CStream* CBaseUnit::AddFeed(const std::string& _name, [[maybe_unused]] const std::string& _key)
+{
+	return AddFeed(_name);
+}
+
+CStream* CBaseUnit::AddMaterialStream(const std::string& _name, [[maybe_unused]] const std::string& key)
+{
+	return AddStream(_name);
+}
+
+CStream* CBaseUnit::GetMaterialStream(const std::string& _name)
+{
+	return GetStream(_name);
+}
+
+void CBaseUnit::AddConstParameter(const std::string& _name, double _minValue, double _maxValue, double _initValue, const std::string& _units, const std::string& _description)
+{
+	AddConstRealParameter(_name, _initValue, _units, _description, _minValue, _maxValue);
+}
+
+void CBaseUnit::AddTDParameter(const std::string& _name, double _minValue, double _maxValue, double _initValue, const std::string& _units, const std::string& _description)
+{
+	AddTDParameter(_name, _initValue, _units, _description, _minValue, _maxValue);
+}
+
+void CBaseUnit::AddGroupParameter(const std::string& _name, size_t _initValue, const std::vector<size_t>& _values, const std::vector<std::string>& _valuesNames, const std::string& _description)
+{
+	AddComboParameter(_name, _initValue, _values, _valuesNames, _description);
+}
+
+double CBaseUnit::GetConstParameterValue(const std::string& _name) const
+{
+	return GetConstRealParameterValue(_name);
+}
+
+size_t CBaseUnit::GetGroupParameterValue(const std::string& _name) const
+{
+	return GetComboParameterValue(_name);
+}
+
+unsigned CBaseUnit::AddStateVariable(const std::string& _name, double _initValue, [[maybe_unused]] bool _saveHistory)
+{
+	AddStateVariable(_name, _initValue);
+	return static_cast<unsigned>(m_stateVariables.GetStateVariablesNumber()) - 1;
+}
+
+void CBaseUnit::SetStateVariable(unsigned _index, double _value)
+{
+	if (_index >= m_stateVariables.GetStateVariablesNumber()) return;
+	m_stateVariables.GetAllStateVariables()[_index]->SetValue(_value);
+}
+
+void CBaseUnit::SaveStateVariables(double _time)
+{
+	for (auto& sv : m_stateVariables.GetAllStateVariables())
+		sv->SetValue(_time, sv->GetValue());
+}
+
+void CBaseUnit::AddPointOnCurve(const std::string& _plotName, const std::string& _curveName, const std::vector<double>& _x, const std::vector<double>& _y)
+{
+	AddPointsOnCurve(_plotName, _curveName, _x, _y);
+}
+
+void CBaseUnit::AddPointOnCurve(const std::string& _plotName, double _valueZ, const std::vector<double>& _x, const std::vector<double>& _y)
+{
+	AddPointsOnCurve(_plotName, _valueZ, _x, _y);
+}
+
+unsigned CBaseUnit::GetPlotsNumber() const
+{
+	return static_cast<unsigned>(m_plots.GetPlotsNumber());
+}
+
+unsigned CBaseUnit::GetCurvesNumber(size_t _iPlot) const
+{
+	if (_iPlot >= m_plots.GetPlotsNumber()) return {};
+	return static_cast<unsigned>(m_plots.GetAllPlots()[_iPlot]->GetCurvesNumber());
+}
+
+std::string CBaseUnit::GetPlotName(size_t _iPlot) const
+{
+	if (_iPlot >= m_plots.GetPlotsNumber()) return {};
+	return m_plots.GetAllPlots()[_iPlot]->GetName();
+}
+
+std::string CBaseUnit::GetPlotXAxisName(unsigned _iPlot) const
+{
+	if (_iPlot >= m_plots.GetPlotsNumber()) return {};
+	return m_plots.GetAllPlots()[_iPlot]->GetLabelX();
+}
+
+std::string CBaseUnit::GetPlotYAxisName(unsigned _iPlot) const
+{
+	if (_iPlot >= m_plots.GetPlotsNumber()) return {};
+	return m_plots.GetAllPlots()[_iPlot]->GetLabelY();
+}
+
+std::string CBaseUnit::GetPlotZAxisName(unsigned _iPlot) const
+{
+	if (_iPlot >= m_plots.GetPlotsNumber()) return {};
+	return m_plots.GetAllPlots()[_iPlot]->GetLabelZ();
+}
+
+std::string CBaseUnit::GetCurveName(unsigned _iPlot, unsigned _iCurve) const
+{
+	if (_iPlot >= m_plots.GetPlotsNumber() || _iCurve >= m_plots.GetAllPlots()[_iPlot]->GetCurvesNumber()) return {};
+	return m_plots.GetAllPlots()[_iPlot]->GetAllCurves()[_iCurve]->GetName();
+}
+
+std::vector<double> CBaseUnit::GetCurveX(unsigned _iPlot, unsigned _iCurve) const
+{
+	if (_iPlot >= m_plots.GetPlotsNumber() || _iCurve >= m_plots.GetAllPlots()[_iPlot]->GetCurvesNumber()) return {};
+	return m_plots.GetAllPlots()[_iPlot]->GetAllCurves()[_iCurve]->GetXValues();
+}
+
+std::vector<double> CBaseUnit::GetCurveY(unsigned _iPlot, unsigned _iCurve) const
+{
+	if (_iPlot >= m_plots.GetPlotsNumber() || _iCurve >= m_plots.GetAllPlots()[_iPlot]->GetCurvesNumber()) return {};
+	return m_plots.GetAllPlots()[_iPlot]->GetAllCurves()[_iCurve]->GetYValues();
+}
+
+double CBaseUnit::GetCurveZ(size_t _iPlot, size_t _iCurve) const
+{
+	if (_iPlot >= m_plots.GetPlotsNumber() || _iCurve >= m_plots.GetAllPlots()[_iPlot]->GetCurvesNumber()) return {};
+	return m_plots.GetAllPlots()[_iPlot]->GetAllCurves()[_iCurve]->GetZValue();
+}
+
+bool CBaseUnit::IsPlot2D(unsigned _iPlot)
+{
+	if (_iPlot >= m_plots.GetPlotsNumber()) return {};
+	return m_plots.GetAllPlots()[_iPlot]->Is2D();
+}
+
+std::vector<double> CBaseUnit::GetAllDefinedTimePoints(double _timeBeg, double _timeEnd, bool _forceStartBoundary, bool _forceEndBoundary) const
+{
+	if (!_forceStartBoundary && !_forceEndBoundary)
+		return GetAllTimePoints(_timeBeg, _timeEnd);
+	else if (_forceStartBoundary && _forceEndBoundary)
+		return GetAllTimePointsClosed(_timeBeg, _timeEnd);
+	else
+	{
+		auto res = GetAllTimePoints(_timeBeg, _timeEnd);
+		if (_forceStartBoundary && std::fabs(res.front() - _timeBeg) > 16 * std::numeric_limits<double>::epsilon())
+			res.insert(res.begin(), _timeBeg);
+		if (_forceEndBoundary && std::fabs(res.back() - _timeEnd) > 16 * std::numeric_limits<double>::epsilon())
+			res.push_back(_timeEnd);
+		return res;
+	}
+}
+
+std::vector<double> CBaseUnit::GetAllInputTimePoints(double _timeBeg, double _timeEnd, bool _forceStartBoundary, bool _forceEndBoundary) const
+{
+	if (!_forceStartBoundary && !_forceEndBoundary)
+		return GetInputTimePoints(_timeBeg, _timeEnd);
+	else if (_forceStartBoundary && _forceEndBoundary)
+		return GetInputTimePointsClosed(_timeBeg, _timeEnd);
+	else
+	{
+		auto res = GetInputTimePoints(_timeBeg, _timeEnd);
+		if (_forceStartBoundary && std::fabs(res.front() - _timeBeg) > 16 * std::numeric_limits<double>::epsilon())
+			res.insert(res.begin(), _timeBeg);
+		if (_forceEndBoundary && std::fabs(res.back() - _timeEnd) > 16 * std::numeric_limits<double>::epsilon())
+			res.push_back(_timeEnd);
+		return res;
+	}
+}
+
+std::vector<double> CBaseUnit::GetAllStreamsTimePoints(const std::vector<CStream*>& _srteams, double _timeBeg, double _timeEnd) const
+{
+	return GetStreamsTimePoints(_timeBeg, _timeEnd, _srteams);
+}
+
+std::vector<std::string> CBaseUnit::GetCompoundsList() const
+{
+	return GetAllCompounds();
+}
+
+std::vector<std::string> CBaseUnit::GetCompoundsNames() const
+{
+	return GetAllCompoundsNames();
+}
+
+bool CBaseUnit::IsCompoundKeyDefined(const std::string& _compoundKey) const
+{
+	return IsCompoundDefined(_compoundKey);
+}
+
+unsigned CBaseUnit::GetPhaseIndex(unsigned _soa) const
+{
+	const auto state = SOA2EPhase(_soa);
+	for (unsigned i = 0; i < m_phases->size(); ++i)
+		if (m_phases->at(i).state == state)
+			return i;
+	return -1;
+}
+
+unsigned CBaseUnit::GetPhaseSOA(unsigned _index) const
+{
+	return EPhase2SOA(GetPhaseType(_index));
+}
+
+bool CBaseUnit::IsPhaseDefined(unsigned _soa) const
+{
+	return IsPhaseDefined(SOA2EPhase(_soa));
+}
+
+double CBaseUnit::GetCompoundConstant(const std::string& _compoundKey, unsigned _property) const
+{
+	return GetCompoundProperty(_compoundKey, static_cast<ECompoundConstProperties>(_property));
+}
+
+double CBaseUnit::GetCompoundTPDProp(const std::string& _compoundKey, unsigned _property, double _temperature, double _pressure) const
+{
+	return GetCompoundProperty(_compoundKey, static_cast<ECompoundTPProperties>(_property), _temperature, _pressure);
+}
+
+double CBaseUnit::GetCompoundsInteractionProp(const std::string& _compoundKey1, const std::string& _compoundKey2, unsigned _property, double _temperature, double _pressure) const
+{
+	return GetCompoundProperty(_compoundKey1, _compoundKey2, static_cast<EInteractionProperties>(_property), _temperature, _pressure);
+}
+
+double CBaseUnit::CalcTemperatureFromProperty(ECompoundTPProperties _property, const std::vector<double>& _fractions, double _value) const
+{
+	return CalculateTemperatureFromProperty(_property, _value, _fractions);
+}
+
+double CBaseUnit::CalcPressureFromProperty(ECompoundTPProperties _property, const std::vector<double>& _fractions, double _value) const
+{
+	return CalculatePressureFromProperty(_property, _value, _fractions);
+}
+
+void CBaseUnit::HeatExchange(CStream* _stream1, CStream* _stream2, double _time, double _efficiency) const
+{
+	HeatExchange(_time, _stream1, _stream2, _efficiency);
+}
+
+bool CBaseUnit::CheckError() const
+{
+	return HasError();
+}
+
+EPhase CBaseUnit::SOA2EPhase(unsigned _soa)
+{
+	switch (_soa)
+	{
+	case 0:		return EPhase::SOLID;
+	case 1:		return EPhase::LIQUID;
+	case 2:		return EPhase::VAPOR;
+	default:	return EPhase::UNDEFINED;
+	}
+}
+
+unsigned CBaseUnit::EPhase2SOA(EPhase _phase)
+{
+	switch (_phase)
+	{
+	case EPhase::SOLID:		return 0;
+	case EPhase::LIQUID:	return 1;
+	case EPhase::VAPOR:		return 2;
+	case EPhase::UNDEFINED:	return 4;
+	}
+	return 4;
 }
 

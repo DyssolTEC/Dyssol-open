@@ -32,18 +32,6 @@
 // Initial minimal fraction
 #define DEFAULT_MIN_FRACTION	0
 
-//////////////////////////////////////////////////////////////////////////
-/// Aggregation states
-
-// Identifiers of phase types
-enum EPhaseTypes : unsigned
-{
-	SOA_SOLID,
-	SOA_LIQUID,
-	SOA_VAPOR,
-	SOA_LIQUID2,
-	SOA_UNDEFINED
-};
 
 // ========== Convergence methods
 enum EConvMethod : uint32_t
@@ -229,4 +217,33 @@ enum class EOverall : uint32_t
 	OVERALL_USER_DEFINED_08 = 208,
 	OVERALL_USER_DEFINED_09 = 209,
 	OVERALL_USER_DEFINED_10 = 210,
+};
+
+// Types of unit ports.
+enum class EUnitPort : uint32_t
+{
+	INPUT     = 0,
+	OUTPUT    = 1,
+	UNDEFINED = 2
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+/// Deprecated types
+
+// Identifiers of phase types
+enum EPhaseTypes : unsigned
+{
+	SOA_SOLID,
+	SOA_LIQUID,
+	SOA_VAPOR,
+	SOA_LIQUID2,
+	SOA_UNDEFINED
+};
+
+enum EPortType
+{
+	INPUT_PORT = 0,
+	OUTPUT_PORT = 1,
+	UNDEFINED_PORT = 2
 };

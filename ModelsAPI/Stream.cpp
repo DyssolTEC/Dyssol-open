@@ -70,9 +70,19 @@ double CStream::GetMassFlow(double _time) const
 	return GetMass(_time);
 }
 
+double CStream::GetMolFlow(double _time) const
+{
+	return GetMol(_time);
+}
+
 void CStream::SetMassFlow(double _time, double _value)
 {
 	SetMass(_time, _value);
+}
+
+void CStream::SetMolFlow(double _time, double _value)
+{
+	SetMol(_time, _value);
 }
 
 double CStream::GetCompoundMassFlow(double _time, const std::string& _compoundKey, EPhase _phase) const
@@ -80,15 +90,39 @@ double CStream::GetCompoundMassFlow(double _time, const std::string& _compoundKe
 	return GetCompoundMass(_time, _compoundKey, _phase);
 }
 
+double CStream::GetCompoundMassFlow(double _time, const std::string& _compoundKey) const
+{
+	return GetCompoundMass(_time, _compoundKey);
+}
+
+double CStream::GetCompoundMolFlow(double _time, const std::string& _compoundKey, EPhase _phase) const
+{
+	return GetCompoundMol(_time, _compoundKey, _phase);
+}
+
 double CStream::GetPhaseMassFlow(double _time, EPhase _phase) const
 {
 	return GetPhaseMass(_time, _phase);
+}
+
+double CStream::GetPhaseMolFlow(double _time, EPhase _phase) const
+{
+	return GetPhaseMol(_time, _phase);
 }
 
 void CStream::SetPhaseMassFlow(double _time, EPhase _phase, double _value)
 {
 	SetPhaseMass(_time, _phase, _value);
 }
+
+void CStream::SetPhaseMolFlow(double _time, EPhase _phase, double _value)
+{
+	SetPhaseMol(_time, _phase, _value);
+}
+
+// TODO: move it somewhere
+////////////////////////////////////////////////////////////////////////////////
+/// Deprecated functions
 
 void CStream::CopyFromStream(const CStream* _source, double _time)
 {
@@ -100,7 +134,7 @@ void CStream::CopyFromStream(const CStream* _source, double _timeBeg, double _ti
 	CopyFromStream(_timeBeg, _timeEnd, _source);
 }
 
-void CStream::CopyFromHoldup(const CHoldup* _source, double _time, double _massFlow)
+void CStream::CopyFromHoldup(const CHoldup* _source, double _time, double _massFlow, [[maybe_unused]] bool _deleteDataAfter)
 {
 	CopyFromHoldup(_time, _source, _massFlow);
 }
@@ -110,12 +144,42 @@ void CStream::AddStream(const CStream* _source, double _time)
 	AddStream(_time, _source);
 }
 
-double CStream::GetPhaseMassFlow(double _time, unsigned _soa) const
+double CStream::GetMassFlow(double _time, unsigned _basis) const
 {
-	return GetPhaseMassFlow(_time, PhaseSOA2EPhase(_soa));
+	if (_basis == 0)
+		return GetMassFlow(_time);
+	else
+		return GetMolFlow(_time);
 }
 
-void CStream::SetPhaseMassFlow(double _time, unsigned _soa, double _value)
+void CStream::SetMassFlow(double _time, double _value, unsigned _basis)
 {
-	SetPhaseMassFlow(_time, PhaseSOA2EPhase(_soa), _value);
+	if (_basis == 0)
+		SetMassFlow(_time, _value);
+	else
+		SetMolFlow(_time, _value);
+}
+
+double CStream::GetCompoundMassFlow(double _time, const std::string& _compound, unsigned _soa, unsigned _basis) const
+{
+	if (_basis == 0)
+		return GetCompoundMassFlow(_time, _compound, SOA2EPhase(_soa));
+	else
+		return GetCompoundMolFlow(_time, _compound, SOA2EPhase(_soa));
+}
+
+double CStream::GetPhaseMassFlow(double _time, unsigned _soa, unsigned _basis) const
+{
+	if (_basis == 0)
+		return GetPhaseMassFlow(_time, SOA2EPhase(_soa));
+	else
+		return GetPhaseMolFlow(_time, SOA2EPhase(_soa));
+}
+
+void CStream::SetPhaseMassFlow(double _time, unsigned _soa, double _value, unsigned _basis)
+{
+	if (_basis == 0)
+		SetPhaseMassFlow(_time, SOA2EPhase(_soa), _value);
+	else
+		SetPhaseMolFlow(_time, SOA2EPhase(_soa), _value);
 }

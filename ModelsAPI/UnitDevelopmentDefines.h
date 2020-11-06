@@ -8,6 +8,8 @@
 #include "DynamicUnit.h"
 #include "SteadyStateUnit.h"
 #include "TransformMatrix.h"
+#include "Phase.h"
+#include "TimeDependentValue.h"
 #include "DistributionsFunctions.h"
 #include "StringFunctions.h"
 #include "DyssolUtilities.h"

@@ -248,7 +248,7 @@ void CFlowsheetEditor::ChangeStreamName(int _iRow, int _iCol)
 
 void CFlowsheetEditor::NewPortStreamSelected(int _iRow, int _iCol, QComboBox* _comboBox)
 {
-	if (!m_pSelectedModel || m_pSelectedModel->GetModel()) return;
+	if (!m_pSelectedModel || !m_pSelectedModel->GetModel()) return;
 	m_pSelectedModel->GetModel()->GetPortsManager().GetPort(ui.tablePorts->GetItemUserData(_iRow, 0).toStdString())->SetStreamKey(_comboBox->currentData(Qt::UserRole).toString().toStdString());
 	m_pFlowsheet->SetTopologyModified(true);
 	emit DataChanged();
@@ -479,8 +479,8 @@ void CFlowsheetEditor::UpdatePortsView() const
 	for (int i = 0; i < static_cast<int>(ports.size()); ++i)
 	{
 		ui.tablePorts->SetItemNotEditable(i, 0, ports[i]->GetName(), QString::fromStdString(ports[i]->GetName()));
-		ui.tablePorts->SetItemNotEditable(i, 1, ports[i]->GetType() == CUnitPort::EPortType2::INPUT ? QString(StrConst::FE_PortTypeInput) : QString(StrConst::FE_PortTypeOutput));
-		ui.tablePorts->SetRowBackgroundColor(i, ports[i]->GetType() == CUnitPort::EPortType2::INPUT ? QColor(0, 255, 0, 50) : QColor(255, 216, 0, 50));
+		ui.tablePorts->SetItemNotEditable(i, 1, ports[i]->GetType() == EUnitPort::INPUT ? QString(StrConst::FE_PortTypeInput) : QString(StrConst::FE_PortTypeOutput));
+		ui.tablePorts->SetRowBackgroundColor(i, ports[i]->GetType() == EUnitPort::INPUT ? QColor(0, 255, 0, 50) : QColor(255, 216, 0, 50));
 		QComboBox* combo = ui.tablePorts->SetComboBox(i, 2, streamNames, streamKeys, ports[i]->GetStreamKey());
 		combo->setMaxVisibleItems(20);
 	}

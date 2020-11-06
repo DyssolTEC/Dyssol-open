@@ -7,8 +7,8 @@
 class CSteadyStateUnit : public CBaseUnit
 {
 public:
-	CSteadyStateUnit();
-	virtual ~CSteadyStateUnit();
+	CSteadyStateUnit() = default;
+	~CSteadyStateUnit() override = default;
 
 	/**	Calculates unit on a time point (for steady-state units).
 	 *	\param _dTime Time point to calculate*/

@@ -38,7 +38,7 @@ private:
 	unsigned m_iTWIterationFull;	// Iteration number within a current time window [m_dTWStart .. ]. Does not reset if the size of current TW is reduced.
 	unsigned m_iTWIterationCurr;	// Iteration number within a current time window [m_dTWStart .. m_dTWEnd]. Reset if the size of current TW is reduced.
 	unsigned m_iWindowNumber;		// Current time window within a partition.
-	std::string m_sUnitName;		// Name of the currently calculated unit.
+	std::string m_unitName;		    // Name of the currently calculated unit.
 
 	//// parameters of convergence methods
 	bool m_bSteffensenTrigger;

@@ -70,7 +70,8 @@ void CHoldup::AddStream(double _timeBeg, double _timeEnd, const CStream* _source
 	if (std::fabs(_source->GetPreviousTimePoint(_timeEnd) - _timeBeg) > m_epsilon) // there are some points in-between - create a copy with only two points
 	{
 		auto* temp = new CStream();
-		temp->SetupStructure(*_source);
+		temp->SetupStructure(_source);
+		temp->SetCacheSettings(SCacheSettings{ false, 0, {} });
 		temp->Copy(_timeBeg, *_source);
 		temp->Copy(_timeEnd, *_source);
 		stream = temp;
@@ -147,6 +148,16 @@ void CHoldup::AddHoldup(double _timeBeg, double _timeEnd, const CHoldup* _source
 	Add(_timeBeg, _timeEnd, *_source);
 }
 
+
+// TODO: move it somewhere
+////////////////////////////////////////////////////////////////////////////////
+/// Deprecated functions
+
+void CHoldup::CopyFromHoldup(const CHoldup* _source, double _time)
+{
+	CopyFromHoldup(_time, _source);
+}
+
 void CHoldup::AddStream(const CStream* _source, double _timeBeg, double _timeEnd)
 {
 	AddStream(_timeBeg, _timeEnd, _source);
@@ -155,4 +166,44 @@ void CHoldup::AddStream(const CStream* _source, double _timeBeg, double _timeEnd
 void CHoldup::AddStream2(const CStream* _source, double _timeBeg, double _timeEnd)
 {
 	AddStream(_timeBeg, _timeEnd, _source);
+}
+
+double CHoldup::GetMass(double _time, unsigned _basis) const
+{
+	if (_basis == 0)
+		return GetMass(_time);
+	else
+		return GetMol(_time);
+}
+
+void CHoldup::SetMass(double _time, double _value, unsigned _basis)
+{
+	if (_basis == 0)
+		SetMass(_time, _value);
+	else
+		SetMol(_time, _value);
+}
+
+double CHoldup::GetCompoundMass(double _time, const std::string& _compoundKey, unsigned _soa, unsigned _basis) const
+{
+	if (_basis == 0)
+		return GetCompoundMass(_time, _compoundKey, SOA2EPhase(_soa));
+	else
+		return GetCompoundMol(_time, _compoundKey, SOA2EPhase(_soa));
+}
+
+double CHoldup::GetPhaseMass(double _time, unsigned _soa, unsigned _basis) const
+{
+	if (_basis == 0)
+		return GetPhaseMass(_time, SOA2EPhase(_soa));
+	else
+		return GetPhaseMol(_time, SOA2EPhase(_soa));
+}
+
+void CHoldup::SetPhaseMass(double _time, unsigned _soa, double _value, unsigned _basis)
+{
+	if (_basis == 0)
+		SetPhaseMass(_time, SOA2EPhase(_soa), _value);
+	else
+		SetPhaseMol(_time, SOA2EPhase(_soa), _value);
 }

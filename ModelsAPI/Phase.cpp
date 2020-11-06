@@ -17,6 +17,7 @@ CPhase::CPhase(EPhase _state, std::string _name, const CDistributionsGrid& _grid
 {
 	SetCacheSettings(_cache);
 	m_fractions.SetName(m_name);
+	m_fractions.SetUnits("-");
 
 	if (_state != EPhase::SOLID)
 		// TODO: fix this when CMDMatrix uses size_t.
@@ -174,6 +175,7 @@ const CTimeDependentValue* CPhase::Fractions() const
 
 void CPhase::SetCacheSettings(const SCacheSettings& _cache)
 {
+	m_fractions.SetCacheSettings(_cache);
 	m_distribution.SetCachePath(_cache.path);
 	m_distribution.SetCacheParams(_cache.isEnabled, _cache.window);
 }
@@ -191,8 +193,8 @@ void CPhase::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
 	_h5File.WriteAttribute(_path, StrConst::H5AttrSaveVersion, m_saveVersion);
 	_h5File.WriteData(_path, StrConst::Phase_H5Name, m_name);
 	_h5File.WriteData(_path, StrConst::Phase_H5State, E2I(m_state));
-	m_fractions.SaveToFile(_h5File, _path + "/" + StrConst::Phase_H5Fractions);
-	m_distribution.SaveToFile(_h5File, _path + "/" + StrConst::Phase_H5Distribution);
+	m_fractions.SaveToFile(_h5File, _h5File.CreateGroup(_path, StrConst::Phase_H5Fractions));
+	m_distribution.SaveToFile(_h5File, _h5File.CreateGroup(_path, StrConst::Phase_H5Distribution));
 }
 
 void CPhase::LoadFromFile(const CH5Handler& _h5File, const std::string& _path)
