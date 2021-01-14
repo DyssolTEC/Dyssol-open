@@ -11,11 +11,10 @@
 #define CppProjects[5] "ModelsAPI"
 #define CppProjects[6] "Utilities"
 
-#dim ExternalLibs[4]
+#dim ExternalLibs[3]
 #define ExternalLibs[0] "hdf5"
 #define ExternalLibs[1] "sundials"
-#define ExternalLibs[2] "szip"
-#define ExternalLibs[3] "zlib"
+#define ExternalLibs[2] "zlib"
 
 #dim SolverTemplates[1]
 #define SolverTemplates[0] "AgglomerationTemplate"
