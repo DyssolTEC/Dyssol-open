@@ -40,6 +40,10 @@
 #define VISUAL_STUDIO_VERSION	"Visual Studio 2019 16.6"
 #elif (_MSC_VER == 1927)
 #define VISUAL_STUDIO_VERSION	"Visual Studio 2019 16.7"
+#elif (_MSC_VER == 1928)
+#define VISUAL_STUDIO_VERSION	"Visual Studio 2019 16.8"
+#elif (_MSC_VER == 1929)
+#define VISUAL_STUDIO_VERSION	"Visual Studio 2019 16.9"
 #endif
 
 #ifdef _WIN64

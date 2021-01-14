@@ -20,7 +20,7 @@ A fully functional version can be compiled and built with Microsoft Visual Studi
 ## Windows
 ### Compilation requirements on Windows
 - [Microsoft Visual Studio 2019](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Community&rel=16), Desktop development with C++ workload.
-- [Qt 5.15.0](https://www.qt.io/download-qt-installer) msvc2019 / msvc2019_64
+- [Qt 5.15.2](https://www.qt.io/download-qt-installer) msvc2019 / msvc2019_64
 - [Qt Visual Studio Tools](https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools2019) for Visual Studio 2019
 - [CMake](https://cmake.org/download/) 3.14 or higher
 - [Git](https://git-scm.com/downloads)
@@ -110,9 +110,9 @@ $ ./make_dyssol.sh
 - unins000.exe – Dyssol uninstaller
 
 # Third-party tools and libraries
-- [Qt 5.15.0](https://www.qt.io/) – The Qt Company - [LGPL v3](https://doc.qt.io/qt-5/lgpl.html)
+- [Qt 5.15.2](https://www.qt.io/) – The Qt Company - [LGPL v3](https://doc.qt.io/qt-5/lgpl.html)
 - [HDF5 v1.12.0](https://www.hdfgroup.org/downloads/hdf5/) – HDF Group - [HDF license](https://support.hdfgroup.org/ftp/HDF5/releases/COPYING)
 - [zlib v1.2.11](https://www.zlib.net/) – Jean-loup Gailly and Mark Adler - [zlib license](https://www.zlib.net/zlib_license.html)
-- [SUNDIALS v5.3.0](https://computing.llnl.gov/projects/sundials/) – Lawrence Livermore National Security and Southern Methodist University - [BSD-3-Clause license](https://computing.llnl.gov/projects/sundials/license)
+- [SUNDIALS v5.6.1](https://computing.llnl.gov/projects/sundials/) – Lawrence Livermore National Security and Southern Methodist University - [BSD-3-Clause license](https://computing.llnl.gov/projects/sundials/license)
 - [Inno Setup v6.0.5](https://jrsoftware.org/isinfo.php) – Jordan Russell - [Inno Setup license](http://www.jrsoftware.org/files/is/license.txt)
 - [KISS FFT v131](https://github.com/mborgerding/kissfft) – Mark Borgerding - [BSD-3-Clause license](https://github.com/mborgerding/kissfft/blob/master/COPYING)

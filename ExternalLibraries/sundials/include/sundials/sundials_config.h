@@ -1,8 +1,8 @@
 /* -----------------------------------------------------------------
- * Programmer(s): Aaron Collier and Radu Serban @ LLNL
+ * Programmer(s): Cody J. Balos, Aaron Collier and Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * LLNS/SMU Copyright Start
- * Copyright (c) 2002-2018, Southern Methodist University and
+ * Copyright (c) 2002-2020, Southern Methodist University and
  * Lawrence Livermore National Security
  *
  * This work was performed under the auspices of the U.S. Department
@@ -15,31 +15,26 @@
  * For details, see the LICENSE file.
  * LLNS/SMU Copyright End
  * -----------------------------------------------------------------
- * SUNDIALS configuration header file
+ * SUNDIALS configuration header file.
  * -----------------------------------------------------------------*/
 
-/* Define SUNDIALS version numbers */
-#define SUNDIALS_VERSION "5.3.0"
+#include "sundials_export.h"
+
+/* ------------------------------------------------------------------
+ * Define SUNDIALS version numbers
+ * -----------------------------------------------------------------*/
+
+
+#define SUNDIALS_VERSION "5.6.1"
 #define SUNDIALS_VERSION_MAJOR 5
-#define SUNDIALS_VERSION_MINOR 3
-#define SUNDIALS_VERSION_PATCH 0
+#define SUNDIALS_VERSION_MINOR 6
+#define SUNDIALS_VERSION_PATCH 1
 #define SUNDIALS_VERSION_LABEL ""
 
-/* FCMIX: Define Fortran name-mangling macro for C identifiers.
- * Depending on the inferred scheme, one of the following six
- * macros will be defined:
- *     #define SUNDIALS_F77_FUNC(name,NAME) name
- *     #define SUNDIALS_F77_FUNC(name,NAME) name ## _
- *     #define SUNDIALS_F77_FUNC(name,NAME) name ## __
- *     #define SUNDIALS_F77_FUNC(name,NAME) NAME
- *     #define SUNDIALS_F77_FUNC(name,NAME) NAME ## _
- *     #define SUNDIALS_F77_FUNC(name,NAME) NAME ## __
- */
 
-
-/* FCMIX: Define Fortran name-mangling macro for C identifiers
- *        which contain underscores.
- */
+/* ------------------------------------------------------------------
+ * SUNDIALS build information
+ * -----------------------------------------------------------------*/
 
 
 /* Define precision of SUNDIALS data type 'realtype'
@@ -75,58 +70,88 @@
  */
 /* #undef SUNDIALS_HAVE_POSIX_TIMERS */
 
-/* Build monitoring code
- * If it was decided that monitoring code should be built, then
- *     #define SUNDIALS_BUILD_WITH_MONITORING
- */
+/* CVODE should use fused kernels if utilizing
+  * the CUDA NVector.
+  */
+/* #undef SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS */
+
+
+/* BUILD SUNDIALS with monitoring functionalities
+  * the CUDA NVector.
+  */
 /* #undef SUNDIALS_BUILD_WITH_MONITORING */
 
-/* Blas/Lapack available
- * If working libraries for Blas/lapack support were found, then
- *     #define SUNDIALS_BLAS_LAPACK
- */
-/* #undef SUNDIALS_BLAS_LAPACK */
+/* ------------------------------------------------------------------
+ * SUNDIALS TPL macros
+ * -----------------------------------------------------------------*/
 
-/* SUPERLUMT available
- * If working libraries for SUPERLUMT support were found, then
- *     #define SUNDIALS_SUPERLUMT
+
+
+
+/* Set if SUNDIALS is built with MPI support, then
+ *     #define SUNDIALS_MPI_ENABLED 1
+ * otherwise
+ *     #define SUNDIALS_MPI_ENABLED 0
  */
-/* #undef SUNDIALS_SUPERLUMT */
+#define SUNDIALS_MPI_ENABLED 0
+
+ /* SUPERLUMT threading type */
 /* #undef SUNDIALS_SUPERLUMT_THREAD_TYPE */
-
-/* SUPERLUDIST available
- * If working libraries for SUPERLUDIST support were found, then
- *    #define SUNDIALS_SUPERLUDIST
- */
-/* #undef SUNDIALS_SUPERLUDIST */
-
-/* KLU available
- * If working libraries for KLU support were found, then
- *     #define SUNDIALS_KLU
- */
-/* #undef SUNDIALS_KLU */
-
-/* Trilinos available
- * If working libraries for Trilinos support were found, then
- *     #define SUNDIALS_TRILINOS
- */
-/* #undef SUNDIALS_TRILINOS */
 
  /* Trilinos with MPI is available, then
   *    #define SUNDIALS_TRILINOS_HAVE_MPI
   */
 /* #undef SUNDIALS_TRILINOS_HAVE_MPI */
 
-/* Set if SUNDIALS is built with MPI support.
- *
+/* RAJA backends */
+/* #undef SUNDIALS_RAJA_BACKENDS_HIP */
+#define SUNDIALS_RAJA_BACKENDS_CUDA
+
+/* ------------------------------------------------------------------
+ * SUNDIALS modules enabled
+ * -----------------------------------------------------------------*/
+
+
+#define SUNDIALS_IDA 1
+#define SUNDIALS_KINSOL 1
+#define SUNDIALS_NVECTOR_SERIAL 1
+#define SUNDIALS_NVECTOR_MANYVECTOR 1
+#define SUNDIALS_SUNMATRIX_BAND 1
+#define SUNDIALS_SUNMATRIX_DENSE 1
+#define SUNDIALS_SUNMATRIX_SPARSE 1
+#define SUNDIALS_SUNLINSOL_BAND 1
+#define SUNDIALS_SUNLINSOL_DENSE 1
+#define SUNDIALS_SUNLINSOL_PCG 1
+#define SUNDIALS_SUNLINSOL_SPBCGS 1
+#define SUNDIALS_SUNLINSOL_SPFGMR 1
+#define SUNDIALS_SUNLINSOL_SPGMR 1
+#define SUNDIALS_SUNLINSOL_SPTFQMR 1
+#define SUNDIALS_SUNNONLINSOL_NEWTON 1
+#define SUNDIALS_SUNNONLINSOL_FIXEDPOINT 1
+
+
+
+/* ------------------------------------------------------------------
+ * SUNDIALS fortran configuration
+ * -----------------------------------------------------------------*/
+
+
+/* FCMIX: Define Fortran name-mangling macro for C identifiers.
+ * Depending on the inferred scheme, one of the following six
+ * macros will be defined:
+ *     #define SUNDIALS_F77_FUNC(name,NAME) name
+ *     #define SUNDIALS_F77_FUNC(name,NAME) name ## _
+ *     #define SUNDIALS_F77_FUNC(name,NAME) name ## __
+ *     #define SUNDIALS_F77_FUNC(name,NAME) NAME
+ *     #define SUNDIALS_F77_FUNC(name,NAME) NAME ## _
+ *     #define SUNDIALS_F77_FUNC(name,NAME) NAME ## __
  */
 
 
+/* FCMIX: Define Fortran name-mangling macro for C identifiers
+ *        which contain underscores.
+ */
 
- /* CVODE should use fused kernels if utilizing
-  * the CUDA NVector.
-  */
-/* #undef SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS */
 
 /* FNVECTOR: Allow user to specify different MPI communicator
  * If it was found that the MPI implementation supports MPI_Comm_f2c, then
@@ -134,18 +159,30 @@
  * otherwise
  *      #define SUNDIALS_MPI_COMM_F2C 0
  */
-#define SUNDIALS_MPI_COMM_F2C 0
+#define SUNDIALS_MPI_COMM_F2C 1
 
-/* Mark SUNDIALS API functions for export/import
- * When building shared SUNDIALS libraries under Windows, use
- *      #define SUNDIALS_EXPORT __declspec(dllexport)
- * When linking to shared SUNDIALS libraries under Windows, use
- *      #define SUNDIALS_EXPORT __declspec(dllimport)
- * In all other cases (other platforms or static libraries under
- * Windows), the SUNDIALS_EXPORT macro is empty
- */
-#define SUNDIALS_EXPORT
 
-/* Mark SUNDIALS API functions for deprecation.
+/* ------------------------------------------------------------------
+ * SUNDIALS inline macros.
+ * -----------------------------------------------------------------*/
+
+
+/* Mark SUNDIALS function as inline.
  */
-#define SUNDIALS_DEPRECATED SUNDIALS_EXPORT
+#ifndef SUNDIALS_CXX_INLINE
+#define SUNDIALS_CXX_INLINE inline
+#endif
+
+#ifndef SUNDIALS_C_INLINE
+#define SUNDIALS_C_INLINE inline
+#endif
+
+#ifdef __cplusplus
+#define SUNDIALS_INLINE SUNDIALS_CXX_INLINE
+#else
+#define SUNDIALS_INLINE SUNDIALS_C_INLINE
+#endif
+
+/* Mark SUNDIALS function as static inline.
+ */
+#define SUNDIALS_STATIC_INLINE static SUNDIALS_INLINE

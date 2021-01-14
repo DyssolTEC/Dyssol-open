@@ -12,7 +12,7 @@ if (-not (Get-Command Expand-7Zip -ErrorAction Ignore)) {
 ################################################################################
 ### Paths
 
-$SUNDIALS_VERSION = "5.3.0"
+$SUNDIALS_VERSION = "5.6.1"
 $SUNDIALS_DOWNLOAD_ADDRESS = "https://computation.llnl.gov/projects/sundials/download/sundials-$SUNDIALS_VERSION.tar.gz"
 $SUNDIALS_NAME = "sundials-$SUNDIALS_VERSION"
 $SUNDIALS_TAR_NAME = "$SUNDIALS_NAME.tar"
@@ -65,10 +65,22 @@ Copy-Item "$SUNDIALS_SRC_PATH\src\kinsol\kinsol_impl.h" "$SUNDIALS_INSTALL_PATH\
 Copy-Item "$SUNDIALS_SRC_PATH\src\kinsol\kinsol_ls_impl.h" "$SUNDIALS_INSTALL_PATH\include\kinsol\kinsol_ls_impl.h"
 
 # Copy *.pdb files
-Copy-Item "$SUNDIALS_BUILD_PATH\x32\src\ida\sundials_ida_static.dir\Debug\sundials_ida_static.pdb" "$SUNDIALS_INSTALL_PATH\lib32\sundials_ida_static.pdb"
-Copy-Item "$SUNDIALS_BUILD_PATH\x64\src\ida\sundials_ida_static.dir\Debug\sundials_ida_static.pdb" "$SUNDIALS_INSTALL_PATH\lib64\sundials_ida_static.pdb"
-Copy-Item "$SUNDIALS_BUILD_PATH\x32\src\kinsol\sundials_kinsol_static.dir\Debug\sundials_kinsol_static.pdb" "$SUNDIALS_INSTALL_PATH\lib32\sundials_kinsol_static.pdb"
-Copy-Item "$SUNDIALS_BUILD_PATH\x64\src\kinsol\sundials_kinsol_static.dir\Debug\sundials_kinsol_static.pdb" "$SUNDIALS_INSTALL_PATH\lib64\sundials_kinsol_static.pdb"
+Copy-Item "$SUNDIALS_BUILD_PATH\x32\src\ida\sundials_ida_obj_static.dir\Debug\sundials_ida_obj_static.pdb" "$SUNDIALS_INSTALL_PATH\lib32\sundials_ida_obj_static.pdb"
+Copy-Item "$SUNDIALS_BUILD_PATH\x64\src\ida\sundials_ida_obj_static.dir\Debug\sundials_ida_obj_static.pdb" "$SUNDIALS_INSTALL_PATH\lib64\sundials_ida_obj_static.pdb"
+Copy-Item "$SUNDIALS_BUILD_PATH\x32\src\kinsol\sundials_kinsol_obj_static.dir\Debug\sundials_kinsol_obj_static.pdb" "$SUNDIALS_INSTALL_PATH\lib32\sundials_kinsol_obj_static.pdb"
+Copy-Item "$SUNDIALS_BUILD_PATH\x64\src\kinsol\sundials_kinsol_obj_static.dir\Debug\sundials_kinsol_obj_static.pdb" "$SUNDIALS_INSTALL_PATH\lib64\sundials_kinsol_obj_static.pdb"
+Copy-Item "$SUNDIALS_BUILD_PATH\x32\src\sundials\sundials_generic_obj_static.dir\Debug\sundials_generic_obj_static.pdb" "$SUNDIALS_INSTALL_PATH\lib32\sundials_generic_obj_static.pdb"
+Copy-Item "$SUNDIALS_BUILD_PATH\x64\src\sundials\sundials_generic_obj_static.dir\Debug\sundials_generic_obj_static.pdb" "$SUNDIALS_INSTALL_PATH\lib64\sundials_generic_obj_static.pdb"
+Copy-Item "$SUNDIALS_BUILD_PATH\x32\src\nvector\serial\sundials_nvecserial_obj_static.dir\Debug\sundials_nvecserial_obj_static.pdb" "$SUNDIALS_INSTALL_PATH\lib32\sundials_nvecserial_obj_static.pdb"
+Copy-Item "$SUNDIALS_BUILD_PATH\x64\src\nvector\serial\sundials_nvecserial_obj_static.dir\Debug\sundials_nvecserial_obj_static.pdb" "$SUNDIALS_INSTALL_PATH\lib64\sundials_nvecserial_obj_static.pdb"
+Copy-Item "$SUNDIALS_BUILD_PATH\x32\src\sunmatrix\band\sundials_sunmatrixband_obj_static.dir\Debug\sundials_sunmatrixband_obj_static.pdb" "$SUNDIALS_INSTALL_PATH\lib32\sundials_sunmatrixband_obj_static.pdb"
+Copy-Item "$SUNDIALS_BUILD_PATH\x64\src\sunmatrix\band\sundials_sunmatrixband_obj_static.dir\Debug\sundials_sunmatrixband_obj_static.pdb" "$SUNDIALS_INSTALL_PATH\lib64\sundials_sunmatrixband_obj_static.pdb"
+Copy-Item "$SUNDIALS_BUILD_PATH\x32\src\sunmatrix\dense\sundials_sunmatrixdense_obj_static.dir\Debug\sundials_sunmatrixdense_obj_static.pdb" "$SUNDIALS_INSTALL_PATH\lib32\sundials_sunmatrixdense_obj_static.pdb"
+Copy-Item "$SUNDIALS_BUILD_PATH\x64\src\sunmatrix\dense\sundials_sunmatrixdense_obj_static.dir\Debug\sundials_sunmatrixdense_obj_static.pdb" "$SUNDIALS_INSTALL_PATH\lib64\sundials_sunmatrixdense_obj_static.pdb"
+Copy-Item "$SUNDIALS_BUILD_PATH\x32\src\sunlinsol\dense\sundials_sunlinsoldense_obj_static.dir\Debug\sundials_sunlinsoldense_obj_static.pdb" "$SUNDIALS_INSTALL_PATH\lib32\sundials_sunlinsoldense_obj_static.pdb"
+Copy-Item "$SUNDIALS_BUILD_PATH\x64\src\sunlinsol\dense\sundials_sunlinsoldense_obj_static.dir\Debug\sundials_sunlinsoldense_obj_static.pdb" "$SUNDIALS_INSTALL_PATH\lib64\sundials_sunlinsoldense_obj_static.pdb"
+Copy-Item "$SUNDIALS_BUILD_PATH\x32\src\sunnonlinsol\newton\sundials_sunnonlinsolnewton_obj_static.dir\Debug\sundials_sunnonlinsolnewton_obj_static.pdb" "$SUNDIALS_INSTALL_PATH\lib32\sundials_sunnonlinsolnewton_obj_static.pdb"
+Copy-Item "$SUNDIALS_BUILD_PATH\x64\src\sunnonlinsol\newton\sundials_sunnonlinsolnewton_obj_static.dir\Debug\sundials_sunnonlinsolnewton_obj_static.pdb" "$SUNDIALS_INSTALL_PATH\lib64\sundials_sunnonlinsolnewton_obj_static.pdb"
 
 ################################################################################
 ### Clean installation directory
@@ -77,8 +89,11 @@ $REM_ROOT_LIST = @(
 	"include\sunnonlinsol"
 	"include\sundials\LICENSE"
 	"include\sundials\NOTICE"
+	"lib32\cmake"
+	"lib64\cmake"
 )
 $REM_LIB_LIST = @(
+	"sundials_generic", 
 	"sundials_nvecmanyvector", 
 	"sundials_nvecserial", 
 	"sundials_sunlinsolband", 
@@ -107,6 +122,7 @@ $REM_INCLUDE_LIST = @(
 	"sundials\sundials_fnvector",
 	"sundials\sundials_futils",
 	"sundials\sundials_math",
+	"sundials\sundials_memory",
 	"sundials\sundials_mpi_types",
 	"sundials\sundials_version",
 	"sunlinsol\sunlinsol_band",
