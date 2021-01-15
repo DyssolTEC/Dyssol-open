@@ -1376,12 +1376,12 @@ bool CQtPlot::GetGridVisibility()
 	return m_bIsGridVisible;
 }
 
-void CQtPlot::SetLegendPosition(__int8 _position)
+void CQtPlot::SetLegendPosition(int8_t _position)
 {
 	m_nLegendPosition = _position;
 	RedrawPlot();
 }
-__int8 CQtPlot::GetLegendPosition()
+int8_t CQtPlot::GetLegendPosition()
 {
 	return m_nLegendPosition;
 }
