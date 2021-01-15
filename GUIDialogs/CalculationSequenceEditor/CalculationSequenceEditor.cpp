@@ -64,15 +64,15 @@ void CCalculationSequenceEditor::UpdatePartitionsList() const
 	for (size_t i = 0; i < m_pSequence->PartitionsNumber(); ++i)
 	{
 		// partition
-		QTreeWidgetItem* partitionItem = ui.treeWidget->AddItem(0, StrConst::CSE_Partition + std::to_string(i + 1), i);
+		QTreeWidgetItem* partitionItem = ui.treeWidget->AddItem(0, StrConst::CSE_Partition + std::to_string(i + 1), QVariant::fromValue(i));
 
 		// models
-		QTreeWidgetItem* modelsItem = ui.treeWidget->AddChildItem(partitionItem, 0, StrConst::CSE_Models, i);
+		QTreeWidgetItem* modelsItem = ui.treeWidget->AddChildItem(partitionItem, 0, StrConst::CSE_Models, QVariant::fromValue(i));
 		for (const auto& model : m_pSequence->PartitionModels(i))
 			ui.treeWidget->AddChildItemComboBox(modelsItem, 0, modelsNames, modelsKeys, model ? static_cast<int>(m_pFlowsheet->GetModelIndex(model->GetModelKey())) : -1);
 
 		// tear streams
-		QTreeWidgetItem* streamsItem = ui.treeWidget->AddChildItem(partitionItem, 0, StrConst::CSE_Streams, i);
+		QTreeWidgetItem* streamsItem = ui.treeWidget->AddChildItem(partitionItem, 0, StrConst::CSE_Streams, QVariant::fromValue(i));
 		for (const auto& stream : m_pSequence->PartitionTearStreams(i))
 			ui.treeWidget->AddChildItemComboBox(streamsItem, 0, streamsNames, streamsKeys, stream ? static_cast<int>(m_pFlowsheet->GetStreamIndex(stream->GetStreamKey())) : -1);
 	}
