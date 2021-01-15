@@ -5,6 +5,7 @@
 #include "DyssolStringConstants.h"
 #include <sstream>
 #include <QMessageBox>
+#include <cmath>
 
 CFlowsheetEditor::CFlowsheetEditor(CFlowsheet *_pFlowsheet, QWidget *parent /*= 0 */)
 	: QWidget(parent),

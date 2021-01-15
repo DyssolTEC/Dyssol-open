@@ -286,7 +286,7 @@ QComboBox* CQtTable::SetComboBox(int _row, int _col, const std::vector<std::stri
 	for (int i = 0; i < static_cast<int>(_names.size()); ++i)
 	{
 		names.emplace_back(QString::fromStdString(_names[i]));
-		data.emplace_back(_data[i]);
+		data.emplace_back(QVariant::fromValue(_data[i]));
 		if (_data[i] == _dataSelected)	// this one is selected
 			iSelected = i;
 	}

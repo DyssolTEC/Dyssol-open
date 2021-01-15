@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QColorDialog>
+#include <cmath>
 
 using namespace QtPlot;
 
@@ -250,19 +251,26 @@ void CQtPlot::mouseReleaseEvent(QMouseEvent* _mouseEvent)
 	switch (m_eLeftMouseMode)
 	{
 	case Zoom:
-		SetNewBoundaries(&QRect(m_pRubberBand->x(), m_pRubberBand->y(), m_pRubberBand->width(), m_pRubberBand->height()));
+		{
+		auto qr = QRect(m_pRubberBand->x(), m_pRubberBand->y(), m_pRubberBand->width(), m_pRubberBand->height());
+		SetNewBoundaries(&qr);
 		delete m_pRubberBand;
 		m_eLeftMouseMode = None;
 		break;
+		}
 	case Mark:
+		{
 		m_eLeftMouseMode = None;
 		m_csNearestCurveIndex = -1;
 		RedrawPlot();
 		break;
+		}
 	default:
+		{
 		m_eLeftMouseMode = None;
 		m_csNearestCurveIndex = -1;
 		break;
+		}
 	}
 }
 

@@ -4,6 +4,7 @@
 
 #include <map>
 #include <vector>
+#include <ostream>
 
 // Represents a dependent value, described with the list of [param:value]. Implements internal linear interpolation of values between defined parameters and nearest-neighbor extrapolation beyond.
 class CDependentValues

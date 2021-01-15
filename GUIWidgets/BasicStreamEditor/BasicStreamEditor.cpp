@@ -227,7 +227,8 @@ void CBasicStreamEditor::UpdatePhaseTab(unsigned _nIndex)
 		}
 
 		m_bAvoidSignal = true;
-		m_vMDMTablePhases[_nIndex]->SetDistribution(m_pSelectedHoldup->GetPhaseDistribution(iPhaseIndex), m_pFlowsheet->GetCompoundsNames());
+		auto tempName = m_pFlowsheet->GetCompoundsNames();
+		m_vMDMTablePhases[_nIndex]->SetDistribution(m_pSelectedHoldup->GetPhaseDistribution(iPhaseIndex), tempName);
 		m_bAvoidSignal = false;
 		m_vMDMTablePhases[_nIndex]->setVisible(true);
 	}

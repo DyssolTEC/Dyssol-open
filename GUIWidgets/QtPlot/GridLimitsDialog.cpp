@@ -8,7 +8,7 @@ CGridLimitsDialog::CGridLimitsDialog(QWidget *parent)
 	ui.setupUi(this);
 
 	m_dXMin = m_dXMax = m_dYMin = m_dYMax = NULL;
-	m_bLogX = m_bLogY = false;
+	*m_bLogX = *m_bLogY = false;
 
 	QObject::connect( ui.buttonOk, SIGNAL(clicked()), this, SLOT(accept()) );
 	QObject::connect( ui.buttonCancel, SIGNAL(clicked()), this, SLOT(close()) );
