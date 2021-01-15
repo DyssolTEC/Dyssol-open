@@ -6,6 +6,10 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
 add_executable(Dyssol
@@ -15,6 +19,7 @@ add_executable(Dyssol
     ${CMAKE_SOURCE_DIR}/DyssolMainWindow/main.cpp
     ${CMAKE_SOURCE_DIR}/DyssolMainWindow/Dyssol.cpp
     ${CMAKE_SOURCE_DIR}/DyssolMainWindow/AboutWindow.cpp
+    ${CMAKE_SOURCE_DIR}/DyssolMainWindow/SaveLoadThread.cpp
     ${CMAKE_SOURCE_DIR}/GUIDialogs/CalculationSequenceEditor/CalculationSequenceEditor.cpp
     ${CMAKE_SOURCE_DIR}/GUIDialogs/CalculationSequenceEditor/CalculationSequenceEditor.ui
     ${CMAKE_SOURCE_DIR}/GUIWidgets/QtWidgets/QtTable.cpp
@@ -102,10 +107,26 @@ add_executable(Dyssol
     ${CMAKE_SOURCE_DIR}/Modules/DustFormationTester/DustFormationTester.cpp
     ${CMAKE_SOURCE_DIR}/GUIDialogs/SettingsEditor/SettingsEditor.cpp
     ${CMAKE_SOURCE_DIR}/GUIDialogs/SettingsEditor/SettingsEditor.ui
-    ${CMAKE_SOURCE_DIR}/
-    ${CMAKE_SOURCE_DIR}/
-    ${CMAKE_SOURCE_DIR}/
-    ${CMAKE_SOURCE_DIR}/
+    ${CMAKE_SOURCE_DIR}/ModelsAPI/Stream.cpp
+    ${CMAKE_SOURCE_DIR}/ModelsAPI/BaseUnit.cpp
+    ${CMAKE_SOURCE_DIR}/ModelsAPI/DenseDistr2D.cpp
+    ${CMAKE_SOURCE_DIR}/ModelsAPI/DenseMDMatrix.cpp
+    ${CMAKE_SOURCE_DIR}/ModelsAPI/DependentValues.cpp
+    ${CMAKE_SOURCE_DIR}/ModelsAPI/DistributionsGrid.cpp
+    ${CMAKE_SOURCE_DIR}/ModelsAPI/DynamicUnit.cpp
+    ${CMAKE_SOURCE_DIR}/ModelsAPI/Holdup.cpp
+    ${CMAKE_SOURCE_DIR}/ModelsAPI/LookupTable.cpp
+    ${CMAKE_SOURCE_DIR}/ModelsAPI/MaterialStream.cpp
+    ${CMAKE_SOURCE_DIR}/ModelsAPI/Matrix2D.cpp
+    ${CMAKE_SOURCE_DIR}/ModelsAPI/MDMatrix.cpp
+    ${CMAKE_SOURCE_DIR}/ModelsAPI/SteadyStateUnit.cpp
+    ${CMAKE_SOURCE_DIR}/ModelsAPI/Stream.cpp
+    ${CMAKE_SOURCE_DIR}/ModelsAPI/TDArray.cpp
+    ${CMAKE_SOURCE_DIR}/ModelsAPI/TransformMatrix.cpp
+    ${CMAKE_SOURCE_DIR}/ModelsAPI/UnitParameters.cpp
+    ${CMAKE_SOURCE_DIR}/BaseSolvers/BaseSolver.cpp
+    ${CMAKE_SOURCE_DIR}/BaseSolvers/PBMSolver.cpp
+    ${CMAKE_SOURCE_DIR}/BaseSolvers/AgglomerationSolver.cpp
 )
 
 INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/GUIDialogs/CalculationSequenceEditor/")
