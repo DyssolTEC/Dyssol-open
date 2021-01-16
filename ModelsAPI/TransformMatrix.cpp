@@ -152,7 +152,7 @@ void CTransformMatrix::Normalize()
 			double dVal = GetValue(vSrcCoord, vDstCoord);
 			vValues.push_back(dVal);
 			dSum += dVal;
-			bDstGet = IncrementCoords(vDstCoord, m_vClasses);
+			bDstGet = IncrementCoordsOld(vDstCoord, m_vClasses);
 		}
 		while (bDstGet);
 
@@ -165,13 +165,13 @@ void CTransformMatrix::Normalize()
 			do
 			{
 				SetValue(vSrcCoord, vDstCoord, vValues[ind] / dSum);
-				bDstSet = IncrementCoords(vDstCoord, m_vClasses);
+				bDstSet = IncrementCoordsOld(vDstCoord, m_vClasses);
 				ind++;
 			}
 			while (bDstSet);
 		}
 
-		bSrc = IncrementCoords(vSrcCoord, m_vClasses);
+		bSrc = IncrementCoordsOld(vSrcCoord, m_vClasses);
 	}
 	while (bSrc);
 }
@@ -436,12 +436,12 @@ void CTransformMatrix::ReduceLastDim( CTransformMatrix& _newTMatr ) const
 			dVal /= nLastDimSize;
 			_newTMatr.SetValue(vSrcCoord, vDstCoord, dVal);
 
-			bDst = IncrementCoords(vDstCoord, vNewClasses);
+			bDst = IncrementCoordsOld(vDstCoord, vNewClasses);
 		}
 		while (bDst);
 
 		std::fill(vDstCoord.begin(), vDstCoord.end(), 0);
-		bSrc = IncrementCoords(vSrcCoord, vNewClasses);
+		bSrc = IncrementCoordsOld(vSrcCoord, vNewClasses);
 	}
 	while (bSrc);
 }

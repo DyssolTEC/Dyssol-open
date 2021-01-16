@@ -102,7 +102,8 @@ bool inline CompareMatrices(const std::vector<std::vector<double>>& _vvMatr1, co
 	return true;
 }
 
-bool inline IncrementCoords(std::vector<unsigned>& _vCoords, const std::vector<unsigned>& _vSizes)
+// TODO: remove it when MDMatrix is rewritten.
+bool inline IncrementCoordsOld(std::vector<unsigned>& _vCoords, const std::vector<unsigned>& _vSizes)
 {
 	if (_vCoords.size() == 0)
 		return false;
