@@ -9,12 +9,12 @@ class CGridLimitsDialog : public QDialog
 	Q_OBJECT
 
 private:
-	double *m_dXMin;
-	double *m_dXMax;
-	double *m_dYMin;
-	double *m_dYMax;
-	bool *m_bLogX;
-	bool *m_bLogY;
+	double m_dXMin;
+	double m_dXMax;
+	double m_dYMin;
+	double m_dYMax;
+	bool m_bLogX;
+	bool m_bLogY;
 
 public:
 	CGridLimitsDialog(QWidget *parent);
