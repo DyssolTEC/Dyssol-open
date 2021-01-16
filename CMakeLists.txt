@@ -131,9 +131,6 @@ add_executable(Dyssol
     ${CMAKE_SOURCE_DIR}/EquationSolvers/DAESolver.cpp
     ${CMAKE_SOURCE_DIR}/EquationSolvers/NLModel.cpp
     ${CMAKE_SOURCE_DIR}/EquationSolvers/NLSolver.cpp
-    ${CMAKE_SOURCE_DIR}/Units/Agglomerator/Agglomerator.cpp
-    #${CMAKE_SOURCE_DIR}/Units/Crusher/Crusher.cpp
-    #${CMAKE_SOURCE_DIR}/Units/Mixer/Mixer.cpp
     )
 
 INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/GUIDialogs/CalculationSequenceEditor/")
@@ -165,9 +162,6 @@ INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/GUIDialogs/TearStreamsEditor/")
 INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/GUIDialogs/DustFormationTesterTab/")
 INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/Modules/DustFormationTester/")
 INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/GUIDialogs/SettingsEditor/")
-#INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/Units/Agglomerator/")
-#INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/Units/Crusher/")
-INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/Units/Mixer/")
 INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/EquationSolvers/")
 INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/DyssolLinux/sundials_install/include/nvector/")
 INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/DyssolLinux/sundials_install/include/ida/")
@@ -179,5 +173,7 @@ INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/ExternalLibraries/sundials/include/")
 
 
 INCLUDE_DIRECTORIES("/usr/include/hdf5/serial/")
-LINK_DIRECTORIES("${CMAKE_SOURCE_DIR}/DyssolLinux/sundials_install/lib")
-target_link_libraries(Dyssol Qt5::Widgets pthread dl hdf5_serial hdf5_serial_cpp hdf5_serial_hl hdf5_serial_hl_cpp z sundials_ida sundials_kinsol)
+TARGET_LINK_LIBRARIES(Dyssol Qt5::Widgets pthread dl hdf5_serial hdf5_serial_cpp hdf5_serial_hl hdf5_serial_hl_cpp z sundials_ida sundials_kinsol)
+
+
+ADD_SUBDIRECTORY("${CMAKE_SOURCE_DIR}/Units")
