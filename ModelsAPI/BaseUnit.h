@@ -511,14 +511,16 @@ public:
 	// Simulation-time operations
 	//
 
+	// Setup the structure of the unit (ports, unit parameters, holdups, internal streams).
+	void DoCreateStructure();
 	// Performs initialization of unit before starting the simulation.
-	void InitializeUnit();
+	void DoInitializeUnit();
 	// Performs finalization of unit after the simulation is finished.
-	void FinalizeUnit();
+	void DoFinalizeUnit();
 	// Stores current state of the unit on specified time interval.
-	void SaveStateUnit(double _timeBeg, double _timeEnd);
+	void DoSaveStateUnit(double _timeBeg, double _timeEnd);
 	// Restores previously saved state of the unit.
-	void LoadStateUnit();
+	void DoLoadStateUnit();
 
 	// Removes all data produced during simulation.
 	void ClearSimulationResults();

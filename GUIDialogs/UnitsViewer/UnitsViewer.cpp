@@ -214,7 +214,7 @@ void CUnitsViewer::UpdateCurvesView()
 	}
 	m_bAvoidSignal = true;
 
-	const auto& plot = m_pSelectedModel->GetModel()->GetPlotsManager().GetAllPlots()[iPlot];
+	const auto* plot = m_pSelectedModel->GetModel()->GetPlotsManager().GetAllPlots()[iPlot];
 	int nOldSelected = ui.listWidgetCurves->currentRow();
 	ui.listWidgetCurves->clear();
 	for (const auto& curve : plot->GetAllCurves())

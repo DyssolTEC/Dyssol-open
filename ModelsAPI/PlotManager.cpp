@@ -5,6 +5,20 @@
 #include "ContainerFunctions.h"
 #include "DyssolStringConstants.h"
 
+template <typename T>
+void ResizeUniquePtrVector(std::vector<std::unique_ptr<T>>& _v, size_t _size)
+{
+	if (_v.size() == _size) return;
+	if (_v.size() > _size)
+		_v.resize(_size);
+	else
+	{
+		_v.reserve(_size);
+		for (size_t i = _v.size(); i < _size; ++i)
+			_v.emplace_back(new T{ "" });
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // CCurve
 //
@@ -163,7 +177,7 @@ CPlot& CPlot::operator=(const CPlot& _other)
 		m_labelX = _other.m_labelX;
 		m_labelY = _other.m_labelY;
 		m_labelZ = _other.m_labelZ;
-		m_curves.resize(_other.m_curves.size());
+		ResizeUniquePtrVector(m_curves, _other.m_curves.size());
 		for (size_t i = 0; i < m_curves.size(); ++i)
 			*m_curves[i] = *_other.m_curves[i];
 	}
@@ -479,14 +493,14 @@ void CPlotManager::Clear()
 
 void CPlotManager::SaveState()
 {
-	m_plotsStored.resize(m_plots.size());
+	ResizeUniquePtrVector(m_plotsStored, m_plots.size());
 	for (size_t i = 0; i < m_plots.size(); ++i)
 		*m_plotsStored[i] = *m_plots[i];
 }
 
 void CPlotManager::LoadState()
 {
-	m_plots.resize(m_plotsStored.size());
+	ResizeUniquePtrVector(m_plots, m_plotsStored.size());
 	for (size_t i = 0; i < m_plotsStored.size(); ++i)
 		*m_plots[i] = *m_plotsStored[i];
 }

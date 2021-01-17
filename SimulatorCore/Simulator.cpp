@@ -74,7 +74,7 @@ void CSimulator::Simulate()
 		for (auto& model : partition.models)
 		{
 			m_log.WriteInfo(StrConst::Sim_InfoUnitFinalization(model->GetName(), model->GetModel()->GetUnitName()));
-			model->GetModel()->FinalizeUnit();
+			model->GetModel()->DoFinalizeUnit();
 		}
 	}
 
@@ -187,7 +187,7 @@ void CSimulator::SimulateUnitsWithRecycles(const CCalculationSequence::SPartitio
 
 		// save units state
 		for (auto& model : _partition.models)
-			model->GetModel()->SaveStateUnit(m_dTWStart, m_dTWEnd);
+			model->GetModel()->DoSaveStateUnit(m_dTWStart, m_dTWEnd);
 
 		if (m_dTWEnd < m_pParams->endSimulationTime)
 		{
@@ -254,7 +254,7 @@ void CSimulator::SimulateUnits(const CCalculationSequence::SPartition& _partitio
 		m_log.WriteInfo(StrConst::Sim_InfoUnitSimulation(m_unitName, model->GetModel()->GetUnitName(), _t1, _t2));
 
 		// load previous state
-		model->GetModel()->LoadStateUnit();
+		model->GetModel()->DoLoadStateUnit();
 
 		// clean output streams
 		for (auto& port : model->GetModel()->GetPortsManager().GetAllOutputPorts())
@@ -324,7 +324,7 @@ void CSimulator::InitializeUnit(CUnitContainer& _model, double _t)
 	// write log
 	m_log.WriteInfo(StrConst::Sim_InfoUnitInitialization(m_unitName, _model.GetModel()->GetUnitName()));
 	try {
-		_model.GetModel()->InitializeUnit();
+		_model.GetModel()->DoInitializeUnit();
 	}
 	catch (const std::logic_error& e) {
 		RaiseError(e.what());

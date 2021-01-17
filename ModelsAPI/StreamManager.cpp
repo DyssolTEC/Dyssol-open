@@ -16,6 +16,13 @@ void CStreamManager::SetPointers(const CMaterialsDatabase* _materialsDB, const C
 	m_tolerances  = _tolerances;
 }
 
+void CStreamManager::CreateStructure()
+{
+	// store number of fixed objects
+	m_nFixHoldups = m_holdupsWork.size();
+	m_nFixStreams = m_streamsWork.size();
+}
+
 void CStreamManager::Initialize()
 {
 	// copy all time points for feeds
@@ -29,27 +36,46 @@ void CStreamManager::Initialize()
 		stream->RemoveAllTimePoints();
 	for (auto& stream : m_streamsStored)
 		stream->RemoveAllTimePoints();
-	// reset number of temporary objects
-	m_tempHoldups = 0;
-	m_tempStreams = 0;
+	// reset number of variable objects
+	m_nVarHoldups = 0;
+	m_nVarStreams = 0;
 	// reset stored time window
 	m_timeBegStored = 0.0;
 	m_timeEndStored = 0.0;
 }
 
+void CStreamManager::PostInitialize()
+{
+	// store number of variable objects
+	m_nVarHoldups = m_holdupsWork.size() - m_nFixHoldups;
+	m_nVarStreams = m_streamsWork.size() - m_nFixStreams;
+}
+
 void CStreamManager::RemoveTemporary()
 {
-	for (size_t i = 0; i < m_tempHoldups; ++i)
-		RemoveHoldup(m_holdupsWork.back()->GetName());
-	for (size_t i = 0; i < m_tempStreams; ++i)
-		RemoveStream(m_streamsWork.back()->GetName());
-	m_tempHoldups = 0;
-	m_tempStreams = 0;
+	const size_t nTempHoldups = m_holdupsWork.size() - m_nFixHoldups - m_nVarHoldups; // number of temporary holdups
+	for (size_t i = 0; i < nTempHoldups; ++i)
+		RemoveHoldup(m_holdupsWork[m_nFixHoldups + m_nVarHoldups]->GetName());
+	const size_t nTempStreams = m_streamsWork.size() - m_nFixStreams - m_nVarStreams; // number of temporary streams
+	for (size_t i = 0; i < nTempStreams; ++i)
+		RemoveStream(m_streamsWork[m_nFixStreams + m_nVarStreams]->GetName());
+}
+
+void CStreamManager::RemoveVariable()
+{
+	for (size_t i = 0; i < m_nVarHoldups; ++i)
+		RemoveHoldup(m_holdupsWork[m_nFixHoldups]->GetName());
+	for (size_t i = 0; i < m_nVarStreams; ++i)
+		RemoveStream(m_streamsWork[m_nFixStreams]->GetName());
+	// reset number of variable objects
+	m_nVarHoldups = 0;
+	m_nVarStreams = 0;
 }
 
 void CStreamManager::ClearResults()
 {
 	RemoveTemporary();
+	RemoveVariable();
 	for (auto& s : m_feedsWork)		s->RemoveAllTimePoints();
 	for (auto& s : m_holdupsWork)	s->RemoveAllTimePoints();
 	for (auto& s : m_streamsWork)	s->RemoveAllTimePoints();
@@ -137,12 +163,16 @@ CHoldup* CStreamManager::GetHoldup(const std::string& _name)
 
 std::vector<const CHoldup*> CStreamManager::GetHoldupsInit() const
 {
-	return GetObjects(m_holdupsInit);
+	auto res = GetObjects(m_holdupsInit);	// get all init holdups
+	res.resize(m_nFixHoldups);				// leave only fixed ones
+	return res;
 }
 
 std::vector<CHoldup*> CStreamManager::GetHoldupsInit()
 {
-	return GetObjects(m_holdupsInit);
+	auto res = GetObjects(m_holdupsInit);	// get all init holdups
+	res.resize(m_nFixHoldups);				// leave only fixed ones
+	return res;
 }
 
 std::vector<const CHoldup*> CStreamManager::GetHoldups() const
@@ -204,8 +234,8 @@ void CStreamManager::RemoveStream(const std::string& _name)
 
 std::vector<const CBaseStream*> CStreamManager::GetAllInit() const
 {
-	const auto& feeds   = GetObjects(m_feedsInit);
-	const auto& holdups = GetObjects(m_holdupsInit);
+	const auto& feeds   = GetFeedsInit();
+	const auto& holdups = GetHoldupsInit();
 	std::vector<const CBaseStream*> res;
 	res.reserve(feeds.size() + holdups.size());
 	for (const auto& feed : feeds)
@@ -217,8 +247,8 @@ std::vector<const CBaseStream*> CStreamManager::GetAllInit() const
 
 std::vector<CBaseStream*> CStreamManager::GetAllInit()
 {
-	const auto& feeds   = GetObjects(m_feedsInit);
-	const auto& holdups = GetObjects(m_holdupsInit);
+	const auto& feeds   = GetFeedsInit();
+	const auto& holdups = GetHoldupsInit();
 	std::vector<CBaseStream*> res;
 	res.reserve(feeds.size() + holdups.size());
 	for (const auto& feed : feeds)
@@ -382,17 +412,21 @@ void CStreamManager::LoadFromFile(const CH5Handler& _h5File, const std::string& 
 	//const int version = _h5File.ReadAttribute(_path, StrConst::H5AttrSaveVersion);
 
 	// load init and working streams
-	LoadObjects(_h5File, _path, m_feedsInit,   StrConst::StrMngr_H5AttrFeedsInitNum,   StrConst::StrMngr_H5GroupFeedsInit,   StrConst::StrMngr_H5GroupFeedName,   StrConst::StrMngr_H5Names);
-	LoadObjects(_h5File, _path, m_feedsWork,   StrConst::StrMngr_H5AttrFeedsWorkNum,   StrConst::StrMngr_H5GroupFeedsWork,   StrConst::StrMngr_H5GroupFeedName,   StrConst::StrMngr_H5Names);
-	LoadObjects(_h5File, _path, m_holdupsInit, StrConst::StrMngr_H5AttrHoldupsInitNum, StrConst::StrMngr_H5GroupHoldupsInit, StrConst::StrMngr_H5GroupHoldupName, StrConst::StrMngr_H5Names);
-	LoadObjects(_h5File, _path, m_holdupsWork, StrConst::StrMngr_H5AttrHoldupsWorkNum, StrConst::StrMngr_H5GroupHoldupsWork, StrConst::StrMngr_H5GroupHoldupName, StrConst::StrMngr_H5Names);
-	LoadObjects(_h5File, _path, m_streamsWork, StrConst::StrMngr_H5AttrStreamsWorkNum, StrConst::StrMngr_H5GroupStreamsWork, StrConst::StrMngr_H5GroupStreamName, StrConst::StrMngr_H5Names);
+	LoadObjects(_h5File, _path, m_feedsInit,   StrConst::StrMngr_H5AttrFeedsInitNum,   StrConst::StrMngr_H5GroupFeedsInit,   StrConst::StrMngr_H5GroupFeedName,   StrConst::StrMngr_H5Names, &CStreamManager::AddFeed);
+	LoadObjects(_h5File, _path, m_feedsWork,   StrConst::StrMngr_H5AttrFeedsWorkNum,   StrConst::StrMngr_H5GroupFeedsWork,   StrConst::StrMngr_H5GroupFeedName,   StrConst::StrMngr_H5Names, &CStreamManager::AddFeed);
+	LoadObjects(_h5File, _path, m_holdupsInit, StrConst::StrMngr_H5AttrHoldupsInitNum, StrConst::StrMngr_H5GroupHoldupsInit, StrConst::StrMngr_H5GroupHoldupName, StrConst::StrMngr_H5Names, &CStreamManager::AddHoldup);
+	LoadObjects(_h5File, _path, m_holdupsWork, StrConst::StrMngr_H5AttrHoldupsWorkNum, StrConst::StrMngr_H5GroupHoldupsWork, StrConst::StrMngr_H5GroupHoldupName, StrConst::StrMngr_H5Names, &CStreamManager::AddHoldup);
+	LoadObjects(_h5File, _path, m_streamsWork, StrConst::StrMngr_H5AttrStreamsWorkNum, StrConst::StrMngr_H5GroupStreamsWork, StrConst::StrMngr_H5GroupStreamName, StrConst::StrMngr_H5Names, &CStreamManager::AddStream);
 
 	// properly configure store streams
 	for (size_t i = 0; i < m_holdupsStored.size(); ++i)
 		m_holdupsStored[i]->SetupStructure(m_holdupsWork[i].get());
 	for (size_t i = 0; i < m_streamsStored.size(); ++i)
 		m_streamsStored[i]->SetupStructure(m_streamsWork[i].get());
+
+	// store number of variable objects
+	m_nVarHoldups = m_holdupsWork.size() - m_nFixHoldups;
+	m_nVarStreams = m_streamsWork.size() - m_nFixStreams;
 }
 
 void CStreamManager::LoadFromFile_v0(const CH5Handler& _h5File, const std::string& _path)
@@ -440,6 +474,15 @@ void CStreamManager::LoadFromFile_v0(const CH5Handler& _h5File, const std::strin
 				_feeds[i]->LoadFromFile(_h5File, holdupPath + std::to_string(i));
 				_feeds[i]->SetName(name);
 			}
+		// load the rest, if any, as variable holdups
+		for (size_t i = 0; i < names.size(); ++i)
+		{
+			if (!holdupsReaded[i])
+			{
+				AddHoldup(names[i]);
+				_holdups.back()->LoadFromFile(_h5File, holdupPath + std::to_string(i));
+			}
+		}
 	};
 
 	if (!_h5File.IsValid()) return;
@@ -449,13 +492,17 @@ void CStreamManager::LoadFromFile_v0(const CH5Handler& _h5File, const std::strin
 	// load working holdups and feeds
 	Load(m_holdupsWork, m_feedsWork, StrConst::BUnit_H5GroupHoldupsWork, StrConst::BUnit_H5GroupHoldupWorkName, StrConst::BUnit_H5WorkHoldupsNames);
 	// load working material streams
-	LoadObjects(_h5File, _path, m_streamsWork, StrConst::StrMngr_H5AttrStreamsWorkNum, StrConst::BUnit_H5GroupStreamsWork, StrConst::BUnit_H5GroupStreamWorkName, StrConst::BUnit_H5WorkStreamsNames);
+	LoadObjects(_h5File, _path, m_streamsWork, StrConst::StrMngr_H5AttrStreamsWorkNum, StrConst::BUnit_H5GroupStreamsWork, StrConst::BUnit_H5GroupStreamWorkName, StrConst::BUnit_H5WorkStreamsNames, &CStreamManager::AddStream);
 
 	// properly configure store streams
 	for (size_t i = 0; i < m_holdupsStored.size(); ++i)
 		m_holdupsStored[i]->SetupStructure(m_holdupsWork[i].get());
 	for (size_t i = 0; i < m_streamsStored.size(); ++i)
 		m_streamsStored[i]->SetupStructure(m_streamsWork[i].get());
+
+	// store number of variable objects
+	m_nVarHoldups = m_holdupsWork.size() - m_nFixHoldups;
+	m_nVarStreams = m_streamsWork.size() - m_nFixStreams;
 }
 
 void CStreamManager::LoadFromFile_v00(const CH5Handler& _h5File, const std::string& _path)
@@ -491,6 +538,10 @@ void CStreamManager::LoadFromFile_v00(const CH5Handler& _h5File, const std::stri
 		m_holdupsStored[i]->SetupStructure(m_holdupsWork[i].get());
 	for (size_t i = 0; i < m_streamsStored.size(); ++i)
 		m_streamsStored[i]->SetupStructure(m_streamsWork[i].get());
+
+	// store number of variable objects
+	m_nVarHoldups = m_holdupsWork.size() - m_nFixHoldups;
+	m_nVarStreams = m_streamsWork.size() - m_nFixStreams;
 }
 
 template <typename T>
@@ -560,7 +611,7 @@ void CStreamManager::SaveObjects(CH5Handler& _h5File, const std::string& _path, 
 }
 
 template <typename T>
-void CStreamManager::LoadObjects(const CH5Handler& _h5File, const std::string& _path, const std::vector<std::unique_ptr<T>>& _streams, const std::string& _attribute, const std::string& _group, const std::string& _subgroup, const std::string& _namespath)
+void CStreamManager::LoadObjects(const CH5Handler& _h5File, const std::string& _path, const std::vector<std::unique_ptr<T>>& _streams, const std::string& _attribute, const std::string& _group, const std::string& _subgroup, const std::string& _namespath, AddObjectFun<T> _addObjectFun)
 {
 	/* complex loading procedure with names, while users can change feeds/holdups/streams during the development of a unit.
 	 * this approach allows to properly load even if the order or names of streams are changed by a developer. */
@@ -569,7 +620,7 @@ void CStreamManager::LoadObjects(const CH5Handler& _h5File, const std::string& _
 	std::vector<bool> streamLoaded(_streams.size(), false);	// whether an existing stream is already loaded
 	std::vector<bool> streamReaded(names.size(), false);	// whether a saved stream is already used to load an existing stream
 	const std::string streamPath = _path + "/" + _group + "/" + _subgroup;
-	// try to load by names
+	// try to load fixed by names
 	for (size_t iExist = 0; iExist < _streams.size(); ++iExist)
 		for (size_t iSaved = 0; iSaved < names.size(); ++iSaved)
 			if (_streams[iExist]->GetName() == names[iSaved])
@@ -579,7 +630,7 @@ void CStreamManager::LoadObjects(const CH5Handler& _h5File, const std::string& _
 				streamLoaded[iExist] = true;
 				break;
 			}
-	// load rest by positions
+	// load rest fixed by positions
 	for (size_t i = 0; i < _streams.size(); ++i)
 		if (!streamLoaded[i] && i < streamReaded.size() && !streamReaded[i])
 		{
@@ -587,6 +638,15 @@ void CStreamManager::LoadObjects(const CH5Handler& _h5File, const std::string& _
 			_streams[i]->LoadFromFile(_h5File, streamPath + std::to_string(i));
 			_streams[i]->SetName(name);
 		}
+	// load the rest, if any, as variable objects
+	for (size_t i = 0; i < names.size(); ++i)
+	{
+		if (!streamReaded[i])
+		{
+			(this->*_addObjectFun)(names[i]); // add a corresponding object as variable
+			_streams.back()->LoadFromFile(_h5File, streamPath + std::to_string(i));
+		}
+	}
 }
 
 template <typename T>

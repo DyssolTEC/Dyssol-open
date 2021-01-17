@@ -1088,7 +1088,13 @@ void CBaseUnit::ClearInfo()
 	m_infoMessage.clear();
 }
 
-void CBaseUnit::InitializeUnit()
+void CBaseUnit::DoCreateStructure()
+{
+	CreateStructure();
+	m_streams.CreateStructure();
+}
+
+void CBaseUnit::DoInitializeUnit()
 {
 	ClearError();
 	ClearWarning();
@@ -1099,10 +1105,11 @@ void CBaseUnit::InitializeUnit()
 	for (auto& param : m_unitParameters.GetAllSolverParameters())
 		param->GetSolver()->Initialize();
 	Initialize(0.0);
-	SaveStateUnit(0.0, std::numeric_limits<double>::max());
+	m_streams.PostInitialize();
+	DoSaveStateUnit(0.0, std::numeric_limits<double>::max());
 }
 
-void CBaseUnit::FinalizeUnit()
+void CBaseUnit::DoFinalizeUnit()
 {
 	Finalize();
 	for (auto& param : m_unitParameters.GetAllSolverParameters())
@@ -1110,7 +1117,7 @@ void CBaseUnit::FinalizeUnit()
 	m_streams.RemoveTemporary();
 }
 
-void CBaseUnit::SaveStateUnit(double _timeBeg, double _timeEnd)
+void CBaseUnit::DoSaveStateUnit(double _timeBeg, double _timeEnd)
 {
 	SaveState();
 	for (auto& param : m_unitParameters.GetAllSolverParameters())
@@ -1120,7 +1127,7 @@ void CBaseUnit::SaveStateUnit(double _timeBeg, double _timeEnd)
 	m_plots.SaveState();
 }
 
-void CBaseUnit::LoadStateUnit()
+void CBaseUnit::DoLoadStateUnit()
 {
 	LoadState();
 	for (auto& param : m_unitParameters.GetAllSolverParameters())

@@ -5,7 +5,11 @@
 #include "Stream.h"
 #include "Holdup.h"
 
-// Manages streams in each unit.
+/* Manages streams in each unit.
+   There are 3 types of holdups and streams:
+   1. Fixed - added when constructing unit. Their number is always constant. Are shown in holdups editor.
+   2. Variable - added during initialization of unit. Their number can vary depending on e.g. unit parameters. Are shown in simulation results.
+   3. Temporary - added during simulation. Are removed right after the simulation is finished. */
 class CStreamManager
 {
 	static const unsigned m_saveVersion{ 1 };	// Current version of the saving procedure.
@@ -20,8 +24,10 @@ class CStreamManager
 	std::vector<std::unique_ptr<CStream>> m_streamsWork;	// Internal streams.
 	std::vector<std::unique_ptr<CStream>> m_streamsStored;	// Copies of streams used to store data from streams during cyclic recalculations.
 
-	size_t m_tempHoldups{ 0 };		// Is used to distinguish between permanent (shown in GUI) and temporary holdups (added during the simulation).
-	size_t m_tempStreams{ 0 };		// Is used to distinguish between permanent (shown in GUI) and temporary streams (added during the simulation).
+	size_t m_nFixHoldups{ 0 };	// Number of holdups always present in the unit.
+	size_t m_nFixStreams{ 0 };	// Number of streams always present in the unit.
+	size_t m_nVarHoldups{ 0 };	// Number of holdups added during initialization of the unit.
+	size_t m_nVarStreams{ 0 };	// Number of streams added during initialization of the unit.
 
 	double m_timeBegStored{ 0.0 };	// Begin of the time window that is currently stored in store streams.
 	double m_timeEndStored{ 0.0 };	// End of the time window that is currently stored in store streams.
@@ -45,10 +51,16 @@ public:
 	void SetPointers(const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid, const std::vector<std::string>* _compounds, const std::vector<SOverallDescriptor>* _overall,
 		const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerances);
 
-	// Initializes all defines feeds, holdups and streams before starting the simulation.
+	// Is called when initial structure of the unit is configured.
+	void CreateStructure();
+	// Initializes all defines feeds, holdups and streams before starting initialization of the unit.
 	void Initialize();
+	// Performs additional initialization actions after initialization of the unit, but before starting the simulation.
+	void PostInitialize();
 	// Removes temporary holdups and streams.
 	void RemoveTemporary();
+	// Removes variable holdups and streams.
+	void RemoveVariable();
 	// Removes all simulation results.
 	void ClearResults();
 	// Removes all defined streams.
@@ -79,9 +91,9 @@ public:
 	const CHoldup* GetHoldup(const std::string& _name) const;
 	// Returns a holdup with the specified name. If such holdup does not exist, returns nullptr.
 	CHoldup* GetHoldup(const std::string& _name);
-	// Returns all defined initial holdups.
+	// Returns all defined initial holdups for fixed holdups.
 	std::vector<const CHoldup*> GetHoldupsInit() const;
-	// Returns all defined initial holdups.
+	// Returns all defined initial holdups for fixed holdups.
 	std::vector<CHoldup*> GetHoldupsInit();
 	// Returns all defined holdups.
 	std::vector<const CHoldup*> GetHoldups() const;
@@ -180,9 +192,11 @@ private:
 	// Saves all streams from the given list.
 	template<typename T>
 	void SaveObjects(CH5Handler& _h5File, const std::string& _path, const std::vector<std::unique_ptr<T>>& _streams, const std::string& _attribute, const std::string& _group, const std::string& _subgroup, const std::string& _namespath) const;
-	// Loads all streams from the given list.
+	// Loads all streams from the given list. Adds new variable objects if necessary during loading.
 	template<typename T>
-	void LoadObjects(const CH5Handler& _h5File, const std::string& _path, const std::vector<std::unique_ptr<T>>& _streams, const std::string& _attribute, const std::string& _group, const std::string& _subgroup, const std::string& _namespath);
+	using AddObjectFun = T* (CStreamManager::*)(const std::string&);
+	template<typename T>
+	void LoadObjects(const CH5Handler& _h5File, const std::string& _path, const std::vector<std::unique_ptr<T>>& _streams, const std::string& _attribute, const std::string& _group, const std::string& _subgroup, const std::string& _namespath, AddObjectFun<T> _addObjectFun);
 
 	// Returns keys of all the streams from the list.
 	template<typename T>

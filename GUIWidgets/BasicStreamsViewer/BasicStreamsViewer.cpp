@@ -243,8 +243,12 @@ void CBasicStreamsViewer::GetSelectedDistributions()
 		case EPropertyType::Phase2:
 		case EPropertyType::Phase3:
 		case EPropertyType::Phase4:
-			m_vSelectedMD.push_back(s->GetPhase(EPhase(E2I(type) - E2I(EPropertyType::Phase1) + 1))->MDDistr());
+		{
+			// HACK: temporary solution; combo box should store phase type
+			const EPhase phase = m_pFlowsheet->GetPhases()[E2I(type) - E2I(EPropertyType::Phase1)].state;
+			m_vSelectedMD.push_back(s->GetPhase(phase)->MDDistr());
 			break;
+		}
 		case EPropertyType::SolidDistr:
 		case EPropertyType::SauterDiameter:
 		{
@@ -561,7 +565,7 @@ void CBasicStreamsViewer::SetPhaseFractionsToTable()
 	for (int i = 0; i < (int)m_vSelectedStreams.size(); ++i)
 	{
 		for (int j = 0; j < distrPerStream; ++j)
-			ui.tabTable->SetColHeaderItem(i * distrPerStream + j + 1, m_vSelectedStreams[i]->GetName() + "\n" + m_vSelected2D[i]->GetName() + " [" + m_vSelected2D[i]->GetUnits() + "]");
+			ui.tabTable->SetColHeaderItem(i * distrPerStream + j + 1, m_vSelectedStreams[i]->GetName() + "\n" + m_vSelected2D[i * distrPerStream + j]->GetName() + " [" + m_vSelected2D[i]->GetUnits() + "]");
 
 		std::vector<std::vector<double>> data(distrPerStream);
 		for (int j = 0; j < distrPerStream; ++j)

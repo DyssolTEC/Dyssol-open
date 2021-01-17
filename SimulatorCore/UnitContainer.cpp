@@ -53,7 +53,7 @@ void CUnitContainer::SetModel(const std::string& _uniqueID)
 	{
 		m_model->SetPointers(&m_materialsDB, &m_grid, &m_compounds, &m_overall, &m_phases, &m_cache, &m_tolerance);
 		// TODO: catch exceptions from Add-functions
-		m_model->CreateStructure();
+		m_model->DoCreateStructure();
 	}
 }
 
