@@ -12,13 +12,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
-add_executable(Dyssol
-    ${CMAKE_SOURCE_DIR}/BaseSolvers/AgglomerationSolver.cpp
-    ${CMAKE_SOURCE_DIR}/BaseSolvers/BaseSolver.cpp
-    ${CMAKE_SOURCE_DIR}/BaseSolvers/PBMSolver.cpp
-    ${CMAKE_SOURCE_DIR}/CacheHandler/BaseCacheHandler.cpp
-    ${CMAKE_SOURCE_DIR}/CacheHandler/DenseDistrCacher.cpp
-    ${CMAKE_SOURCE_DIR}/CacheHandler/MDMatrCacher.cpp
+add_executable(DyssolC
+    ${CMAKE_SOURCE_DIR}/DyssolConsole/ConfigFileParser.cpp
+    ${CMAKE_SOURCE_DIR}/DyssolConsole/main.cpp
+)
+
+add_executable(DyssolGUI
     ${CMAKE_SOURCE_DIR}/DyssolMainWindow/AboutWindow.cpp
     ${CMAKE_SOURCE_DIR}/DyssolMainWindow/Dyssol.cpp
     ${CMAKE_SOURCE_DIR}/DyssolMainWindow/Dyssol.rc
@@ -26,10 +25,6 @@ add_executable(Dyssol
     ${CMAKE_SOURCE_DIR}/DyssolMainWindow/main.cpp
     ${CMAKE_SOURCE_DIR}/DyssolMainWindow/Resources.qrc
     ${CMAKE_SOURCE_DIR}/DyssolMainWindow/SaveLoadThread.cpp
-    ${CMAKE_SOURCE_DIR}/EquationSolvers/DAEModel.cpp
-    ${CMAKE_SOURCE_DIR}/EquationSolvers/DAESolver.cpp
-    ${CMAKE_SOURCE_DIR}/EquationSolvers/NLModel.cpp
-    ${CMAKE_SOURCE_DIR}/EquationSolvers/NLSolver.cpp
     ${CMAKE_SOURCE_DIR}/GUIDialogs/CalculationSequenceEditor/CalculationSequenceEditor.cpp
     ${CMAKE_SOURCE_DIR}/GUIDialogs/CalculationSequenceEditor/CalculationSequenceEditor.ui
     ${CMAKE_SOURCE_DIR}/GUIDialogs/CompoundsManager/CompoundsManager.cpp
@@ -93,6 +88,20 @@ add_executable(Dyssol
     ${CMAKE_SOURCE_DIR}/GUIWidgets/QtWidgets/SignalBlocker.cpp
     ${CMAKE_SOURCE_DIR}/GUIWidgets/StatusWindow/StatusWindow.cpp
     ${CMAKE_SOURCE_DIR}/GUIWidgets/StatusWindow/StatusWindow.ui
+    )
+
+
+    add_library(Dyssol SHARED
+    ${CMAKE_SOURCE_DIR}/BaseSolvers/AgglomerationSolver.cpp
+    ${CMAKE_SOURCE_DIR}/BaseSolvers/BaseSolver.cpp
+    ${CMAKE_SOURCE_DIR}/BaseSolvers/PBMSolver.cpp
+    ${CMAKE_SOURCE_DIR}/CacheHandler/BaseCacheHandler.cpp
+    ${CMAKE_SOURCE_DIR}/CacheHandler/DenseDistrCacher.cpp
+    ${CMAKE_SOURCE_DIR}/CacheHandler/MDMatrCacher.cpp
+    ${CMAKE_SOURCE_DIR}/EquationSolvers/DAEModel.cpp
+    ${CMAKE_SOURCE_DIR}/EquationSolvers/DAESolver.cpp
+    ${CMAKE_SOURCE_DIR}/EquationSolvers/NLModel.cpp
+    ${CMAKE_SOURCE_DIR}/EquationSolvers/NLSolver.cpp
     ${CMAKE_SOURCE_DIR}/HDF5Handler/H5Handler.cpp
     ${CMAKE_SOURCE_DIR}/HDF5Handler/PacketTable.cpp
     ${CMAKE_SOURCE_DIR}/MaterialsDatabase/BaseProperty.cpp
@@ -172,7 +181,8 @@ INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/SimulatorCore/")
 INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/Utilities/")
 
 INCLUDE_DIRECTORIES("/usr/include/hdf5/serial/")
-TARGET_LINK_LIBRARIES(Dyssol Qt5::Widgets pthread dl hdf5_serial hdf5_serial_cpp hdf5_serial_hl hdf5_serial_hl_cpp z sundials_ida sundials_kinsol)
-
+TARGET_LINK_LIBRARIES(Dyssol pthread dl hdf5_serial hdf5_serial_cpp hdf5_serial_hl hdf5_serial_hl_cpp z sundials_ida sundials_kinsol)
+TARGET_LINK_LIBRARIES(DyssolC Dyssol)
+TARGET_LINK_LIBRARIES(DyssolGUI Qt5::Widgets Dyssol)
 
 ADD_SUBDIRECTORY("${CMAKE_SOURCE_DIR}/Units")
