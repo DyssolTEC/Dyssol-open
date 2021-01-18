@@ -1,0 +1,16 @@
+stages:
+  - build
+
+.plaftorms_template: &platforms_definition
+  only:
+    - branches
+    - master # I suppose that we can work directly on master
+    - merge_request
+
+make_pdflatex:
+  <<: *platforms_definition
+  stage: pdflatex
+  image: debian-bullseye:latest
+  script:
+    - apt-get update && apt-get install -y cmake build-essential libsundials-dev libhdf5-serial
+    - mkdir build && cd build && cmake .. && make
