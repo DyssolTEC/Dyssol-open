@@ -7,10 +7,10 @@ stages:
     - master # I suppose that we can work directly on master
     - merge_request
 
-make_pdflatex:
+make_dyssol:
   <<: *platforms_definition
   stage: build
   image: debian:bullseye
   script:
-    - apt-get update && apt-get install -y cmake build-essential libsundials-dev libhdf5-serial
+    - apt-get update && apt-get install -y cmake build-essential libsundials-dev libhdf5-serial-dev
     - mkdir build && cd build && cmake .. && make
