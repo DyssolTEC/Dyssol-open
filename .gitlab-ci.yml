@@ -9,7 +9,7 @@ stages:
 
 make_pdflatex:
   <<: *platforms_definition
-  stage: pdflatex
+  stage: build
   image: debian-bullseye:latest
   script:
     - apt-get update && apt-get install -y cmake build-essential libsundials-dev libhdf5-serial
