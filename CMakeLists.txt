@@ -13,7 +13,7 @@ add_executable(DyssolC
     ${CMAKE_SOURCE_DIR}/DyssolConsole/main.cpp
 )
 
-add_library(Dyssol STATIC
+set(libdyssolsrc
     ${CMAKE_SOURCE_DIR}/BaseSolvers/AgglomerationSolver.cpp
     ${CMAKE_SOURCE_DIR}/BaseSolvers/BaseSolver.cpp
     ${CMAKE_SOURCE_DIR}/BaseSolvers/PBMSolver.cpp
@@ -76,10 +76,15 @@ INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/SimulatorCore/")
 INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/Utilities/")
 INCLUDE_DIRECTORIES("/usr/include/hdf5/serial/")
 
-TARGET_LINK_LIBRARIES(Dyssol pthread dl hdf5_serial hdf5_serial_cpp hdf5_serial_hl hdf5_serial_hl_cpp z sundials_ida sundials_kinsol)
-TARGET_LINK_LIBRARIES(DyssolC Dyssol)
+add_library(libdyssol_shared SHARED ${libdyssolsrc})
+add_library(libdyssol_static STATIC ${libdyssolsrc})
+
+TARGET_LINK_LIBRARIES(libdyssol_shared pthread dl hdf5_serial hdf5_serial_cpp hdf5_serial_hl hdf5_serial_hl_cpp z sundials_ida sundials_kinsol)
+TARGET_LINK_LIBRARIES(libdyssol_static pthread dl hdf5_serial hdf5_serial_cpp hdf5_serial_hl hdf5_serial_hl_cpp z sundials_ida sundials_kinsol)
+TARGET_LINK_LIBRARIES(DyssolC libdyssol_static)
 INSTALL(TARGETS DyssolC DESTINATION ${CMAKE_INSTALL_BINDIR})
-INSTALL(TARGETS Dyssol DESTINATION ${CMAKE_INSTALL_LIBDIR})
+INSTALL(TARGETS libdyssol_shared DESTINATION ${CMAKE_INSTALL_LIBDIR})
+INSTALL(TARGETS libdyssol_static DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 ADD_SUBDIRECTORY("${CMAKE_SOURCE_DIR}/Units")
 ADD_SUBDIRECTORY("${CMAKE_SOURCE_DIR}/DyssolMainWindow")
