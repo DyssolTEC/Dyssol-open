@@ -12,5 +12,5 @@ make_dyssol:
   stage: build
   image: debian:bullseye
   script:
-    - apt-get update && apt-get install -y cmake build-essential libsundials-dev libhdf5-serial-dev
+    - apt-get update && apt-get install -y cmake build-essential libsundials-dev libhdf5-serial-dev libqglviewer-dev-qt5
     - mkdir build && cd build && cmake .. && make
