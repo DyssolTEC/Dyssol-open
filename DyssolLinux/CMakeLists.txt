@@ -12,7 +12,7 @@ set(SRC_CORE "./src/Core")
 set(SRC_UNITS "./src/Units")
 set(SRC_SOLVERS "./src/Solvers")
 
-set(UNITS_NAMES 
+set(UNITS_NAMES
 	"Agglomerator"
 	"Bunker"
 	"Crusher"
@@ -30,7 +30,7 @@ set(UNITS_NAMES
 	"TimeDelay"
 )
 
-set(SOLVERS_NAMES 
+set(SOLVERS_NAMES
 	"AgglomerationCellAverage"
 	"AgglomerationFixedPivot"
 	"AgglomerationFFT"
@@ -50,12 +50,12 @@ file(GLOB C_FILES ${SRC_CORE}/*.c)
 set_source_files_properties(${C_FILES} PROPERTIES LANGUAGE CXX)
 
 include_directories(
-	${SRC_CORE} 
+	${SRC_CORE}
 	${CMAKE_CURRENT_BINARY_DIR}
 	${SRC_CORE}/include/
 	${HDF5_INSTALL_PATH}/include/
 	${SUNDIALS_INSTALL_PATH}/include/
-) 
+)
 
 link_directories(${HDF5_INSTALL_PATH}/lib/ ${ZLIB_INSTALL_PATH}/lib/ ${SUNDIALS_INSTALL_PATH}/lib/)
 

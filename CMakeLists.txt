@@ -171,7 +171,6 @@ INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/DyssolLinux/sundials_install/include/su
 INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/DyssolLinux/sundials_install/include/sunmatrix/")
 INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/ExternalLibraries/sundials/include/")
 
-
 INCLUDE_DIRECTORIES("/usr/include/hdf5/serial/")
 TARGET_LINK_LIBRARIES(Dyssol Qt5::Widgets pthread dl hdf5_serial hdf5_serial_cpp hdf5_serial_hl hdf5_serial_hl_cpp z sundials_ida sundials_kinsol)
 
