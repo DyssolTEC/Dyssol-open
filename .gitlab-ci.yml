@@ -15,6 +15,6 @@ make_bullseye:
   <<: *platforms_definition
   image: debian:bullseye
 
-make_xenial:
+make_focal:
   <<: *platforms_definition
-  image: ubuntu:xenial
+  image: ubuntu:focal
