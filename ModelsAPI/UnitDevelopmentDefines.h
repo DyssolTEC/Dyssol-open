@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "MaterialStream.h"
+#include "Stream.h"
 #include "DAESolver.h"
 #include "NLSolver.h"
 #include "DynamicUnit.h"

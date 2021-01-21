@@ -14,37 +14,39 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 void CUnit::CreateBasicInfo()
 {
 	/// Basic unit's info ///
-	m_sUnitName = "DummyUnit1";
-	m_sAuthorName = "Author";
-	m_sUniqueID = "00000000000000000000000000000100";
+	SetUnitName  ("DummyUnit1");
+	SetAuthorName("Author");
+	SetUniqueID  ("00000000000000000000000000000100");
 }
 
 void CUnit::CreateStructure()
 {
 	/// Add ports ///
-	AddPort("InPort", INPUT_PORT);
-	AddPort("OutPort", OUTPUT_PORT);
+	AddPort("InPort" , EUnitPort::INPUT);
+	AddPort("OutPort", EUnitPort::OUTPUT);
 
 	/// Add unit parameters ///
-	AddTDParameter("ParamTD", 0, 1e+6, 0, "kg", "Unit parameter description");
-	AddConstParameter("ParamConst", 0, 1e+6, 0, "s", "Unit parameter description");
-	AddStringParameter("ParamString", "Initial value", "Unit parameter description");
+	AddTDParameter       ("ParamTD"    , 0, "kg"        , "Unit parameter description");
+	AddConstRealParameter("ParamConst" , 0, "s"         , "Unit parameter description");
+	AddStringParameter   ("ParamString", "Initial value", "Unit parameter description");
+
+
 }
 
-void CUnit::Initialize(double _dTime)
+void CUnit::Initialize(double _time)
 {
 	/// Add state variables ///
-	AddStateVariable("VarName", 0, true);
+	AddStateVariable("VarName", 0.0);
 
 
 }
 
-void CUnit::Simulate(double _dTime)
+void CUnit::Simulate(double _time)
 {
-	CMaterialStream* pInStream = GetPortStream("InPort");
-	CMaterialStream* pOutStream = GetPortStream("OutPort");
+	CStream* inStream  = GetPortStream("InPort");
+	CStream* outStream = GetPortStream("OutPort");
 
-	pOutStream->CopyFromStream(pInStream, _dTime);
+	outStream->CopyFromStream(_time, inStream);
 
 
 }
