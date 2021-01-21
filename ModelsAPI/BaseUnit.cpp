@@ -127,6 +127,13 @@ CStream* CBaseUnit::GetFeed(const std::string& _name)
 	throw std::logic_error(StrConst::BUnit_ErrGetFeed(m_unitName, _name, __func__));
 }
 
+const CStream* CBaseUnit::GetFeed(const std::string& _name) const
+{
+	if (const CStream* feed = m_streams.GetFeed(_name))
+		return feed;
+	throw std::logic_error(StrConst::BUnit_ErrGetFeed(m_unitName, _name, __func__));
+}
+
 void CBaseUnit::RemoveFeed(const std::string& _name)
 {
 	if (!m_streams.GetFeed(_name))
@@ -139,6 +146,13 @@ CHoldup* CBaseUnit::AddHoldup(const std::string& _name)
 	if (m_streams.GetHoldup(_name)) // already exists
 		throw std::logic_error(StrConst::BUnit_ErrAddHoldup(m_unitName, _name, __func__));
 	return m_streams.AddHoldup(_name);
+}
+
+const CHoldup* CBaseUnit::GetHoldup(const std::string& _name) const
+{
+	if (const CHoldup* holdup = m_streams.GetHoldup(_name))
+		return holdup;
+	throw std::logic_error(StrConst::BUnit_ErrGetHoldup(m_unitName, _name, __func__));
 }
 
 CHoldup* CBaseUnit::GetHoldup(const std::string& _name)
@@ -160,6 +174,13 @@ CStream* CBaseUnit::AddStream(const std::string& _name)
 	if (m_streams.GetStream(_name)) // already exists
 		throw std::logic_error(StrConst::BUnit_ErrAddStream(m_unitName, _name, __func__));
 	return m_streams.AddStream(_name);
+}
+
+const CStream* CBaseUnit::GetStream(const std::string& _name) const
+{
+	if (const CStream* stream = m_streams.GetStream(_name))
+		return stream;
+	throw std::logic_error(StrConst::BUnit_ErrGetStream(m_unitName, _name, __func__));
 }
 
 CStream* CBaseUnit::GetStream(const std::string& _name)

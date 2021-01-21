@@ -71,6 +71,8 @@ public:
 	// Adds new feed, setups its structure (MD dimensions, phases, materials, etc.), and returns a pointer to it. If a feed with the given name already exists, does nothing, and returns nullptr.
 	CStream* AddFeed(const std::string& _name);
 	// Returns a feed with the specified name. If such feed does not exist, returns nullptr.
+	const CStream* GetFeed(const std::string& _name) const;
+	// Returns a feed with the specified name. If such feed does not exist, returns nullptr.
 	CStream* GetFeed(const std::string& _name);
 	// Returns all defined initial feeds.
 	std::vector<const CStream*> GetFeedsInit() const;

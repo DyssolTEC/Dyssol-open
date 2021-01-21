@@ -150,6 +150,8 @@ public:
 
 	// Adds a new feed to the unit with proper structure (MD dimensions, phases, materials, etc.), and returns a pointer to it. If a feed with the given name already exists, a logic_error exception is thrown.
 	CStream* AddFeed(const std::string& _name);
+	// Returns a const feed with the specified name. If such feed does not exist, a logic_error exception is thrown.
+	const CStream* GetFeed(const std::string & _name) const;
 	// Returns a feed with the specified name. If such feed does not exist, a logic_error exception is thrown.
 	CStream* GetFeed(const std::string& _name);
 	// Removes the feed with the specified name from the unit. If such feed does not exist, a logic_error exception is thrown.
@@ -157,6 +159,8 @@ public:
 
 	// Adds a new holdup to the unit with proper structure (MD dimensions, phases, materials, etc.), and returns a pointer to it. If a holdup with the given name already exists, a logic_error exception is thrown.
 	CHoldup* AddHoldup(const std::string& _name);
+	// Returns a const holdup with the specified name. If such holdup does not exist, a logic_error exception is thrown.
+	const CHoldup* GetHoldup(const std::string & _name) const;
 	// Returns a holdup with the specified name. If such holdup does not exist, a logic_error exception is thrown.
 	CHoldup* GetHoldup(const std::string& _name);
 	// Removes the holdup with the specified name from the unit. If such holdup does not exist, a logic_error exception is thrown.
@@ -164,6 +168,8 @@ public:
 
 	// Adds a new stream to the unit with proper structure (MD dimensions, phases, materials, etc.), and returns a pointer to it. If a stream with the given name already exists, a logic_error exception is thrown.
 	CStream* AddStream(const std::string& _name);
+	// Returns a const stream with the specified name. If such stream does not exist, a logic_error exception is thrown.
+	const CStream* GetStream(const std::string & _name) const;
 	// Returns a stream with the specified name. If such stream does not exist, a logic_error exception is thrown.
 	CStream* GetStream(const std::string& _name);
 	// Removes the stream with the specified name from the unit. If such stream does not exist, a logic_error exception is thrown.

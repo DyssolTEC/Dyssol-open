@@ -105,6 +105,11 @@ CStream* CStreamManager::AddFeed(const std::string& _name)
 	return m_feedsWork.back().get();
 }
 
+const CStream* CStreamManager::GetFeed(const std::string& _name) const
+{
+	return GetObject(m_feedsWork, _name);
+}
+
 CStream* CStreamManager::GetFeed(const std::string& _name)
 {
 	return GetObject(m_feedsWork, _name);
