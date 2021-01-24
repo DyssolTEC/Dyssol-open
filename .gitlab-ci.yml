@@ -20,9 +20,9 @@ make_bullseye:
   <<: *platforms_definition
   image: debian:bullseye
 
-make_focal:
+make_hirsute:
   <<: *platforms_definition
-  image: ubuntu:focal
+  image: ubuntu:hirsute
 
 variables:
   DEBIAN_FRONTEND: "noninteractive"
