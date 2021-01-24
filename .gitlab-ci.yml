@@ -13,7 +13,7 @@ stages:
     - export CCACHE_BASEDIR="$PWD"
     - export CCACHE_DIR="$PWD/ccache"
     - ccache -s
-    - mkdir build && cd build && cmake .. && make
+    - mkdir build && cd build && cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_VERBOSE_MAKEFILE=ON  .. && make
     - ccache -s
 
 make_bullseye:
