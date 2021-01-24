@@ -18,3 +18,6 @@ make_bullseye:
 make_focal:
   <<: *platforms_definition
   image: ubuntu:focal
+
+variables:
+  DEBIAN_FRONTEND=noninteractive
