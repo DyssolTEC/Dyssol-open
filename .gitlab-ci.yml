@@ -8,8 +8,13 @@ stages:
     - merge_request
   stage: build
   script:
+    - export PATH="/usr/lib/ccache:$PATH"
+    - export CCACHE_BASEDIR="$PWD"
+    - export CCACHE_DIR="$PWD/ccache"
+    - ccache -s
     - apt-get update && apt-get install -y cmake build-essential libsundials-dev libhdf5-serial-dev libqglviewer-dev-qt5
     - mkdir build && cd build && cmake .. && make
+    - ccache -s
 
 make_bullseye:
   <<: *platforms_definition
@@ -21,3 +26,7 @@ make_focal:
 
 variables:
   DEBIAN_FRONTEND: "noninteractive"
+
+cache:
+  paths:
+    - ccache
