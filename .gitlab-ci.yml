@@ -20,4 +20,4 @@ make_focal:
   image: ubuntu:focal
 
 variables:
-  DEBIAN_FRONTEND=noninteractive
+  DEBIAN_FRONTEND: "noninteractive"
