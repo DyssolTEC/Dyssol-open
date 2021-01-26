@@ -586,6 +586,8 @@ public:
 	CStream* GetPortStream(unsigned _index) const;
 	[[deprecated("WARNING! AddFeed(const std::string&, const std::string&) is deprecated. Use AddFeed(const std::string&) instead.")]]
 	CStream* AddFeed(const std::string& _name, const std::string& _key);
+	[[deprecated("WARNING! AddHoldup(const std::string&, const std::string&) is deprecated. Use AddHoldup(const std::string&) instead.")]]
+	CHoldup* AddHoldup(const std::string& _name, const std::string& _key);
 	[[deprecated("WARNING! AddMaterialStream(const std::string&, const std::string&) is deprecated. Use AddStream(const std::string&) instead.")]]
 	CStream* AddMaterialStream(const std::string& _name, const std::string& key = "");
 	[[deprecated("WARNING! GetMaterialStream(const std::string&) is deprecated. Use GetStream(const std::string&) instead.")]]

@@ -1905,6 +1905,11 @@ std::vector<double> CBaseStream::GetPSDNumber(double _time, const std::vector<st
 ////////////////////////////////////////////////////////////////////////////////
 /// Deprecated functions
 
+void CBaseStream::AddTimePoint(double _timeDst, double _timeSrc)
+{
+	CopyTimePoint(_timeDst, _timeSrc);
+}
+
 std::string CBaseStream::GetStreamName() const
 {
 	return GetName();

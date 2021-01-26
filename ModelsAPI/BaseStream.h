@@ -427,6 +427,8 @@ private:
 	////////////////////////////////////////////////////////////////////////////////
 	/// Deprecated functions
 public:
+	[[deprecated("WARNING! AddTimePoint(double, double) is deprecated. Use CopyTimePoint(double, double) instead.")]]
+	void AddTimePoint(double _timeDst, double _timeSrc);
 	[[deprecated("WARNING! GetStreamName() is deprecated. Use GetName() instead.")]]
 	std::string GetStreamName() const;
 	[[deprecated("WARNING! SetupStream(const CBaseStream*) is deprecated. Use SetupStructure(const CBaseStream*) instead.")]]

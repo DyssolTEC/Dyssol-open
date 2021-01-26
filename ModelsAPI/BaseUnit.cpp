@@ -1285,6 +1285,11 @@ CStream* CBaseUnit::AddFeed(const std::string& _name, [[maybe_unused]] const std
 	return AddFeed(_name);
 }
 
+CHoldup* CBaseUnit::AddHoldup(const std::string& _name, [[maybe_unused]] const std::string& _key)
+{
+	return AddHoldup(_name);
+}
+
 CStream* CBaseUnit::AddMaterialStream(const std::string& _name, [[maybe_unused]] const std::string& key)
 {
 	return AddStream(_name);

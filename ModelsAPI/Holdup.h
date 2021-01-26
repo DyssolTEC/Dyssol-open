@@ -44,8 +44,10 @@ public:
 	// TODO: move it somewhere
 	////////////////////////////////////////////////////////////////////////////////
 	/// Deprecated functions
-	[[deprecated("WARNING! CopyFromHoldup(const CHoldup*, double,) is deprecated. Use CopyFromHoldup(double, const CHoldup*) instead.")]]
+	[[deprecated("WARNING! CopyFromHoldup(const CHoldup*, double) is deprecated. Use CopyFromHoldup(double, const CHoldup*) instead.")]]
 	void CopyFromHoldup(const CHoldup* _source, double _time);
+	[[deprecated("WARNING! AddHoldup(const CHoldup*, double) is deprecated. Use AddHoldup(double, const CHoldup*) instead.")]]
+	void AddHoldup(const CHoldup* _source, double _time);
 	[[deprecated("WARNING! AddStream(const CStream*, double, double) is deprecated. Use AddStream(double, const CStream*), AddStream(double, double, const CStream*) or AddStreamInterval(double, double, const CStream*) instead.")]]
 	void AddStream(const CStream* _source, double _timeBeg, double _timeEnd);
 	[[deprecated("WARNING! AddStream2(const CStream*, double, double) is deprecated. Use AddStream(double, double, const CStream*) instead.")]]

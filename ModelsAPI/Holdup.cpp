@@ -158,6 +158,11 @@ void CHoldup::CopyFromHoldup(const CHoldup* _source, double _time)
 	CopyFromHoldup(_time, _source);
 }
 
+void CHoldup::AddHoldup(const CHoldup* _source, double _time)
+{
+	AddHoldup(_time, _source);
+}
+
 void CHoldup::AddStream(const CStream* _source, double _timeBeg, double _timeEnd)
 {
 	AddStream(_timeBeg, _timeEnd, _source);
