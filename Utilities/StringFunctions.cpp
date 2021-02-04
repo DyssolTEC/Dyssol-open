@@ -171,6 +171,18 @@ namespace StringFunctions
 		return res;
 	}
 
+	void Quote(std::string& _s)
+	{
+		_s = "\"" + _s + "\"";
+	}
+
+	std::string Quote(const std::string& _s)
+	{
+		std::ostringstream ss;
+		ss << std::quoted(_s);
+		return ss.str();
+	}
+
 	std::string GetRestOfLine(std::istream* _is)
 	{
 		const std::istreambuf_iterator<char> eos;
