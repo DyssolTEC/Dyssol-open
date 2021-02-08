@@ -2,7 +2,10 @@
 
 #pragma once
 
-#include "LookupTables.h"
+#include "DyssolTypes.h"
+#include "DyssolDefines.h"
+#include "DefinesMDB.h"
+#include "MixtureEnthalpyLookup.h"
 
 class CH5Handler;
 class CDenseMDMatrix;
@@ -36,9 +39,10 @@ protected:
 	std::map<EOverall, std::unique_ptr<CTimeDependentValue>> m_overall;			// Defined overall properties.
 	std::map<EPhase, std::unique_ptr<CPhase>> m_phases;							// Defined phases.
 	std::vector<std::string> m_compounds;										// Keys of chemical compounds defined in this stream.
-	CStreamLookupTables m_lookupTables{ *this, m_materialsDB, &m_compounds };	// Lookup tables to calculate TP-dependent properties.
+	mutable std::unique_ptr<CMixtureEnthalpyLookup> m_enthalpyCalculator;		// Lookup table to calculate temperature<->enthalpy.
 	SCacheSettings m_cacheSettings;												// Settings for caching in the stream.
 	SToleranceSettings m_toleranceSettings;										// Settings for tolerances in the stream.
+	SThermodynamicsSettings m_thermodynamicsSettings;							// Settings for thermodynamics in the stream.
 
 public:
 	// TODO: remove empty constructor, always set pointers to MDB and grid.
@@ -47,7 +51,7 @@ public:
 	// Constructor configuring the whole structure.
 	CBaseStream(const std::string& _key, const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid,
 		const std::vector<std::string>* _compounds, const std::vector<SOverallDescriptor>* _overall, const std::vector<SPhaseDescriptor>* _phases,
-		const SCacheSettings* _cache, const SToleranceSettings* _tolerance);
+		const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics);
 	// Copy constructor.
 	CBaseStream(const CBaseStream& _other);
 	virtual ~CBaseStream() = default;
@@ -344,11 +348,20 @@ public:
 	static bool AreEqual(double _time, const CBaseStream& _stream1, const CBaseStream& _stream2);
 
 	////////////////////////////////////////////////////////////////////////////////
-	// Other
+	// Thermodynamics
 	//
 
-	// Returns a pointer to lookup tables.
-	CStreamLookupTables* GetLookupTables();
+	// Returns a pointer to enthalpy calculator.
+	[[nodiscard]] CMixtureEnthalpyLookup* GetEnthalpyCalculator() const;
+
+	// Calculates enthalpy of the stream mixture for the temperature at the given time point using a lookup table.
+	[[nodiscard]] double CalculateEnthalpyFromTemperature(double _time) const;
+	// Calculates temperature of the stream mixture for the enthalpy at the given time point using a lookup table.
+	[[nodiscard]] double CalculateTemperatureFromEnthalpy(double _time) const;
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Other
+	//
 
 	// TODO: remove, initialize MDB in constructor
 	// Sets pointer to the used materials database.
@@ -365,6 +378,9 @@ public:
 
 	// Sets tolerance settings.
 	void SetToleranceSettings(const SToleranceSettings& _settings);
+
+	// Sets thermodynamics settings.
+	void SetThermodynamicsSettings(const SThermodynamicsSettings& _settings);
 
 	// Performs nearest-neighbor extrapolation of all stream data.
 	void Extrapolate(double _timeExtra, double _time);
@@ -422,6 +438,9 @@ private:
 	/* Calculates the number particle distribution of the stream for the selected compounds. If the list of components is empty, calculates the PSD for the entire mixture.
 	 * Takes into account porosity, if specified. All checks of parameters, phases, grids availability, etc. must be executed by the calling code.*/
 	std::vector<double> GetPSDNumber(double _time, const std::vector<std::string>& _compoundKeys, EPSDGridType _grid) const;
+
+	// Clears enthalpy calculator.
+	void ClearEnthalpyCalculator();
 
 	// TODO: move it somewhere
 	////////////////////////////////////////////////////////////////////////////////

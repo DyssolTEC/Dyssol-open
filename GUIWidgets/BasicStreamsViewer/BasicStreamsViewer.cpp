@@ -6,6 +6,7 @@
 #include "Phase.h"
 #include "MDMatrix.h"
 #include "DistributionsGrid.h"
+#include "MaterialsDatabase.h"
 #include "DistributionsFunctions.h"
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"

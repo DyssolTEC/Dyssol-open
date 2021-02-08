@@ -4,6 +4,7 @@
 #include "Flowsheet.h"
 #include "BaseUnit.h"
 #include "Stream.h"
+#include "MaterialsDatabase.h"
 #include "DyssolStringConstants.h"
 #include <sstream>
 #include <QMessageBox>

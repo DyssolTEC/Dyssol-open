@@ -222,7 +222,7 @@ namespace MDBDescriptors
 	// List of initial values of temperature/pressure - dependent properties
 	static tpdepDescr defaultTPDProperties =
 	{
-		{ ENTHALPY ,			 { "Enthalpy" ,				L"J/kg" 			, "" , ECorrelationTypes::CONSTANT , { 0.0 } } },
+		{ ENTHALPY ,			 { "Enthalpy" ,				L"J/kg" 			, "" , ECorrelationTypes::LINEAR   , { 4185.6, 0, 1e+6 } } },
 		{ THERMAL_CONDUCTIVITY , { "Thermal conductivity" ,	L"W/(m*K)" 			, "" , ECorrelationTypes::CONSTANT , { 0.0 } } },
 		{ VAPOR_PRESSURE ,		 { "Vapor pressure" ,		L"Pa" 				, "" , ECorrelationTypes::CONSTANT , { 0.0 } } },
 		{ VISCOSITY ,			 { "Dynamic Viscosity" ,	L"Pa*s" 			, "" , ECorrelationTypes::CONSTANT , { 0.0 } } },

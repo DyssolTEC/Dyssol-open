@@ -3,6 +3,7 @@
 #include "Stream.h"
 #include "TimeDependentValue.h"
 #include "Phase.h"
+#include "MaterialsDatabase.h"
 #include "ContainerFunctions.h"
 #include "DistributionsGrid.h"
 #include "DyssolStringConstants.h"
@@ -19,20 +20,20 @@ CBaseStream::CBaseStream(const std::string& _key) :
 
 CBaseStream::CBaseStream(const std::string& _key, const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid,
 	const std::vector<std::string>* _compounds, const std::vector<SOverallDescriptor>* _overall, const std::vector<SPhaseDescriptor>* _phases,
-	const SCacheSettings* _cache, const SToleranceSettings* _tolerance) :
+	const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics) :
 	m_key{ _key.empty() ? StringFunctions::GenerateRandomKey() : _key },
 	m_materialsDB{ _materialsDB },
 	m_grid{ _grid }
 {
 	SetCacheSettings(*_cache);
 	SetToleranceSettings(*_tolerance);
+	SetThermodynamicsSettings(*_thermodynamics);
 	for (const auto& key : *_compounds)
 		AddCompound(key);
 	for (const auto& overall : *_overall)
 		AddOverallProperty(overall.type, overall.name, overall.units);
 	for (const auto& phase : *_phases)
 		AddPhase(phase.state, phase.name);
-	m_lookupTables.SetMaterialsDatabase(_materialsDB);
 }
 
 CBaseStream::CBaseStream(const CBaseStream& _other) :
@@ -55,7 +56,7 @@ void CBaseStream::Clear()
 	m_overall.clear();
 	m_phases.clear();
 	m_compounds.clear();
-	m_lookupTables.Clear();
+	ClearEnthalpyCalculator();
 }
 
 void CBaseStream::SetupStructure(const CBaseStream* _other)
@@ -161,7 +162,7 @@ void CBaseStream::RemoveTimePoints(double _timeBeg, double _timeEnd)
 
 void CBaseStream::RemoveTimePointsAfter(double _time, bool _inclusive/* = false*/)
 {
-	const auto beg = _inclusive ? std::lower_bound(m_timePoints.begin(), m_timePoints.end(), _time) : std::upper_bound(m_timePoints.begin(), m_timePoints.end(), _time);
+	const auto& beg = _inclusive ? std::lower_bound(m_timePoints.begin(), m_timePoints.end(), _time) : std::upper_bound(m_timePoints.begin(), m_timePoints.end(), _time);
 	if (beg == m_timePoints.end()) return;
 	RemoveTimePoints(*beg, GetLastTimePoint());
 }
@@ -344,7 +345,7 @@ void CBaseStream::AddCompound(const std::string& _compoundKey)
 	for (auto& [state, phase] : m_phases)
 		phase->AddCompound(_compoundKey);
 
-	m_lookupTables.Clear();
+	ClearEnthalpyCalculator();
 }
 
 void CBaseStream::RemoveCompound(const std::string& _compoundKey)
@@ -355,7 +356,7 @@ void CBaseStream::RemoveCompound(const std::string& _compoundKey)
 	for (auto& [state, phase] : m_phases)
 		phase->RemoveCompound(_compoundKey);
 
-	m_lookupTables.Clear();
+	ClearEnthalpyCalculator();
 }
 
 void CBaseStream::ClearCompounds()
@@ -1332,15 +1333,32 @@ bool CBaseStream::AreEqual(double _time, const CBaseStream& _stream1, const CBas
 	return true;
 }
 
-CStreamLookupTables* CBaseStream::GetLookupTables()
+CMixtureEnthalpyLookup* CBaseStream::GetEnthalpyCalculator() const
 {
-	return &m_lookupTables;
+	// lazy initialization
+	if (!m_enthalpyCalculator)
+		m_enthalpyCalculator = std::make_unique<CMixtureEnthalpyLookup>(m_materialsDB, m_compounds, m_thermodynamicsSettings.limits, m_thermodynamicsSettings.intervals);
+	return m_enthalpyCalculator.get();
+}
+
+double CBaseStream::CalculateEnthalpyFromTemperature(double _time) const
+{
+	auto* table = GetEnthalpyCalculator();
+	table->SetCompoundFractions(GetCompoundsFractions(_time));
+	return table->GetEnthalpy(GetTemperature(_time));
+}
+
+double CBaseStream::CalculateTemperatureFromEnthalpy(double _time) const
+{
+	auto* table = GetEnthalpyCalculator();
+	table->SetCompoundFractions(GetCompoundsFractions(_time));
+	return table->GetTemperature(GetMixtureProperty(_time, ENTHALPY));
 }
 
 void CBaseStream::SetMaterialsDatabase(const CMaterialsDatabase* _database)
 {
 	m_materialsDB = _database;
-	m_lookupTables.SetMaterialsDatabase(_database);
+	ClearEnthalpyCalculator();
 }
 
 void CBaseStream::SetGrid(const CDistributionsGrid* _grid)
@@ -1372,6 +1390,12 @@ void CBaseStream::SetToleranceSettings(const SToleranceSettings& _settings)
 	m_toleranceSettings = _settings;
 	for (auto& [state, phase] : m_phases)
 		phase->MDDistr()->SetMinimalFraction(_settings.minFraction);
+}
+
+void CBaseStream::SetThermodynamicsSettings(const SThermodynamicsSettings& _settings)
+{
+	m_thermodynamicsSettings = _settings;
+	ClearEnthalpyCalculator();
 }
 
 void CBaseStream::Extrapolate(double _timeExtra, double _time)
@@ -1484,7 +1508,7 @@ void CBaseStream::LoadFromFile(const CH5Handler& _h5File, const std::string& _pa
 	m_overall.clear();
 	m_phases.clear();
 	m_compounds.clear();
-	m_lookupTables.Clear();
+	ClearEnthalpyCalculator();
 
 	// basic data
 	_h5File.ReadData(_path, StrConst::Stream_H5StreamName, m_name);
@@ -1535,7 +1559,7 @@ void CBaseStream::LoadFromFile_v1(const CH5Handler& _h5File, const std::string& 
 	m_overall.clear();
 	m_phases.clear();
 	m_compounds.clear();
-	m_lookupTables.Clear();
+	ClearEnthalpyCalculator();
 
 	// prepare some values
 	const std::string distrPathBase = _path + "/" + StrConst::Stream_H5Group2DDistrs + "/" + StrConst::Stream_H5Group2DDistrName;
@@ -1671,9 +1695,10 @@ double CBaseStream::CalculateMixPressure(double _time1, const CBaseStream& _stre
 
 double CBaseStream::CalculateMixTemperature(double _time1, const CBaseStream& _stream1, double _mass1, double _time2, const CBaseStream& _stream2, double _mass2)
 {
+	// TODO: check that T is in limits of lookup
 	// get enthalpies
-	const double enthalpy1 = _stream1.m_lookupTables.CalcFromTemperature(_time1, ECompoundTPProperties::ENTHALPY);
-	const double enthalpy2 = _stream2.m_lookupTables.CalcFromTemperature(_time2, ECompoundTPProperties::ENTHALPY);
+	const double enthalpy1 = _stream1.CalculateEnthalpyFromTemperature(_time1);
+	const double enthalpy2 = _stream2.CalculateEnthalpyFromTemperature(_time2);
 	// calculate total mass
 	const double massMix = _mass1 + _mass2;
 	// if no material at all, return some arbitrary temperature
@@ -1682,12 +1707,11 @@ double CBaseStream::CalculateMixTemperature(double _time1, const CBaseStream& _s
 	// calculate (specific) total enthalpy
 	const double enthalpyMix = (enthalpy1 * _mass1 + enthalpy2 * _mass2) / massMix;
 	// combine both enthalpy tables for mixture enthalpy table
-	CLookupTable* lookup1 = _stream1.m_lookupTables.GetLookupTable(ECompoundTPProperties::ENTHALPY, EDependencyTypes::DEPENDENCE_TEMP);
-	CLookupTable* lookup2 = _stream2.m_lookupTables.GetLookupTable(ECompoundTPProperties::ENTHALPY, EDependencyTypes::DEPENDENCE_TEMP);
-	lookup1->MultiplyTable(_mass1 / massMix);
-	lookup1->Add(*lookup2, _mass2 / massMix);
+	const CMixtureEnthalpyLookup* lookup1 = _stream1.GetEnthalpyCalculator();
+	const CMixtureEnthalpyLookup* lookup2 = _stream2.GetEnthalpyCalculator();
+	const CMixtureEnthalpyLookup lookupMix = *lookup1 * (_mass1 / massMix) + *lookup2 * (_mass2 / massMix);
 	// read out new temperature
-	return lookup1->GetParam(enthalpyMix);
+	return lookupMix.GetTemperature(enthalpyMix);
 }
 
 double CBaseStream::CalculateMixOverall(double _time1, const CBaseStream& _stream1, double _mass1, double _time2, const CBaseStream& _stream2, double _mass2, EOverall _property)
@@ -1900,6 +1924,11 @@ std::vector<double> CBaseStream::GetPSDNumber(double _time, const std::vector<st
 		}
 		return res;
 	}
+}
+
+void CBaseStream::ClearEnthalpyCalculator()
+{
+	m_enthalpyCalculator.reset(nullptr);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

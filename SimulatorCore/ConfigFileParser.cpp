@@ -5,6 +5,7 @@
 #include "ModelsManager.h"
 #include "Flowsheet.h"
 #include "BaseUnit.h"
+#include "MaterialsDatabase.h"
 #include "StringFunctions.h"
 #include "FileSystem.h"
 #include "DyssolUtilities.h"

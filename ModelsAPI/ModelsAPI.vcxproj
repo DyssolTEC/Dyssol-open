@@ -106,9 +106,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseUnit.cpp" />
+    <ClCompile Include="MixtureEnthalpyLookup.cpp" />
+    <ClCompile Include="MixtureLookup.cpp" />
+    <ClCompile Include="TwoWayMap.cpp" />
     <ClCompile Include="PlotManager.cpp" />
     <ClCompile Include="StateVariable.cpp" />
-    <ClCompile Include="LookupTables.cpp" />
     <ClCompile Include="Phase.cpp" />
     <ClCompile Include="Holdup.cpp" />
     <ClCompile Include="Stream.cpp" />
@@ -119,7 +121,6 @@
     <ClCompile Include="DenseMDMatrix.cpp" />
     <ClCompile Include="DependentValues.cpp" />
     <ClCompile Include="DistributionsGrid.cpp" />
-    <ClCompile Include="LookupTable.cpp" />
     <ClCompile Include="MDMatrix.cpp" />
     <ClCompile Include="TDArray.cpp" />
     <ClCompile Include="TransformMatrix.cpp" />
@@ -129,7 +130,9 @@
   <ItemGroup>
     <ClInclude Include="BaseUnit.h" />
     <ClInclude Include="Holdup.h" />
-    <ClInclude Include="LookupTables.h" />
+    <ClInclude Include="MixtureLookup.h" />
+    <ClInclude Include="MixtureEnthalpyLookup.h" />
+    <ClInclude Include="TwoWayMap.h" />
     <ClInclude Include="MaterialStream.h" />
     <ClInclude Include="PlotManager.h" />
     <ClInclude Include="StateVariable.h" />
@@ -140,7 +143,6 @@
     <ClInclude Include="DistributionsFunctions.h" />
     <ClInclude Include="DistributionsGrid.h" />
     <ClInclude Include="DynamicUnit.h" />
-    <ClInclude Include="LookupTable.h" />
     <ClInclude Include="MDMatrix.h" />
     <ClInclude Include="Phase.h" />
     <ClInclude Include="SteadyStateUnit.h" />

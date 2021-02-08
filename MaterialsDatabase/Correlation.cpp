@@ -53,7 +53,7 @@ void CCorrelation::SetType(ECorrelationTypes _nType)
 
 	// invalidate old values
 	m_vParameters.clear();
-	m_valuesList.clear();
+	m_valuesList.Clear();
 
 	// prepare the parameters list
 	m_vParameters.resize(MDBDescriptors::correlations[m_nType].parametersNumber, 1.0);
@@ -82,7 +82,7 @@ bool CCorrelation::SetParameters(const std::vector<double>& _vParams)
 		// check that the length of parameters is an even value, as it must contain pairs [parameter:value]
 		if (_vParams.size() % 2 != 0) return false;
 		// remove old data
-		m_valuesList.clear();
+		m_valuesList.Clear();
 		// set the list of pairs
 		for (size_t i = 0; i < _vParams.size(); i += 2)
 			m_valuesList.SetValue(_vParams[i], _vParams[i + 1]);
@@ -193,7 +193,7 @@ void CCorrelation::Initialize(ECorrelationTypes _nType, const std::vector<double
 		// set default values
 		m_nType = ECorrelationTypes::LIST_OF_T_VALUES;
 		m_vParameters.clear();
-		m_valuesList.clear();
+		m_valuesList.Clear();
 		m_TInterval = { MDBDescriptors::TEMP_MIN , MDBDescriptors::TEMP_MIN };
 		m_PInterval = { MDBDescriptors::PRES_MIN , MDBDescriptors::PRES_MAX };
 	}

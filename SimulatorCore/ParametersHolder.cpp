@@ -3,7 +3,7 @@
 #include "ParametersHolder.h"
 #include "DyssolStringConstants.h"
 
-const unsigned CParametersHolder::m_cnSaveVersion = 4;
+const unsigned CParametersHolder::m_cnSaveVersion = 5;
 
 CParametersHolder::CParametersHolder()
 {
@@ -46,6 +46,10 @@ void CParametersHolder::SetDefaultValues()
 	cacheFlagHoldupsAfterReload = DEFAULT_CACHE_FLAG_HOLDUPS;
 	cacheFlagInternalAfterReload = DEFAULT_CACHE_FLAG_INTERNAL;
 	cacheWindowAfterReload = DEFAULT_CACHE_WINDOW;
+
+	enthalpyMinT = DEFAULT_ENTHALPY_MIN_T;
+	enthalpyMaxT = DEFAULT_ENTHALPY_MAX_T;
+	enthalpyInt  = DEFAULT_ENTHALPY_INTERVALS;
 
 	fileSingleFlag = true;
 }
@@ -98,6 +102,12 @@ void CParametersHolder::SaveToFile(CH5Handler& _h5File, const std::string& _sPat
 
 	// save tear streams initialization parameters
 	_h5File.WriteData(_sPath, StrConst::FlPar_H5InitTearStreamsFlag, initializeTearStreamsAutoFlag);
+
+	// enthalpy calculator
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5EnthalpyMinT     , enthalpyMinT);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5EnthalpyMaxT     , enthalpyMaxT);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5EnthalpyIntervals, enthalpyInt);
+
 }
 
 void CParametersHolder::LoadFromFile(CH5Handler& _h5File, const std::string& _sPath)
@@ -170,6 +180,20 @@ void CParametersHolder::LoadFromFile(CH5Handler& _h5File, const std::string& _sP
 		initializeTearStreamsAutoFlag = true;
 	else
 		_h5File.ReadData(_sPath, StrConst::FlPar_H5InitTearStreamsFlag, initializeTearStreamsAutoFlag.data);
+
+	// enthalpy calculator
+	if (nVer < 5)
+	{
+		enthalpyMinT = DEFAULT_ENTHALPY_MIN_T;
+		enthalpyMaxT = DEFAULT_ENTHALPY_MAX_T;
+		enthalpyInt  = DEFAULT_ENTHALPY_INTERVALS;
+	}
+	else
+	{
+		_h5File.ReadData(_sPath, StrConst::FlPar_H5EnthalpyMinT     , enthalpyMinT.data);
+		_h5File.ReadData(_sPath, StrConst::FlPar_H5EnthalpyMaxT     , enthalpyMaxT.data);
+		_h5File.ReadData(_sPath, StrConst::FlPar_H5EnthalpyIntervals, enthalpyInt.data);
+	}
 }
 
 void CParametersHolder::AbsTol(double val)
@@ -326,4 +350,19 @@ void CParametersHolder::FileSingleFlag(bool val)
 void CParametersHolder::InitializeTearStreamsAutoFlag(bool val)
 {
 	initializeTearStreamsAutoFlag = val;
+}
+
+void CParametersHolder::EnthalpyMinT(double val)
+{
+	enthalpyMinT = val;
+}
+
+void CParametersHolder::EnthalpyMaxT(double val)
+{
+	enthalpyMaxT = val;
+}
+
+void CParametersHolder::EnthalpyInt(size_t val)
+{
+	enthalpyInt = val;
 }

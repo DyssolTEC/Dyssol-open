@@ -4,6 +4,7 @@
 #include "Flowsheet.h"
 #include "BaseStream.h"
 #include "Phase.h"
+#include "MaterialsDatabase.h"
 #include "ContainerFunctions.h"
 #include <QMessageBox>
 

@@ -24,9 +24,6 @@
     <ClCompile Include="DistributionsGrid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LookupTable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MDMatrix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -46,9 +43,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Phase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LookupTables.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BaseStream.cpp">
@@ -75,6 +69,15 @@
     <ClCompile Include="BaseUnit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MixtureLookup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MixtureEnthalpyLookup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TwoWayMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DenseMDMatrix.h">
@@ -90,9 +93,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DynamicUnit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LookupTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MDMatrix.h">
@@ -122,9 +122,6 @@
     <ClInclude Include="Phase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LookupTables.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MaterialStream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -150,6 +147,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BaseUnit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MixtureLookup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TwoWayMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MixtureEnthalpyLookup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

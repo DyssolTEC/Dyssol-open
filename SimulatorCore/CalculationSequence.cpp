@@ -350,6 +350,13 @@ void CCalculationSequence::UpdateToleranceSettings(const SToleranceSettings& _to
 			str->SetToleranceSettings(_tolerance);
 }
 
+void CCalculationSequence::UpdateThermodynamicsSettings(const SThermodynamicsSettings& _settings)
+{
+	for (auto& part : m_initialTearStreams)
+		for (auto& str : part)
+			str->SetThermodynamicsSettings(_settings);
+}
+
 void CCalculationSequence::SaveToFile(CH5Handler& _h5Saver, const std::string& _path)
 {
 	if (!_h5Saver.IsValid()) return;

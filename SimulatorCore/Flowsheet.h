@@ -25,9 +25,10 @@ class CFlowsheet
 	std::vector<std::string> m_compounds;		// List of all defined compound keys.
 	std::vector<SOverallDescriptor> m_overall;	// List of all defined overall properties.
 	std::vector<SPhaseDescriptor> m_phases;		// List of all defined phases.
-	SCacheSettings m_cacheStreams{ m_parameters.cacheFlagStreams, m_parameters.cacheWindow, m_parameters.cachePath };	// Global cache settings for streams.
-	SCacheSettings m_cacheHoldups{ m_parameters.cacheFlagHoldups, m_parameters.cacheWindow, m_parameters.cachePath };	// Global cache settings for holdups in models.
-	SToleranceSettings m_tolerance{ m_parameters.absTol, m_parameters.relTol, m_parameters.minFraction };				// Global tolerance settings.
+	SCacheSettings m_cacheStreams{ m_parameters.cacheFlagStreams, m_parameters.cacheWindow, m_parameters.cachePath };				// Global cache settings for streams.
+	SCacheSettings m_cacheHoldups{ m_parameters.cacheFlagHoldups, m_parameters.cacheWindow, m_parameters.cachePath };				// Global cache settings for holdups in models.
+	SToleranceSettings m_tolerance{ m_parameters.absTol, m_parameters.relTol, m_parameters.minFraction };							// Global tolerance settings.
+	SThermodynamicsSettings m_thermodynamics{ { m_parameters.enthalpyMinT, m_parameters.enthalpyMaxT }, m_parameters.enthalpyInt };	// Global thermodynamics settings.
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Flowsheet structure
@@ -177,6 +178,8 @@ public:
 	void UpdateCacheSettings();
 	// Updates tolerance settings in all units and streams.
 	void UpdateToleranceSettings();
+	// Updates thermodynamics settings in all units and streams.
+	void UpdateThermodynamicsSettings();
 
 	// TODO: remove them when grid is moved out of scope of the flowsheet.
 	// Returns a const pointer to distributions grid.

@@ -23,6 +23,7 @@ struct SInterval
 	friend std::ostream& operator << (std::ostream& os, const SInterval& val) { os << val.min << ' ' << val.max;	return os; }
 	friend std::istream& operator >> (std::istream& is, SInterval& val) { is >> val.min >> val.max; return is; }
 	bool operator==(const SInterval& _i) const { return min == _i.min && max == _i.max; }
+	[[nodiscard]] bool Includes(double _d) const { return _d >= min && _d <= max; }
 };
 
 enum class EArguments
@@ -67,6 +68,12 @@ struct SToleranceSettings
 	double toleranceAbs{ DEFAULT_A_TOL };		// Absolute tolerance.
 	double toleranceRel{ DEFAULT_R_TOL };		// Relative tolerance.
 	double minFraction{ DEFAULT_MIN_FRACTION };	// Minimum considering fraction in MD distributions.
+};
+
+struct SThermodynamicsSettings
+{
+	SInterval limits{ DEFAULT_ENTHALPY_MIN_T, DEFAULT_ENTHALPY_MAX_T };
+	size_t intervals{ DEFAULT_ENTHALPY_INTERVALS };
 };
 
 struct SPhaseDescriptor

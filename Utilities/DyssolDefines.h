@@ -32,6 +32,11 @@
 // Initial minimal fraction
 #define DEFAULT_MIN_FRACTION	0
 
+// Enthalpy calculator
+#define DEFAULT_ENTHALPY_MIN_T     173
+#define DEFAULT_ENTHALPY_MAX_T     1273
+#define DEFAULT_ENTHALPY_INTERVALS 100
+
 
 // ========== Convergence methods
 enum EConvMethod : uint32_t

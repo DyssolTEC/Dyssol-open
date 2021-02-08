@@ -3,6 +3,7 @@
 #include "Flowsheet.h"
 #include "BaseUnit.h"
 #include "Topology.h"
+#include "MaterialsDatabase.h"
 #include "ContainerFunctions.h"
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
@@ -63,7 +64,7 @@ size_t CFlowsheet::GetUnitsNumber() const
 CUnitContainer* CFlowsheet::AddUnit(const std::string& _key)
 {
 	const std::string uniqueID = StringFunctions::GenerateUniqueKey(_key, GetAllUnitsKeys());
-	auto* unit = new CUnitContainer(uniqueID, m_modelsManager, m_materialsDB, m_grid, m_compounds, m_overall, m_phases, m_cacheHoldups, m_tolerance);
+	auto* unit = new CUnitContainer(uniqueID, m_modelsManager, m_materialsDB, m_grid, m_compounds, m_overall, m_phases, m_cacheHoldups, m_tolerance, m_thermodynamics);
 	m_units.emplace_back(unit);
 	SetTopologyModified(true);
 	return unit;
@@ -136,7 +137,7 @@ size_t CFlowsheet::GetStreamsNumber() const
 CStream* CFlowsheet::AddStream(const std::string& _key)
 {
 	const std::string uniqueID = StringFunctions::GenerateUniqueKey(_key, GetAllStreamsKeys());
-	auto* stream = new CStream(uniqueID, &m_materialsDB, &m_grid, &m_compounds, &m_overall, &m_phases, &m_cacheStreams, &m_tolerance);
+	auto* stream = new CStream(uniqueID, &m_materialsDB, &m_grid, &m_compounds, &m_overall, &m_phases, &m_cacheStreams, &m_tolerance, &m_thermodynamics);
 	m_streams.emplace_back(stream);
 	SetTopologyModified(true);
 	return stream;
@@ -580,6 +581,18 @@ void CFlowsheet::UpdateToleranceSettings()
 		if (auto* model = unit->GetModel())
 			model->UpdateToleranceSettings();
 	m_calculationSequence.UpdateToleranceSettings(m_tolerance);
+}
+
+void CFlowsheet::UpdateThermodynamicsSettings()
+{
+	m_thermodynamics = { { m_parameters.enthalpyMinT, m_parameters.enthalpyMaxT }, m_parameters.enthalpyInt };
+
+	for (auto& stream : m_streams)
+		stream->SetThermodynamicsSettings(m_thermodynamics);
+	for (auto& unit : m_units)
+		if (auto* model = unit->GetModel())
+			model->UpdateThermodynamicsSettings();
+	m_calculationSequence.UpdateThermodynamicsSettings(m_thermodynamics);
 }
 
 const CDistributionsGrid* CFlowsheet::GetDistributionsGrid() const

@@ -461,6 +461,9 @@ namespace StrConst
 	const char* const FlPar_H5CacheWindow	          = "CacheWindow";
 	const char* const FlPar_H5FileSingleFlag	      = "FileSingleFlag";
 	const char* const FlPar_H5InitTearStreamsFlag	  = "InitTearStreamsFlag";
+	const char* const FlPar_H5EnthalpyMinT            = "EnthalpyMinTemperature";
+	const char* const FlPar_H5EnthalpyMaxT            = "EnthalpyMaxTemperature";
+	const char* const FlPar_H5EnthalpyIntervals       = "EnthalpyIntervals";
 	const char* const FlPar_H5AttrSaveVersion         = "SaveVersion";
 
 

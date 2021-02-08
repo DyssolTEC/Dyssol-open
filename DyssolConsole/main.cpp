@@ -6,6 +6,7 @@
 #include "Flowsheet.h"
 #include "ModelsManager.h"
 #include "BaseUnit.h"
+#include "MaterialsDatabase.h"
 #include "DistributionsGrid.h"
 #include "DyssolUtilities.h"
 #include "StringFunctions.h"

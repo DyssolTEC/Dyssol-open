@@ -159,7 +159,7 @@ CTDUnitParameter::CTDUnitParameter(std::string _name, std::string _units, std::s
 
 void CTDUnitParameter::Clear()
 {
-	m_values.clear();
+	m_values.Clear();
 }
 
 double CTDUnitParameter::GetMin() const
@@ -214,12 +214,12 @@ const CDependentValues& CTDUnitParameter::GetTDData() const
 
 size_t CTDUnitParameter::Size() const
 {
-	return m_values.size();
+	return m_values.Size();
 }
 
 bool CTDUnitParameter::IsEmpty() const
 {
-	return m_values.empty();
+	return m_values.IsEmpty();
 }
 
 bool CTDUnitParameter::IsInBounds() const
@@ -250,7 +250,7 @@ void CTDUnitParameter::LoadFromFile(const CH5Handler& _h5File, const std::string
 	// load version of save procedure
 	//const int version = _h5File.ReadAttribute(_path, StrConst::BUnit_H5AttrSaveVersion);
 
-	m_values.clear();
+	m_values.Clear();
 
 	// read data
 	std::vector<double> times, values;

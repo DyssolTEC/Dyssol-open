@@ -1,19 +1,23 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "StreamManager.h"
+#include "MaterialsDatabase.h"
 #include "H5Handler.h"
 #include "ContainerFunctions.h"
 #include "DyssolStringConstants.h"
 
-void CStreamManager::SetPointers(const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid, const std::vector<std::string>* _compounds, const std::vector<SOverallDescriptor>* _overall, const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerances)
+void CStreamManager::SetPointers(const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid, const std::vector<std::string>* _compounds,
+	const std::vector<SOverallDescriptor>* _overall, const std::vector<SPhaseDescriptor>* _phases,
+	const SCacheSettings* _cache, const SToleranceSettings* _tolerances, const SThermodynamicsSettings* _thermodynamics)
 {
-	m_materialsDB = _materialsDB;
-	m_grid        = _grid;
-	m_compounds   = _compounds;
-	m_overall     = _overall;
-	m_phases      = _phases;
-	m_cache       = _cache;
-	m_tolerances  = _tolerances;
+	m_materialsDB    = _materialsDB;
+	m_grid           = _grid;
+	m_compounds      = _compounds;
+	m_overall        = _overall;
+	m_phases         = _phases;
+	m_cache          = _cache;
+	m_tolerances     = _tolerances;
+	m_thermodynamics = _thermodynamics;
 }
 
 void CStreamManager::CreateStructure()
@@ -373,6 +377,12 @@ void CStreamManager::UpdateCacheSettings()
 		stream->SetCacheSettings(*m_cache);
 }
 
+void CStreamManager::UpdateThermodynamicsSettings()
+{
+	for (auto& stream : AllObjects())
+		stream->SetThermodynamicsSettings(*m_thermodynamics);
+}
+
 void CStreamManager::ReduceTimePoints(double _timeBeg, double _timeEnd, double _step)
 {
 	for (auto& s : m_feedsWork)		s->ReduceTimePoints(_timeBeg, _timeEnd, _step);
@@ -386,6 +396,7 @@ void CStreamManager::SetupStreamStructure(CBaseStream& _stream) const
 {
 	_stream.SetCacheSettings(*m_cache);
 	_stream.SetToleranceSettings(*m_tolerances);
+	_stream.SetThermodynamicsSettings(*m_thermodynamics);
 	for (const auto& key : *m_compounds)
 		_stream.AddCompound(key);
 	for (const auto& overall : *m_overall)
@@ -553,8 +564,8 @@ template <typename T>
 T* CStreamManager::CreateObject(const std::string& _key, const std::string& _name) const
 {
 	T* stream;
-	if (m_materialsDB && m_grid && m_compounds && m_overall && m_phases && m_cache && m_tolerances) // should be usually the case
-		stream = new T{ _key, m_materialsDB, m_grid, m_compounds, m_overall, m_phases, m_cache, m_tolerances };
+	if (m_materialsDB && m_grid && m_compounds && m_overall && m_phases && m_cache && m_tolerances && m_thermodynamics) // should be usually the case
+		stream = new T{ _key, m_materialsDB, m_grid, m_compounds, m_overall, m_phases, m_cache, m_tolerances, m_thermodynamics };
 	else // for the case of old models, which add holdups in constructor - just create a placeholder, since the loading of the model will be discarded
 		stream = new T{};
 	stream->SetName(_name);

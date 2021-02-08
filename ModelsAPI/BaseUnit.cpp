@@ -3,6 +3,7 @@
 #include "BaseUnit.h"
 #include "TransformMatrix.h"
 #include "TimeDependentValue.h"
+#include "MaterialsDatabase.h"
 #include "DistributionsGrid.h"
 #include "ContainerFunctions.h"
 #include "DyssolUtilities.h"
@@ -11,17 +12,17 @@
 #include <numeric>
 
 void CBaseUnit::SetPointers(const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid, const std::vector<std::string>* _compounds, const std::vector<SOverallDescriptor>* _overall,
-	const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerance)
+	const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics)
 {
-	m_materialsDB  = _materialsDB;
-	m_grid         = _grid;
-	m_compounds    = _compounds;
-	m_overall      = _overall;
-	m_phases       = _phases;
-	m_cache        = _cache;
-	m_tolerance    = _tolerance;
-	m_streams.SetPointers(m_materialsDB, m_grid, m_compounds, m_overall, m_phases, m_cache, m_tolerance);
-	m_lookupTables.SetPointers(m_materialsDB, m_compounds);
+	m_materialsDB    = _materialsDB;
+	m_grid           = _grid;
+	m_compounds      = _compounds;
+	m_overall        = _overall;
+	m_phases         = _phases;
+	m_cache          = _cache;
+	m_tolerance      = _tolerance;
+	m_thermodynamics = _thermodynamics;
+	m_streams.SetPointers(m_materialsDB, m_grid, m_compounds, m_overall, m_phases, m_cache, m_tolerance, m_thermodynamics);
 }
 
 std::string CBaseUnit::GetUnitName() const
@@ -638,13 +639,13 @@ void CBaseUnit::ReduceTimePoints(double _timeBeg, double _timeEnd, double _step)
 void CBaseUnit::AddCompound(const std::string& _compoundKey)
 {
 	m_streams.AddCompound(_compoundKey);
-	m_lookupTables.Clear();
+	ClearEnthalpyCalculator();
 }
 
 void CBaseUnit::RemoveCompound(const std::string& _compoundKey)
 {
 	m_streams.RemoveCompound(_compoundKey);
-	m_lookupTables.Clear();
+	ClearEnthalpyCalculator();
 }
 
 std::string CBaseUnit::GetCompoundName(const std::string& _compoundKey) const
@@ -751,10 +752,7 @@ size_t CBaseUnit::GetPhasesNumber() const
 
 bool CBaseUnit::IsPhaseDefined(EPhase _phase) const
 {
-	for (const auto& phase : *m_phases)
-		if (phase.state == _phase)
-			return true;
-	return false;
+	return std::any_of(m_phases->begin(), m_phases->end(), [&](const auto& _p) { return _p.state == _phase; });
 }
 
 void CBaseUnit::UpdateDistributionsGrid()
@@ -924,6 +922,12 @@ void CBaseUnit::UpdateCacheSettings()
 	m_streams.UpdateCacheSettings();
 }
 
+void CBaseUnit::UpdateThermodynamicsSettings()
+{
+	m_streams.UpdateThermodynamicsSettings();
+	ClearEnthalpyCalculator();
+}
+
 double CBaseUnit::GetCompoundProperty(const std::string& _compoundKey, ECompoundConstProperties _property) const
 {
 	return m_materialsDB->GetConstPropertyValue(_compoundKey, _property);
@@ -954,29 +958,26 @@ bool CBaseUnit::IsPropertyDefined(EInteractionProperties _property) const
 	return m_materialsDB->IsPropertyDefined(_property);
 }
 
-CUnitLookupTables* CBaseUnit::GetLookupTables()
+CMixtureEnthalpyLookup* CBaseUnit::GetEnthalpyCalculator() const
 {
-	return &m_lookupTables;
+	// lazy initialization
+	if (!m_enthalpyCalculator)
+		m_enthalpyCalculator = std::make_unique<CMixtureEnthalpyLookup>(m_materialsDB, *m_compounds, m_thermodynamics->limits, m_thermodynamics->intervals);
+	return m_enthalpyCalculator.get();
 }
 
-double CBaseUnit::CalculateTemperatureFromProperty(ECompoundTPProperties _property, double _value, const std::vector<double>& _fractions) const
+double CBaseUnit::CalculateEnthalpyFromTemperature(double _temperature, const std::vector<double>& _fractions) const
 {
-	return m_lookupTables.CalcTemperature(_property, _value, _fractions);
+	auto* calculator = GetEnthalpyCalculator();
+	calculator->SetCompoundFractions(_fractions);
+	return calculator->GetEnthalpy(_temperature);
 }
 
-double CBaseUnit::CalculatePressureFromProperty(ECompoundTPProperties _property, double _value, const std::vector<double>& _fractions) const
+double CBaseUnit::CalculateTemperatureFromEnthalpy(double _enthalpy, const std::vector<double>& _fractions) const
 {
-	return m_lookupTables.CalcPressure(_property, _value, _fractions);
-}
-
-double CBaseUnit::CalculatePropertyFromTemperature(ECompoundTPProperties _property, double _T, const std::vector<double>& _fractions) const
-{
-	return m_lookupTables.CalcFromTemperature(_property, _T, _fractions);
-}
-
-double CBaseUnit::CalculatePropertyFromPressure(ECompoundTPProperties _property, double _P, const std::vector<double>& _fractions) const
-{
-	return m_lookupTables.CalcFromPressure(_property, _P, _fractions);
+	auto* calculator = GetEnthalpyCalculator();
+	calculator->SetCompoundFractions(_fractions);
+	return calculator->GetTemperature(_enthalpy);
 }
 
 void CBaseUnit::HeatExchange(double _time, CBaseStream* _stream1, CBaseStream* _stream2, double _efficiency) const
@@ -993,19 +994,17 @@ void CBaseUnit::HeatExchange(double _time, CBaseStream* _stream1, CBaseStream* _
 		return;
 
 	// calculate enthalpy
-	const double enthalpy1 = _stream1->GetLookupTables()->CalcFromTemperature(_time, ENTHALPY);
-	const double enthalpy2 = _stream2->GetLookupTables()->CalcFromTemperature(_time, ENTHALPY);
+	const double enthalpy1 = _stream1->CalculateEnthalpyFromTemperature(_time);
+	const double enthalpy2 = _stream2->CalculateEnthalpyFromTemperature(_time);
 	const double enthalpyMix = (mass1 * enthalpy1 + mass2 * enthalpy2) / massMix;
 
 	// add up both enthalpy tables weighted with their respective mass fraction of total mass flow
-	const CLookupTable* lookup1 = _stream1->GetLookupTables()->GetLookupTable(ENTHALPY, EDependencyTypes::DEPENDENCE_TEMP);
-	const CLookupTable* lookup2 = _stream2->GetLookupTables()->GetLookupTable(ENTHALPY, EDependencyTypes::DEPENDENCE_TEMP);
-	CLookupTable lookupMix(m_materialsDB, *m_compounds, ENTHALPY, EDependencyTypes::DEPENDENCE_TEMP);
-	lookupMix.Add(*lookup1, mass1 / massMix);
-	lookupMix.Add(*lookup2, mass2 / massMix);
+	const CMixtureEnthalpyLookup* lookup1 = _stream1->GetEnthalpyCalculator();
+	const CMixtureEnthalpyLookup* lookup2 = _stream2->GetEnthalpyCalculator();
+	const CMixtureEnthalpyLookup lookupMix = *lookup1 * (mass1 / massMix) + *lookup2 * (mass2 / massMix);
 
 	// get ideal heat exchange temperature, i.e. temperature for maximum heat exchange between both streams (here: mixing temperature)
-	const double temperatureMix = lookupMix.GetParam(enthalpyMix);
+	const double temperatureMix = lookupMix.GetTemperature(enthalpyMix);
 
 	if (_efficiency == 1.0)	// use ideal heat exchange temperature for both streams
 	{
@@ -1016,7 +1015,7 @@ void CBaseUnit::HeatExchange(double _time, CBaseStream* _stream1, CBaseStream* _
 	else	// calculate heat transfer with respective efficiency, i.e. maximum heat exchange multiplied with efficiency
 	{
 		// actual heat exchange between both streams
-		double enthalpyRes1 = _efficiency * mass1 * (lookup1->GetValue(temperatureMix) - enthalpy1);
+		double enthalpyRes1 = _efficiency * mass1 * (lookup1->GetEnthalpy(temperatureMix) - enthalpy1);
 		double enthalpyRes2 = -enthalpyRes1;
 
 		// new enthalpies of both streams
@@ -1028,8 +1027,8 @@ void CBaseUnit::HeatExchange(double _time, CBaseStream* _stream1, CBaseStream* _
 		enthalpyRes2 /= mass2;
 
 		// read out temperatures for new specific enthalpies from enthalpy lookup tables
-		const double temperatureRes1 = lookup1->GetParam(enthalpyRes1);
-		const double temperatureRes2 = lookup2->GetParam(enthalpyRes2);
+		const double temperatureRes1 = lookup1->GetEnthalpy(enthalpyRes1);
+		const double temperatureRes2 = lookup2->GetEnthalpy(enthalpyRes2);
 
 		// set stream temperatures
 		_stream1->SetTemperature(_time, temperatureRes1);
@@ -1233,6 +1232,11 @@ void CBaseUnit::LoadFromFile_v1(const CH5Handler& _h5File, const std::string& _p
 	m_unitParameters.LoadFromFile(_h5File, _path + "/" + StrConst::BUnit_H5GroupParams);
 	m_stateVariables.LoadFromFile_v0(_h5File, _path);
 	m_plots.LoadFromFile_v0(_h5File, _path);
+}
+
+void CBaseUnit::ClearEnthalpyCalculator() const
+{
+	m_enthalpyCalculator.reset(nullptr);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1508,12 +1512,41 @@ double CBaseUnit::GetCompoundsInteractionProp(const std::string& _compoundKey1, 
 
 double CBaseUnit::CalcTemperatureFromProperty(ECompoundTPProperties _property, const std::vector<double>& _fractions, double _value) const
 {
-	return CalculateTemperatureFromProperty(_property, _value, _fractions);
+	if (_property == ENTHALPY)
+		return CalculateTemperatureFromEnthalpy(_value, _fractions);
+	else
+	{
+		const double deltaT = (m_thermodynamics->limits.max - m_thermodynamics->limits.min) / static_cast<double>(m_thermodynamics->intervals);
+		std::vector<CDependentValues> components(m_compounds->size());
+		for (size_t iCmp = 0; iCmp < m_compounds->size(); ++iCmp)
+		{
+			for (size_t iInt = 0; iInt <= m_thermodynamics->intervals; ++iInt)
+			{
+				const double T = m_thermodynamics->limits.min + deltaT * static_cast<double>(iInt);
+				const double prop = m_materialsDB->GetTPPropertyValue(m_compounds->at(iCmp), _property, T, STANDARD_CONDITION_P);
+				components[iCmp].SetValue(T, prop);
+			}
+		}
+		const CMixtureLookup lookup{ components, _fractions };
+		return lookup.GetLeft(_value);
+	}
 }
 
 double CBaseUnit::CalcPressureFromProperty(ECompoundTPProperties _property, const std::vector<double>& _fractions, double _value) const
 {
-	return CalculatePressureFromProperty(_property, _value, _fractions);
+	const double deltaP = (1000000 - 10000) / static_cast<double>(100);
+	std::vector<CDependentValues> components(m_compounds->size());
+	for (size_t iCmp = 0; iCmp < m_compounds->size(); ++iCmp)
+	{
+		for (size_t iInt = 0; iInt <= 100; ++iInt)
+		{
+			const double P = 10000 + deltaP * static_cast<double>(iInt);
+			const double prop = m_materialsDB->GetTPPropertyValue(m_compounds->at(iCmp), _property, STANDARD_CONDITION_T, P);
+			components[iCmp].SetValue(P, prop);
+		}
+	}
+	const CMixtureLookup lookup{ components, _fractions };
+	return lookup.GetLeft(_value);
 }
 
 void CBaseUnit::HeatExchange(CStream* _stream1, CStream* _stream2, double _time, double _efficiency) const

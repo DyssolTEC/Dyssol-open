@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <map>
+#include <set>
 #include <vector>
 
 // Checks whether the vector contains a specified element.
@@ -74,6 +75,14 @@ void VectorDelete(std::vector<T>& _vec, size_t _index)
 		_vec.erase(_vec.begin() + _index);
 }
 
+// Checks if the vector contains only unique elements.
+template<typename T>
+bool VectorUnique(const std::vector<T>& _vec)
+{
+	std::set<T> unique(_vec.begin(), _vec.end());
+	return unique.size() == _vec.size();
+}
+
 // Adds two equally sized vectors element-wise and writes results to the third one.
 template<typename T>
 void AddVectors(const std::vector<T>& _vec1, const std::vector<T>& _vec2, std::vector<T>& _res)
@@ -109,6 +118,15 @@ std::vector<K> MapKeys(const std::map<K, V>& _map)
 	return keys;
 }
 
+// Returns a sorted copy of the vector.
+template<typename T>
+std::vector<T> VectorSort(const std::vector<T>& _v)
+{
+	std::vector<T> res = _v;
+	std::sort(res.begin(), res.end());
+	return res;
+}
+
 // Calculates union of two sorted vectors.
 template<typename T>
 void VectorsUnionSorted(const std::vector<T>& _v1, const std::vector<T>& _v2, std::vector<T>& _res)
@@ -123,6 +141,25 @@ std::vector<T> VectorsUnionSorted(const std::vector<T>& _v1, const std::vector<T
 {
 	std::vector<T> res;
 	VectorsUnionSorted(_v1, _v2, res);
+	return res;
+}
+
+// Calculates union of two unsorted vectors.
+template<typename T>
+void VectorsUnionUnsorted(const std::vector<T>& _v1, const std::vector<T>& _v2, std::vector<T>& _res)
+{
+	auto s1 = VectorSort(_v1);
+	auto s2 = VectorSort(_v2);
+	_res.resize(s1.size() + s2.size());
+	_res.resize(std::set_union(s1.begin(), s1.end(), s2.begin(), s2.end(), _res.begin()) - _res.begin());
+}
+
+// Calculates and returns union of two unsorted vectors.
+template<typename T>
+std::vector<T> VectorsUnionUnsorted(const std::vector<T>& _v1, const std::vector<T>& _v2)
+{
+	std::vector<T> res;
+	VectorsUnionUnsorted(_v1, _v2, res);
 	return res;
 }
 

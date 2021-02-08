@@ -109,5 +109,13 @@ public:
 	// == Initialization of tear streams
 	proxy<bool> initializeTearStreamsAutoFlag;	// true - automatically calculate initialization values using previous calculations, false - user defined initial values
 	void InitializeTearStreamsAutoFlag(bool val);
+
+	// == Enthalpy calculator
+	proxy<double> enthalpyMinT;
+	void EnthalpyMinT(double val);
+	proxy<double> enthalpyMaxT;
+	void EnthalpyMaxT(double val);
+	proxy<size_t> enthalpyInt;
+	void EnthalpyInt(size_t val);
 };
 

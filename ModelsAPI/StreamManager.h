@@ -39,6 +39,7 @@ class CStreamManager
 	const std::vector<SPhaseDescriptor>* m_phases{ nullptr };		// Reference to phases.
 	const SCacheSettings* m_cache{ nullptr };						// Reference to cache settings.
 	const SToleranceSettings* m_tolerances{ nullptr };				// Reference to tolerance settings.
+	const SThermodynamicsSettings* m_thermodynamics{ nullptr };		// Reference to thermodynamics settings.
 
 	// All streams of all types, to simplify massive operations.
 	std::vector<std::vector<std::unique_ptr<CStream>>*> m_allStreams{ &m_feedsInit, &m_feedsWork, &m_streamsWork, &m_streamsStored };
@@ -49,7 +50,7 @@ public:
 	// TODO: set it all in constructor and make them references when the same is done in BaseUnit.
 	// Sets pointers to all required data.
 	void SetPointers(const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid, const std::vector<std::string>* _compounds, const std::vector<SOverallDescriptor>* _overall,
-		const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerances);
+		const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerances, const SThermodynamicsSettings* _thermodynamics);
 
 	// Is called when initial structure of the unit is configured.
 	void CreateStructure();
@@ -155,6 +156,8 @@ public:
 	void UpdateToleranceSettings();
 	// Updates cache settings in all streams.
 	void UpdateCacheSettings();
+	// Updates thermodynamics settings in all streams.
+	void UpdateThermodynamicsSettings();
 
 	// Removes time points within the specified interval [timeBeg; timeEnd) that are closer together than step.
 	void ReduceTimePoints(double _timeBeg, double _timeEnd, double _step);

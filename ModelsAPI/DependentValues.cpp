@@ -1,54 +1,65 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "DependentValues.h"
+#include "ContainerFunctions.h"
 #include <ostream>
 
-bool CDependentValues::empty() const
+bool CDependentValues::IsEmpty() const
 {
 	return m_data.empty();
 }
 
-size_t CDependentValues::size() const
+size_t CDependentValues::Size() const
 {
 	return m_data.size();
 }
 
-std::map<double, double>::iterator CDependentValues::begin()
+CDependentValues::iterator CDependentValues::begin()
 {
 	return m_data.begin();
 }
 
-std::map<double, double>::const_iterator CDependentValues::begin() const
+CDependentValues::const_iterator CDependentValues::begin() const
 {
 	return m_data.begin();
 }
 
-std::map<double, double>::iterator CDependentValues::end()
+CDependentValues::const_iterator CDependentValues::cbegin() const
+{
+	return m_data.cbegin();
+}
+
+CDependentValues::iterator CDependentValues::end()
 {
 	return m_data.end();
 }
 
-std::map<double, double>::const_iterator CDependentValues::end() const
+CDependentValues::const_iterator CDependentValues::end() const
 {
 	return m_data.end();
 }
 
-std::pair<double, double> CDependentValues::front()
+CDependentValues::const_iterator CDependentValues::cend() const
+{
+	return m_data.cend();
+}
+
+CDependentValues::value_type CDependentValues::front()
 {
 	return *m_data.begin();
 }
 
-std::pair<double, double> CDependentValues::front() const
+CDependentValues::value_type CDependentValues::front() const
 {
 	return *m_data.begin();
 }
 
-std::pair<double, double> CDependentValues::back()
+CDependentValues::value_type CDependentValues::back()
 {
 	return *m_data.rbegin();
 }
 
-std::pair<double, double> CDependentValues::back() const
+CDependentValues::value_type CDependentValues::back() const
 {
 	return *m_data.rbegin();
 }
@@ -80,9 +91,9 @@ double CDependentValues::GetValueAt(size_t _index) const
 	return GetPairAt(_index).second;
 }
 
-std::pair<double, double> CDependentValues::GetPairAt(size_t _index) const
+CDependentValues::value_type CDependentValues::GetPairAt(size_t _index) const
 {
-	if (_index >= m_data.size()) return { 0, 0 };
+	if (_index >= m_data.size()) return {};
 	auto it = m_data.begin();
 	std::advance(it, _index);
 	return *it;
@@ -98,26 +109,33 @@ void CDependentValues::RemovePairAt(size_t _index)
 
 std::vector<double> CDependentValues::GetParamsList() const
 {
-	std::vector<double> res;
-	for (const auto& pair : m_data)
-		res.push_back(pair.first);
+	auto res = ReservedVector<double>(m_data.size());
+	for (const auto& [param, value] : m_data)
+		res.push_back(param);
 	return res;
 }
 
 std::vector<double> CDependentValues::GetValuesList() const
 {
-	std::vector<double> res;
-	for (const auto& pair : m_data)
-		res.push_back(pair.second);
+	auto res = ReservedVector<double>(m_data.size());
+	for (const auto& [param, value] : m_data)
+		res.push_back(value);
 	return res;
 }
 
-bool CDependentValues::IsDefined(double _param)
+bool CDependentValues::HasParam(double _param) const
 {
 	return m_data.find(_param) != m_data.end();
 }
 
-void CDependentValues::clear()
+bool CDependentValues::IsConst() const
+{
+	if (m_data.empty()) return true;
+	const auto val0 = GetValueAt(0);
+	return std::all_of(m_data.begin(), m_data.end(), [&](const auto& pair) { return pair.second == val0; });
+}
+
+void CDependentValues::Clear()
 {
 	m_data.clear();
 }
@@ -148,5 +166,5 @@ std::ostream& operator<<(std::ostream& _os, const CDependentValues& _obj)
 		_os << _obj.GetParamAt(0) << " " << _obj.GetValueAt(0);
 	for (size_t i = 1; i < _obj.m_data.size(); ++i)
 		_os << " " << _obj.GetParamAt(i) << " " << _obj.GetValueAt(i);
-	return  _os;
+	return _os;
 }

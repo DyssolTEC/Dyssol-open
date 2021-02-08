@@ -40,6 +40,9 @@ void COptionsEditor::UpdateWholeView()
 	ui.lineEditMinFraction->setText(QString::number(m_pParams->minFraction));
 	ui.lineEditSaveTimeStep->setText(QString::number(m_pParams->saveTimeStep));
 	ui.checkBoxSaveTimeStepHoldup->setChecked(m_pParams->saveTimeStepFlagHoldups);
+	ui.lineEditTMin->setText(QString::number(m_pParams->enthalpyMinT));
+	ui.lineEditTMax->setText(QString::number(m_pParams->enthalpyMaxT));
+	ui.lineEditTIntervals->setText(QString::number(m_pParams->enthalpyInt));
 	ui.lineEditInitialWindow->setText(QString::number(m_pParams->initTimeWindow));
 	ui.lineEditMinWindow->setText(QString::number(m_pParams->minTimeWindow));
 	ui.lineEditMaxWindow->setText(QString::number(m_pParams->maxTimeWindow));
@@ -160,6 +163,9 @@ void COptionsEditor::ApplyChanges()
 	m_pParams->MinFraction(ui.lineEditMinFraction->text().toDouble());
 	m_pParams->SaveTimeStep(ui.lineEditSaveTimeStep->text().toDouble());
 	m_pParams->SaveTimeStepFlagHoldups(ui.checkBoxSaveTimeStepHoldup->isChecked());
+	m_pParams->EnthalpyMinT(ui.lineEditTMin->text().toDouble());
+	m_pParams->EnthalpyMaxT(ui.lineEditTMax->text().toDouble());
+	m_pParams->EnthalpyInt(ui.lineEditTIntervals->text().toDouble());
 	m_pParams->InitTimeWindow(ui.lineEditInitialWindow->text().toDouble());
 	m_pParams->MinTimeWindow(ui.lineEditMinWindow->text().toDouble());
 	m_pParams->MaxTimeWindow(ui.lineEditMaxWindow->text().toDouble());
@@ -179,6 +185,7 @@ void COptionsEditor::ApplyChanges()
 	m_pParams->FileSingleFlag(!ui.checkBoxSplitFile->isChecked());
 
 	m_pFlowsheet->UpdateToleranceSettings();
+	m_pFlowsheet->UpdateThermodynamicsSettings();
 	emit DataChanged();
 	QDialog::accept();
 }

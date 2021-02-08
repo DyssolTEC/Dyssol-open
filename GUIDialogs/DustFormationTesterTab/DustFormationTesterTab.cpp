@@ -4,6 +4,7 @@
 #include "Flowsheet.h"
 #include "BaseUnit.h"
 #include "Stream.h"
+#include "MaterialsDatabase.h"
 #include "DistributionsGrid.h"
 
 CDustFormationTesterTab::CDustFormationTesterTab(const CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, QWidget *parent)

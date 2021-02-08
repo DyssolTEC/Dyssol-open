@@ -7,6 +7,8 @@
 #include <vector>
 #include <memory>
 
+#include "DyssolTypes.h"
+
 class CUnitContainer;
 class CStream;
 class CH5Handler;
@@ -142,8 +144,10 @@ public:
 	void UpdateDistributionsGrid();
 	// Updates cache settings in all streams.
 	void UpdateCacheSettings(const SCacheSettings& _cache);
-	// Updates tolerance settings in all units and streams.
+	// Updates tolerance settings in all streams.
 	void UpdateToleranceSettings(const SToleranceSettings& _tolerance);
+	// Updates thermodynamics settings in all streams.
+	void UpdateThermodynamicsSettings(const SThermodynamicsSettings& _settings);
 
 	void SaveToFile(CH5Handler& _h5Saver, const std::string& _path);
 	void LoadFromFile(CH5Handler& _h5Loader, const std::string& _path);

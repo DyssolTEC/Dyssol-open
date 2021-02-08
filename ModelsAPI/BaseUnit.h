@@ -11,9 +11,9 @@
 #include "StreamManager.h"
 
 #ifdef _DEBUG
-#define DYSSOL_CREATE_MODEL_FUN CreateDYSSOLUnitV3_DEBUG
+#define DYSSOL_CREATE_MODEL_FUN CreateDYSSOLUnitV4_DEBUG
 #else
-#define DYSSOL_CREATE_MODEL_FUN CreateDYSSOLUnitV3
+#define DYSSOL_CREATE_MODEL_FUN CreateDYSSOLUnitV4
 #endif
 #define DYSSOL_CREATE_MODEL_FUN_NAME MACRO_TOSTRING(DYSSOL_CREATE_MODEL_FUN)
 
@@ -59,6 +59,7 @@ private:
 	const std::vector<SPhaseDescriptor>* m_phases{ nullptr };		// Reference to phases.
 	const SCacheSettings* m_cache{ nullptr };						// Reference to cache settings.
 	const SToleranceSettings* m_tolerance{ nullptr };				// Reference to tolerance settings.
+	const SThermodynamicsSettings* m_thermodynamics{ nullptr };		// Reference to thermodynamics settings.
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Structural unit data
@@ -70,7 +71,7 @@ private:
 	CStreamManager m_streams;					// Feeds, holdups and internal streams.
 	CPlotManager m_plots;						// Plots.
 
-	CUnitLookupTables m_lookupTables;			// Lookup tables to calculate TP-dependent properties.
+	mutable std::unique_ptr<CMixtureEnthalpyLookup> m_enthalpyCalculator;	// Lookup table to calculate temperature<->enthalpy.
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Generated messages
@@ -95,7 +96,7 @@ public:
 	// TODO: set it all in constructor and make them references.
 	// Sets pointers to all required data.
 	void SetPointers(const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid, const std::vector<std::string>* _compounds, const std::vector<SOverallDescriptor>* _overall,
-		const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerance);
+		const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Basic unit information
@@ -444,6 +445,9 @@ public:
 	// Updates cache settings in all streams.
 	void UpdateCacheSettings();
 
+	// Updates thermodynamics settings in all streams.
+	void UpdateThermodynamicsSettings();
+
 	////////////////////////////////////////////////////////////////////////////////
 	// Materials database
 	//
@@ -466,17 +470,13 @@ public:
 	// Thermodynamics
 	//
 
-	// Returns a pointer to lookup tables.
-	CUnitLookupTables* GetLookupTables();
+	// Returns a pointer to enthalpy calculator.
+	[[nodiscard]] CMixtureEnthalpyLookup* GetEnthalpyCalculator() const;
 
-	// Calculates temperature using a lookup table of the corresponding property for the specified property value and the compound fractions.
-	double CalculateTemperatureFromProperty(ECompoundTPProperties _property, double _value, const std::vector<double>& _fractions) const;
-	// Calculates pressure using a lookup table of the corresponding property for the specified property value and the compound fractions.
-	double CalculatePressureFromProperty(ECompoundTPProperties _property, double _value, const std::vector<double>& _fractions) const;
-	// Calculates the value of the corresponding property for the given temperature and compound fractions using a lookup table.
-	double CalculatePropertyFromTemperature(ECompoundTPProperties _property, double _T, const std::vector<double>& _fractions) const;
-	// Calculates the value of the corresponding property for the given pressure and compound fractions using a lookup table.
-	double CalculatePropertyFromPressure(ECompoundTPProperties _property, double _P, const std::vector<double>& _fractions) const;
+	// Calculates enthalpy of the mixture of all defined compounds for the given temperature and compound fractions using a lookup table.
+	[[nodiscard]] double CalculateEnthalpyFromTemperature(double _temperature, const std::vector<double>& _fractions) const;
+	// Calculates temperature of the mixture of all defined compounds for the given enthalpy and compound fractions using a lookup table.
+	[[nodiscard]] double CalculateTemperatureFromEnthalpy(double _enthalpy, const std::vector<double>& _fractions) const;
 
 	// Performs a heat exchange between two streams at the specified time point with a specified efficiency (0..1].
 	void HeatExchange(double _time, CBaseStream* _stream1, CBaseStream* _stream2, double _efficiency) const;
@@ -565,6 +565,11 @@ public:
 	// Loads unit from HDF5 file. A compatibility version.
 	void LoadFromFile_v1(const CH5Handler& _h5File, const std::string& _path);
 
+private:
+	// Clears enthalpy calculator.
+	void ClearEnthalpyCalculator() const;
+
+public:
 	// TODO: move it somewhere
 	////////////////////////////////////////////////////////////////////////////////
 	/// Deprecated functions
@@ -658,9 +663,9 @@ public:
 	double GetCompoundTPDProp(const std::string& _compoundKey, unsigned _property, double _temperature, double _pressure) const;
 	[[deprecated("WARNING! GetCompoundsInteractionProp(const std::string&, const std::string&, EInteractionProperties, double, double) is deprecated. Use GetCompoundProperty(const std::string&, const std::string&, EInteractionProperties, double, double) instead.")]]
 	double GetCompoundsInteractionProp(const std::string& _compoundKey1, const std::string& _compoundKey2, unsigned _property, double _temperature = STANDARD_CONDITION_T, double _pressure = STANDARD_CONDITION_P) const;
-	[[deprecated("WARNING! CalcTemperatureFromProperty(ECompoundTPProperties, const std::vector<double>&, double) is deprecated. Use CalculateTemperatureFromProperty(ECompoundTPProperties, double, const std::vector<double>&) instead.")]]
+	[[deprecated("WARNING! CalcTemperatureFromProperty(ECompoundTPProperties, const std::vector<double>&, double) is deprecated. Use CalculateTemperatureFromEnthalpy(double, const std::vector<double>&) or CMixtureLookup class instead.")]]
 	double CalcTemperatureFromProperty(ECompoundTPProperties _property, const std::vector<double>& _fractions, double _value) const;
-	[[deprecated("WARNING! CalcPressureFromProperty(ECompoundTPProperties, const std::vector<double>&, double) is deprecated. Use CalculatePressureFromProperty(ECompoundTPProperties, double, const std::vector<double>&) instead.")]]
+	[[deprecated("WARNING! CalcPressureFromProperty(ECompoundTPProperties, const std::vector<double>&, double) is deprecated. Use CMixtureLookup class instead.")]]
 	double CalcPressureFromProperty(ECompoundTPProperties _property, const std::vector<double>& _fractions, double _value) const;
 	[[deprecated("WARNING! HeatExchange(CMaterialStream*, CMaterialStream*, double, double) is deprecated. Use HeatExchange(double, CBaseStream*, CBaseStream*, double) instead.")]]
 	void HeatExchange(CStream* _stream1, CStream* _stream2, double _time, double _efficiency) const;
