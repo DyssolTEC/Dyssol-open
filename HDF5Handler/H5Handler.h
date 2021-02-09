@@ -73,6 +73,9 @@ private:
 	void OpenH5File(const std::wstring& _sFileName, bool _bOpen, bool _bSingleFile);
 	static H5::FileAccPropList CreateFileAccPropList(bool _bSingleFile);
 
+	static H5::CompType& h5CPoint_type();	// Lazily initializes HDF5 type for CPoint and returns it.
+	static H5::CompType& h5STDValue_type(); // Lazily initializes HDF5 type for STDValue and returns it.
+
 	static std::wstring ConvertFileName(const std::wstring& _sFileName, bool _bOpen, bool _bSingleFile);	// Converts the file name to a Dyssol format.
 	static std::wstring MultiFileReadName(const std::wstring& _sFileName);									// Transforms the file name to the form needed to read from multi-file.
 	static std::wstring MultiFileWriteName(std::wstring _sFileName);										// Transforms the file name to the form needed to write to multi-file.

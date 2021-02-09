@@ -104,7 +104,7 @@ void CPlotsViewer::UpdateSliderLabel()
 	if(m_iCurves.empty()) return;
 
 	//int index = ui.horizontalSlider->sliderPosition();
-	ui.labelZValue->setText(QString::number(plots[m_iPlot]->GetCurve(m_iCurves.back())->GetZValue()));
+	ui.labelZValue->setText(QString::number(plots[m_iPlot]->GetAllCurves()[m_iCurves.back()]->GetZValue()));
 }
 
 void CPlotsViewer::UpdateSliderLabelName()
@@ -167,14 +167,15 @@ void CPlotsViewer::UpdateTable()
 	m_pTableWidget->setRowCount(0);
 	m_pTableWidget->setColumnCount((int)m_iCurves.size()*3-1 );
 	const auto plots = m_pModel->GetModel()->GetPlotsManager().GetAllPlots();
+	const auto curves = plots[m_iPlot]->GetAllCurves();
 	for( unsigned i=0; i<m_iCurves.size(); ++i )
 	{
 		m_pTableWidget->setHorizontalHeaderItem( i*3, new QTableWidgetItem( QString::fromStdString(plots[m_iPlot]->GetLabelX()) ) );
 		m_pTableWidget->setHorizontalHeaderItem( i*3+1, new QTableWidgetItem( QString::fromStdString(plots[m_iPlot]->GetLabelY()) ) );
 		if(i != m_iCurves.size()-1)
 			m_pTableWidget->setHorizontalHeaderItem( i*3+2, new QTableWidgetItem("") );
-		std::vector<double> vX = plots[m_iPlot]->GetCurve(m_iCurves[i])->GetXValues();
-		std::vector<double> vY = plots[m_iPlot]->GetCurve(m_iCurves[i])->GetYValues();
+		std::vector<double> vX = curves[m_iCurves[i]]->GetXValues();
+		std::vector<double> vY = curves[m_iCurves[i]]->GetYValues();
 		for( int j=0; j<(int)vX.size(); ++j )
 		{
 			if( m_pTableWidget->rowCount() <= j )
@@ -195,6 +196,7 @@ void CPlotsViewer::UpdatePlot()
 	}
 
 	const auto plots = m_pModel->GetModel()->GetPlotsManager().GetAllPlots();
+	const auto curves = plots[m_iPlot]->GetAllCurves();
 	m_pPlot->ClearPlot();
 	m_pPlot->SetManualLabelsNames(QString::fromStdString(plots[m_iPlot]->GetLabelX()), QString::fromStdString(plots[m_iPlot]->GetLabelY()));
 	std::vector<double> vdTemp;
@@ -202,13 +204,13 @@ void CPlotsViewer::UpdatePlot()
 	for( unsigned i=0; i<m_iCurves.size(); ++i )
 	{
 		QColor color = Qt::GlobalColor(Qt::red + i%(Qt::transparent - Qt::red));
-		QtPlot::SCurve *pCurve = new QtPlot::SCurve( QString::fromStdString(plots[m_iPlot]->GetCurve(m_iCurves[i])->GetName()), color, PLOT_LINE_WIDTH, true, true, QtPlot::LABEL_MANUAL, QtPlot::LABEL_MANUAL );
+		QtPlot::SCurve *pCurve = new QtPlot::SCurve( QString::fromStdString(curves[m_iCurves[i]]->GetName()), color, PLOT_LINE_WIDTH, true, true, QtPlot::LABEL_MANUAL, QtPlot::LABEL_MANUAL );
 		vCurves.push_back( m_pPlot->AddCurve(pCurve) );
 	}
 	for( unsigned i=0; i<m_iCurves.size(); ++i )
 	{
-		std::vector<double> vX = plots[m_iPlot]->GetCurve(m_iCurves[i])->GetXValues();
-		std::vector<double> vY = plots[m_iPlot]->GetCurve(m_iCurves[i])->GetYValues();
+		std::vector<double> vX = curves[m_iCurves[i]]->GetXValues();
+		std::vector<double> vY = curves[m_iCurves[i]]->GetYValues();
 		m_pPlot->AddPoints( vCurves[i], vX, vY );
 	}
 }
