@@ -36,6 +36,12 @@ size_t CMixtureEnthalpyLookup::GetIntervalsNumber() const
 	return m_intervals;
 }
 
+void CMixtureEnthalpyLookup::SetMaterialsDatabase(const CMaterialsDatabase* _materialsDB)
+{
+	m_materialsDB = _materialsDB;
+	UpdateCompoundsEnthalpies();
+}
+
 void CMixtureEnthalpyLookup::SetCompounds(const std::vector<std::string>& _compounds)
 {
 	m_compounds = _compounds;
@@ -61,6 +67,18 @@ double CMixtureEnthalpyLookup::GetEnthalpy(double _temperature) const
 double CMixtureEnthalpyLookup::GetTemperature(double _enthalpy) const
 {
 	return m_mixtureLookup.GetLeft(_enthalpy);
+}
+
+double CMixtureEnthalpyLookup::GetEnthalpy(double _temperature, const std::vector<double>& _fractions)
+{
+	SetCompoundFractions(_fractions);
+	return GetEnthalpy(_temperature);
+}
+
+double CMixtureEnthalpyLookup::GetTemperature(double _enthalpy, const std::vector<double>& _fractions)
+{
+	SetCompoundFractions(_fractions);
+	return GetTemperature(_enthalpy);
 }
 
 void CMixtureEnthalpyLookup::Clear()

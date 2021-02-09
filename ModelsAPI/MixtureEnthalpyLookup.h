@@ -29,9 +29,11 @@ public:
 	// Returns current number of temperature intervals.
 	[[nodiscard]] size_t GetIntervalsNumber() const;
 
+	// Sets pointer to materials database
+	void SetMaterialsDatabase(const CMaterialsDatabase* _materialsDB);
 	// Sets new list of _compounds.
 	void SetCompounds(const std::vector<std::string>& _compounds);
-	// Sets new _fractions of all compounds. _fractions must have the same length as the number of previously defined compounds.
+	// Sets new _fractions of all compounds. The length of _fractions must be equal to the number of previously defined compounds.
 	void SetCompoundFractions(const std::vector<double>& _fractions);
 	// Returns current fractions of compounds.
 	[[nodiscard]] std::vector<double> GetCompoundFractions() const;
@@ -40,6 +42,11 @@ public:
 	[[nodiscard]] double GetEnthalpy(double _temperature) const;
 	// Returns temperature for the given _enthalpy.
 	[[nodiscard]] double GetTemperature(double _enthalpy) const;
+
+	// Sets new _fractions of all compounds and returns enthalpy for the given _temperature. The length of _fractions must be equal to the number of previously defined compounds.
+	[[nodiscard]] double GetEnthalpy(double _temperature, const std::vector<double>& _fractions);
+	// Sets new _fractions of all compounds and returns temperature for the given _enthalpy. The length of _fractions must be equal to the number of previously defined compounds.
+	[[nodiscard]] double GetTemperature(double _enthalpy, const std::vector<double>& _fractions);
 
 	// Removes all information.
 	void Clear();
