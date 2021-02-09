@@ -103,5 +103,5 @@ INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/GUIWidgets/StatusWindow/")
 
 
 INCLUDE_DIRECTORIES("/usr/include/hdf5/serial/")
-TARGET_LINK_LIBRARIES(DyssolGUI Qt5::Widgets libdyssol_static)
+TARGET_LINK_LIBRARIES(DyssolGUI Qt5::Widgets libdyssol_shared)
 INSTALL(TARGETS DyssolGUI DESTINATION ${CMAKE_INSTALL_BINDIR})

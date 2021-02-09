@@ -8,6 +8,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 INCLUDE(GNUInstallDirs)
 
+SET(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+
 add_executable(DyssolC
     ${CMAKE_SOURCE_DIR}/DyssolConsole/ConfigFileParser.cpp
     ${CMAKE_SOURCE_DIR}/DyssolConsole/main.cpp
@@ -81,7 +85,7 @@ add_library(libdyssol_static STATIC ${libdyssolsrc})
 
 TARGET_LINK_LIBRARIES(libdyssol_shared pthread dl hdf5_serial hdf5_serial_cpp hdf5_serial_hl hdf5_serial_hl_cpp z sundials_ida sundials_kinsol)
 TARGET_LINK_LIBRARIES(libdyssol_static pthread dl hdf5_serial hdf5_serial_cpp hdf5_serial_hl hdf5_serial_hl_cpp z sundials_ida sundials_kinsol)
-TARGET_LINK_LIBRARIES(DyssolC libdyssol_static)
+TARGET_LINK_LIBRARIES(DyssolC libdyssol_shared)
 INSTALL(TARGETS DyssolC DESTINATION ${CMAKE_INSTALL_BINDIR})
 INSTALL(TARGETS libdyssol_shared DESTINATION ${CMAKE_INSTALL_LIBDIR})
 INSTALL(TARGETS libdyssol_static DESTINATION ${CMAKE_INSTALL_LIBDIR})
