@@ -22,7 +22,7 @@ make_bullseye:
 
 make_focal:
   <<: *platforms_definition
-  image: debian:focal
+  image: ubuntu:focal
 
 make_hirsute:
   <<: *platforms_definition
