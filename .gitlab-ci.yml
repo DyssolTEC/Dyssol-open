@@ -8,7 +8,7 @@ stages:
     - merge_request
   stage: build
   script:
-    - apt-get update && apt-get install -y cmake ccache build-essential libsundials-dev libhdf5-serial-dev libqglviewer-dev-qt5
+    - apt-get update && apt-get install -y cmake ccache build-essential libsundials-dev libhdf5-serial-dev libqt5opengl5-dev
     - export PATH="/usr/lib/ccache:$PATH"
     - export CCACHE_BASEDIR="$PWD"
     - export CCACHE_DIR="$PWD/ccache"
