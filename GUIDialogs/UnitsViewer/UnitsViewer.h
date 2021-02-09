@@ -32,7 +32,7 @@ private:
 	int m_nLastCurve;
 
 public:
-	CUnitsViewer( CFlowsheet* _pFlowsheet, QWidget *parent = 0, Qt::WindowFlags flags = 0 );
+	CUnitsViewer( CFlowsheet* _pFlowsheet, QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags() );
 	~CUnitsViewer();
 
 	void InitializeConnections();

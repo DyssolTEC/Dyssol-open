@@ -14,7 +14,7 @@ class CStreamsViewer : public QWidget
 	CBasicStreamsViewer *m_pViewer;	// streams viewer
 
 public:
-	CStreamsViewer(CFlowsheet* _pFlowsheet, QWidget* _parent = nullptr, Qt::WindowFlags flags = 0);
+	CStreamsViewer(CFlowsheet* _pFlowsheet, QWidget* _parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 
 	void InitializeConnections() const;
 

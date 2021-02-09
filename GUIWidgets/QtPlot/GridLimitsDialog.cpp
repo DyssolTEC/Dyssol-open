@@ -7,7 +7,7 @@ CGridLimitsDialog::CGridLimitsDialog(QWidget *parent)
 {
 	ui.setupUi(this);
 
-	m_dXMin = m_dXMax = m_dYMin = m_dYMax = NULL;
+	m_dXMin = m_dXMax = m_dYMin = m_dYMax = 0;
 	m_bLogX = m_bLogY = false;
 
 	QObject::connect( ui.buttonOk, SIGNAL(clicked()), this, SLOT(accept()) );
@@ -38,7 +38,7 @@ void CGridLimitsDialog::SetLimits( double& _dXMin, double& _dXMax, double& _dYMi
 
 void CGridLimitsDialog::UpdateLogScaling(void)
 {
-	if ((m_bLogX == NULL) || (m_bLogY == NULL))
+	if ((m_bLogX == false) || (m_bLogY == false))
 		return;
 	m_bLogX = ui.checkLogX->isChecked();
 	m_bLogY = ui.checkLogY->isChecked();
@@ -53,7 +53,7 @@ void CGridLimitsDialog::SetLogScaling(bool &_bLogX, bool &_bLogY)
 
 void CGridLimitsDialog::UpdateWholeView()
 {
-	if( ( m_dXMin == NULL ) || ( m_dXMax == NULL ) || ( m_dYMin == NULL ) || ( m_dYMax == NULL ) )
+	if( ( m_dXMin == 0 ) || ( m_dXMax == 0 ) || ( m_dYMin == 0 ) || ( m_dYMax == 0 ) )
 		return;
 
 	UpdateLogScaling();
