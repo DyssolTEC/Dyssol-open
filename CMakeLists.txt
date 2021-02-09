@@ -78,13 +78,16 @@ INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/ModelsAPI/")
 INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/Modules/DustFormationTester/")
 INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/SimulatorCore/")
 INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/Utilities/")
-INCLUDE_DIRECTORIES("/usr/include/hdf5/serial/")
+
+FIND_PACKAGE(HDF5 REQUIRED COMPONENTS "CXX" "HL")
+
+INCLUDE_DIRECTORIES(${HDF5_INCLUDE_DIRS})
 
 ADD_LIBRARY(libdyssol_shared SHARED ${libdyssolsrc})
 ADD_LIBRARY(libdyssol_static STATIC ${libdyssolsrc})
 
-TARGET_LINK_LIBRARIES(libdyssol_shared pthread dl hdf5_serial hdf5_serial_cpp hdf5_serial_hl hdf5_serial_hl_cpp z sundials_ida sundials_kinsol)
-TARGET_LINK_LIBRARIES(libdyssol_static pthread dl hdf5_serial hdf5_serial_cpp hdf5_serial_hl hdf5_serial_hl_cpp z sundials_ida sundials_kinsol)
+TARGET_LINK_LIBRARIES(libdyssol_shared ${HDF5_LIBRARIES} ${HDF5_HL_LIBRARIES} sundials_ida sundials_kinsol)
+TARGET_LINK_LIBRARIES(libdyssol_static ${HDF5_LIBRARIES} ${HDF5_HL_LIBRARIES} sundials_ida sundials_kinsol)
 TARGET_LINK_LIBRARIES(DyssolC libdyssol_shared)
 
 SET(INSTALL_UNITS_LIB_PATH  ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/Dysssol/Units)
