@@ -859,7 +859,7 @@ void CBasicStreamsViewer::ExportToFile()
 		const std::vector<QString> rowHeaders = ui.tabTable->GetRowHeaderItems(0);
 		for (int i = 0; i < ui.tabTable->rowCount(); ++i)
 		{
-			fileStream << endl << rowHeaders[i];
+			fileStream << Qt::endl << rowHeaders[i];
 			for (const auto& s : ui.tabTable->GetItemsRow(i, 0))
 				fileStream << s << "; ";
 		}
@@ -876,7 +876,7 @@ void CBasicStreamsViewer::ExportToFile()
 			fileStream << "; " << s.replace("\n", " ");
 		for (double t : m_vSelectedMD.front()->GetAllTimePoints())
 		{
-			fileStream << endl << t << "; ";
+			fileStream << Qt::endl << t << "; ";
 			if (distr == DISTR_SIZE)
 				for (double v : m_vSelectedStreams.front()->GetPSD(t, psdType, compounds, meanType))
 					fileStream << v << "; ";

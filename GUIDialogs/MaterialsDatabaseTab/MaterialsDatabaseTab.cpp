@@ -926,7 +926,7 @@ void CMaterialsDatabaseTab::TogglePropertyConstancy(CQtTable* _pTable, const int
 
 			QTableWidgetItem *pItem = _pTable->item(_iRow, EPropTable::PT_VALUE_COL);
 			pItem->setFlags(pItem->flags() | Qt::ItemIsEditable);
-			pItem->setBackgroundColor(Qt::white);
+			pItem->setBackground(Qt::white);
 			pItem->setText("0");
 
 			SetMaterialsDatabaseModified(true);
@@ -938,7 +938,7 @@ void CMaterialsDatabaseTab::TogglePropertyConstancy(CQtTable* _pTable, const int
 	{
 		QTableWidgetItem *pItem = _pTable->item(_iRow, EPropTable::PT_VALUE_COL);
 		pItem->setFlags(pItem->flags() ^ Qt::ItemIsEditable);
-		pItem->setBackgroundColor(Qt::lightGray);
+		pItem->setBackground(Qt::lightGray);
 		pItem->setText("");
 	}
 }

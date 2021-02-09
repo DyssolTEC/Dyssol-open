@@ -339,7 +339,7 @@ void CQtTable::SetItemBackgroundColor(const int _row, const int _col, const QCol
 	if (_row < 0 || _row >= rowCount()) return;
 	if (_col < 0 || _col >= columnCount()) return;
 	if (item(_row, _col))
-		item(_row, _col)->setBackgroundColor(_color);
+		item(_row, _col)->setBackground(_color);
 }
 
 void CQtTable::SetColBackgroundColor(int _col, const QColor& _color) const
