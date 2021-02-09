@@ -20,6 +20,10 @@ make_bullseye:
   <<: *platforms_definition
   image: debian:bullseye
 
+make_buster:
+  <<: *platforms_definition
+  image: debian:buster
+
 make_focal:
   <<: *platforms_definition
   image: ubuntu:focal
