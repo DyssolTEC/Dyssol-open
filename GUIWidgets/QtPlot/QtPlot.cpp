@@ -1319,6 +1319,9 @@ void CQtPlot::SaveAsPicture(const QString& _sFileName)
 
 void CQtPlot::SaveAsCSVFile(const QString& _sFileName)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+	using Qt::endl;
+#endif
 	QFile file(_sFileName);
 	if (file.open(QFile::WriteOnly | QFile::Truncate))
 	{
@@ -1328,13 +1331,13 @@ void CQtPlot::SaveAsCSVFile(const QString& _sFileName)
 		{
 			if ((m_vpCurves.at(i)->bVisibility) && (m_vpCurves.at(i)->points.size() > 0))
 			{
-				textStream << m_vpCurves.at(i)->sCurveName << Qt::endl;
+				textStream << m_vpCurves.at(i)->sCurveName << endl;
 				for (int j = 0; j < m_vpCurves.at(i)->points.size(); ++j)
 					textStream << m_vpCurves.at(i)->points.at(j).x() << ", ";
-				textStream << Qt::endl;
+				textStream << endl;
 				for (int j = 0; j < m_vpCurves.at(i)->points.size(); ++j)
 					textStream << m_vpCurves.at(i)->points.at(j).y() << ", ";
-				textStream << Qt::endl;
+				textStream << endl;
 			}
 		}
 	}

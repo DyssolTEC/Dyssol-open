@@ -640,7 +640,11 @@ void CFlowsheetEditor::UpdateUnitParamDescr() const
 
 	// resize widget according to text length
 	const QString tempText = QString::fromStdString(param->GetDescription());
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+	extraLines += tempText.split("\n", QString::SkipEmptyParts).count();
+#else
 	extraLines += tempText.split("\n", Qt::SkipEmptyParts).count();
+#endif
 	const QFontMetrics fontMetrics(ui.textParamDescr->font());
 	const int fontHeight = fontMetrics.height();
 	const int textWidth = fontMetrics.horizontalAdvance(tempText);
