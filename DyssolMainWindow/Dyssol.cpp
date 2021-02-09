@@ -29,7 +29,6 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= 0*/)
 
 	// setup config file
 	m_sSettingsPath = QFileInfo(QSettings(QSettings::IniFormat, QSettings::UserScope, StrConst::Dyssol_ApplicationName, StrConst::Dyssol_ConfigApp).fileName()).absolutePath();
-
 	// create directory for temporary data if it doesn't exist
 	if (!FileSystem::DirExists(m_sSettingsPath.toStdString()))
 		FileSystem::CreateDir(m_sSettingsPath.toStdString());
@@ -68,14 +67,6 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= 0*/)
 	// current flowsheet saving file
 	m_sCurrFlowsheetFile = "";
 
-	// Setup default path for models
-	#ifdef INSTALL_UNITS_LIB_PATH
-	{
-	const std::string s (INSTALL_UNITS_LIB_PATH);
-	std::wstring wsTmp(s.begin(), s.end());
-	m_ModelsManager.AddDir(wsTmp);
-	}
-	#endif
 	// status modal windows
 	m_pLoadingWindow = new CStatusWindow(StrConst::Dyssol_StatusLoadingTitle, StrConst::Dyssol_StatusLoadingText, StrConst::Dyssol_StatusLoadingQuestion, false, this);
 	m_pSavingWindow  = new CStatusWindow(StrConst::Dyssol_StatusSavingTitle,  StrConst::Dyssol_StatusSavingText,  StrConst::Dyssol_StatusSavingQuestion,  false);
