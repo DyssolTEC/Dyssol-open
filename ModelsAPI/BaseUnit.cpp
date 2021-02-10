@@ -2155,11 +2155,16 @@ int CBaseUnit::p_AddPlot(const std::string& _sPlotName, const std::string& _sXAx
 {
 	for (size_t i = 0; i < m_vPlots.size(); ++i)
 		if (m_vPlots[i]->sName == _sPlotName)
+		{
 			if((m_vPlots[i]->sXAxis == _sXAxisName) && (m_vPlots[i]->sYAxis == _sYAxisName) && (m_vPlots[i]->sZAxis == _sZAxisName))
+			{
 				return (int)i;
+			}
 			else
+			{
 				throw std::logic_error(StrConst::BUnit_ErrAddPlot(m_sUnitName, _sPlotName));
-
+			}
+		}
 	SPlot* pPlot = new SPlot();
 	pPlot->sName = _sPlotName;
 	pPlot->sXAxis = _sXAxisName;
