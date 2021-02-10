@@ -18,6 +18,11 @@ void CNLModel::Clear()
 	m_pUserData = NULL;
 }
 
+void CNLModel::SetStrategy(ENLSolverStrategy _eStrategy)
+{
+	m_eStrategy = _eStrategy;
+}
+
 size_t CNLModel::AddNLVariable(double _dVariableInit, double _dConstraint /*= 0.0 */, double _dUScale /*= 1.0 */, double _dFScale /*= 1.0 */)
 {
 	m_vVariables.push_back(SNLVariable( _dVariableInit, _dConstraint, _dUScale, _dFScale) );
@@ -85,6 +90,12 @@ bool CNLModel::GetFunctions(double* _pVars, double* _pFunc)
 	{
 		if( ( _pVars[0] <= DBL_MAX ) && ( _pVars[0] >= -DBL_MAX ) )
 				bRet = true;
+
+		if (m_eStrategy == ENLSolverStrategy::Newton || m_eStrategy == ENLSolverStrategy::Linesearch)
+		{
+			for (size_t i = 0; i < m_vVariables.size(); ++i)
+				_pFunc[i] = _pFunc[i] - _pVars[i];
+		}
 	}
 	return bRet;
 }

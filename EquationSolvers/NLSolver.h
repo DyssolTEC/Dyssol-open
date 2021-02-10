@@ -3,6 +3,7 @@
 #pragma once
 
 #include "NLModel.h"
+#include "DyssolUtilities.h"
 #include <kinsol/kinsol.h>
 #include <string>
 #include <nvector/nvector_serial.h>
@@ -25,25 +26,60 @@ private:
 	// Variables for storing
 	N_Vector m_StoreVectorVars;			///< Memory for storing of vector of variables
 
-
 	// Solver settings
-	size_t m_nMaxIter;		///< Integer with maximum number of solver iterations
+	ENLSolverStrategy m_eStrategy;		///< Solver strategy
+	
+	// General setting
+	size_t m_nMaxIter;				///< Max. number of nonlinear iterations
+
+	// Newton method settings
+	unsigned m_nMaxSet;					///< Max. iterations without matrix setup
+	unsigned m_nMaxSubSet;				///< Max. iterations without residual check. nMaxSet should be multiple of nMaxSubSet.
+
+	// Fixed point method settings
+	unsigned m_nMAA;					///< Anderson Acceleration subspace size. The value of nMAA should always be less than nMaxIter.
+	double m_dDampingAA;				///< Anderson Acceleration damping parameter between 0 and 1
 
 public:
 	/**	Basic constructor.*/
 	CNLSolver();
+	CNLSolver(ENLSolverStrategy _eStrategy);
 	/**	Basic destructor.*/
 	~CNLSolver();
 
 	/** Set model to a solver.
+	 *	\param _eStrategy Solving strategy*/
+	void SetStrategy(ENLSolverStrategy _eStrategy);
+
+	/** Set model to a solver.
+	 *	\retval Solving strategy*/
+	ENLSolverStrategy GetStrategy();
+
+	/** Set maximum number of nonlinear iterations.
+	 *	\param _nMaxIter Max. number of nonlinear iterations */
+	void SetMaxIter(unsigned _nMaxIter);
+
+	/** Set parameters for Newton based solvers.
+	 *	\param _nMaxSet Max. iterations without matrix setup
+	 *  \param _nMaxSubSet Max. iterations without residual check
+	 *  \retval true No errors occurred */
+	bool SetNewtonSolverParameters(unsigned _nMaxSet, unsigned _nMaxSubSet);
+
+	/** Set parameters for fixed-point based solvers.
+	 *	\param _nMAA Anderson Acceleration subspace size
+	 *  \param _dDampingAA Anderson Acceleration damping parameter between 0 and 1
+	 *  \retval true No errors occurred */
+	bool SetFixedPointSolverParameters(unsigned _nMAA, double _dDampingAA);
+
+	/** Set model to a solver.
 	 *	\param _pModel Pointer to a model
 	 *	\retval true No errors occurred*/
-	bool SetModel(CNLModel* _pModel, unsigned _nMAA = 0);
+	bool SetModel(CNLModel* _pModel);
 
 	/** Solve problem on a given time point.
 	 *	\param _dTime Time point
 	 *	\retval true No errors occurred*/
-	bool Calculate(realtype _dTime, unsigned _nModel = KIN_NONE);
+	bool Calculate(realtype _dTime);
 
 	/** Save current state of solver. Should be called during saving of unit.*/
 	void SaveState();
