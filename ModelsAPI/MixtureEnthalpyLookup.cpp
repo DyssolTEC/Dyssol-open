@@ -50,8 +50,11 @@ void CMixtureEnthalpyLookup::SetCompounds(const std::vector<std::string>& _compo
 
 void CMixtureEnthalpyLookup::SetCompoundFractions(const std::vector<double>& _fractions)
 {
+	std::vector<double> filteredFractions(_fractions.size());
+	std::replace_copy_if(_fractions.begin(), _fractions.end(), filteredFractions.begin(), [](double v) { return v < 0; }, 0.0);
+	Normalize(filteredFractions);
 	if (_fractions.size() != m_compounds.size()) return;
-	m_mixtureLookup.SetWeights(Normalize(_fractions));
+	m_mixtureLookup.SetWeights(filteredFractions);
 }
 
 std::vector<double> CMixtureEnthalpyLookup::GetCompoundFractions() const

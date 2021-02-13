@@ -3,6 +3,7 @@
 #include "DependentValues.h"
 #include "ContainerFunctions.h"
 #include <ostream>
+#include <numeric>
 
 bool CDependentValues::IsEmpty() const
 {
@@ -138,6 +139,36 @@ bool CDependentValues::IsConst() const
 void CDependentValues::Clear()
 {
 	m_data.clear();
+}
+
+CDependentValues CDependentValues::Unique(const CDependentValues& _table)
+{
+	auto params = _table.GetParamsList();
+	auto values = _table.GetValuesList();
+	// initial index locations
+	std::vector<size_t> iparams(params.size());
+	std::vector<size_t> ivalues(values.size());
+	std::iota(iparams.begin(), iparams.end(), 0);
+	std::iota(ivalues.begin(), ivalues.end(), 0);
+	// sort indices based on comparing values in vectors
+	std::stable_sort(iparams.begin(), iparams.end(), [&params](size_t i1, size_t i2) { return params[i1] < params[i2]; });
+	std::stable_sort(ivalues.begin(), ivalues.end(), [&values](size_t i1, size_t i2) { return values[i1] < values[i2]; });
+	// indices of elements to be deleted
+	std::set<size_t> todel;
+	// find all but first repeating params
+	for (size_t i = 1; i < iparams.size(); ++i)
+		if (params[iparams[i]] == params[iparams[i - 1]])
+			todel.insert(iparams[i]);
+	// find all but first repeating values
+	for (size_t i = 1; i < ivalues.size(); ++i)
+		if (values[ivalues[i]] == values[ivalues[i - 1]])
+			todel.insert(ivalues[i]);
+	// create a copy of the table
+	CDependentValues res = _table;
+	// remove not unique
+	for (const auto& i : todel)
+		res.RemoveValue(params[i]);
+	return res;
 }
 
 bool CDependentValues::operator==(const CDependentValues& _v) const

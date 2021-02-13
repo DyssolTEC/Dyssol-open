@@ -65,6 +65,9 @@ public:
 	// Removes all previously defined values from the list.
 	void Clear();
 
+	// Returns a table with only unique entries.
+	static CDependentValues CDependentValues::Unique(const CDependentValues& _table);
+
 	// Output stream operator.
 	friend std::ostream& operator<<(std::ostream& _os, const CDependentValues& _obj);
 

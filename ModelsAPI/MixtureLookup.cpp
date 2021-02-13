@@ -116,17 +116,23 @@ void CMixtureLookup::CTwoWayMapExt::Add(double _value)
 
 void CMixtureLookup::CTwoWayMapExt::Add(const CDependentValues& _table)
 {
-	const auto params = VectorsUnionUnsorted(m_direct.GetParamsList(), _table.GetParamsList());
+	// TODO: check performance
+	const auto unique = CDependentValues::Unique(_table);
+	const auto params = VectorsUnionUnsorted(m_direct.GetParamsList(), unique.GetParamsList());
+	const CDependentValues copy = m_direct; // can not directly use m_direct because of the interpolation
 	for (const auto& p : params)
-		m_direct.SetValue(p, m_direct.GetValue(p) + _table.GetValue(p));
+		m_direct.SetValue(p, copy.GetValue(p) + unique.GetValue(p));
 	m_revert = Reverted(m_direct);
 }
 
 void CMixtureLookup::CTwoWayMapExt::AddMult(const CDependentValues& _table, double _value)
 {
-	const auto params = VectorsUnionUnsorted(m_direct.GetParamsList(), _table.GetParamsList());
+	// TODO: check performance
+	const auto unique = CDependentValues::Unique(_table);
+	const auto params = VectorsUnionUnsorted(m_direct.GetParamsList(), unique.GetParamsList());
+	const CDependentValues copy = m_direct; // can not directly use m_direct because of the interpolation
 	for (const auto& p : params)
-		m_direct.SetValue(p, m_direct.GetValue(p) + _table.GetValue(p) * _value);
+		m_direct.SetValue(p, copy.GetValue(p) + unique.GetValue(p) * _value);
 	m_revert = Reverted(m_direct);
 }
 
