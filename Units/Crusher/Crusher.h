@@ -11,13 +11,15 @@ class CCrusher : public CSteadyStateUnit
 		BondNormal, BondBimodal, Cone, Const
 	};
 
-	CMaterialStream *m_inlet, *m_outlet, *m_internal;	// Streams.
-	CTransformMatrix m_transform;						// Transformation matrix.
-	unsigned m_classesNumber;							// Number of PSD classes.
-	std::vector<double> m_grid;							// Diameter grid for PSD.
-	std::vector<double> m_diameters;					// Mean diameters for each grid class.
-	std::vector<std::string> m_compounds;				// List of keys for defined compounds.
-	EModels m_model;									// Chosen crusher model.
+	CMaterialStream* m_inlet{ nullptr };	// Pointer to inlet stream.
+	CMaterialStream* m_outlet{ nullptr };	// Pointer to outlet stream.
+	CMaterialStream* m_internal{ nullptr };	// Pointer to internal stream.
+	CTransformMatrix m_transform;			// Transformation matrix.
+	size_t m_classesNumber{};				// Number of PSD classes.
+	std::vector<double> m_grid;				// Diameter grid for PSD.
+	std::vector<double> m_diameters;		// Mean diameters for each grid class.
+	std::vector<std::string> m_compounds;	// List of keys for defined compounds.
+	EModels m_model{ Const };				// Chosen crusher model.
 
 public:
 	void CreateBasicInfo() override;
