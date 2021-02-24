@@ -330,14 +330,18 @@ public:
 	void AddCompound(const std::string& _compoundKey);
 	// Removes a compound with the specified unique key from all feeds, holdups and streams in the unit.
 	void RemoveCompound(const std::string& _compoundKey);
-	// Returns the name of the compound with the specified unique key.
+	// Returns the name of the compound with the specified unique key. Returns empty string if such compound does not exist.
 	std::string GetCompoundName(const std::string& _compoundKey) const;
-	// Returns the unique key of the compound with the specified name.
-	std::string GetCompoundKey(const std::string& _compoundName) const;
-	// Returns the name of the compound with the specified index.
+	// Returns the name of the compound with the specified index. Returns empty string if such compound does not exist.
 	std::string GetCompoundName(size_t _index) const;
-	// Returns the unique key of the compound with the specified index.
+	// Returns the unique key of the compound with the specified name. Returns empty string if such compound does not exist.
+	std::string GetCompoundKey(const std::string& _compoundName) const;
+	// Returns the unique key of the compound with the specified index. Returns empty string if such compound does not exist.
 	std::string GetCompoundKey(size_t _index) const;
+	// Returns index of the compound with the specified key. Returns -1 if such compound does not exist.
+	size_t GetCompoundIndex(const std::string& _compoundKey) const;
+	// Returns index of the compound with the specified name. Returns -1 if such compound does not exist.
+	size_t GetCompoundIndexByName(const std::string& _compoundName) const;
 	// Returns unique keys of all defined materials.
 	std::vector<std::string> GetAllCompounds() const;
 	// Returns names of all defined materials.

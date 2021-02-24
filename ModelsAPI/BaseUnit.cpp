@@ -671,7 +671,17 @@ std::string CBaseUnit::GetCompoundName(size_t _index) const
 std::string CBaseUnit::GetCompoundKey(size_t _index) const
 {
 	if (_index >= m_compounds->size()) return {};
-	return GetCompoundKey(m_compounds->at(_index));
+	return m_compounds->at(_index);
+}
+
+size_t CBaseUnit::GetCompoundIndex(const std::string& _compoundKey) const
+{
+	return VectorFind(*m_compounds, _compoundKey);
+}
+
+size_t CBaseUnit::GetCompoundIndexByName(const std::string& _compoundName) const
+{
+	return VectorFind(GetAllCompoundsNames(), _compoundName);
 }
 
 std::vector<std::string> CBaseUnit::GetAllCompounds() const
