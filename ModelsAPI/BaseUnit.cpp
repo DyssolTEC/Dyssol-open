@@ -1061,7 +1061,7 @@ void CBaseUnit::RaiseError(const std::string& _message)
 	m_hasError = true;
 	const std::string suffix = m_errorMessage.empty() ? "" : "\n";
 	const std::string text = !_message.empty() ? _message : StrConst::BUnit_UnknownError;
-	m_errorMessage = suffix + text;
+	m_errorMessage += suffix + text;
 }
 
 void CBaseUnit::RaiseWarning(const std::string& _message)
@@ -1069,7 +1069,7 @@ void CBaseUnit::RaiseWarning(const std::string& _message)
 	m_hasWarning = true;
 	const std::string suffix = m_warningMessage.empty() ? "" : "\n";
 	const std::string text = !_message.empty() ? _message : StrConst::BUnit_UnknownWarning;
-	m_warningMessage = suffix + text;
+	m_warningMessage += suffix + text;
 }
 
 void CBaseUnit::ShowInfo(const std::string& _message)
@@ -1077,7 +1077,7 @@ void CBaseUnit::ShowInfo(const std::string& _message)
 	if (_message.empty()) return;
 	m_hasInfo = true;
 	const std::string suffix = m_infoMessage.empty() ? "" : "\n";
-	m_infoMessage = suffix + _message;
+	m_infoMessage += suffix + _message;
 }
 
 bool CBaseUnit::HasError() const
