@@ -434,10 +434,14 @@ public:
 	// Returns a pointer to the current grid od distributed parameters.
 	const CDistributionsGrid* GetGrid() const;
 
+	// Returns current tolerance settings.
+	SToleranceSettings GetToleranceSettings() const;
 	// Returns the global absolute tolerance.
 	double GetAbsTolerance() const;
 	// Returns the global relative tolerance.
 	double GetRelTolerance() const;
+	// Returns current thermodynamics settings.
+	SThermodynamicsSettings GetThermodynamicsSettings() const;
 
 	// Updates tolerance settings in all units and streams.
 	void UpdateToleranceSettings();

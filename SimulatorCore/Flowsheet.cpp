@@ -697,8 +697,9 @@ bool CFlowsheet::LoadFromFile(CH5Handler& _h5File, const std::wstring& _fileName
 
 	// parameters
 	m_parameters.LoadFromFile(_h5File, root + StrConst::Flow_H5GroupOptions);
-	UpdateToleranceSettings();	// needed to fill global tolerance structure with possibly updated data
-	UpdateCacheSettings();		// needed to fill global cache structure with possibly updated data
+	UpdateToleranceSettings();		// needed to fill global tolerance structure with possibly updated data
+	UpdateCacheSettings();			// needed to fill global cache structure with possibly updated data
+	UpdateThermodynamicsSettings();	// needed to fill global thermodynamics structure with possibly updated data
 
 	// distributions grid
 	m_grid.LoadFromFile(_h5File, root + StrConst::Flow_H5GroupDistrGrid);

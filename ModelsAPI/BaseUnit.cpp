@@ -902,6 +902,11 @@ const CDistributionsGrid* CBaseUnit::GetGrid() const
 	return m_grid;
 }
 
+SToleranceSettings CBaseUnit::GetToleranceSettings() const
+{
+	return *m_tolerance;
+}
+
 double CBaseUnit::GetAbsTolerance() const
 {
 	return m_tolerance->toleranceAbs;
@@ -910,6 +915,11 @@ double CBaseUnit::GetAbsTolerance() const
 double CBaseUnit::GetRelTolerance() const
 {
 	return m_tolerance->toleranceRel;
+}
+
+SThermodynamicsSettings CBaseUnit::GetThermodynamicsSettings() const
+{
+	return *m_thermodynamics;
 }
 
 void CBaseUnit::UpdateToleranceSettings()
