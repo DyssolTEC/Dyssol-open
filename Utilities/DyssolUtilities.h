@@ -61,7 +61,7 @@ void inline Normalize(std::vector<double>& _vec)
 }
 
 // Returns normalized copy of a vector.
-std::vector<double> inline Normalize(const std::vector<double>& _vec)
+std::vector<double> inline Normalized(const std::vector<double>& _vec)
 {
 	std::vector<double> res{ _vec };
 	Normalize(res);

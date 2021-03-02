@@ -854,7 +854,7 @@ std::vector<double> CBaseStream::GetDistribution(double _time, EDistrTypes _dist
 	if (!HasCompound(_compoundKey)) return {};
 	if (_distribution == DISTR_COMPOUNDS) return {};
 
-	return ::Normalize(m_phases.at(EPhase::SOLID)->MDDistr()->GetVectorValue(_time, DISTR_COMPOUNDS, static_cast<unsigned>(CompoundIndex(_compoundKey)), _distribution));
+	return Normalized(m_phases.at(EPhase::SOLID)->MDDistr()->GetVectorValue(_time, DISTR_COMPOUNDS, static_cast<unsigned>(CompoundIndex(_compoundKey)), _distribution));
 }
 
 CMatrix2D CBaseStream::GetDistribution(double _time, EDistrTypes _distribution1, EDistrTypes _distribution2, const std::string& _compoundKey) const
@@ -1841,7 +1841,7 @@ std::vector<double> CBaseStream::GetPSDNumber(double _time, const std::vector<st
 	// single compound with no porosity, several compounds defined in the stream
 	if (!hasPorosity && activeCompounds.size() == 1)
 	{
-		std::vector<double> res = ::Normalize(m_phases.at(EPhase::SOLID)->MDDistr()->GetVectorValue(_time, DISTR_COMPOUNDS, static_cast<unsigned>(CompoundIndex(activeCompounds.front())), DISTR_SIZE));
+		std::vector<double> res = Normalized(m_phases.at(EPhase::SOLID)->MDDistr()->GetVectorValue(_time, DISTR_COMPOUNDS, static_cast<unsigned>(CompoundIndex(activeCompounds.front())), DISTR_SIZE));
 		const double density = GetPhaseProperty(_time, EPhase::SOLID, DENSITY);
 		if (density == 0.0) return std::vector<double>(nSizeClasses, 0.0);
 		for (size_t i = 0; i < res.size(); ++i)

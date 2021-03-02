@@ -855,8 +855,8 @@ void CBaseUnit::CalculateTM(EDistrTypes _distribution, const std::vector<double>
 	if (_inValue.empty() || _inValue.size() != _outValue.size()) return;
 
 	// normalize
-	std::vector<double> vectorI = Normalize(_inValue);
-	std::vector<double> vectorO = Normalize(_outValue);
+	std::vector<double> vectorI = Normalized(_inValue);
+	std::vector<double> vectorO = Normalized(_outValue);
 
 	_matrix.SetDimensions(_distribution, static_cast<unsigned>(vectorI.size()));
 	unsigned indexI = 0;
