@@ -124,7 +124,7 @@ void CStream::SetPhaseMolFlow(double _time, EPhase _phase, double _value)
 ////////////////////////////////////////////////////////////////////////////////
 /// Deprecated functions
 
-void CStream::CopyFromStream(const CStream* _source, double _time)
+void CStream::CopyFromStream(const CStream* _source, double _time, [[maybe_unused]] bool _deleteDataAfter)
 {
 	CopyFromStream(_time, _source);
 }

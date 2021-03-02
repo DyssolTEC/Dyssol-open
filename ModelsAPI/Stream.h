@@ -67,7 +67,7 @@ public:
 	////////////////////////////////////////////////////////////////////////////////
 	/// Deprecated functions
 	[[deprecated("WARNING! CopyFromStream(const CStream*, double) is deprecated. Use CopyFromStream(double, const CStream*) instead.")]]
-	void CopyFromStream(const CStream* _source, double _time);
+	void CopyFromStream(const CStream* _source, double _time, bool _deleteDataAfter = true);
 	[[deprecated("WARNING! CopyFromStream(const CStream*, double, double) is deprecated. Use CopyFromStream(double, double, const CStream*) instead.")]]
 	void CopyFromStream(const CStream* _source, double _timeBeg, double _timeEnd);
 	[[deprecated("WARNING! CopyFromHoldup(const CHoldup*, double, double, bool) is deprecated. Use CopyFromHoldup(double, const CHoldup*, double) instead.")]]
