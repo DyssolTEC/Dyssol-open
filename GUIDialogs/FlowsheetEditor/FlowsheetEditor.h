@@ -16,12 +16,12 @@ class CFlowsheetEditor : public QWidget
 	Q_OBJECT
 
 	Ui::CFlowsheetEditorClass ui;
-	CFlowsheet* m_pFlowsheet;			    // Pointer to a current flowsheet.
-	CMaterialsDatabase* m_materialsDB;		// Pointer to a materials database.
-	CModelsManager* m_modelsManager;		// Pointer to a models manager.
+	CFlowsheet* m_pFlowsheet;					// Pointer to a current flowsheet.
+	const CMaterialsDatabase* m_materialsDB;	// Pointer to a materials database.
+	CModelsManager* m_modelsManager;			// Pointer to a models manager.
 	CUnitContainer* m_pSelectedModel;		    // Currently selected model.
-	CStream *m_pSelectedStream;	    // Currently selected stream.
-	CUnitParametersManager *m_pModelParams;	// Unit parameters of currently selected model.
+	CStream *m_pSelectedStream;					// Currently selected stream.
+	CUnitParametersManager *m_pModelParams;		// Unit parameters of currently selected model.
 
 public:
 	CFlowsheetEditor(CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, CModelsManager* _modelsManager, QWidget *parent = nullptr);

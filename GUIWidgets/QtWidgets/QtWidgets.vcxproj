@@ -105,6 +105,7 @@
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
   </PropertyGroup>
   <ItemGroup>
+    <ClCompile Include="QtList.cpp" />
     <ClCompile Include="QtTable.cpp" />
     <ClCompile Include="QtTree.cpp" />
     <ClCompile Include="SignalBlocker.cpp" />
@@ -118,6 +119,7 @@
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="QtList.h" />
     <ClInclude Include="SignalBlocker.h" />
   </ItemGroup>
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.props')">

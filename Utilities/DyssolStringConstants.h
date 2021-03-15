@@ -309,11 +309,13 @@ namespace StrConst
 //////////////////////////////////////////////////////////////////////////
 /// CUnitParameters
 //////////////////////////////////////////////////////////////////////////
-	const char* const UParam_H5Times          = "Times";
-	const char* const UParam_H5Values         = "Values";
-	const char* const UParam_H5StrValue       = "StrValue";
-	const char* const UParam_H5Names          = "ParamsNames";
-	const char* const UParam_H5GroupParamName = "UnitParameter";
+	const char* const UParam_H5Times            = "Times";
+	const char* const UParam_H5Values           = "Values";
+	const char* const UParam_H5StrValue         = "StrValue";
+	const char* const UParam_H5AttrReactionsNum = "ReactionsNumber";
+	const char* const UParam_H5Reaction         = "Reaction";
+	const char* const UParam_H5Names            = "ParamsNames";
+	const char* const UParam_H5GroupParamName   = "UnitParameter";
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -520,6 +522,17 @@ namespace StrConst
 	const char* const Phase_H5State        = "State";
 	const char* const Phase_H5Fractions    = "Fractions";
 	const char* const Phase_H5Distribution = "Distribution";
+
+//////////////////////////////////////////////////////////////////////////
+/// CChemicalReaction
+//////////////////////////////////////////////////////////////////////////
+	const char* const Reac_H5Name             = "Name";
+	const char* const Reac_H5Base             = "BaseSubstance";
+	const char* const Reac_H5SubstancesNumber = "SubstancesNumber";
+	const char* const Reac_H5Substance        = "Substance";
+	const char* const Reac_H5SubstanceKey     = "Key";
+	const char* const Reac_H5SubstanceNu      = "Nu";
+	const char* const Reac_H5SubstancePhase   = "Phase";
 
 //////////////////////////////////////////////////////////////////////////
 /// HDF5 saving/loading

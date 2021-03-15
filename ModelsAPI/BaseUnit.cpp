@@ -290,6 +290,14 @@ CCompoundUnitParameter* CBaseUnit::AddCompoundParameter(const std::string& _name
 	return m_unitParameters.GetCompoundParameter(_name);
 }
 
+CReactionUnitParameter* CBaseUnit::AddReactionParameter(const std::string& _name, const std::string& _description)
+{
+	if (m_unitParameters.IsNameExist(_name))
+		throw std::logic_error(StrConst::BUnit_ErrAddParam(m_unitName, _name, __func__));
+	m_unitParameters.AddReactionParameter(_name, _description);
+	return m_unitParameters.GetReactionParameter(_name);
+}
+
 CAgglomerationSolver* CBaseUnit::AddSolverAgglomeration(const std::string& _name, const std::string& _description)
 {
 	if (m_unitParameters.IsNameExist(_name))
@@ -372,6 +380,13 @@ std::string CBaseUnit::GetCompoundParameterValue(const std::string& _name) const
 {
 	if (const CCompoundUnitParameter* param = m_unitParameters.GetCompoundParameter(_name))
 		return param->GetCompound();
+	throw std::logic_error(StrConst::BUnit_ErrGetParam(m_unitName, _name, __func__));
+}
+
+std::vector<CChemicalReaction> CBaseUnit::GetReactionParameterValue(const std::string& _name) const
+{
+	if (const CReactionUnitParameter* param = m_unitParameters.GetReactionParameter(_name))
+		return param->GetReactions();
 	throw std::logic_error(StrConst::BUnit_ErrGetParam(m_unitName, _name, __func__));
 }
 
@@ -1142,6 +1157,9 @@ void CBaseUnit::DoInitializeUnit()
 	m_stateVariables.Clear();
 	m_plots.Clear();
 	m_streams.Initialize();
+	for (auto& param : m_unitParameters.GetAllReactionParameters())
+		for (auto& reaction : param->GetReactionsPtr())
+			reaction->Initialize(*m_materialsDB);
 	for (auto& param : m_unitParameters.GetAllSolverParameters())
 		param->GetSolver()->Initialize();
 	Initialize(0.0);

@@ -5,6 +5,7 @@
 #include "DependentValues.h"
 #include "BaseSolver.h"
 #include "H5Handler.h"
+#include "ChemicalReaction.h"
 
 enum class EUnitParameter
 {
@@ -20,6 +21,7 @@ enum class EUnitParameter
 	CONSTANT_DOUBLE       = 9,
 	CONSTANT_INT64        = 10,
 	CONSTANT_UINT64       = 11,
+	REACTION			  = 12,
 };
 
 // TODO: remove
@@ -258,6 +260,35 @@ public:
 };
 
 
+class CReactionUnitParameter : public CBaseUnitParameter
+{
+	static const unsigned m_cnSaveVersion;
+
+	std::vector<CChemicalReaction> m_reactions;					// Defined reactions.
+
+public:
+	CReactionUnitParameter();
+	CReactionUnitParameter(std::string _name, std::string _description);
+
+	void Clear() override;														// Clears all reactions.
+
+	[[nodiscard]] std::vector<CChemicalReaction> GetReactions() const;			// Returns all defined chemical reactions.
+	std::vector<CChemicalReaction*> GetReactionsPtr();							// Returns modifiable versions of defined chemical reactions.
+	[[nodiscard]] const CChemicalReaction* GetReaction(size_t _index) const;	// Returns pointer to a selected reaction. If such reaction does not exist, returns nullptr.
+	CChemicalReaction* GetReaction(size_t _index);								// Returns pointer to a selected reaction. If such reaction does not exist, returns nullptr.
+	[[nodiscard]] size_t GetReactionsNumber() const;							// Returns the number of defined reactions.
+
+	void AddReaction();															// Adds new empty reaction.
+	void AddReaction(const CChemicalReaction& _reaction);						// Adds new reaction.
+	void SetReactions(const std::vector<CChemicalReaction>& _reactions);		// Sets new reactions replacing existing.
+
+	void RemoveReaction(size_t _index);											// Removes the selected reaction.
+
+	void SaveToFile(CH5Handler& _h5Saver, const std::string& _path) const;
+	void LoadFromFile(const CH5Handler& _h5Loader, const std::string& _path);
+};
+
+
 /* Manager of unit parameters for each unit.
  * Each parameter may be a member of one or several groups, to allow showing / hiding of some parameters in GUI.
  * Block is defined by a single CComboUnitParameter and may have several options to choose.
@@ -297,6 +328,8 @@ public:
 	void AddComboParameter(const std::string& _name, const std::string& _description, size_t _itemDefault, const std::vector<size_t>& _items, const std::vector<std::string>& _itemsNames);
 	// Adds new compound unit parameter. If parameter with the given name already exists, does nothing.
 	void AddCompoundParameter(const std::string& _name, const std::string& _description);
+	// Adds new reaction unit parameter. If parameter with the given name already exists, does nothing.
+	void AddReactionParameter(const std::string& _name, const std::string& _description);
 
 	// Returns list of all defined parameters.
 	std::vector<CBaseUnitParameter*> GetParameters() const;
@@ -346,6 +379,10 @@ public:
 	const CCompoundUnitParameter* GetCompoundParameter(size_t _index) const;
 	// Returns pointer to the compound unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
 	CCompoundUnitParameter* GetCompoundParameter(size_t _index);
+	// Returns const pointer to the reaction unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
+	const CReactionUnitParameter* GetReactionParameter(size_t _index) const;
+	// Returns pointer to the reaction unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
+	CReactionUnitParameter* GetReactionParameter(size_t _index);
 
 	// Returns const pointer to the real constant unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
 	const CConstRealUnitParameter* GetConstRealParameter(const std::string& _name) const;
@@ -383,6 +420,10 @@ public:
 	const CCompoundUnitParameter* GetCompoundParameter(const std::string& _name) const;
 	// Returns pointer to the compound unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
 	CCompoundUnitParameter* GetCompoundParameter(const std::string& _name);
+	// Returns const pointer to the reaction unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
+	const CReactionUnitParameter* GetReactionParameter(const std::string& _name) const;
+	// Returns pointer to the reaction unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
+	CReactionUnitParameter* GetReactionParameter(const std::string& _name);
 
 	// Returns value of a constant real unit parameter with the specified _index. If such parameter does not exist or is not a constant real parameter, returns 0.
 	double GetConstRealParameterValue(size_t _index) const;
@@ -402,6 +443,8 @@ public:
 	size_t GetComboParameterValue(size_t _index) const;
 	// Returns value of a compound unit parameter with the specified _index. If such parameter does not exist or is not a compound parameter, returns "".
 	std::string GetCompoundParameterValue(size_t _index) const;
+	// Returns value of a reaction unit parameter with the specified _index. If such parameter does not exist or is not a reaction parameter, returns empty vector.
+	std::vector<CChemicalReaction> GetReactionParameterValue(size_t _index) const;
 
 	// Returns value of a constant real unit parameter with the specified _name. If such parameter does not exist or is not a constant real parameter, returns 0.
 	double GetConstRealParameterValue(const std::string& _name) const;
@@ -421,7 +464,13 @@ public:
 	size_t GetComboParameterValue(const std::string& _name) const;
 	// Returns value of a compound unit parameter with the specified _name. If such parameter does not exist or is not a compound parameter, returns "".
 	std::string GetCompoundParameterValue(const std::string& _name) const;
+	// Returns value of a reaction unit parameter with the specified _name. If such parameter does not exist or is not a reaction parameter, returns "".
+	std::vector<CChemicalReaction> GetReactionParameterValue(const std::string& _name) const;
 
+	// Returns const pointers to all specified reaction unit parameters.
+	std::vector<const CReactionUnitParameter*> GetAllReactionParameters() const;
+	// Returns pointers to all specified reaction unit parameters.
+	std::vector<CReactionUnitParameter*> GetAllReactionParameters();
 	// Returns const pointers to all specified solver unit parameters.
 	std::vector<const CSolverUnitParameter*> GetAllSolverParameters() const;
 	// Returns pointers to all specified solver unit parameters.

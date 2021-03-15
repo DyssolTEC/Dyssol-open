@@ -298,6 +298,29 @@ QComboBox* CQtTable::GetComboBox(int _row, int _col) const
 	return dynamic_cast<QComboBox*>(cellWidget(_row, _col));
 }
 
+QPushButton* CQtTable::SetPushButton(int _row, int _col, const QString& _text)
+{
+	delete item(_row, _col);
+	auto* widget = new QWidget(this);
+	auto* button = new QPushButton(widget);
+	auto* layout = new QHBoxLayout(widget);
+	layout->addWidget(button);
+	layout->setAlignment(Qt::AlignCenter);
+	layout->setContentsMargins(0, 0, 0, 0);
+	widget->setLayout(layout);
+	button->setText(_text);
+	button->setAutoDefault(false);
+	button->setObjectName("PushButton");
+	connect(button, &QPushButton::clicked, this, [=] { PushButtonClicked(_row, _col, button); });
+	setCellWidget(_row, _col, widget);
+	return button;
+}
+
+QPushButton* CQtTable::GetPushButton(int _row, int _col) const
+{
+	return cellWidget(_row, _col)->findChild<QPushButton*>("PushButton");
+}
+
 QToolButton* CQtTable::SetToolButton(int _row, int _col, const QString& _text)
 {
 	delete item(_row, _col);

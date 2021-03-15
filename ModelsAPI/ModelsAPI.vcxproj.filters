@@ -78,6 +78,9 @@
     <ClCompile Include="TwoWayMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ChemicalReaction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DenseMDMatrix.h">
@@ -156,6 +159,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MixtureEnthalpyLookup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChemicalReaction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

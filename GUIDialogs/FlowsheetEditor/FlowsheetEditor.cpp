@@ -6,13 +6,14 @@
 #include "Stream.h"
 #include "MaterialsDatabase.h"
 #include "DyssolStringConstants.h"
+#include "ReactionsEditor.h"
 #include <sstream>
 #include <QMessageBox>
 
 CFlowsheetEditor::CFlowsheetEditor(CFlowsheet *_pFlowsheet, const CMaterialsDatabase* _matrialsDB, CModelsManager* _modelsManager, QWidget *parent /*= 0 */)
 	: QWidget(parent),
 	m_pFlowsheet(_pFlowsheet),
-	m_materialsDB{ m_materialsDB },
+	m_materialsDB{ _matrialsDB },
 	m_modelsManager{ _modelsManager },
 	m_pSelectedModel(nullptr),
 	m_pSelectedStream(nullptr)
@@ -48,6 +49,7 @@ void CFlowsheetEditor::InitializeConnections()
 	connect(ui.tableUnitParams,		&QTableWidget::cellChanged,				this, &CFlowsheetEditor::UnitParamValueChanged);
 	connect(ui.tableUnitParams,		&CQtTable::ComboBoxIndexChanged,		this, &CFlowsheetEditor::UnitParamValueChanged);
 	connect(ui.tableUnitParams,		&CQtTable::CheckBoxStateChanged,		this, &CFlowsheetEditor::UnitParamValueChanged);
+	connect(ui.tableUnitParams,		&CQtTable::PushButtonClicked,		    this, &CFlowsheetEditor::UnitParamValueChanged);
 }
 
 void CFlowsheetEditor::setVisible(bool _bVisible)
@@ -336,6 +338,7 @@ void CFlowsheetEditor::UnitParamValueChanged(int _row, int _col)
 	auto* param = m_pModelParams->GetParameter(ui.tableUnitParams->GetItemUserData(_row, 0).toInt());
 	if (!param) return;
 
+	bool dataChanged = true; // whether the data were changed here
 	switch (param->GetType())
 	{
 	case EUnitParameter::CONSTANT: [[fallthrough]];
@@ -388,6 +391,17 @@ void CFlowsheetEditor::UnitParamValueChanged(int _row, int _col)
 		dynamic_cast<CCompoundUnitParameter*>(param)->SetCompound(key.toStdString());
 		break;
 	}
+	case EUnitParameter::REACTION:
+	{
+		auto* reactionParam = dynamic_cast<CReactionUnitParameter*>(param);
+		const auto compounds = m_pFlowsheet->GetCompounds();
+		CReactionsEditor editor{ reactionParam->GetReactions(), &compounds, m_materialsDB, this };
+		if (editor.exec() == QDialog::Accepted)
+			reactionParam->SetReactions(editor.GetReactions());
+		else
+			dataChanged = false;
+		break;
+	}
 	case EUnitParameter::UNKNOWN:
 		break;
 	}
@@ -395,7 +409,8 @@ void CFlowsheetEditor::UnitParamValueChanged(int _row, int _col)
 	UpdateUnitParamTable();
 	UpdateTDValuesTable();
 
-	emit DataChanged();
+	if (dataChanged)
+		emit DataChanged();
 }
 
 void CFlowsheetEditor::UpdateModelsView()
@@ -599,6 +614,12 @@ void CFlowsheetEditor::UpdateUnitParamTable() const
 			const auto* p = dynamic_cast<const CCompoundUnitParameter*>(param);
 			// create combo with total list of possible compounds
 			ui.tableUnitParams->SetComboBox(iRow, 2, m_materialsDB->GetCompoundsNames(m_pFlowsheet->GetCompounds()), m_pFlowsheet->GetCompounds(), p->GetCompound());
+			ui.tableUnitParams->SetItemNotEditable(iRow, 1, QString{});
+			break;
+		}
+		case EUnitParameter::REACTION:
+		{
+			ui.tableUnitParams->SetPushButton(iRow, 2, "Reactions");
 			ui.tableUnitParams->SetItemNotEditable(iRow, 1, QString{});
 			break;
 		}

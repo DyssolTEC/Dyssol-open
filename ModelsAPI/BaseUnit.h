@@ -204,6 +204,8 @@ public:
 	CComboUnitParameter* AddComboParameter(const std::string& _name, size_t _initValue, const std::vector<size_t>& _items, const std::vector<std::string>& _itemsNames, const std::string& _description);
 	// Adds a new compound combo-box unit parameter, allowing to choose one of the defined compounds, and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
 	CCompoundUnitParameter* AddCompoundParameter(const std::string& _name, const std::string& _description);
+	// Adds a new reaction unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	CReactionUnitParameter* AddReactionParameter(const std::string& _name, const std::string& _description);
 	// Adds a new solver unit parameter with type SOLVER_AGGLOMERATION_1, allowing to choose one of the available solvers of this type, and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
 	CAgglomerationSolver* AddSolverAgglomeration(const std::string& _name, const std::string& _description);
 	// Adds a new solver unit parameter with type SOLVER_PBM_1, allowing to choose one of the available solvers of this type, and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
@@ -228,6 +230,8 @@ public:
 	size_t GetComboParameterValue(const std::string& _name) const;
 	// Returns value of the compound unit parameter. Throws logic_error exception if a compound unit parameter with the given name does not exist.
 	std::string GetCompoundParameterValue(const std::string& _name) const;
+	// Returns value of the reaction unit parameter. Throws logic_error exception if a reaction unit parameter with the given name does not exist.
+	std::vector<CChemicalReaction> GetReactionParameterValue(const std::string& _name) const;
 	// Returns a pointer to an agglomeration solver of a type SOLVER_AGGLOMERATION_1 with the specified name. Throws logic_error exception if a solver unit parameter with the given name does not exist.
 	CAgglomerationSolver* GetSolverAgglomeration(const std::string& _name) const;
 	// Returns a pointer to a PBM solver of a type SOLVER_PBM_1 with the specified name. Throws logic_error exception if a solver unit parameter with the given name does not exist.

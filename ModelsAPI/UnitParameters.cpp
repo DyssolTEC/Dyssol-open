@@ -2,7 +2,6 @@
 
 #include "UnitParameters.h"
 #include "DyssolStringConstants.h"
-#include "DyssolTypes.h"
 #include "ContainerFunctions.h"
 #include <set>
 #include <utility>
@@ -602,6 +601,104 @@ void CCompoundUnitParameter::LoadFromFile(const CH5Handler& _h5Loader, const std
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// CReactionUnitParameter
+
+const unsigned CReactionUnitParameter::m_cnSaveVersion = 1;
+
+CReactionUnitParameter::CReactionUnitParameter()
+	: CBaseUnitParameter(EUnitParameter::REACTION)
+{
+}
+
+CReactionUnitParameter::CReactionUnitParameter(std::string _name, std::string _description)
+	: CBaseUnitParameter(EUnitParameter::REACTION, std::move(_name), "", std::move(_description))
+{
+}
+
+void CReactionUnitParameter::Clear()
+{
+	m_reactions.clear();
+}
+
+std::vector<CChemicalReaction> CReactionUnitParameter::GetReactions() const
+{
+	return m_reactions;
+}
+
+std::vector<CChemicalReaction*> CReactionUnitParameter::GetReactionsPtr()
+{
+	std::vector<CChemicalReaction*> res;
+	for (auto& r : m_reactions)
+		res.push_back(&r);
+	return res;
+}
+
+const CChemicalReaction* CReactionUnitParameter::GetReaction(size_t _index) const
+{
+	if (_index >= m_reactions.size()) return nullptr;
+	return &m_reactions[_index];
+}
+
+CChemicalReaction* CReactionUnitParameter::GetReaction(size_t _index)
+{
+	if (_index >= m_reactions.size()) return nullptr;
+	return &m_reactions[_index];
+}
+
+size_t CReactionUnitParameter::GetReactionsNumber() const
+{
+	return m_reactions.size();
+}
+
+void CReactionUnitParameter::AddReaction()
+{
+	m_reactions.emplace_back();
+}
+
+void CReactionUnitParameter::AddReaction(const CChemicalReaction& _reaction)
+{
+	m_reactions.push_back(_reaction);
+}
+
+void CReactionUnitParameter::SetReactions(const std::vector<CChemicalReaction>& _reactions)
+{
+	m_reactions = _reactions;
+}
+
+void CReactionUnitParameter::RemoveReaction(size_t _index)
+{
+	if (_index >= m_reactions.size()) return;
+	VectorDelete(m_reactions, _index);
+}
+
+void CReactionUnitParameter::SaveToFile(CH5Handler& _h5Saver, const std::string& _path) const
+{
+	if (!_h5Saver.IsValid()) return;
+
+	// current version of save procedure
+	_h5Saver.WriteAttribute(_path, StrConst::BUnit_H5AttrSaveVersion, m_cnSaveVersion);
+
+	// save data
+	_h5Saver.WriteAttribute(_path, StrConst::UParam_H5AttrReactionsNum, static_cast<int>(m_reactions.size()));
+	for (size_t i = 0; i < m_reactions.size(); ++i)
+		m_reactions[i].SaveToFile(_h5Saver, _h5Saver.CreateGroup(_path, StrConst::UParam_H5Reaction + std::to_string(i)));
+}
+
+void CReactionUnitParameter::LoadFromFile(const CH5Handler& _h5Loader, const std::string& _path)
+{
+	if (!_h5Loader.IsValid()) return;
+
+	// load version of save procedure
+	//const int version = _h5Loader.ReadAttribute(_path, StrConst::BUnit_H5AttrSaveVersion);
+
+	// read data
+	m_reactions.resize(static_cast<size_t>(_h5Loader.ReadAttribute(_path, StrConst::UParam_H5AttrReactionsNum)));
+	for (size_t i = 0; i < m_reactions.size(); ++i)
+		m_reactions[i].LoadFromFile(_h5Loader, _path + "/" + StrConst::UParam_H5Reaction + std::to_string(i));
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 /// CUnitParametersManager
 
 size_t CUnitParametersManager::ParametersNumber() const
@@ -669,6 +766,12 @@ void CUnitParametersManager::AddCompoundParameter(const std::string& _name, cons
 {
 	if (IsNameExist(_name)) return;
 	m_parameters.emplace_back(new CCompoundUnitParameter{ _name, _description });
+}
+
+void CUnitParametersManager::AddReactionParameter(const std::string& _name, const std::string& _description)
+{
+	if (IsNameExist(_name)) return;
+	m_parameters.emplace_back(new CReactionUnitParameter{ _name, _description });
 }
 
 std::vector<CBaseUnitParameter*> CUnitParametersManager::GetParameters() const
@@ -790,6 +893,16 @@ CCompoundUnitParameter* CUnitParametersManager::GetCompoundParameter(size_t _ind
 	return const_cast<CCompoundUnitParameter*>(static_cast<const CUnitParametersManager&>(*this).GetCompoundParameter(_index));
 }
 
+const CReactionUnitParameter* CUnitParametersManager::GetReactionParameter(size_t _index) const
+{
+	return dynamic_cast<const CReactionUnitParameter*>(GetParameter(_index));
+}
+
+CReactionUnitParameter* CUnitParametersManager::GetReactionParameter(size_t _index)
+{
+	return const_cast<CReactionUnitParameter*>(static_cast<const CUnitParametersManager&>(*this).GetReactionParameter(_index));
+}
+
 const CConstRealUnitParameter* CUnitParametersManager::GetConstRealParameter(const std::string& _name) const
 {
 	return GetConstRealParameter(Name2Index(_name));
@@ -880,6 +993,16 @@ CCompoundUnitParameter* CUnitParametersManager::GetCompoundParameter(const std::
 	return GetCompoundParameter(Name2Index(_name));
 }
 
+const CReactionUnitParameter* CUnitParametersManager::GetReactionParameter(const std::string& _name) const
+{
+	return GetReactionParameter(Name2Index(_name));
+}
+
+CReactionUnitParameter* CUnitParametersManager::GetReactionParameter(const std::string& _name)
+{
+	return GetReactionParameter(Name2Index(_name));
+}
+
 double CUnitParametersManager::GetConstRealParameterValue(size_t _index) const
 {
 	if (const auto* p = GetConstRealParameter(_index))
@@ -943,6 +1066,13 @@ std::string CUnitParametersManager::GetCompoundParameterValue(size_t _index) con
 	return {};
 }
 
+std::vector<CChemicalReaction> CUnitParametersManager::GetReactionParameterValue(size_t _index) const
+{
+	if (const auto* p = GetReactionParameter(_index))
+		return p->GetReactions();
+	return {};
+}
+
 double CUnitParametersManager::GetConstRealParameterValue(const std::string& _name) const
 {
 	return GetConstRealParameterValue(Name2Index(_name));
@@ -986,6 +1116,29 @@ size_t CUnitParametersManager::GetComboParameterValue(const std::string& _name) 
 std::string CUnitParametersManager::GetCompoundParameterValue(const std::string& _name) const
 {
 	return GetCompoundParameterValue(Name2Index(_name));
+}
+
+std::vector<CChemicalReaction> CUnitParametersManager::GetReactionParameterValue(const std::string& _name) const
+{
+	return GetReactionParameterValue(Name2Index(_name));
+}
+
+std::vector<const CReactionUnitParameter*> CUnitParametersManager::GetAllReactionParameters() const
+{
+	std::vector<const CReactionUnitParameter*> res;
+	for (const auto& p : m_parameters)
+		if (p->GetType() == EUnitParameter::REACTION)
+			res.push_back(dynamic_cast<const CReactionUnitParameter*>(p.get()));
+	return res;
+}
+
+std::vector<CReactionUnitParameter*> CUnitParametersManager::GetAllReactionParameters()
+{
+	std::vector<CReactionUnitParameter*> res;
+	for (auto& p : m_parameters)
+		if (p->GetType() == EUnitParameter::REACTION)
+			res.push_back(dynamic_cast<CReactionUnitParameter*>(p.get()));
+	return res;
 }
 
 std::vector<const CSolverUnitParameter*> CUnitParametersManager::GetAllSolverParameters() const
@@ -1078,6 +1231,7 @@ void CUnitParametersManager::SaveToFile(CH5Handler& _h5Saver, const std::string&
 		case EUnitParameter::COMBO:				dynamic_cast<CComboUnitParameter*>              (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
 		case EUnitParameter::GROUP:				dynamic_cast<CComboUnitParameter*>              (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
 		case EUnitParameter::COMPOUND:			dynamic_cast<CCompoundUnitParameter*>           (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
+		case EUnitParameter::REACTION:			dynamic_cast<CReactionUnitParameter*>           (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
 		case EUnitParameter::UNKNOWN: break;
 		}
 	}
@@ -1128,6 +1282,7 @@ void CUnitParametersManager::LoadFromFile(const CH5Handler& _h5Loader, const std
 			case EUnitParameter::COMBO:				dynamic_cast<CComboUnitParameter*>              (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
 			case EUnitParameter::GROUP:				dynamic_cast<CComboUnitParameter*>              (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
 			case EUnitParameter::COMPOUND:			dynamic_cast<CCompoundUnitParameter*>           (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
+			case EUnitParameter::REACTION:			dynamic_cast<CReactionUnitParameter*>           (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
 			case EUnitParameter::UNKNOWN: break;
 			}
 		}

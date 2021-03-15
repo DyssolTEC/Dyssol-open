@@ -106,6 +106,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseUnit.cpp" />
+    <ClCompile Include="ChemicalReaction.cpp" />
     <ClCompile Include="MixtureEnthalpyLookup.cpp" />
     <ClCompile Include="MixtureLookup.cpp" />
     <ClCompile Include="TwoWayMap.cpp" />
@@ -129,6 +130,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseUnit.h" />
+    <ClInclude Include="ChemicalReaction.h" />
     <ClInclude Include="Holdup.h" />
     <ClInclude Include="MixtureLookup.h" />
     <ClInclude Include="MixtureEnthalpyLookup.h" />
