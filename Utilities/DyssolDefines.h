@@ -115,7 +115,7 @@ enum class EGridFunction : uint32_t
 };
 
 // ========== TYPES OF SOLVING STRATEGIES FOR NLSOLVER
-enum class ENLSolverStrategy : size_t
+enum class ENLSolverStrategy : std::size_t
 {
 	Newton, Linesearch, Picard, Fixedpoint
 };

@@ -6,6 +6,7 @@
 #include "TimeDependentValue.h"
 #include "Phase.h"
 #include "ContainerFunctions.h"
+#include <cmath>
 
 CHoldup::CHoldup(const std::string& _key) :
 	CBaseStream{ _key }
