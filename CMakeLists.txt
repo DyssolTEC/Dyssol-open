@@ -17,67 +17,26 @@ add_executable(DyssolC
     ${CMAKE_SOURCE_DIR}/DyssolConsole/main.cpp
 )
 
-set(libdyssolsrc
-    ${CMAKE_SOURCE_DIR}/BaseSolvers/AgglomerationSolver.cpp
-    ${CMAKE_SOURCE_DIR}/BaseSolvers/BaseSolver.cpp
-    ${CMAKE_SOURCE_DIR}/BaseSolvers/PBMSolver.cpp
-    ${CMAKE_SOURCE_DIR}/CacheHandler/BaseCacheHandler.cpp
-    ${CMAKE_SOURCE_DIR}/CacheHandler/DenseDistrCacher.cpp
-    ${CMAKE_SOURCE_DIR}/CacheHandler/MDMatrCacher.cpp
-    ${CMAKE_SOURCE_DIR}/EquationSolvers/DAEModel.cpp
-    ${CMAKE_SOURCE_DIR}/EquationSolvers/DAESolver.cpp
-    ${CMAKE_SOURCE_DIR}/EquationSolvers/NLModel.cpp
-    ${CMAKE_SOURCE_DIR}/EquationSolvers/NLSolver.cpp
-    ${CMAKE_SOURCE_DIR}/HDF5Handler/H5Handler.cpp
-    ${CMAKE_SOURCE_DIR}/HDF5Handler/PacketTable.cpp
-    ${CMAKE_SOURCE_DIR}/MaterialsDatabase/BaseProperty.cpp
-    ${CMAKE_SOURCE_DIR}/MaterialsDatabase/Compound.cpp
-    ${CMAKE_SOURCE_DIR}/MaterialsDatabase/ConstProperty.cpp
-    ${CMAKE_SOURCE_DIR}/MaterialsDatabase/Correlation.cpp
-    ${CMAKE_SOURCE_DIR}/MaterialsDatabase/Interaction.cpp
-    ${CMAKE_SOURCE_DIR}/MaterialsDatabase/MaterialsDatabase.cpp
-    ${CMAKE_SOURCE_DIR}/MaterialsDatabase/TPDProperty.cpp
-    ${CMAKE_SOURCE_DIR}/ModelsAPI/BaseUnit.cpp
-    ${CMAKE_SOURCE_DIR}/ModelsAPI/DenseDistr2D.cpp
-    ${CMAKE_SOURCE_DIR}/ModelsAPI/DenseMDMatrix.cpp
-    ${CMAKE_SOURCE_DIR}/ModelsAPI/DependentValues.cpp
-    ${CMAKE_SOURCE_DIR}/ModelsAPI/DistributionsGrid.cpp
-    ${CMAKE_SOURCE_DIR}/ModelsAPI/DynamicUnit.cpp
-    ${CMAKE_SOURCE_DIR}/ModelsAPI/Holdup.cpp
-    ${CMAKE_SOURCE_DIR}/ModelsAPI/LookupTable.cpp
-    ${CMAKE_SOURCE_DIR}/ModelsAPI/MaterialStream.cpp
-    ${CMAKE_SOURCE_DIR}/ModelsAPI/Matrix2D.cpp
-    ${CMAKE_SOURCE_DIR}/ModelsAPI/MDMatrix.cpp
-    ${CMAKE_SOURCE_DIR}/ModelsAPI/SteadyStateUnit.cpp
-    ${CMAKE_SOURCE_DIR}/ModelsAPI/Stream.cpp
-    ${CMAKE_SOURCE_DIR}/ModelsAPI/Stream.cpp
-    ${CMAKE_SOURCE_DIR}/ModelsAPI/TDArray.cpp
-    ${CMAKE_SOURCE_DIR}/ModelsAPI/TransformMatrix.cpp
-    ${CMAKE_SOURCE_DIR}/ModelsAPI/UnitParameters.cpp
-    ${CMAKE_SOURCE_DIR}/Modules/DustFormationTester/DustFormationTester.cpp
-    ${CMAKE_SOURCE_DIR}/SimulatorCore/BaseModel.cpp
-    ${CMAKE_SOURCE_DIR}/SimulatorCore/CalculationSequence.cpp
-    ${CMAKE_SOURCE_DIR}/SimulatorCore/Flowsheet.cpp
-    ${CMAKE_SOURCE_DIR}/SimulatorCore/FlowsheetParameters.cpp
-    ${CMAKE_SOURCE_DIR}/SimulatorCore/ModelsManager.cpp
-    ${CMAKE_SOURCE_DIR}/SimulatorCore/Simulator.cpp
-    ${CMAKE_SOURCE_DIR}/SimulatorCore/SimulatorLog.cpp
-    ${CMAKE_SOURCE_DIR}/SimulatorCore/Topology.cpp
-    ${CMAKE_SOURCE_DIR}/Utilities/FileSystem.cpp
-    ${CMAKE_SOURCE_DIR}/Utilities/StringFunctions.cpp
-    ${CMAKE_SOURCE_DIR}/Utilities/ThreadPool.cpp
+set(libdyssolnames
+	"BaseSolvers"
+	"CacheHandler"
+	"EquationSolvers"
+	"HDF5Handler"
+	"MaterialsDatabase"
+	"ModelsAPI"
+	"Modules"
+	"SimulatorCore"
+	"Utilities"
 )
 
-INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/BaseSolvers/")
-INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/CacheHandler/")
-INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/EquationSolvers/")
+foreach(foldername ${libdyssolnames})
+    file(GLOB_RECURSE src   ${CMAKE_SOURCE_DIR}/${foldername}/*.cpp)
+    set(libdyssolsrc ${libdyssolsrc} ${src})
+    INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/${foldername}/")
+endforeach(foldername ${libdyssolnames})
+
 INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/ExternalLibraries/sundials/include/")
-INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/HDF5Handler/")
-INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/MaterialsDatabase/")
-INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/ModelsAPI/")
 INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/Modules/DustFormationTester/")
-INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/SimulatorCore/")
-INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/Utilities/")
 
 SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
