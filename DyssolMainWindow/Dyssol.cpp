@@ -620,14 +620,6 @@ void Dyssol::OpenHelp(const QString& _sFile) const
 {
 #ifdef _MSC_VER
 	QString sFileToOpen = QCoreApplication::applicationDirPath() + "/" + StrConst::Dyssol_HelpDir + "/" + _sFile + StrConst::Dyssol_HelpFileExt;
-#else
-	QString sFileToOpen =  QString(INSTALL_DOCS_PATH) + "/" + _sFile + StrConst::Dyssol_HelpFileExt;
-
-	std::cerr << sFileToOpen.toStdString() ;
-
-#endif
-
-
 	if (!FileSystem::FileExists(sFileToOpen.toStdString())) // cannot find requested file in the running folder -> access through the link
 		sFileToOpen = QFile::symLinkTarget(m_sSettingsPath + "/" + StrConst::Dyssol_AppFolderPathLink) + "/" + StrConst::Dyssol_HelpDir + "/" + _sFile + StrConst::Dyssol_HelpFileExt;
 	QDesktopServices::openUrl(QUrl::fromLocalFile(sFileToOpen));
