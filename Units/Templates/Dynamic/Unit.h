@@ -7,11 +7,10 @@
 class CUnit : public CDynamicUnit
 {
 public:
-	CUnit();
-	~CUnit();
-
-	void Initialize(double _dTime) override;
-	void Simulate(double _dStartTime, double _dEndTime) override;
+	void CreateBasicInfo() override;
+	void CreateStructure() override;
+	void Initialize(double _time) override;
+	void Simulate(double _timeBeg, double _timeEnd) override;
 	void SaveState() override;
 	void LoadState() override;
 	void Finalize() override;

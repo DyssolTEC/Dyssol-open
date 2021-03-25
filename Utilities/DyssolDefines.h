@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 // ========== Initial values
 
 // Simulator
@@ -28,23 +30,16 @@
 #define DEFAULT_R_TOL	1e-3
 
 // Initial minimal fraction
-#define DEFAULT_MIN_FRACTION	1e-9
+#define DEFAULT_MIN_FRACTION	0
 
-//////////////////////////////////////////////////////////////////////////
-/// Aggregation states
+// Enthalpy calculator
+#define DEFAULT_ENTHALPY_MIN_T     173
+#define DEFAULT_ENTHALPY_MAX_T     1273
+#define DEFAULT_ENTHALPY_INTERVALS 100
 
-// Identifiers of phase types
-enum EPhaseTypes : unsigned
-{
-	SOA_SOLID,
-	SOA_LIQUID,
-	SOA_VAPOR,
-	SOA_LIQUID2,
-	SOA_UNDEFINED
-};
 
 // ========== Convergence methods
-enum EConvMethod
+enum EConvMethod : uint32_t
 {
 	CM_DIRECT_SUBSTITUTION	= 0,
 	CM_WEGSTEIN				= 1,
@@ -52,7 +47,7 @@ enum EConvMethod
 };
 
 // ========== Extrapolation methods
-enum class EExtrapMethod : unsigned
+enum class EExtrapMethod : uint32_t
 {
 	EM_LINEAR	= 0,
 	EM_SPLINE	= 1,
@@ -62,7 +57,7 @@ enum class EExtrapMethod : unsigned
 //======== SOLID DISTRIBUTIONS DATABASE [0; 50] ===============
 #define DISTRIBUTIONS_NUMBER 15
 
-enum EDistrTypes : unsigned
+enum EDistrTypes : uint32_t
 {
 	DISTR_COMPOUNDS		  = 0,
 	DISTR_SIZE			  = 1,
@@ -100,7 +95,7 @@ inline int GetDistributionTypeIndex(EDistrTypes _nType)
 #define MTP_PRESSURE	2
 
 // ========== TYPES OF GRIDS ENTRIES
-enum class EGridEntry : unsigned
+enum class EGridEntry : uint32_t
 {
 	GRID_NUMERIC	= 0,
 	GRID_SYMBOLIC	= 2,
@@ -108,7 +103,7 @@ enum class EGridEntry : unsigned
 };
 
 // ========== TYPES OF GRID FUNCTIONAL DISTRIBUTIONS
-enum class EGridFunction : unsigned
+enum class EGridFunction : uint32_t
 {
 	GRID_FUN_MANUAL	         = 0,
 	GRID_FUN_EQUIDISTANT	 = 1,
@@ -117,6 +112,12 @@ enum class EGridFunction : unsigned
 	GRID_FUN_GEOMETRIC_L2S	 = 4,
 	GRID_FUN_LOGARITHMIC_L2S = 5,
 	GRID_FUN_UNDEFINED		 = 15
+};
+
+// ========== TYPES OF SOLVING STRATEGIES FOR NLSOLVER
+enum class ENLSolverStrategy : size_t
+{
+	Newton, Linesearch, Picard, Fixedpoint
 };
 
 // ========== PSD TYPES
@@ -134,6 +135,7 @@ enum EPSDTypes
 
 // ========== For stream addition
 
+// TODO: remove
 enum ETimePointsComposition
 {
 	BOTH_TP	= 0,
@@ -151,6 +153,7 @@ enum class EDependencyTypes
 
 // ========== Non-constant single-phase mixture properties and overall properties [300..399]
 
+// TODO: remove them
 //#define ENTHALPY				308 // overall
 #define FLOW					320	// overall (stream)
 #define MASS					320	// overall (holdup)
@@ -197,4 +200,61 @@ enum class EPSDGridType : unsigned
 {
 	DIAMETER = 0,
 	VOLUME = 1
+};
+
+// Identifiers of phase types.
+enum class EPhase : uint32_t
+{
+	UNDEFINED,
+	SOLID,
+	LIQUID,
+	VAPOR,
+};
+
+// Identifiers of time-dependent overall parameters.
+enum class EOverall : uint32_t
+{
+	// TODO: rename when corresponding defines are removed
+	OVERALL_MASS,
+	OVERALL_TEMPERATURE,
+	OVERALL_PRESSURE,
+	OVERALL_USER_DEFINED_01 = 201,
+	OVERALL_USER_DEFINED_02 = 202,
+	OVERALL_USER_DEFINED_03 = 203,
+	OVERALL_USER_DEFINED_04 = 204,
+	OVERALL_USER_DEFINED_05 = 205,
+	OVERALL_USER_DEFINED_06 = 206,
+	OVERALL_USER_DEFINED_07 = 207,
+	OVERALL_USER_DEFINED_08 = 208,
+	OVERALL_USER_DEFINED_09 = 209,
+	OVERALL_USER_DEFINED_10 = 210,
+};
+
+// Types of unit ports.
+enum class EUnitPort : uint32_t
+{
+	INPUT     = 0,
+	OUTPUT    = 1,
+	UNDEFINED = 2
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+/// Deprecated types
+
+// Identifiers of phase types
+enum EPhaseTypes : unsigned
+{
+	SOA_SOLID,
+	SOA_LIQUID,
+	SOA_VAPOR,
+	SOA_LIQUID2,
+	SOA_UNDEFINED
+};
+
+enum EPortType
+{
+	INPUT_PORT = 0,
+	OUTPUT_PORT = 1,
+	UNDEFINED_PORT = 2
 };

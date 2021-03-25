@@ -27,13 +27,13 @@ void CTDArray::AddTimePoint(double _dTime, double _dSourceTimePoint /*= -1 */)
 
 	size_t index = GetIndexByTime( _dTime, false ); // get new index to insert
 	if( index < m_data.size() )
-		if( m_data[index].dTime == _dTime ) // time point already exists
+		if( m_data[index].time == _dTime ) // time point already exists
 			return;
 
 	if( _dSourceTimePoint == -1 )
 	{
 		if( index != 0 )
-			SetData( index, _dTime, m_data[index-1].dValue );
+			SetData( index, _dTime, m_data[index-1].value );
 		else
 			SetData( index, _dTime, 0 );
 	}
@@ -61,7 +61,7 @@ void CTDArray::RemoveTimePoints(double _dStartTime, double _dEndTime)
 	size_t iLast = GetIndexByTime( _dEndTime, false );
 	size_t iFirst = GetIndexByTime( _dStartTime, false );
 
-	if( ( iLast >= m_data.size() ) || ( m_data[iLast].dTime != _dEndTime )) // iLast correction
+	if( ( iLast >= m_data.size() ) || ( m_data[iLast].time != _dEndTime )) // iLast correction
 		iLast--;
 
 	m_data.erase( m_data.begin() + iFirst, m_data.begin() + (iLast + 1) );
@@ -75,9 +75,9 @@ void CTDArray::ChangeTimePoint(double _dOldTime, double _dNewTime)
 
 	if( m_data.size() > 1 )
 	{
-		if(( index != 0 ) && ( m_data[index-1].dTime >= _dNewTime ) ) // new time value is before the previous time point
+		if(( index != 0 ) && ( m_data[index-1].time >= _dNewTime ) ) // new time value is before the previous time point
 			return;
-		if(( index != m_data.size()-1 ) && ( m_data[index+1].dTime <= _dNewTime ) ) // new time value is bigger than the next time point
+		if(( index != m_data.size()-1 ) && ( m_data[index+1].time <= _dNewTime ) ) // new time value is bigger than the next time point
 			return;
 	}
 
@@ -91,21 +91,21 @@ double CTDArray::GetValue(double _dTime)
 
 	size_t index = GetIndexByTime( _dTime );
 	if( index != -1 ) // time point is found
-		return m_data[index].dValue;
+		return m_data[index].value;
 
 	if( m_data.size() == 1 ) // not enough data for interpolation
-		return m_data.front().dValue;
+		return m_data.front().value;
 
 	size_t indexAfter = GetIndexByTime( _dTime, false );
 	if(( indexAfter != m_data.size() ) && ( indexAfter != 0 )) // point inside - interpolation
 		//return GetInterpolation( indexAfter-1, indexAfter, _dTime );
-		return Interpolate( m_data[indexAfter].dValue, m_data[indexAfter-1].dValue, m_data[indexAfter].dTime, m_data[indexAfter-1].dTime, _dTime );
+		return Interpolate( m_data[indexAfter].value, m_data[indexAfter-1].value, m_data[indexAfter].time, m_data[indexAfter-1].time, _dTime );
 	else if( indexAfter == m_data.size() ) // point after the last - extrapolation
 		//return GetInterpolation( indexAfter-2, indexAfter-1, _dTime );
-		return m_data.back().dValue;
+		return m_data.back().value;
 	else // point at the beginning - extrapolation
 		//return GetInterpolation( indexAfter+1, indexAfter+0, _dTime );
-		return m_data.front().dValue;
+		return m_data.front().value;
 }
 
 void CTDArray::GetVectorValue(const std::vector<double>& _dTimes, std::vector<double>& _vRes)
@@ -147,14 +147,14 @@ void CTDArray::CopyFrom(CTDArray& _source, double _dStartTime, double _dEndTime)
 	else // for time interval
 	{
 		size_t index = _source.GetIndexByTime( _dStartTime, false );
-		if( ( index != -1 ) && ( index <_source.m_data.size() ) && ( _source.m_data[index].dTime != _dStartTime ) ) // left boundary of the interval
+		if( ( index != -1 ) && ( index <_source.m_data.size() ) && ( _source.m_data[index].time != _dStartTime ) ) // left boundary of the interval
 			SetValue( _dStartTime, _source.GetValue( _dStartTime ) );
-		while( ( index < _source.m_data.size() ) && ( _source.m_data[index].dTime <= _dEndTime ) ) // interval
+		while( ( index < _source.m_data.size() ) && ( _source.m_data[index].time <= _dEndTime ) ) // interval
 		{
-			SetValue( _source.m_data[index].dTime, _source.m_data[index].dValue );
+			SetValue( _source.m_data[index].time, _source.m_data[index].value );
 			index++;
 		}
-		if( ( index <_source.m_data.size() ) && ( _source.m_data[index].dTime != _dEndTime ) ) // right boundary of the interval
+		if( ( index <_source.m_data.size() ) && ( _source.m_data[index].time != _dEndTime ) ) // right boundary of the interval
 			SetValue( _dEndTime, _source.GetValue( _dEndTime ) );
 	}
 }
@@ -170,9 +170,9 @@ void CTDArray::GetCacheArray( const std::vector<double>& _vTP, std::vector<doubl
 	size_t nInternalCnt = 0;
 	for(size_t i=0; i<_vTP.size(); ++i )
 	{
-		if( ( nInternalCnt < m_data.size() ) && ( m_data[nInternalCnt].dTime == _vTP[i] ) )
+		if( ( nInternalCnt < m_data.size() ) && ( m_data[nInternalCnt].time == _vTP[i] ) )
 		{
-			_vOut[i] = m_data[nInternalCnt].dValue;
+			_vOut[i] = m_data[nInternalCnt].value;
 			nInternalCnt++;
 		}
 	}
@@ -204,12 +204,12 @@ void CTDArray::GetDataForSave(const std::vector<double>& _vTP, std::vector<doubl
 	bool bAllAreEqual = true;
 	for (size_t i = 0; i < _vTP.size(); ++i)
 	{
-		if ((iCnt < m_data.size()) && (m_data[iCnt].dTime == _vTP[i]))
+		if ((iCnt < m_data.size()) && (m_data[iCnt].time == _vTP[i]))
 		{
-			_vOut[i] = m_data[iCnt].dValue;
+			_vOut[i] = m_data[iCnt].value;
 			if (dFirstValue == -2)
-				dFirstValue = m_data[iCnt].dValue;
-			else if (bAllAreEqual && (dFirstValue != m_data[iCnt].dValue))
+				dFirstValue = m_data[iCnt].value;
+			else if (bAllAreEqual && (dFirstValue != m_data[iCnt].value))
 				bAllAreEqual = false;
 			iCnt++;
 		}
@@ -286,9 +286,9 @@ void CTDArray::CompressData( double _dStartTime, double _dEndTime, double _dATol
 	size_t i = iStart+1;
 	while( i<iEnd-1 )
 	{
-		//double dInterpVal = GetInterpolation( i-1, i+1, m_data[i].dTime );
-		double dInterpVal = Interpolate( m_data[i-1].dValue, m_data[i+1].dValue, m_data[i-1].dTime, m_data[i+1].dTime, m_data[i].dTime );
-		if(std::fabs( m_data[i].dValue - dInterpVal ) <= std::fabs( m_data[i].dValue ) * _dRTol + _dATol ) // value can be interpolated. remove
+		//double dInterpVal = GetInterpolation( i-1, i+1, m_data[i].time );
+		double dInterpVal = Interpolate( m_data[i-1].value, m_data[i+1].value, m_data[i-1].time, m_data[i+1].time, m_data[i].time );
+		if(std::fabs( m_data[i].value - dInterpVal ) <= std::fabs( m_data[i].value ) * _dRTol + _dATol ) // value can be interpolated. remove
 		{
 			m_data.erase( m_data.begin() + i );
 			iEnd--;
@@ -310,23 +310,23 @@ size_t CTDArray::GetIndexByTime(double _dTime, bool _bIsStrict /*= true */)
 	}
 
 	// check last used point
-	if( ( m_nLastTimePos < m_data.size() ) && ( m_data.at( m_nLastTimePos ).dTime == _dTime ) )
+	if( ( m_nLastTimePos < m_data.size() ) && ( m_data.at( m_nLastTimePos ).time == _dTime ) )
 		return m_nLastTimePos;
 	// check next of last used point
-	if( ( ( m_nLastTimePos+1 ) < m_data.size() ) && ( m_data.at( m_nLastTimePos+1 ).dTime == _dTime ))
+	if( ( ( m_nLastTimePos+1 ) < m_data.size() ) && ( m_data.at( m_nLastTimePos+1 ).time == _dTime ))
 		return ++m_nLastTimePos;
 	// check previous of last used point
-	if( ( m_nLastTimePos > 0 ) && ( ( m_nLastTimePos-1 ) < m_data.size() ) && ( m_data.at( m_nLastTimePos-1 ).dTime == _dTime ))
+	if( ( m_nLastTimePos > 0 ) && ( ( m_nLastTimePos-1 ) < m_data.size() ) && ( m_data.at( m_nLastTimePos-1 ).time == _dTime ))
 		return --m_nLastTimePos;
 	// check boundaries
-	if( m_data.front().dTime > _dTime )
+	if( m_data.front().time > _dTime )
 	{
 		if( _bIsStrict )
 			return -1;
 		else
 			return 0;
 	}
-	if( m_data.back().dTime < _dTime )
+	if( m_data.back().time < _dTime )
 	{
 		if( _bIsStrict )
 			return -1;
@@ -340,13 +340,13 @@ size_t CTDArray::GetIndexByTime(double _dTime, bool _bIsStrict /*= true */)
 	size_t nMid = (size_t)(nFirst + nLast) >> 1;
 	while( nFirst < nLast )
 	{
-		if ( _dTime <= m_data[nMid].dTime )
+		if ( _dTime <= m_data[nMid].time )
 			nLast = nMid;
 		else
 			nFirst = nMid + 1;
 		nMid = (size_t)(nFirst + nLast) >> 1;
 	}
-	if( ( m_data[nLast].dTime == _dTime ) || ( !_bIsStrict ) )
+	if( ( m_data[nLast].time == _dTime ) || ( !_bIsStrict ) )
 	{
 		m_nLastTimePos = nLast;
 		return m_nLastTimePos;
@@ -359,11 +359,11 @@ void CTDArray::SetData(size_t _nIndex, double _dTime, double _dValue)
 {
 	if( _dTime == -1 ) // value changing, no inserting
 	{
-		m_data[_nIndex].dValue = _dValue;
+		m_data[_nIndex].value = _dValue;
 	}
 	else if( _dValue == -1 ) // time changing, no inserting
 	{
-		m_data[_nIndex].dTime = _dTime;
+		m_data[_nIndex].time = _dTime;
 	}
 	else // adding of new point, inserting
 	{
@@ -374,59 +374,59 @@ void CTDArray::SetData(size_t _nIndex, double _dTime, double _dValue)
 	//{
 	//	if( m_data.size() < 3 ) // just set new value
 	//	{
-	//		m_data[_nIndex].dValue = _dValue;
+	//		m_data[_nIndex].value = _dValue;
 	//	}
 	//	else if( _nIndex == 0 ) // changing at the beginning
 	//	{
-	//		m_data[_nIndex].dValue = _dValue;
+	//		m_data[_nIndex].value = _dValue;
 
 	//		// check if the next value can be interpolated
-	//		double dInterpVal = GetInterpolation( _nIndex, _nIndex+2, m_data[_nIndex+1].dTime );
-	//		double dRealVal = m_data[_nIndex+1].dValue;
+	//		double dInterpVal = GetInterpolation( _nIndex, _nIndex+2, m_data[_nIndex+1].time );
+	//		double dRealVal = m_data[_nIndex+1].value;
 	//		if( std::fabs( dRealVal - dInterpVal ) <= std::fabs( dRealVal ) * m_dRTol + m_dATol ) // next value can be removed
 	//			m_data.erase( m_data.begin()+_nIndex+1 );
 	//	}
 	//	else if( _nIndex == m_data.size()-1 ) // changing at the end
 	//	{
-	//		m_data[_nIndex].dValue = _dValue;
+	//		m_data[_nIndex].value = _dValue;
 
 	//		// check if the previous value can be interpolated
-	//		double dInterpVal = GetInterpolation( _nIndex-2, _nIndex, m_data[_nIndex-1].dTime );
-	//		double dRealVal = m_data[_nIndex-1].dValue;
+	//		double dInterpVal = GetInterpolation( _nIndex-2, _nIndex, m_data[_nIndex-1].time );
+	//		double dRealVal = m_data[_nIndex-1].value;
 	//		if( std::fabs( dRealVal - dInterpVal ) <= std::fabs( dRealVal ) * m_dRTol + m_dATol ) // previous value can be removed
 	//			m_data.erase( m_data.begin()+_nIndex-1 );
 	//	}
 	//	else // changing inside
 	//	{
 	//		// check if the value can be interpolated
-	//		double dInterpVal = GetInterpolation( _nIndex-1, _nIndex+1, m_data[_nIndex].dTime );
+	//		double dInterpVal = GetInterpolation( _nIndex-1, _nIndex+1, m_data[_nIndex].time );
 	//		if( std::fabs( _dValue - dInterpVal ) > std::fabs( _dValue ) * m_dRTol + m_dATol ) // value can't be interpolated. set
-	//			m_data[_nIndex].dValue = _dValue;
+	//			m_data[_nIndex].value = _dValue;
 	//	}
 	//}
 	//else if( _dValue == -1 ) // time changing, no inserting
 	//{
 	//	if( m_data.size() < 3 ) // just set new time
 	//	{
-	//		m_data[_nIndex].dTime = _dTime;
+	//		m_data[_nIndex].time = _dTime;
 	//	}
 	//	else if( _nIndex == 0 ) // changing at the beginning
 	//	{
-	//		m_data[_nIndex].dTime = _dTime;
+	//		m_data[_nIndex].time = _dTime;
 
 	//		// check if the next value can be interpolated
-	//		double dInterpVal = GetInterpolation( _nIndex, _nIndex+2, m_data[_nIndex+1].dTime );
-	//		double dRealVal = m_data[_nIndex+1].dValue;
+	//		double dInterpVal = GetInterpolation( _nIndex, _nIndex+2, m_data[_nIndex+1].time );
+	//		double dRealVal = m_data[_nIndex+1].value;
 	//		if( std::fabs( dRealVal - dInterpVal ) <= std::fabs( dRealVal ) * m_dRTol + m_dATol ) // next value can be removed
 	//			m_data.erase( m_data.begin()+_nIndex+1 );
 	//	}
 	//	else if( _nIndex == m_data.size()-1 ) // changing at the end
 	//	{
-	//		m_data[_nIndex].dTime = _dTime;
+	//		m_data[_nIndex].time = _dTime;
 
 	//		// check if the previous value can be interpolated
-	//		double dInterpVal = GetInterpolation( _nIndex-2, _nIndex, m_data[_nIndex-1].dTime );
-	//		double dRealVal = m_data[_nIndex-1].dValue;
+	//		double dInterpVal = GetInterpolation( _nIndex-2, _nIndex, m_data[_nIndex-1].time );
+	//		double dRealVal = m_data[_nIndex-1].value;
 	//		if( std::fabs( dRealVal - dInterpVal ) <= std::fabs( dRealVal ) * m_dRTol + m_dATol ) // previous value can be removed
 	//			m_data.erase( m_data.begin()+_nIndex-1 );
 	//	}
@@ -434,9 +434,9 @@ void CTDArray::SetData(size_t _nIndex, double _dTime, double _dValue)
 	//	{
 	//		// check if the value can be interpolated
 	//		double dInterpVal = GetInterpolation( _nIndex-1, _nIndex+1, _dTime );
-	//		double dRealVal = m_data[_nIndex].dValue;
+	//		double dRealVal = m_data[_nIndex].value;
 	//		if( std::fabs( dRealVal - dInterpVal ) > std::fabs( dRealVal ) * m_dRTol + m_dATol ) // value can't be interpolated. set
-	//			m_data[_nIndex].dTime = _dTime;
+	//			m_data[_nIndex].time = _dTime;
 	//	}
 	//}
 	//else // adding of new point, inserting
@@ -447,12 +447,12 @@ void CTDArray::SetData(size_t _nIndex, double _dTime, double _dValue)
 	//	}
 	//	else if( _nIndex == 0 ) // adding to the beginning
 	//	{
-	//		double dInterpVal = GetInterpolation( _dValue, m_data[_nIndex+1].dValue, _dTime, m_data[_nIndex+1].dTime, m_data[_nIndex].dTime );
-	//		double dRealVal = m_data[_nIndex].dValue;
+	//		double dInterpVal = GetInterpolation( _dValue, m_data[_nIndex+1].value, _dTime, m_data[_nIndex+1].time, m_data[_nIndex].time );
+	//		double dRealVal = m_data[_nIndex].value;
 	//		if( std::fabs( dRealVal - dInterpVal ) <= std::fabs( dRealVal ) * m_dRTol + m_dATol ) // next value can be removed
 	//		{
-	//			m_data[_nIndex].dTime = _dTime;
-	//			m_data[_nIndex].dValue = _dValue;
+	//			m_data[_nIndex].time = _dTime;
+	//			m_data[_nIndex].value = _dValue;
 	//		}
 	//		else // insert new
 	//		{
@@ -461,12 +461,12 @@ void CTDArray::SetData(size_t _nIndex, double _dTime, double _dValue)
 	//	}
 	//	else if( _nIndex == m_data.size() ) // adding to the end
 	//	{
-	//		double dInterpVal = GetInterpolation( m_data[_nIndex-2].dValue, _dValue, m_data[_nIndex-2].dTime, _dTime, m_data[_nIndex-1].dTime );
-	//		double dRealVal = m_data[_nIndex-1].dValue;
+	//		double dInterpVal = GetInterpolation( m_data[_nIndex-2].value, _dValue, m_data[_nIndex-2].time, _dTime, m_data[_nIndex-1].time );
+	//		double dRealVal = m_data[_nIndex-1].value;
 	//		if( std::fabs( dRealVal - dInterpVal ) <= std::fabs( dRealVal ) * m_dRTol + m_dATol ) // next value can be removed
 	//		{
-	//			m_data[_nIndex-1].dTime = _dTime;
-	//			m_data[_nIndex-1].dValue = _dValue;
+	//			m_data[_nIndex-1].time = _dTime;
+	//			m_data[_nIndex-1].value = _dValue;
 	//		}
 	//		else // insert new
 	//		{
@@ -487,7 +487,7 @@ void CTDArray::SetData(size_t _nIndex, double _dTime, double _dValue)
 
 //double CTDArray::GetInterpolation(unsigned _nIndex1, unsigned _nIndex2, double _dTime) const
 //{
-//	return ( m_data[_nIndex2].dValue - m_data[_nIndex1].dValue ) / ( m_data[_nIndex2].dTime - m_data[_nIndex1].dTime ) * ( _dTime - m_data[_nIndex1].dTime ) + m_data[_nIndex1].dValue;
+//	return ( m_data[_nIndex2].value - m_data[_nIndex1].value ) / ( m_data[_nIndex2].time - m_data[_nIndex1].time ) * ( _dTime - m_data[_nIndex1].time ) + m_data[_nIndex1].value;
 //}
 //
 //double CTDArray::GetInterpolation(double _dLVal, double _dRVal, double _dLTime, double _dRTime, double _dTime) const

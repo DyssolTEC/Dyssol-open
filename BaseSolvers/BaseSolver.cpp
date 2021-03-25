@@ -3,58 +3,58 @@
 #include "BaseSolver.h"
 #include <stdexcept>
 
-CExternalSolver::CExternalSolver():
+CBaseSolver::CBaseSolver():
 	m_nCompilerVer(COMPILER_VERSION),
 	m_solverType(ESolverTypes::SOLVER_NONE),
 	m_solverName(""),
 	m_authorName(""),
 	m_solverUniqueKey(""),
-	m_solverVersion(1)
+	m_solverVersion(0)
 {
 }
 
-void CExternalSolver::Initialize()
+void CBaseSolver::Initialize()
 {
 }
 
-void CExternalSolver::Finalize()
+void CBaseSolver::Finalize()
 {
 }
 
-void CExternalSolver::SaveState()
+void CBaseSolver::SaveState()
 {
 }
 
-void CExternalSolver::LoadState()
+void CBaseSolver::LoadState()
 {
 }
 
-ESolverTypes CExternalSolver::GetType() const
+ESolverTypes CBaseSolver::GetType() const
 {
 	return m_solverType;
 }
 
-std::string CExternalSolver::GetName() const
+std::string CBaseSolver::GetName() const
 {
 	return m_solverName;
 }
 
-std::string CExternalSolver::GetUniqueID() const
+std::string CBaseSolver::GetUniqueID() const
 {
 	return m_solverUniqueKey;
 }
 
-std::string CExternalSolver::GetAuthorName() const
+std::string CBaseSolver::GetAuthorName() const
 {
 	return m_authorName;
 }
 
-unsigned CExternalSolver::GetVersion() const
+unsigned CBaseSolver::GetVersion() const
 {
 	return m_solverVersion;
 }
 
-void CExternalSolver::RaiseError(const std::string& _sDescription) const
+void CBaseSolver::RaiseError(const std::string& _sDescription) const
 {
 	throw std::logic_error(m_solverName + ": " + _sDescription);
 }

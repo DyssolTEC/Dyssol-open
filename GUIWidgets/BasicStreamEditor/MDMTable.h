@@ -20,11 +20,11 @@ public:
 	CMDMTable(QWidget *parent);
 	~CMDMTable();
 
-	void SetDistribution( CMDMatrix* _pDistribution, std::vector<std::string>& _sNames );
+	void SetDistribution( CMDMatrix* _pDistribution, const std::vector<std::string>& _sNames );
 	void SetEditable(bool _bEditable);				// Turn on/off edit possibility.
 
 private:
-	void SetHeaders( std::vector<std::string>& _sNames );
+	void SetHeaders(const std::vector<std::string>& _sNames);
 	void CheckNormalization();
 
 signals:

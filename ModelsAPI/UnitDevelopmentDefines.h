@@ -2,12 +2,17 @@
 
 #pragma once
 
-#include "MaterialStream.h"
+#include "Stream.h"
 #include "DAESolver.h"
 #include "NLSolver.h"
 #include "DynamicUnit.h"
 #include "SteadyStateUnit.h"
+#include "TransformMatrix.h"
+#include "Phase.h"
+#include "TimeDependentValue.h"
+#include "MaterialsDatabase.h"
 #include "DistributionsFunctions.h"
 #include "StringFunctions.h"
 #include "DyssolUtilities.h"
 #include "ThreadPool.h"
+#include "ContainerFunctions.h"

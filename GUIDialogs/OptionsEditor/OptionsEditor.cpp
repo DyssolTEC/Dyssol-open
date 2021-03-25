@@ -1,13 +1,14 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "OptionsEditor.h"
-#include "FlowsheetParameters.h"
+#include "Flowsheet.h"
+#include "ParametersHolder.h"
 #include "DyssolUtilities.h"
 
-COptionsEditor::COptionsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pMaterialsDB, QWidget* parent /*= 0*/, Qt::WindowFlags flags /*= 0*/)
+COptionsEditor::COptionsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pMaterialsDB, QWidget* parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	: QDialog(parent, flags),
 	m_pFlowsheet(_pFlowsheet),
-	m_pParams(m_pFlowsheet->m_pParams),
+	m_pParams(m_pFlowsheet->GetParameters()),
 	m_pMaterialsDB(_pMaterialsDB)
 {
 	ui.setupUi(this);
@@ -39,6 +40,9 @@ void COptionsEditor::UpdateWholeView()
 	ui.lineEditMinFraction->setText(QString::number(m_pParams->minFraction));
 	ui.lineEditSaveTimeStep->setText(QString::number(m_pParams->saveTimeStep));
 	ui.checkBoxSaveTimeStepHoldup->setChecked(m_pParams->saveTimeStepFlagHoldups);
+	ui.lineEditTMin->setText(QString::number(m_pParams->enthalpyMinT));
+	ui.lineEditTMax->setText(QString::number(m_pParams->enthalpyMaxT));
+	ui.lineEditTIntervals->setText(QString::number(m_pParams->enthalpyInt));
 	ui.lineEditInitialWindow->setText(QString::number(m_pParams->initTimeWindow));
 	ui.lineEditMinWindow->setText(QString::number(m_pParams->minTimeWindow));
 	ui.lineEditMaxWindow->setText(QString::number(m_pParams->maxTimeWindow));
@@ -159,6 +163,9 @@ void COptionsEditor::ApplyChanges()
 	m_pParams->MinFraction(ui.lineEditMinFraction->text().toDouble());
 	m_pParams->SaveTimeStep(ui.lineEditSaveTimeStep->text().toDouble());
 	m_pParams->SaveTimeStepFlagHoldups(ui.checkBoxSaveTimeStepHoldup->isChecked());
+	m_pParams->EnthalpyMinT(ui.lineEditTMin->text().toDouble());
+	m_pParams->EnthalpyMaxT(ui.lineEditTMax->text().toDouble());
+	m_pParams->EnthalpyInt(ui.lineEditTIntervals->text().toDouble());
 	m_pParams->InitTimeWindow(ui.lineEditInitialWindow->text().toDouble());
 	m_pParams->MinTimeWindow(ui.lineEditMinWindow->text().toDouble());
 	m_pParams->MaxTimeWindow(ui.lineEditMaxWindow->text().toDouble());
@@ -177,6 +184,8 @@ void COptionsEditor::ApplyChanges()
 	m_pParams->CacheFlagInternalAfterReload(ui.checkBoxCacheInternalFlag->isChecked());
 	m_pParams->FileSingleFlag(!ui.checkBoxSplitFile->isChecked());
 
+	m_pFlowsheet->UpdateToleranceSettings();
+	m_pFlowsheet->UpdateThermodynamicsSettings();
 	emit DataChanged();
 	QDialog::accept();
 }

@@ -4,6 +4,7 @@
 #include "StringFunctions.h"
 #include "DyssolUtilities.h"
 #include "DyssolStringConstants.h"
+#include "ContainerFunctions.h"
 #include <fstream>
 #include <sstream>
 
@@ -456,7 +457,6 @@ bool CMaterialsDatabase::LoadFromFileV3(std::ifstream& _file)
 			case MDBDescriptors::EPropertyType::CONSTANT:	  currPropDescr = &activeConstProperties[static_cast<ECompoundConstProperties>(GetValueFromStream<unsigned>(&ss))]; break;
 			case MDBDescriptors::EPropertyType::TP_DEPENDENT: currPropDescr = &activeTPDepProperties[static_cast<ECompoundTPProperties>(GetValueFromStream<unsigned>(&ss))];	break;
 			case MDBDescriptors::EPropertyType::INTERACTION:  currPropDescr = &activeInterProperties[static_cast<EInteractionProperties>(GetValueFromStream<unsigned>(&ss))];	break;
-			default:;
 			}
 			break;
 		case ETXTFileKeys::PROPERTY_NAME:
@@ -574,7 +574,7 @@ CCompound* CMaterialsDatabase::AddCompound(const std::string& _sCompoundUniqueKe
 CCompound* CMaterialsDatabase::AddCompound(const CCompound& _compound)
 {
 	// generate unique key
-	const std::string sKey = GenerateUniqueString(_compound.GetKey(), GetCompoundsKeys());
+	const std::string sKey = GenerateUniqueKey(_compound.GetKey(), GetCompoundsKeys());
 	// add new compound
 	m_vCompounds.emplace_back(_compound);
 	// set key
@@ -663,6 +663,17 @@ const CCompound* CMaterialsDatabase::GetCompoundByName(const std::string& _sComp
 		if (c.GetName() == _sCompoundName)
 			return &c;
 	return nullptr;
+}
+
+std::vector<std::string> CMaterialsDatabase::GetCompoundsNames(const std::vector<std::string>& _keys) const
+{
+	std::vector<std::string> res;
+	for (const auto& key : _keys)
+	{
+		const auto* compound = GetCompound(key);
+		res.push_back(compound ? compound->GetName() : "");
+	}
+	return res;
 }
 
 double CMaterialsDatabase::GetConstPropertyValue(const std::string& _sCompoundUniqueKey, ECompoundConstProperties _nConstPropType) const

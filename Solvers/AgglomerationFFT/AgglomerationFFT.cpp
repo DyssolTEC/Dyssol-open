@@ -9,14 +9,12 @@ extern "C" DECLDIR CAgglomerationSolver* CREATE_SOLVER_FUN_AGG1()
 	return new CAgglomerationFFT();
 }
 
-CAgglomerationFFT::CAgglomerationFFT()
+void CAgglomerationFFT::CreateBasicInfo()
 {
 	m_solverName = "Agglomeration Solver FFT";
 	m_authorName = "Lusine Shahmuradyan / Robin Ahrens";
 	m_solverUniqueKey = "5547D68E93E844F8A55A36CB957A253B";
 	m_solverVersion = 4;
-
-	m_rank = 3;
 }
 
 void CAgglomerationFFT::Initialize(const std::vector<double>& _vGrid, double _beta0, EKernels _kernel, size_t _rank, const std::vector<double>& vParams)

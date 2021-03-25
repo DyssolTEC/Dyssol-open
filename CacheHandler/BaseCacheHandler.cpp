@@ -160,11 +160,11 @@ void CBaseCacheHandler::CreateFile()
 	if (!FileSystem::DirExists(StringFunctions::UnicodePath(m_dirPath)))
 		FileSystem::CreateDir(StringFunctions::UnicodePath(m_dirPath));
 
-	m_fileName = m_dirPath + L"/" + m_fileNamePrefix + StringFunctions::String2WString(StringFunctions::GenerateRandomString());
+	m_fileName = m_dirPath + L"/" + m_fileNamePrefix + StringFunctions::String2WString(StringFunctions::GenerateRandomKey());
 	std::wstring sBufName = m_fileName + L"0" + m_fileExt;
 	while (FileSystem::FileExists(StringFunctions::UnicodePath(sBufName)))
 	{
-		m_fileName = m_dirPath + L"/" + m_fileNamePrefix + StringFunctions::String2WString(StringFunctions::GenerateRandomString());
+		m_fileName = m_dirPath + L"/" + m_fileNamePrefix + StringFunctions::String2WString(StringFunctions::GenerateRandomKey());
 		sBufName = m_fileName + L"0" + m_fileExt;
 	}
 
@@ -194,7 +194,7 @@ std::fstream* CBaseCacheHandler::OpenFileToWrite(SDescriptor& _currDescriptor, b
 	{
 		for (size_t iFile = 0; ; ++iFile)
 		{
-			std::wstring bufName = m_fileName + std::to_wstring(iFile) + m_fileExt;
+			const std::wstring bufName = m_fileName + std::to_wstring(iFile) + m_fileExt;
 			const uint64_t currFileSize = FileSystem::FileSize(StringFunctions::UnicodePath(bufName));
 			if (currFileSize == static_cast<uint64_t>(-1)) // file not exists
 			{

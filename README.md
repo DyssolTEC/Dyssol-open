@@ -7,36 +7,62 @@ If you want refer to Dyssol please use contribution of [Skorych et al., 2020](ht
 
 For new versions and updates, please check [here](https://github.com/FlowsheetSimulation/Dyssol-open/releases/latest).
 
-# Requirements 
+# Installation requirements 
 Dyssol should install and work on all latest versions of Windows.
-Requires Visual C++ Redistributable for Visual Studio 2015 to run.
-
-# Compilation
-A fully functional version can be compiled and biult with Microsoft Visual Studio 2015. A command-line version can also be compiled on Linux.
-
-Requirements on Windows:
-- Microsoft Visual Studio 2015
-- Qt 5.8 msvc2015 / Qt 5.8 msvc2015_64
-- Qt Visual Studio Tools for Visual Studio 2015
-- Git
-
-Also, other versions of Microsoft Visual Studio can be used, but additional preparations are required:
-- All statically linked external libraries must be precompiled using the selected version. Scripts in ./ExternalLibraries may be used for that. To use scripts, the following requirements apply: Visual Studio 14 2015, cmake, PowerShell 5.0.
-- If required, files assiciated with the Models Creator tool should be updated. They to be found in ./DyssolInstallers/Data/VCProject
-
-Requirements on Linux:
-- cmake 3.11.2
-- gcc-7, g++-7
-
-Biuld on Linux:
-- Move to ./DyssolLinux/
-- Install required build tools or run ./install_compiler.sh
-- Run ./install_hdf5.sh and ./install_sundials.sh to build all required third-party libraries
-- Run ./copy_files.sh to gather source files
-- Run ./make_dyssol to build Dyssol
+Requires Visual C++ Redistributable for Visual Studio 2019 to run.
 
 # Installation
 Run the provided installer and follow the instructions.
+
+# Compilation
+A fully functional version can be compiled and built with Microsoft Visual Studio 2019. A command-line version can also be built for Linux.
+
+## Windows
+### Compilation requirements on Windows
+- [Microsoft Visual Studio 2019](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Community&rel=16), Desktop development with C++ workload.
+- [Qt 5.15.2](https://www.qt.io/download-qt-installer) msvc2019 / msvc2019_64
+- [Qt Visual Studio Tools](https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools2019) for Visual Studio 2019
+- [CMake](https://cmake.org/download/) 3.14 or higher
+- [Git](https://git-scm.com/downloads)
+- PowerShell 5.0 (usually shipped with Windows)
+
+### Compilation procedure on Windows
+- Make sure all programs and tools from the [list](#Compilation-requirements) are installed.
+- Setup Qt Visual Studio Tools extension to point to the installed Qt libraries. In Visual Studio 2019, go to Extensions → Qt VS Tools → Qt Options → Add → ... → Navigate in the Qt installation directory to `Qt/5.15.0/msvc2019` → OK. Repeat for `Qt/5.15.0/msvc2019_64`.
+- Compile and build external statically linked libraries: zlib, HDF5, SUNDIALS. To do this, navigate to `Dyssol/ExternalLibraries/` and execute file `RunAll.bat`. It will start building all the required libraries by executing files `CompileZLib.ps1`, `CompileHDF5.ps1`, `CompileSundials.ps1`. To use the scripts, the following requirements apply: Visual Studio 16 2019, CMake, PowerShell 5.0.
+- Open `Dyssol/Dyssol.sln` with Visual Studio and build the solution.
+
+Also, other versions of Microsoft Visual Studio can be used, but additional preparations are required:
+- Install build tools for the corresponding Visual Studio.
+- Configure all *.ps1 scripts to use the required version of Visual Studio build tools before running `Dyssol/ExternalLibraries/RunAll.bat`.
+- If the Models Creator tool is required, files associated with it may need to be updated. They to be found in `Dyssol/DyssolInstallers/Data/VCProject/`.
+
+## Linux
+### Compilation requirements on Linux
+- gcc-9, g++-9
+- CMake 3.14 or higher
+
+### Compilation procedure on Linux
+- Navigate to `Dyssol/DyssolLinux/`
+- Install the required build tools manually or run
+```sh
+$ sudo ./install_gcc.sh
+$ sudo ./install_cmake.sh
+```
+- Build and install all required third-party libraries.
+```sh
+$ ./install_hdf5.sh
+$ ./install_sundials.sh
+```
+- Gather all source files.
+```sh
+$ ./copy_files.sh
+```
+- Build Dyssol.
+```sh
+$ ./make_dyssol.sh
+```
+- The compiled executable file and all the units libraries will appear in `Dyssol/DyssolLinux/compiled/`
 
 # Code organization
 - BaseSolvers - interfaces for equation solvers
@@ -56,12 +82,12 @@ Run the provided installer and follow the instructions.
 - Modules - additional modules
 - PropertySheets - projects settings for Visual Studio
 - SimulatorCore - core components
-- Solvers - all solvers and templetes for them
+- Solvers - all solvers and templates for them
 - Units - all units and temp0lates for them
-- Utilities - auxiliary programm components
+- Utilities - auxiliary program components
 - Dyssol.sln - main file of the Visual Studio solution
 - LICENSE - license agreement
-- Materials.dmdb - examplary database of meterials 
+- Materials.dmdb - exemplary database of materials 
 - README - this file
 
 # Installation directory organization 
@@ -72,6 +98,7 @@ Run the provided installer and follow the instructions.
 - Licenses – information about licenses 
 - platforms - Qt libraries to support GUI
 - Solvers – libraries of developed solvers
+- styles - Qt libraries to support GUI
 - Units – libraries of developed units
 - VCProject – Models Creator tool: template project for Microsoft Visual Studio 
 - Dyssol.exe – main executable of Dyssol
@@ -83,9 +110,9 @@ Run the provided installer and follow the instructions.
 - unins000.exe – Dyssol uninstaller
 
 # Third-party tools and libraries
-- [Qt 5.11.3](https://www.qt.io/) – The Qt Company - [LGPL v3](https://doc.qt.io/qt-5/lgpl.html)
-- [HDF5 v1.10.2](https://www.hdfgroup.org/downloads/hdf5/) – HDF Group - [HDF Licence](https://support.hdfgroup.org/ftp/HDF5/current/src/unpacked/COPYING)
-- [zlib v1.2.11](https://www.zlib.net/) – Jean-loup Gailly and Mark Adler - [zlib License](https://www.zlib.net/zlib_license.html)
-- [SUNDIALS v3.1.0](https://computing.llnl.gov/projects/sundials/) – Lawrence Livermore National Security - [BSD-3-Clause License]( https://computation.llnl.gov/projects/sundials/license)
-- [Inno Setup v5.6.1](https://jrsoftware.org/isinfo.php) – Jordan Russell - [Inno Setup License](http://www.jrsoftware.org/files/is/license.txt)
-- [KISS FFT v131](https://github.com/mborgerding/kissfft) – Mark Borgerding - [BSD-3-Clause License](https://github.com/mborgerding/kissfft/blob/master/COPYING)
+- [Qt 5.15.2](https://www.qt.io/) – The Qt Company - [LGPL v3](https://doc.qt.io/qt-5/lgpl.html)
+- [HDF5 v1.12.0](https://www.hdfgroup.org/downloads/hdf5/) – HDF Group - [HDF license](https://support.hdfgroup.org/ftp/HDF5/releases/COPYING)
+- [zlib v1.2.11](https://www.zlib.net/) – Jean-loup Gailly and Mark Adler - [zlib license](https://www.zlib.net/zlib_license.html)
+- [SUNDIALS v5.6.1](https://computing.llnl.gov/projects/sundials/) – Lawrence Livermore National Security and Southern Methodist University - [BSD-3-Clause license](https://computing.llnl.gov/projects/sundials/license)
+- [Inno Setup v6.0.5](https://jrsoftware.org/isinfo.php) – Jordan Russell - [Inno Setup license](http://www.jrsoftware.org/files/is/license.txt)
+- [KISS FFT v131](https://github.com/mborgerding/kissfft) – Mark Borgerding - [BSD-3-Clause license](https://github.com/mborgerding/kissfft/blob/master/COPYING)

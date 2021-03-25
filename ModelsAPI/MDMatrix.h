@@ -22,37 +22,38 @@ struct sFraction
 class CMDMatrix
 {
 private:
-	static const unsigned m_cnSaveVersion;
+	static const unsigned m_cnSaveVersion{ 2 };
 
 	std::vector<unsigned> m_vDimensions;	///< Types of the distributions
 	std::vector<unsigned> m_vClasses;		///< Number of classes of the distributions
 	std::vector<double> m_vTimePoints;		///< Vector of current time points
-	mutable sFraction *m_data;				///< Current data itself
-	double m_dMinFraction;					///< Minimal fraction. All smaller values are interpreted as 0
+	mutable sFraction *m_data{ nullptr };				///< Current data itself
+	double m_dMinFraction{ DEFAULT_MIN_FRACTION };					///< Minimal fraction. All smaller values are interpreted as 0
 
 	// ===== Variables for temporary use in recursive functions
-	mutable double m_dTempT1;
-	double m_dTempT2;
+	mutable double m_dTempT1{ 0.0 };
+	double m_dTempT2{ 0.0 };
 	mutable std::vector<unsigned> m_vTempCoords;
 	mutable std::vector<unsigned> m_vTempDims;
 	mutable std::vector<double> m_vTempValues;
-	double m_dTempValue;
-	CMDMatrix *m_pSortMatr;
+	double m_dTempValue{ 0.0 };
+	CMDMatrix* m_pSortMatr{ nullptr };
 
-	std::wstring m_sCachePath;
-	bool m_bCacheEnabled;
-	mutable CMDMatrCacher *m_pCacheHandler;
-	mutable unsigned m_nCounter;
-	mutable double m_dCurrWinStart;
-	mutable double m_dCurrWinEnd;
-	unsigned m_nCacheWindow;
-	mutable unsigned m_nNonCachedTPNum;
-	mutable size_t m_nCurrOffset;
-	mutable bool m_bCacheCoherent;
+	std::wstring m_sCachePath{ L"" };
+	bool m_bCacheEnabled{ false };
+	mutable CMDMatrCacher m_cacheHandler;
+	mutable unsigned m_nCounter{ 0 };
+	mutable double m_dCurrWinStart{ 0.0 };
+	mutable double m_dCurrWinEnd{ 0.0 };
+	size_t m_nCacheWindow{ DEFAULT_CACHE_WINDOW };
+	mutable unsigned m_nNonCachedTPNum{ 0 };
+	mutable size_t m_nCurrOffset{ 0 };
+	mutable bool m_bCacheCoherent{ false };
 
 public:
-	CMDMatrix( void );
-	~CMDMatrix( void );
+	CMDMatrix() = default;
+	CMDMatrix(const CMDMatrix& _other);
+	~CMDMatrix();
 
 	/** Clears all data, time points and dimensions.*/
 	void Clear();
@@ -86,7 +87,7 @@ public:
 	/** Adds class to a dimension.*/
 	void AddClass( unsigned _nDim );
 	/** Removes specified class from dimension.*/
-	void RemoveClass( unsigned _nDim, unsigned _nClassIndex );
+	void RemoveClass(unsigned _nDim, size_t _nClassIndex);
 	/** Returns true if matrices have the same dimensions.*/
 	bool CompareDims( const CMDMatrix& _matr ) const;
 
@@ -295,14 +296,14 @@ public:
 	// ========== Functions to SAVE / LOAD matrix
 
 	/** Save data to file.*/
-	void SaveToFile( CH5Handler& _h5File, const std::string& _sPath );
-	void SaveMDBlockToFile(CH5Handler& _h5File, const std::string& _sPath, unsigned _iFirst, unsigned _iLast, std::vector<std::vector<double>>& _vvBuf);
+	void SaveToFile( CH5Handler& _h5File, const std::string& _sPath ) const;
+	void SaveMDBlockToFile(CH5Handler& _h5File, const std::string& _sPath, unsigned _iFirst, unsigned _iLast, std::vector<std::vector<double>>& _vvBuf) const;
 	/** Load data from file*/
-	void LoadFromFile( CH5Handler& _h5File, const std::string& _sPath );
-	void LoadMDBlockFromFile(CH5Handler& _h5File, const std::string& _sPath, unsigned _iFirst, unsigned _iLast, std::vector<std::vector<double>>& vvBuf);
+	void LoadFromFile(const CH5Handler& _h5File, const std::string& _sPath );
+	void LoadMDBlockFromFile(const CH5Handler& _h5File, const std::string& _sPath, unsigned _iFirst, unsigned _iLast, std::vector<std::vector<double>>& vvBuf);
 
 	void SetCachePath(const std::wstring& _sPath);
-	void SetCacheParams( bool _bEnabled, unsigned _nWindow );
+	void SetCacheParams(bool _bEnabled, size_t _nWindow);
 
 	/** Removes all data, which can be approximated.*/
 	void CompressData( double _dStartTime, double _dEndTime, double _dATol, double _dRTol );
@@ -367,7 +368,7 @@ private:
 	/** Adds new class to a dimension with index _nDimIndex.*/
 	sFraction* AddClassRecursive( sFraction *_pFraction, unsigned _nDimIndex, unsigned _nNesting = 0 );
 	/** Removes class _nClassIndex from a dimension _nDimIndex.*/
-	sFraction* RemoveClassRecursive( sFraction *_pFraction, unsigned _nDimIndex, unsigned _nClassIndex, unsigned _nNesting = 0 );
+	sFraction* RemoveClassRecursive(sFraction *_pFraction, unsigned _nDimIndex, size_t _nClassIndex, unsigned _nNesting = 0);
 	/** Removes all data, which can be approximated in time interval [m_dTempT1, m_dTempT2].*/
 	void CompressDataRecursive( sFraction *_pFraction, double _dATol, double _dRTol, unsigned _nNesting = 0 );
 	//void NormalizeToOneRecursive( sFraction *_pFraction, unsigned _nNesting = 0 );

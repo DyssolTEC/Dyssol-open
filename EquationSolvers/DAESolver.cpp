@@ -2,7 +2,7 @@
 
 #include "DAESolver.h"
 #include <ida/ida.h>
-#include <ida/ida_direct_impl.h>
+#include <ida/ida_ls_impl.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
 #include <cstring>
@@ -132,7 +132,7 @@ bool CDAESolver::SetModel( CDAEModel* _pModel )
 	/* Create dense SUNMatrix for use in linear solves */
 	LS = SUNDenseLinearSolver(m_vectorVars, A);
 	/* Attach the matrix and linear solver */
-	if (IDADlsSetLinearSolver(m_pIDAmem, LS, A) != IDADLS_SUCCESS)
+	if (IDASetLinearSolver(m_pIDAmem, LS, A) != IDALS_SUCCESS)
 		return false;
 
 
@@ -289,11 +289,11 @@ bool CDAESolver::InitStoringMemory()
 	/* Create dense SUNMatrix for use in linear solves */
 	LS = SUNDenseLinearSolver(m_vectorVars, A);
 	/* Attach the matrix and linear solver */
-	if (IDADlsSetLinearSolver(m_pStoreIDAmem, LS, A) != IDADLS_SUCCESS)
+	if (IDASetLinearSolver(m_pStoreIDAmem, LS, A) != IDALS_SUCCESS)
 		return false;
 
-	IDAMem originMem = static_cast<IDAMemRec*>( m_pIDAmem );
-	IDAMem storeMem = static_cast<IDAMemRec*>( m_pStoreIDAmem );
+	auto* originMem = static_cast<IDAMemRec*>( m_pIDAmem );
+	auto* storeMem = static_cast<IDAMemRec*>( m_pStoreIDAmem );
 
 	// Allocate memory in m_pStoreIDAmem
 	for (size_t i = 0; i < MXORDP1; ++i)
@@ -302,7 +302,6 @@ bool CDAESolver::InitStoringMemory()
 	if (!storeMem->ida_yy)		storeMem->ida_yy    = N_VNew_Serial(nVarsCnt);
 	if (!storeMem->ida_yp)		storeMem->ida_yp    = N_VNew_Serial(nVarsCnt);
 	if (!storeMem->ida_delta)	storeMem->ida_delta = N_VNew_Serial(nVarsCnt);
-	if (!storeMem->ida_mm)		storeMem->ida_mm    = N_VNew_Serial(nVarsCnt);
 
 	return true;
 }
@@ -323,12 +322,11 @@ void CDAESolver::ClearMemory()
 	// free store IDA memory
 	if (m_pStoreIDAmem)
 	{
-		IDAMem storeMem = static_cast<IDAMemRec*>(m_pStoreIDAmem);
+		auto* storeMem = static_cast<IDAMemRec*>(m_pStoreIDAmem);
 		if (storeMem->ida_ewt)		{ N_VDestroy_Serial(storeMem->ida_ewt);		storeMem->ida_ewt = nullptr; }
 		if (storeMem->ida_yy)		{ N_VDestroy_Serial(storeMem->ida_yy);		storeMem->ida_yy = nullptr; }
 		if (storeMem->ida_yp)		{ N_VDestroy_Serial(storeMem->ida_yp);		storeMem->ida_yp = nullptr; }
 		if (storeMem->ida_delta)	{ N_VDestroy_Serial(storeMem->ida_delta);	storeMem->ida_delta = nullptr; }
-		if (storeMem->ida_mm)		{ N_VDestroy_Serial(storeMem->ida_mm);		storeMem->ida_mm = nullptr; }
 		IDAFree(&m_pStoreIDAmem);	m_pStoreIDAmem = nullptr;
 	}
 }
@@ -336,7 +334,7 @@ void CDAESolver::ClearMemory()
 void CDAESolver::CopyNVector( N_Vector _dst, N_Vector _src )
 {
 	if ((_dst == NULL) || (_src == NULL))	return;
-	std::memcpy(NV_DATA_S(_dst), NV_DATA_S(_src), sizeof(realtype)*NV_LENGTH_S(_src));
+	std::memcpy(NV_DATA_S(_dst), NV_DATA_S(_src), sizeof(realtype)*static_cast<size_t>(NV_LENGTH_S(_src)));
 }
 
 void CDAESolver::CopyIDAmem( void* _pDst, void* _pSrc )
@@ -344,12 +342,12 @@ void CDAESolver::CopyIDAmem( void* _pDst, void* _pSrc )
 	if( ( _pSrc == NULL ) || ( _pDst == NULL ) )
 		return;
 
-	IDAMem src = static_cast<IDAMemRec*>( _pSrc );
-	IDAMem dst = static_cast<IDAMemRec*>( _pDst );
+	auto* src = static_cast<IDAMemRec*>( _pSrc );
+	auto* dst = static_cast<IDAMemRec*>( _pDst );
 
 	// Divided differences array and associated minor arrays
 	for(size_t i=0; i<MXORDP1; ++i )
-		std::memcpy( NV_DATA_S( dst->ida_phi[i] ), NV_DATA_S( src->ida_phi[i] ), sizeof(realtype)*NV_LENGTH_S( src->ida_phi[i] ) );
+		std::memcpy( NV_DATA_S( dst->ida_phi[i] ), NV_DATA_S( src->ida_phi[i] ), sizeof(realtype)*static_cast<size_t>(NV_LENGTH_S(src->ida_phi[i])) );
 	std::memcpy( dst->ida_psi, src->ida_psi, sizeof(realtype)*MXORDP1 );
 	std::memcpy( dst->ida_alpha, src->ida_alpha, sizeof(realtype)*MXORDP1 );
 	std::memcpy( dst->ida_beta, src->ida_beta, sizeof(realtype)*MXORDP1 );
@@ -358,15 +356,13 @@ void CDAESolver::CopyIDAmem( void* _pDst, void* _pSrc )
 
 	/// N_Vectors
 	if( ( src->ida_ewt != NULL ) && ( dst->ida_ewt != NULL) )
-		std::memcpy( NV_DATA_S( dst->ida_ewt ), NV_DATA_S( src->ida_ewt ), sizeof(realtype)*NV_LENGTH_S( src->ida_ewt ) );
+		std::memcpy( NV_DATA_S( dst->ida_ewt ), NV_DATA_S( src->ida_ewt ), sizeof(realtype)*static_cast<size_t>(NV_LENGTH_S(src->ida_ewt)) );
 	if( ( src->ida_yy != NULL ) && ( dst->ida_yy != NULL) )
-		std::memcpy( NV_DATA_S( dst->ida_yy ), NV_DATA_S( src->ida_yy ), sizeof(realtype)*NV_LENGTH_S( src->ida_yy ) );
+		std::memcpy( NV_DATA_S( dst->ida_yy ), NV_DATA_S( src->ida_yy ), sizeof(realtype)*static_cast<size_t>(NV_LENGTH_S(src->ida_yy)) );
 	if( ( src->ida_yp != NULL ) && ( dst->ida_yp != NULL) )
-		std::memcpy( NV_DATA_S( dst->ida_yp ), NV_DATA_S( src->ida_yp ), sizeof(realtype)*NV_LENGTH_S( src->ida_yp ) );
+		std::memcpy( NV_DATA_S( dst->ida_yp ), NV_DATA_S( src->ida_yp ), sizeof(realtype)*static_cast<size_t>(NV_LENGTH_S(src->ida_yp)) );
 	if( ( src->ida_delta != NULL ) && ( dst->ida_delta != NULL) )
-		std::memcpy( NV_DATA_S( dst->ida_delta ), NV_DATA_S( src->ida_delta ), sizeof(realtype)*NV_LENGTH_S( src->ida_delta ) );
-	if( ( src->ida_mm != NULL ) && ( dst->ida_mm != NULL) )
-		std::memcpy( NV_DATA_S( dst->ida_mm ), NV_DATA_S( src->ida_mm ), sizeof(realtype)*NV_LENGTH_S( src->ida_mm ) );
+		std::memcpy( NV_DATA_S( dst->ida_delta ), NV_DATA_S( src->ida_delta ), sizeof(realtype)*static_cast<size_t>(NV_LENGTH_S(src->ida_delta)) );
 
 	/// Tstop information
 	dst->ida_tstopset = src->ida_tstopset;
@@ -416,12 +412,12 @@ void CDAESolver::CopyIDAmem( void* _pDst, void* _pSrc )
 	dst->ida_taskc = src->ida_taskc;
 
 	/// Linear Solver specific memory
-	((IDADlsMemRec*)dst->ida_lmem)->nje = ((IDADlsMemRec*)src->ida_lmem)->nje;
-	((IDADlsMemRec*)dst->ida_lmem)->nreDQ = ((IDADlsMemRec*)src->ida_lmem)->nreDQ;
+	((IDALsMemRec*)dst->ida_lmem)->nje = ((IDALsMemRec*)src->ida_lmem)->nje;
+	((IDALsMemRec*)dst->ida_lmem)->nreDQ = ((IDALsMemRec*)src->ida_lmem)->nreDQ;
 
-	 SUNMatCopy(((IDADlsMemRec*)src->ida_lmem)->J, ((IDADlsMemRec*)dst->ida_lmem)->J);
-	if ((((IDADlsMemRec*)dst->ida_lmem)->x != NULL) && (((IDADlsMemRec*)src->ida_lmem)->x != NULL))
-		std::memcpy(NV_DATA_S(((IDADlsMemRec*)dst->ida_lmem)->x), NV_DATA_S(((IDADlsMemRec*)src->ida_lmem)->x), sizeof(realtype)*NV_LENGTH_S(((IDADlsMemRec*)src->ida_lmem)->x));
+	 SUNMatCopy(((IDALsMemRec*)src->ida_lmem)->J, ((IDALsMemRec*)dst->ida_lmem)->J);
+	if ((((IDALsMemRec*)dst->ida_lmem)->x != NULL) && (((IDALsMemRec*)src->ida_lmem)->x != NULL))
+		std::memcpy(NV_DATA_S(((IDALsMemRec*)dst->ida_lmem)->x), NV_DATA_S(((IDALsMemRec*)src->ida_lmem)->x), sizeof(realtype)*static_cast<size_t>(NV_LENGTH_S(((IDALsMemRec*)src->ida_lmem)->x)));
 }
 
 void CDAESolver::ErrorHandler( int _nErrorCode, const char *_pModule, const char *_pFunction, char *_pMsg, void *_sOutString )

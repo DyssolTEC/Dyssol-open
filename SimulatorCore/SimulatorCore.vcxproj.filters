@@ -15,19 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Flowsheet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Simulator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BaseModel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Topology.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FlowsheetParameters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SimulatorLog.h">
@@ -39,21 +30,24 @@
     <ClInclude Include="CalculationSequence.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ParametersHolder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Flowsheet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigFileParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Flowsheet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Simulator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BaseModel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Topology.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FlowsheetParameters.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SimulatorLog.cpp">
@@ -63,6 +57,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CalculationSequence.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ParametersHolder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitContainer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Flowsheet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigFileParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

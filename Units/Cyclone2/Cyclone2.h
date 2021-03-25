@@ -7,8 +7,8 @@
 class CCyclone2 : public CSteadyStateUnit
 {
 public:
-	CCyclone2();
-
+	void CreateBasicInfo() override;
+	void CreateStructure() override;
 	void Initialize(double _dTime) override;
 	void Simulate(double _dTime) override;
 

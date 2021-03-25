@@ -3,10 +3,12 @@
 #pragma once
 
 #include "ui_SimulatorTab.h"
-#include "ProgressThread.h"
-#include "StatusWindow.h"
 #include <QTimer>
 #include <QElapsedTimer>
+
+class CProgressThread;
+class CSimulator;
+class CFlowsheet;
 
 class CSimulatorTab : public QWidget
 {

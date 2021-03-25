@@ -8,7 +8,7 @@
 class CSplitter : public CSteadyStateUnit
 {
 public:
-	CSplitter();
-
+	void CreateBasicInfo() override;
+	void CreateStructure() override;
 	void Simulate(double _dTime) override;
 };

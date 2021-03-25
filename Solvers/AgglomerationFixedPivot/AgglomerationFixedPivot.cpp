@@ -8,7 +8,7 @@ extern "C" DECLDIR CAgglomerationSolver* CREATE_SOLVER_FUN_AGG1()
 	return new CAgglomerationFixedPivot();
 }
 
-CAgglomerationFixedPivot::CAgglomerationFixedPivot()
+void CAgglomerationFixedPivot::CreateBasicInfo()
 {
 	m_solverName = "Agglomeration Solver Fixed Pivot";
 	m_authorName = "Lusine Shahmuradyan / Robin Ahrens";

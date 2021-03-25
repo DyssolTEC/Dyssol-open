@@ -26,6 +26,24 @@
 #define VISUAL_STUDIO_VERSION	"Visual Studio 2017 15.9"
 #elif (_MSC_VER == 1920)
 #define VISUAL_STUDIO_VERSION	"Visual Studio 2019 16.0"
+#elif (_MSC_VER == 1921)
+#define VISUAL_STUDIO_VERSION	"Visual Studio 2019 16.1"
+#elif (_MSC_VER == 1922)
+#define VISUAL_STUDIO_VERSION	"Visual Studio 2019 16.2"
+#elif (_MSC_VER == 1923)
+#define VISUAL_STUDIO_VERSION	"Visual Studio 2019 16.3"
+#elif (_MSC_VER == 1924)
+#define VISUAL_STUDIO_VERSION	"Visual Studio 2019 16.4"
+#elif (_MSC_VER == 1925)
+#define VISUAL_STUDIO_VERSION	"Visual Studio 2019 16.5"
+#elif (_MSC_VER == 1926)
+#define VISUAL_STUDIO_VERSION	"Visual Studio 2019 16.6"
+#elif (_MSC_VER == 1927)
+#define VISUAL_STUDIO_VERSION	"Visual Studio 2019 16.7"
+#elif (_MSC_VER == 1928)
+#define VISUAL_STUDIO_VERSION	"Visual Studio 2019 16.8"
+#elif (_MSC_VER == 1929)
+#define VISUAL_STUDIO_VERSION	"Visual Studio 2019 16.9"
 #endif
 
 #ifdef _WIN64

@@ -286,7 +286,7 @@ bool CDenseMDMatrix::IsNormalized()
 
 void CDenseMDMatrix::Normalize()
 {
-	VectorNormalize(m_vData);
+	::Normalize(m_vData);
 }
 
 bool CDenseMDMatrix::CheckDuplicates(const std::vector<unsigned>& _vDims) const

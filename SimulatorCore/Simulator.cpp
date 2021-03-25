@@ -1,9 +1,15 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "Simulator.h"
-#include "FlowsheetParameters.h"
-#include "MaterialStream.h"
+#include "Flowsheet.h"
+#include "ParametersHolder.h"
+#include "Stream.h"
+#include "Phase.h"
+#include "UnitContainer.h"
+#include "DynamicUnit.h"
 #include "DyssolStringConstants.h"
+#include "ContainerFunctions.h"
+#include "DistributionsGrid.h"
 #include "DyssolUtilities.h"
 
 CSimulator::CSimulator()
@@ -18,7 +24,7 @@ void CSimulator::SetFlowsheet(CFlowsheet* _pFlowsheet)
 {
 	m_pFlowsheet = _pFlowsheet;
 	m_pSequence = m_pFlowsheet->GetCalculationSequence();
-	m_pParams = m_pFlowsheet->m_pParams;
+	m_pParams = m_pFlowsheet->GetParameters();
 }
 
 void CSimulator::SetCurrentStatus(ESimulatorStatus _nStatus)
@@ -46,22 +52,19 @@ void CSimulator::Simulate()
 	m_vInitialized.clear();
 	for (const auto& partition : m_pSequence->Partitions())
 		for (const auto& model : partition.models)
-			m_vInitialized[model->GetModelKey()] = false;
+			m_vInitialized[model->GetKey()] = false;
 
 	// set initial values to tear streams
-	for (size_t i = 0; i < m_pSequence->PartitionsNumber(); ++i)
-		for (size_t j = 0; j < m_pSequence->TearStreamsNumber(i); ++j)
-		{
-			m_pSequence->PartitionTearStreams(i)[j]->CopyFromStream(&m_pFlowsheet->m_vvInitTearStreams[i][j], 0, m_pParams->initTimeWindow);
-			if (m_pSequence->PartitionTearStreams(i)[j]->GetAllTimePoints().empty()) // make sure, there is at least one time point in the stream
-				m_pSequence->PartitionTearStreams(i)[j]->AddTimePoint(0);
-		}
+	m_pFlowsheet->GetCalculationSequence()->InitializeTearStreams(m_pParams->initTimeWindow);
 
 	// Simulate all units
 	for (const auto& partition : m_pSequence->Partitions())
 	{
 		if (partition.tearStreams.empty())	// step without cycles
-			SimulateUnits(partition, 0, m_pFlowsheet->GetSimulationTime());		// simulation on time interval itself
+		{
+			SimulateUnits(partition, 0, m_pParams->endSimulationTime);		// simulation on time interval itself
+			ReduceData(partition, 0, m_pParams->endSimulationTime);
+		}
 		else															// step with recycles
 			SimulateUnitsWithRecycles(partition);								// waveform relaxation on time interval
 
@@ -70,8 +73,8 @@ void CSimulator::Simulate()
 		// Finalize all units within partition
 		for (auto& model : partition.models)
 		{
-			m_log.WriteInfo(StrConst::Sim_InfoUnitFinalization(model->GetModelName(), model->GetUnitName()));
-			model->Finalize();
+			m_log.WriteInfo(StrConst::Sim_InfoUnitFinalization(model->GetName(), model->GetModel()->GetUnitName()));
+			model->GetModel()->DoFinalizeUnit();
 		}
 	}
 
@@ -79,9 +82,7 @@ void CSimulator::Simulate()
 	if(m_pParams->initializeTearStreamsAutoFlag)
 	{
 		m_log.WriteInfo(StrConst::Sim_InfoSaveInitTearStreams);
-		for (size_t i = 0; i < m_pSequence->PartitionsNumber(); ++i)
-			for (size_t j = 0; j < m_pSequence->TearStreamsNumber(i); ++j)
-				m_pFlowsheet->m_vvInitTearStreams[i][j].CopyFromStream(m_pSequence->PartitionTearStreams(i)[j], 0, m_pParams->initTimeWindow);
+		m_pFlowsheet->GetCalculationSequence()->UpdateInitialStreams(m_pParams->initTimeWindow);
 	}
 
 	m_nCurrentStatus = ESimulatorStatus::SIMULATOR_IDLE;
@@ -89,12 +90,12 @@ void CSimulator::Simulate()
 
 void CSimulator::SimulateUnitsWithRecycles(const CCalculationSequence::SPartition& _partition)
 {
-	const std::vector<CMaterialStream*>& vRecycles = _partition.tearStreams;
+	const std::vector<CStream*>& vRecycles = _partition.tearStreams;
 
 	// check whether initial values were set to recycle streams
 	bool bTearStreamsFromInit = false; // will be true if data from m_vvInitTearStreams were used to initialize tear streams
 	for (auto recycle : vRecycles)
-		bTearStreamsFromInit |= !recycle->GetTimePointsForInterval(0, m_pParams->initTimeWindow).empty();
+		bTearStreamsFromInit |= !recycle->GetTimePoints(0, m_pParams->initTimeWindow).empty();
 
 	// initialize simulation's parameters
 	m_iTWIterationFull = 0;
@@ -106,16 +107,18 @@ void CSimulator::SimulateUnitsWithRecycles(const CCalculationSequence::SPartitio
 	double dTWStartPrev = 0;					// start time of the previous time window
 
 	// create and initialize structure of buffer streams
-	std::vector<CMaterialStream*> vRecyclesPrev(vRecycles.size());			// previous state of recycles
-	std::vector<CMaterialStream*> vRecyclesPrevPrev(vRecycles.size());		// pre-previous state of recycles
+	std::vector<CStream*> vRecyclesPrev(vRecycles.size());			// previous state of recycles
+	std::vector<CStream*> vRecyclesPrevPrev(vRecycles.size());		// pre-previous state of recycles
 	for (size_t i = 0; i < vRecycles.size(); ++i)
 	{
-		vRecyclesPrev[i] = new CMaterialStream(*vRecycles[i]);
-		vRecyclesPrevPrev[i] = new CMaterialStream(*vRecycles[i]);
+		vRecyclesPrev[i] = new CStream(*vRecycles[i]);
+		vRecyclesPrev[i]->RemoveAllTimePoints();
+		vRecyclesPrevPrev[i] = new CStream(*vRecycles[i]);
+		vRecyclesPrevPrev[i]->RemoveAllTimePoints();
 	}
 
 	// main calculation sequence
-	while (m_dTWStart < m_pFlowsheet->GetSimulationTime())
+	while (m_dTWStart < m_pParams->endSimulationTime)
 	{
 		if (m_dTWLength < m_pParams->minTimeWindow)
 			RaiseError(StrConst::Sim_ErrMinTWLength);
@@ -125,8 +128,8 @@ void CSimulator::SimulateUnitsWithRecycles(const CCalculationSequence::SPartitio
 			break;
 
 		// adjust time window
-		if (m_dTWEnd > m_pFlowsheet->GetSimulationTime())
-			m_dTWEnd = m_pFlowsheet->GetSimulationTime();
+		if (m_dTWEnd > m_pParams->endSimulationTime)
+			m_dTWEnd = m_pParams->endSimulationTime;
 
 		// write log
 		m_log.WriteInfo(StrConst::Sim_InfoRecycleStreamCalculating(m_iWindowNumber, m_iTWIterationFull, m_dTWStart, m_dTWEnd), true);
@@ -134,8 +137,8 @@ void CSimulator::SimulateUnitsWithRecycles(const CCalculationSequence::SPartitio
 		// save copies of streams
 		for (size_t j = 0; j < vRecycles.size(); ++j)
 		{
-			vRecyclesPrevPrev[j]->CopyFromStream(vRecyclesPrev[j], dTWStartPrev, m_dTWEnd);
-			vRecyclesPrev[j]->CopyFromStream(vRecycles[j], dTWStartPrev, m_dTWEnd);
+			vRecyclesPrevPrev[j]->CopyFromStream(dTWStartPrev, m_dTWEnd, vRecyclesPrev[j]);
+			vRecyclesPrev[j]->CopyFromStream(dTWStartPrev, m_dTWEnd, vRecycles[j]);
 		}
 
 		// simulation itself
@@ -151,9 +154,9 @@ void CSimulator::SimulateUnitsWithRecycles(const CCalculationSequence::SPartitio
 			if (m_dTWStart == 0 && m_iTWIterationCurr > m_pParams->iters1stUpperLimit && m_pParams->initializeTearStreamsAutoFlag && bTearStreamsFromInit)
 			{
 				m_log.WriteInfo(StrConst::Sim_InfoFalseInitTearStreams, true);					// warn the user
-				for (auto& stream : vRecycles)			stream->RemoveTimePointsAfter(0, true); // clear recycle streams
-				for (auto& stream : vRecyclesPrev)		stream->RemoveTimePointsAfter(0, true); // clear previous state of recycles
-				for (auto& stream : vRecyclesPrevPrev)	stream->RemoveTimePointsAfter(0, true); // clear pre-previous state of recycles
+				for (auto& stream : vRecycles)			stream->RemoveAllTimePoints();			// clear recycle streams
+				for (auto& stream : vRecyclesPrev)		stream->RemoveAllTimePoints();			// clear previous state of recycles
+				for (auto& stream : vRecyclesPrevPrev)	stream->RemoveAllTimePoints();			// clear pre-previous state of recycles
 				bTearStreamsFromInit = false;													// turn off the control flag to prevent a repeated reset
 				m_iTWIterationFull = 0;															// reset iteration number
 				m_iTWIterationCurr = 0;															// reset iteration number
@@ -180,13 +183,13 @@ void CSimulator::SimulateUnitsWithRecycles(const CCalculationSequence::SPartitio
 		// use old initial values instead of calculated ones to maintain the consistency of the results in consecutive simulations of the same flowsheet
 		if (m_dTWStart == 0 && m_iTWIterationFull == 1)
 			for (size_t i = 0; i < vRecycles.size(); ++i)
-				vRecycles[i]->CopyFromStream(vRecyclesPrev[i], dTWStartPrev, m_dTWEnd);
+				vRecycles[i]->CopyFromStream(dTWStartPrev, m_dTWEnd, vRecyclesPrev[i]);
 
 		// save units state
 		for (auto& model : _partition.models)
-			model->SaveInternalState(m_dTWStart, m_dTWEnd);
+			model->GetModel()->DoSaveStateUnit(m_dTWStart, m_dTWEnd);
 
-		if (m_dTWEnd < m_pFlowsheet->GetSimulationTime())
+		if (m_dTWEnd < m_pParams->endSimulationTime)
 		{
 			// recalculate time window if necessary
 			if (m_iTWIterationCurr < m_pParams->itersLowerLimit)
@@ -235,31 +238,30 @@ void CSimulator::SimulateUnits(const CCalculationSequence::SPartition& _partitio
 	for (auto& model : _partition.models)
 	{
 		// current model
-		m_sUnitName = model->GetModelName();
+		m_unitName = model->GetName();
 
 		// initialize unit if not yet initialized
-		if (!m_vInitialized[model->GetModelKey()])
+		if (!m_vInitialized[model->GetKey()])
 		{
 			InitializeUnit(*model, _t1);
-			m_vInitialized[model->GetModelKey()] = true;
+			m_vInitialized[model->GetKey()] = true;
 		}
 
 		// check for stopping flag
 		if (m_nCurrentStatus == ESimulatorStatus::SIMULATOR_SHOULD_BE_STOPPED) break;
 
 		// write log
-		m_log.WriteInfo(StrConst::Sim_InfoUnitSimulation(m_sUnitName, model->GetUnitName(), _t1, _t2));
+		m_log.WriteInfo(StrConst::Sim_InfoUnitSimulation(m_unitName, model->GetModel()->GetUnitName(), _t1, _t2));
 
 		// load previous state
-		model->LoadInternalState();
+		model->GetModel()->DoLoadStateUnit();
 
 		// clean output streams
-		for (auto& port : model->GetUnitPorts())
-			if (port.nType == OUTPUT_PORT)
-				port.pStream->RemoveTimePointsAfter(_t1);
+		for (auto& port : model->GetModel()->GetPortsManager().GetAllOutputPorts())
+			port->GetStream()->RemoveTimePointsAfter(_t1);
 
 		// simulate
-		if (model->IsDynamic())	// for dynamic units
+		if (dynamic_cast<CDynamicUnit*>(model->GetModel()))	// for dynamic units
 		{
 			// simulate
 			SimulateUnit(*model, _t1, _t2);
@@ -267,7 +269,9 @@ void CSimulator::SimulateUnits(const CCalculationSequence::SPartition& _partitio
 		else	// for steady-state units
 		{
 			// get all time points in current window + _dEndTime
-			std::vector<double> vTimePoints = model->GetAllInletTimePoints(_t1, _t2, false, true);
+			std::vector<double> vTimePoints = model->GetModel()->GetAllTimePoints(_t1, _t2);
+			if (std::fabs(vTimePoints.back() - _t2) > 16 * std::numeric_limits<double>::epsilon())
+				vTimePoints.push_back(_t2);
 			if (vTimePoints.front() != 0)
 				vTimePoints.erase(vTimePoints.begin()); // already calculated on previous time window
 
@@ -283,59 +287,59 @@ void CSimulator::SimulateUnits(const CCalculationSequence::SPartition& _partitio
 	}
 }
 
-void CSimulator::SimulateUnit(CBaseModel& _model, double _t1, double _t2 /*= -1*/)
+void CSimulator::SimulateUnit(CUnitContainer& _model, double _t1, double _t2 /*= -1*/)
 {
 	// simulate
 	try {
-		if(_model.IsDynamic())
-			_model.Simulate(_t1, _t2);
+		if(dynamic_cast<CDynamicUnit*>(_model.GetModel()))
+			_model.GetModel()->Simulate(_t1, _t2);
 		else
-			_model.Simulate(_t1);
+			_model.GetModel()->Simulate(_t1);
 	}
 	catch (const std::logic_error& e) {
 		RaiseError(e.what());
 	}
 	// check for errors
-	if (_model.CheckError())
+	if (_model.GetModel()->HasError())
 	{
-		RaiseError(_model.GetErrorDescription());
-		_model.ClearError();
+		RaiseError(_model.GetModel()->GetErrorMessage());
+		_model.GetModel()->ClearError();
 	}
 	// check for warnings
-	if (_model.CheckWarning())
+	if (_model.GetModel()->HasWarning())
 	{
-		m_log.WriteWarning(_model.GetWarningDescription());
-		_model.ClearWarning();
+		m_log.WriteWarning(_model.GetModel()->GetWarningMessage());
+		_model.GetModel()->ClearWarning();
 	}
 	// check for info
-	if (_model.CheckInfo())
+	if (_model.GetModel()->HasInfo())
 	{
-		m_log.WriteInfo(_model.GetInfoDescription());
-		_model.ClearInfo();
+		m_log.WriteInfo(_model.GetModel()->GetInfoMessage());
+		_model.GetModel()->ClearInfo();
 	}
 }
 
-void CSimulator::InitializeUnit(CBaseModel& _model, double _t)
+void CSimulator::InitializeUnit(CUnitContainer& _model, double _t)
 {
 	// write log
-	m_log.WriteInfo(StrConst::Sim_InfoUnitInitialization(m_sUnitName, _model.GetUnitName()));
+	m_log.WriteInfo(StrConst::Sim_InfoUnitInitialization(m_unitName, _model.GetModel()->GetUnitName()));
 	try {
-		_model.Initialize(_t);
+		_model.GetModel()->DoInitializeUnit();
 	}
 	catch (const std::logic_error& e) {
 		RaiseError(e.what());
 	}
 
-	if (_model.CheckError())
-		RaiseError(_model.GetErrorDescription());
+	if (_model.GetModel()->HasError())
+		RaiseError(_model.GetModel()->GetErrorMessage());
 
 	// check unit parameters
-	for (const CBaseUnitParameter* param : _model.GetUnitParametersManager()->AllParameters())
+	for (const CBaseUnitParameter* param : _model.GetModel()->GetUnitParametersManager().GetParameters())
 		if (!param->IsInBounds())
-			m_log.WriteWarning(StrConst::Sim_WarningParamOutOfRange(_model.GetUnitName(), _model.GetModelName(), param->GetName()));
+			m_log.WriteWarning(StrConst::Sim_WarningParamOutOfRange(_model.GetModel()->GetUnitName(), m_unitName, param->GetName()));
 }
 
-bool CSimulator::CheckConvergence(const std::vector<CMaterialStream*>& _vStreams1, const std::vector<CMaterialStream*>& _vStreams2, double _t1, double _t2) const
+bool CSimulator::CheckConvergence(const std::vector<CStream*>& _vStreams1, const std::vector<CStream*>& _vStreams2, double _t1, double _t2) const
 {
 	for (size_t i = 0; i < _vStreams1.size(); ++i)
 		if (!CompareStreams(*_vStreams1[i], *_vStreams2[i], _t1, _t2))
@@ -343,10 +347,10 @@ bool CSimulator::CheckConvergence(const std::vector<CMaterialStream*>& _vStreams
 	return true;
 }
 
-bool CSimulator::CompareStreams(const CMaterialStream& _str1, const CMaterialStream& _str2, double _t1, double _t2) const
+bool CSimulator::CompareStreams(const CStream& _str1, const CStream& _str2, double _t1, double _t2) const
 {
 	// get all time points
-	std::vector<double> vTimePoints = VectorsUnionSorted(_str1.GetTimePointsForInterval(_t1, _t2), _str2.GetTimePointsForInterval(_t1, _t2));
+	std::vector<double> vTimePoints = VectorsUnionSorted(_str1.GetTimePoints(_t1, _t2), _str2.GetTimePoints(_t1, _t2));
 	if (vTimePoints.empty())
 		return true;
 
@@ -354,44 +358,11 @@ bool CSimulator::CompareStreams(const CMaterialStream& _str1, const CMaterialStr
 	if (vTimePoints.front() != 0)
 		vTimePoints.erase(vTimePoints.begin());
 
-	// check for MTP
+	// compare
 	for (auto t : vTimePoints)
-		if (!CompareVectors(_str1.GetDistrStreamMTP()->GetValue(t), _str2.GetDistrStreamMTP()->GetValue(t)))
+		if (!CBaseStream::AreEqual(t, _str1, _str2))
 			return false;
 
-	// check for PhaseFractions
-	for (auto t : vTimePoints)
-		if (!CompareVectors(_str1.GetDistrPhaseFractions()->GetValue(t), _str2.GetDistrPhaseFractions()->GetValue(t)))
-			return false;
-
-	// check for phases
-	for (unsigned iPhase = 0; iPhase < (unsigned)m_pFlowsheet->GetPhasesNumber(); ++iPhase)
-		for (auto t : vTimePoints)
-			if (!CompareMatrices(_str1.GetPhaseDistribution(iPhase)->GetDistribution(t), _str2.GetPhaseDistribution(iPhase)->GetDistribution(t)))
-				return false;
-
-	return true;
-}
-
-bool CSimulator::CompareVectors(const std::vector<double>& _vVec1, const std::vector<double>& _vVec2) const
-{
-	if (_vVec1.size() != _vVec2.size())
-		return false;
-	for (size_t k = 0; k < _vVec1.size(); ++k)
-		if (std::fabs(_vVec1[k] - _vVec2[k]) > std::fabs(_vVec1[k]) * m_pParams->relTol + m_pParams->absTol)
-			return false;
-	return true;
-}
-
-bool CSimulator::CompareMatrices(const CDenseMDMatrix& _matr1, const CDenseMDMatrix& _matr2) const
-{
-	if (_matr1.GetDataLength() != _matr2.GetDataLength())
-		return false;
-	const double* arr1 = _matr1.GetDataPtr();
-	const double* arr2 = _matr2.GetDataPtr();
-	for(size_t i=0; i<_matr1.GetDataLength(); ++i)
-		if (std::fabs(arr1[i] - arr2[i]) > std::fabs(arr1[i]) * m_pParams->relTol + m_pParams->absTol)
-			return false;
 	return true;
 }
 
@@ -407,18 +378,18 @@ void CSimulator::ClearLogState()
 	m_dTWEnd = 0;
 	m_iTWIterationFull = 0;
 	m_iWindowNumber = 0;
-	m_sUnitName.clear();
+	m_unitName.clear();
 	m_log.Clear();
 }
 
-void CSimulator::ApplyExtrapolationMethod(const std::vector<CMaterialStream*>& _streams, double _t1, double _t2, double _tExtra) const
+void CSimulator::ApplyExtrapolationMethod(const std::vector<CStream*>& _streams, double _t1, double _t2, double _tExtra) const
 {
-	if (_t2 >= m_pFlowsheet->GetSimulationTime()) return;
+	if (_t2 >= m_pParams->endSimulationTime) return;
 	switch (static_cast<EExtrapMethod>(m_pParams->extrapolationMethod))
 	{
-	case EExtrapMethod::EM_LINEAR:	for (auto& str : _streams) str->ExtrapolateToPoint(_t1, _t2, _tExtra);					break;
-	case EExtrapMethod::EM_SPLINE:	for (auto& str : _streams) str->ExtrapolateToPoint(_t1, (_t2 + _t1) / 2, _t2, _tExtra);	break;
-	case EExtrapMethod::EM_NEAREST:	for (auto& str : _streams) str->ExtrapolateToPoint(_t2, _tExtra);						break;
+	case EExtrapMethod::EM_LINEAR:	for (auto& str : _streams) str->Extrapolate(_tExtra, _t1, _t2);						break;
+	case EExtrapMethod::EM_SPLINE:	for (auto& str : _streams) str->Extrapolate(_tExtra, _t1, (_t2 + _t1) / 2, _t2);	break;
+	case EExtrapMethod::EM_NEAREST:	for (auto& str : _streams) str->Extrapolate(_tExtra, _t2);							break;
 	}
 }
 
@@ -426,12 +397,12 @@ void CSimulator::SetupConvergenceMethod()
 {
 	m_bSteffensenTrigger = true;
 	m_vDims = m_pFlowsheet->GetDistributionsGrid()->GetDistrTypes();
-	m_mMDnew.SetDimensions(reinterpret_cast<std::vector<unsigned>&>(m_vDims), m_pFlowsheet->GetDistributionsGrid()->GetClasses());
+	m_mMDnew.SetDimensions(vector_cast<unsigned>(m_vDims), m_pFlowsheet->GetDistributionsGrid()->GetClasses());
 	m_vMTPnew.resize(3);
 	m_vPFnew.resize(m_pFlowsheet->GetPhasesNumber());
 }
 
-void CSimulator::ApplyConvergenceMethod(const std::vector<CMaterialStream*>& _s3, std::vector<CMaterialStream*>& _s2, std::vector<CMaterialStream*>& _s1, double _t1, double _t2)
+void CSimulator::ApplyConvergenceMethod(const std::vector<CStream*>& _s3, std::vector<CStream*>& _s2, std::vector<CStream*>& _s1, double _t1, double _t2)
 {
 	if ((m_pParams->convergenceMethod == CM_DIRECT_SUBSTITUTION) && (m_pParams->relaxationParam == 1.))
 		return;
@@ -443,12 +414,29 @@ void CSimulator::ApplyConvergenceMethod(const std::vector<CMaterialStream*>& _s3
 	}
 
 	for (size_t i = 0; i < _s3.size(); ++i)
-		for (auto time : _s3[i]->GetTimePointsForInterval(_t1, _t2, false))
+		for (auto time : _s3[i]->GetTimePoints(_t1, _t2))
 		{
-			_s3[i]->GetDistrStreamMTP()->SetValue(time,	PredictValues(_s3[i]->GetDistrStreamMTP()->GetValue(time), _s2[i]->GetDistrStreamMTP()->GetValue(time), _s1[i]->GetDistrStreamMTP()->GetValue(time)));
-			_s3[i]->GetDistrPhaseFractions()->SetValue(time, PredictValues(_s3[i]->GetDistrPhaseFractions()->GetValue(time), _s2[i]->GetDistrPhaseFractions()->GetValue(time), _s1[i]->GetDistrPhaseFractions()->GetValue(time)));
-			_s3[i]->SetDistribution(time, PredictValues(_s3[i]->GetDistribution(time), _s2[i]->GetDistribution(time), _s1[i]->GetDistribution(time)));
+			// TODO: go over all defined properties
+			_s3[i]->SetOverallProperty(time, EOverall::OVERALL_MASS, PredictValues(_s3[i]->GetOverallProperty(time, EOverall::OVERALL_MASS), _s2[i]->GetOverallProperty(time, EOverall::OVERALL_MASS), _s1[i]->GetOverallProperty(time, EOverall::OVERALL_MASS)));
+			_s3[i]->SetOverallProperty(time, EOverall::OVERALL_TEMPERATURE, PredictValues(_s3[i]->GetOverallProperty(time, EOverall::OVERALL_TEMPERATURE), _s2[i]->GetOverallProperty(time, EOverall::OVERALL_TEMPERATURE), _s1[i]->GetOverallProperty(time, EOverall::OVERALL_TEMPERATURE)));
+			_s3[i]->SetOverallProperty(time, EOverall::OVERALL_PRESSURE, PredictValues(_s3[i]->GetOverallProperty(time, EOverall::OVERALL_PRESSURE), _s2[i]->GetOverallProperty(time, EOverall::OVERALL_PRESSURE), _s1[i]->GetOverallProperty(time, EOverall::OVERALL_PRESSURE)));
+			for (const auto& phase : m_pFlowsheet->GetPhases())
+			{
+				_s3[i]->SetPhaseFraction(time, phase.state, PredictValues(_s3[i]->GetPhaseFraction(time, phase.state), _s2[i]->GetPhaseFraction(time, phase.state), _s1[i]->GetPhaseFraction(time, phase.state)));
+				if (phase.state == EPhase::SOLID) // all distributed parameters
+					_s3[i]->SetDistribution(time, PredictValues(_s3[i]->GetDistribution(time, m_pFlowsheet->GetDistributionsGrid()->GetDistrTypes()), _s2[i]->GetDistribution(time, m_pFlowsheet->GetDistributionsGrid()->GetDistrTypes()), _s1[i]->GetDistribution(time, m_pFlowsheet->GetDistributionsGrid()->GetDistrTypes())));
+				else				// only distribution by compounds
+					_s3[i]->SetCompoundsFractions(time, phase.state, PredictValues(_s3[i]->GetCompoundsFractions(time, phase.state), _s2[i]->GetCompoundsFractions(time, phase.state), _s1[i]->GetCompoundsFractions(time, phase.state)));
+			}
 		}
+}
+
+double CSimulator::PredictValues(double _d3, double _d2, double _d1) const
+{
+	double res;
+	PredictValues(1, &_d3, &_d2, &_d1, &res);
+	return res;
+
 }
 
 std::vector<double> CSimulator::PredictValues(const std::vector<double>& _v3, const std::vector<double>& _v2, const std::vector<double>& _v1) const
@@ -514,14 +502,25 @@ void CSimulator::ReduceData(const CCalculationSequence::SPartition& _partition, 
 {
 	if (m_pParams->saveTimeStep > 0.)
 	{
-		const double dStart = std::min(_t1, _t2 - m_pParams->saveTimeStep);
-		for (auto model : _partition.models)
-		{
-			for (auto& p : model->GetUnitPorts())
-				if (p.nType == OUTPUT_PORT)
-					p.pStream->ReduceTimePoints(dStart, _t2, m_pParams->saveTimeStep);
-			if (m_pParams->saveTimeStepFlagHoldups)
-				model->ReduceTimePoints(dStart, _t2, m_pParams->saveTimeStep);
-		}
+		const double dStart = std::max(std::min(_t1, _t2 - 2 * m_pParams->saveTimeStep), 0.0);
+		for (auto* model : _partition.models)
+			if (model->GetModel()->GetStreamsManager().GetFeedsInit().empty()) // TODO: proper check for feed unit
+			{
+				for (auto& p : model->GetModel()->GetPortsManager().GetAllOutputPorts())
+					p->GetStream()->ReduceTimePoints(dStart, _t2, m_pParams->saveTimeStep);
+				if (m_pParams->saveTimeStepFlagHoldups)
+					model->GetModel()->ReduceTimePoints(dStart, _t2, m_pParams->saveTimeStep);
+			}
+	}
+}
+
+EPhase CSimulator::PhaseSOA2EPhase(unsigned _soa)
+{
+	switch (_soa)
+	{
+	case SOA_SOLID:		return EPhase::SOLID;
+	case SOA_LIQUID:	return EPhase::LIQUID;
+	case SOA_VAPOR:		return EPhase::VAPOR;
+	default:			return EPhase::UNDEFINED;
 	}
 }

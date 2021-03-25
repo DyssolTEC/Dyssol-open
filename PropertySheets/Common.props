@@ -4,16 +4,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_PropertySheetDisplayName>Common</_PropertySheetDisplayName>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)BaseSolvers;$(SolutionDir)CacheHandler;$(SolutionDir)EquationSolvers;$(SolutionDir)ExternalLibraries\hdf5\include;$(SolutionDir)ExternalLibraries\sundials\include;$(SolutionDir)HDF5Handler;$(SolutionDir)MaterialsDatabase;$(SolutionDir)ModelsAPI;$(SolutionDir)SimulatorCore;$(SolutionDir)Utilities;$(MATLAB_PATH)\extern\include</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <MultiProcessorCompilation>false</MultiProcessorCompilation>
-      <MinimalRebuild>true</MinimalRebuild>
       <WarningLevel>Level3</WarningLevel>
       <AdditionalOptions>/w34062 %(AdditionalOptions)</AdditionalOptions>
       <FunctionLevelLinking>true</FunctionLevelLinking>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <SupportJustMyCode>true</SupportJustMyCode>
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>

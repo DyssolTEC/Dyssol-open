@@ -3,7 +3,9 @@
 #pragma once
 
 #include "ui_CalculationSequenceEditor.h"
-#include "Flowsheet.h"
+
+class CCalculationSequence;
+class CFlowsheet;
 
 class CCalculationSequenceEditor: public QDialog
 {

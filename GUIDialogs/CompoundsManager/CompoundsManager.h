@@ -3,7 +3,9 @@
 #pragma once
 
 #include "ui_CompoundsManager.h"
-#include "Flowsheet.h"
+
+class CFlowsheet;
+class CMaterialsDatabase;
 
 class CCompoundsManager: public QDialog
 {

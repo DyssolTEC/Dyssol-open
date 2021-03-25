@@ -1,17 +1,24 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "BasicStreamsViewer.h"
+#include "Flowsheet.h"
+#include "Stream.h"
+#include "Phase.h"
+#include "MDMatrix.h"
+#include "DistributionsGrid.h"
+#include "MaterialsDatabase.h"
 #include "DistributionsFunctions.h"
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
-#include "MaterialStream.h"
+#include "ContainerFunctions.h"
 #include <QMenu>
 #include <QContextMenuEvent>
 #include <QFileDialog>
 #include <QTextStream>
 
-CBasicStreamsViewer::CBasicStreamsViewer(CFlowsheet* _pFlowsheet, QWidget* parent)
+CBasicStreamsViewer::CBasicStreamsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, QWidget* parent)
 	: QWidget(parent),
+	m_materialsDB{ _materialsDB },
 	m_pFlowsheet(_pFlowsheet),
 	m_dCurrentTime(0.)
 {
@@ -46,7 +53,7 @@ void CBasicStreamsViewer::InitializeConnections() const
 	connect(ui.lineEditTime,		&QLineEdit::editingFinished,	this, &CBasicStreamsViewer::TimeEdited);
 }
 
-void CBasicStreamsViewer::SetStreams(const std::vector<const CStream*>& _vStreams)
+void CBasicStreamsViewer::SetStreams(const std::vector<const CBaseStream*>& _vStreams)
 {
 	m_vSelectedStreams = _vStreams;
 
@@ -104,7 +111,7 @@ void CBasicStreamsViewer::SetupComboBoxProperties() const
 {
 	QSignalBlocker block(ui.comboBoxProperties);
 
-	const bool isStream = !m_vSelectedStreams.empty() && dynamic_cast<const CMaterialStream*>(m_vSelectedStreams.front()) != nullptr;
+	const bool isStream = !m_vSelectedStreams.empty() && dynamic_cast<const CStream*>(m_vSelectedStreams.front()) != nullptr;
 
 	const int iOld = ui.comboBoxProperties->currentIndex();
 	ui.comboBoxProperties->clear();
@@ -113,10 +120,11 @@ void CBasicStreamsViewer::SetupComboBoxProperties() const
 	ui.comboBoxProperties->addItem(StrConst::BSV_PropTemperature, E2I(EPropertyType::Temperatue));
 	ui.comboBoxProperties->addItem(StrConst::BSV_PropPressure, E2I(EPropertyType::Pressure));
 	ui.comboBoxProperties->addItem(StrConst::BSV_PropPhaseFractions, E2I(EPropertyType::PhaseFraction));
-	for (unsigned i = 0; i < m_pFlowsheet->GetPhasesNumber(); ++i)
-		ui.comboBoxProperties->addItem(QString::fromStdString(m_pFlowsheet->GetPhaseName(i)), E2I(EPropertyType::Phase1) + i);
+	int index = 0;
+	for (const auto& phase : m_pFlowsheet->GetPhases())
+		ui.comboBoxProperties->addItem(QString::fromStdString(phase.name), E2I(EPropertyType::Phase1) + index++);
 	ui.comboBoxProperties->addItem(StrConst::BSV_PropSauterDiameter, E2I(EPropertyType::SauterDiameter));
-	if (m_pFlowsheet->IsPhaseDefined(SOA_SOLID))
+	if (m_pFlowsheet->IsPhaseDefined(EPhase::SOLID))
 		ui.comboBoxProperties->addItem(StrConst::BSV_PropSolidDistribution, E2I(EPropertyType::SolidDistr));
 
 	block.unblock();
@@ -153,8 +161,8 @@ void CBasicStreamsViewer::SetupComboBoxCompounds() const
 
 	ui.comboBoxCompounds->clear();
 	ui.comboBoxCompounds->addItem(StrConst::BSV_ComboBoxAllCompounds, "");
-	for (size_t i=0; i<m_pFlowsheet->GetCompoundsNumber(); ++i)
-		ui.comboBoxCompounds->addItem(QString::fromStdString(m_pFlowsheet->GetCompoundsNames()[i]), QString::fromStdString(m_pFlowsheet->GetCompounds()[i]));
+	for (const auto& key : m_pFlowsheet->GetCompounds())
+		ui.comboBoxCompounds->addItem(QString::fromStdString(m_materialsDB->GetCompound(key) ? m_materialsDB->GetCompound(key)->GetName() : ""), QString::fromStdString(key));
 
 	block.unblock();
 	RestorePosition(ui.comboBoxCompounds, iOld);
@@ -216,25 +224,37 @@ void CBasicStreamsViewer::GetSelectedDistributions()
 		switch (type)
 		{
 		case EPropertyType::Mass:
+			m_vSelected2D.push_back(s->GetOverallProperty(EOverall::OVERALL_MASS));
+			break;
 		case EPropertyType::Temperatue:
+			m_vSelected2D.push_back(s->GetOverallProperty(EOverall::OVERALL_TEMPERATURE));
+			break;
 		case EPropertyType::Pressure:
-			m_vSelected2D.push_back(s->GetDistrStreamMTP());
+			m_vSelected2D.push_back(s->GetOverallProperty(EOverall::OVERALL_PRESSURE));
 			break;
 		case EPropertyType::PhaseFraction:
-			m_vSelected2D.push_back(s->GetDistrPhaseFractions());
+			if (const auto* phase = s->GetPhase(EPhase::SOLID))
+				m_vSelected2D.push_back(phase->Fractions());
+			if (const auto* phase = s->GetPhase(EPhase::LIQUID))
+				m_vSelected2D.push_back(phase->Fractions());
+			if (const auto* phase = s->GetPhase(EPhase::VAPOR))
+				m_vSelected2D.push_back(phase->Fractions());
 			break;
 		case EPropertyType::Phase1:
 		case EPropertyType::Phase2:
 		case EPropertyType::Phase3:
 		case EPropertyType::Phase4:
-			m_vSelectedMD.push_back(s->GetPhaseDistribution(E2I(type) - E2I(EPropertyType::Phase1)));
+		{
+			// HACK: temporary solution; combo box should store phase type
+			const EPhase phase = m_pFlowsheet->GetPhases()[E2I(type) - E2I(EPropertyType::Phase1)].state;
+			m_vSelectedMD.push_back(s->GetPhase(phase)->MDDistr());
 			break;
+		}
 		case EPropertyType::SolidDistr:
 		case EPropertyType::SauterDiameter:
 		{
-			const int iSolid = m_pFlowsheet->GetPhaseIndex(SOA_SOLID);
-			if (iSolid != -1)
-				m_vSelectedMD.push_back(s->GetPhaseDistribution(iSolid));
+			if (m_pFlowsheet->IsPhaseDefined(EPhase::SOLID))
+				m_vSelectedMD.push_back(s->GetPhase(EPhase::SOLID)->MDDistr());
 			break;
 		}
 		}
@@ -524,8 +544,12 @@ void CBasicStreamsViewer::SetMTPToTable(int _type)
 
 	for (int i = 0; i < static_cast<int>(m_vSelected2D.size()); ++i)
 	{
-		ui.tabTable->SetColHeaderItem(i + 1, m_vSelectedStreams[i]->GetStreamName() + "\n" + m_vSelected2D[i]->GetLabel(_type));
-		ui.tabTable->SetItemsColNotEditable(0, i + 1, m_vSelected2D[i]->GetValues(m_vSelectedTP, _type));
+		ui.tabTable->SetColHeaderItem(i + 1, m_vSelectedStreams[i]->GetName() + "\n" + m_vSelected2D[i]->GetName() + " [" + m_vSelected2D[i]->GetUnits() + "]");
+		std::vector<double> values;
+		values.reserve(m_vSelectedTP.size());
+		for (double t : m_vSelectedTP)
+			values.push_back(m_vSelected2D[i]->GetValue(t));
+		ui.tabTable->SetItemsColNotEditable(0, i + 1, values);
 	}
 }
 
@@ -533,17 +557,26 @@ void CBasicStreamsViewer::SetPhaseFractionsToTable()
 {
 	if (m_vSelected2D.empty()) return;
 
-	const int colNum = static_cast<int>(m_vSelected2D.front()->GetDimensionsNumber());
-	ui.tabTable->SetGeometry(static_cast<int>(m_vSelectedTP.size()), static_cast<int>(m_vSelected2D.size()) * colNum + 1);
+	const int distrNum = static_cast<int>(m_vSelected2D.size());
+	const int distrPerStream = distrNum / (int)m_vSelectedStreams.size();
+	ui.tabTable->SetGeometry(static_cast<int>(m_vSelectedTP.size()), distrNum + 1);
 	ui.tabTable->SetColHeaderItem(0, StrConst::BSV_TableHeaderTime);
 	ui.tabTable->SetItemsColNotEditable(0, 0, m_vSelectedTP);
 
-	for (int i = 0; i < (int)m_vSelected2D.size(); ++i)
+	for (int i = 0; i < (int)m_vSelectedStreams.size(); ++i)
 	{
-		for (int j = 0; j < colNum; ++j)
-			ui.tabTable->SetColHeaderItem(i * colNum + j + 1, m_vSelectedStreams[i]->GetStreamName() + "\n" + m_vSelected2D[i]->GetLabel(j));
-		for (int iTP = 0; iTP < static_cast<int>(m_vSelectedTP.size()); ++iTP)
-			ui.tabTable->SetItemsRowNotEditable(iTP, i * colNum + 1, m_vSelected2D[i]->GetValue(m_vSelectedTP[iTP]));
+		for (int j = 0; j < distrPerStream; ++j)
+			ui.tabTable->SetColHeaderItem(i * distrPerStream + j + 1, m_vSelectedStreams[i]->GetName() + "\n" + m_vSelected2D[i * distrPerStream + j]->GetName() + " [" + m_vSelected2D[i]->GetUnits() + "]");
+
+		std::vector<std::vector<double>> data(distrPerStream);
+		for (int j = 0; j < distrPerStream; ++j)
+		{
+			data[j].reserve(m_vSelectedTP.size());
+			for (double iTP : m_vSelectedTP)
+				data[j].push_back(m_vSelected2D[i * distrPerStream + j]->GetValue(iTP));
+		}
+		for (int j = 0; j < distrPerStream; ++j)
+			ui.tabTable->SetItemsColNotEditable(0, i * distrPerStream + j + 1, data[j]);
 	}
 }
 
@@ -556,10 +589,11 @@ void CBasicStreamsViewer::SetPhaseCompoundsToTable()
 	ui.tabTable->SetColHeaderItem(0, StrConst::BSV_TableHeaderTime);
 	ui.tabTable->SetItemsColNotEditable(0, 0, m_vSelectedTP);
 
+	const auto compoundsNames = m_materialsDB->GetCompoundsNames(m_pFlowsheet->GetCompounds());
 	for (int i = 0; i < static_cast<int>(m_vSelectedMD.size()); ++i)
 	{
 		for (int j = 0; j < colNum; ++j)
-			ui.tabTable->SetColHeaderItem(i * colNum + j + 1, m_vSelectedStreams[i]->GetStreamName() + "\n" + m_pFlowsheet->GetCompoundName(j));
+			ui.tabTable->SetColHeaderItem(i * colNum + j + 1, m_vSelectedStreams[i]->GetName() + "\n" + compoundsNames[j]);
 		for (int iTP = 0; iTP < static_cast<int>(m_vSelectedTP.size()); ++iTP)
 			ui.tabTable->SetItemsRowNotEditable(iTP, i * colNum + 1, m_vSelectedMD[i]->GetVectorValue(m_vSelectedTP[iTP], DISTR_COMPOUNDS));
 	}
@@ -577,7 +611,7 @@ void CBasicStreamsViewer::SetSauterDiameterToTable()
 
 	for (int i = 0; i < static_cast<int>(m_vSelectedMD.size()); ++i)
 	{
-		ui.tabTable->SetColHeaderItem(i + 1, m_vSelectedStreams[i]->GetStreamName() + "\n" + StrConst::BSV_TableHeaderSauter);
+		ui.tabTable->SetColHeaderItem(i + 1, m_vSelectedStreams[i]->GetName() + "\n" + StrConst::BSV_TableHeaderSauter);
 		for (int iTP = 0; iTP < (int)m_vSelectedTP.size(); ++iTP)
 		{
 			const std::vector<double> q3 = m_vSelectedStreams[i]->GetPSD(m_vSelectedTP[iTP], PSD_q3);
@@ -618,12 +652,15 @@ void CBasicStreamsViewer::SetSolidDistrsToTableHeaders(EDistrCombination _type)
 		ui.tabTable->SetGeometry(0, 0);
 		break;
 	case EDistrCombination::Compounds:
+	{
+		const auto compoundsNames = m_materialsDB->GetCompoundsNames(m_pFlowsheet->GetCompounds());
 		ui.tabTable->SetGeometry(static_cast<int>(m_pFlowsheet->GetCompoundsNumber()), static_cast<int>(m_vSelectedMD.size()));
 		for (int i = 0; i < static_cast<int>(m_vSelectedMD.size()); ++i)
-			ui.tabTable->SetColHeaderItem(i, m_vSelectedStreams[i]->GetStreamName() + "\n" + StrConst::BSV_TableHeaderMassFrac);
+			ui.tabTable->SetColHeaderItem(i, m_vSelectedStreams[i]->GetName() + "\n" + StrConst::BSV_TableHeaderMassFrac);
 		for (int i = 0; i < static_cast<int>(m_pFlowsheet->GetCompoundsNumber()); ++i)
-			ui.tabTable->SetRowHeaderItem(i, m_pFlowsheet->GetCompoundName(i));
+			ui.tabTable->SetRowHeaderItem(i, compoundsNames[i]);
 		break;
+	}
 	case EDistrCombination::TwoDimensional:
 	{
 		const EDistrTypes dimRow = ChosenDim(EDimType::Row);
@@ -646,7 +683,7 @@ void CBasicStreamsViewer::SetSolidDistrsToTableHeaders(EDistrCombination _type)
 		ui.tabTable->SetGeometry(classes, static_cast<int>(m_vSelectedMD.size()));
 		ui.tabTable->SetRowHeaderItems(0, TableHeaders(dim));
 		for (int i = 0; i < static_cast<int>(m_vSelectedMD.size()); ++i)
-			ui.tabTable->SetColHeaderItem(i, m_vSelectedStreams[i]->GetStreamName() + "\n" + PSDSymbolicName(dim));
+			ui.tabTable->SetColHeaderItem(i, m_vSelectedStreams[i]->GetName() + "\n" + PSDSymbolicName(dim));
 		break;
 	}
 	case EDistrCombination::OneDimensionalHorizontal:
@@ -656,7 +693,7 @@ void CBasicStreamsViewer::SetSolidDistrsToTableHeaders(EDistrCombination _type)
 		ui.tabTable->SetGeometry(static_cast<int>(m_vSelectedMD.size()), classes);
 		ui.tabTable->SetColHeaderItems(0, TableHeaders(dim));
 		for (int i = 0; i < static_cast<int>(m_vSelectedMD.size()); ++i)
-			ui.tabTable->SetRowHeaderItem(i, m_vSelectedStreams[i]->GetStreamName() + " - " + PSDSymbolicName(dim));
+			ui.tabTable->SetRowHeaderItem(i, m_vSelectedStreams[i]->GetName() + " - " + PSDSymbolicName(dim));
 		break;
 	}
 	}
@@ -673,7 +710,7 @@ void CBasicStreamsViewer::SetSolidDistrsToTableData(EDistrCombination _type)
 	{
 		const std::string comp = ChosenCompound();
 		std::vector<unsigned> distrs = comp.empty() ? std::vector<unsigned>{} : std::vector<unsigned>(1, DISTR_COMPOUNDS);
-		std::vector<unsigned> coords = comp.empty() ? std::vector<unsigned>{} : std::vector<unsigned>(1, (unsigned)m_pFlowsheet->GetCompoundIndex(comp));
+		std::vector<unsigned> coords = comp.empty() ? std::vector<unsigned>{} : std::vector<unsigned>(1, (unsigned)VectorFind(m_pFlowsheet->GetCompounds(), comp));
 
 		if (_type == EDistrCombination::TwoDimensional)
 		{
@@ -722,7 +759,7 @@ void CBasicStreamsViewer::SetMTPToPlot(int _type)
 	QtPlot::LabelTypes labelType;
 	switch (_type)
 	{
-	case MTP_MASS:			labelType = dynamic_cast<const CMaterialStream*>(m_vSelectedStreams.front()) ? QtPlot::LABEL_MASS_FLOW : QtPlot::LABEL_MASS;	break;
+	case MTP_MASS:			labelType = dynamic_cast<const CStream*>(m_vSelectedStreams.front()) ? QtPlot::LABEL_MASS_FLOW : QtPlot::LABEL_MASS;	break;
 	case MTP_TEMPERATURE:	labelType = QtPlot::LABEL_TEMPERATURE;									break;
 	case MTP_PRESSURE:		labelType = QtPlot::LABEL_PRESSURE;										break;
 	default:				labelType = QtPlot::LABEL_NONE;											break;
@@ -731,12 +768,17 @@ void CBasicStreamsViewer::SetMTPToPlot(int _type)
 	for (int i = 0; i < static_cast<int>(m_vSelected2D.size()); ++i)
 	{
 		const QColor color = m_vSelected2D.size() == 1 ? Qt::blue : Qt::GlobalColor(Qt::red + i % (Qt::transparent - Qt::red));
-		auto* curve = new QtPlot::SCurve(m_vSelectedStreams[i]->GetStreamName(), color, QtPlot::LABEL_TIME, labelType);
+		auto* curve = new QtPlot::SCurve(m_vSelectedStreams[i]->GetName(), color, QtPlot::LABEL_TIME, labelType);
 		ui.tabPlot->AddCurve(curve);
-		ui.tabPlot->AddPoints(i, m_vSelected2D[i]->GetAllTimePoints(), m_vSelected2D[i]->GetValues(_type));
+		std::vector<double> times = m_vSelectedStreams[i]->GetAllTimePoints();
+		std::vector<double> values;
+		values.reserve(times.size());
+		for (double t : times)
+			values.push_back(m_vSelected2D[i]->GetValue(t));
+		ui.tabPlot->AddPoints(i, times, values);
 	}
 
-	if (m_vSelected2D.size() == 1 && m_vSelected2D.front()->GetTimePointsNumber() == 1)
+	if (m_vSelected2D.size() == 1 && m_vSelectedStreams.front()->GetAllTimePoints().size() == 1)
 		ui.tabPlot->SetCurveLinesVisibility(0, false);
 }
 
@@ -744,20 +786,26 @@ void CBasicStreamsViewer::SetPhaseFractionsToPlot()
 {
 	if (m_vSelected2D.empty())	return;
 
-	const unsigned dimsNum = m_vSelected2D.front()->GetDimensionsNumber();
+	const int distrNum = static_cast<int>(m_vSelected2D.size());
+	const int distrPerStream = distrNum / (int)m_vSelectedStreams.size();
 
-	for (size_t i = 0; i < m_vSelected2D.size(); ++i)
-		for (unsigned j = 0; j < dimsNum; ++j)
+	for (size_t i = 0; i < m_vSelectedStreams.size(); ++i)
+		for (unsigned j = 0; j < (unsigned)distrPerStream; ++j)
 		{
-			const std::string name = m_vSelectedStreams[i]->GetStreamName() + " - " + m_vSelected2D[i]->GetLabel(j);
-			const QColor color = Qt::GlobalColor(Qt::red + (i * dimsNum + j) % (Qt::transparent - Qt::red));
+			const std::string name = m_vSelectedStreams[i]->GetName() + " - " + m_vSelected2D[i * distrPerStream + j]->GetName() + " [" + m_vSelected2D[i * distrPerStream + j]->GetUnits() + "]";
+			const QColor color = static_cast<Qt::GlobalColor>(Qt::red + (i * distrPerStream + j) % (Qt::transparent - Qt::red));
 			auto* curve = new QtPlot::SCurve(name, color, QtPlot::LABEL_TIME, QtPlot::LABEL_MASS_FRACTION);
 			const unsigned iCurve = ui.tabPlot->AddCurve(curve);
-			ui.tabPlot->AddPoints(iCurve, m_vSelected2D[i]->GetAllTimePoints(), m_vSelected2D[i]->GetValues(j));
+			std::vector<double> times = m_vSelectedStreams[i]->GetAllTimePoints();
+			std::vector<double> values;
+			values.reserve(times.size());
+			for (double t : times)
+				values.push_back(m_vSelected2D[i * distrPerStream + j]->GetValue(t));
+			ui.tabPlot->AddPoints(iCurve, times, values);
 		}
 
-	if (m_vSelected2D.size() == 1 && m_vSelected2D.front()->GetTimePointsNumber() == 1)
-		for (unsigned i = 0; i < dimsNum; ++i)
+	if (m_vSelected2D.size() == 1 && m_vSelectedStreams.front()->GetAllTimePoints().size() == 1)
+		for (unsigned i = 0; i < (unsigned)distrPerStream; ++i)
 			ui.tabPlot->SetCurveLinesVisibility(i, false);
 }
 
@@ -765,12 +813,13 @@ void CBasicStreamsViewer::SetPhaseCompoundsToPlot()
 {
 	if (m_vSelectedMD.empty()) return;
 
-	const size_t cmpNum = m_pFlowsheet->GetCompoundsNumber();
+	const auto names = m_materialsDB->GetCompoundsNames(m_pFlowsheet->GetCompounds());
+	const size_t cmpNum = names.size();
 
 	for (size_t i = 0; i < m_vSelectedMD.size(); ++i)
 		for (unsigned j = 0; j < cmpNum; ++j)
 		{
-			const std::string name = m_vSelectedStreams[i]->GetStreamName() + " - " + m_pFlowsheet->GetCompoundName(j);
+			const std::string name = m_vSelectedStreams[i]->GetName() + " - " + names[j];
 			const QColor color = Qt::GlobalColor(Qt::red + (i * cmpNum + j) % (Qt::transparent - Qt::red));
 			auto* curve = new QtPlot::SCurve(name, color, QtPlot::LABEL_TIME, QtPlot::LABEL_MASS_FRACTION);
 			const unsigned iCurve = ui.tabPlot->AddCurve(curve);
@@ -792,7 +841,7 @@ void CBasicStreamsViewer::SetSauterDiameterToPlot()
 	for (unsigned i = 0; i < m_vSelectedMD.size(); ++i)
 	{
 		const QColor color = Qt::GlobalColor(Qt::red + i % (Qt::transparent - Qt::red));
-		auto* pCurve = new QtPlot::SCurve(m_vSelectedStreams[i]->GetStreamName(), color, QtPlot::LABEL_TIME, QtPlot::LABEL_SAUTER);
+		auto* pCurve = new QtPlot::SCurve(m_vSelectedStreams[i]->GetName(), color, QtPlot::LABEL_TIME, QtPlot::LABEL_SAUTER);
 		ui.tabPlot->AddCurve(pCurve);
 
 		std::vector<double> tp = m_vSelectedMD[i]->GetAllTimePoints();
@@ -822,7 +871,7 @@ void CBasicStreamsViewer::SetSolidDistrsToPlot()
 	for (unsigned i = 0; i < m_vSelectedMD.size(); ++i)
 	{
 		const QColor color = Qt::GlobalColor(Qt::red + i % (Qt::transparent - Qt::red));
-		auto* pCurve = new QtPlot::SCurve(m_vSelectedStreams[i]->GetStreamName(), color, QtPlot::LABEL_MANUAL, QtPlot::LABEL_MANUAL);
+		auto* pCurve = new QtPlot::SCurve(m_vSelectedStreams[i]->GetName(), color, QtPlot::LABEL_MANUAL, QtPlot::LABEL_MANUAL);
 		ui.tabPlot->AddCurve(pCurve);
 
 		std::vector<double> vals;
@@ -832,7 +881,7 @@ void CBasicStreamsViewer::SetSolidDistrsToPlot()
 			if (compounds.empty())	// for all compounds
 				vals = m_vSelectedMD[i]->GetVectorValue(m_dCurrentTime, dim);
 			else					// for only one compound
-				vals = m_vSelectedMD[i]->GetVectorValue(m_dCurrentTime, DISTR_COMPOUNDS, static_cast<unsigned>(m_pFlowsheet->GetCompoundIndex(comp)), dim);
+				vals = m_vSelectedMD[i]->GetVectorValue(m_dCurrentTime, DISTR_COMPOUNDS, static_cast<unsigned>(VectorFind(m_pFlowsheet->GetCompounds(), comp)), dim);
 
 		ui.tabPlot->AddPoints(i, vMedians, vals);
 	}
@@ -862,7 +911,7 @@ void CBasicStreamsViewer::ExportToFile()
 		const std::vector<QString> rowHeaders = ui.tabTable->GetRowHeaderItems(0);
 		for (int i = 0; i < ui.tabTable->rowCount(); ++i)
 		{
-			fileStream << endl << rowHeaders[i];
+			fileStream << Qt::endl << rowHeaders[i];
 			for (const auto& s : ui.tabTable->GetItemsRow(i, 0))
 				fileStream << s << "; ";
 		}
@@ -879,7 +928,7 @@ void CBasicStreamsViewer::ExportToFile()
 			fileStream << "; " << s.replace("\n", " ");
 		for (double t : m_vSelectedMD.front()->GetAllTimePoints())
 		{
-			fileStream << endl << t << "; ";
+			fileStream << Qt::endl << t << "; ";
 			if (distr == DISTR_SIZE)
 				for (double v : m_vSelectedStreams.front()->GetPSD(t, psdType, compounds, meanType))
 					fileStream << v << "; ";

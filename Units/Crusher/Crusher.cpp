@@ -8,28 +8,31 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 	return new CCrusher();
 }
 
-CCrusher::CCrusher()
+void CCrusher::CreateBasicInfo()
 {
 	/// Basic unit's info ///
-	m_sUnitName = "Crusher";
-	m_sAuthorName = "SPE TUHH";
-	m_sUniqueID = "4E2C9FB3BFA44B8E829AC393042F2BE3";
+	SetUnitName("Crusher");
+	SetAuthorName("SPE TUHH");
+	SetUniqueID("4E2C9FB3BFA44B8E829AC393042F2BE3");
+}
 
-	/// Add ports ///
-	AddPort("Input", INPUT_PORT);
-	AddPort("Output", OUTPUT_PORT);
+void CCrusher::CreateStructure()
+{
+		/// Add ports ///
+	AddPort("Input", EUnitPort::INPUT);
+	AddPort("Output", EUnitPort::OUTPUT);
 
 	/// Add unit parameters ///
-	AddGroupParameter("Model", BondNormal, { BondNormal, BondBimodal, Cone, Const }, { "Bond (normal distribution)", "Bond (bimodal breakage)", "Cone", "Const" }, "Crushing model");
-	AddTDParameter(   "P",         0,     1000000,                            50,     "kW", "Power input");
-	AddTDParameter(   "Mean",      0,     std::numeric_limits<double>::max(), 0.001,  "m",  "Mean value of the normal output distribution");
-	AddTDParameter(   "Deviation", 0,     1000000,                            0.0001, "m",  "Standard deviation of the normal output distribution");
-	AddConstParameter("CSS",       1e-12, 10,                                 0.04,   "m",  "Closed-side setting parameter of the King selection function");
-	AddConstParameter("alpha1",    0.5,   0.95,                               0.6,    "-",  "Alpha1 parameter of the King selection function");
-	AddConstParameter("alpha2",    1.7,   3.5,                                2,      "-",  "Alpha2 parameter of the King selection function");
-	AddConstParameter("n",         1,     3,                                  2,      "-",  "Power parameter of the King selection function");
-	AddConstParameter("d'",        0,     10e+10,                             0.003,  "m",  "Minimum fragment size of the Vogel breakage function");
-	AddConstParameter("q",         0,     10e+10,                             0.55,   "-",  "Q parameter of the Vogel breakage function");
+	AddComboParameter("Model", BondNormal, { BondNormal, BondBimodal, Cone, Const }, { "Bond (normal distribution)", "Bond (bimodal breakage)", "Cone", "Const" }, "Crushing model");
+	AddTDParameter(       "P"        , 50,     "kW", "Power input"                                                 , 0          );
+	AddTDParameter(       "Mean"     , 0.001,  "m" , "Mean value of the normal output distribution"                , 0          );
+	AddTDParameter(       "Deviation", 0.0001, "m" , "Standard deviation of the normal output distribution"        , 0          );
+	AddConstRealParameter("CSS"      , 0.04,   "m" , "Closed-side setting parameter of the King selection function", 1e-12, 10  );
+	AddConstRealParameter("alpha1"   , 0.6,    "-" , "Alpha1 parameter of the King selection function"             , 0.5,   0.95);
+	AddConstRealParameter("alpha2"   , 2,      "-" , "Alpha2 parameter of the King selection function"             , 1.7,   3.5 );
+	AddConstRealParameter("n"        , 2,      "-" , "Power parameter of the King selection function"              , 1,     3   );
+	AddConstRealParameter("d'"       , 0.003,  "m" , "Minimum fragment size of the Vogel breakage function"        , 0          );
+	AddConstRealParameter("q"        , 0.55,   "-" , "Q parameter of the Vogel breakage function"                  , 0          );
 
 	/// Group unit parameters ///
 	AddParametersToGroup("Model", "Bond (normal distribution)", { "P", "Deviation"                          });
@@ -41,7 +44,7 @@ CCrusher::CCrusher()
 void CCrusher::Initialize(double _time)
 {
 	/// Check flowsheet parameters ///
-	if (!IsPhaseDefined(SOA_SOLID))			RaiseError("Solid phase has not been defined.");
+	if (!IsPhaseDefined(EPhase::SOLID))		RaiseError("Solid phase has not been defined.");
 	if (!IsDistributionDefined(DISTR_SIZE))	RaiseError("Size distribution has not been defined.");
 
 	/// Get pointers to streams ///
@@ -54,13 +57,13 @@ void CCrusher::Initialize(double _time)
 	m_diameters     = GetClassesMeans(DISTR_SIZE);
 
 	/// Check PSD grid parameters ///
-	if (m_classesNumber == 0)					RaiseError("There are no size classes in size distribution.");
+	if (m_classesNumber == 0)				RaiseError("There are no size classes in size distribution.");
 
 	/// Get compounds parameters ///
-	m_compounds = m_inlet->GetCompoundsList();
+	m_compounds = GetAllCompounds();
 
 	/// Get selected crushing model ///
-	m_model = static_cast<EModels>(GetGroupParameterValue("Model"));
+	m_model = static_cast<EModels>(GetComboParameterValue("Model"));
 
 	/// Model-specific initialization ///
 	switch (m_model)
@@ -75,7 +78,7 @@ void CCrusher::Initialize(double _time)
 void CCrusher::Simulate(double _time)
 {
 	/// Copy the time point from inlet to outlet ///
-	m_outlet->CopyFromStream(m_inlet, _time);
+	m_outlet->CopyFromStream(_time, m_inlet);
 
 	/// Model-specific simulation ///
 	switch (m_model)
@@ -101,10 +104,10 @@ void CCrusher::SimulateBondNormal(double _time)
 	if (power <= 0)	RaiseError("Parameter 'P' has to be larger than 0.");
 	if (sigma <= 0)	RaiseError("Parameter 'Deviation' has to be larger than 0.");
 
-	// return if any error occured
-	if (CheckError()) return;
+	// return if any error occurred
+	if (HasError()) return;
 
-	const double solidMassFlow = m_inlet->GetPhaseMassFlow(_time, SOA_SOLID) * 3.6;
+	const double solidMassFlow = m_inlet->GetPhaseMassFlow(_time, EPhase::SOLID) * 3.6;
 	if (solidMassFlow == 0)
 		RaiseWarning("Solid mass flow in crusher equals to 0.");
 
@@ -113,7 +116,7 @@ void CCrusher::SimulateBondNormal(double _time)
 	// component-wise application of Bond model
 	for (const auto& compound : m_compounds)
 	{
-		if (m_inlet->GetCompoundPhaseFraction(_time, compound, SOA_SOLID) == 0) continue; // this component is not a solid
+		if (m_inlet->GetCompoundFraction(_time, compound, EPhase::SOLID) == 0) continue; // this component is not a solid
 
 		const std::vector<double> Q3 = m_inlet->GetPSD(_time, PSD_Q3, compound);
 		if (Q3.empty())
@@ -125,7 +128,7 @@ void CCrusher::SimulateBondNormal(double _time)
 
 		const std::vector<double> psdIn = m_inlet->GetPSD(_time, PSD_MassFrac, compound);
 
-		const double bondIndex = m_inlet->GetCompoundConstant(compound, BOND_WORK_INDEX);
+		const double bondIndex = m_inlet->GetCompoundProperty(compound, BOND_WORK_INDEX);
 		const double x80Out = 1. / std::pow(workInput / (10 * bondIndex) + 1. / std::sqrt(x80In), 2) / 1000;
 		const double meanOut = x80Out - 0.83 * sigma;
 
@@ -153,17 +156,17 @@ void CCrusher::SimulateBondNormal(double _time)
 
 	// component-wise correction of compounds fractions
 	for (const auto& compound : m_compounds)
-		m_outlet->SetCompoundPhaseFraction(_time, compound, SOA_SOLID, m_inlet->GetCompoundPhaseFraction(_time, compound, SOA_SOLID));
+		m_outlet->SetCompoundFraction(_time, compound, EPhase::SOLID, m_inlet->GetCompoundFraction(_time, compound, EPhase::SOLID));
 }
 
 void CCrusher::InitializeBondBimodal(double _time)
 {
 	// add internal material stream
-	m_internal = AddMaterialStream("TempStream");
+	m_internal = AddStream("TempStream");
 
 	// configure transformation matrix
 	m_transform.Clear();
-	m_transform.SetDimensions(DISTR_SIZE, m_classesNumber);
+	m_transform.SetDimensions(DISTR_SIZE, static_cast<unsigned>(m_classesNumber));
 }
 
 void CCrusher::SimulateBondBimodal(double _time)
@@ -174,10 +177,10 @@ void CCrusher::SimulateBondBimodal(double _time)
 	// check unit parameters
 	if (power <= 0)	RaiseError("Parameter 'P' has to be larger than 0.");
 
-	// return if any error occured
-	if (CheckError()) return;
+	// return if any error occurred
+	if (HasError()) return;
 
-	const double solidMassFlow = m_inlet->GetPhaseMassFlow(_time, SOA_SOLID) * 3.6;
+	const double solidMassFlow = m_inlet->GetPhaseMassFlow(_time, EPhase::SOLID) * 3.6;
 	if (solidMassFlow == 0)
 		RaiseWarning("Solid mass flow in crusher equals to 0.");
 
@@ -186,7 +189,7 @@ void CCrusher::SimulateBondBimodal(double _time)
 	// component-wise application of Bond model
 	for (const auto& compound : m_compounds)
 	{
-		if (m_inlet->GetCompoundPhaseFraction(_time, compound, SOA_SOLID) == 0) continue; // this component is not a solid
+		if (m_inlet->GetCompoundFraction(_time, compound, EPhase::SOLID) == 0) continue; // this component is not a solid
 
 		const std::vector<double> Q3 = m_inlet->GetPSD(_time, PSD_Q3, compound);
 		if (Q3.empty())
@@ -200,7 +203,7 @@ void CCrusher::SimulateBondBimodal(double _time)
 		if (psdIn.empty())
 			RaiseWarning("No size distribution in input stream.");
 
-		const double bondIndex = m_inlet->GetCompoundConstant(compound, BOND_WORK_INDEX);
+		const double bondIndex = m_inlet->GetCompoundProperty(compound, BOND_WORK_INDEX);
 		const double x80Out = 1. / std::pow(workInput / (10 * bondIndex) + 1. / std::sqrt(x80In * 1000), 2) / 1000;
 		double x80New = x80In;
 
@@ -211,11 +214,11 @@ void CCrusher::SimulateBondBimodal(double _time)
 		while (std::fabs(x80New - x80Out) > 1e-4 * x80Out) // allowed deviation between d80's is 0.01%
 		{
 			m_transform.ClearData();
-			m_internal->CopyFromStream(m_outlet, _time);
+			m_internal->CopyFromStream(_time, m_outlet);
 			ParallelFor(m_classesNumber, [&](size_t i)
 			{
 				// get left and right diameters of initial class on new grid
-				double lDiameter = m_grid[i] / std::pow(2, 1. / 3.);
+				const double lDiameter = m_grid[i] / std::pow(2, 1. / 3.);
 				double rDiameter = m_grid[i + 1] / std::pow(2, 1. / 3.);
 				const double totalLength = rDiameter - lDiameter;
 
@@ -261,7 +264,7 @@ void CCrusher::SimulateBondBimodal(double _time)
 				RaiseError("Cannot reach x80 = " + StringFunctions::Double2String(x80Out) + ". Current value " + StringFunctions::Double2String(x80New));
 			iteration++;
 
-			if (CheckError()) return;
+			if (HasError()) return;
 		}
 		// set result to output
 		m_outlet->ApplyTM(_time, compound, m_transform); // apply rest
@@ -269,18 +272,18 @@ void CCrusher::SimulateBondBimodal(double _time)
 
 	// component-wise correction of compounds fractions
 	for (const auto& compound : m_compounds)
-		m_outlet->SetCompoundPhaseFraction(_time, compound, SOA_SOLID, m_inlet->GetCompoundPhaseFraction(_time, compound, SOA_SOLID));
+		m_outlet->SetCompoundFraction(_time, compound, EPhase::SOLID, m_inlet->GetCompoundFraction(_time, compound, EPhase::SOLID));
 }
 
 void CCrusher::InitializeCone(double _time)
 {
 	// get unit parameters
-	const double CSS    = GetConstParameterValue("CSS");
-	const double alpha1 = GetConstParameterValue("alpha1");
-	const double alpha2 = GetConstParameterValue("alpha2");
-	const double n      = GetConstParameterValue("n");
-	const double FS     = GetConstParameterValue("d'");
-	const double q      = GetConstParameterValue("q");
+	const double CSS    = GetConstRealParameterValue("CSS");
+	const double alpha1 = GetConstRealParameterValue("alpha1");
+	const double alpha2 = GetConstRealParameterValue("alpha2");
+	const double n      = GetConstRealParameterValue("n");
+	const double FS     = GetConstRealParameterValue("d'");
+	const double q      = GetConstRealParameterValue("q");
 
 	// check unit parameters
 	if (CSS <= 0)		RaiseError("Parameter 'CSS' may not be smaller or equal to 0.");
@@ -288,12 +291,12 @@ void CCrusher::InitializeCone(double _time)
 	if (alpha2 <= 0)	RaiseError("Parameter 'alpha2' may not be smaller or equal to 0.");
 	if (FS <= 0)		RaiseError("Parameter 'd'' may not be smaller or equal to 0.");
 
-	// return if any error occured
-	if (CheckError()) return;
+	// return if any error occurred
+	if (HasError()) return;
 
 	// configure transformation matrix
 	m_transform.Clear();
-	m_transform.SetDimensions(DISTR_SIZE, m_classesNumber);
+	m_transform.SetDimensions(DISTR_SIZE, static_cast<unsigned>(m_classesNumber));
 
 	// calculate values for King selection function
 	const double minDiameter = CSS * alpha1;
@@ -313,7 +316,7 @@ void CCrusher::InitializeCone(double _time)
 		for (size_t k = 0; k < m_classesNumber; ++k)
 			if (k <= i)
 				breakage[i][k] = std::pow(m_diameters[i] / m_diameters[k], q) * 0.5 * (1 + std::tanh((m_diameters[k] - FS) / FS));
-		VectorNormalize(breakage[i]);
+		Normalize(breakage[i]);
 	});
 
 	// calculate transformation matrix

@@ -15,7 +15,7 @@ public:
 	QTreeWidgetItem* AddItem(int _col, const std::string& _text, const QVariant& _userData = -1);
 	static QTreeWidgetItem* AddChildItem(QTreeWidgetItem* _parent, int _col, const std::string& _text, const QVariant& _userData = -1);
 
-	QComboBox* AddChildItemComboBox(QTreeWidgetItem* _parent, int _col, const std::vector<QString>& _names, const std::vector<QVariant>& _userData, int _iSelected);
+	QComboBox* AddChildItemComboBox(QTreeWidgetItem* _parent, int _col, const std::vector<QString>& _names, const std::vector<QVariant>& _userData, const QVariant& _selected);
 
 	void SetCurrentItem(const std::vector<size_t>& _indices);
 

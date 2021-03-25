@@ -7,10 +7,9 @@
 class CUnit : public CSteadyStateUnit
 {
 public:
-	CUnit();
-	~CUnit();
-
-	void Initialize(double _dTime) override;
-	void Simulate(double _dTime) override;
+	void CreateBasicInfo() override;
+	void CreateStructure() override;
+	void Initialize(double _time) override;
+	void Simulate(double _time) override;
 	void Finalize() override;
 };

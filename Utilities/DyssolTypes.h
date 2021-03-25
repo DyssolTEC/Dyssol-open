@@ -3,19 +3,17 @@
 #pragma once
 
 #include "DyssolDefines.h"
-#include "DependentValues.h"
 #include <string>
-#include <vector>
 #include <iostream>
 
 // Time dependent value.
 struct STDValue
 {
-	double dTime;
-	double dValue;
-	STDValue() : dTime(0), dValue(0) {};
-	STDValue( double _dTime, double _dValue ) : dTime(_dTime), dValue(_dValue) {};
-	bool operator<(const STDValue ob2) const { return (dTime < ob2.dTime); }
+	double time{ 0.0 };
+	double value{ 0.0 };
+	STDValue() {}
+	STDValue(double _time, double _value) : time{ _time }, value{ _value } {}
+	bool operator<(const STDValue& _other) const { return time < _other.time; }
 };
 
 struct SInterval
@@ -25,6 +23,7 @@ struct SInterval
 	friend std::ostream& operator << (std::ostream& os, const SInterval& val) { os << val.min << ' ' << val.max;	return os; }
 	friend std::istream& operator >> (std::istream& is, SInterval& val) { is >> val.min >> val.max; return is; }
 	bool operator==(const SInterval& _i) const { return min == _i.min && max == _i.max; }
+	[[nodiscard]] bool Includes(double _d) const { return _d >= min && _d <= max; }
 };
 
 enum class EArguments
@@ -55,4 +54,55 @@ enum class EArguments
 	UNIT_HOLDUP_PHASES,
 	UNIT_HOLDUP_COMP,
 	UNIT_HOLDUP_SOLID
+};
+
+struct SCacheSettings
+{
+	bool isEnabled{ false };
+	size_t window{ DEFAULT_CACHE_WINDOW };
+	std::wstring path{ L"" };
+};
+
+struct SToleranceSettings
+{
+	double toleranceAbs{ DEFAULT_A_TOL };		// Absolute tolerance.
+	double toleranceRel{ DEFAULT_R_TOL };		// Relative tolerance.
+	double minFraction{ DEFAULT_MIN_FRACTION };	// Minimum considering fraction in MD distributions.
+};
+
+struct SThermodynamicsSettings
+{
+	SInterval limits{ DEFAULT_ENTHALPY_MIN_T, DEFAULT_ENTHALPY_MAX_T };
+	size_t intervals{ DEFAULT_ENTHALPY_INTERVALS };
+};
+
+struct SPhaseDescriptor
+{
+	EPhase state;		// Phase state.
+	std::string name;	// Phase name.
+};
+
+struct SOverallDescriptor
+{
+	EOverall type;
+	std::string name;
+	std::string units;
+};
+
+// Describes a 2D point.
+class CPoint
+{
+public:
+	double x{};
+	double y{};
+	CPoint() = default;
+	CPoint(double _x, double _y) : x{ _x },	y{ _y } {}
+	static size_t Size() { return 2; }
+	double operator[](size_t _i) const { switch (_i) { case 0: return x; case 1: return y; default: throw std::out_of_range("CPoint::operator[size_t] : index is out of range"); } }
+	double& operator[](size_t _i) { switch (_i) { case 0: return x; case 1: return y; default: throw std::out_of_range("CPoint::operator[size_t] : index is out of range"); } }
+};
+
+enum class EDirection
+{
+	UP, DOWN
 };

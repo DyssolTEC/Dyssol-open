@@ -1,9 +1,10 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "ModelsManager.h"
+#include "DynamicUnit.h"
 #include "FileSystem.h"
 #include "DyssolStringConstants.h"
-#include "DyssolUtilities.h"
+#include "ContainerFunctions.h"
 #ifdef _MSC_VER
 #else
 #include <dlfcn.h>
@@ -18,7 +19,7 @@ bool CModelsManager::AddDir(const std::wstring& _path, bool _active)
 {
 	const auto& it = std::find_if(m_dirsList.begin(), m_dirsList.end(), [&](const SModelDir& entry) { return entry.path == _path; });
 	if (it != m_dirsList.end()) return false;	// this path has been already added
-	m_dirsList.push_back(SModelDir{ _path , StringFunctions::GenerateUniqueString("", AllDirsKeys()), _active, false });
+	m_dirsList.push_back(SModelDir{ _path , StringFunctions::GenerateUniqueKey("", AllDirsKeys()), _active, false });
 	UpdateAvailableModels();
 	return true;
 }
@@ -106,7 +107,7 @@ CBaseUnit* CModelsManager::InstantiateUnit(const std::string& _key)
 			const DYSSOL_LIBRARY_INSTANCE hLibrary = LoadDyssolLibrary(u.fileLocation);
 			if (!hLibrary) return nullptr;
 			// get constructor function
-			const CreateUnit createUnitFunc = reinterpret_cast<CreateUnit>(LoadDyssolLibraryConstructor(hLibrary, DYSSOL_CREATE_MODEL_FUN_NAME));
+			const CreateUnit2 createUnitFunc = reinterpret_cast<CreateUnit2>(LoadDyssolLibraryConstructor(hLibrary, DYSSOL_CREATE_MODEL_FUN_NAME));
 			if (!createUnitFunc)
 			{
 				CloseDyssolLibrary(hLibrary);
@@ -119,6 +120,7 @@ CBaseUnit* CModelsManager::InstantiateUnit(const std::string& _key)
 				CloseDyssolLibrary(hLibrary);
 				continue; // seek further
 			}
+			pUnit->CreateBasicInfo();
 			// save created unit and its library
 			m_loadedUnits[pUnit] = hLibrary;
 			// return instantiated unit
@@ -127,7 +129,7 @@ CBaseUnit* CModelsManager::InstantiateUnit(const std::string& _key)
 	return nullptr;
 }
 
-CExternalSolver* CModelsManager::InstantiateSolver(const std::string& _key)
+CBaseSolver* CModelsManager::InstantiateSolver(const std::string& _key)
 {
 	for (const auto& s : m_availableSolvers)	// go through all available solvers
 		if (s.uniqueID == _key)				// find the required descriptor
@@ -143,12 +145,13 @@ CExternalSolver* CModelsManager::InstantiateSolver(const std::string& _key)
 				continue; // seek further
 			}
 			// instantiate solver
-			CExternalSolver* pSolver = createSolverFunc();
+			CBaseSolver* pSolver = createSolverFunc();
 			if (!pSolver)
 			{
 				CloseDyssolLibrary(hLibrary);
 				continue; // seek further
 			}
+			pSolver->CreateBasicInfo();
 			// save created solver and its library
 			m_loadedSolvers[pSolver] = hLibrary;
 			// return instantiated solver
@@ -173,7 +176,7 @@ void CModelsManager::FreeUnit(CBaseUnit* _unit)
 	CloseDyssolLibrary(hLibrary);
 }
 
-void CModelsManager::FreeSolver(CExternalSolver* _solver)
+void CModelsManager::FreeSolver(CBaseSolver* _solver)
 {
 	if (!_solver) return;
 	// test if such solver exists
@@ -275,7 +278,7 @@ std::pair<std::vector<SUnitDescriptor>, std::vector<SSolverDescriptor>> CModelsM
 SUnitDescriptor CModelsManager::TryGetUnitDescriptor(const std::wstring& _pathToUnit, DYSSOL_LIBRARY_INSTANCE _library)
 {
 	// try to get constructor
-	const CreateUnit createUnitFunc = reinterpret_cast<CreateUnit>(LoadDyssolLibraryConstructor(_library, DYSSOL_CREATE_MODEL_FUN_NAME));
+	const CreateUnit2 createUnitFunc = reinterpret_cast<CreateUnit2>(LoadDyssolLibraryConstructor(_library, DYSSOL_CREATE_MODEL_FUN_NAME));
 	if (!createUnitFunc)
 		return {};
 
@@ -289,11 +292,17 @@ SUnitDescriptor CModelsManager::TryGetUnitDescriptor(const std::wstring& _pathTo
 		return {};
 	}
 
-	// validate unit
-	if (pUnit->m_nCompilerVer != COMPILER_VERSION) {
-		delete pUnit;
+	// do not allow code in constructor, as in previous versions
+	try {
+		if (!pUnit->GetUnitName().empty() || !pUnit->GetUniqueID().empty() || !pUnit->GetAuthorName().empty() || pUnit->GetVersion() != 0)
+			return {};
+	}
+	catch (const std::logic_error& e) {
+		std::cerr << e.what() << std::endl;
 		return {};
 	}
+
+	pUnit->CreateBasicInfo();
 
 	SUnitDescriptor unitDescriptor;
 
@@ -302,8 +311,8 @@ SUnitDescriptor CModelsManager::TryGetUnitDescriptor(const std::wstring& _pathTo
 		unitDescriptor.uniqueID = pUnit->GetUniqueID();
 		unitDescriptor.name = pUnit->GetUnitName();
 		unitDescriptor.author = pUnit->GetAuthorName();
-		unitDescriptor.version = pUnit->GetUnitVersion();
-		unitDescriptor.isDynamic = pUnit->IsDynamicUnit();
+		unitDescriptor.version = pUnit->GetVersion();
+		unitDescriptor.isDynamic = dynamic_cast<CDynamicUnit*>(pUnit);
 		unitDescriptor.fileLocation = StringFunctions::UnifyPath(_pathToUnit);
 	}
 	catch (...) {
@@ -317,7 +326,7 @@ SUnitDescriptor CModelsManager::TryGetUnitDescriptor(const std::wstring& _pathTo
 SSolverDescriptor CModelsManager::TryGetSolverDescriptor(const std::wstring& _pathToSolver, DYSSOL_LIBRARY_INSTANCE _library)
 {
 	SSolverDescriptor solverDescriptor;
-	CExternalSolver* pSolver = nullptr;
+	CBaseSolver* pSolver = nullptr;
 	bool bFound = false;
 
 	// go through all solver types
@@ -335,6 +344,17 @@ SSolverDescriptor CModelsManager::TryGetSolverDescriptor(const std::wstring& _pa
 		catch (const std::logic_error&) {
 			continue;
 		}
+
+		// do not allow code in constructor, as in previous versions
+		try {
+			if (!pSolver->GetName().empty() || !pSolver->GetUniqueID().empty() || !pSolver->GetAuthorName().empty() || pSolver->GetVersion() != 0)
+				continue;
+		}
+		catch (const std::logic_error&) {
+			continue;
+		}
+
+		pSolver->CreateBasicInfo();
 
 		// validate solver
 		if (pSolver->m_nCompilerVer != COMPILER_VERSION)

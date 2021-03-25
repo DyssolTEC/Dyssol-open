@@ -19,8 +19,8 @@ class CScreen : public CSteadyStateUnit
 	EModels m_model;									// Chosen classification model.
 
 public:
-	CScreen();
-
+	void CreateBasicInfo() override;
+	void CreateStructure() override;
 	void Initialize(double _time) override;
 	void Simulate(double _time) override;
 

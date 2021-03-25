@@ -11,49 +11,52 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 //////////////////////////////////////////////////////////////////////////
 /// Unit
 
-CUnit::CUnit()
+void CUnit::CreateBasicInfo()
 {
 	/// Basic unit's info ///
-	m_sUnitName = "DummyUnit2";
-	m_sAuthorName = "Author";
-	m_sUniqueID = "00000000000000000000000000000200";
+	SetUnitName  ("DummyUnit2");
+	SetAuthorName("Author");
+	SetUniqueID  ("00000000000000000000000000000200");
+}
 
+void CUnit::CreateStructure()
+{
 	/// Add ports ///
-	AddPort("InPort", INPUT_PORT);
-	AddPort("OutPort", OUTPUT_PORT);
+	AddPort("InPort" , EUnitPort::INPUT);
+	AddPort("OutPort", EUnitPort::OUTPUT);
 
 	/// Add unit parameters ///
-	AddTDParameter("ParamTD", 0, 1e+6, 0, "kg", "Unit parameter description");
-	AddConstParameter("ParamConst", 0, 1e+6, 0, "s", "Unit parameter description");
-	AddStringParameter("ParamString", "Initial value", "Unit parameter description");
+	AddTDParameter       ("ParamTD"    , 0, "kg"        , "Unit parameter description");
+	AddConstRealParameter("ParamConst" , 0, "s"         , "Unit parameter description");
+	AddStringParameter   ("ParamString", "Initial value", "Unit parameter description");
 
 	/// Add holdups ///
 	AddHoldup("HoldupName");
-}
 
-CUnit::~CUnit()
-{
 
 }
 
-void CUnit::Initialize(double _dTime)
+void CUnit::Initialize(double _time)
 {
 	/// Add state variables ///
-	AddStateVariable("VarName", 0, true);
+	AddStateVariable("VarName", 0.0);
 
 
 }
 
-void CUnit::Simulate(double _dStartTime, double _dEndTime)
+void CUnit::Simulate(double _timeBeg, double _timeEnd)
 {
 	/// Get pointers to streams ///
-	CMaterialStream* pInStream = GetPortStream("InPort");
-	CMaterialStream* pOutStream = GetPortStream("OutPort");
+	CMaterialStream* inStream  = GetPortStream("InPort");
+	CMaterialStream* outStream = GetPortStream("OutPort");
 
 	/// Get pointers to holdups ///
-	CHoldup* pHoldup = GetHoldup("HoldupName");
+	CHoldup* holdup = GetHoldup("HoldupName");
 
-	pOutStream->CopyFromStream(pInStream, _dStartTime, _dEndTime);
+	/// Unit body ///
+	holdup->AddStream(_timeBeg, _timeEnd, inStream);
+	outStream->CopyFromHoldup(_timeBeg, holdup, 1.0);
+	outStream->CopyFromHoldup(_timeEnd, holdup, 1.0);
 
 
 }

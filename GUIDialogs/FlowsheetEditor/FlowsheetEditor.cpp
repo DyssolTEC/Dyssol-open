@@ -1,15 +1,21 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "FlowsheetEditor.h"
-#include "MaterialStream.h"
+#include "Flowsheet.h"
+#include "BaseUnit.h"
+#include "Stream.h"
+#include "MaterialsDatabase.h"
 #include "DyssolStringConstants.h"
+#include "ReactionsEditor.h"
 #include <sstream>
 #include <QMessageBox>
 #include <cmath>
 
-CFlowsheetEditor::CFlowsheetEditor(CFlowsheet *_pFlowsheet, QWidget *parent /*= 0 */)
+CFlowsheetEditor::CFlowsheetEditor(CFlowsheet *_pFlowsheet, const CMaterialsDatabase* _matrialsDB, CModelsManager* _modelsManager, QWidget *parent /*= 0 */)
 	: QWidget(parent),
 	m_pFlowsheet(_pFlowsheet),
+	m_materialsDB{ _matrialsDB },
+	m_modelsManager{ _modelsManager },
 	m_pSelectedModel(nullptr),
 	m_pSelectedStream(nullptr)
 {
@@ -44,6 +50,7 @@ void CFlowsheetEditor::InitializeConnections()
 	connect(ui.tableUnitParams,		&QTableWidget::cellChanged,				this, &CFlowsheetEditor::UnitParamValueChanged);
 	connect(ui.tableUnitParams,		&CQtTable::ComboBoxIndexChanged,		this, &CFlowsheetEditor::UnitParamValueChanged);
 	connect(ui.tableUnitParams,		&CQtTable::CheckBoxStateChanged,		this, &CFlowsheetEditor::UnitParamValueChanged);
+	connect(ui.tableUnitParams,		&CQtTable::PushButtonClicked,		    this, &CFlowsheetEditor::UnitParamValueChanged);
 }
 
 void CFlowsheetEditor::setVisible(bool _bVisible)
@@ -66,7 +73,7 @@ void CFlowsheetEditor::UpdateAvailableUnits() const
 
 	ui.comboUnits->clear();
 
-	const std::vector<SUnitDescriptor> units = m_pFlowsheet->GetModelsManager()->GetAvailableUnits();
+	const std::vector<SUnitDescriptor> units = m_modelsManager->GetAvailableUnits();
 	for (int i = 0; i < static_cast<int>(units.size()); ++i)
 		ui.comboUnits->insertItem(i, QString::fromStdString(units[i].name), QString::fromStdString(units[i].uniqueID));
 
@@ -83,8 +90,8 @@ void CFlowsheetEditor::UpdateAvailableSolvers() const
 
 void CFlowsheetEditor::AddModel()
 {
-	CBaseModel* model = m_pFlowsheet->AddModel();
-	model->SetModelName(StrConst::FE_UnitDefaultName + std::to_string(m_pFlowsheet->GetModelsCount()));
+	CUnitContainer* model = m_pFlowsheet->AddUnit();
+	model->SetName(StrConst::FE_UnitDefaultName + std::to_string(m_pFlowsheet->GetUnitsNumber()));
 
 	UpdateModelsView();
 	QSignalBlocker blocker(ui.listModels);
@@ -99,7 +106,7 @@ void CFlowsheetEditor::DeleteModel()
 {
 	if (!m_pSelectedModel) return;
 
-	m_pFlowsheet->DeleteModel(m_pSelectedModel->GetModelKey());
+	m_pFlowsheet->DeleteUnit(m_pSelectedModel->GetKey());
 
 	UpdateModelsView();
 	UpdateUnitCombo();
@@ -116,7 +123,7 @@ void CFlowsheetEditor::UpModel()
 {
 	if (!m_pSelectedModel || ui.listModels->currentRow() <= 0) return;
 	QSignalBlocker blocker(ui.listModels);
-	m_pFlowsheet->ShiftModelUp(m_pSelectedModel->GetModelKey());
+	m_pFlowsheet->ShiftUnit(m_pSelectedModel->GetKey(), EDirection::UP);
 	ui.listModels->setCurrentItem(ui.listModels->item(ui.listModels->currentRow() - 1, 0));
 	UpdateModelsView();
 	emit DataChanged();
@@ -126,7 +133,7 @@ void CFlowsheetEditor::DownModel()
 {
 	if (!m_pSelectedModel || ui.listModels->currentRow() >= ui.listModels->rowCount() - 1) return;
 	QSignalBlocker blocker(ui.listModels);
-	m_pFlowsheet->ShiftModelDown(m_pSelectedModel->GetModelKey());
+	m_pFlowsheet->ShiftUnit(m_pSelectedModel->GetKey(), EDirection::DOWN);
 	ui.listModels->setCurrentItem(ui.listModels->item(ui.listModels->currentRow() + 1, 0));
 	UpdateModelsView();
 	emit DataChanged();
@@ -134,8 +141,8 @@ void CFlowsheetEditor::DownModel()
 
 void CFlowsheetEditor::AddStream()
 {
-	CMaterialStream *stream = m_pFlowsheet->AddStream();
-	stream->SetStreamName(StrConst::FE_StreamDefaultName + std::to_string(m_pFlowsheet->GetStreamsCount()));
+	CStream*stream = m_pFlowsheet->AddStream();
+	stream->SetName(StrConst::FE_StreamDefaultName + std::to_string(m_pFlowsheet->GetStreamsNumber()));
 
 	UpdateStreamsView();
 	QSignalBlocker blocker(ui.listStreams);
@@ -151,7 +158,7 @@ void CFlowsheetEditor::DeleteStream()
 {
 	if (!m_pSelectedStream) return;
 
-	m_pFlowsheet->DeleteStream(m_pSelectedStream->GetStreamKey());
+	m_pFlowsheet->DeleteStream(m_pSelectedStream->GetKey());
 
 	UpdateStreamsView();
 	UpdatePortsView();
@@ -163,7 +170,7 @@ void CFlowsheetEditor::DeleteStream()
 void CFlowsheetEditor::UpStream()
 {
 	if (!m_pSelectedStream || ui.listStreams->currentRow() <= 0) return;
-	m_pFlowsheet->ShiftStreamUp(m_pSelectedStream->GetStreamKey());
+	m_pFlowsheet->ShiftStream(m_pSelectedStream->GetKey(), EDirection::UP);
 	UpdateStreamsView();
 	UpdatePortsView();
 	ui.listStreams->setCurrentItem(ui.listStreams->item(ui.listStreams->currentRow() - 1, 0));
@@ -173,7 +180,7 @@ void CFlowsheetEditor::UpStream()
 void CFlowsheetEditor::DownStream()
 {
 	if (!m_pSelectedStream || ui.listStreams->currentRow() >= ui.listStreams->rowCount() - 1) return;
-	m_pFlowsheet->ShiftStreamDown(m_pSelectedStream->GetStreamKey());
+	m_pFlowsheet->ShiftStream(m_pSelectedStream->GetKey(), EDirection::DOWN);
 	UpdateStreamsView();
 	UpdatePortsView();
 	ui.listStreams->setCurrentItem(ui.listStreams->item(ui.listStreams->currentRow() + 1, 0));
@@ -189,8 +196,8 @@ void CFlowsheetEditor::ChangeSelectedStream()
 void CFlowsheetEditor::ChangeSelectedModel()
 {
 	const QTableWidgetItem *pItem = ui.listModels->currentItem();
-	m_pSelectedModel = pItem ? m_pFlowsheet->GetModel(pItem->data(Qt::UserRole).toString().toStdString()) : nullptr;
-	m_pModelParams = m_pSelectedModel ? m_pSelectedModel->GetUnitParametersManager() : nullptr;
+	m_pSelectedModel = pItem ? m_pFlowsheet->GetUnit(pItem->data(Qt::UserRole).toString().toStdString()) : nullptr;
+	m_pModelParams = m_pSelectedModel && m_pSelectedModel->GetModel() ? &m_pSelectedModel->GetModel()->GetUnitParametersManager() : nullptr;
 
 	EnableGUIElements();
 	UpdateUnitCombo();
@@ -205,10 +212,9 @@ void CFlowsheetEditor::ChangeUnitInModel(int _index)
 	if (!m_pSelectedModel) return;
 
 	// set new unit
-	m_pSelectedModel->SetUnit(ui.comboUnits->itemData(_index).toString().toStdString());
-	m_pFlowsheet->InitializeModel(m_pSelectedModel->GetModelKey());
+	m_pSelectedModel->SetModel(ui.comboUnits->itemData(_index).toString().toStdString());
 	m_pFlowsheet->SetTopologyModified(true);
-	m_pModelParams = m_pSelectedModel->GetUnitParametersManager();
+	m_pModelParams = m_pSelectedModel->GetModel() ? &m_pSelectedModel->GetModel()->GetUnitParametersManager() : nullptr;
 
 	UpdatePortsView();
 	UpdateUnitParamDescr();
@@ -223,7 +229,7 @@ void CFlowsheetEditor::ChangeModelName(int _iRow, int _iCol)
 {
 	if (!m_pSelectedModel) return;
 
-	m_pSelectedModel->SetModelName(ui.listModels->item(_iRow, _iCol)->text().simplified().toStdString());
+	m_pSelectedModel->SetName(ui.listModels->item(_iRow, _iCol)->text().simplified().toStdString());
 
 	UpdateModelsView();
 
@@ -235,7 +241,7 @@ void CFlowsheetEditor::ChangeStreamName(int _iRow, int _iCol)
 {
 	if (!m_pSelectedStream) return;
 
-	m_pSelectedStream->SetStreamName(ui.listStreams->item(_iRow, _iCol)->text().simplified().toStdString());
+	m_pSelectedStream->SetName(ui.listStreams->item(_iRow, _iCol)->text().simplified().toStdString());
 
 	UpdateStreamsView();
 	UpdatePortsView();
@@ -246,8 +252,8 @@ void CFlowsheetEditor::ChangeStreamName(int _iRow, int _iCol)
 
 void CFlowsheetEditor::NewPortStreamSelected(int _iRow, int _iCol, QComboBox* _comboBox)
 {
-	if (!m_pSelectedModel) return;
-	m_pSelectedModel->SetPortStreamKey(_iRow, _comboBox->currentData(Qt::UserRole).toString().toStdString());
+	if (!m_pSelectedModel || !m_pSelectedModel->GetModel()) return;
+	m_pSelectedModel->GetModel()->GetPortsManager().GetPort(ui.tablePorts->GetItemUserData(_iRow, 0).toStdString())->SetStreamKey(_comboBox->currentData(Qt::UserRole).toString().toStdString());
 	m_pFlowsheet->SetTopologyModified(true);
 	emit DataChanged();
 }
@@ -333,10 +339,18 @@ void CFlowsheetEditor::UnitParamValueChanged(int _row, int _col)
 	auto* param = m_pModelParams->GetParameter(ui.tableUnitParams->GetItemUserData(_row, 0).toInt());
 	if (!param) return;
 
+	bool dataChanged = true; // whether the data were changed here
 	switch (param->GetType())
 	{
-	case EUnitParameter::CONSTANT:
-		dynamic_cast<CConstUnitParameter*>(param)->SetValue(ui.tableUnitParams->GetItem(_row, _col).toDouble());
+	case EUnitParameter::CONSTANT: [[fallthrough]];
+	case EUnitParameter::CONSTANT_DOUBLE:
+		dynamic_cast<CConstRealUnitParameter*>(param)->SetValue(ui.tableUnitParams->GetItem(_row, _col).toDouble());
+		break;
+	case EUnitParameter::CONSTANT_INT64:
+		dynamic_cast<CConstIntUnitParameter*>(param)->SetValue(ui.tableUnitParams->GetItem(_row, _col).toInt());
+		break;
+	case EUnitParameter::CONSTANT_UINT64:
+		dynamic_cast<CConstUIntUnitParameter*>(param)->SetValue(ui.tableUnitParams->GetItem(_row, _col).toUInt());
 		break;
 	case EUnitParameter::TIME_DEPENDENT:
 		dynamic_cast<CTDUnitParameter*>(param)->SetValue(dynamic_cast<CTDUnitParameter*>(param)->GetTimes().front(), ui.tableUnitParams->GetItem(_row, _col).toDouble());
@@ -347,7 +361,7 @@ void CFlowsheetEditor::UnitParamValueChanged(int _row, int _col)
 	case EUnitParameter::CHECKBOX:
 	{
 		const QCheckBox* checkbox = ui.tableUnitParams->GetCheckBox(_row, _col);
-		dynamic_cast<CCheckboxUnitParameter*>(param)->SetChecked(checkbox->isChecked());
+		dynamic_cast<CCheckBoxUnitParameter*>(param)->SetChecked(checkbox->isChecked());
 		break;
 	}
 	case EUnitParameter::SOLVER:
@@ -368,7 +382,7 @@ void CFlowsheetEditor::UnitParamValueChanged(int _row, int _col)
 	{
 		const QComboBox* combo = ui.tableUnitParams->GetComboBox(_row, _col);
 		const size_t value = combo->itemData(combo->currentIndex()).toUInt();
-		dynamic_cast<CGroupUnitParameter*>(param)->SetValue(value);
+		dynamic_cast<CComboUnitParameter*>(param)->SetValue(value);
 		break;
 	}
 	case EUnitParameter::COMPOUND:
@@ -378,6 +392,17 @@ void CFlowsheetEditor::UnitParamValueChanged(int _row, int _col)
 		dynamic_cast<CCompoundUnitParameter*>(param)->SetCompound(key.toStdString());
 		break;
 	}
+	case EUnitParameter::REACTION:
+	{
+		auto* reactionParam = dynamic_cast<CReactionUnitParameter*>(param);
+		const auto compounds = m_pFlowsheet->GetCompounds();
+		CReactionsEditor editor{ reactionParam->GetReactions(), &compounds, m_materialsDB, this };
+		if (editor.exec() == QDialog::Accepted)
+			reactionParam->SetReactions(editor.GetReactions());
+		else
+			dataChanged = false;
+		break;
+	}
 	case EUnitParameter::UNKNOWN:
 		break;
 	}
@@ -385,7 +410,8 @@ void CFlowsheetEditor::UnitParamValueChanged(int _row, int _col)
 	UpdateUnitParamTable();
 	UpdateTDValuesTable();
 
-	emit DataChanged();
+	if (dataChanged)
+		emit DataChanged();
 }
 
 void CFlowsheetEditor::UpdateModelsView()
@@ -396,9 +422,10 @@ void CFlowsheetEditor::UpdateModelsView()
 	const auto oldPos = ui.listModels->CurrentCellPos();
 
 	// update list of models
-	ui.listModels->setRowCount(static_cast<int>(m_pFlowsheet->GetModelsCount()));
-	for (int i = 0; i < static_cast<int>(m_pFlowsheet->GetModelsCount()); ++i)
-		ui.listModels->SetItemEditable(i, 0, m_pFlowsheet->GetModel(i)->GetModelName(), QString::fromStdString(m_pFlowsheet->GetModel(i)->GetModelKey()));
+	ui.listModels->setRowCount(static_cast<int>(m_pFlowsheet->GetUnitsNumber()));
+	int iRow = 0;
+	for (const auto& unit : m_pFlowsheet->GetAllUnits())
+		ui.listModels->SetItemEditable(iRow++, 0, unit->GetName(), QString::fromStdString(unit->GetKey()));
 
 	// restore selection
 	ui.listModels->RestoreSelectedCell(oldPos);
@@ -410,9 +437,10 @@ void CFlowsheetEditor::UpdateStreamsView()
 	QSignalBlocker blocker(ui.listStreams);
 	const auto oldPos = ui.listStreams->CurrentCellPos();
 
-	ui.listStreams->setRowCount(static_cast<int>(m_pFlowsheet->GetStreamsCount()));
-	for (int i = 0; i < static_cast<int>(m_pFlowsheet->GetStreamsCount()); ++i)
-		ui.listStreams->SetItemEditable(i, 0, m_pFlowsheet->GetStream(i)->GetStreamName(), QString::fromStdString(m_pFlowsheet->GetStream(i)->GetStreamKey()));
+	ui.listStreams->setRowCount(static_cast<int>(m_pFlowsheet->GetStreamsNumber()));
+	int iRow = 0;
+	for (const auto& stream : m_pFlowsheet->GetAllStreams())
+		ui.listStreams->SetItemEditable(iRow++, 0, stream->GetName(), QString::fromStdString(stream->GetKey()));
 
 	// restore selection
 	ui.listStreams->RestoreSelectedCell(oldPos);
@@ -427,7 +455,7 @@ void CFlowsheetEditor::UpdateUnitCombo() const
 	if (!m_pSelectedModel) return;
 
 	// set selected unit
-	const QString unitKey = QString::fromStdString(m_pFlowsheet->GetModel(m_pSelectedModel->GetModelKey())->GetUnitKey());
+	const QString unitKey = QString::fromStdString(m_pSelectedModel->GetModel() ? m_pSelectedModel->GetModel()->GetUniqueID() : "");
 	for (int i = 0; i < ui.comboUnits->count(); ++i)
 		if (ui.comboUnits->itemData(i).toString() == unitKey)
 		{
@@ -444,33 +472,33 @@ void CFlowsheetEditor::UpdatePortsView() const
 	ui.tablePorts->setRowCount(0);
 	ui.labelPorts->setText("Ports");
 
-	if (!m_pSelectedModel) return;
+	if (!m_pSelectedModel || !m_pSelectedModel->GetModel()) return;
 
 	// update label
-	ui.labelPorts->setText("Ports of " + QString::fromStdString(m_pSelectedModel->GetModelName()));
+	ui.labelPorts->setText("Ports of " + QString::fromStdString(m_pSelectedModel->GetName()));
 
 	// get list of ports for current unit
-	std::vector<sPortStruct> ports = m_pFlowsheet->GetModel(m_pSelectedModel->GetModelKey())->GetUnitPorts();
+	std::vector<CUnitPort*> ports = m_pSelectedModel->GetModel()->GetPortsManager().GetAllPorts();
 
 	// resize the table
 	ui.tablePorts->setRowCount(static_cast<int>(ports.size()));
 
 	// prepare data for combo boxes
-	std::vector<QString> streamNames;
-	std::vector<QVariant> streamKeys;
-	for (size_t i = 0; i < m_pFlowsheet->GetStreamsCount(); ++i)
+	std::vector<std::string> streamNames;
+	std::vector<std::string> streamKeys;
+	for (const auto& stream : m_pFlowsheet->GetAllStreams())
 	{
-		streamNames.push_back(QString::fromStdString(m_pFlowsheet->GetStream(i)->GetStreamName()));
-		streamKeys.emplace_back(QString::fromStdString(m_pFlowsheet->GetStream(i)->GetStreamKey()));
+		streamNames.push_back(stream->GetName());
+		streamKeys.emplace_back(stream->GetKey());
 	}
 
 	// create table with total ports of the unit
 	for (int i = 0; i < static_cast<int>(ports.size()); ++i)
 	{
-		ui.tablePorts->SetItemNotEditable(i, 0, ports[i].sName);
-		ui.tablePorts->SetItemNotEditable(i, 1, ports[i].nType == INPUT_PORT ? QString(StrConst::FE_PortTypeInput) : QString(StrConst::FE_PortTypeOutput));
-		ui.tablePorts->SetRowBackgroundColor(i, ports[i].nType == INPUT_PORT ? QColor(0, 255, 0, 50) : QColor(255, 216, 0, 50));
-		QComboBox* combo = ui.tablePorts->SetComboBox(i, 2, streamNames, streamKeys, static_cast<int>(m_pFlowsheet->GetStreamIndex(ports[i].sStreamKey)));
+		ui.tablePorts->SetItemNotEditable(i, 0, ports[i]->GetName(), QString::fromStdString(ports[i]->GetName()));
+		ui.tablePorts->SetItemNotEditable(i, 1, ports[i]->GetType() == EUnitPort::INPUT ? QString(StrConst::FE_PortTypeInput) : QString(StrConst::FE_PortTypeOutput));
+		ui.tablePorts->SetRowBackgroundColor(i, ports[i]->GetType() == EUnitPort::INPUT ? QColor(0, 255, 0, 50) : QColor(255, 216, 0, 50));
+		QComboBox* combo = ui.tablePorts->SetComboBox(i, 2, streamNames, streamKeys, ports[i]->GetStreamKey());
 		combo->setMaxVisibleItems(20);
 	}
 }
@@ -496,10 +524,29 @@ void CFlowsheetEditor::UpdateUnitParamTable() const
 
 		switch (param->GetType())
 		{
-		case EUnitParameter::CONSTANT:
+		case EUnitParameter::CONSTANT: [[fallthrough]];
+		case EUnitParameter::CONSTANT_DOUBLE:
 		{
-			const auto* p = dynamic_cast<const CConstUnitParameter*>(param);
+			const auto* p = dynamic_cast<const CConstRealUnitParameter*>(param);
 			ui.tableUnitParams->SetItemEditable(iRow, 2, p->GetValue());
+			if (!p->IsInBounds())
+				ui.tableUnitParams->SetItemBackgroundColor(iRow, 2, Qt::red);
+			ui.tableUnitParams->SetItemNotEditable(iRow, 1, !p->GetUnits().empty() ? "[" + p->GetUnits() + "]" : std::string{});
+			break;
+		}
+		case EUnitParameter::CONSTANT_INT64:
+		{
+			const auto* p = dynamic_cast<const CConstIntUnitParameter*>(param);
+			ui.tableUnitParams->SetItemEditable(iRow, 2, static_cast<double>(p->GetValue()));
+			if (!p->IsInBounds())
+				ui.tableUnitParams->SetItemBackgroundColor(iRow, 2, Qt::red);
+			ui.tableUnitParams->SetItemNotEditable(iRow, 1, !p->GetUnits().empty() ? "[" + p->GetUnits() + "]" : std::string{});
+			break;
+		}
+		case EUnitParameter::CONSTANT_UINT64:
+		{
+			const auto* p = dynamic_cast<const CConstUIntUnitParameter*>(param);
+			ui.tableUnitParams->SetItemEditable(iRow, 2, static_cast<double>(p->GetValue()));
 			if (!p->IsInBounds())
 				ui.tableUnitParams->SetItemBackgroundColor(iRow, 2, Qt::red);
 			ui.tableUnitParams->SetItemNotEditable(iRow, 1, !p->GetUnits().empty() ? "[" + p->GetUnits() + "]" : std::string{});
@@ -532,7 +579,7 @@ void CFlowsheetEditor::UpdateUnitParamTable() const
 		}
 		case EUnitParameter::CHECKBOX:
 		{
-			const auto* p = dynamic_cast<const CCheckboxUnitParameter*>(param);
+			const auto* p = dynamic_cast<const CCheckBoxUnitParameter*>(param);
 			ui.tableUnitParams->SetCheckBox(iRow, 2, p->IsChecked());
 			ui.tableUnitParams->SetItemNotEditable(iRow, 1, QString{});
 			break;
@@ -541,7 +588,7 @@ void CFlowsheetEditor::UpdateUnitParamTable() const
 		{
 			const auto* p = dynamic_cast<const CSolverUnitParameter*>(param);
 			// create combo with total list of possible solvers with the specified type
-			const std::vector<SSolverDescriptor> solvers = m_pFlowsheet->GetModelsManager()->GetAvailableSolvers();
+			const std::vector<SSolverDescriptor> solvers = m_modelsManager->GetAvailableSolvers();
 			std::vector<std::string> names;
 			std::vector<std::string> keys;
 			for (const auto& s : solvers)
@@ -554,7 +601,7 @@ void CFlowsheetEditor::UpdateUnitParamTable() const
 			ui.tableUnitParams->SetItemNotEditable(iRow, 1, QString{});
 			break;
 		}
-		case EUnitParameter::COMBO:
+		case EUnitParameter::COMBO: [[fallthrough]];
 		case EUnitParameter::GROUP:
 		{
 			const auto* p = dynamic_cast<const CComboUnitParameter*>(param);
@@ -567,7 +614,13 @@ void CFlowsheetEditor::UpdateUnitParamTable() const
 		{
 			const auto* p = dynamic_cast<const CCompoundUnitParameter*>(param);
 			// create combo with total list of possible compounds
-			ui.tableUnitParams->SetComboBox(iRow, 2, m_pFlowsheet->GetCompoundsNames(), m_pFlowsheet->GetCompounds(), p->GetCompound());
+			ui.tableUnitParams->SetComboBox(iRow, 2, m_materialsDB->GetCompoundsNames(m_pFlowsheet->GetCompounds()), m_pFlowsheet->GetCompounds(), p->GetCompound());
+			ui.tableUnitParams->SetItemNotEditable(iRow, 1, QString{});
+			break;
+		}
+		case EUnitParameter::REACTION:
+		{
+			ui.tableUnitParams->SetPushButton(iRow, 2, "Reactions");
 			ui.tableUnitParams->SetItemNotEditable(iRow, 1, QString{});
 			break;
 		}
@@ -630,10 +683,10 @@ void CFlowsheetEditor::UpdateUnitParamDescr() const
 	if (type == EUnitParameter::CONSTANT || type == EUnitParameter::TIME_DEPENDENT)
 	{
 		text += "\n" + QString(StrConst::FE_UnitParamMinVal) + QString::number(type == EUnitParameter::CONSTANT
-			? dynamic_cast<CConstUnitParameter*>(param)->GetMin()
+			? dynamic_cast<CConstRealUnitParameter*>(param)->GetMin()
 			: dynamic_cast<CTDUnitParameter*>(param)->GetMin());
 		text += "\n" + QString(StrConst::FE_UnitParamMaxVal) + QString::number(type == EUnitParameter::CONSTANT
-			? dynamic_cast<CConstUnitParameter*>(param)->GetMax()
+			? dynamic_cast<CConstRealUnitParameter*>(param)->GetMax()
 			: dynamic_cast<CTDUnitParameter*>(param)->GetMax());
 		extraLines = 2;
 	}

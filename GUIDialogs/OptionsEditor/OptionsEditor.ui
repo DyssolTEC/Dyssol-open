@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>402</width>
-    <height>498</height>
+    <height>499</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -198,6 +198,60 @@
              <string>Apply save time step also for holdups and internal streams</string>
             </property>
            </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBoxTemperature">
+         <property name="toolTip">
+          <string>Settings for calculating the temperature of mixtures</string>
+         </property>
+         <property name="statusTip">
+          <string>Settings for calculating the temperature of mixtures</string>
+         </property>
+         <property name="whatsThis">
+          <string>Settings for calculating the temperature of mixtures</string>
+         </property>
+         <property name="title">
+          <string>Temperature</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2" columnstretch="1,0">
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelTMin">
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Min temperature [K]</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="lineEditTMin"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelTMax">
+            <property name="text">
+             <string>Max temperature [K]</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="lineEditTMax"/>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="labelTIntervals">
+            <property name="text">
+             <string>Temperature intervals</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="lineEditTIntervals"/>
           </item>
          </layout>
         </widget>

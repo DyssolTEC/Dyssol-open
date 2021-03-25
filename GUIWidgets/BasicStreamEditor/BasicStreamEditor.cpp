@@ -1,6 +1,11 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "BasicStreamEditor.h"
+#include "Flowsheet.h"
+#include "BaseStream.h"
+#include "Phase.h"
+#include "MaterialsDatabase.h"
+#include "ContainerFunctions.h"
 #include <QMessageBox>
 
 CBasicStreamEditor::CBasicStreamEditor(QWidget *parent)
@@ -42,12 +47,13 @@ void CBasicStreamEditor::InitializeConnections()
 	connect(m_pDDTablePhase, &CDDTable::DataChanged, this, &CBasicStreamEditor::ChangeData);
 }
 
-void CBasicStreamEditor::SetFlowsheet(CFlowsheet* _pFlowsheet)
+void CBasicStreamEditor::SetFlowsheet(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB)
 {
 	m_pFlowsheet = _pFlowsheet;
+	m_materialsDB = _materialsDB;
 }
 
-void CBasicStreamEditor::SetStream(CStream* _pStream)
+void CBasicStreamEditor::SetStream(CBaseStream* _pStream)
 {
 	m_pSelectedHoldup = _pStream;
 	UpdateWholeView();
@@ -95,7 +101,7 @@ void CBasicStreamEditor::UpdateTabs()
 	if (ui.mainTabWidget->count() > static_cast<int>(m_vMDMTablePhases.size()) + 2)
 		ui.mainTabWidget->removeTab(static_cast<int>(m_vMDMTablePhases.size()) + 2);
 
-	if (m_pFlowsheet->GetPhaseIndex(SOA_SOLID) == -1)
+	if (!m_pFlowsheet->IsPhaseDefined(EPhase::SOLID))
 	{
 		m_pSolidDistrEditor->GetViewState(m_vLastCombos, m_vLastSliders);
 		m_pSolidDistrEditor->setVisible(false);
@@ -104,32 +110,35 @@ void CBasicStreamEditor::UpdateTabs()
 		ui.mainTabWidget->removeTab(2);
 	m_vMDMTablePhases.clear();
 
-	unsigned nSolidIndex = 0;
-	for (unsigned i = 0; i<m_pFlowsheet->GetPhasesNumber(); ++i)
+	const auto& phases = m_pFlowsheet->GetPhases();
+	int index = 0;
+	for (const auto& phase : phases)
 	{
-		if (m_pFlowsheet->GetPhaseAggregationState(i) == SOA_SOLID)
-		{
-			//m_pSolidDistrEditor = new CSolidDistributionsEditor(ui.mainTabWidget);
-			m_pSolidDistrEditor->SetFlowsheet(m_pFlowsheet);
-			if(m_pSelectedHoldup)
-				m_pSolidDistrEditor->SetDistribution(m_pSelectedHoldup->GetPhaseDistribution(i), m_pSelectedHoldup);
-			else
-				m_pSolidDistrEditor->SetDistribution(nullptr, nullptr);
-			m_pSolidDistrEditor->SetViewState(m_vLastCombos, m_vLastSliders);
-			connect(m_pSolidDistrEditor, SIGNAL(DataChanged()), this, SLOT(ChangeData()));
-			nSolidIndex = i;
-		}
-		else
+		if (phase.state != EPhase::SOLID)
 		{
 			CMDMTable *pMDMTable = new CMDMTable(ui.mainTabWidget);
 			m_vMDMTablePhases.push_back(pMDMTable);
-			ui.mainTabWidget->insertTab(i + 2, pMDMTable, QString::fromStdString(m_pFlowsheet->GetPhaseName(i)));
+			ui.mainTabWidget->insertTab(index + 2, pMDMTable, QString::fromStdString(phase.name));
 			connect(pMDMTable, SIGNAL(DataChanged()), this, SLOT(ChangeData()));
+			++index;
 		}
 	}
 
-	if (m_pFlowsheet->GetPhaseIndex(SOA_SOLID) != -1)
-		ui.mainTabWidget->insertTab(m_pFlowsheet->GetPhasesNumber() + 2, m_pSolidDistrEditor, QString::fromStdString(m_pFlowsheet->GetPhaseName(nSolidIndex)));
+	if (m_pFlowsheet->IsPhaseDefined(EPhase::SOLID))
+	{
+		//m_pSolidDistrEditor = new CSolidDistributionsEditor(ui.mainTabWidget);
+		m_pSolidDistrEditor->SetFlowsheet(m_pFlowsheet, m_materialsDB);
+		if (m_pSelectedHoldup)
+			m_pSolidDistrEditor->SetDistribution(m_pSelectedHoldup->GetPhase(EPhase::SOLID)->MDDistr(), m_pSelectedHoldup);
+		else
+			m_pSolidDistrEditor->SetDistribution(nullptr, nullptr);
+		m_pSolidDistrEditor->SetViewState(m_vLastCombos, m_vLastSliders);
+		connect(m_pSolidDistrEditor, SIGNAL(DataChanged()), this, SLOT(ChangeData()));
+	}
+
+	const size_t iSolid = VectorFind(phases, [&](const auto& p) { return p.state == EPhase::SOLID; });
+	if (iSolid != static_cast<size_t>(-1))
+		ui.mainTabWidget->insertTab(static_cast<int>(m_pFlowsheet->GetPhasesNumber()) + 2, m_pSolidDistrEditor, QString::fromStdString(phases[iSolid].name));
 
 	if (iOldTab < ui.mainTabWidget->count())
 		ui.mainTabWidget->setCurrentIndex(iOldTab);
@@ -149,7 +158,7 @@ void CBasicStreamEditor::UpdateTabContent()
 	if (nTabIndex == -1)
 		return;
 
-	if (m_pFlowsheet->GetPhaseIndex(SOA_SOLID) != -1)
+	if (m_pFlowsheet->IsPhaseDefined(EPhase::SOLID))
 		m_pSolidDistrEditor->GetViewState(m_vLastCombos, m_vLastSliders);
 
 	if (nTabIndex == 0)
@@ -160,7 +169,7 @@ void CBasicStreamEditor::UpdateTabContent()
 		UpdatePhaseTab(nTabIndex - 2);
 	else
 	{
-		if (m_pFlowsheet->GetPhaseIndex(SOA_SOLID) != -1)
+		if (m_pFlowsheet->IsPhaseDefined(EPhase::SOLID))
 			m_pSolidDistrEditor->SetViewState(m_vLastCombos, m_vLastSliders);
 		UpdateDistributionTab();
 		int nTimeRow = ui.timePointsTable->currentRow();
@@ -187,7 +196,10 @@ void CBasicStreamEditor::UpdateStreamMTPTab()
 	else
 	{
 		m_bAvoidSignal = true;
-		m_pDDTableMTP->SetDistribution(m_pSelectedHoldup->GetDistrStreamMTP());
+		std::vector<CTimeDependentValue*> values;
+		for (const auto& overall : m_pFlowsheet->GetOveralProperties())
+			values.push_back(m_pSelectedHoldup->GetOverallProperty(overall.type));
+		m_pDDTableMTP->SetDistribution(values);
 		m_bAvoidSignal = false;
 		m_pDDTableMTP->setVisible(true);
 	}
@@ -200,7 +212,10 @@ void CBasicStreamEditor::UpdatePhaseFractionsTab()
 	else
 	{
 		m_bAvoidSignal = true;
-		m_pDDTablePhase->SetDistribution(m_pSelectedHoldup->GetDistrPhaseFractions());
+		std::vector<CTimeDependentValue*> values;
+		for (const auto& phase : m_pFlowsheet->GetPhases())
+			values.push_back(m_pSelectedHoldup->GetPhase(phase.state)->Fractions());
+		m_pDDTablePhase->SetDistribution(values);
 		m_bAvoidSignal = false;
 		m_pDDTablePhase->setVisible(true);
 	}
@@ -216,10 +231,11 @@ void CBasicStreamEditor::UpdatePhaseTab(unsigned _nIndex)
 		m_vMDMTablePhases[_nIndex]->setVisible(false);
 	else
 	{
+		const auto& phases = m_pFlowsheet->GetPhases();
 		unsigned iPhaseIndex = _nIndex;
 		for (unsigned i = 0; i <= _nIndex; ++i)
 		{
-			if ((i<m_pFlowsheet->GetPhasesNumber()) && (m_pFlowsheet->GetPhasesAggregationStates()->at(i) == SOA_SOLID))
+			if (i < m_pFlowsheet->GetPhasesNumber() && phases[i].state == EPhase::SOLID)
 			{
 				iPhaseIndex += 1;
 				break;
@@ -227,8 +243,7 @@ void CBasicStreamEditor::UpdatePhaseTab(unsigned _nIndex)
 		}
 
 		m_bAvoidSignal = true;
-		auto tempName = m_pFlowsheet->GetCompoundsNames();
-		m_vMDMTablePhases[_nIndex]->SetDistribution(m_pSelectedHoldup->GetPhaseDistribution(iPhaseIndex), tempName);
+		m_vMDMTablePhases[_nIndex]->SetDistribution(m_pSelectedHoldup->GetPhase(phases[iPhaseIndex].state)->MDDistr(), m_materialsDB->GetCompoundsNames(m_pFlowsheet->GetCompounds()));
 		m_bAvoidSignal = false;
 		m_vMDMTablePhases[_nIndex]->setVisible(true);
 	}
@@ -238,7 +253,7 @@ void CBasicStreamEditor::UpdateDistributionTab()
 {
 	if (!m_pFlowsheet) return;
 
-	if (m_pFlowsheet->GetPhaseIndex(SOA_SOLID) == -1)
+	if (!m_pFlowsheet->IsPhaseDefined(EPhase::SOLID))
 		return;
 
 	if (m_pSelectedHoldup == NULL)
@@ -246,12 +261,8 @@ void CBasicStreamEditor::UpdateDistributionTab()
 	else
 	{
 		m_bAvoidSignal = true;
-		for (unsigned i = 0; i<m_pFlowsheet->GetPhasesNumber(); ++i)
-			if (m_pFlowsheet->GetPhaseAggregationState(i) == SOA_SOLID)
-			{
-				m_pSolidDistrEditor->SetDistribution(m_pSelectedHoldup->GetPhaseDistribution(i), m_pSelectedHoldup);
-				break;
-			}
+		m_pSolidDistrEditor->SetDistribution(m_pSelectedHoldup->GetPhase(EPhase::SOLID)->MDDistr(), m_pSelectedHoldup);
+
 		m_bAvoidSignal = false;
 		m_pSolidDistrEditor->setVisible(true);
 	}
@@ -287,12 +298,12 @@ void CBasicStreamEditor::AddTimePoint()
 
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 
-	double dLastTP = m_pSelectedHoldup->GetLastTimePoint();
+	double dLastTP = m_pSelectedHoldup->GetAllTimePoints().empty() ? -1.0 : m_pSelectedHoldup->GetLastTimePoint();
 	m_pSelectedHoldup->AddTimePoint(dLastTP + 1);
 	if (dLastTP == -1)
 	{
-		m_pSelectedHoldup->SetOverallProperty(dLastTP + 1, TEMPERATURE, 300);
-		m_pSelectedHoldup->SetOverallProperty(dLastTP + 1, PRESSURE, 100000);
+		m_pSelectedHoldup->SetOverallProperty(dLastTP + 1, EOverall::OVERALL_TEMPERATURE, 300);
+		m_pSelectedHoldup->SetOverallProperty(dLastTP + 1, EOverall::OVERALL_PRESSURE, 100000);
 	}
 	UpdateTabContent();
 
@@ -330,7 +341,7 @@ void CBasicStreamEditor::RemoveAllTimePoints()
 	{
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 
-		m_pSelectedHoldup->RemoveTimePointsAfter(0, true);
+		m_pSelectedHoldup->RemoveAllTimePoints();
 		UpdateTabContent();
 
 		QApplication::restoreOverrideCursor();
@@ -343,8 +354,15 @@ void CBasicStreamEditor::ChangeTimePoint()
 {
 	if (m_bAvoidSignal) return;
 	if (m_pSelectedHoldup == NULL) return;
-	double dNewValue = (ui.timePointsTable->item(ui.timePointsTable->currentRow(), 0))->text().toDouble();
-	m_pSelectedHoldup->ChangeTimePoint(ui.timePointsTable->currentRow(), dNewValue);
+	const double dNewValue = (ui.timePointsTable->item(ui.timePointsTable->currentRow(), 0))->text().toDouble();
+	const auto timePoints = m_pSelectedHoldup->GetAllTimePoints();
+	const size_t iTimePoint = ui.timePointsTable->currentRow();
+	if (dNewValue == timePoints[iTimePoint]) return;
+	if (iTimePoint < timePoints.size())
+	{
+		m_pSelectedHoldup->CopyTimePoint(dNewValue, timePoints[iTimePoint]);
+		m_pSelectedHoldup->RemoveTimePoint(timePoints[iTimePoint]);
+	}
 	UpdateTabContent();
 	emit DataChanged();
 }
@@ -354,7 +372,7 @@ void CBasicStreamEditor::TableTimeChanged(int _nRow, int _nCol, int _nPrevRow, i
 	if (ui.mainTabWidget->currentIndex() == m_vMDMTablePhases.size() + 2) // solid distribution tab
 	{
 		QApplication::setOverrideCursor(Qt::WaitCursor);
-		if (m_pFlowsheet->GetPhaseIndex(SOA_SOLID) != -1)
+		if (m_pFlowsheet->IsPhaseDefined(EPhase::SOLID))
 		{
 			m_pSolidDistrEditor->GetViewState(m_vLastCombos, m_vLastSliders);
 			m_pSolidDistrEditor->SetViewState(m_vLastCombos, m_vLastSliders);
@@ -373,7 +391,7 @@ void CBasicStreamEditor::SaveViewState()
 {
 	m_nLastTab = ui.mainTabWidget->currentIndex() == -1 ? 0 : ui.mainTabWidget->currentIndex();
 	m_nLastTime = ui.timePointsTable->currentRow() == -1 ? 0 : ui.timePointsTable->currentRow();
-	if (m_pFlowsheet->GetPhaseIndex(SOA_SOLID) != -1)
+	if (m_pFlowsheet->IsPhaseDefined(EPhase::SOLID))
 		m_pSolidDistrEditor->GetViewState(m_vLastCombos, m_vLastSliders);
 }
 
@@ -385,7 +403,7 @@ void CBasicStreamEditor::LoadViewState()
 		ui.mainTabWidget->setCurrentIndex(m_nLastTab);
 	if (m_nLastTime < ui.timePointsTable->rowCount())
 		ui.timePointsTable->selectRow(m_nLastTime);
-	if (m_pFlowsheet->GetPhaseIndex(SOA_SOLID) != -1)
+	if (m_pFlowsheet->IsPhaseDefined(EPhase::SOLID))
 		m_pSolidDistrEditor->SetViewState(m_vLastCombos, m_vLastSliders);
 
 	QApplication::restoreOverrideCursor();

@@ -4,13 +4,16 @@
 
 #include "ui_HoldupsEditor.h"
 
+class CFlowsheet;
+class CUnitContainer;
+
 class CHoldupsEditor : public QDialog
 {
 	Q_OBJECT
 private:
 	CFlowsheet* m_pFlowsheet; // pointer to the flowsheet
 
-	CBaseModel* m_pSelectedModel; // pointer to the selected unit
+	CUnitContainer* m_pSelectedModel; // pointer to the selected unit
 
 	// for save/restore view
 	int m_nLastModel;
@@ -26,7 +29,7 @@ public slots:
 	void UpdateHoldupsList(); // update the list of holdups of specified unit
 
 public:
-	CHoldupsEditor(CFlowsheet* _pFlowsheet, QWidget *parent = 0);
+	CHoldupsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, QWidget *parent = 0);
 
 	void InitializeConnections() const;
 

@@ -11,26 +11,29 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 //////////////////////////////////////////////////////////////////////////
 /// Unit
 
-CBunker::CBunker()
+void CBunker::CreateBasicInfo()
 {
 	/// Basic unit's info ///
-	m_sUnitName = "Bunker";
-	m_sAuthorName = "SPE TUHH";
-	m_sUniqueID = "A5D7F41322C949EC86C96C583A35501F";
+	SetUnitName("Bunker");
+	SetAuthorName("SPE TUHH");
+	SetUniqueID("A5D7F41322C949EC86C96C583A35501F");
+}
 
+void CBunker::CreateStructure()
+{
 	/// Add ports ///
-	AddPort("Inflow", INPUT_PORT);
-	AddPort("Outflow", OUTPUT_PORT);
+	AddPort("Inflow", EUnitPort::INPUT);
+	AddPort("Outflow", EUnitPort::OUTPUT);
 
 	/// Add unit parameters ///
-	AddConstParameter("Target mass", 0, 1e+6, 100000, "kg", "Target mass of bunker.");
+	AddConstRealParameter("Target mass", 100000, "kg", "Target mass of bunker.", 0.0);
 
 	/// Add holdups ///
 	AddHoldup("Holdup");
 
 	/// Add Internal streams ///
-	AddMaterialStream("InflowSolid");
-	AddMaterialStream("InflowBypass");
+	AddStream("InflowSolid");
+	AddStream("InflowBypass");
 
 	/// Set this unit as user data of model ///
 	m_Model.SetUserData(this);
@@ -39,7 +42,7 @@ CBunker::CBunker()
 void CBunker::Initialize(double _dTime)
 {
 	/// Check presence of solid phase ///
-	if (!IsPhaseDefined(SOA_SOLID))
+	if (!IsPhaseDefined(EPhase::SOLID))
 		RaiseError("Solid phase has not been defined.");
 	// Pointer to holdup stream
 	CHoldup* pHoldup = GetHoldup("Holdup");
@@ -53,7 +56,7 @@ void CBunker::Initialize(double _dTime)
 		RaiseError("No initial state of bunker at time point 't = 0' found.");
 		return;
 	}
-	if (vTimePoints[0] != 0)
+	if (vTimePoints[0] != 0.0)
 	{
 		RaiseError("No initial state of bunker at time point 't = 0' found.");
 		return;
@@ -65,19 +68,19 @@ void CBunker::Initialize(double _dTime)
 	}
 
 	const double dMass = pHoldup->GetMass(_dTime);
-	const double dMassSolid = pHoldup->GetPhaseMass(_dTime, SOA_SOLID);
+	const double dMassSolid = pHoldup->GetPhaseMass(_dTime, EPhase::SOLID);
 	if (dMass != dMassSolid)
 	{
 		RaiseWarning("The holdup of the bunker model can only contain solids. Removing all other phases from bunker holdup than the solid phase.");
 		pHoldup->SetMass(_dTime, 0);
-		pHoldup->SetPhaseMass(_dTime, SOA_SOLID, dMassSolid);
+		pHoldup->SetPhaseMass(_dTime, EPhase::SOLID, dMassSolid);
 	}
 
 	/// Clear all state variables in model ///
 	m_Model.ClearVariables();
 
 	/// Add state variables to the model ///
-	const double dMassBunker_Init = pHoldup->GetMass(_dTime, SOA_SOLID);
+	const double dMassBunker_Init = pHoldup->GetMass(_dTime);
 
 	m_Model.m_nMassBunker = m_Model.AddDAEVariable(true, dMassBunker_Init, 0, 0);
 	m_Model.m_nMflow_Out = m_Model.AddDAEVariable(false, 0, 0, 0);
@@ -101,35 +104,33 @@ void CBunker::Initialize(double _dTime)
 void CBunker::Simulate(double _dStartTime, double _dEndTime)
 {
 	// Pointer to inlet and outlet stream
-	CMaterialStream* pInStream = GetPortStream("Inflow");
+	CStream* pInStream = GetPortStream("Inflow");
 
 	// Pointer to internal stream
-	CMaterialStream* pInSolid = GetMaterialStream("InflowSolid");
-	CMaterialStream* pInBypass = GetMaterialStream("InflowBypass");
+	CStream* pInSolid = GetStream("InflowSolid");
+	CStream* pInBypass = GetStream("InflowBypass");
 
 	pInSolid->RemoveTimePointsAfter(0);
 	pInBypass->RemoveTimePointsAfter(0);
 
 	/// Bypass non solid phases ///
-	std::vector<double> vTimePoints = pInStream->GetTimePointsForInterval(_dStartTime, _dEndTime, true);
+	std::vector<double> vTimePoints = pInStream->GetTimePointsClosed(_dStartTime, _dEndTime);
 
 	for (double time : vTimePoints)
 	{
-		const double dMflow_Solid = pInStream->GetPhaseMassFlow(time, SOA_SOLID);
+		const double dMflow_Solid = pInStream->GetPhaseMassFlow(time, EPhase::SOLID);
 
-		pInSolid->CopyFromStream(pInStream, time);
-		pInSolid->SetMassFlow(time, 0);
-		pInSolid->SetPhaseMassFlow(time, SOA_SOLID, dMflow_Solid);
+		pInSolid->CopyFromStream(time, pInStream);
+		pInSolid->SetMassFlow(time, 0.0);
+		pInSolid->SetPhaseMassFlow(time, EPhase::SOLID, dMflow_Solid);
 
-		pInBypass->CopyFromStream(pInStream, time);
+		pInBypass->CopyFromStream(time, pInStream);
 		pInBypass->SetMassFlow(time, 0);
 
-		if (IsPhaseDefined(SOA_VAPOR))
-			pInBypass->SetPhaseMassFlow(time, SOA_VAPOR, pInStream->GetPhaseMassFlow(time, SOA_VAPOR));
-		if (IsPhaseDefined(SOA_LIQUID))
-			pInBypass->SetPhaseMassFlow(time, SOA_LIQUID, pInStream->GetPhaseMassFlow(time, SOA_LIQUID));
-		if (IsPhaseDefined(SOA_LIQUID2))
-			pInBypass->SetPhaseMassFlow(time, SOA_LIQUID2, pInStream->GetPhaseMassFlow(time, SOA_LIQUID2));
+		if (IsPhaseDefined(EPhase::VAPOR))
+			pInBypass->SetPhaseMassFlow(time, EPhase::VAPOR, pInStream->GetPhaseMassFlow(time, EPhase::VAPOR));
+		if (IsPhaseDefined(EPhase::LIQUID))
+			pInBypass->SetPhaseMassFlow(time, EPhase::LIQUID, pInStream->GetPhaseMassFlow(time, EPhase::LIQUID));
 	}
 
 	/// Run solver ///
@@ -155,17 +156,17 @@ void CBunker::LoadState()
 void CMyDAEModel::ResultsHandler(double _dTime, double* _pVars, double* _pDerivs, void* _pUserData)
 {
 	/// General information ///
-	auto unit = static_cast<CBunker*>(_pUserData);
+	auto* unit = static_cast<CBunker*>(_pUserData);
 
 	// Pointer to inlet and outlet stream
-	CMaterialStream* pOutStream = unit->GetPortStream("Outflow");
+	CStream* pOutStream = unit->GetPortStream("Outflow");
 
 	// Pointer to internal stream
-	CMaterialStream* pInSolid = unit->GetMaterialStream("InflowSolid");
-	CMaterialStream* pInBypass = unit->GetMaterialStream("InflowBypass");
+	CStream* pInSolid = unit->GetStream("InflowSolid");
+	CStream* pInBypass = unit->GetStream("InflowBypass");
 
 	// Pointer to holdup stream
-	CHoldup* pHoldup = static_cast<CHoldup*>(unit->GetHoldup("Holdup"));
+	CHoldup* pHoldup = unit->GetHoldup("Holdup");
 
 	// Previous time point of inlet stream
 	double dTimePrev = 0;
@@ -174,29 +175,29 @@ void CMyDAEModel::ResultsHandler(double _dTime, double* _pVars, double* _pDerivs
 		dTimePrev = pHoldup->GetPreviousTimePoint(_dTime);
 		pHoldup->RemoveTimePointsAfter(dTimePrev);
 		/// Add input to bunker ///
-		pHoldup->AddStream(pInSolid, dTimePrev, _dTime);
+		pHoldup->AddStream(dTimePrev, _dTime, pInSolid);
 	}
 
-	std::vector<double> vTimePoints = pHoldup->GetTimePointsForInterval(dTimePrev, _dTime, true);
+	std::vector<double> vTimePoints = pHoldup->GetTimePointsClosed(dTimePrev, _dTime);
 
 	for (size_t i = 1; i < vTimePoints.size() - 1; ++i)
 		pHoldup->RemoveTimePoint(vTimePoints[i]);
 
 	pHoldup->SetMass(_dTime, _pVars[m_nMassBunker]);
 
-	pOutStream->CopyFromHoldup(pHoldup, _dTime, _pVars[m_nMflow_Out]);
-	pOutStream->AddStream(pInBypass, _dTime);
+	pOutStream->CopyFromHoldup(_dTime, pHoldup, _pVars[m_nMflow_Out]);
+	pOutStream->AddStream(_dTime, pInBypass);
 }
 
 void CMyDAEModel::CalculateResiduals(double _dTime, double* _pVars, double* _pDers, double* _pRes, void* _pUserData)
 {
 	/// General information ///
 	// Pointer to unit
-	auto unit = static_cast<CBunker*>(_pUserData);
+	auto* unit = static_cast<CBunker*>(_pUserData);
 	// Parameter for bunker capacity
-	const double dMassBunker_Target = unit->GetConstParameterValue("Target mass");
+	const double dMassBunker_Target = unit->GetConstRealParameterValue("Target mass");
 	// Pointer to internal stream
-	CMaterialStream* pInSolid = unit->GetMaterialStream("InflowSolid");
+	CStream* pInSolid = unit->GetStream("InflowSolid");
 
 	// Previous time point of inlet stream
 	const double dTimePrev = pInSolid->GetPreviousTimePoint(_dTime);
@@ -233,11 +234,12 @@ void CMyDAEModel::CalculateResiduals(double _dTime, double* _pVars, double* _pDe
 	double dNormCompounds_update = 0;
 	// Loop for phase compound fractions
 	for (size_t j = 0; j < nNumCompounds; ++j)
+	for (const auto& compound : unit->GetAllCompounds())
 	{
 		// Phase compound fractions at last time point
-		const double dTempCompPhaseFracPrev = pInSolid->GetCompoundPhaseFraction(dTimePrev, static_cast<unsigned>(j), SOA_SOLID);
+		const double dTempCompPhaseFracPrev = pInSolid->GetCompoundFraction(dTimePrev, compound, EPhase::SOLID);
 		// Phase compound fractions at current time point
-		const double dTempCompPhaseFrac = pInSolid->GetCompoundPhaseFraction(_dTime, static_cast<unsigned>(j), SOA_SOLID);
+		const double dTempCompPhaseFrac = pInSolid->GetCompoundFraction(_dTime, compound, EPhase::SOLID);
 		// Squared difference of phase compound fractions
 		dNormCompounds_update += std::pow(dTempCompPhaseFracPrev - dTempCompPhaseFrac, 2);
 	}

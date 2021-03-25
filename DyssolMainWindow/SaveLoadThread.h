@@ -3,7 +3,9 @@
 #pragma once
 
 #include "BasicThread.h"
-#include "Flowsheet.h"
+#include "H5Handler.h"
+
+class CFlowsheet;
 
 /** Flowsheet saver/loader thread */
 class CSaveLoadThread : public CBasicThread

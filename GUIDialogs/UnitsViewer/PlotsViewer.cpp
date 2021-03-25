@@ -1,6 +1,8 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "PlotsViewer.h"
+#include "UnitContainer.h"
+#include "BaseUnit.h"
 #include "DyssolStringConstants.h"
 
 CPlotsViewer::CPlotsViewer(QWidget *parent)
@@ -34,19 +36,20 @@ void CPlotsViewer::InitializeConnections()
 	connect( ui.tabWidget,			SIGNAL(currentChanged(int)),	this, SLOT(TabChanged(int)) );
 }
 
-void CPlotsViewer::SetSelectedModel( CBaseModel *_pModel )
+void CPlotsViewer::SetSelectedModel(CUnitContainer* _pModel)
 {
 	m_pModel = _pModel;
-	setEnabled(m_pModel && m_pModel->GetPlotsNumber() != 0);
+	setEnabled(m_pModel && m_pModel->GetModel() && m_pModel->GetModel()->GetPlotsManager().GetPlotsNumber() != 0);
 }
 
 void CPlotsViewer::SetSelectedPlot(int _nIndex)
 {
-	if(!m_pModel) return;
-	if( ( _nIndex >= 0 ) && ( _nIndex < (int)m_pModel->GetPlotsNumber() ) )
+	if (!m_pModel || !m_pModel->GetModel()) return;
+	const auto plots = m_pModel->GetModel()->GetPlotsManager().GetAllPlots();
+	if( ( _nIndex >= 0 ) && ( _nIndex < (int)plots.size() ) )
 	{
 		m_iPlot = _nIndex;
-		if( m_pModel->IsPlot2D(_nIndex) )
+		if (plots[_nIndex]->Is2D())
 		{
 			ui.horizontalSlider->setVisible(false);
 			ui.labelZValue->setVisible(false);
@@ -81,11 +84,12 @@ void CPlotsViewer::SetSelectedCurve(const std::vector<int>& _vIndexes)
 
 void CPlotsViewer::UpdateSlider()
 {
-	if(!m_pModel) return;
+	if (!m_pModel || !m_pModel->GetModel()) return;
 	if(m_iPlot == -1) return;
-	if(m_pModel->IsPlot2D(m_iPlot))	return;
+	const auto plots = m_pModel->GetModel()->GetPlotsManager().GetAllPlots();
+	if (plots[m_iPlot]->Is2D())	return;
 
-	ui.horizontalSlider->setMaximum( m_pModel->GetCurvesNumber(m_iPlot) - 1 );
+	ui.horizontalSlider->setMaximum(static_cast<int>(plots[m_iPlot]->GetCurvesNumber()) - 1);
 	ui.horizontalSlider->setTickInterval( 1 );
 }
 
@@ -93,24 +97,26 @@ void CPlotsViewer::UpdateSliderLabel()
 {
 	ui.labelZValue->setText( "" );
 
-	if(!m_pModel) return;
+	if (!m_pModel || !m_pModel->GetModel()) return;
 	if(m_iPlot == -1) return;
-	if(m_pModel->IsPlot2D(m_iPlot))	return;
+	const auto plots = m_pModel->GetModel()->GetPlotsManager().GetAllPlots();
+	if (plots[m_iPlot]->Is2D())	return;
 	if(m_iCurves.empty()) return;
 
 	//int index = ui.horizontalSlider->sliderPosition();
-	ui.labelZValue->setText( QString::number( m_pModel->GetCurveZ(m_iPlot, m_iCurves.back()) ) );
+	ui.labelZValue->setText(QString::number(plots[m_iPlot]->GetAllCurves()[m_iCurves.back()]->GetZValue()));
 }
 
 void CPlotsViewer::UpdateSliderLabelName()
 {
 	ui.labelZName->setText( "" );
 
-	if(!m_pModel) return;
+	if (!m_pModel || !m_pModel->GetModel()) return;
 	if(m_iPlot == -1) return;
-	if(m_pModel->IsPlot2D(m_iPlot))	return;
+	const auto plots = m_pModel->GetModel()->GetPlotsManager().GetAllPlots();
+	if (plots[m_iPlot]->Is2D())	return;
 
-	ui.labelZName->setText( QString::fromStdString(m_pModel->GetPlotZAxisName(m_iPlot)) + ":" );
+	ui.labelZName->setText( QString::fromStdString(plots[m_iPlot]->GetLabelZ()) + ":" );
 }
 
 void CPlotsViewer::UpdateSliderPosFromSelectedIndex()
@@ -127,7 +133,8 @@ void CPlotsViewer::UpdateSliderPosFromSelectedIndex()
 	//m_bAvoidSignal = false;
 
 	m_bAvoidSignal = true;
-	if( (m_pModel) && (m_iPlot != -1) && !m_pModel->IsPlot2D(m_iPlot) && !m_iCurves.empty() )
+	const auto plots = m_pModel->GetModel()->GetPlotsManager().GetAllPlots();
+	if( m_pModel && m_pModel->GetModel() && m_iPlot != -1 && m_iPlot < plots.size() && !plots[m_iPlot]->Is2D() && !m_iCurves.empty() )
 		ui.horizontalSlider->setSliderPosition(m_iCurves.back());
 	else
 		ui.horizontalSlider->setSliderPosition(0);
@@ -150,7 +157,7 @@ void CPlotsViewer::UpdateTabWidget()
 
 void CPlotsViewer::UpdateTable()
 {
-	if((!m_pModel) || (m_iPlot == -1) || (m_iCurves.empty()) )
+	if((!m_pModel) || !m_pModel->GetModel() || (m_iPlot == -1) || (m_iCurves.empty()) )
 	{
 		m_pTableWidget->setRowCount(0);
 		m_pTableWidget->setColumnCount(0);
@@ -159,14 +166,16 @@ void CPlotsViewer::UpdateTable()
 
 	m_pTableWidget->setRowCount(0);
 	m_pTableWidget->setColumnCount((int)m_iCurves.size()*3-1 );
+	const auto plots = m_pModel->GetModel()->GetPlotsManager().GetAllPlots();
+	const auto curves = plots[m_iPlot]->GetAllCurves();
 	for( unsigned i=0; i<m_iCurves.size(); ++i )
 	{
-		m_pTableWidget->setHorizontalHeaderItem( i*3, new QTableWidgetItem( QString::fromStdString(m_pModel->GetPlotXAxisName(m_iPlot)) ) );
-		m_pTableWidget->setHorizontalHeaderItem( i*3+1, new QTableWidgetItem( QString::fromStdString(m_pModel->GetPlotYAxisName(m_iPlot)) ) );
+		m_pTableWidget->setHorizontalHeaderItem( i*3, new QTableWidgetItem( QString::fromStdString(plots[m_iPlot]->GetLabelX()) ) );
+		m_pTableWidget->setHorizontalHeaderItem( i*3+1, new QTableWidgetItem( QString::fromStdString(plots[m_iPlot]->GetLabelY()) ) );
 		if(i != m_iCurves.size()-1)
 			m_pTableWidget->setHorizontalHeaderItem( i*3+2, new QTableWidgetItem("") );
-		std::vector<double> vX = m_pModel->GetCurveX( m_iPlot, m_iCurves[i] );
-		std::vector<double> vY = m_pModel->GetCurveY( m_iPlot, m_iCurves[i] );
+		std::vector<double> vX = curves[m_iCurves[i]]->GetXValues();
+		std::vector<double> vY = curves[m_iCurves[i]]->GetYValues();
 		for( int j=0; j<(int)vX.size(); ++j )
 		{
 			if( m_pTableWidget->rowCount() <= j )
@@ -180,26 +189,28 @@ void CPlotsViewer::UpdateTable()
 
 void CPlotsViewer::UpdatePlot()
 {
-	if((!m_pModel) || (m_iPlot == -1) || (m_iCurves.empty()) )
+	if((!m_pModel) || !m_pModel->GetModel() || (m_iPlot == -1) || (m_iCurves.empty()) )
 	{
 		m_pPlot->ClearPlot();
 		return;
 	}
 
+	const auto plots = m_pModel->GetModel()->GetPlotsManager().GetAllPlots();
+	const auto curves = plots[m_iPlot]->GetAllCurves();
 	m_pPlot->ClearPlot();
-	m_pPlot->SetManualLabelsNames(QString::fromStdString(m_pModel->GetPlotXAxisName(m_iPlot)), QString::fromStdString(m_pModel->GetPlotYAxisName(m_iPlot)));
+	m_pPlot->SetManualLabelsNames(QString::fromStdString(plots[m_iPlot]->GetLabelX()), QString::fromStdString(plots[m_iPlot]->GetLabelY()));
 	std::vector<double> vdTemp;
 	std::vector<unsigned> vCurves;
 	for( unsigned i=0; i<m_iCurves.size(); ++i )
 	{
 		QColor color = Qt::GlobalColor(Qt::red + i%(Qt::transparent - Qt::red));
-		QtPlot::SCurve *pCurve = new QtPlot::SCurve( QString::fromStdString(m_pModel->GetCurveName(m_iPlot, m_iCurves[i])), color, PLOT_LINE_WIDTH, true, true, QtPlot::LABEL_MANUAL, QtPlot::LABEL_MANUAL );
+		QtPlot::SCurve *pCurve = new QtPlot::SCurve( QString::fromStdString(curves[m_iCurves[i]]->GetName()), color, PLOT_LINE_WIDTH, true, true, QtPlot::LABEL_MANUAL, QtPlot::LABEL_MANUAL );
 		vCurves.push_back( m_pPlot->AddCurve(pCurve) );
 	}
 	for( unsigned i=0; i<m_iCurves.size(); ++i )
 	{
-		std::vector<double> vX = m_pModel->GetCurveX( m_iPlot, m_iCurves[i] );
-		std::vector<double> vY = m_pModel->GetCurveY( m_iPlot, m_iCurves[i] );
+		std::vector<double> vX = curves[m_iCurves[i]]->GetXValues();
+		std::vector<double> vY = curves[m_iCurves[i]]->GetYValues();
 		m_pPlot->AddPoints( vCurves[i], vX, vY );
 	}
 }

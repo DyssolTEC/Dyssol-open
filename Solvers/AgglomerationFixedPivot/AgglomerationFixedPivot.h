@@ -18,8 +18,7 @@ class CAgglomerationFixedPivot : public CAgglomerationSolver
 	std::vector<double> m_pivotPoints;
 
 public:
-	CAgglomerationFixedPivot();
-
+	void CreateBasicInfo() override;
 	void Initialize(const std::vector<double>& _vGrid, double _beta0, EKernels _kernel, size_t _rank, const std::vector<double>& vParams) override;
 	bool Calculate(const std::vector<double>& _vN, std::vector<double>& _vBRate, std::vector<double>& _vDRate) override;
 

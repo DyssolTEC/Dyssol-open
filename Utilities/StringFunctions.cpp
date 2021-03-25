@@ -13,6 +13,7 @@
 #include <locale>
 #include <cctype>
 #include <iomanip>
+#include <random>
 
 namespace StringFunctions
 {
@@ -170,6 +171,18 @@ namespace StringFunctions
 		return res;
 	}
 
+	void Quote(std::string& _s)
+	{
+		_s = "\"" + _s + "\"";
+	}
+
+	std::string Quote(const std::string& _s)
+	{
+		std::ostringstream ss;
+		ss << std::quoted(_s);
+		return ss.str();
+	}
+
 	std::string GetRestOfLine(std::istream* _is)
 	{
 		const std::istreambuf_iterator<char> eos;
@@ -194,25 +207,34 @@ namespace StringFunctions
 		return s;
 	}
 
-	std::string GenerateRandomString(size_t _length /*= 20*/)
+	// Generates a random key of the given length.
+	std::string GenerateRandomKey(size_t _length /*= 20*/)
 	{
-		std::string result;
-		static const char symbols[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-		for (size_t i = 0; i < _length; ++i)
-			result += symbols[std::rand() % (sizeof(symbols) - 1)];
+		static const std::string symbols = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+		std::random_device device;
+		std::default_random_engine engine{ device() };
+		const std::uniform_int_distribution<size_t> distribution{ 0, symbols.length() - 1 };
+		std::string result(_length, '0');
+		std::generate(result.begin(), result.end(), [&]() { return symbols[distribution(engine)]; });
 		return result;
 	}
 
-	std::string GenerateUniqueString(const std::string& _init, const std::vector<std::string>& _existing, size_t _length /*= 20*/)
+	// Returns a key that does not yet exist in _existing.
+	std::string GenerateUniqueKey(const std::vector<std::string>& _existing, size_t _length /*= 20*/)
 	{
-		std::string res = !_init.empty() ? _init : GenerateRandomString(_length);
-		bool unique = false;
-		while (!unique)
+		while (true)
 		{
-			unique = std::find(_existing.begin(), _existing.end(), res) == _existing.end();
-			if (!unique)
-				res = GenerateRandomString(_length);
+			std::string res = GenerateRandomKey(_length);
+			if (std::find(_existing.begin(), _existing.end(), res) == _existing.end())
+				return res;
 		}
-		return res;
+	}
+
+	// Returns a key that does not yet exist in _existing.
+	std::string GenerateUniqueKey(const std::string& _init, const std::vector<std::string>& _existing, size_t _length /*= 20*/)
+	{
+		if (std::find(_existing.begin(), _existing.end(), _init) == _existing.end())
+			return _init;
+		return GenerateUniqueKey(_existing, _length);
 	}
 }

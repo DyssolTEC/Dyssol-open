@@ -8,16 +8,16 @@ extern "C" DECLDIR CAgglomerationSolver* CREATE_SOLVER_FUN_AGG1()
 	return new CSolver();
 }
 
-CSolver::CSolver()
+CSolver::~CSolver()
+{
+
+}
+
+void CSolver::CreateBasicInfo()
 {
 	m_solverName = "Dummy Agglomeration Solver";
 	m_authorName = "Author";
 	m_solverUniqueKey = "00000000000000000000000000010000";
-}
-
-CSolver::~CSolver()
-{
-
 }
 
 void CSolver::Initialize(const std::vector<double>& _vGrid, double _beta0, EKernels _kernel, size_t _rank, const std::vector<double>& vParams)

@@ -16,7 +16,7 @@ $ZLIB_VERSION = "1.2.11"
 $ZLIB_DOWNLOAD_ADDRESS = "http://www.zlib.net/zlib-$ZLIB_VERSION.tar.gz"
 $ZLIB_NAME = "zlib-$ZLIB_VERSION"
 $ZLIB_TAR_NAME = "$ZLIB_NAME.tar"
-$ZLIB_ZIP_NAME = "$ZLIB_NAME.tar.gz"
+$ZLIB_ZIP_NAME = "$ZLIB_TAR_NAME.gz"
 $ZLIB_INSTALL_PATH = "$CURRENT_PATH\zlib"
 $ZLIB_SRC_PATH = "$CURRENT_PATH\$ZLIB_NAME"
 $ZLIB_BUILD_PATH = "$ZLIB_SRC_PATH\build"
@@ -40,7 +40,7 @@ Expand-7Zip $ZLIB_ZIP_NAME . | Expand-7Zip $ZLIB_TAR_NAME .
 # Build x32
 New-Item $ZLIB_BUILD_PATH\x32 -ItemType directory
 Set-Location $ZLIB_BUILD_PATH\x32
-cmake -G "Visual Studio 14 2015" $ZLIB_SRC_PATH -DCMAKE_INSTALL_PREFIX:PATH=$ZLIB_INSTALL_PATH
+cmake -G "Visual Studio 16 2019" -A Win32 $ZLIB_SRC_PATH -DCMAKE_INSTALL_PREFIX:PATH=$ZLIB_INSTALL_PATH
 cmake --build . --target INSTALL --config Debug
 cmake --build . --target INSTALL --config Release
 Rename-Item -Path "$ZLIB_INSTALL_PATH\lib" -NewName "$ZLIB_INSTALL_PATH\lib32"
@@ -48,7 +48,7 @@ Rename-Item -Path "$ZLIB_INSTALL_PATH\lib" -NewName "$ZLIB_INSTALL_PATH\lib32"
 # Build x64
 New-Item $ZLIB_BUILD_PATH\x64 -ItemType directory
 Set-Location $ZLIB_BUILD_PATH\x64
-cmake -G "Visual Studio 14 2015 Win64" $ZLIB_SRC_PATH -DCMAKE_INSTALL_PREFIX:PATH=$ZLIB_INSTALL_PATH
+cmake -G "Visual Studio 16 2019" -A x64 $ZLIB_SRC_PATH -DCMAKE_INSTALL_PREFIX:PATH=$ZLIB_INSTALL_PATH
 cmake --build . --target INSTALL --config Debug
 cmake --build . --target INSTALL --config Release
 Rename-Item -Path "$ZLIB_INSTALL_PATH\lib" -NewName "$ZLIB_INSTALL_PATH\lib64"
@@ -64,7 +64,6 @@ Copy-Item "$ZLIB_BUILD_PATH\x64\zlibstatic.dir\Debug\zlibstatic.pdb" "$ZLIB_INST
 
 $REM_ZLIB_ROOT_LIST = @(
 	"bin",
-#	"include",
 	"share",
 	"lib32\zlib.lib",
 	"lib64\zlib.lib",

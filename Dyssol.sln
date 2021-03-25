@@ -1,7 +1,6 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.779
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30406.217
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Dyssol", "DyssolMainWindow\DyssolMainWindow.vcxproj", "{06FC09C8-3DBA-40B5-A5D2-5A33CD23F917}"
 EndProject
@@ -659,6 +658,6 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CAC327DA-BA65-4990-BEC0-618347D67688}
-		Qt5Version = msvc2015
+		Qt5Version = msvc2019_64
 	EndGlobalSection
 EndGlobal

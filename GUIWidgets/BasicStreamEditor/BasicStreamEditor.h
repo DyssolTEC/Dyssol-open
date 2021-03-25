@@ -7,6 +7,8 @@
 #include "MDMTable.h"
 #include "DDTable.h"
 
+class CFlowsheet;
+
 class CBasicStreamEditor : public QWidget
 {
 	Q_OBJECT
@@ -16,8 +18,9 @@ private:
 
 	// TODO: make it const
 	CFlowsheet* m_pFlowsheet; // pointer to the flowsheet
+	CMaterialsDatabase* m_materialsDB; // pointer to a materials database
 	bool m_bAvoidSignal;
-	CStream* m_pSelectedHoldup; // pointer to the selected stream
+	CBaseStream* m_pSelectedHoldup; // pointer to the selected stream
 
 	CDDTable* m_pDDTableMTP;
 	CDDTable* m_pDDTablePhase;
@@ -33,8 +36,8 @@ private:
 public:
 	CBasicStreamEditor(QWidget *parent = Q_NULLPTR);
 
-	void SetFlowsheet(CFlowsheet* _pFlowsheet);
-	void SetStream(CStream* _pStream);
+	void SetFlowsheet(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB);
+	void SetStream(CBaseStream* _pStream);
 	void SetEditable(bool _bEditable);				// Turn on/off edit possibility.
 
 	void UpdateWholeView();

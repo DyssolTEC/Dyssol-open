@@ -3,8 +3,14 @@
 #pragma once
 
 #include "ui_DustFormationTesterTab.h"
-#include "Flowsheet.h"
 #include "DustFormationTester.h"
+
+class CFlowsheet;
+class CUnitContainer;
+class CBaseStream;
+class CStream;
+class CHoldup;
+class CMaterialsDatabase;
 
 class CDustFormationTesterTab : public QDialog
 {
@@ -13,10 +19,11 @@ private:
 	Ui::DustFormationTesterTabClass ui;
 	CDustFormationTester m_tester;
 	const CFlowsheet* m_pFlowsheet;
+	const CMaterialsDatabase* m_matrialsDB;
 	enum class EType { STREAMS = 0, UNITS = 1 } m_focusType{ EType::STREAMS };
 
 public:
-	CDustFormationTesterTab(const CFlowsheet* _pFlowsheet, QWidget* parent = Q_NULLPTR);
+	CDustFormationTesterTab(const CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, QWidget* parent = Q_NULLPTR);
 
 	void InitializeConnections();
 	void UpdateWholeView();
@@ -36,10 +43,10 @@ private:
 
 	static void AddItemToList(QListWidget* _pList, const std::string& _sName, const std::string& _sKey);
 	static void RestoreSelectedRow(QListWidget* _pList, int iRow);
-	const CStream* GetSelectedStream() const;
-	const CBaseModel* GetSelectedModel() const;
+	const CBaseStream* GetSelectedStream() const;
+	const CUnitContainer* GetSelectedModel() const;
 	const CHoldup* GetSelectedHoldup() const;
-	const CMaterialStream* GetSelectedMaterialStream() const;
+	const CStream* GetSelectedMaterialStream() const;
 	std::string GetSelectedCompound() const;
 
 private slots:

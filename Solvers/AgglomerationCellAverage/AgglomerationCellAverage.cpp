@@ -8,7 +8,7 @@ extern "C" DECLDIR CAgglomerationSolver* CREATE_SOLVER_FUN_AGG1()
 	return new CAgglomerationCellAverage();
 }
 
-CAgglomerationCellAverage::CAgglomerationCellAverage()
+void CAgglomerationCellAverage::CreateBasicInfo()
 {
 	m_solverName = "Agglomeration Solver Cell Average";
 	m_authorName = "Robin Ahrens";

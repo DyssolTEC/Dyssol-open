@@ -42,8 +42,8 @@ private:
 	EMethod m_method;						// Chosen solving method.
 
 public:
-	CCrusherPBMTM();
-
+	void CreateBasicInfo() override;
+	void CreateStructure() override;
 	void Initialize(double _dTime) override;
 	void Simulate(double _dStartTime, double _dEndTime) override;
 

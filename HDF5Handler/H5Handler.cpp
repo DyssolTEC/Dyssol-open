@@ -109,9 +109,19 @@ void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatas
 	WriteValue(_sPath, _sDatasetName, 1, PredType::NATIVE_DOUBLE, &_dData);
 }
 
-void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, unsigned _nData) const
+void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, uint32_t _nData) const
 {
-	WriteValue(_sPath, _sDatasetName, 1, PredType::NATIVE_UINT, &_nData);
+	WriteValue(_sPath, _sDatasetName, 1, PredType::NATIVE_UINT32, &_nData);
+}
+
+void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, uint64_t _nData) const
+{
+	WriteValue(_sPath, _sDatasetName, 1, PredType::NATIVE_UINT64, &_nData);
+}
+
+void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, int64_t _nData) const
+{
+	WriteValue(_sPath, _sDatasetName, 1, PredType::NATIVE_INT64, &_nData);
 }
 
 void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, bool _bData) const
@@ -171,6 +181,16 @@ void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatas
 	h5Group.close();
 }
 
+void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<STDValue>& _data) const
+{
+	WriteValue(_sPath, _sDatasetName, _data.size(), h5STDValue_type(), _data.data());
+}
+
+void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<CPoint>& _data) const
+{
+	WriteValue(_sPath, _sDatasetName, _data.size(), h5CPoint_type(), _data.data());
+}
+
 void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::string& _sData) const
 {
 	auto** buf = new char*[1];
@@ -189,9 +209,19 @@ void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatase
 	(void)ReadValue(_sPath, _sDatasetName, PredType::NATIVE_DOUBLE, &_dData);
 }
 
-void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, unsigned& _nData) const
+void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, uint32_t& _nData) const
 {
-	(void)ReadValue(_sPath, _sDatasetName, PredType::NATIVE_UINT, &_nData);
+	(void)ReadValue(_sPath, _sDatasetName, PredType::NATIVE_UINT32, &_nData);
+}
+
+void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, uint64_t& _nData) const
+{
+	(void)ReadValue(_sPath, _sDatasetName, PredType::NATIVE_UINT64, &_nData);
+}
+
+void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, int64_t& _nData) const
+{
+	(void)ReadValue(_sPath, _sDatasetName, PredType::NATIVE_INT64, &_nData);
 }
 
 void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, bool& _bData) const
@@ -322,6 +352,21 @@ void CH5Handler::ReadDataOld(const std::string& _sPath, const std::string& _sDat
 	}
 }
 
+void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<STDValue>& _data) const
+{
+	_data.resize(ReadSize(_sPath, _sDatasetName));
+	if (_data.empty()) return;
+	(void)ReadValue(_sPath, _sDatasetName, h5STDValue_type(), _data.data());
+}
+
+void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<CPoint>& _data) const
+{
+	_data.resize(ReadSize(_sPath, _sDatasetName));
+	if (_data.empty()) return;
+
+	(void)ReadValue(_sPath, _sDatasetName, h5CPoint_type(), _data.data());
+}
+
 bool CH5Handler::IsValid() const
 {
 	return m_bFileValid;
@@ -448,6 +493,32 @@ FileAccPropList CH5Handler::CreateFileAccPropList(bool _bSingleFile)
 	h5AccPropList.setFcloseDegree(H5F_CLOSE_STRONG);
 	h5AccPropList.setCache(cChunkSize, cChunkSize, cCacheSize, 0.5);
 	return h5AccPropList;
+}
+
+CompType& CH5Handler::h5CPoint_type()
+{
+	static std::unique_ptr<CompType> type{};
+
+	if (!type)
+	{
+		type = std::make_unique<CompType>(sizeof(CPoint));
+		type->insertMember("x", HOFFSET(CPoint, x), PredType::NATIVE_DOUBLE);
+		type->insertMember("y", HOFFSET(CPoint, y), PredType::NATIVE_DOUBLE);
+	}
+	return *type;
+}
+
+H5::CompType& CH5Handler::h5STDValue_type()
+{
+	static std::unique_ptr<CompType> type{};
+
+	if (!type)
+	{
+		type = std::make_unique<CompType>(sizeof(STDValue));
+		type->insertMember("time" , HOFFSET(STDValue, time ), PredType::NATIVE_DOUBLE);
+		type->insertMember("value", HOFFSET(STDValue, value), PredType::NATIVE_DOUBLE);
+	}
+	return *type;
 }
 
 std::wstring CH5Handler::ConvertFileName(const std::wstring& _sFileName, bool _bOpen, bool _bSingleFile)

@@ -52,10 +52,7 @@ namespace StrConst
 	const char* const Dyssol_StatusSavingTitle     = "Saving";
 	const char* const Dyssol_StatusSavingText      = "Flowsheet is saving. <br/>Please wait";
 	const char* const Dyssol_StatusSavingQuestion  = "Terminate saving of the flowsheet?";
-	const char* const Dyssol_AboutTitle            = "About Dyssol";
 	const char* const Dyssol_AboutDyssolDescr      = "Dyssol: Dynamic Simulation of Solids Processes";
-	const char* const Dyssol_AboutUpdateLink       = "https://github.com/FlowsheetSimulation/Dyssol-open/releases/latest";
-	const char* const Dyssol_AboutUpdateLinkView   = "GitHub";
 	const char* const Dyssol_AppFolderPathLink     = "AppFolder.lnk";
 
 
@@ -69,9 +66,82 @@ namespace StrConst
 
 
 //////////////////////////////////////////////////////////////////////////
+/// CUnitContainer
+//////////////////////////////////////////////////////////////////////////
+	const char* const BCont_H5UnitName   = "UnitName";
+	const char* const BCont_H5UnitKey    = "UnitKey";
+	const char* const BCont_H5ModelKey   = "ModelKey";
+	const char* const BCont_H5GroupModel = "Unit";
+
+
+//////////////////////////////////////////////////////////////////////////
+/// CUnitPort
+//////////////////////////////////////////////////////////////////////////
+	const char* const UPort_H5AttrPortsNum  = "PortsNumber";
+	const char* const UPort_H5GroupPortName = "Port";
+	const char* const UPort_H5PortsNames    = "UnitPortsNames";
+	const char* const UPort_H5PortsKeys     = "UnitPortsKeys";
+	const char* const UPort_H5Name          = "Name";
+	const char* const UPort_H5Type          = "Type";
+	const char* const UPort_H5StreamKey     = "StreamKey";
+
+
+//////////////////////////////////////////////////////////////////////////
+/// CStateVariable
+//////////////////////////////////////////////////////////////////////////
+	const char* const SVar_H5Name    = "Name";
+	const char* const SVar_H5Value   = "Value";
+	const char* const SVar_H5History = "History";
+
+
+//////////////////////////////////////////////////////////////////////////
+/// CStreamManager
+//////////////////////////////////////////////////////////////////////////
+	const char* const StrMngr_H5AttrFeedsInitNum   = "FeedsInitNumber";
+	const char* const StrMngr_H5AttrFeedsWorkNum   = "FeedsWorkNumber";
+	const char* const StrMngr_H5AttrHoldupsInitNum = "HoldupsInitNumber";
+	const char* const StrMngr_H5AttrHoldupsWorkNum = "HoldupsWorkNumber";
+	const char* const StrMngr_H5AttrStreamsWorkNum = "StreamsWorkNumber";
+	const char* const StrMngr_H5GroupFeedsInit     = "FeedsInit";
+	const char* const StrMngr_H5GroupFeedsWork     = "FeedsWork";
+	const char* const StrMngr_H5GroupHoldupsInit   = "HoldupsInit";
+	const char* const StrMngr_H5GroupHoldupsWork   = "HoldupsWork";
+	const char* const StrMngr_H5GroupStreamsWork   = "StreamsWork";
+	const char* const StrMngr_H5GroupFeedName      = "Feed";
+	const char* const StrMngr_H5GroupHoldupName    = "Holdup";
+	const char* const StrMngr_H5GroupStreamName    = "Stream";
+	const char* const StrMngr_H5Names              = "Names";
+
+
+//////////////////////////////////////////////////////////////////////////
+/// CPlotManager
+//////////////////////////////////////////////////////////////////////////
+	const char* const PlotMngr_H5AttrPlotsNum   = "PlotsNumber";
+	const char* const PlotMngr_H5GroupPlotName  = "Plot";
+	const char* const PlotMngr_H5PlotName       = "PlotName";
+	const char* const PlotMngr_H5PlotXAxis      = "XAxis";
+	const char* const PlotMngr_H5PlotYAxis      = "YAxis";
+	const char* const PlotMngr_H5PlotZAxis      = "ZAxis";
+	const char* const PlotMngr_H5AttrCurvesNum  = "CurvesNumber";
+	const char* const PlotMngr_H5GroupCurves    = "Curves";
+	const char* const PlotMngr_H5GroupCurveName = "Curve";
+	const char* const PlotMngr_H5CurveName      = "CurveName";
+	const char* const PlotMngr_H5CurveZValue    = "ZValue";
+	const char* const PlotMngr_H5CurveData      = "Data";
+
+
+//////////////////////////////////////////////////////////////////////////
+/// CStateVariablesManager
+//////////////////////////////////////////////////////////////////////////
+	const char* const SVMngr_H5AttrStateVarsNum  = "StateVarsNumber";
+	const char* const SVMngr_H5GroupStateVarName = "StateVariable";
+
+
+//////////////////////////////////////////////////////////////////////////
 /// CBaseUnit
 //////////////////////////////////////////////////////////////////////////
-	const char* const BUnit_DefaultPortName   = "NewPort";
+	const char* const BUnit_DefaultPortName   = "Port";
+	// TODO: remove
 	const char* const BUnit_StoreStreamSuffix = "_STORE";
 
 	const char* const BUnit_UnspecValue	   = "Unspecified";
@@ -83,9 +153,11 @@ namespace StrConst
 
 	const char* const BUnit_H5UnitKey			      = "UnitKey";
 	const char* const BUnit_H5GroupPorts			  = "Ports";
+	const char* const BUnit_H5GroupPortName			  = "Port";
 	const char* const BUnit_H5UnitPorts			      = "UnitPorts";
 	const char* const BUnit_H5UnitPortsKeys		      = "UnitPortsKeys";
 	const char* const BUnit_H5UnitPortsNames		  = "UnitPortsNames";
+	const char* const BUnit_H5GroupInternalMaterials  = "InternalMaterials";
 	const char* const BUnit_H5GroupHoldups	          = "Holdups";
 	const char* const BUnit_H5HoldupsNames	          = "HoldupsNames";
 	const char* const BUnit_H5GroupHoldupName	      = "Holdup";
@@ -127,71 +199,123 @@ namespace StrConst
 	const char* const BUnit_H5CurveY              = "YVector";
 	const char* const BUnit_H5CurveZ              = "ZValue";
 
-	inline std::string BUnit_ErrGetPort(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetPortStream(\"" + s2 + "\"): port with such name does not exist in this unit."); }
-	inline std::string BUnit_ErrAddPort(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "': Port '" + s2 + "' has duplicates. Ports names must be unique within the unit."); }
+	// TODO: delete unused
+	inline std::string BUnit_Err0(const std::string& unit, const std::string& fun) {
+		return std::string("Error in unit '" + unit + "', function call " + fun + "(): "); }
+	inline std::string BUnit_Err1(const std::string& unit, const std::string& fun, const std::string& param1) {
+		return std::string("Error in unit '" + unit + "', function call " + fun + "('" + param1 + "'): "); }
+	inline std::string BUnit_Err2(const std::string& unit, const std::string& fun, const std::string& param1, const std::string& param2) {
+		return std::string("Error in unit '" + unit + "', function call " + fun + "('" + param1 + "', '" + param2 + "'): "); }
+	inline std::string BUnit_Err3(const std::string& unit, const std::string& fun, const std::string& param1, const std::string& param2, const std::string& param3) {
+		return std::string("Error in unit '" + unit + "', function call " + fun + "('" + param1 + "', '" + param2 + "', '" + param3 + "'): "); }
+	inline std::string BUnit_ErrAddPort(const std::string& s1, const std::string& s2, const std::string& s3) {
+		return BUnit_Err1(s1, s3, s2) + "Port '" + s2 + "' has duplicates. Ports names must be unique within the unit."; }
+	inline std::string BUnit_ErrGetPort(const std::string& s1, const std::string& s2, const std::string& s3) {
+		return BUnit_Err1(s1, s3, s2) + "A port with such name does not exist in this unit."; }
+	inline std::string BUnit_ErrGetPortEmpty(const std::string& s1, const std::string& s2, const std::string& s3) {
+		return BUnit_Err1(s1, s3, s2) + "A port is not connected to the stream."; }
+	inline std::string BUnit_ErrAddFeed(const std::string& s1, const std::string& s2, const std::string& s3) {
+		return BUnit_Err1(s1, s3, s2) + "Feed '" + s2 + "' has duplicates. Feeds names must be unique within the unit."; }
+	inline std::string BUnit_ErrAddHoldup(const std::string& s1, const std::string& s2, const std::string& s3) {
+		return BUnit_Err1(s1, s3, s2) + "Holdup '" + s2 + "' has duplicates. Holdups names must be unique within the unit."; }
+	inline std::string BUnit_ErrAddStream(const std::string& s1, const std::string& s2, const std::string& s3) {
+		return BUnit_Err1(s1, s3, s2) + "Stream '" + s2 + "' has duplicates. Streams names must be unique within the unit."; }
+	inline std::string BUnit_ErrGetFeed(const std::string& s1, const std::string& s2, const std::string& s3) {
+		return BUnit_Err1(s1, s3, s2) + "A feed with such name does not exist in this unit."; }
+	inline std::string BUnit_ErrGetHoldup(const std::string& s1, const std::string& s2, const std::string& s3) {
+		return BUnit_Err1(s1, s3, s2) + "A holdup with such name does not exist in this unit."; }
+	inline std::string BUnit_ErrGetStream(const std::string& s1, const std::string& s2, const std::string& s3) {
+		return BUnit_Err1(s1, s3, s2) + "A stream with such name does not exist in this unit."; }
 	inline std::string BUnit_ErrGetHoldup(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetHoldup(\"" + s2 + "\"): holdup with such name does not exist in this unit."); }
+		return std::string("Error in unit '" + s1 + "', function call GetHoldup('" + s2 + "'): holdup with such name does not exist in this unit."); }
 	inline std::string BUnit_ErrAddFeed(const std::string& s1, const std::string& s2) {
 		return std::string("Error in unit '" + s1 + "': Feed '" + s2 + "' has duplicates. Feeds names must be unique within the unit."); }
 	inline std::string BUnit_ErrGetFeed(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetFeed(\"" + s2 + "\"): feed with such name does not exist in this unit."); }
+		return std::string("Error in unit '" + s1 + "', function call GetFeed('" + s2 + "'): feed with such name does not exist in this unit."); }
 	inline std::string BUnit_ErrGetStream(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetMaterialStream(\"" + s2 + "\"): material stream with such name does not exist in this unit."); }
+		return std::string("Error in unit '" + s1 + "', function call GetMaterialStream('" + s2 + "'): material stream with such name does not exist in this unit."); }
+	inline std::string BUnit_ErrGetParam(const std::string& s1, const std::string& s2, const std::string& s3) {
+		return std::string("Error in unit '" + s1 + "', function call " + s3 + "('" + s2 + "'): unit parameter with such combination of name and type does not exist in this unit.");	}
+	// TODO: rename to BUnit_ErrGetSolver
+	inline std::string BUnit_ErrGetSolverParam(const std::string& s1, const std::string& s2, const std::string& s3) {
+		return std::string("Error in unit '" + s1 + "', function call " + s3 + "('" + s2 + "'): solver with such combination of name and type does not exist in this unit."); }
 	inline std::string BUnit_ErrGetConstParam(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetConstParameterValue(\"" + s2 + "\"): const unit parameter with such name does not exist in this unit."); }
+		return std::string("Error in unit '" + s1 + "', function call GetConstParameterValue('" + s2 + "'): const unit parameter with such name does not exist in this unit."); }
 	inline std::string BUnit_ErrGetTDParam(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetTDParameterValue(\"" + s2 + ", \"Time\"): time-dependent unit parameter with this name does not exist in this unit."); }
+		return std::string("Error in unit '" + s1 + "', function call GetTDParameterValue('" + s2 + ", 'Time'): time-dependent unit parameter with this name does not exist in this unit."); }
 	inline std::string BUnit_ErrGetStrParam(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetStringParameterValue(\"" + s2 + "\"): string unit parameter with such name does not exist in this unit."); }
+		return std::string("Error in unit '" + s1 + "', function call GetStringParameterValue('" + s2 + "'): string unit parameter with such name does not exist in this unit."); }
 	inline std::string BUnit_ErrGetBoxParam(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetCheckBoxParameterValue(\"" + s2 + "\"): check box unit parameter with such name does not exist in this unit."); }
+		return std::string("Error in unit '" + s1 + "', function call GetCheckBoxParameterValue('" + s2 + "'): check box unit parameter with such name does not exist in this unit."); }
 	inline std::string BUnit_ErrGetComboParam(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetComboParameterValue(\"" + s2 + "\"): combo unit parameter with such name does not exist in this unit."); }
-	inline std::string BUnit_ErrGetGroupParam(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetGroupParameterValue(\"" + s2 + "\"): group unit parameter with such name does not exist in this unit."); }
+		return std::string("Error in unit '" + s1 + "', function call GetComboParameterValue('" + s2 + "'): combo unit parameter with such name does not exist in this unit."); }
 	inline std::string BUnit_ErrGetCompParam(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetCompoundParameterValue(\"" + s2 + "\"): compound unit parameter with such name does not exist in this unit."); }
-	inline std::string BUnit_ErrAddParam(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "': Unit parameter '" + s2 + "' has duplicates. Unit parameters names must be unique within the unit."); }
-	inline std::string BUnit_ErrAddComboParam(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "': Unit parameter '" + s2 + "' cannot be added. The number of values must be equal to the number of names."); }
-	inline std::string BUnit_ErrGroupParamBlock(const std::string& s1, const std::string& s2, const std::string& s3) {
-		return std::string("Error in unit '" + s1 + "', function call AddParametersToGroup(\"" + s2 + "\", \"" + s3 + "\", {}): group unit parameter with such name does not exist in this unit."); }
+		return std::string("Error in unit '" + s1 + "', function call GetCompoundParameterValue('" + s2 + "'): compound unit parameter with such name does not exist in this unit."); }
+	inline std::string BUnit_ErrAddParam(const std::string& s1, const std::string& s2, const std::string& s3) {
+		return BUnit_Err1(s1, s3, s2) + "Unit parameter '" + s2 + "' has duplicates. Unit parameters names must be unique within the unit."; }
+	inline std::string BUnit_ErrAddComboParam(const std::string& s1, const std::string& s2, const std::string& s3) {
+		return BUnit_Err1(s1, s3, s2) + "Unit parameter '" + s2 + "' cannot be added. The number of items must be equal to the number of names."; }
+	inline std::string BUnit_ErrGroupParamBlock(const std::string& s1, const std::string& s2, const std::string& s3, const std::string& s4) {
+		return BUnit_Err3(s1, s4, s2, s3, "{}") + "A group unit parameter with name '" + s2 + "' does not exist in this unit.";	}
+	inline std::string BUnit_ErrGroupParamGroup(const std::string& s1, const std::string& s2, const std::string& s3, const std::string& s4) {
+		return BUnit_Err3(s1, s4, s2, s3, "{}") + "A group with name '" + s3 + "' does not exist in this group unit parameter."; }
+	inline std::string BUnit_ErrGroupParamParam(const std::string& s1, const std::string& s2, const std::string& s3, const std::string& s4, const std::string& s5) {
+		return BUnit_Err3(s1, s5, s2, s3, s4) + std::string("A unit parameter with name  '" + s4 + "' does not exist in this unit."); }
 	inline std::string BUnit_ErrGroupParamGroup(const std::string& s1, const std::string& s2, const std::string& s3) {
-		return std::string("Error in unit '" + s1 + "', function call AddParametersToGroup(\"" + s2 + "\", \"" + s3 + "\", {}): group with such name does not exist in this group unit parameter."); }
+		return std::string("Error in unit '" + s1 + "', function call AddParametersToGroup('" + s2 + "', '" + s3 + "', {}): group with such name does not exist in this group unit parameter."); }
 	inline std::string BUnit_ErrGroupParamParam(const std::string& s1, const std::string& s2, const std::string& s3, const std::string& s4) {
-		return std::string("Error in unit '" + s1 + "', function call AddParametersToGroup(\"" + s2 + "\", \"" + s3 + "\", {\"" + s4 + "\"}): unit parameter with such name does not exist in this unit."); }
+		return std::string("Error in unit '" + s1 + "', function call AddParametersToGroup('" + s2 + "', '" + s3 + "', {'" + s4 + "'}): unit parameter with such name does not exist in this unit."); }
+	inline std::string BUnit_ErrAddSV(const std::string& s1, const std::string& s2, const std::string& s3) {
+		return BUnit_Err1(s1, s3, s2) + "State variable '" + s2 + "' has duplicates. State variables names must be unique within the unit."; }
+	inline std::string BUnit_ErrGetSV(const std::string& s1, const std::string& s2, const std::string& s3) {
+		return BUnit_Err1(s1, s3, s2) + "A state variable with such name does not exist in this unit.";}
 	inline std::string BUnit_ErrGetSV(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetStateVariable(\"" + s2 + "\"): state variable with such name does not exist in this unit."); }
+		return std::string("Error in unit '" + s1 + "', function call GetStateVariable('" + s2 + "'): state variable with such name does not exist in this unit."); }
 	inline std::string BUnit_ErrSetSV(const std::string& s1, const std::string& s2, const std::string& s3) {
-		return std::string("Error in unit '" + s1 + "', function call SetStateVariable(\"" + s2 + "\", " + s3 + "): state variable with such name does not exist in this unit."); }
+		return std::string("Error in unit '" + s1 + "', function call SetStateVariable('" + s2 + "', " + s3 + "): state variable with such name does not exist in this unit."); }
+	inline std::string BUnit_ErrAddPlot(const std::string& s1, const std::string& s2, const std::string& s3) {
+		return BUnit_Err1(s1, s3, s2) + ("Plot '" + s2 + "' has duplicates. Plots names must be unique within the unit."); }
+	inline std::string BUnit_ErrAddCurve2D(const std::string& s1, const std::string& s2, const std::string& s3, const std::string& s4) {
+		return BUnit_Err2(s1, s4, s3, s2) + "Curve '" + s3 + "' has duplicates in plot '" + s2 + "'. Curves names must be unique within the plot."; }
+	inline std::string BUnit_ErrAddCurve3D(const std::string& s1, const std::string& s2, double s3, const std::string& s4) {
+		return BUnit_Err2(s1, s4, StringFunctions::Double2String(s3), s2) + ("A curve with Z-value '" + StringFunctions::Double2String(s3) + "' has duplicates in plot '" + s2 + "'. Z-values must be unique within the plot."); }
+	inline std::string BUnit_ErrGetPlot(const std::string& s1, const std::string& s2, const std::string& s3) {
+		return BUnit_Err1(s1, s3, s2) + "A plot with such name does not exist in this unit"; }
+	inline std::string BUnit_ErrGetCurve2D(const std::string& s1, const std::string& s2, const std::string& s3, const std::string& s4) {
+		return BUnit_Err2(s1, s4, s3, s2) + "A curve with such name does not exist in plot '" + s2 + "'."; }
+	inline std::string BUnit_ErrGetCurve3D(const std::string& s1, const std::string& s2, double s3, const std::string& s4) {
+		return BUnit_Err2(s1, s4, StringFunctions::Double2String(s3), s2) + "A curve with such Z-value does not exist in plot '" + s2 + "'."; }
 	inline std::string BUnit_ErrAddPlot(const std::string& s1, const std::string& s2) {
 		return std::string("Error in unit '" + s1 + "': Plot '" + s2 + "' has duplicates. Plots names must be unique within the unit."); }
 	inline std::string BUnit_ErrAddCurve(const std::string& s1, const std::string& s2, const std::string& s3) {
-		return std::string("Error in unit '" + s1 + "', function call AddCurveOnPlot(\"" + s2 + "\", \"" + s3 + "\"): plot with such name does not exist in this unit."); }
+		return std::string("Error in unit '" + s1 + "', function call AddCurveOnPlot('" + s2 + "', '" + s3 + "'): plot with such name does not exist in this unit."); }
 	inline std::string BUnit_ErrAddPoint(const std::string& s1, const std::string& s2, const std::string& s3, const std::string& s4, const std::string& s5) {
-		return std::string("Error in unit '" + s1 + "', function call AddPointOnCurve(\"" + s2 + "\", \"" + s3 + "\", \"" + s4 + "\", \"" + s5 + "\"): plot or curve with such name does not exist in this unit."); }
+		return std::string("Error in unit '" + s1 + "', function call AddPointOnCurve('" + s2 + "', '" + s3 + "', '" + s4 + "', '" + s5 + "'): plot or curve with such name does not exist in this unit."); }
 	inline std::string BUnit_ErrGetSolver(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetSolverParameterValue(\"" + s2 + "\"): solver parameter with such name does not exist in this unit."); }
+		return std::string("Error in unit '" + s1 + "', function call GetSolverParameterValue('" + s2 + "'): solver parameter with such name does not exist in this unit."); }
 	inline std::string BUnit_ErrGetSolver1(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetSolverAgglomeration(\"" + s2 + "\"): solver with this name does not belong to the type CAgglomerationSolver."); }
+		return std::string("Error in unit '" + s1 + "', function call GetSolverAgglomeration('" + s2 + "'): solver with this name does not belong to the type CAgglomerationSolver."); }
 	inline std::string BUnit_ErrGetSolver2(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetSolverPBM(\"" + s2 + "\"): solver with this name does not belong to the type CPBMSolver."); }
+		return std::string("Error in unit '" + s1 + "', function call GetSolverPBM(\"" + s2 + "'): solver with this name does not belong to the type CPBMSolver."); }
+	inline std::string BUnit_ErrCopyToPort(const std::string& s1, const std::string& s2, const std::string& s3, const std::string& s4) {
+		return BUnit_Err2(s1, s4, s2, s3) + "Cannot copy to input port with name '" + s3 + "'."; }
+	inline std::string BUnit_ErrCopyFromPort(const std::string& s1, const std::string& s2, const std::string& s3, const std::string& s4) {
+		return BUnit_Err2(s1, s4, s2, s3) + "Cannot copy from output port with name '" + s2 + "'."; }
 	inline std::string BUnit_WarnAddCurve(const std::string& s1, const std::string& s2, const std::string& s3) {
-		return std::string("In unit '" + s1 + "', function call AddCurveOnPlot(\"" + s2 + "\", \"" + s3 + "\"): cannot add named curve to 3d plot - use function AddCurveOnPlot(string PlotName, double ZValue) instead."); }
+		return std::string("In unit '" + s1 + "', function call AddCurveOnPlot('" + s2 + "', '" + s3 + "'): cannot add named curve to 3d plot - use function AddCurveOnPlot(string PlotName, double ZValue) instead."); }
 	inline std::string BUnit_WarnAddPoint(const std::string& s1, const std::string& s2, const std::string& s3, const std::string& s4, const std::string& s5) {
-		return std::string("In unit '" + s1 + "', function call AddPointOnCurve(\"" + s2 + "\", \"" + s3 + "\", \"" + s4 + "\", \"" + s5 + "\"): cannot add points on plot - vectors '" + s4 + "' and '" + s5 + "' are not equal in size."); }
+		return std::string("In unit '" + s1 + "', function call AddPointOnCurve('" + s2 + "', '" + s3 + "', '" + s4 + "', '" + s5 + "'): cannot add points on plot - vectors '" + s4 + "' and '" + s5 + "' are not equal in size."); }
 
 //////////////////////////////////////////////////////////////////////////
 /// CUnitParameters
 //////////////////////////////////////////////////////////////////////////
-	const char* const UParam_H5Times          = "Times";
-	const char* const UParam_H5Values         = "Values";
-	const char* const UParam_H5StrValue       = "StrValue";
-	const char* const UParam_H5Names          = "ParamsNames";
-	const char* const UParam_H5GroupParamName = "UnitParameter";
+	const char* const UParam_H5Times            = "Times";
+	const char* const UParam_H5Values           = "Values";
+	const char* const UParam_H5StrValue         = "StrValue";
+	const char* const UParam_H5AttrReactionsNum = "ReactionsNumber";
+	const char* const UParam_H5Reaction         = "Reaction";
+	const char* const UParam_H5Names            = "ParamsNames";
+	const char* const UParam_H5GroupParamName   = "UnitParameter";
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -242,10 +366,10 @@ namespace StrConst
 //////////////////////////////////////////////////////////////////////////
 /// CFlowsheet
 //////////////////////////////////////////////////////////////////////////
-	const char* const Flow_H5AttrModelsNum		     = "ModelsNumber";
-	const char* const Flow_H5GroupModels		     = "Models";
-	const char* const Flow_H5GroupModelName		     = "Model";
-	const char* const Flow_H5UnitKey			     = "UnitKey";
+	const char* const Flow_H5AttrUnitsNum		     = "ModelsNumber";
+	const char* const Flow_H5GroupUnits		         = "Models";
+	const char* const Flow_H5GroupUnitName		     = "Model";
+	const char* const Flow_H5ModelKey			     = "UnitKey";
 	const char* const Flow_H5AttrStreamsNum		     = "StreamsNumber";
 	const char* const Flow_H5GroupStreams		     = "Streams";
 	const char* const Flow_H5GroupStreamName	     = "Stream";
@@ -253,17 +377,29 @@ namespace StrConst
 	const char* const Flow_H5GroupInitTearStreams	 = "InitTearStreams";
 	const char* const Flow_H5GroupPartitionName	     = "Partition";
 	const char* const Flow_H5GroupInitTearStreamName = "InitTearStream";
-	const char* const Flow_H5Compounds			     = "Compounds";
 	const char* const Flow_H5GroupDistrGrid		     = "DistrGrid";
+	const char* const Flow_H5Compounds			     = "Compounds";
+	const char* const Flow_H5AttrOverallsNum         = "OverallsNumber";
+	const char* const Flow_H5GroupOveralls           = "OverallProperties";
+	const char* const Flow_H5GroupOverallName        = "OverallProperty";
+	const char* const Flow_H5OverallType             = "Type";
+	const char* const Flow_H5OverallName             = "Name";
+	const char* const Flow_H5OverallUnits            = "Units";
+	const char* const Flow_H5AttrPhasesNum           = "PhasesNumber";
 	const char* const Flow_H5GroupPhases		     = "Phases";
+	const char* const Flow_H5GroupPhaseName          = "Phase";
+	const char* const Flow_H5PhaseType               = "Type";
+	const char* const Flow_H5PhaseName               = "Name";
 	const char* const Flow_H5PhasesNames		     = "PhaseNames";
 	const char* const Flow_H5PhasesSOA			     = "PhaseAggregationStates";
 	const char* const Flow_H5GroupOptions		     = "Options";
 	const char* const Flow_H5OptionSimTime		     = "SimulationTime";
 	const char* const Flow_H5AttrSaveVersion	     = "SaveVersion";
 
-	inline std::string  Flow_ErrEmptyFeed(const std::string& s1) { return std::string("Holdup of feed '" + s1 + "' is empty."); }
-	inline std::string  Flow_ErrEmptyUnit(const std::string& s1) { return std::string("Unit '" + s1 + "' is not assigned to a model."); }
+	inline std::string  Flow_ErrEmptyHoldup(const std::string& s1, const std::string& s2) {
+		return std::string("Holdup '" + s2 + "' in unit '" + s1 + "' is empty."); }
+	inline std::string  Flow_ErrEmptyUnit(const std::string& s1) {
+		return std::string("No model is assigned to unit '" + s1 + "'."); }
 	const char* const	Flow_ErrEmptyMDB = "Materials database file has not been loaded or empty.";
 	const char* const	Flow_ErrEmptySequence = "Calculation sequence is empty.";
 	const char* const	Flow_ErrWrongSequence = "Wrong calculation sequence.";
@@ -271,12 +407,15 @@ namespace StrConst
 	const char* const	Flow_ErrMultSolids = "More than 1 solid phase has been defined.";
 	const char* const	Flow_ErrMultVapors = "More than 1 vapor phase has been defined.";
 	const char* const	Flow_ErrNoCompounds = "No compounds specified.";
-	inline std::string	Flow_ErrWrongCompound(const std::string& s1) { return std::string("Cannot find the compound '" + s1 + "' in the materials database."); }
+	inline std::string	Flow_ErrWrongCompound(const std::string& s1) {
+		return std::string("Cannot find compound '" + s1 + "' in the loaded materials database.");	}
 	const char* const	Flow_ErrNoPhases = "No phases specified.";
-	inline std::string  Flow_ErrUnconnectedPorts(const std::string& s1) { return std::string("Some ports of unit '" + s1 + "' are still unconnected."); }
-	inline std::string	Flow_ErrWrongStreams(const std::string& s1) { return std::string("Stream '" + s1 + "' is not correctly connected! Each stream must be connected to one input and to one output port."); }
-	inline std::string  Flow_ErrSolverKeyEmpty(const std::string& s1, const std::string& s2) { return std::string("External solver '" + s1 + "' in unit '" + s2 + "' has not been chosen in unit parameters."); }
-	inline std::string  Flow_ErrCannotLoadSolverLib(const std::string& s1, const std::string& s2) { return std::string("External solver '" + s1 + "' in unit '" + s2 + "' can not be found or loaded."); }
+	inline std::string  Flow_ErrUnconnectedPorts(const std::string& s1, const std::string& s2) {
+		return "Port '" + s2 + "' in unit '" + s1 + "' is unconnected."; }
+	inline std::string	Flow_ErrWrongStreams(const std::string& s1) {
+		return std::string("Stream '" + s1 + "' is not correctly connected. Each stream must be connected to one input and to one output port."); }
+	inline std::string  Flow_ErrSolverKeyEmpty(const std::string& s1, const std::string& s2) { return std::string("Solver '" + s1 + "' in unit '" + s2 + "' has not been chosen in unit parameters."); }
+	inline std::string  Flow_ErrCannotLoadSolverLib(const std::string& s1, const std::string& s2) { return std::string("Solver '" + s1 + "' in unit '" + s2 + "' can not be found or loaded."); }
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -288,6 +427,8 @@ namespace StrConst
 	const char* const Seq_H5ModelsKeys         = "ModelsKeys";
 	const char* const Seq_H5TearStreamsKeys    = "TearStreamsKeys";
 	const char* const Seq_H5AttrSaveVersion    = "SaveVersion";
+	const char* const Seq_H5GroupInitTears     = "InitialTearStreams";
+	const char* const Seq_H5GroupInitTearName  = "Stream";
 
 	const char* const  Seq_ErrEmptySequence = "Calculation sequence is empty.";
 	const char* const  Seq_ErrEmptyModel    = "Some model in calculation sequence is empty.";
@@ -296,11 +437,12 @@ namespace StrConst
 
 
 //////////////////////////////////////////////////////////////////////////
-/// CFlowsheetParameters
+/// CParametersHolder
 //////////////////////////////////////////////////////////////////////////
 	const char* const FlPar_H5ATol		              = "AbsTolerance";
 	const char* const FlPar_H5RTol		              = "RelTolerance";
 	const char* const FlPar_H5MinFrac	              = "MinimalFraction";
+	const char* const FlPar_H5SimTime                 = "SimulationTime";
 	const char* const FlPar_H5InitTimeWin             = "InitialTimeWindow";
 	const char* const FlPar_H5MinTimeWin	          = "MinTimeWindow";
 	const char* const FlPar_H5MaxTimeWin	          = "MaxTimeWindow";
@@ -321,6 +463,9 @@ namespace StrConst
 	const char* const FlPar_H5CacheWindow	          = "CacheWindow";
 	const char* const FlPar_H5FileSingleFlag	      = "FileSingleFlag";
 	const char* const FlPar_H5InitTearStreamsFlag	  = "InitTearStreamsFlag";
+	const char* const FlPar_H5EnthalpyMinT            = "EnthalpyMinTemperature";
+	const char* const FlPar_H5EnthalpyMaxT            = "EnthalpyMaxTemperature";
+	const char* const FlPar_H5EnthalpyIntervals       = "EnthalpyIntervals";
 	const char* const FlPar_H5AttrSaveVersion         = "SaveVersion";
 
 
@@ -355,10 +500,44 @@ namespace StrConst
 	const char* const Stream_H5Attr2DDistrNum	= "2DDistrNumber";
 	const char* const Stream_H5Group2DDistrs	= "Distributions";
 	const char* const Stream_H5Group2DDistrName	= "Distribution";
+	const char* const Stream_H5OverallKeys      = "OverallKeys";
+	const char* const Stream_H5GroupOveralls    = "Overalls";
+	const char* const Stream_H5GroupOverallName = "Overall";
+	const char* const Stream_H5PhaseKeys        = "PhaseKeys";
 	const char* const Stream_H5PhaseName		= "PhaseName";
 	const char* const Stream_H5PhaseSOA			= "PhaseSOA";
 	const char* const Stream_H5AttrSaveVersion	= "SaveVersion";
 
+//////////////////////////////////////////////////////////////////////////
+/// CTimeDependentValue
+//////////////////////////////////////////////////////////////////////////
+	const char* const TDV_H5Name  = "Name";
+	const char* const TDV_H5Units = "Units";
+	const char* const TDV_H5Data  = "Data";
+
+//////////////////////////////////////////////////////////////////////////
+/// CPhase
+//////////////////////////////////////////////////////////////////////////
+	const char* const Phase_H5Name         = "Name";
+	const char* const Phase_H5State        = "State";
+	const char* const Phase_H5Fractions    = "Fractions";
+	const char* const Phase_H5Distribution = "Distribution";
+
+//////////////////////////////////////////////////////////////////////////
+/// CChemicalReaction
+//////////////////////////////////////////////////////////////////////////
+	const char* const Reac_H5Name             = "Name";
+	const char* const Reac_H5Base             = "BaseSubstance";
+	const char* const Reac_H5SubstancesNumber = "SubstancesNumber";
+	const char* const Reac_H5Substance        = "Substance";
+	const char* const Reac_H5SubstanceKey     = "Key";
+	const char* const Reac_H5SubstanceNu      = "Nu";
+	const char* const Reac_H5SubstancePhase   = "Phase";
+
+//////////////////////////////////////////////////////////////////////////
+/// HDF5 saving/loading
+//////////////////////////////////////////////////////////////////////////
+	const char* const H5AttrSaveVersion = "SaveVersion";
 
 //////////////////////////////////////////////////////////////////////////
 /// CH5Handler

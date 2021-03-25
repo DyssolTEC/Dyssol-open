@@ -20,37 +20,34 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{06FC09C8-3DBA-40B5-A5D2-5A33CD23F917}</ProjectGuid>
-    <Keyword>QtVS_v301</Keyword>
+    <Keyword>QtVS_v303</Keyword>
     <ProjectName>Dyssol</ProjectName>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <QtMsBuild Condition="'$(QtMsBuild)'=='' or !Exists('$(QtMsBuild)\qt.targets')">$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <PropertyGroup Condition="'$(QtMsBuild)'=='' or !Exists('$(QtMsBuild)\qt.targets')">
-    <QtMsBuild>$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
-  </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
     <Message Importance="High" Text="QtMsBuild: could not locate qt.targets, qt.props; project may not build correctly." />
   </Target>
@@ -84,58 +81,47 @@
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <QtInstall>msvc2015_64</QtInstall>
+    <QtInstall>msvc2019_64</QtInstall>
     <QtModules>core;gui;widgets</QtModules>
   </PropertyGroup>
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <QtInstall>msvc2015</QtInstall>
+    <QtInstall>msvc2019</QtInstall>
     <QtModules>core;gui;widgets</QtModules>
   </PropertyGroup>
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <QtInstall>msvc2015_64</QtInstall>
+    <QtInstall>msvc2019_64</QtInstall>
     <QtModules>core;gui;widgets</QtModules>
   </PropertyGroup>
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <QtInstall>msvc2015</QtInstall>
+    <QtInstall>msvc2019</QtInstall>
     <QtModules>core;gui;widgets</QtModules>
   </PropertyGroup>
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Modules\DustFormationTester;$(SolutionDir)GUIDialogs\CalculationSequenceEditor;$(SolutionDir)$(Platform)\$(Configuration)\CalculationSequenceEditor\uic;$(SolutionDir)GUIDialogs\CompoundsManager;$(SolutionDir)$(Platform)\$(Configuration)\CompoundsManager\uic;$(SolutionDir)GUIDialogs\DustFormationTesterTab;$(SolutionDir)$(Platform)\$(Configuration)\DustFormationTesterTab\uic;$(SolutionDir)GUIDialogs\FlowsheetEditor;$(SolutionDir)$(Platform)\$(Configuration)\FlowsheetEditor\uic;$(SolutionDir)GUIDialogs\GridEditor;$(SolutionDir)$(Platform)\$(Configuration)\GridEditor\uic;$(SolutionDir)GUIDialogs\HoldupsEditor;$(SolutionDir)$(Platform)\$(Configuration)\HoldupsEditor\uic;$(SolutionDir)GUIDialogs\MaterialsDatabaseTab;$(SolutionDir)$(Platform)\$(Configuration)\MaterialsDatabaseTab\uic;$(SolutionDir)GUIDialogs\ModulesManagerTab;$(SolutionDir)$(Platform)\$(Configuration)\ModulesManagerTab\uic;$(SolutionDir)GUIDialogs\OptionsEditor;$(SolutionDir)$(Platform)\$(Configuration)\OptionsEditor\uic;$(SolutionDir)GUIDialogs\PhasesEditor;$(SolutionDir)$(Platform)\$(Configuration)\PhasesEditor\uic;$(SolutionDir)GUIDialogs\SettingsEditor;$(SolutionDir)$(Platform)\$(Configuration)\SettingsEditor\uic;$(SolutionDir)GUIDialogs\SimulatorTab;$(SolutionDir)$(Platform)\$(Configuration)\SimulatorTab\uic;$(SolutionDir)GUIDialogs\StreamsViewer;$(SolutionDir)$(Platform)\$(Configuration)\StreamsViewer\uic;$(SolutionDir)GUIDialogs\TearStreamsEditor;$(SolutionDir)$(Platform)\$(Configuration)\TearStreamsEditor\uic;$(SolutionDir)GUIDialogs\UnitsViewer;$(SolutionDir)$(Platform)\$(Configuration)\UnitsViewer\uic;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;$(SolutionDir)Modules\DustFormationTester;$(SolutionDir)GUIDialogs\CalculationSequenceEditor;$(SolutionDir)$(Platform)\$(Configuration)\CalculationSequenceEditor\uic;$(SolutionDir)GUIDialogs\CompoundsManager;$(SolutionDir)$(Platform)\$(Configuration)\CompoundsManager\uic;$(SolutionDir)GUIDialogs\DustFormationTesterTab;$(SolutionDir)$(Platform)\$(Configuration)\DustFormationTesterTab\uic;$(SolutionDir)GUIDialogs\FlowsheetEditor;$(SolutionDir)$(Platform)\$(Configuration)\FlowsheetEditor\uic;$(SolutionDir)GUIDialogs\GridEditor;$(SolutionDir)$(Platform)\$(Configuration)\GridEditor\uic;$(SolutionDir)GUIDialogs\HoldupsEditor;$(SolutionDir)$(Platform)\$(Configuration)\HoldupsEditor\uic;$(SolutionDir)GUIDialogs\MaterialsDatabaseTab;$(SolutionDir)$(Platform)\$(Configuration)\MaterialsDatabaseTab\uic;$(SolutionDir)GUIDialogs\ModulesManagerTab;$(SolutionDir)$(Platform)\$(Configuration)\ModulesManagerTab\uic;$(SolutionDir)GUIDialogs\OptionsEditor;$(SolutionDir)$(Platform)\$(Configuration)\OptionsEditor\uic;$(SolutionDir)GUIDialogs\PhasesEditor;$(SolutionDir)$(Platform)\$(Configuration)\PhasesEditor\uic;$(SolutionDir)GUIDialogs\SettingsEditor;$(SolutionDir)$(Platform)\$(Configuration)\SettingsEditor\uic;$(SolutionDir)GUIDialogs\SimulatorTab;$(SolutionDir)$(Platform)\$(Configuration)\SimulatorTab\uic;$(SolutionDir)GUIDialogs\StreamsViewer;$(SolutionDir)$(Platform)\$(Configuration)\StreamsViewer\uic;$(SolutionDir)GUIDialogs\TearStreamsEditor;$(SolutionDir)$(Platform)\$(Configuration)\TearStreamsEditor\uic;$(SolutionDir)GUIDialogs\UnitsViewer;$(SolutionDir)$(Platform)\$(Configuration)\UnitsViewer\uic;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Modules\DustFormationTester;$(SolutionDir)GUIDialogs\CalculationSequenceEditor;$(SolutionDir)$(Platform)\$(Configuration)\CalculationSequenceEditor\uic;$(SolutionDir)GUIDialogs\CompoundsManager;$(SolutionDir)$(Platform)\$(Configuration)\CompoundsManager\uic;$(SolutionDir)GUIDialogs\DustFormationTesterTab;$(SolutionDir)$(Platform)\$(Configuration)\DustFormationTesterTab\uic;$(SolutionDir)GUIDialogs\FlowsheetEditor;$(SolutionDir)$(Platform)\$(Configuration)\FlowsheetEditor\uic;$(SolutionDir)GUIDialogs\GridEditor;$(SolutionDir)$(Platform)\$(Configuration)\GridEditor\uic;$(SolutionDir)GUIDialogs\HoldupsEditor;$(SolutionDir)$(Platform)\$(Configuration)\HoldupsEditor\uic;$(SolutionDir)GUIDialogs\MaterialsDatabaseTab;$(SolutionDir)$(Platform)\$(Configuration)\MaterialsDatabaseTab\uic;$(SolutionDir)GUIDialogs\ModulesManagerTab;$(SolutionDir)$(Platform)\$(Configuration)\ModulesManagerTab\uic;$(SolutionDir)GUIDialogs\OptionsEditor;$(SolutionDir)$(Platform)\$(Configuration)\OptionsEditor\uic;$(SolutionDir)GUIDialogs\PhasesEditor;$(SolutionDir)$(Platform)\$(Configuration)\PhasesEditor\uic;$(SolutionDir)GUIDialogs\SettingsEditor;$(SolutionDir)$(Platform)\$(Configuration)\SettingsEditor\uic;$(SolutionDir)GUIDialogs\SimulatorTab;$(SolutionDir)$(Platform)\$(Configuration)\SimulatorTab\uic;$(SolutionDir)GUIDialogs\StreamsViewer;$(SolutionDir)$(Platform)\$(Configuration)\StreamsViewer\uic;$(SolutionDir)GUIDialogs\TearStreamsEditor;$(SolutionDir)$(Platform)\$(Configuration)\TearStreamsEditor\uic;$(SolutionDir)GUIDialogs\UnitsViewer;$(SolutionDir)$(Platform)\$(Configuration)\UnitsViewer\uic;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;$(SolutionDir)Modules\DustFormationTester;$(SolutionDir)GUIDialogs\CalculationSequenceEditor;$(SolutionDir)$(Platform)\$(Configuration)\CalculationSequenceEditor\uic;$(SolutionDir)GUIDialogs\CompoundsManager;$(SolutionDir)$(Platform)\$(Configuration)\CompoundsManager\uic;$(SolutionDir)GUIDialogs\DustFormationTesterTab;$(SolutionDir)$(Platform)\$(Configuration)\DustFormationTesterTab\uic;$(SolutionDir)GUIDialogs\FlowsheetEditor;$(SolutionDir)$(Platform)\$(Configuration)\FlowsheetEditor\uic;$(SolutionDir)GUIDialogs\GridEditor;$(SolutionDir)$(Platform)\$(Configuration)\GridEditor\uic;$(SolutionDir)GUIDialogs\HoldupsEditor;$(SolutionDir)$(Platform)\$(Configuration)\HoldupsEditor\uic;$(SolutionDir)GUIDialogs\MaterialsDatabaseTab;$(SolutionDir)$(Platform)\$(Configuration)\MaterialsDatabaseTab\uic;$(SolutionDir)GUIDialogs\ModulesManagerTab;$(SolutionDir)$(Platform)\$(Configuration)\ModulesManagerTab\uic;$(SolutionDir)GUIDialogs\OptionsEditor;$(SolutionDir)$(Platform)\$(Configuration)\OptionsEditor\uic;$(SolutionDir)GUIDialogs\PhasesEditor;$(SolutionDir)$(Platform)\$(Configuration)\PhasesEditor\uic;$(SolutionDir)GUIDialogs\SettingsEditor;$(SolutionDir)$(Platform)\$(Configuration)\SettingsEditor\uic;$(SolutionDir)GUIDialogs\SimulatorTab;$(SolutionDir)$(Platform)\$(Configuration)\SimulatorTab\uic;$(SolutionDir)GUIDialogs\StreamsViewer;$(SolutionDir)$(Platform)\$(Configuration)\StreamsViewer\uic;$(SolutionDir)GUIDialogs\TearStreamsEditor;$(SolutionDir)$(Platform)\$(Configuration)\TearStreamsEditor\uic;$(SolutionDir)GUIDialogs\UnitsViewer;$(SolutionDir)$(Platform)\$(Configuration)\UnitsViewer\uic;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Modules\DustFormationTester;$(SolutionDir)GUIDialogs\CalculationSequenceEditor;$(SolutionDir)$(Platform)\$(Configuration)\CalculationSequenceEditor\uic;$(SolutionDir)GUIDialogs\CompoundsManager;$(SolutionDir)$(Platform)\$(Configuration)\CompoundsManager\uic;$(SolutionDir)GUIDialogs\DustFormationTesterTab;$(SolutionDir)$(Platform)\$(Configuration)\DustFormationTesterTab\uic;$(SolutionDir)GUIDialogs\FlowsheetEditor;$(SolutionDir)$(Platform)\$(Configuration)\FlowsheetEditor\uic;$(SolutionDir)GUIDialogs\GridEditor;$(SolutionDir)$(Platform)\$(Configuration)\GridEditor\uic;$(SolutionDir)GUIDialogs\HoldupsEditor;$(SolutionDir)$(Platform)\$(Configuration)\HoldupsEditor\uic;$(SolutionDir)GUIDialogs\MaterialsDatabaseTab;$(SolutionDir)$(Platform)\$(Configuration)\MaterialsDatabaseTab\uic;$(SolutionDir)GUIDialogs\ModulesManagerTab;$(SolutionDir)$(Platform)\$(Configuration)\ModulesManagerTab\uic;$(SolutionDir)GUIDialogs\OptionsEditor;$(SolutionDir)$(Platform)\$(Configuration)\OptionsEditor\uic;$(SolutionDir)GUIDialogs\PhasesEditor;$(SolutionDir)$(Platform)\$(Configuration)\PhasesEditor\uic;$(SolutionDir)GUIDialogs\SettingsEditor;$(SolutionDir)$(Platform)\$(Configuration)\SettingsEditor\uic;$(SolutionDir)GUIDialogs\SimulatorTab;$(SolutionDir)$(Platform)\$(Configuration)\SimulatorTab\uic;$(SolutionDir)GUIDialogs\StreamsViewer;$(SolutionDir)$(Platform)\$(Configuration)\StreamsViewer\uic;$(SolutionDir)GUIDialogs\TearStreamsEditor;$(SolutionDir)$(Platform)\$(Configuration)\TearStreamsEditor\uic;$(SolutionDir)GUIDialogs\UnitsViewer;$(SolutionDir)$(Platform)\$(Configuration)\UnitsViewer\uic;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;$(SolutionDir)Modules\DustFormationTester;$(SolutionDir)GUIDialogs\CalculationSequenceEditor;$(SolutionDir)$(Platform)\$(Configuration)\CalculationSequenceEditor\uic;$(SolutionDir)GUIDialogs\CompoundsManager;$(SolutionDir)$(Platform)\$(Configuration)\CompoundsManager\uic;$(SolutionDir)GUIDialogs\DustFormationTesterTab;$(SolutionDir)$(Platform)\$(Configuration)\DustFormationTesterTab\uic;$(SolutionDir)GUIDialogs\FlowsheetEditor;$(SolutionDir)$(Platform)\$(Configuration)\FlowsheetEditor\uic;$(SolutionDir)GUIDialogs\GridEditor;$(SolutionDir)$(Platform)\$(Configuration)\GridEditor\uic;$(SolutionDir)GUIDialogs\HoldupsEditor;$(SolutionDir)$(Platform)\$(Configuration)\HoldupsEditor\uic;$(SolutionDir)GUIDialogs\MaterialsDatabaseTab;$(SolutionDir)$(Platform)\$(Configuration)\MaterialsDatabaseTab\uic;$(SolutionDir)GUIDialogs\ModulesManagerTab;$(SolutionDir)$(Platform)\$(Configuration)\ModulesManagerTab\uic;$(SolutionDir)GUIDialogs\OptionsEditor;$(SolutionDir)$(Platform)\$(Configuration)\OptionsEditor\uic;$(SolutionDir)GUIDialogs\PhasesEditor;$(SolutionDir)$(Platform)\$(Configuration)\PhasesEditor\uic;$(SolutionDir)GUIDialogs\SettingsEditor;$(SolutionDir)$(Platform)\$(Configuration)\SettingsEditor\uic;$(SolutionDir)GUIDialogs\SimulatorTab;$(SolutionDir)$(Platform)\$(Configuration)\SimulatorTab\uic;$(SolutionDir)GUIDialogs\StreamsViewer;$(SolutionDir)$(Platform)\$(Configuration)\StreamsViewer\uic;$(SolutionDir)GUIDialogs\TearStreamsEditor;$(SolutionDir)$(Platform)\$(Configuration)\TearStreamsEditor\uic;$(SolutionDir)GUIDialogs\UnitsViewer;$(SolutionDir)$(Platform)\$(Configuration)\UnitsViewer\uic;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Modules\DustFormationTester;$(SolutionDir)GUIDialogs\CalculationSequenceEditor;$(SolutionDir)$(Platform)\$(Configuration)\CalculationSequenceEditor\uic;$(SolutionDir)GUIDialogs\CompoundsManager;$(SolutionDir)$(Platform)\$(Configuration)\CompoundsManager\uic;$(SolutionDir)GUIDialogs\DustFormationTesterTab;$(SolutionDir)$(Platform)\$(Configuration)\DustFormationTesterTab\uic;$(SolutionDir)GUIDialogs\FlowsheetEditor;$(SolutionDir)$(Platform)\$(Configuration)\FlowsheetEditor\uic;$(SolutionDir)GUIDialogs\GridEditor;$(SolutionDir)$(Platform)\$(Configuration)\GridEditor\uic;$(SolutionDir)GUIDialogs\HoldupsEditor;$(SolutionDir)$(Platform)\$(Configuration)\HoldupsEditor\uic;$(SolutionDir)GUIDialogs\MaterialsDatabaseTab;$(SolutionDir)$(Platform)\$(Configuration)\MaterialsDatabaseTab\uic;$(SolutionDir)GUIDialogs\ModulesManagerTab;$(SolutionDir)$(Platform)\$(Configuration)\ModulesManagerTab\uic;$(SolutionDir)GUIDialogs\OptionsEditor;$(SolutionDir)$(Platform)\$(Configuration)\OptionsEditor\uic;$(SolutionDir)GUIDialogs\PhasesEditor;$(SolutionDir)$(Platform)\$(Configuration)\PhasesEditor\uic;$(SolutionDir)GUIDialogs\SettingsEditor;$(SolutionDir)$(Platform)\$(Configuration)\SettingsEditor\uic;$(SolutionDir)GUIDialogs\SimulatorTab;$(SolutionDir)$(Platform)\$(Configuration)\SimulatorTab\uic;$(SolutionDir)GUIDialogs\StreamsViewer;$(SolutionDir)$(Platform)\$(Configuration)\StreamsViewer\uic;$(SolutionDir)GUIDialogs\TearStreamsEditor;$(SolutionDir)$(Platform)\$(Configuration)\TearStreamsEditor\uic;$(SolutionDir)GUIDialogs\UnitsViewer;$(SolutionDir)$(Platform)\$(Configuration)\UnitsViewer\uic;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\GeneratedFiles\$(ConfigurationName);.\GeneratedFiles;$(SolutionDir)Modules\DustFormationTester;$(SolutionDir)GUIDialogs\CalculationSequenceEditor;$(SolutionDir)$(Platform)\$(Configuration)\CalculationSequenceEditor\uic;$(SolutionDir)GUIDialogs\CompoundsManager;$(SolutionDir)$(Platform)\$(Configuration)\CompoundsManager\uic;$(SolutionDir)GUIDialogs\DustFormationTesterTab;$(SolutionDir)$(Platform)\$(Configuration)\DustFormationTesterTab\uic;$(SolutionDir)GUIDialogs\FlowsheetEditor;$(SolutionDir)$(Platform)\$(Configuration)\FlowsheetEditor\uic;$(SolutionDir)GUIDialogs\GridEditor;$(SolutionDir)$(Platform)\$(Configuration)\GridEditor\uic;$(SolutionDir)GUIDialogs\HoldupsEditor;$(SolutionDir)$(Platform)\$(Configuration)\HoldupsEditor\uic;$(SolutionDir)GUIDialogs\MaterialsDatabaseTab;$(SolutionDir)$(Platform)\$(Configuration)\MaterialsDatabaseTab\uic;$(SolutionDir)GUIDialogs\ModulesManagerTab;$(SolutionDir)$(Platform)\$(Configuration)\ModulesManagerTab\uic;$(SolutionDir)GUIDialogs\OptionsEditor;$(SolutionDir)$(Platform)\$(Configuration)\OptionsEditor\uic;$(SolutionDir)GUIDialogs\PhasesEditor;$(SolutionDir)$(Platform)\$(Configuration)\PhasesEditor\uic;$(SolutionDir)GUIDialogs\SettingsEditor;$(SolutionDir)$(Platform)\$(Configuration)\SettingsEditor\uic;$(SolutionDir)GUIDialogs\SimulatorTab;$(SolutionDir)$(Platform)\$(Configuration)\SimulatorTab\uic;$(SolutionDir)GUIDialogs\StreamsViewer;$(SolutionDir)$(Platform)\$(Configuration)\StreamsViewer\uic;$(SolutionDir)GUIDialogs\TearStreamsEditor;$(SolutionDir)$(Platform)\$(Configuration)\TearStreamsEditor\uic;$(SolutionDir)GUIDialogs\UnitsViewer;$(SolutionDir)$(Platform)\$(Configuration)\UnitsViewer\uic;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -236,4 +222,7 @@
   </ImportGroup>
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <PropertyGroup Condition="'$(Language)'=='C++'">
+    <CAExcludePath>$(Qt_INCLUDEPATH_);.\GeneratedFiles;$(CAExcludePath)</CAExcludePath>
+  </PropertyGroup>
 </Project>

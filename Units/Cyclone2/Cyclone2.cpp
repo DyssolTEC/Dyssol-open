@@ -11,13 +11,16 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 //////////////////////////////////////////////////////////////////////////
 /// Unit
 
-CCyclone2::CCyclone2()
+void CCyclone2::CreateBasicInfo()
 {
 	/// Basic unit's info ///
 	m_sUnitName = "Cyclone v2";
 	m_sAuthorName = "Buchholz (SPE/TUHH)";
 	m_sUniqueID = "170BEB3E368548BDBF8B3DB1C66DB179";
+}
 
+void CCyclone2::CreateStructure()
+{
 	/// Add ports ///
 	AddPort("Inflow", INPUT_PORT);
 	AddPort("Outflow_Coarse", OUTPUT_PORT);

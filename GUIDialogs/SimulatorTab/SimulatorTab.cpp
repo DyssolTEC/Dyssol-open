@@ -1,8 +1,9 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "SimulatorTab.h"
+#include "ProgressThread.h"
+#include "Flowsheet.h"
 #include "DyssolStringConstants.h"
-#include "MaterialStream.h"
 #include <QMessageBox>
 #include <QDateTime>
 
@@ -52,7 +53,7 @@ void CSimulatorTab::OnNewFlowsheet() const
 
 void CSimulatorTab::SetSimulationTime()
 {
-	m_pFlowsheet->SetSimulationTime(ui.lineEditTime->text().toDouble());
+	m_pFlowsheet->GetParameters()->EndSimulationTime(ui.lineEditTime->text().toDouble());
 	UpdateSimulationTime();
 	emit DataChanged();
 }
@@ -143,9 +144,7 @@ void CSimulatorTab::ClearInitialRecycleStreams()
 	if (QMessageBox::question(this, StrConst::ST_TitleClearRecycles, StrConst::ST_QuestionClearRecycles, QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel) != QMessageBox::Yes)
 		return;
 
-	for (auto& partition : m_pFlowsheet->m_vvInitTearStreams)
-		for (auto& stream : partition)
-			stream.RemoveTimePointsAfter(0, true);
+	m_pFlowsheet->GetCalculationSequence()->ClearInitialStreamsData();
 
 	emit DataChanged();
 }
@@ -156,9 +155,7 @@ void CSimulatorTab::ClearAll()
 		return;
 
 	m_pFlowsheet->ClearSimulationResults();
-	for (auto& partition : m_pFlowsheet->m_vvInitTearStreams)
-		for (auto& stream : partition)
-			stream.RemoveTimePointsAfter(0, true);
+	m_pFlowsheet->GetCalculationSequence()->ClearInitialStreamsData();
 	ClearLog();
 
 	emit DataChanged();
@@ -189,13 +186,13 @@ void CSimulatorTab::UpdateLog() const
 	ui.tableLog->SetItemNotEditable(EStatTable::TIME_WIN_LENGTH,  0, m_pSimulator->m_dTWLength);
 	ui.tableLog->SetItemNotEditable(EStatTable::ITERATION_NUMBER, 0, m_pSimulator->m_iTWIterationFull);
 	ui.tableLog->SetItemNotEditable(EStatTable::WINDOW_NUMBER,    0, m_pSimulator->m_iWindowNumber);
-	ui.tableLog->SetItemNotEditable(EStatTable::UNIT_NAME,        0, m_pSimulator->m_sUnitName);
+	ui.tableLog->SetItemNotEditable(EStatTable::UNIT_NAME,        0, m_pSimulator->m_unitName);
 	ui.tableLog->SetItemNotEditable(EStatTable::ELAPSED_TIME,     0, QDateTime::fromTime_t(m_simulationTimer.elapsed() / 1000).toUTC().toString("hh:mm:ss"));
 }
 
 void CSimulatorTab::UpdateSimulationTime() const
 {
-	ui.lineEditTime->setText(QString::number(m_pFlowsheet->GetSimulationTime()));
+	ui.lineEditTime->setText(QString::number(m_pFlowsheet->GetParameters()->endSimulationTime));
 }
 
 void CSimulatorTab::BlockUI(bool _block) const

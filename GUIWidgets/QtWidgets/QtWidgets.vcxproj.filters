@@ -20,12 +20,18 @@
     <ClCompile Include="SignalBlocker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="QtList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="QtTable.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="QtTree.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="QtList.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

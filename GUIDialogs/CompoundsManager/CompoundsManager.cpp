@@ -1,6 +1,8 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "CompoundsManager.h"
+#include "MaterialsDatabase.h"
+#include "Flowsheet.h"
 
 CCompoundsManager::CCompoundsManager(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pDatabase, QWidget *parent) : QDialog(parent)
 {

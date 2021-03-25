@@ -6,6 +6,7 @@
 #include <QCheckBox>
 #include <QLabel>
 #include <QComboBox>
+#include <QPushButton>
 #include <QToolButton>
 
 class CQtTable : public QTableWidget
@@ -60,6 +61,8 @@ public:
 	QComboBox* SetComboBox(int _row, int _col, const std::vector<std::string>& _names, const std::vector<std::string>& _data, const std::string& _dataSelected);
 	QComboBox* SetComboBox(int _row, int _col, const std::vector<std::string>& _names, const std::vector<size_t>& _data, size_t _dataSelected);
 	QComboBox* GetComboBox(int _row, int _col) const;
+	QPushButton* SetPushButton(int _row, int _col, const QString& _text);
+	QPushButton* GetPushButton(int _row, int _col) const;
 	QToolButton* SetToolButton(int _row, int _col, const QString& _text);
 	QToolButton* GetToolButton(int _row, int _col) const;
 	QLabel* SetLabel(int _row, int _col, const QString& _text);
@@ -94,5 +97,6 @@ private:
 signals:
 	void CheckBoxStateChanged(int _row, int _col, QCheckBox* _pCheckBox);
 	void ComboBoxIndexChanged(int _row, int _col, QComboBox* _pComboBox);
+	void PushButtonClicked(int _row, int _col, QPushButton* _pushButton);
 	void ToolButtonClicked(int _row, int _col, QToolButton* _pToolButton);
 };

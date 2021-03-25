@@ -28,6 +28,7 @@ extern "C" {
 
 #define H5E_FUNC             (H5OPEN H5E_FUNC_g)
 #define H5E_FILE             (H5OPEN H5E_FILE_g)
+#define H5E_VOL              (H5OPEN H5E_VOL_g)
 #define H5E_SOHM             (H5OPEN H5E_SOHM_g)
 #define H5E_SYM              (H5OPEN H5E_SYM_g)
 #define H5E_PLUGIN           (H5OPEN H5E_PLUGIN_g)
@@ -40,6 +41,7 @@ extern "C" {
 #define H5E_RS               (H5OPEN H5E_RS_g)
 #define H5E_FARRAY           (H5OPEN H5E_FARRAY_g)
 #define H5E_HEAP             (H5OPEN H5E_HEAP_g)
+#define H5E_MAP              (H5OPEN H5E_MAP_g)
 #define H5E_ATTR             (H5OPEN H5E_ATTR_g)
 #define H5E_IO               (H5OPEN H5E_IO_g)
 #define H5E_EFL              (H5OPEN H5E_EFL_g)
@@ -56,12 +58,14 @@ extern "C" {
 #define H5E_NONE_MAJOR       (H5OPEN H5E_NONE_MAJOR_g)
 #define H5E_SLIST            (H5OPEN H5E_SLIST_g)
 #define H5E_ARGS             (H5OPEN H5E_ARGS_g)
+#define H5E_CONTEXT          (H5OPEN H5E_CONTEXT_g)
 #define H5E_EARRAY           (H5OPEN H5E_EARRAY_g)
 #define H5E_PLINE            (H5OPEN H5E_PLINE_g)
 #define H5E_ERROR            (H5OPEN H5E_ERROR_g)
 #define H5E_CACHE            (H5OPEN H5E_CACHE_g)
 H5_DLLVAR hid_t H5E_FUNC_g;          /* Function entry/exit */
-H5_DLLVAR hid_t H5E_FILE_g;          /* File accessibilty */
+H5_DLLVAR hid_t H5E_FILE_g;          /* File accessibility */
+H5_DLLVAR hid_t H5E_VOL_g;           /* Virtual Object Layer */
 H5_DLLVAR hid_t H5E_SOHM_g;          /* Shared Object Header Messages */
 H5_DLLVAR hid_t H5E_SYM_g;           /* Symbol table */
 H5_DLLVAR hid_t H5E_PLUGIN_g;        /* Plugin for dynamically loaded library */
@@ -74,6 +78,7 @@ H5_DLLVAR hid_t H5E_RESOURCE_g;      /* Resource unavailable */
 H5_DLLVAR hid_t H5E_RS_g;            /* Reference Counted Strings */
 H5_DLLVAR hid_t H5E_FARRAY_g;        /* Fixed Array */
 H5_DLLVAR hid_t H5E_HEAP_g;          /* Heap */
+H5_DLLVAR hid_t H5E_MAP_g;           /* Map */
 H5_DLLVAR hid_t H5E_ATTR_g;          /* Attribute */
 H5_DLLVAR hid_t H5E_IO_g;            /* Low-level I/O */
 H5_DLLVAR hid_t H5E_EFL_g;           /* External file list */
@@ -90,6 +95,7 @@ H5_DLLVAR hid_t H5E_ATOM_g;          /* Object atom */
 H5_DLLVAR hid_t H5E_NONE_MAJOR_g;    /* No error */
 H5_DLLVAR hid_t H5E_SLIST_g;         /* Skip Lists */
 H5_DLLVAR hid_t H5E_ARGS_g;          /* Invalid arguments to routine */
+H5_DLLVAR hid_t H5E_CONTEXT_g;       /* API Context */
 H5_DLLVAR hid_t H5E_EARRAY_g;        /* Extensible Array */
 H5_DLLVAR hid_t H5E_PLINE_g;         /* Data filters */
 H5_DLLVAR hid_t H5E_ERROR_g;         /* Error API */
@@ -231,7 +237,7 @@ H5_DLLVAR hid_t H5E_NONE_MINOR_g;    /* No error */
 #define H5E_OPENERROR        (H5OPEN H5E_OPENERROR_g)
 H5_DLLVAR hid_t H5E_OPENERROR_g;     /* Can't open directory or file */
 
-/* File accessibilty errors */
+/* File accessibility errors */
 #define H5E_FILEEXISTS       (H5OPEN H5E_FILEEXISTS_g)
 #define H5E_FILEOPEN         (H5OPEN H5E_FILEOPEN_g)
 #define H5E_CANTCREATE       (H5OPEN H5E_CANTCREATE_g)
@@ -241,6 +247,7 @@ H5_DLLVAR hid_t H5E_OPENERROR_g;     /* Can't open directory or file */
 #define H5E_BADFILE          (H5OPEN H5E_BADFILE_g)
 #define H5E_TRUNCATED        (H5OPEN H5E_TRUNCATED_g)
 #define H5E_MOUNT            (H5OPEN H5E_MOUNT_g)
+#define H5E_CANTDELETEFILE   (H5OPEN H5E_CANTDELETEFILE_g)
 H5_DLLVAR hid_t H5E_FILEEXISTS_g;    /* File already exists */
 H5_DLLVAR hid_t H5E_FILEOPEN_g;      /* File already open */
 H5_DLLVAR hid_t H5E_CANTCREATE_g;    /* Unable to create file */
@@ -250,6 +257,7 @@ H5_DLLVAR hid_t H5E_NOTHDF5_g;       /* Not an HDF5 file */
 H5_DLLVAR hid_t H5E_BADFILE_g;       /* Bad file ID accessed */
 H5_DLLVAR hid_t H5E_TRUNCATED_g;     /* File has been truncated */
 H5_DLLVAR hid_t H5E_MOUNT_g;         /* File mount error */
+H5_DLLVAR hid_t H5E_CANTDELETEFILE_g; /* Unable to delete file */
 
 /* Object atom related errors */
 #define H5E_BADATOM          (H5OPEN H5E_BADATOM_g)
@@ -290,7 +298,7 @@ H5_DLLVAR hid_t H5E_NOIDS_g;         /* Out of IDs for group */
 #define H5E_CANTDEPEND       (H5OPEN H5E_CANTDEPEND_g)
 #define H5E_CANTUNDEPEND     (H5OPEN H5E_CANTUNDEPEND_g)
 #define H5E_CANTNOTIFY       (H5OPEN H5E_CANTNOTIFY_g)
-#define H5E_LOGFAIL          (H5OPEN H5E_LOGFAIL_g)
+#define H5E_LOGGING          (H5OPEN H5E_LOGGING_g)
 #define H5E_CANTCORK         (H5OPEN H5E_CANTCORK_g)
 #define H5E_CANTUNCORK       (H5OPEN H5E_CANTUNCORK_g)
 H5_DLLVAR hid_t H5E_CANTFLUSH_g;     /* Unable to flush data from cache */
@@ -317,7 +325,7 @@ H5_DLLVAR hid_t H5E_CANTRESIZE_g;    /* Unable to resize a metadata cache entry 
 H5_DLLVAR hid_t H5E_CANTDEPEND_g;    /* Unable to create a flush dependency */
 H5_DLLVAR hid_t H5E_CANTUNDEPEND_g;  /* Unable to destroy a flush dependency */
 H5_DLLVAR hid_t H5E_CANTNOTIFY_g;    /* Unable to notify object about action */
-H5_DLLVAR hid_t H5E_LOGFAIL_g;       /* Failure in the cache logging framework */
+H5_DLLVAR hid_t H5E_LOGGING_g;       /* Failure in the cache logging framework */
 H5_DLLVAR hid_t H5E_CANTCORK_g;      /* Unable to cork an object */
 H5_DLLVAR hid_t H5E_CANTUNCORK_g;    /* Unable to uncork an object */
 
@@ -352,6 +360,7 @@ H5_DLLVAR hid_t H5E_NO_INDEPENDENT_g; /* Can't perform independent IO */
 #define H5E_CANTNEXT         (H5OPEN H5E_CANTNEXT_g)
 #define H5E_BADSELECT        (H5OPEN H5E_BADSELECT_g)
 #define H5E_CANTCOMPARE      (H5OPEN H5E_CANTCOMPARE_g)
+#define H5E_INCONSISTENTSTATE (H5OPEN H5E_INCONSISTENTSTATE_g)
 #define H5E_CANTAPPEND       (H5OPEN H5E_CANTAPPEND_g)
 H5_DLLVAR hid_t H5E_CANTCLIP_g;      /* Can't clip hyperslab region */
 H5_DLLVAR hid_t H5E_CANTCOUNT_g;     /* Can't count elements */
@@ -359,6 +368,7 @@ H5_DLLVAR hid_t H5E_CANTSELECT_g;    /* Can't select hyperslab */
 H5_DLLVAR hid_t H5E_CANTNEXT_g;      /* Can't move to next iterator location */
 H5_DLLVAR hid_t H5E_BADSELECT_g;     /* Invalid selection */
 H5_DLLVAR hid_t H5E_CANTCOMPARE_g;   /* Can't compare objects */
+H5_DLLVAR hid_t H5E_INCONSISTENTSTATE_g; /* Internal states are inconsistent */
 H5_DLLVAR hid_t H5E_CANTAPPEND_g;    /* Can't append object */
 
 /* Argument errors */

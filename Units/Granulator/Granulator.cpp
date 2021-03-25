@@ -3,19 +3,23 @@
 #define DLL_EXPORT
 #include "Granulator.h"
 #include "DistributionsFunctions.h"
+#include "TransformMatrix.h"
 
 extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 {
 	return new CSimpleGranulator();
 }
 
-CSimpleGranulator::CSimpleGranulator()
+void CSimpleGranulator::CreateBasicInfo()
 {
 	/// Set basic unit info ///
 	m_sUnitName = "Granulator";
 	m_sAuthorName = "SPE TUHH";
 	m_sUniqueID = "560E86013C6B4647A32A3AE346D5DB75";
+}
 
+void CSimpleGranulator::CreateStructure()
+{
 	/// Add ports ///
 	AddPort("Suspension", INPUT_PORT);
 	AddPort("ExternalNuclei", INPUT_PORT);
@@ -24,7 +28,7 @@ CSimpleGranulator::CSimpleGranulator()
 	AddPort("DustOutput", OUTPUT_PORT);
 
 	/// Add unit parameters ///
-	AddTDParameter("Kos",     0.0, 1.0, 0.0,  "-", "Overspray part of suspension");
+	AddTDParameter("Kos", 0.0, 1.0, 0.0, "-", "Overspray part of suspension");
 	AddConstParameter("RTol", 0.0, 1.0, 1e-6, "-", "Relative tolerance");
 	AddConstParameter("ATol", 0.0, 1.0, 1e-8, "-", "Absolute tolerance");
 
@@ -143,8 +147,8 @@ void CUnitDAEModel::ResultsHandler(double _dTime, double* _pVars, double* _pDeri
 
 	const double dHoldupMass = unit->m_pHoldup->GetMass(_dTime);
 
-	static_cast<CStream*>(unit->m_pHoldup)->AddStream_Base(*static_cast<CStream*>(unit->m_pInSuspStream), _dTime);	// hack to handle holdup as material stream
-	static_cast<CStream*>(unit->m_pHoldup)->AddStream_Base(*static_cast<CStream*>(unit->m_pInNuclStream), _dTime);
+	static_cast<CBaseStream*>(unit->m_pHoldup)->AddStream_Base(*static_cast<CBaseStream*>(unit->m_pInSuspStream), _dTime);	// hack to handle holdup as material stream
+	static_cast<CBaseStream*>(unit->m_pHoldup)->AddStream_Base(*static_cast<CBaseStream*>(unit->m_pInNuclStream), _dTime);
 
 	unit->m_pHoldup->RemoveTimePointsAfter(_dTime);
 

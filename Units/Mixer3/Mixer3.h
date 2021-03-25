@@ -8,7 +8,7 @@
 class CMixer3 : public CSteadyStateUnit
 {
 public:
-	CMixer3();
-
+	void CreateBasicInfo() override;
+	void CreateStructure() override;
 	void Simulate(double _dTime) override;
 };

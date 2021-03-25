@@ -12,7 +12,7 @@ void CPBMSolver::SetInitialHoldup(const CHoldup* _pHoldup)
 
 }
 
-void CPBMSolver::SetInputStream(const CMaterialStream* _pStream)
+void CPBMSolver::SetInputStream(const CStream* _pStream)
 {
 
 }

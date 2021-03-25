@@ -8,12 +8,15 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 	return new CMixer();
 }
 
-CMixer::CMixer()
+void CMixer::CreateBasicInfo()
 {
 	m_sUnitName = "Mixer";
 	m_sAuthorName = "SPE TUHH";
 	m_sUniqueID = "3872940337B3492CBAA5D7E9595EBD99";
+}
 
+void CMixer::CreateStructure()
+{
 	AddPort("In1", INPUT_PORT);
 	AddPort("In2", INPUT_PORT);
 	AddPort("Out", OUTPUT_PORT);

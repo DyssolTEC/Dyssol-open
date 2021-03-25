@@ -11,13 +11,16 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 //////////////////////////////////////////////////////////////////////////
 /// Unit
 
-CHeatExchanger::CHeatExchanger()
+void CHeatExchanger::CreateBasicInfo()
 {
 	/// Basic unit's info ///
 	m_sUnitName = "HeatExchanger";
 	m_sAuthorName = "TUHH SPE";
 	m_sUniqueID = "DB2C399331AA4F309DF63A819911251F";
+}
 
+void CHeatExchanger::CreateStructure()
+{
 	/// Add ports ///
 	AddPort("Input1", INPUT_PORT);
 	AddPort("Input2", INPUT_PORT);

@@ -8,7 +8,7 @@
 class CInlet : public CDynamicUnit
 {
 public:
-	CInlet();
-
+	void CreateBasicInfo() override;
+	void CreateStructure() override;
 	void Simulate(double _dStartTime, double _dEndTime) override;
 };

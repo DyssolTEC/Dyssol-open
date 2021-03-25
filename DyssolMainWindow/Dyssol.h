@@ -3,6 +3,8 @@
 #pragma once
 
 #include "ui_Dyssol.h"
+#include "Simulator.h"
+#include "Flowsheet.h"
 #include "CalculationSequenceEditor.h"
 #include "MaterialsDatabaseTab.h"
 #include "CompoundsManager.h"
@@ -12,7 +14,6 @@
 #include "ModulesManagerTab.h"
 #include "OptionsEditor.h"
 #include "PhasesEditor.h"
-#include "SimulatorTab.h"
 #include "StreamsViewer.h"
 #include "UnitsViewer.h"
 #include "TearStreamsEditor.h"
@@ -28,6 +29,8 @@
 #define STREAMS_TAB		2
 #define UNITS_TAB		3
 
+class CStatusWindow;
+
 //////////////////////////////////////////////////////////////////////////
 /// Main Dyssol GUI class
 //////////////////////////////////////////////////////////////////////////
@@ -39,10 +42,10 @@ public:
 	static const int EXIT_CODE_REBOOT = -0x9EB007;
 
 private:
-	CModelsManager m_ModelsManager;				// units and solvers manager
-	CFlowsheet m_Flowsheet;						// flowsheet
-	CSimulator m_Simulator;						// simulator
 	CMaterialsDatabase m_MaterialsDatabase;		// database of materials
+	CModelsManager m_ModelsManager;				// units and solvers manager
+	CFlowsheet m_Flowsheet{ m_ModelsManager, m_MaterialsDatabase };	// flowsheet
+	CSimulator m_Simulator;						// simulator
 
 	QSettings* m_pSettings;		// Config file.
 	QString m_sSettingsPath;	// Path to store settings and temporary data, where config file and caches are stored.

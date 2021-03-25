@@ -1,11 +1,16 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "DustFormationTesterTab.h"
-#include "MaterialStream.h"
+#include "Flowsheet.h"
+#include "BaseUnit.h"
+#include "Stream.h"
+#include "MaterialsDatabase.h"
+#include "DistributionsGrid.h"
 
-CDustFormationTesterTab::CDustFormationTesterTab(const CFlowsheet* _pFlowsheet, QWidget *parent)
+CDustFormationTesterTab::CDustFormationTesterTab(const CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, QWidget *parent)
 	: QDialog(parent),
-	m_pFlowsheet(_pFlowsheet)
+	m_pFlowsheet(_pFlowsheet),
+	m_matrialsDB{ _matrialsDB }
 {
 	ui.setupUi(this);
 	ui.tableWidgetData->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -54,10 +59,9 @@ void CDustFormationTesterTab::UpdateStreams() const
 
 	// update table
 	ui.listWidgetStreams->clear();
-	for (size_t i = 0; i < m_pFlowsheet->GetStreamsCount(); ++i)
+	for (const auto& stream : m_pFlowsheet->GetAllStreams())
 	{
-		const CMaterialStream* pStream = m_pFlowsheet->GetStream(i);
-		AddItemToList(ui.listWidgetStreams, pStream->GetStreamName(), pStream->GetStreamKey());
+		AddItemToList(ui.listWidgetStreams, stream->GetName(), stream->GetKey());
 	}
 
 	// if streams block is selected, unblock the table here
@@ -82,10 +86,9 @@ void CDustFormationTesterTab::UpdateUnits() const
 
 	// update table
 	ui.listWidgetUnits->clear();
-	for (size_t i = 0; i < m_pFlowsheet->GetModelsCount(); ++i)
+	for (const auto& unit : m_pFlowsheet->GetAllUnits())
 	{
-		const CBaseModel* pModel = m_pFlowsheet->GetModel(i);
-		AddItemToList(ui.listWidgetUnits, pModel->GetModelName(), pModel->GetModelKey());
+		AddItemToList(ui.listWidgetUnits, unit->GetName(), unit->GetKey());
 	}
 
 	// if units block is selected, unblock the table here
@@ -112,18 +115,17 @@ void CDustFormationTesterTab::UpdateHoldups() const
 	ui.listWidgetHoldups->clear();
 
 	// prepare stuff
-	const CBaseModel* pModel = GetSelectedModel();
-	if(!pModel)
+	const CUnitContainer* pModel = GetSelectedModel();
+	if(!pModel || !pModel->GetModel())
 	{
 		ui.listWidgetHoldups->blockSignals(bOldBlock);
 		return;
 	}
 
 	// update table
-	for (size_t i = 0; i < pModel->GetHoldupsCount(); ++i)
+	for (const auto& holdup : pModel->GetModel()->GetStreamsManager().GetHoldups())
 	{
-		const CHoldup* pHoldup = pModel->GetHoldup(i);
-		AddItemToList(ui.listWidgetHoldups, pHoldup->GetStreamName(), pHoldup->GetStreamKey());
+		AddItemToList(ui.listWidgetHoldups, holdup->GetName(), holdup->GetKey());
 	}
 
 	// if units block is selected, unblock the table here
@@ -165,8 +167,8 @@ void CDustFormationTesterTab::UpdateCompounds() const
 	// create entry for mixture
 	ui.comboBoxCompound->addItem("Total mixture", "");
 	// add compounds
-	for (size_t i = 0; i < m_pFlowsheet->GetCompoundsNumber(); ++i)
-		ui.comboBoxCompound->addItem(QString::fromStdString(m_pFlowsheet->GetCompoundName(i)), QString::fromStdString(m_pFlowsheet->GetCompoundKey(i)));
+	for (const auto& key : m_pFlowsheet->GetCompounds())
+		ui.comboBoxCompound->addItem(QString::fromStdString(m_matrialsDB->GetCompound(key) ? m_matrialsDB->GetCompound(key)->GetName() : ""), QString::fromStdString(key));
 }
 
 void CDustFormationTesterTab::UpdateDataTable()
@@ -177,7 +179,7 @@ void CDustFormationTesterTab::UpdateDataTable()
 	ui.tableWidgetData->setRowCount(0);
 
 	// prepare stuff
-	const CStream* pStream = GetSelectedStream();
+	const CBaseStream* pStream = GetSelectedStream();
 	if (!pStream)
 		return;
 
@@ -220,7 +222,7 @@ void CDustFormationTesterTab::RestoreSelectedRow(QListWidget* _pList, int iRow)
 		_pList->setCurrentRow(_pList->count() - 1, QItemSelectionModel::SelectCurrent);
 }
 
-const CStream* CDustFormationTesterTab::GetSelectedStream() const
+const CBaseStream* CDustFormationTesterTab::GetSelectedStream() const
 {
 	switch (m_focusType)
 	{
@@ -230,25 +232,27 @@ const CStream* CDustFormationTesterTab::GetSelectedStream() const
 	}
 }
 
-const CBaseModel* CDustFormationTesterTab::GetSelectedModel() const
+const CUnitContainer* CDustFormationTesterTab::GetSelectedModel() const
 {
 	const QListWidgetItem* pItem = ui.listWidgetUnits->currentItem();
 	if (!pItem) return nullptr;
 	const std::string sKey = pItem->data(Qt::UserRole).toString().toStdString();
-	return m_pFlowsheet->GetModel(sKey);
+	return m_pFlowsheet->GetUnit(sKey);
 }
 
 const CHoldup* CDustFormationTesterTab::GetSelectedHoldup() const
 {
-	const CBaseModel* pModel = GetSelectedModel();
+	const CUnitContainer* pModel = GetSelectedModel();
 	if (!pModel) return nullptr;
 	const QListWidgetItem* pItem = ui.listWidgetHoldups->currentItem();
 	if (!pItem) return nullptr;
 	const std::string sKey = pItem->data(Qt::UserRole).toString().toStdString();
-	return pModel->GetHoldup(sKey);
+	const CBaseUnit* model = pModel->GetModel();
+	if (!model) return nullptr;
+	return model->GetStreamsManager().GetHoldup(sKey);
 }
 
-const CMaterialStream* CDustFormationTesterTab::GetSelectedMaterialStream() const
+const CStream* CDustFormationTesterTab::GetSelectedMaterialStream() const
 {
 	const QListWidgetItem* pItem = ui.listWidgetStreams->currentItem();
 	if (!pItem) return nullptr;

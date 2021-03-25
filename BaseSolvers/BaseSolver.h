@@ -29,14 +29,14 @@ enum class ESolverTypes : unsigned
 #define CREATE_SOLVER_FUN_NAMES { CREATE_SOLVER_FUN_NAME(0), CREATE_SOLVER_FUN_NAME(1), CREATE_SOLVER_FUN_NAME(2) }
 
 #if _DEBUG
-#define CREATE_SOLVER_FUNCTION_BASE CreateDYSSOLSolverV2_DEBUG
+#define CREATE_SOLVER_FUNCTION_BASE CreateDYSSOLSolverV3_DEBUG
 #else
-#define CREATE_SOLVER_FUNCTION_BASE CreateDYSSOLSolverV2
+#define CREATE_SOLVER_FUNCTION_BASE CreateDYSSOLSolverV3
 #endif
 #define CREATE_SOLVER_FUN(X)		MACRO_CONCAT(CREATE_SOLVER_FUNCTION_BASE, X)
 #define CREATE_SOLVER_FUN_NAME(X)	MACRO_TOSTRING(CREATE_SOLVER_FUN(X))
 
-class CExternalSolver
+class CBaseSolver
 {
 public:
 	unsigned m_nCompilerVer;
@@ -49,10 +49,12 @@ protected:
 	unsigned m_solverVersion;
 
 public:
-	CExternalSolver();
-	virtual ~CExternalSolver() = default;
+	CBaseSolver();
+	virtual ~CBaseSolver() = default;
 
-	/// Will be called once during initialization of unit.
+	/// Will be called once during creation of the solver (name, author, key, version).
+	virtual void CreateBasicInfo() = 0;
+	/// Will be called once during initialization of the solver.
 	virtual void Initialize();
 	/// Will be called once after the whole simulation is finished.
 	virtual void Finalize();
@@ -76,4 +78,4 @@ protected:
 	void RaiseError(const std::string& _sDescription) const;
 };
 
-typedef DECLDIR CExternalSolver* (*CreateExternalSolver)();
+typedef DECLDIR CBaseSolver* (*CreateExternalSolver)();

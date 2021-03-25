@@ -5,6 +5,7 @@
 #include "Descriptable.h"
 #include "DyssolTypes.h"
 #include "DefinesMDB.h"
+#include "DependentValues.h"
 
 // Correlation between the value of the property and the temperature(T)/pressure(P) in a certain T/P-interval. Is used to describe TP-dependent parameters of pure compounds
 class CCorrelation : public CDescriptable

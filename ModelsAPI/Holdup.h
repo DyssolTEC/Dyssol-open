@@ -4,112 +4,69 @@
 
 #include "Stream.h"
 
-class CMaterialStream;
+class CStream;
 
-class CHoldup : public CStream
+class CHoldup : public CBaseStream
 {
 public:
-	/** Basic constructor.
-	 *	\param _sHoldupKey Unique key of this stream*/
-	CHoldup(const std::string& _sHoldupKey = "");
-	/** Copy constructor.
-	*	\param _stream Initial stream. Only the structure (phases, compounds, etc.) will be copied from _stream, but not the data itself.*/
-	CHoldup(const CStream& _stream);
+	// Basic constructor.
+	CHoldup(const std::string& _key = "");
+	// Constructor configuring the whole structure.
+	CHoldup(const std::string& _key, const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid,
+		const std::vector<std::string>* _compounds, const std::vector<SOverallDescriptor>* _overall, const std::vector<SPhaseDescriptor>* _phases,
+		const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics);
+	// Copy constructor.
+	CHoldup(const CBaseStream& _other);
 
-private:
-	/** Initialize Holdup-specific data.*/
-	void initHoldup();
+	// Copies all data at the given time point from another holdup. All data after the time point are removed from this holdup.
+	void CopyFromHoldup(double _time, const CHoldup* _source);
+	// Copies all data at the given time interval from another holdup. All data after the end time point are removed from this holdup.
+	void CopyFromHoldup(double _timeBeg, double _timeEnd, const CHoldup* _source);
+	// Copies all data from the given time point of another holdup to another time point of this stream. All data after the time point are removed from this holdup.
+	void CopyFromHoldup(double _timeDst, const CHoldup* _source, double _timeSrc);
 
-public:
-	// ============= Functions to work with OTHER STREAMS and HOLDUPS
+	/* Mixes the content of the specified stream at the given time interval with the current holdup. Before mixing, all data after the first time point are removed.
+	 * The beginning of the time interval as the first defined time point preceding the given end time point, i.e. [source.PreviousTime(timeEnd); timeEnd].
+	 * Takes into account only two given time points, regardless of whether they were defined in the stream. All possible time points within the interval are discarded.*/
+	void AddStream(double _timeEnd, const CStream* _source);
+	/* Mixes the content of the specified stream at the given time interval with the current holdup. Before mixing, all data after the first time point are removed.
+	 * Takes into account only two given time points, regardless of whether they were defined in the stream. All possible time points within the interval are discarded.*/
+	void AddStream(double _timeBeg, double _timeEnd, const CStream* _source);
+	/* Removes all data after the first time point and adds content of the specified stream at the given time interval to the current holdup.
+	 * Takes into account both the given boundary time points and all the time points within the interval defined in the stream.*/
+	void AddStreamInterval(double _timeBeg, double _timeEnd, const CStream* _source);
 
-	/** Copies all holdup data for specified time point.
-	 *	Before copying all data after the time point _dTime in the destination holdup can be removed if flag _bDeleteDataAfter is set to true.
-	 *	\param _pSrcHoldup Pointer to a holdup that should be copied
-	 *	\param _dTime Time point to copy
-	 *	\param _bDeleteDataAfter Before copying the all data in the destination holdup is removed after _dTime*/
-	void CopyFromHoldup(const CHoldup* _pSrcHoldup, double _dTime, bool _bDeleteDataAfter = true);
-	/** Copies all data from another holdup for specified time interval.
-	 *	Before copying all data after the time point _dStart in the destination holdup can be removed if flag _bDeleteDataAfter is set to true.
-	 *	\param _pSrcHoldup Pointer to a holdup that should be copied
-	 *	\param _dStart Start of the time interval to copy
-	 *	\param _dEnd End of the time interval to copy
-	 *	\param _bDeleteDataAfter Before copying the all data in the destination holdup is removed after _dTime*/
-	void CopyFromHoldup(const CHoldup* _pSrcHoldup, double _dStart, double _dEnd, bool _bDeleteDataAfter = true);
-	/** Copies all data from one time point of _pSrcHoldup to another time point in this holdup.
-	 *	Before copying all data after the time point _dTimeDst in the destination holdup can be removed if flag _bDeleteDataAfter is set to true.
-	 *	\param _dTimeDst Time point in this stream where data should be copied
-	 *	\param _pSrcHoldup Pointer to a holdup that should be copied
-	 *	\param _dTimeSrc Time point of the source holdup to copy
-	 *	\param _bDeleteDataAfter Before copying the all data in the destination holdup is removed after _dTimeDst*/
-	void CopyFromHoldup(double _dTimeDst, const CHoldup* _pSrcHoldup, double _dTimeSrc, bool _bDeleteDataAfter = true);
+	// Mixes the specified holdup with the current holdup at the given time point.
+	void AddHoldup(double _time, const CHoldup* _source);
+	// Mixes the specified holdup with the current holdup for each time point from the given time interval.
+	void AddHoldup(double _timeBeg, double _timeEnd, const CHoldup* _source);
 
-	/** Performs mixing of the holdup with the stream _pStream for the specified time interval. Boundary points are included into this interval.
-	*	Only streams with the same data structure (MD dimensions, phases, etc) can be mixed.
-	*	\param _pStream Pointer to a stream
-	*	\param _dStart Start of the time interval
-	*	\param _dEnd End of the time interval*/
-	void AddStream(const CMaterialStream* _pStream, double _dStart, double _dEnd);
-	void AddStream2(const CMaterialStream* _pStream, double _tStart, double _tEnd);
+	// TODO: move it somewhere
+	////////////////////////////////////////////////////////////////////////////////
+	/// Deprecated functions
+	[[deprecated("WARNING! CopyFromHoldup(const CHoldup*, double) is deprecated. Use CopyFromHoldup(double, const CHoldup*) instead.")]]
+	void CopyFromHoldup(const CHoldup* _source, double _time);
+	[[deprecated("WARNING! AddHoldup(const CHoldup*, double) is deprecated. Use AddHoldup(double, const CHoldup*) instead.")]]
+	void AddHoldup(const CHoldup* _source, double _time);
+	[[deprecated("WARNING! AddStream(const CStream*, double, double) is deprecated. Use AddStream(double, const CStream*), AddStream(double, double, const CStream*) or AddStreamInterval(double, double, const CStream*) instead.")]]
+	void AddStream(const CStream* _source, double _timeBeg, double _timeEnd);
+	[[deprecated("WARNING! AddStream2(const CStream*, double, double) is deprecated. Use AddStream(double, double, const CStream*) instead.")]]
+	void AddStream2(const CStream* _source, double _timeBeg, double _timeEnd);
+	[[deprecated("WARNING! GetMass(double, eValueBasises) is deprecated. Use GetMass(double) or GetMol(double) instead.")]]
+	double GetMass(double _time, unsigned _basis) const;
+	[[deprecated("WARNING! SetMass(double, double, eValueBasises) is deprecated. Use SetMass(double, double) or SetMol(double, double) instead.")]]
+	void SetMass(double _time, double _value, unsigned _basis);
+	[[deprecated("WARNING! GetCompoundMass(double, const std::string&, EPhaseTypes, eValueBasises) is deprecated. Use GetCompoundMass(double, const std::string&, EPhase) or GetCompoundMol(double, const std::string&, EPhase) instead.")]]
+	double GetCompoundMass(double _time, const std::string& _compoundKey, unsigned _soa, unsigned _basis = BASIS_MASS) const;
+	[[deprecated("WARNING! GetPhaseMass(double, EPhaseTypes, eValueBasises) is deprecated. Use GetPhaseMass(double, EPhase) or GetPhaseMol(double, EPhase) instead.")]]
+	double GetPhaseMass(double _time, unsigned _soa, unsigned _basis = BASIS_MASS) const;
+	[[deprecated("WARNING! SetPhaseMass(double, EPhaseTypes, double, eValueBasises) is deprecated. Use SetPhaseMass(double, EPhase, double) or SetPhaseMol(double, EPhase, double) instead.")]]
+	void SetPhaseMass(double _time, unsigned _soa, double _value, unsigned _basis = BASIS_MASS);
 
-	/** Performs a mixing of the holdup with holdup _pHoldup at the specified time point.
-	 *	Only holdups with the same data structure (MD dimensions, phases, etc) can be mixed.
-	 *	\param _pHoldup Pointer to a holdup
-	 *	\param _dTime Time point that should be mixed*/
-	void AddHoldup(const CHoldup* _pHoldup, double _dTime);
-	/** Performs a mixing of the holdup with the holdup _pHoldup for specified time interval. Boundary points are included into this interval.
-	 *	Parameter _nTPTypes specifies which time points will be present in the resulting holdup (combining points from two holdup (BOTH_TP),
-	 *	only from the first holdup (DST_TP), or only from the second holdup (SRC_TP)). Data for non-existent points are obtained by linear approximation.
-	 *	Only holdups with the same data structure (MD dimensions, phases, etc) can be mixed.
-	 *	\param _pHoldup Pointer to a holdup
-	 *	\param _dStart Start of the time interval
-	 *	\param _dEnd End of the time interval
-	 *	\param _nTPTypes Specifies which time points will be present in the resulting holdup*/
-	void AddHoldup(const CHoldup* _pHoldup, double _dStart, double _dEnd, unsigned _nTPTypes = BOTH_TP);
-
-	///** Performs subtraction of the stream*/
-	//bool SubHoldup( CHoldup* _pHoldup, double _dTime );
-	//bool SubHoldup( CHoldup* _pHoldup, double _dStart, double _dEnd );
-	//bool SubStream( CMaterialStream* _pStream, double _dStart, double _dEnd );
-
-
-	// ============= Functions to work with OVERALL PROPERTIES
-
-	/** Returns mass of the holdup. If there is no specified time point, the value will be interpolated
-	 *	\param _dTime Time point
-	 *	\param _nBasis Basis of results (BASIS_MASS [kg] or BASIS_MOLL [mol])*/
-	double GetMass(double _dTime, unsigned _nBasis = BASIS_MASS) const;
-	/** Sets mass of the holdup. If there is no specified time point, the value will not be set
-	 *	\param _dTime Time point
-	 *	\param _dValue New mass value
-	 *	\param _nBasis Basis of value (BASIS_MASS [kg] or BASIS_MOLL [mol])*/
-	void SetMass(double _dTime, double _dValue, unsigned _nBasis = BASIS_MASS);
-
-
-	// ============= Functions to work with COMPOUNDS
-
-	/** Returns mass of the compound with key _sCompoundKey in phase _nPhase at the time point _dTime.
-	 *	_nBasis is a basis of value (BASIS_MASS [kg] or BASIS_MOLL [mol]).*/
-	double GetCompoundMass(double _dTime, const std::string& _sCompoundKey, unsigned _nPhase, unsigned _nBasis = BASIS_MASS) const;
-	/** Returns mass of the compound with index _nCompoundIndex in phase _nPhase at the time point _dTime.
-	 *	_nBasis is a basis of value (BASIS_MASS [kg] or BASIS_MOLL [mol]).*/
-	double GetCompoundMass(double _dTime, unsigned _nCompoundIndex, unsigned _nPhase, unsigned _nBasis = BASIS_MASS) const;
-
-
-	// ============= Functions to work with PHASES
-
-	/** Returns mass of the specified phase in the holdup. If there is no specified time point, the value will be interpolated.
-	 *	_nBasis is a basis of value (BASIS_MASS [kg] or BASIS_MOLL [mol]).
-	 *	\param _dTime Time point
-	 *	\param _nPhase Key of the phase
-	 *	\param _nBasis Basis of value (BASIS_MASS [kg] or BASIS_MOLL [mol]).*/
-	double GetPhaseMass(double _dTime, unsigned _nPhase, unsigned _nBasis = BASIS_MASS) const;
-
-	/** Sets mass of the specified phase in the holdup for time point. Negative values before setting will be converted to zero.
-	 *	If there is no specified time point or phase in holdup, the value will not be set.
-	 *	_nBasis is a basis of value (BASIS_MASS [kg] or BASIS_MOLL [mol]).*/
-	void SetPhaseMass(double _dTime, unsigned _nPhase, double _dMassFlow, unsigned _nBasis = BASIS_MASS);
-
-private:
-	void CopyFromStream(const CMaterialStream* _pStream, double _dStart, double _dEnd);
+	// Is required, so that deprecated functions do not hide CBaseStream functions
+	using CBaseStream::GetMass;
+	using CBaseStream::SetMass;
+	using CBaseStream::GetPhaseMass;
+	using CBaseStream::SetPhaseMass;
+	using CBaseStream::GetCompoundMass;
 };

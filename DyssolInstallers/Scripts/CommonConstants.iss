@@ -9,6 +9,7 @@ function DirCacheDebug(Param: String): String;          begin  Result := 'cache_
 function DirExampleFlowsheets(Param: String): String;   begin  Result := 'Example Flowsheets';  end;
 function DirHelp(Param: String): String;                begin  Result := 'Help';                end;
 function DirQtPlatforms(Param: String): String;         begin  Result := 'platforms';           end;
+function DirQtStyles(Param: String): String;            begin  Result := 'styles';              end;
 function DirUnitsDll(Param: String): String;            begin  Result := 'Units';               end;
 function DirSolversDll(Param: String): String;          begin  Result := 'Solvers';             end;
 function DirExampleUnits(Param: String): String;        begin  Result := 'Example Units';       end;

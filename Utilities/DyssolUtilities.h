@@ -7,65 +7,6 @@
 #include <numeric>
 #include <algorithm>
 #include <cmath>
-#include <map>
-
-/// Calculates union of two sorted vectors
-void inline VectorsUnionSorted(const std::vector<double>& _v1, const std::vector<double>& _v2, std::vector<double>& _vRes)
-{
-	_vRes.resize(_v1.size() + _v2.size());
-	_vRes.resize(set_union(_v1.begin(), _v1.end(), _v2.begin(), _v2.end(), _vRes.begin()) - _vRes.begin());
-}
-
-/// Calculates and returns union of two sorted vectors
-std::vector<double> inline VectorsUnionSorted(const std::vector<double>& _v1, const std::vector<double>& _v2)
-{
-	std::vector<double> _vRes(_v1.size() + _v2.size());
-	_vRes.resize(set_union(_v1.begin(), _v1.end(), _v2.begin(), _v2.end(), _vRes.begin()) - _vRes.begin());
-	return _vRes;
-}
-
-template<typename T>
-bool VectorContains(const std::vector<T>& _vec, T _val)
-{
-	return std::find(_vec.begin(), _vec.end(), _val) != _vec.end();
-}
-
-template<typename T>
-size_t VectorFind(const std::vector<T>& _vec, T _val)
-{
-	for (size_t i = 0; i < _vec.size(); ++i)
-		if (_vec[i] == _val)
-			return i;
-	return -1;
-}
-
-template<typename T, typename FUN>
-void VectorDelete(std::vector<T>& _v, const FUN& _fun)
-{
-	_v.erase(std::remove_if(_v.begin(), _v.end(), _fun), _v.end());
-}
-
-template<typename T>
-void VectorDelete(std::vector<T>& _v, size_t _index)
-{
-	if (_index < _v.size())
-		_v.erase(_v.begin() +_index);
-}
-
-template<typename K, typename V>
-bool MapContainsKey(const std::map<K, V>& _map, K _key)
-{
-	return _map.find(_key) != _map.end();
-}
-
-template<typename K, typename V>
-bool MapContainsValue(const std::map<K, V>& _map, V _value)
-{
-	for (const auto& p : _map)
-		if (p.second == _value)
-			return true;
-	return false;
-}
 
 // Performs linear interpolation between two selected points.
 double inline Interpolate(double Y1, double Y2, double X1, double X2, double X)
@@ -112,49 +53,35 @@ T VectorSum(const std::vector<T>& _vVec)
 }
 
 // Normalizes provided vector.
-void inline VectorNormalize(std::vector<double>& _vec)
+void inline Normalize(std::vector<double>& _vec)
 {
 	const double sum = VectorSum(_vec);
-	if (sum != 0 && sum != 1)
-		std::transform(_vec.begin(), _vec.end(), _vec.begin(), [sum](const double v) { return v / sum; });
+	if (sum == 0.0 || sum == 1.0) return;
+	std::transform(_vec.begin(), _vec.end(), _vec.begin(), [sum](const double v) { return v / sum; });
 }
 
 // Returns normalized copy of a vector.
-std::vector<double> inline VectorNormalize(const std::vector<double>& _vec)
+std::vector<double> inline Normalized(const std::vector<double>& _vec)
 {
-	const double sum = VectorSum(_vec);
-	if (sum == 0 || sum == 1)
-		return _vec;
-
-	std::vector<double> res(_vec.size());
-	std::transform(_vec.begin(), _vec.end(), res.begin(), [sum](const double v) { return v / sum; });
+	std::vector<double> res{ _vec };
+	Normalize(res);
 	return res;
 }
 
-void inline MatrixNormalize(std::vector<std::vector<double>>& _matr)
+void inline Normalize(std::vector<std::vector<double>>& _matr)
 {
-	double sum = 0;
+	double sum = 0.0;
 	for (auto& row : _matr)
 		sum += VectorSum(row);
-
-	if (sum != 0 && sum != 1)
-		for (auto& row : _matr)
-			for (double& val : row)
-				val /= sum;
+	if (sum == 0.0 || sum == 1.0) return;
+	for (auto& row : _matr)
+		std::transform(row.begin(), row.end(), row.begin(), [sum](const double v) { return v / sum; });
 }
 
-std::vector<std::vector<double>> inline MatrixNormalize(const std::vector<std::vector<double>>& _matr)
+std::vector<std::vector<double>> inline Normalize(const std::vector<std::vector<double>>& _matr)
 {
-	double sum = 0;
-	for (auto& row : _matr)
-		sum += VectorSum(row);
-
-	if (sum == 0 || sum == 1)
-		return _matr;
-
-	std::vector<std::vector<double>> res(_matr.size(), std::vector<double>(_matr.front().size()));
-	for (size_t i = 0; i < _matr.size(); ++i)
-		std::transform(_matr[i].begin(), _matr[i].end(), res[i].begin(), [sum](const double v) { return v / sum; });
+	std::vector<std::vector<double>> res{ _matr };
+	Normalize(res);
 	return res;
 }
 
@@ -175,7 +102,8 @@ bool inline CompareMatrices(const std::vector<std::vector<double>>& _vvMatr1, co
 	return true;
 }
 
-bool inline IncrementCoords(std::vector<unsigned>& _vCoords, const std::vector<unsigned>& _vSizes)
+// TODO: remove it when MDMatrix is rewritten.
+bool inline IncrementCoordsOld(std::vector<unsigned>& _vCoords, const std::vector<unsigned>& _vSizes)
 {
 	if (_vCoords.size() == 0)
 		return false;
@@ -209,16 +137,36 @@ bool inline IncrementCoords(std::vector<unsigned>& _vCoords, const std::vector<u
 	}
 }
 
-// Converts vector of enumerators to the vector of its underlying type.
-template <typename T>
-std::vector<typename std::underlying_type<T>::type> VectorEnumToIntegral(const std::vector<T>& _enums)
+// Increments coordinates according to dimensions' sizes.
+bool inline IncrementCoords(std::vector<size_t>& _coords, const std::vector<size_t>& _sizes)
 {
-	if (_enums.empty()) return {};
-	typedef typename std::underlying_type<T>::type integral_type;
-	std::vector<integral_type> res;
-	for (const auto& e : _enums)
-		res.push_back(static_cast<integral_type>(e));
-	return res;
+	if (_coords.empty()) return false;
+
+	unsigned corr = 0;
+	if (_coords.size() + 1 == _sizes.size())
+		corr = 2;
+	else if (_coords.size() == _sizes.size())
+		corr = 1;
+	else
+		return false;
+
+	size_t iCoord = _coords.size() - 1;
+	size_t iDim = _sizes.size() - corr;
+
+	while (true)
+	{
+		_coords[iCoord]++;
+		if (_coords[iCoord] == _sizes[iDim])
+		{
+			if (iCoord == 0)
+				return false;
+			_coords[iCoord] = 0;
+			iCoord--;
+			iDim--;
+		}
+		else
+			return true;
+	}
 }
 
 // Converts enumerator value to its underlying type.
@@ -228,11 +176,27 @@ constexpr auto E2I(E e) -> typename std::underlying_type<E>::type
 	return static_cast<typename std::underlying_type<E>::type>(e);
 }
 
-// Converts integer value to enumerator.
-template<typename E>
-constexpr E I2E(size_t i)
+// Converts vector of enumerators to the vector of its underlying type.
+template <typename T>
+std::vector<typename std::underlying_type<T>::type> E2I(const std::vector<T>& _enums)
 {
-	return static_cast<E>(i);
+	if (_enums.empty()) return {};
+	using integral_type = typename std::underlying_type<T>::type;
+	std::vector<integral_type> res;
+	for (const auto& e : _enums)
+		res.push_back(static_cast<integral_type>(e));
+	return res;
+}
+
+// Casts the vector of values to a vector of another type.
+template <typename TO, typename TI>
+std::vector<TO> vector_cast(const std::vector<TI>& _ints)
+{
+	if (_ints.empty()) return {};
+	std::vector<TO> res;
+	for (const auto& i : _ints)
+		res.push_back(static_cast<TO>(i));
+	return res;
 }
 
 // Converts double value to enumerator.
@@ -295,11 +259,13 @@ std::vector<double> inline CreateDistribution(EDistrFunction _distr, const std::
 	return std::vector<double>(_x.size(), 0);
 }
 
+// Calculates volume of the sphere from its diameter.
 inline double DiameterToVolume(double _d)
 {
-	return MATH_PI / 6 * std::pow(_d, 3.);
+	return MATH_PI / 6 * std::pow(_d, 3);
 }
 
+// Calculates volumes of the spheres from their diameters.
 inline std::vector<double> DiameterToVolume(const std::vector<double>& _d)
 {
 	std::vector<double> res(_d.size());
@@ -308,15 +274,58 @@ inline std::vector<double> DiameterToVolume(const std::vector<double>& _d)
 	return res;
 }
 
+// Calculates surface of the sphere from its diameter.
+inline double DiameterToSurface(double _d)
+{
+	return MATH_PI * std::pow(_d, 2);
+}
+
+// Calculates surfaces of the spheres from their diameters.
+inline std::vector<double> DiameterToSurface(const std::vector<double>& _d)
+{
+	std::vector<double> res(_d.size());
+	for (size_t i = 0; i < _d.size(); ++i)
+		res[i] = DiameterToSurface(_d[i]);
+	return res;
+}
+
+// Calculates diameter of the sphere from its volume.
 inline double VolumeToDiameter(double _v)
 {
 	return std::pow(6 * _v / MATH_PI, 1./3.);
 }
 
+// Calculates diameters of the spheres from their volumes.
 inline std::vector<double> VolumeToDiameter(const std::vector<double>& _v)
 {
 	std::vector<double> res(_v.size());
 	for (size_t i = 0; i < _v.size(); ++i)
 		res[i] = VolumeToDiameter(_v[i]);
+	return res;
+}
+
+// Adds start and end values to the ends of the sorted vector, if missing, to create a closed interval.
+inline void CloseInterval(std::vector<double>& _v, double _l, double _r)
+{
+	// no time points in the interval - return only limits
+	if (_v.empty())
+	{
+		_v = { _l, _r };
+		return;
+	}
+
+	// TODO: use global epsilon
+	// add limits if necessary
+	if (std::fabs(_v.front() - _l) > 16 * std::numeric_limits<double>::epsilon())
+		_v.insert(_v.begin(), _l);
+	if (std::fabs(_v.back() - _r) > 16 * std::numeric_limits<double>::epsilon())
+		_v.push_back(_r);
+}
+
+// Adds start and end values to the ends of the sorted vector, if missing, to create a closed interval.
+inline std::vector<double> CloseInterval(const std::vector<double>& _v, double _l, double _r)
+{
+	std::vector<double> res = _v;
+	CloseInterval(res, _l, _r);
 	return res;
 }

@@ -22,32 +22,31 @@
     <VCProjectVersion>14.0</VCProjectVersion>
     <ProjectGuid>{150781F9-5A9F-4A7F-B835-C4012BA35D8F}</ProjectGuid>
     <RootNamespace>ModelsAPI</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -81,45 +80,25 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <ConformanceMode>true</ConformanceMode>
-    </ClCompile>
+    <ClCompile />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile>
-      <ConformanceMode>true</ConformanceMode>
-    </ClCompile>
+    <ClCompile />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
-      <ConformanceMode>true</ConformanceMode>
-    </ClCompile>
+    <ClCompile />
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ClCompile>
-      <ConformanceMode>true</ConformanceMode>
-    </ClCompile>
+    <ClCompile />
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
@@ -127,41 +106,56 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseUnit.cpp" />
+    <ClCompile Include="ChemicalReaction.cpp" />
+    <ClCompile Include="MixtureEnthalpyLookup.cpp" />
+    <ClCompile Include="MixtureLookup.cpp" />
+    <ClCompile Include="TwoWayMap.cpp" />
+    <ClCompile Include="PlotManager.cpp" />
+    <ClCompile Include="StateVariable.cpp" />
+    <ClCompile Include="Phase.cpp" />
+    <ClCompile Include="Holdup.cpp" />
+    <ClCompile Include="Stream.cpp" />
+    <ClCompile Include="BaseStream.cpp" />
+    <ClCompile Include="StreamManager.cpp" />
+    <ClCompile Include="TimeDependentValue.cpp" />
     <ClCompile Include="Matrix2D.cpp" />
-    <ClCompile Include="DenseDistr2D.cpp" />
     <ClCompile Include="DenseMDMatrix.cpp" />
     <ClCompile Include="DependentValues.cpp" />
     <ClCompile Include="DistributionsGrid.cpp" />
-    <ClCompile Include="DynamicUnit.cpp" />
-    <ClCompile Include="Holdup.cpp" />
-    <ClCompile Include="LookupTable.cpp" />
-    <ClCompile Include="MaterialStream.cpp" />
     <ClCompile Include="MDMatrix.cpp" />
-    <ClCompile Include="SteadyStateUnit.cpp" />
-    <ClCompile Include="Stream.cpp" />
     <ClCompile Include="TDArray.cpp" />
     <ClCompile Include="TransformMatrix.cpp" />
     <ClCompile Include="UnitParameters.cpp" />
+    <ClCompile Include="UnitPorts.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseUnit.h" />
+    <ClInclude Include="ChemicalReaction.h" />
+    <ClInclude Include="Holdup.h" />
+    <ClInclude Include="MixtureLookup.h" />
+    <ClInclude Include="MixtureEnthalpyLookup.h" />
+    <ClInclude Include="TwoWayMap.h" />
+    <ClInclude Include="MaterialStream.h" />
+    <ClInclude Include="PlotManager.h" />
+    <ClInclude Include="StateVariable.h" />
+    <ClInclude Include="Stream.h" />
     <ClInclude Include="Matrix2D.h" />
-    <ClInclude Include="DenseDistr2D.h" />
     <ClInclude Include="DenseMDMatrix.h" />
     <ClInclude Include="DependentValues.h" />
     <ClInclude Include="DistributionsFunctions.h" />
     <ClInclude Include="DistributionsGrid.h" />
     <ClInclude Include="DynamicUnit.h" />
-    <ClInclude Include="Holdup.h" />
-    <ClInclude Include="LookupTable.h" />
-    <ClInclude Include="MaterialStream.h" />
     <ClInclude Include="MDMatrix.h" />
+    <ClInclude Include="Phase.h" />
     <ClInclude Include="SteadyStateUnit.h" />
-    <ClInclude Include="Stream.h" />
+    <ClInclude Include="BaseStream.h" />
+    <ClInclude Include="StreamManager.h" />
     <ClInclude Include="TDArray.h" />
+    <ClInclude Include="TimeDependentValue.h" />
     <ClInclude Include="TransformMatrix.h" />
     <ClInclude Include="UnitDevelopmentDefines.h" />
     <ClInclude Include="UnitParameters.h" />
+    <ClInclude Include="UnitPorts.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)BaseSolvers\BaseSolvers.vcxproj">

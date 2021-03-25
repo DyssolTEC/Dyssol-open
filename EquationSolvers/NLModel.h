@@ -3,6 +3,7 @@
 #pragma once
 
 #include <vector>
+#include "DyssolDefines.h"
 
 #define DEFAULT_ATOL 1.0e-6
 #define DEFAULT_RTOL 1.0e-4
@@ -35,6 +36,9 @@ class CNLModel
 
 	std::vector<SNLVariable> m_vVariables;	///< Vector of state variables
 	void *m_pUserData;						///< Pointer to a user data
+	
+											// Solver settings
+	ENLSolverStrategy m_eStrategy;		///< Solver strategy
 
 public:
 	/**	Basic constructor.*/
@@ -74,6 +78,10 @@ public:
 	/**	Set pointer to user data. This pointer will be returned with functions \a CalculateResiduals and \a ResultsHandler.
 	 *	\param _pUserData Pointer to user data*/
 	void SetUserData(void* _pUserData);
+
+	/** Set solver strategy to a model.
+	 *	\param _eStrategy Solving strategy*/
+	void SetStrategy(ENLSolverStrategy _eStrategy);
 
 	// ========== Virtual functions which should be overridden in child classes
 

@@ -149,7 +149,7 @@ void CDistrFunctionDialog::OKClicked()
 	}
 
 	m_vDistr = CreateDistribution(m_distrFun, m_vSizes, m_dParam1, m_dParam2);
-	VectorNormalize(m_vDistr);
+	Normalize(m_vDistr);
 
 	QDialog::accept();
 }

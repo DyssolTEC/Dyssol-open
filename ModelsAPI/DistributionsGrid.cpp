@@ -287,7 +287,7 @@ void CDistributionsGrid::SaveToFile(CH5Handler& _h5File, const std::string& _sPa
 		_h5File.WriteData(sPath, StrConst::DGrid_H5GridType,     E2I(m_grids[i].gridEntry));
 		_h5File.WriteData(sPath, StrConst::DGrid_H5GridFun,      E2I(m_grids[i].gridFun));
 		_h5File.WriteData(sPath, StrConst::DGrid_H5Units,        E2I(m_grids[i].gridUnit));
-		_h5File.WriteData(sPath, StrConst::DGrid_H5Classes,      static_cast<unsigned>(m_grids[i].classes));
+		_h5File.WriteData(sPath, StrConst::DGrid_H5Classes,      static_cast<uint32_t>(m_grids[i].classes));
 		_h5File.WriteData(sPath, StrConst::DGrid_H5NumGrid,      m_grids[i].numGrid);
 		_h5File.WriteData(sPath, StrConst::DGrid_H5StrGrid,      m_grids[i].strGrid);
 	}
@@ -311,10 +311,10 @@ void CDistributionsGrid::LoadFromFile(CH5Handler& _h5File, const std::string& _s
 		m_grids.emplace_back();
 
 		const std::string sPath = _sPath + "/" + StrConst::DGrid_H5GroupName + std::to_string(i);
-		_h5File.ReadData(sPath, StrConst::DGrid_H5DistrType,    reinterpret_cast<unsigned&>(m_grids[i].distrType));
-		_h5File.ReadData(sPath, StrConst::DGrid_H5GridType,     reinterpret_cast<unsigned&>(m_grids[i].gridEntry));
-		_h5File.ReadData(sPath, StrConst::DGrid_H5GridFun,      reinterpret_cast<unsigned&>(m_grids[i].gridFun));
-		_h5File.ReadData(sPath, StrConst::DGrid_H5Units,        reinterpret_cast<unsigned&>(m_grids[i].gridUnit));
+		_h5File.ReadData(sPath, StrConst::DGrid_H5DistrType,    reinterpret_cast<uint32_t&>(m_grids[i].distrType));
+		_h5File.ReadData(sPath, StrConst::DGrid_H5GridType,     reinterpret_cast<uint32_t&>(m_grids[i].gridEntry));
+		_h5File.ReadData(sPath, StrConst::DGrid_H5GridFun,      reinterpret_cast<uint32_t&>(m_grids[i].gridFun));
+		_h5File.ReadData(sPath, StrConst::DGrid_H5Units,        reinterpret_cast<uint32_t&>(m_grids[i].gridUnit));
 		_h5File.ReadData(sPath, StrConst::DGrid_H5Classes,      m_grids[i].classes);
 		_h5File.ReadData(sPath, StrConst::DGrid_H5NumGrid,      m_grids[i].numGrid);
 		_h5File.ReadData(sPath, StrConst::DGrid_H5StrGrid,      m_grids[i].strGrid);

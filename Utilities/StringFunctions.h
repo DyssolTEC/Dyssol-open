@@ -45,6 +45,9 @@ namespace StringFunctions
 	void TrimFromSymbols(std::string& _s, const std::string& _symbols);					// Removes the end of the string starting with _symbols.
 	std::string TrimFromSymbols(const std::string& _s, const std::string& _symbols);	// Returns a copy of string _s removing its end starting with _symbols.
 
+	void Quote(std::string& _s);				// Adds double quotes to the string _s.
+	std::string Quote(const std::string& _s);	// Returns a copy of the string _s in double quotes.
+
 	std::string GetRestOfLine(std::istream* _is);												 // Returns the full string until the end-of-line without trailing whitespaces.
 	template<typename T> T GetValueFromStream(std::istream* _is) { T v{}; *_is >> v; return v; } // Returns the next value from the stream and advances stream's iterator correspondingly.
 
@@ -54,8 +57,10 @@ namespace StringFunctions
 	/*////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// Strings generators. */
 
-	std::string GenerateRandomString(size_t _length = 20);	// Returns a random string with the specified length.
+	std::string GenerateRandomKey(size_t _length = 20);	// Returns a random string with the specified length.
 
 	// Returns a string with the specified length, which will be unique among the set of existing strings.
-	std::string GenerateUniqueString(const std::string& _init, const std::vector<std::string>& _existing, size_t _length = 20);
+	std::string GenerateUniqueKey(const std::vector<std::string>& _existing, size_t _length = 20);
+	// Returns a string with the specified length, which will be unique among the set of existing strings.
+	std::string GenerateUniqueKey(const std::string& _init, const std::vector<std::string>& _existing, size_t _length = 20);
 }
