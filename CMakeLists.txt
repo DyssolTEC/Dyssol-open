@@ -13,7 +13,6 @@ SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 
 add_executable(DyssolC
-    ${CMAKE_SOURCE_DIR}/DyssolConsole/ConfigFileParser.cpp
     ${CMAKE_SOURCE_DIR}/DyssolConsole/main.cpp
 )
 
