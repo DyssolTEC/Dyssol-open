@@ -298,6 +298,30 @@ CReactionUnitParameter* CBaseUnit::AddReactionParameter(const std::string& _name
 	return m_unitParameters.GetReactionParameter(_name);
 }
 
+CListRealUnitParameter* CBaseUnit::AddListRealParameter(const std::string& _name, double _initValue, const std::string& _units, const std::string& _description, double _minValue, double _maxValue)
+{
+	if (m_unitParameters.IsNameExist(_name))
+		throw std::logic_error(StrConst::BUnit_ErrAddParam(m_unitName, _name, __func__));
+	m_unitParameters.AddListRealParameter(_name, _units, _description, _minValue, _maxValue, { _initValue });
+	return m_unitParameters.GetListRealParameter(_name);
+}
+
+CListIntUnitParameter* CBaseUnit::AddListIntParameter(const std::string& _name, int64_t _initValue, const std::string& _units, const std::string& _description, int64_t _minValue, int64_t _maxValue)
+{
+	if (m_unitParameters.IsNameExist(_name))
+		throw std::logic_error(StrConst::BUnit_ErrAddParam(m_unitName, _name, __func__));
+	m_unitParameters.AddListIntParameter(_name, _units, _description, _minValue, _maxValue, { _initValue });
+	return m_unitParameters.GetListIntParameter(_name);
+}
+
+CListUIntUnitParameter* CBaseUnit::AddListUIntParameter(const std::string& _name, uint64_t _initValue, const std::string& _units, const std::string& _description, uint64_t _minValue, uint64_t _maxValue)
+{
+	if (m_unitParameters.IsNameExist(_name))
+		throw std::logic_error(StrConst::BUnit_ErrAddParam(m_unitName, _name, __func__));
+	m_unitParameters.AddListUIntParameter(_name, _units, _description, _minValue, _maxValue, { _initValue });
+	return m_unitParameters.GetListUIntParameter(_name);
+}
+
 CAgglomerationSolver* CBaseUnit::AddSolverAgglomeration(const std::string& _name, const std::string& _description)
 {
 	if (m_unitParameters.IsNameExist(_name))
@@ -387,6 +411,27 @@ std::vector<CChemicalReaction> CBaseUnit::GetReactionParameterValue(const std::s
 {
 	if (const CReactionUnitParameter* param = m_unitParameters.GetReactionParameter(_name))
 		return param->GetReactions();
+	throw std::logic_error(StrConst::BUnit_ErrGetParam(m_unitName, _name, __func__));
+}
+
+double CBaseUnit::GetListRealParameterValue(const std::string& _name, size_t _index) const
+{
+	if (const CListRealUnitParameter* param = m_unitParameters.GetListRealParameter(_name))
+		return param->GetValue(_index);
+	throw std::logic_error(StrConst::BUnit_ErrGetParam(m_unitName, _name, __func__));
+}
+
+int64_t CBaseUnit::GetListIntParameterValue(const std::string& _name, size_t _index) const
+{
+	if (const CListIntUnitParameter* param = m_unitParameters.GetListIntParameter(_name))
+		return param->GetValue(_index);
+	throw std::logic_error(StrConst::BUnit_ErrGetParam(m_unitName, _name, __func__));
+}
+
+uint64_t CBaseUnit::GetListUIntParameterValue(const std::string& _name, size_t _index) const
+{
+	if (const CListUIntUnitParameter* param = m_unitParameters.GetListUIntParameter(_name))
+		return param->GetValue(_index);
 	throw std::logic_error(StrConst::BUnit_ErrGetParam(m_unitName, _name, __func__));
 }
 

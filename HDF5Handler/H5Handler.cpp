@@ -142,10 +142,28 @@ void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatas
 	h5Datatype.close();
 }
 
-void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<unsigned>& _vData) const
+void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<uint32_t>& _vData) const
 {
 	if (_vData.empty()) return;
-	WriteValue(_sPath, _sDatasetName, _vData.size(), PredType::NATIVE_UINT, &_vData.front());
+	WriteValue(_sPath, _sDatasetName, _vData.size(), PredType::NATIVE_UINT32, &_vData.front());
+}
+
+void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<uint64_t>& _vData) const
+{
+	if (_vData.empty()) return;
+	WriteValue(_sPath, _sDatasetName, _vData.size(), PredType::NATIVE_UINT64, &_vData.front());
+}
+
+void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<int32_t>& _vData) const
+{
+	if (_vData.empty()) return;
+	WriteValue(_sPath, _sDatasetName, _vData.size(), PredType::NATIVE_INT32, &_vData.front());
+}
+
+void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<int64_t>& _vData) const
+{
+	if (_vData.empty()) return;
+	WriteValue(_sPath, _sDatasetName, _vData.size(), PredType::NATIVE_INT64, &_vData.front());
 }
 
 void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<double>& _vData) const
@@ -248,11 +266,35 @@ void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatase
 	h5Datatype.close();
 }
 
-void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<unsigned>& _vData) const
+void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<uint32_t>& _vData) const
 {
 	_vData.resize(ReadSize(_sPath, _sDatasetName));
 	if (!_vData.empty())
-		if (!ReadValue(_sPath, _sDatasetName, PredType::NATIVE_UINT, &_vData.front()))
+		if (!ReadValue(_sPath, _sDatasetName, PredType::NATIVE_UINT32, &_vData.front()))
+			_vData.clear();
+}
+
+void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<uint64_t>& _vData) const
+{
+	_vData.resize(ReadSize(_sPath, _sDatasetName));
+	if (!_vData.empty())
+		if (!ReadValue(_sPath, _sDatasetName, PredType::NATIVE_UINT64, &_vData.front()))
+			_vData.clear();
+}
+
+void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<int32_t>& _vData) const
+{
+	_vData.resize(ReadSize(_sPath, _sDatasetName));
+	if (!_vData.empty())
+		if (!ReadValue(_sPath, _sDatasetName, PredType::NATIVE_INT32, &_vData.front()))
+			_vData.clear();
+}
+
+void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<int64_t>& _vData) const
+{
+	_vData.resize(ReadSize(_sPath, _sDatasetName));
+	if (!_vData.empty())
+		if (!ReadValue(_sPath, _sDatasetName, PredType::NATIVE_INT64, &_vData.front()))
 			_vData.clear();
 }
 

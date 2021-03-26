@@ -22,6 +22,9 @@ enum class EUnitParameter
 	CONSTANT_INT64        = 10,
 	CONSTANT_UINT64       = 11,
 	REACTION			  = 12,
+	LIST_DOUBLE           = 13,
+	LIST_INT64            = 14,
+	LIST_UINT64           = 15,
 };
 
 // TODO: remove
@@ -67,10 +70,9 @@ public:
 };
 
 
-// Class for constant unit parameters.
-// TODO: rename to CConstUnitParameter
+// Class for constant single-value unit parameters.
 template<typename T>
-class CBaseConstUnitParameter : public CBaseUnitParameter
+class CConstUnitParameter : public CBaseUnitParameter
 {
 	static const unsigned m_cnSaveVersion{ 1 };
 
@@ -79,18 +81,18 @@ class CBaseConstUnitParameter : public CBaseUnitParameter
 	T m_max{};										///< Maximum allowed value.
 
 public:
-	CBaseConstUnitParameter();
-	CBaseConstUnitParameter(std::string _name, std::string _units, std::string _description, T _min, T _max, T _value);
+	CConstUnitParameter();
+	CConstUnitParameter(std::string _name, std::string _units, std::string _description, T _min, T _max, T _value);
 
 	void Clear() override;							///< Sets value to zero.
 
 	T GetValue() const { return m_value; }			///< Returns constant unit parameter value.
 	T GetMin() const{ return m_min; }				///< Returns minimum allowed value.
-	T GetMax() const{ return m_max; }				///< Returns minimum allowed value.
+	T GetMax() const{ return m_max; }				///< Returns maximum allowed value.
 
 	void SetValue(T _value) { m_value = _value; }	///< Sets constant unit parameter value.
 	void SetMin(T _min){ m_min = _min; }			///< Sets minimum allowed value.
-	void SetMax(T _max){ m_max = _max; }			///< Sets minimum allowed value.
+	void SetMax(T _max){ m_max = _max; }			///< Sets maximum allowed value.
 
 	bool IsInBounds() const override;				///< Checks whether m_value lays in range [m_min; m_max].
 
@@ -101,9 +103,66 @@ private:
 	EUnitParameter DeduceType() const;				///< Deduces type of the unit parameter depending on the template argument.
 };
 
-using CConstRealUnitParameter = CBaseConstUnitParameter<double>;
-using CConstIntUnitParameter  = CBaseConstUnitParameter<int64_t>;
-using CConstUIntUnitParameter = CBaseConstUnitParameter<uint64_t>;
+using CConstRealUnitParameter = CConstUnitParameter<double>;
+using CConstIntUnitParameter  = CConstUnitParameter<int64_t>;
+using CConstUIntUnitParameter = CConstUnitParameter<uint64_t>;
+
+// Class for constant list unit parameters.
+template<typename T>
+class CListUnitParameter : public CBaseUnitParameter
+{
+	static const unsigned m_saveVersion{ 0 };
+
+	std::vector<T> m_values{};						// Const values.
+	T m_min{};										// Minimum allowed value.
+	T m_max{};										// Maximum allowed value.
+
+public:
+	CListUnitParameter();
+	CListUnitParameter(std::string _name, std::string _units, std::string _description, T _min, T _max, std::vector<T> _values);
+
+	// Removes all values.
+	void Clear() override { m_values.clear(); }
+
+	// Returns value at the given index of the list. Returns T{} if no value is defined for the given index.
+	[[nodiscard]] T GetValue(size_t _index) const { if (_index >= m_values.size()) return T{}; return m_values[_index]; }
+	// Add new value to the list.
+	void AddValue(T _value) { m_values.push_back(_value); }
+	// Sets new value at the given index of the list if it exists.
+	void SetValue(size_t _index, T _value) { if (_index < m_values.size()) m_values[_index] = _value; }
+	// Removes value at the given index of the list if it exists.
+	void RemoveValue(size_t _index)	{ if (_index < m_values.size()) m_values.erase(m_values.begin() + _index); }
+	// Returns all defined values.
+	[[nodiscard]] std::vector<T> GetValues() const { return m_values; }
+
+	// Returns minimum allowed value.
+	[[nodiscard]] T GetMin() const { return m_min; }
+	// Returns maximum allowed value.
+	[[nodiscard]] T GetMax() const { return m_max; }
+
+	// Sets new minimum allowed value.
+	void SetMin(T _min) { m_min = _min; }
+	// Sets new maximum allowed value.
+	void SetMax(T _max) { m_max = _max; }
+
+	// Returns the number of defined values.
+	[[nodiscard]] size_t Size() const { return m_values.size(); }
+	// Checks if any value is defined.
+	[[nodiscard]] bool IsEmpty() const { return m_values.empty(); }
+	// Checks if all values lay in range [min; max].
+	[[nodiscard]] bool IsInBounds() const override { return std::all_of(m_values.begin(), m_values.end(), [&](const auto val) { return val >= m_min && val <= m_max; }); }
+
+	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
+	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
+
+private:
+	// Deduces type of the unit parameter depending on the template argument.
+	[[nodiscard]] EUnitParameter DeduceType() const;
+};
+
+using CListRealUnitParameter = CListUnitParameter<double>;
+using CListIntUnitParameter  = CListUnitParameter<int64_t>;
+using CListUIntUnitParameter = CListUnitParameter<uint64_t>;
 
 // Class for time-dependent unit parameters.
 class CTDUnitParameter : public CBaseUnitParameter
@@ -121,10 +180,10 @@ public:
 	void Clear() override;                      ///< Removes all values.
 
 	double GetMin() const;						///< Returns minimum allowed value.
-	double GetMax() const;						///< Returns minimum allowed value.
+	double GetMax() const;						///< Returns maximum allowed value.
 
 	void SetMin(double _min);					///< Sets minimum allowed value.
-	void SetMax(double _max);					///< Sets minimum allowed value.
+	void SetMax(double _max);					///< Sets maximum allowed value.
 
 	double GetValue(double _time) const;		///< Returns unit parameter value at given time point using interpolation if necessary.
 	void SetValue(double _time, double _value);	///< Adds new unit parameter value at given time point or changes the value of existing one.
@@ -330,6 +389,12 @@ public:
 	void AddCompoundParameter(const std::string& _name, const std::string& _description);
 	// Adds new reaction unit parameter. If parameter with the given name already exists, does nothing.
 	void AddReactionParameter(const std::string& _name, const std::string& _description);
+	// Adds new real list unit parameter. If parameter with the given name already exists, does nothing.
+	void AddListRealParameter(const std::string& _name, const std::string& _units, const std::string& _description, double _min, double _max, const std::vector<double>& _values);
+	// Adds new signed integer list unit parameter. If parameter with the given name already exists, does nothing.
+	void AddListIntParameter(const std::string& _name, const std::string& _units, const std::string& _description, int64_t _min, int64_t _max, const std::vector<int64_t>& _values);
+	// Adds new unsigned integer list unit parameter. If parameter with the given name already exists, does nothing.
+	void AddListUIntParameter(const std::string& _name, const std::string& _units, const std::string& _description, uint64_t _min, uint64_t _max, const std::vector<uint64_t>& _values);
 
 	// Returns list of all defined parameters.
 	std::vector<CBaseUnitParameter*> GetParameters() const;
@@ -383,6 +448,18 @@ public:
 	const CReactionUnitParameter* GetReactionParameter(size_t _index) const;
 	// Returns pointer to the reaction unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
 	CReactionUnitParameter* GetReactionParameter(size_t _index);
+	// Returns const pointer to the real list unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
+	const CListRealUnitParameter* GetListRealParameter(size_t _index) const;
+	// Returns pointer to the list real unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
+	CListRealUnitParameter* GetListRealParameter(size_t _index);
+	// Returns const pointer to the signed integer list unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
+	const CListIntUnitParameter* GetListIntParameter(size_t _index) const;
+	// Returns pointer to the signed integer list unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
+	CListIntUnitParameter* GetListIntParameter(size_t _index);
+	// Returns const pointer to the unsigned integer list unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
+	const CListUIntUnitParameter* GetListUIntParameter(size_t _index) const;
+	// Returns pointer to the unsigned integer list unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
+	CListUIntUnitParameter* GetListUIntParameter(size_t _index);
 
 	// Returns const pointer to the real constant unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
 	const CConstRealUnitParameter* GetConstRealParameter(const std::string& _name) const;
@@ -424,6 +501,18 @@ public:
 	const CReactionUnitParameter* GetReactionParameter(const std::string& _name) const;
 	// Returns pointer to the reaction unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
 	CReactionUnitParameter* GetReactionParameter(const std::string& _name);
+	// Returns const pointer to the real list unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
+	const CListRealUnitParameter* GetListRealParameter(const std::string& _name) const;
+	// Returns pointer to the list real unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
+	CListRealUnitParameter* GetListRealParameter(const std::string& _name);
+	// Returns const pointer to the signed integer list unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
+	const CListIntUnitParameter* GetListIntParameter(const std::string& _name) const;
+	// Returns pointer to the list signed integer unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
+	CListIntUnitParameter* GetListIntParameter(const std::string& _name);
+	// Returns const pointer to the unsigned integer list unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
+	const CListUIntUnitParameter* GetListUIntParameter(const std::string& _name) const;
+	// Returns pointer to the list unsigned integer unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
+	CListUIntUnitParameter* GetListUIntParameter(const std::string& _name);
 
 	// Returns value of a constant real unit parameter with the specified _index. If such parameter does not exist or is not a constant real parameter, returns 0.
 	double GetConstRealParameterValue(size_t _index) const;
@@ -445,6 +534,12 @@ public:
 	std::string GetCompoundParameterValue(size_t _index) const;
 	// Returns value of a reaction unit parameter with the specified _index. If such parameter does not exist or is not a reaction parameter, returns empty vector.
 	std::vector<CChemicalReaction> GetReactionParameterValue(size_t _index) const;
+	// Returns value of a list real unit parameter with the specified _index. If such parameter does not exist or is not a list real parameter, returns 0.
+	double GetListRealParameterValue(size_t _index, size_t _vauleIndex) const;
+	// Returns value of a list signed integer unit parameter with the specified _index. If such parameter does not exist or is not a list signed integer parameter, returns 0.
+	int64_t GetListIntParameterValue(size_t _index, size_t _vauleIndex) const;
+	// Returns value of a list unsigned integer unit parameter with the specified _index. If such parameter does not exist or is not a list unsigned integer parameter, returns 0.
+	uint64_t GetListUIntParameterValue(size_t _index, size_t _vauleIndex) const;
 
 	// Returns value of a constant real unit parameter with the specified _name. If such parameter does not exist or is not a constant real parameter, returns 0.
 	double GetConstRealParameterValue(const std::string& _name) const;
@@ -466,6 +561,12 @@ public:
 	std::string GetCompoundParameterValue(const std::string& _name) const;
 	// Returns value of a reaction unit parameter with the specified _name. If such parameter does not exist or is not a reaction parameter, returns "".
 	std::vector<CChemicalReaction> GetReactionParameterValue(const std::string& _name) const;
+	// Returns value of a list real unit parameter with the specified _name. If such parameter does not exist or is not a list real parameter, returns 0.
+	double GetListRealParameterValue(const std::string& _name, size_t _index) const;
+	// Returns value of a list signed integer unit parameter with the specified _name. If such parameter does not exist or is not a list signed integer parameter, returns 0.
+	int64_t GetListIntParameterValue(const std::string& _name, size_t _index) const;
+	// Returns value of a list unsigned integer unit parameter with the specified _name. If such parameter does not exist or is not a list unsigned integer parameter, returns 0.
+	uint64_t GetListUIntParameterValue(const std::string& _name, size_t _index) const;
 
 	// Returns const pointers to all specified reaction unit parameters.
 	std::vector<const CReactionUnitParameter*> GetAllReactionParameters() const;

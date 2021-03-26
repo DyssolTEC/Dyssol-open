@@ -39,6 +39,8 @@ public:
 	void SetItemEditable(int _row, int _col);
 
 	void SetItemsColEditable(int _startrow, int _col, const std::vector<double>& _val);
+	void SetItemsColEditable(int _startrow, int _col, const std::vector<int64_t>& _val);
+	void SetItemsColEditable(int _startrow, int _col, const std::vector<uint64_t>& _val);
 	void SetItemsColEditable(int _startrow, int _col, const std::vector<std::string>& _val);
 	void SetItemsRowEditable(int _row, int _startcol, const std::vector<double>& _val);
 	void SetItemsRowEditable(int _row, int _startcol, const std::vector<std::string>& _val);
@@ -83,6 +85,9 @@ public:
 
 	std::vector<double> GetRowValues(int _row) const;
 	std::vector<double> GetColumnValues(int _col) const;
+
+	void ShowRow(int _row, bool _show);
+	void ShowCol(int _col, bool _show);
 
 	bool blockSignals(bool _flag);
 

@@ -206,6 +206,12 @@ public:
 	CCompoundUnitParameter* AddCompoundParameter(const std::string& _name, const std::string& _description);
 	// Adds a new reaction unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
 	CReactionUnitParameter* AddReactionParameter(const std::string& _name, const std::string& _description);
+	// Adds a new real list unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	CListRealUnitParameter* AddListRealParameter(const std::string& _name, double _initValue, const std::string& _units, const std::string& _description, double _minValue = std::numeric_limits<double>::lowest(), double _maxValue = std::numeric_limits<double>::max());
+	// Adds a new signed integer list unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	CListIntUnitParameter* AddListIntParameter(const std::string& _name, int64_t _initValue, const std::string& _units, const std::string& _description, int64_t _minValue = std::numeric_limits<int64_t>::lowest(), int64_t _maxValue = std::numeric_limits<int64_t>::max());
+	// Adds a new unsigned integer list unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	CListUIntUnitParameter* AddListUIntParameter(const std::string& _name, uint64_t _initValue, const std::string& _units, const std::string& _description, uint64_t _minValue = std::numeric_limits<uint64_t>::lowest(), uint64_t _maxValue = std::numeric_limits<uint64_t>::max());
 	// Adds a new solver unit parameter with type SOLVER_AGGLOMERATION_1, allowing to choose one of the available solvers of this type, and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
 	CAgglomerationSolver* AddSolverAgglomeration(const std::string& _name, const std::string& _description);
 	// Adds a new solver unit parameter with type SOLVER_PBM_1, allowing to choose one of the available solvers of this type, and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
@@ -232,6 +238,12 @@ public:
 	std::string GetCompoundParameterValue(const std::string& _name) const;
 	// Returns value of the reaction unit parameter. Throws logic_error exception if a reaction unit parameter with the given name does not exist.
 	std::vector<CChemicalReaction> GetReactionParameterValue(const std::string& _name) const;
+	// Returns value of the real list unit parameter. Throws logic_error exception if a real list unit parameter with the given name does not exist.
+	double GetListRealParameterValue(const std::string& _name, size_t _index) const;
+	// Returns value of the signed integer list unit parameter. Throws logic_error exception if a signed integer list unit parameter with the given name does not exist.
+	int64_t GetListIntParameterValue(const std::string& _name, size_t _index) const;
+	// Returns value of the unsigned integer list unit parameter. Throws logic_error exception if an unsigned integer list unit parameter with the given name does not exist.
+	uint64_t GetListUIntParameterValue(const std::string& _name, size_t _index) const;
 	// Returns a pointer to an agglomeration solver of a type SOLVER_AGGLOMERATION_1 with the specified name. Throws logic_error exception if a solver unit parameter with the given name does not exist.
 	CAgglomerationSolver* GetSolverAgglomeration(const std::string& _name) const;
 	// Returns a pointer to a PBM solver of a type SOLVER_PBM_1 with the specified name. Throws logic_error exception if a solver unit parameter with the given name does not exist.

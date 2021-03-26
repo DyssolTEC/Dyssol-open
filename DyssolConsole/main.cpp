@@ -130,9 +130,10 @@ void RunSimulation(const CConfigFileParser& _parser)
 			case EUnitParameter::COMPOUND:
 				dynamic_cast<CCompoundUnitParameter*>(pParam)->SetCompound(u.sValue);
 				break;
-			case EUnitParameter::REACTION:
-				// TODO: implement
-				break;
+			case EUnitParameter::REACTION:		break;	// TODO: implement
+			case EUnitParameter::LIST_DOUBLE:	break;	// TODO: implement
+			case EUnitParameter::LIST_UINT64:	break;	// TODO: implement
+			case EUnitParameter::LIST_INT64:	break;	// TODO: implement
 			case EUnitParameter::UNKNOWN:  break;
 			}
 		}

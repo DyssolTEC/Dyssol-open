@@ -56,9 +56,9 @@ private slots:
 
 	void NewUnitParameterSelected() const;					       // User selected new unit parameter.
 
-	void AddUnitParamTimePoint();									// Add new time point to selected unit parameter.
-	void DeleteUnitParamTimePoint();								// Remove time point from selected unit parameter.
-	void TDValueChanged();											// User changed value or time of selected unit parameter.
+	void AddUnitParamListItem();									// Add new time point to selected unit parameter.
+	void DeleteUnitParamListItem();								// Remove time point from selected unit parameter.
+	void ListValueChanged();											// User changed value or time of selected unit parameter.
 	void UnitParamValueChanged(int _row, int _col);				// Value of unit parameter has been changed.
 
 private:
@@ -67,7 +67,7 @@ private:
 	void UpdateUnitCombo() const;	   // Update selected unit according to a selected model.
 	void UpdatePortsView() const;	   // Update ports according to selected model and unit.
 	void UpdateUnitParamTable() const; // Update main view of unit parameters.
-	void UpdateTDValuesTable() const;  // Update time-dependent unit parameters table according to selected model and parameter.
+	void UpdateListValuesTable() const;  // Update time-dependent unit parameters table according to selected model and parameter.
 	void UpdateUnitParamDescr() const; // Update unit parameter description according to selected model and parameter.
 
 	void EnableGUIElements() const; // Disables block of GUI elements if model is not selected.

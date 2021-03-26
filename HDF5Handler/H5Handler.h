@@ -40,7 +40,10 @@ public:
 	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, int64_t _nData) const;
 	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, bool _bData) const;
 	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<std::string>& _vData) const;
-	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<unsigned>& _vData) const;
+	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<uint32_t>& _vData) const;
+	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<uint64_t>& _vData) const;
+	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<int32_t>& _vData) const;
+	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<int64_t>& _vData) const;
 	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<double>& _vData) const;
 	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<std::vector<double>>& _vvData) const;
 	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<STDValue>& _data) const;
@@ -53,7 +56,10 @@ public:
 	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, int64_t& _nData) const;
 	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, bool& _bData) const;
 	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<std::string>& _vData) const;
-	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<unsigned>& _vData) const;
+	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<uint32_t>& _vData) const;
+	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<uint64_t>& _vData) const;
+	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<int32_t>& _vData) const;
+	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<int64_t>& _vData) const;
 	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<double>& _vData) const;
 	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<std::vector<double>>& _vvData) const;
 	void ReadDataOld(const std::string& _sPath, const std::string& _sDatasetName, std::vector<std::vector<double>>& _vvData) const;

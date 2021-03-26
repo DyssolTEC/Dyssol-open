@@ -136,6 +136,20 @@ void CQtTable::SetItemsColEditable(int _startrow, int _col, const std::vector<do
 			SetItemEditable(_startrow + i, _col, _val[i]);
 }
 
+void CQtTable::SetItemsColEditable(int _startrow, int _col, const std::vector<int64_t>& _val)
+{
+	for (int i = 0; i < static_cast<int>(_val.size()); ++i)
+		if (_startrow + i < rowCount())
+			SetItemEditable(_startrow + i, _col, _val[i]);
+}
+
+void CQtTable::SetItemsColEditable(int _startrow, int _col, const std::vector<uint64_t>& _val)
+{
+	for (int i = 0; i < static_cast<int>(_val.size()); ++i)
+		if (_startrow + i < rowCount())
+			SetItemEditable(_startrow + i, _col, _val[i]);
+}
+
 void CQtTable::SetItemsColEditable(int _startrow, int _col, const std::vector<std::string>& _val)
 {
 	for (int i = 0; i < static_cast<int>(_val.size()); ++i)
@@ -448,6 +462,18 @@ std::vector<double> CQtTable::GetColumnValues(const int _col) const
 	for (int i = 0; i < rowCount(); ++i)
 		res.push_back(item(i, _col)->text().toDouble());
 	return res;
+}
+
+void CQtTable::ShowRow(int _row, bool _show)
+{
+	if (_show)	showRow(_row);
+	else		hideRow(_row);
+}
+
+void CQtTable::ShowCol(int _col, bool _show)
+{
+	if (_show)	showColumn(_col);
+	else		hideColumn(_col);
 }
 
 bool CQtTable::blockSignals(bool _flag)

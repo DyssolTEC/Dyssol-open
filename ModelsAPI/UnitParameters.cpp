@@ -77,13 +77,13 @@ bool CBaseUnitParameter::IsInBounds() const
 /// CConstUnitParameter
 
 template<typename T>
-CBaseConstUnitParameter<T>::CBaseConstUnitParameter() :
+CConstUnitParameter<T>::CConstUnitParameter() :
 	CBaseUnitParameter(DeduceType())
 {
 }
 
 template<typename T>
-CBaseConstUnitParameter<T>::CBaseConstUnitParameter(std::string _name, std::string _units, std::string _description, T _min, T _max, T _value) :
+CConstUnitParameter<T>::CConstUnitParameter(std::string _name, std::string _units, std::string _description, T _min, T _max, T _value) :
 	CBaseUnitParameter(DeduceType(), std::move(_name), std::move(_units), std::move(_description)),
 	m_value{ _value },
 	m_min{ _min },
@@ -92,19 +92,19 @@ CBaseConstUnitParameter<T>::CBaseConstUnitParameter(std::string _name, std::stri
 }
 
 template<typename T>
-void CBaseConstUnitParameter<T>::Clear()
+void CConstUnitParameter<T>::Clear()
 {
 	m_value = {};
 }
 
 template<typename T>
-bool CBaseConstUnitParameter<T>::IsInBounds() const
+bool CConstUnitParameter<T>::IsInBounds() const
 {
 	return m_value >= m_min && m_value <= m_max;
 }
 
 template<typename T>
-void CBaseConstUnitParameter<T>::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
+void CConstUnitParameter<T>::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
 {
 	if (!_h5File.IsValid()) return;
 
@@ -116,7 +116,7 @@ void CBaseConstUnitParameter<T>::SaveToFile(CH5Handler& _h5File, const std::stri
 }
 
 template<typename T>
-void CBaseConstUnitParameter<T>::LoadFromFile(const CH5Handler& _h5File, const std::string& _path)
+void CConstUnitParameter<T>::LoadFromFile(const CH5Handler& _h5File, const std::string& _path)
 {
 	if (!_h5File.IsValid()) return;
 
@@ -127,16 +127,67 @@ void CBaseConstUnitParameter<T>::LoadFromFile(const CH5Handler& _h5File, const s
 	_h5File.ReadData(_path, StrConst::UParam_H5Values, m_value);
 }
 
-template <typename T>
-EUnitParameter CBaseConstUnitParameter<T>::DeduceType() const
+template<typename T>
+EUnitParameter CConstUnitParameter<T>::DeduceType() const
 {
-	if (std::is_same_v<T, double>)
-		return EUnitParameter::CONSTANT_DOUBLE;
-	if (std::is_same_v<T, int64_t>)
-		return EUnitParameter::CONSTANT_INT64;
-	if (std::is_same_v<T, uint64_t>)
-		return EUnitParameter::CONSTANT_UINT64;
+	if (std::is_same_v<T, double>)		return EUnitParameter::CONSTANT_DOUBLE;
+	if (std::is_same_v<T, int64_t>)		return EUnitParameter::CONSTANT_INT64;
+	if (std::is_same_v<T, uint64_t>)	return EUnitParameter::CONSTANT_UINT64;
 	return EUnitParameter::CONSTANT;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// CListUnitParameter
+
+template <typename T>
+CListUnitParameter<T>::CListUnitParameter()
+	: CBaseUnitParameter(DeduceType())
+{
+}
+
+template <typename T>
+CListUnitParameter<T>::CListUnitParameter(std::string _name, std::string _units, std::string _description, T _min, T _max, std::vector<T> _values)
+	: CBaseUnitParameter{ DeduceType(), std::move(_name), std::move(_units), std::move(_description) }
+	, m_values{ std::move(_values) }
+	, m_min{ _min }
+	, m_max{ _max }
+{
+}
+
+template <typename T>
+void CListUnitParameter<T>::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
+{
+	if (!_h5File.IsValid()) return;
+
+	// current version of save procedure
+	_h5File.WriteAttribute(_path, StrConst::H5AttrSaveVersion, m_saveVersion);
+
+	// save data
+	_h5File.WriteData(_path, StrConst::UParam_H5Values, m_values);
+}
+
+template <typename T>
+void CListUnitParameter<T>::LoadFromFile(const CH5Handler& _h5File, const std::string& _path)
+{
+	if (!_h5File.IsValid()) return;
+
+	// load version of save procedure
+	//const int version = _h5File.ReadAttribute(_path, StrConst::H5AttrSaveVersion);
+
+	m_values.clear();
+
+	// read data
+	_h5File.ReadData(_path, StrConst::UParam_H5Values, m_values);
+}
+
+template <typename T>
+EUnitParameter CListUnitParameter<T>::DeduceType() const
+{
+	if (std::is_same_v<T, double>)		return EUnitParameter::LIST_DOUBLE;
+	if (std::is_same_v<T, int64_t>)		return EUnitParameter::LIST_INT64;
+	if (std::is_same_v<T, uint64_t>)	return EUnitParameter::LIST_UINT64;
+	return EUnitParameter::UNKNOWN;
 }
 
 
@@ -227,7 +278,6 @@ bool CTDUnitParameter::IsInBounds() const
 		if (value < m_min || value > m_max)
 			return false;
 	return true;
-
 }
 
 void CTDUnitParameter::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
@@ -717,19 +767,19 @@ bool CUnitParametersManager::IsNameExist(const std::string& _name) const
 void CUnitParametersManager::AddConstRealParameter(const std::string& _name, const std::string& _units, const std::string& _description, double _min, double _max, double _value)
 {
 	if (IsNameExist(_name)) return;
-	m_parameters.emplace_back(new CBaseConstUnitParameter<double>{ _name, _units, _description, _min, _max, _value });
+	m_parameters.emplace_back(new CConstUnitParameter<double>{ _name, _units, _description, _min, _max, _value });
 }
 
 void CUnitParametersManager::AddConstIntParameter(const std::string& _name, const std::string& _units, const std::string& _description, int64_t _min, int64_t _max, int64_t _value)
 {
 	if (IsNameExist(_name)) return;
-	m_parameters.emplace_back(new CBaseConstUnitParameter<int64_t>{ _name, _units, _description, _min, _max, _value });
+	m_parameters.emplace_back(new CConstUnitParameter<int64_t>{ _name, _units, _description, _min, _max, _value });
 }
 
 void CUnitParametersManager::AddConstUIntParameter(const std::string& _name, const std::string& _units, const std::string& _description, uint64_t _min, uint64_t _max, uint64_t _value)
 {
 	if (IsNameExist(_name)) return;
-	m_parameters.emplace_back(new CBaseConstUnitParameter<uint64_t>{ _name, _units, _description, _min, _max, _value });
+	m_parameters.emplace_back(new CConstUnitParameter<uint64_t>{ _name, _units, _description, _min, _max, _value });
 }
 
 void CUnitParametersManager::AddTDParameter(const std::string& _name, const std::string& _units, const std::string& _description, double _min, double _max, double _value)
@@ -772,6 +822,24 @@ void CUnitParametersManager::AddReactionParameter(const std::string& _name, cons
 {
 	if (IsNameExist(_name)) return;
 	m_parameters.emplace_back(new CReactionUnitParameter{ _name, _description });
+}
+
+void CUnitParametersManager::AddListRealParameter(const std::string& _name, const std::string& _units, const std::string& _description, double _min, double _max, const std::vector<double>& _values)
+{
+	if (IsNameExist(_name)) return;
+	m_parameters.emplace_back(new CListUnitParameter<double>{ _name, _units, _description, _min, _max, _values });
+}
+
+void CUnitParametersManager::AddListIntParameter(const std::string& _name, const std::string& _units, const std::string& _description, int64_t _min, int64_t _max, const std::vector<int64_t>& _values)
+{
+	if (IsNameExist(_name)) return;
+	m_parameters.emplace_back(new CListUnitParameter<int64_t>{ _name, _units, _description, _min, _max, _values });
+}
+
+void CUnitParametersManager::AddListUIntParameter(const std::string& _name, const std::string& _units, const std::string& _description, uint64_t _min, uint64_t _max, const std::vector<uint64_t>& _values)
+{
+	if (IsNameExist(_name)) return;
+	m_parameters.emplace_back(new CListUnitParameter<uint64_t>{ _name, _units, _description, _min, _max, _values });
 }
 
 std::vector<CBaseUnitParameter*> CUnitParametersManager::GetParameters() const
@@ -903,6 +971,36 @@ CReactionUnitParameter* CUnitParametersManager::GetReactionParameter(size_t _ind
 	return const_cast<CReactionUnitParameter*>(static_cast<const CUnitParametersManager&>(*this).GetReactionParameter(_index));
 }
 
+const CListRealUnitParameter* CUnitParametersManager::GetListRealParameter(size_t _index) const
+{
+	return dynamic_cast<const CListRealUnitParameter*>(GetParameter(_index));
+}
+
+CListRealUnitParameter* CUnitParametersManager::GetListRealParameter(size_t _index)
+{
+	return const_cast<CListRealUnitParameter*>(static_cast<const CUnitParametersManager&>(*this).GetListRealParameter(_index));
+}
+
+const CListIntUnitParameter* CUnitParametersManager::GetListIntParameter(size_t _index) const
+{
+	return dynamic_cast<const CListIntUnitParameter*>(GetParameter(_index));
+}
+
+CListIntUnitParameter* CUnitParametersManager::GetListIntParameter(size_t _index)
+{
+	return const_cast<CListIntUnitParameter*>(static_cast<const CUnitParametersManager&>(*this).GetListIntParameter(_index));
+}
+
+const CListUIntUnitParameter* CUnitParametersManager::GetListUIntParameter(size_t _index) const
+{
+	return dynamic_cast<const CListUIntUnitParameter*>(GetParameter(_index));
+}
+
+CListUIntUnitParameter* CUnitParametersManager::GetListUIntParameter(size_t _index)
+{
+	return const_cast<CListUIntUnitParameter*>(static_cast<const CUnitParametersManager&>(*this).GetListUIntParameter(_index));
+}
+
 const CConstRealUnitParameter* CUnitParametersManager::GetConstRealParameter(const std::string& _name) const
 {
 	return GetConstRealParameter(Name2Index(_name));
@@ -1003,6 +1101,36 @@ CReactionUnitParameter* CUnitParametersManager::GetReactionParameter(const std::
 	return GetReactionParameter(Name2Index(_name));
 }
 
+const CListRealUnitParameter* CUnitParametersManager::GetListRealParameter(const std::string& _name) const
+{
+	return GetListRealParameter(Name2Index(_name));
+}
+
+CListRealUnitParameter* CUnitParametersManager::GetListRealParameter(const std::string& _name)
+{
+	return GetListRealParameter(Name2Index(_name));
+}
+
+const CListIntUnitParameter* CUnitParametersManager::GetListIntParameter(const std::string& _name) const
+{
+	return GetListIntParameter(Name2Index(_name));
+}
+
+CListIntUnitParameter* CUnitParametersManager::GetListIntParameter(const std::string& _name)
+{
+	return GetListIntParameter(Name2Index(_name));
+}
+
+const CListUIntUnitParameter* CUnitParametersManager::GetListUIntParameter(const std::string& _name) const
+{
+	return GetListUIntParameter(Name2Index(_name));
+}
+
+CListUIntUnitParameter* CUnitParametersManager::GetListUIntParameter(const std::string& _name)
+{
+	return GetListUIntParameter(Name2Index(_name));
+}
+
 double CUnitParametersManager::GetConstRealParameterValue(size_t _index) const
 {
 	if (const auto* p = GetConstRealParameter(_index))
@@ -1073,6 +1201,27 @@ std::vector<CChemicalReaction> CUnitParametersManager::GetReactionParameterValue
 	return {};
 }
 
+double CUnitParametersManager::GetListRealParameterValue(size_t _index, size_t _vauleIndex) const
+{
+	if (const auto* p = GetListRealParameter(_index))
+		return p->GetValue(_vauleIndex);
+	return {};
+}
+
+int64_t CUnitParametersManager::GetListIntParameterValue(size_t _index, size_t _vauleIndex) const
+{
+	if (const auto* p = GetListIntParameter(_index))
+		return p->GetValue(_vauleIndex);
+	return {};
+}
+
+uint64_t CUnitParametersManager::GetListUIntParameterValue(size_t _index, size_t _vauleIndex) const
+{
+	if (const auto* p = GetListUIntParameter(_index))
+		return p->GetValue(_vauleIndex);
+	return {};
+}
+
 double CUnitParametersManager::GetConstRealParameterValue(const std::string& _name) const
 {
 	return GetConstRealParameterValue(Name2Index(_name));
@@ -1121,6 +1270,21 @@ std::string CUnitParametersManager::GetCompoundParameterValue(const std::string&
 std::vector<CChemicalReaction> CUnitParametersManager::GetReactionParameterValue(const std::string& _name) const
 {
 	return GetReactionParameterValue(Name2Index(_name));
+}
+
+double CUnitParametersManager::GetListRealParameterValue(const std::string& _name, size_t _index) const
+{
+	return GetListRealParameterValue(Name2Index(_name), _index);
+}
+
+int64_t CUnitParametersManager::GetListIntParameterValue(const std::string& _name, size_t _index) const
+{
+	return GetListIntParameterValue(Name2Index(_name), _index);
+}
+
+uint64_t CUnitParametersManager::GetListUIntParameterValue(const std::string& _name, size_t _index) const
+{
+	return GetListUIntParameterValue(Name2Index(_name), _index);
 }
 
 std::vector<const CReactionUnitParameter*> CUnitParametersManager::GetAllReactionParameters() const
@@ -1220,18 +1384,21 @@ void CUnitParametersManager::SaveToFile(CH5Handler& _h5Saver, const std::string&
 		May be, it somehow depends on the previous call to LoadLibrary() to get unit from DLL. */
 		switch (m_parameters[i]->GetType())
 		{
-		case EUnitParameter::CONSTANT:			dynamic_cast<CBaseConstUnitParameter<double>*>  (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
-		case EUnitParameter::CONSTANT_DOUBLE:   dynamic_cast<CBaseConstUnitParameter<double>*>  (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
-		case EUnitParameter::CONSTANT_INT64:    dynamic_cast<CBaseConstUnitParameter<int64_t>*> (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
-		case EUnitParameter::CONSTANT_UINT64:   dynamic_cast<CBaseConstUnitParameter<uint64_t>*>(m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
-		case EUnitParameter::TIME_DEPENDENT:	dynamic_cast<CTDUnitParameter*>                 (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
-		case EUnitParameter::STRING:			dynamic_cast<CStringUnitParameter*>             (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
-		case EUnitParameter::CHECKBOX:			dynamic_cast<CCheckBoxUnitParameter*>           (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
-		case EUnitParameter::SOLVER:			dynamic_cast<CSolverUnitParameter*>             (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
-		case EUnitParameter::COMBO:				dynamic_cast<CComboUnitParameter*>              (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
-		case EUnitParameter::GROUP:				dynamic_cast<CComboUnitParameter*>              (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
-		case EUnitParameter::COMPOUND:			dynamic_cast<CCompoundUnitParameter*>           (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
-		case EUnitParameter::REACTION:			dynamic_cast<CReactionUnitParameter*>           (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
+		case EUnitParameter::CONSTANT:			dynamic_cast<CConstUnitParameter<double>*>  (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
+		case EUnitParameter::CONSTANT_DOUBLE:   dynamic_cast<CConstUnitParameter<double>*>  (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
+		case EUnitParameter::CONSTANT_INT64:    dynamic_cast<CConstUnitParameter<int64_t>*> (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
+		case EUnitParameter::CONSTANT_UINT64:   dynamic_cast<CConstUnitParameter<uint64_t>*>(m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
+		case EUnitParameter::TIME_DEPENDENT:	dynamic_cast<CTDUnitParameter*>             (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
+		case EUnitParameter::STRING:			dynamic_cast<CStringUnitParameter*>         (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
+		case EUnitParameter::CHECKBOX:			dynamic_cast<CCheckBoxUnitParameter*>       (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
+		case EUnitParameter::SOLVER:			dynamic_cast<CSolverUnitParameter*>         (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
+		case EUnitParameter::COMBO:				dynamic_cast<CComboUnitParameter*>          (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
+		case EUnitParameter::GROUP:				dynamic_cast<CComboUnitParameter*>          (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
+		case EUnitParameter::COMPOUND:			dynamic_cast<CCompoundUnitParameter*>       (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
+		case EUnitParameter::REACTION:			dynamic_cast<CReactionUnitParameter*>       (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
+		case EUnitParameter::LIST_DOUBLE:		dynamic_cast<CListRealUnitParameter*>       (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
+		case EUnitParameter::LIST_INT64:		dynamic_cast<CListIntUnitParameter*>        (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
+		case EUnitParameter::LIST_UINT64:		dynamic_cast<CListUIntUnitParameter*>       (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
 		case EUnitParameter::UNKNOWN: break;
 		}
 	}
@@ -1271,18 +1438,21 @@ void CUnitParametersManager::LoadFromFile(const CH5Handler& _h5Loader, const std
 			May be somehow depend on the previous call to LoadLibrary() to to get unit from DLL. */
 			switch (m_parameters[i]->GetType())
 			{
-			case EUnitParameter::CONSTANT:			dynamic_cast<CBaseConstUnitParameter<double>*>  (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
-			case EUnitParameter::CONSTANT_DOUBLE:	dynamic_cast<CBaseConstUnitParameter<double>*>  (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
-			case EUnitParameter::CONSTANT_INT64: 	dynamic_cast<CBaseConstUnitParameter<int64_t>*> (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
-			case EUnitParameter::CONSTANT_UINT64:	dynamic_cast<CBaseConstUnitParameter<uint64_t>*>(m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
-			case EUnitParameter::TIME_DEPENDENT:	dynamic_cast<CTDUnitParameter*>                 (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
-			case EUnitParameter::STRING:			dynamic_cast<CStringUnitParameter*>             (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
-			case EUnitParameter::CHECKBOX:			dynamic_cast<CCheckBoxUnitParameter*>           (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
-			case EUnitParameter::SOLVER:			dynamic_cast<CSolverUnitParameter*>             (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
-			case EUnitParameter::COMBO:				dynamic_cast<CComboUnitParameter*>              (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
-			case EUnitParameter::GROUP:				dynamic_cast<CComboUnitParameter*>              (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
-			case EUnitParameter::COMPOUND:			dynamic_cast<CCompoundUnitParameter*>           (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
-			case EUnitParameter::REACTION:			dynamic_cast<CReactionUnitParameter*>           (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
+			case EUnitParameter::CONSTANT:			dynamic_cast<CConstUnitParameter<double>*>  (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
+			case EUnitParameter::CONSTANT_DOUBLE:	dynamic_cast<CConstUnitParameter<double>*>  (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
+			case EUnitParameter::CONSTANT_INT64: 	dynamic_cast<CConstUnitParameter<int64_t>*> (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
+			case EUnitParameter::CONSTANT_UINT64:	dynamic_cast<CConstUnitParameter<uint64_t>*>(m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
+			case EUnitParameter::TIME_DEPENDENT:	dynamic_cast<CTDUnitParameter*>             (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
+			case EUnitParameter::STRING:			dynamic_cast<CStringUnitParameter*>         (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
+			case EUnitParameter::CHECKBOX:			dynamic_cast<CCheckBoxUnitParameter*>       (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
+			case EUnitParameter::SOLVER:			dynamic_cast<CSolverUnitParameter*>         (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
+			case EUnitParameter::COMBO:				dynamic_cast<CComboUnitParameter*>          (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
+			case EUnitParameter::GROUP:				dynamic_cast<CComboUnitParameter*>          (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
+			case EUnitParameter::COMPOUND:			dynamic_cast<CCompoundUnitParameter*>       (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
+			case EUnitParameter::REACTION:			dynamic_cast<CReactionUnitParameter*>       (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
+			case EUnitParameter::LIST_DOUBLE:		dynamic_cast<CListUnitParameter<double>*>   (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
+			case EUnitParameter::LIST_INT64: 		dynamic_cast<CListUnitParameter<int64_t>*>  (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
+			case EUnitParameter::LIST_UINT64:		dynamic_cast<CListUnitParameter<uint64_t>*> (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
 			case EUnitParameter::UNKNOWN: break;
 			}
 		}

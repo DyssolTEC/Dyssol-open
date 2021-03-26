@@ -140,6 +140,9 @@ void CConfigFileParser::SaveConfigFile(const std::wstring& _fileName, const std:
 			case EUnitParameter::COMPOUND:			file << " " << dynamic_cast<const CCompoundUnitParameter*>(params[iParam])->GetCompound();	break;
 			case EUnitParameter::SOLVER:			file << " " << WString2String(_modelsManager.GetSolverLibName(dynamic_cast<const CSolverUnitParameter*>(params[iParam])->GetKey()));	break;
 			case EUnitParameter::REACTION:			break; // TODO: implement
+			case EUnitParameter::LIST_DOUBLE:		break; // TODO: implement
+			case EUnitParameter::LIST_INT64:		break; // TODO: implement
+			case EUnitParameter::LIST_UINT64:		break; // TODO: implement
 			case EUnitParameter::UNKNOWN:			break;
 			}
 			file << "\t" << StrConst::COMMENT_SYMBOL << " " << units[iUnit]->GetName() << " - " << params[iParam]->GetName() << " - <Values>" << std::endl;

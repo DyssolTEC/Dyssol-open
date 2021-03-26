@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1069</width>
+    <width>1000</width>
     <height>789</height>
    </rect>
   </property>
@@ -14,7 +14,7 @@
    <string>CFlowsheetEditor</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../../DyssolMainWindow/Resources.qrc">
+   <iconset resource="../../DyssolMainWindow/Resources.qrc">
     <normaloff>:/Icons/WinIcon</normaloff>:/Icons/WinIcon</iconset>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
@@ -460,7 +460,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QFrame" name="frameTDValues">
+          <widget class="QFrame" name="frameListValues">
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
            </property>
@@ -481,7 +481,7 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="CQtTable" name="tableTDValues">
+             <widget class="CQtTable" name="tableListValues">
               <property name="selectionMode">
                <enum>QAbstractItemView::SingleSelection</enum>
               </property>
@@ -511,7 +511,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_15">
               <item>
-               <widget class="QPushButton" name="buttonAddTDValue">
+               <widget class="QPushButton" name="buttonAddListValue">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -519,13 +519,13 @@
                  </sizepolicy>
                 </property>
                 <property name="toolTip">
-                 <string>Add new time point to the selected unit parameter</string>
+                 <string>Add new item to the selected unit parameter</string>
                 </property>
                 <property name="statusTip">
-                 <string>Add new time point to the selected unit parameter</string>
+                 <string>Add new item to the selected unit parameter</string>
                 </property>
                 <property name="whatsThis">
-                 <string>Add new time point to the selected unit parameter</string>
+                 <string>Add new item to the selected unit parameter</string>
                 </property>
                 <property name="text">
                  <string>+</string>
@@ -533,7 +533,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="buttonRemoveTDValue">
+               <widget class="QPushButton" name="buttonRemoveListValue">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -541,13 +541,13 @@
                  </sizepolicy>
                 </property>
                 <property name="toolTip">
-                 <string>Remove the selected time point from the selected unit parameter</string>
+                 <string>Remove the selected item from the selected unit parameter</string>
                 </property>
                 <property name="statusTip">
-                 <string>Remove the selected time point from the selected unit parameter</string>
+                 <string>Remove the selected item from the selected unit parameter</string>
                 </property>
                 <property name="whatsThis">
-                 <string>Remove the selected time point from the selected unit parameter</string>
+                 <string>Remove the selected item from the selected unit parameter</string>
                 </property>
                 <property name="text">
                  <string>-</string>
@@ -591,12 +591,12 @@
   <tabstop>tablePorts</tabstop>
   <tabstop>tableUnitParams</tabstop>
   <tabstop>textParamDescr</tabstop>
-  <tabstop>tableTDValues</tabstop>
-  <tabstop>buttonAddTDValue</tabstop>
-  <tabstop>buttonRemoveTDValue</tabstop>
+  <tabstop>tableListValues</tabstop>
+  <tabstop>buttonAddListValue</tabstop>
+  <tabstop>buttonRemoveListValue</tabstop>
  </tabstops>
  <resources>
-  <include location="../../../DyssolMainWindow/Resources.qrc"/>
+  <include location="../../DyssolMainWindow/Resources.qrc"/>
  </resources>
  <connections/>
 </ui>
