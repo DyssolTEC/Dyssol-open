@@ -1,7 +1,6 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "Dyssol.h"
-#include "SimulatorTab.h"
 #include "StatusWindow.h"
 #include "AboutWindow.h"
 #include "Stream.h"
@@ -623,6 +622,7 @@ void Dyssol::OpenHelp(const QString& _sFile) const
 	if (!FileSystem::FileExists(sFileToOpen.toStdString())) // cannot find requested file in the running folder -> access through the link
 		sFileToOpen = QFile::symLinkTarget(m_sSettingsPath + "/" + StrConst::Dyssol_AppFolderPathLink) + "/" + StrConst::Dyssol_HelpDir + "/" + _sFile + StrConst::Dyssol_HelpFileExt;
 	QDesktopServices::openUrl(QUrl::fromLocalFile(sFileToOpen));
+#endif
 }
 
 void Dyssol::ShowAboutDialog()

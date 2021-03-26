@@ -4,6 +4,7 @@
 
 #include "Stream.h"
 #include "Holdup.h"
+#include "Phase.h"
 
 /* Manages streams in each unit.
    There are 3 types of holdups and streams:

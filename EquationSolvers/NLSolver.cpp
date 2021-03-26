@@ -173,7 +173,9 @@ bool CNLSolver::SetModel(CNLModel* _pModel)
 	else
 	{
 		KINSetMAA(m_pKINmem, static_cast<long>(m_nMAA));
-		KINSetDampingAA(m_pKINmem, static_cast<realtype>(m_dDampingAA));
+		// TODO!!!
+		// KINSetDampingAA(m_pKINmem, static_cast<realtype>(m_dDampingAA));
+		//
 	}
 
 	// Initialize IDA memory

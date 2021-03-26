@@ -20,6 +20,7 @@
 #include "DustFormationTesterTab.h"
 #include "SettingsEditor.h"
 #include "SaveLoadThread.h"
+#include "SimulatorTab.h"
 #include <QSharedMemory>
 
 #define MAX_RECENT_FILES 10

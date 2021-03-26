@@ -108,7 +108,7 @@ void CReactionWidget::AddListItem(CChemicalReaction::SChemicalSubstanse* _substa
 	[[maybe_unused]] CSignalBlocker block{ list, &m_radioGroup };
 	auto* widget = new CSubstanceWidget(_substance, type, m_compounds, m_database, this);
 	auto* item = new QListWidgetItem();
-	item->setData(Qt::UserRole, _index);
+	item->setData(Qt::UserRole, static_cast<uint>(_index));
 	item->setSizeHint(widget->minimumSizeHint());
 	list->addItem(item);
 	list->setItemWidget(item, widget);
