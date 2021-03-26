@@ -41,7 +41,7 @@ endforeach(foldername ${DyssolGUInames})
 
 add_executable(DyssolGUI ${DyssolGUIsrc})
 
-target_compile_definitions(DyssolGUI PRIVATE INSTALL_UNITS_LIB_PATH="${INSTALL_UNITS_LIB_PATH}")
+target_compile_definitions(DyssolGUI PRIVATE INSTALL_DOCS_PATH="${INSTALL_DOCS_PATH}")
 
 TARGET_LINK_LIBRARIES(DyssolGUI Qt5::Widgets libdyssol_shared)
 INSTALL(TARGETS DyssolGUI DESTINATION ${CMAKE_INSTALL_BINDIR})
