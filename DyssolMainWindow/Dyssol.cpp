@@ -514,9 +514,11 @@ void Dyssol::LoadMaterialsDatabase()
 
 size_t Dyssol::OtherRunningDyssolCount()
 {
-	// This is ahack!!!!!
-	return 1;
-	//return SystemFunctions::ActiveInstancesCount(StringFunctions::String2WString(std::string(StrConst::Dyssol_ApplicationName) + ".exe")) - 1;
+	#ifdef _MSC_VER
+	return SystemFunctions::ActiveInstancesCount(StringFunctions::String2WString(std::string(StrConst::Dyssol_ApplicationName) + ".exe")) - 1;
+	#else
+	return 1
+	#endif
 }
 
 void Dyssol::setVisible(bool _visible)
