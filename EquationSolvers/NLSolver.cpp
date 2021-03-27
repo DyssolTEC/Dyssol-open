@@ -173,10 +173,7 @@ bool CNLSolver::SetModel(CNLModel* _pModel)
 	else
 	{
 		KINSetMAA(m_pKINmem, static_cast<long>(m_nMAA));
-		#ifdef _MSC_VER
-		// TODO!!! Linux version does not have this function. We need to find and analogue
 		KINSetDampingAA(m_pKINmem, static_cast<realtype>(m_dDampingAA));
-		#endif
 	}
 
 	// Initialize IDA memory
