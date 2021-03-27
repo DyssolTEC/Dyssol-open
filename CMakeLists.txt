@@ -26,6 +26,7 @@ set(libdyssolnames
 	"Modules"
 	"SimulatorCore"
 	"Utilities"
+	"Modules/DustFormationTester"
 )
 
 foreach(foldername ${libdyssolnames})
@@ -33,9 +34,6 @@ foreach(foldername ${libdyssolnames})
     set(libdyssolsrc ${libdyssolsrc} ${src})
     INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/${foldername}/")
 endforeach(foldername ${libdyssolnames})
-
-INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/ExternalLibraries/sundials/include/")
-INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/Modules/DustFormationTester/")
 
 SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
