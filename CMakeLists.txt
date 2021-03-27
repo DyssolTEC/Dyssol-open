@@ -1,3 +1,7 @@
+# Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information.
+# Copyright (c) 2021, Anton Gladky <Anton.Gladky@iart.tu-freiberg.de>, IART, Technical University Bergakademie Freiberg
+
+
 cmake_minimum_required(VERSION 3.1.0)
 
 project(Dyssol VERSION 0.10.0.2 LANGUAGES CXX)
