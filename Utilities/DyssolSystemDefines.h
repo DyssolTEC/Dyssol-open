@@ -2,10 +2,14 @@
 
 #pragma once
 
-//#include "BuildVersion.h"
-
+#ifdef _MSC_VER
+#include "BuildVersion.h"
+#else
+//TODO Define version
 #define CURRENT_BUILD_VERSION 111
 #define VISUAL_STUDIO_VERSION 111
+#endif
+
 #include "DyssolHelperDefines.h"
 
 #define VERSION_0			0

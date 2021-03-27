@@ -517,7 +517,7 @@ size_t Dyssol::OtherRunningDyssolCount()
 	#ifdef _MSC_VER
 	return SystemFunctions::ActiveInstancesCount(StringFunctions::String2WString(std::string(StrConst::Dyssol_ApplicationName) + ".exe")) - 1;
 	#else
-	return 1
+	return 1;
 	#endif
 }
 
