@@ -7,7 +7,9 @@
 #include "ConfigFileParser.h"
 #include "FileSystem.h"
 #include "DyssolStringConstants.h"
-//#include "DyssolSystemFunctions.h"
+#ifdef _MSC_VER
+#include "DyssolSystemFunctions.h"
+#endif
 #include <QDesktopWidget>
 #include <QCloseEvent>
 #include <QFileDialog>
