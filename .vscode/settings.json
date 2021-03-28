@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "ostream": "cpp",
-        "*.tcc": "cpp",
-        "optional": "cpp",
-        "system_error": "cpp",
-        "regex": "cpp"
-    }
-}
