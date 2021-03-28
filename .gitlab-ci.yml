@@ -20,20 +20,20 @@ make_sid:
   <<: *platforms_definition
   image: debian:experimental
   before_script:
-    - apt-get update && apt-get install -y libsundials-dev -t experimental
+    - apt-get update && apt-get install -y libsundials-dev experimental
 
 make_focal:
   <<: *platforms_definition
   image: ubuntu:focal
   before_script:
-    - apt-get update && apt-get install software-properties-common
+    - apt-get update && apt-get install -y software-properties-common
     - add-apt-repository ppa:gladky-anton/sundials && apt-get update
 
 make_sid-clang:
   <<: *platforms_definition
   image: debian:experimental
   before_script:
-    - apt-get update && apt-get install -y libsundials-dev -t experimental
+    - apt-get update && apt-get install -y libsundials-dev experimental
     - apt-get install -y clang-11
     - export CC=/usr/bin/clang-11
     - export CXX=/usr/bin/clang++-11
