@@ -20,7 +20,7 @@ make_sid:
   <<: *platforms_definition
   image: debian:experimental
   before_script:
-    - apt-get update && apt-get install -y libsundials-dev experimental
+    - apt-get update && apt-get install -y libsundials-dev
 
 make_focal:
   <<: *platforms_definition
@@ -33,7 +33,7 @@ make_sid-clang:
   <<: *platforms_definition
   image: debian:experimental
   before_script:
-    - apt-get update && apt-get install -y libsundials-dev experimental
+    - apt-get update && apt-get install -y libsundials-dev
     - apt-get install -y clang-11
     - export CC=/usr/bin/clang-11
     - export CXX=/usr/bin/clang++-11
