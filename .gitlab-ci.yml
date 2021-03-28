@@ -16,12 +16,6 @@ stages:
     - mkdir build && cd build && cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_VERBOSE_MAKEFILE=ON  .. && make
     - ccache -s
 
-make_sid:
-  <<: *platforms_definition
-  image: debian:experimental
-  before_script:
-    - apt-get update && apt-get install -y libsundials-dev
-
 make_focal:
   <<: *platforms_definition
   image: ubuntu:focal
