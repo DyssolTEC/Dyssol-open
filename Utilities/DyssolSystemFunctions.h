@@ -2,6 +2,7 @@
 
 #pragma once
 
+#ifdef _MSC_VER
 #include <minwindef.h>
 #include <string>
 #include <processthreadsapi.h>
@@ -9,9 +10,11 @@
 #include <Windows.h>
 #include <tchar.h>
 #include <Psapi.h>
+#endif
 
 namespace SystemFunctions
 {
+#ifdef _MSC_VER
 	// Returns true if a process with _processID has name _processName.
 	inline bool MatchProcessName(DWORD _processID, const std::wstring& _processName)
 	{
@@ -33,7 +36,9 @@ namespace SystemFunctions
 		CloseHandle(hProcess);
 		return found;
 	}
+#endif
 
+#ifdef _MSC_VER
 	/// Returns number of running process with the specified name.
 	inline size_t ActiveInstancesCount(const std::wstring& _processName)
 	{
@@ -52,4 +57,5 @@ namespace SystemFunctions
 
 		return processesCount;
 	}
+#endif
 }

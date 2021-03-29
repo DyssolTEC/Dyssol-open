@@ -6,8 +6,7 @@
 #include "BuildVersion.h"
 #else
 //TODO Define version
-#define CURRENT_BUILD_VERSION 111
-#define VISUAL_STUDIO_VERSION 111
+const char CURRENT_BUILD_VERSION[] = "";
 #endif
 
 #include "DyssolHelperDefines.h"

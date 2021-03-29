@@ -7,9 +7,7 @@
 #include "ConfigFileParser.h"
 #include "FileSystem.h"
 #include "DyssolStringConstants.h"
-#ifdef _MSC_VER
 #include "DyssolSystemFunctions.h"
-#endif
 #include <QDesktopWidget>
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -514,11 +512,13 @@ void Dyssol::LoadMaterialsDatabase()
 
 size_t Dyssol::OtherRunningDyssolCount()
 {
-	#ifdef _MSC_VER
+#ifdef _MSC_VER
 	return SystemFunctions::ActiveInstancesCount(StringFunctions::String2WString(std::string(StrConst::Dyssol_ApplicationName) + ".exe")) - 1;
-	#else
+#else
+	// HACK
+	// TODO: implement for Linux to allow proper cache cleaning
 	return 1;
-	#endif
+#endif
 }
 
 void Dyssol::setVisible(bool _visible)
@@ -621,11 +621,11 @@ void Dyssol::LoadingFinished()
 
 void Dyssol::OpenHelp(const QString& _sFile) const
 {
-	#ifdef _MSC_VER
+#ifdef _MSC_VER
 	QString sFileToOpen = QCoreApplication::applicationDirPath() + "/" + StrConst::Dyssol_HelpDir + "/" + _sFile + StrConst::Dyssol_HelpFileExt;
-	#else
+#else
 	QString sFileToOpen =  QString(INSTALL_DOCS_PATH) + "/" + _sFile + StrConst::Dyssol_HelpFileExt;
-	#endif
+#endif
 
 	if (!FileSystem::FileExists(sFileToOpen.toStdString())) // cannot find requested file in the running folder -> access through the link
 		sFileToOpen = QFile::symLinkTarget(m_sSettingsPath + "/" + StrConst::Dyssol_AppFolderPathLink) + "/" + StrConst::Dyssol_HelpDir + "/" + _sFile + StrConst::Dyssol_HelpFileExt;
