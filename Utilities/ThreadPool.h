@@ -62,6 +62,12 @@ inline ThreadPool::CThreadPool& getThreadPool()
 	return pool;
 }
 
+/// Initialize thread pool with current parameters.
+inline void InitializeThreadPool()
+{
+	getThreadPool();
+}
+
 /// Submits a job _fun of any type with arguments _args.
 template <typename Func, typename... Args>
 auto ParallelJob(Func&& _fun, Args&&... _args)

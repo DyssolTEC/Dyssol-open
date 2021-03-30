@@ -8,6 +8,7 @@
 #include "FileSystem.h"
 #include "DyssolStringConstants.h"
 #include "DyssolSystemFunctions.h"
+#include "ThreadPool.h"
 #include <QDesktopWidget>
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -23,6 +24,8 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	ui.setupUi(this);
 	resize(QDesktopWidget().availableGeometry(this).size() * 0.7);
 	SetFlowsheetModified(false);
+
+	InitializeThreadPool();
 
 	// setup flowsheet and simulator
 	m_Simulator.SetFlowsheet(&m_Flowsheet);
