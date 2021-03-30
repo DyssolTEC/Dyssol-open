@@ -7,7 +7,7 @@ set(SolversNames
 )
 
 foreach(foldername ${SolversNames})
-    file(GLOB_RECURSE src ${CMAKE_SOURCE_DIR}/Solvers/${foldername}/*.cpp *.c)
+    file(GLOB_RECURSE src ${CMAKE_SOURCE_DIR}/Solvers/${foldername}/*.cpp)
     INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/Solvers/${foldername}/)
     add_library(${foldername} SHARED ${src})
     INSTALL(TARGETS ${foldername} DESTINATION ${INSTALL_UNITS_LIB_PATH})
