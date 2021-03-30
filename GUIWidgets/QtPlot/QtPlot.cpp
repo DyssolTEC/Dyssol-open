@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QColorDialog>
+#include <cmath>
 
 using namespace QtPlot;
 
@@ -250,19 +251,26 @@ void CQtPlot::mouseReleaseEvent(QMouseEvent* _mouseEvent)
 	switch (m_eLeftMouseMode)
 	{
 	case Zoom:
-		SetNewBoundaries(&QRect(m_pRubberBand->x(), m_pRubberBand->y(), m_pRubberBand->width(), m_pRubberBand->height()));
+		{
+		auto qr = QRect(m_pRubberBand->x(), m_pRubberBand->y(), m_pRubberBand->width(), m_pRubberBand->height());
+		SetNewBoundaries(&qr);
 		delete m_pRubberBand;
 		m_eLeftMouseMode = None;
 		break;
+		}
 	case Mark:
+		{
 		m_eLeftMouseMode = None;
 		m_csNearestCurveIndex = -1;
 		RedrawPlot();
 		break;
+		}
 	default:
+		{
 		m_eLeftMouseMode = None;
 		m_csNearestCurveIndex = -1;
 		break;
+		}
 	}
 }
 
@@ -532,7 +540,7 @@ void CQtPlot::DrawLegend(QPainter* _painter)
 		int nLinesNumber = 0;
 		for (int i = 0; i < m_vpCurves.size(); ++i)
 		{
-			int nTextWidth = fm.boundingRect(m_vpCurves.at(i)->sCurveName).width();
+			int nTextWidth = fm.horizontalAdvance(m_vpCurves.at(i)->sCurveName);
 			if ((m_vpCurves.at(i)->bVisibility) && (nTextWidth > nMaxTextWidth))
 				nMaxTextWidth = nTextWidth;
 			if (m_vpCurves.at(i)->bVisibility)
@@ -642,10 +650,10 @@ void CQtPlot::DrawMarks(QPainter* _painter)
 				if (m_bLogY)
 					dYPrint = std::pow(10, dY);
 
-				if (fm.boundingRect(QString::number(dX)).width() < m_paintRect.x() + m_paintRect.width() - dPixelX - 5)
+				if (fm.horizontalAdvance(QString::number(dX)) < m_paintRect.x() + m_paintRect.width() - dPixelX - 5)
 					_painter->drawText(dPixelX + 5, m_paintRect.y() + m_paintRect.height() - 5, QString::number(dXPrint));
 				else
-					_painter->drawText(dPixelX - fm.boundingRect(QString::number(dX)).width() - 5, m_paintRect.y() + m_paintRect.height() - 5, QString::number(dXPrint));
+					_painter->drawText(dPixelX - fm.horizontalAdvance(QString::number(dX)) - 5, m_paintRect.y() + m_paintRect.height() - 5, QString::number(dXPrint));
 				if (fm.height() < dPixelY - m_paintRect.y() - 5)
 					_painter->drawText(m_paintRect.x() + 5, dPixelY - 5, QString::number(dYPrint));
 				else
@@ -1311,6 +1319,9 @@ void CQtPlot::SaveAsPicture(const QString& _sFileName)
 
 void CQtPlot::SaveAsCSVFile(const QString& _sFileName)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+	using Qt::endl;
+#endif
 	QFile file(_sFileName);
 	if (file.open(QFile::WriteOnly | QFile::Truncate))
 	{
@@ -1320,13 +1331,13 @@ void CQtPlot::SaveAsCSVFile(const QString& _sFileName)
 		{
 			if ((m_vpCurves.at(i)->bVisibility) && (m_vpCurves.at(i)->points.size() > 0))
 			{
-				textStream << m_vpCurves.at(i)->sCurveName << Qt::endl;
+				textStream << m_vpCurves.at(i)->sCurveName << endl;
 				for (int j = 0; j < m_vpCurves.at(i)->points.size(); ++j)
 					textStream << m_vpCurves.at(i)->points.at(j).x() << ", ";
-				textStream << Qt::endl;
+				textStream << endl;
 				for (int j = 0; j < m_vpCurves.at(i)->points.size(); ++j)
 					textStream << m_vpCurves.at(i)->points.at(j).y() << ", ";
-				textStream << Qt::endl;
+				textStream << endl;
 			}
 		}
 	}
@@ -1376,12 +1387,12 @@ bool CQtPlot::GetGridVisibility()
 	return m_bIsGridVisible;
 }
 
-void CQtPlot::SetLegendPosition(__int8 _position)
+void CQtPlot::SetLegendPosition(int8_t _position)
 {
 	m_nLegendPosition = _position;
 	RedrawPlot();
 }
-__int8 CQtPlot::GetLegendPosition()
+int8_t CQtPlot::GetLegendPosition()
 {
 	return m_nLegendPosition;
 }

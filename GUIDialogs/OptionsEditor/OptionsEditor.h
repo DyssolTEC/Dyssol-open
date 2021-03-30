@@ -22,7 +22,7 @@ class COptionsEditor : public QDialog
 	unsigned m_cacheWindowSizeBeforeEdit; // stores old the value of cacheWindowSize for undo
 
 public:
-	COptionsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pMaterialsDB, QWidget* parent = nullptr, Qt::WindowFlags flags = {});
+	COptionsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pMaterialsDB, QWidget* parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 
 	void InitializeConnections() const;
 

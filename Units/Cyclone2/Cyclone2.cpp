@@ -249,11 +249,16 @@ void CCyclone2::CalculateSeparationMuschelknauz(double _dTime, CMaterialStream* 
 	// Get massflows at inlet
 	// All gas leaves through top exit
 	if (d_mflow_gas < 0)
+	{
 		if (std::fabs(d_mflow_gas) < 1e-3)
+		{
 			d_mflow_gas = 0;
+		}
 		else
+		{
 			RaiseError("Inlet gas massflow lower significantly lower than zero: " + std::to_string(d_mflow_gas));
-
+		}
+	}
 
 	_pOutflowFines->SetPhaseMassFlow(_dTime, SOA_VAPOR, d_mflow_gas);
 	// If there is no solid inflow, stop unit calculation

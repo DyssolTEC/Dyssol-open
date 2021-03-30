@@ -63,7 +63,7 @@ void CStreamsViewer::UpdateStreamsView() const
 	ui.streamsList->setCurrentRow(oldCurrent < ui.streamsList->count() ? oldCurrent : -1);
 	for (const auto& index : oldSelection)
 		if (index.row() < ui.streamsList->count())
-			ui.streamsList->item(index.row())->setSelected(true);
+			(*ui.streamsList->item(index.row())).setSelected(true);
 	StreamChanged();
 }
 

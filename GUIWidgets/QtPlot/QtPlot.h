@@ -147,7 +147,7 @@ private:
 	QPoint m_previousMousePos;
 	bool m_bIsGridVisible;
 	bool m_bIsAxisLablesVisible;
-	__int8 m_nLegendPosition;
+	int8_t m_nLegendPosition;
 	LabelTypes m_eLastChosenXLabel;
 	LabelTypes m_eLastChosenYLabel;
 	MouseMode m_eLeftMouseMode;
@@ -180,7 +180,7 @@ private:
 	QString m_sManualYLabelName;
 
 public:
-	CQtPlot(QWidget* parent = 0, Qt::WindowFlags flags = {});
+	CQtPlot(QWidget* parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 	~CQtPlot();
 
 	unsigned AddCurve();														// add new empty curve to the plot
@@ -231,8 +231,8 @@ public:
 	void SaveAsCSVFile(const QString& _sFileName);	// save visible curves to CSV-file
 	void SetGridVisibility(bool _bIsGridVisible);   // set visibility of the grid
 	bool GetGridVisibility();						// returns current visibility of the grid
-	void SetLegendPosition(__int8 _position);
-	__int8 GetLegendPosition();
+	void SetLegendPosition(int8_t _position);
+	int8_t GetLegendPosition();
 	void SetAxisLablesVisible(bool _bIsVisible);
 	bool GetAxisLablesVisible();
 

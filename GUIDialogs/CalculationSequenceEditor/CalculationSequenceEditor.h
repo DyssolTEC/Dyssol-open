@@ -26,7 +26,7 @@ class CCalculationSequenceEditor: public QDialog
 	CCalculationSequence* m_pSequence; // Pointer to the calculation sequence.
 
 public:
-	CCalculationSequenceEditor(CFlowsheet* _pFlowsheet, QWidget *parent = nullptr, Qt::WindowFlags flags = {});
+	CCalculationSequenceEditor(CFlowsheet* _pFlowsheet, QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 
 	void InitializeConnections() const;
 

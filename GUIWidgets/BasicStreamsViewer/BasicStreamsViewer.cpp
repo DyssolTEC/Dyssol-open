@@ -897,6 +897,9 @@ void CBasicStreamsViewer::RestorePosition(QComboBox* _combo, int _position, int 
 
 void CBasicStreamsViewer::ExportToFile()
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+	using Qt::endl;
+#endif
 	const QString fileName = QFileDialog::getSaveFileName(this, "Save file", "", "Text Files (*.txt)");
 	QFile file(fileName);
 	if (!file.open(QFile::WriteOnly | QFile::Truncate)) return;
@@ -908,7 +911,7 @@ void CBasicStreamsViewer::ExportToFile()
 		const std::vector<QString> rowHeaders = ui.tabTable->GetRowHeaderItems(0);
 		for (int i = 0; i < ui.tabTable->rowCount(); ++i)
 		{
-			fileStream << Qt::endl << rowHeaders[i];
+			fileStream << endl << rowHeaders[i];
 			for (const auto& s : ui.tabTable->GetItemsRow(i, 0))
 				fileStream << s << "; ";
 		}
@@ -925,7 +928,7 @@ void CBasicStreamsViewer::ExportToFile()
 			fileStream << "; " << s.replace("\n", " ");
 		for (double t : m_vSelectedMD.front()->GetAllTimePoints())
 		{
-			fileStream << Qt::endl << t << "; ";
+			fileStream << endl << t << "; ";
 			if (distr == DISTR_SIZE)
 				for (double v : m_vSelectedStreams.front()->GetPSD(t, psdType, compounds, meanType))
 					fileStream << v << "; ";

@@ -9,6 +9,7 @@
 #include "ReactionsEditor.h"
 #include <sstream>
 #include <QMessageBox>
+#include <cmath>
 
 CFlowsheetEditor::CFlowsheetEditor(CFlowsheet *_pFlowsheet, const CMaterialsDatabase* _matrialsDB, CModelsManager* _modelsManager, QWidget *parent /*= 0 */)
 	: QWidget(parent),
@@ -692,10 +693,14 @@ void CFlowsheetEditor::UpdateUnitParamDescr() const
 
 	// resize widget according to text length
 	const QString tempText = QString::fromStdString(param->GetDescription());
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+	extraLines += tempText.split("\n", QString::SkipEmptyParts).count();
+#else
 	extraLines += tempText.split("\n", Qt::SkipEmptyParts).count();
+#endif
 	const QFontMetrics fontMetrics(ui.textParamDescr->font());
 	const int fontHeight = fontMetrics.height();
-	const int textWidth = fontMetrics.boundingRect(tempText).width();
+	const int textWidth = fontMetrics.horizontalAdvance(tempText);
 	const int linesNumber = static_cast<int>(std::ceil(static_cast<double>(textWidth) / ui.textParamDescr->width())) + extraLines;
 	const int textHeight = std::max(50, std::min(fontHeight * linesNumber, 400));
 	ui.textParamDescr->setMinimumHeight(textHeight);

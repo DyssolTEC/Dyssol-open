@@ -20,6 +20,7 @@
 #include "DustFormationTesterTab.h"
 #include "SettingsEditor.h"
 #include "SaveLoadThread.h"
+#include "SimulatorTab.h"
 #include <QSharedMemory>
 
 #define MAX_RECENT_FILES 10
@@ -77,7 +78,7 @@ private:
 	CStatusWindow *m_pLoadingWindow;	// status window for loading
 
 public:
-	Dyssol(QWidget *parent = 0, Qt::WindowFlags flags = {});
+	Dyssol(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 	~Dyssol();
 
 	void InitializeConnections() const;	// initialize all qt connections

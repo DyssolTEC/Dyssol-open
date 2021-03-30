@@ -96,7 +96,7 @@ void CModulesManagerTab::SetModelInfoToTable(const SModelDescriptor& _model, con
 	ui.tableModels->SetItemNotEditable(row, 0, _model.name, QString::fromStdString(_model.name));		          // set name
 	ui.tableModels->SetItemNotEditable(row, 1, _model.fileLocation, QString::fromStdWString(_model.fileLocation)); // set path
 	ui.tableModels->SetItemNotEditable(row, 2, _type, _type);                                                     // set type
-	ui.tableModels->SetItemNotEditable(row, 3, _model.version, _model.version);	                                  // set interface version
+	ui.tableModels->SetItemNotEditable(row, 3, _model.version, static_cast<uint>(_model.version));	                                  // set interface version
 	ui.tableModels->SetItemNotEditable(row, 4, _model.author, QString::fromStdString(_model.author));		      // set author name
 	ui.tableModels->SetItemNotEditable(row, 5, date.toString(), date);	                                          // set creation date
 }

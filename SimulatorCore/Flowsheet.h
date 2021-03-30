@@ -7,6 +7,7 @@
 #include "DistributionsGrid.h"
 #include "DyssolTypes.h"
 #include "ParametersHolder.h"
+#include "Phase.h"
 
 /* Stores the whole information about the flowsheet. */
 class CFlowsheet

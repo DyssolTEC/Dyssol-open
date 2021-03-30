@@ -111,14 +111,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AgglomerationFFT.cpp" />
-    <ClCompile Include="kiss_fft.c" />
-    <ClCompile Include="kiss_fftr.c" />
+    <ClCompile Include="kiss_fft.cpp" />
+    <ClCompile Include="kiss_fftr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AgglomerationFFT.h" />
     <ClInclude Include="kiss_fft.h" />
     <ClInclude Include="kiss_fftr.h" />
-    <ClInclude Include="_kiss_fft_guts.h" />
+    <ClInclude Include="kiss_fft_guts.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

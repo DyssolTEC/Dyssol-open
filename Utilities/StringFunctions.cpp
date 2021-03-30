@@ -213,7 +213,7 @@ namespace StringFunctions
 		static const std::string symbols = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 		std::random_device device;
 		std::default_random_engine engine{ device() };
-		const std::uniform_int_distribution<size_t> distribution{ 0, symbols.length() - 1 };
+		std::uniform_int_distribution<size_t> distribution{ 0, symbols.length() - 1 };
 		std::string result(_length, '0');
 		std::generate(result.begin(), result.end(), [&]() { return symbols[distribution(engine)]; });
 		return result;

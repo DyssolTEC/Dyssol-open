@@ -6,6 +6,8 @@
 #include "DyssolDefines.h"
 #include "DefinesMDB.h"
 #include "MixtureEnthalpyLookup.h"
+#include <limits>
+#include <memory>
 
 class CH5Handler;
 class CDenseMDMatrix;

@@ -5,6 +5,7 @@
 #include <ostream>
 #include <map>
 #include <vector>
+#include <ostream>
 
 /* Represents a dependent value, described with the list of [param:value].
  * Implements internal linear interpolation of values between existing parameters
@@ -66,7 +67,7 @@ public:
 	void Clear();
 
 	// Returns a table with only unique entries.
-	static CDependentValues CDependentValues::Unique(const CDependentValues& _table);
+	static CDependentValues Unique(const CDependentValues& _table);
 
 	// Output stream operator.
 	friend std::ostream& operator<<(std::ostream& _os, const CDependentValues& _obj);

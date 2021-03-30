@@ -2,7 +2,13 @@
 
 #pragma once
 
+#ifdef _MSC_VER
 #include "BuildVersion.h"
+#else
+//TODO Define version
+const char CURRENT_BUILD_VERSION[] = "";
+#endif
+
 #include "DyssolHelperDefines.h"
 
 #define VERSION_0			0

@@ -47,8 +47,10 @@ void CAboutWindow::SetHeaderText() const
 		"<br/>"
 		"Copyright " + QString::number(QDate::currentDate().year()) + ", " + m_headerTeamName + "<br/>"
 		"<br/>"
+#ifdef _MSC_VER
 		"Models Creator: " + VISUAL_STUDIO_VERSION + " (" + ARCHITECTURE + ") <br/>"
 		"<br/>"
+#endif
 		"Check for updates <a href=\"" + m_headerUpdatesLink + "\"><span style=\"text-decoration: underline; color:#0000ff;\">here</span></a><br/>"
 	);
 

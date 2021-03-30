@@ -223,11 +223,16 @@ bool CTDArray::SetDataForLoad(const std::vector<double>& _vTP, const std::vector
 {
 	std::vector<double> vData = _vData;
 	if (_vTP.size() != vData.size())
+	{
 		if (vData.size() == 1)
+		{
 			vData.resize(_vTP.size(), vData.front());
+		}
 		else
+		{
 			return false;
-
+		}
+	}
 	size_t nEmptyCnt = 0;
 	for (size_t i = 0; i < _vTP.size(); ++i)
 		if ((vData[i] != -1) && (_vTP[i] != -1))

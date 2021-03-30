@@ -18,7 +18,7 @@ private:
 	QHBoxLayout *layout;
 
 public:
-	CDDTable( QWidget *parent = 0, Qt::WindowFlags flags = {} );
+	CDDTable( QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags() );
 	~CDDTable();
 
 	void SetDistribution(const std::vector<CTimeDependentValue*>& _values);

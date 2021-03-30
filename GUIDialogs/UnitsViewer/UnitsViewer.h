@@ -38,7 +38,7 @@ private:
 	int m_nLastCurve;
 
 public:
-	CUnitsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDatabase, QWidget* parent = 0, Qt::WindowFlags flags = {});
+	CUnitsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDatabase, QWidget* parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 	~CUnitsViewer();
 
 	void InitializeConnections();

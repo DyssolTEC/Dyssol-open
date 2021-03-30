@@ -18,7 +18,7 @@ private:
 	QHBoxLayout *m_pLayout;
 
 public:
-	CParamsItem(CDistributionsGrid *_pGrid, QComboBox *_pCombo, QSlider *_pSlider, QWidget *parent = nullptr, Qt::WindowFlags flags = {});
+	CParamsItem(CDistributionsGrid *_pGrid, QComboBox *_pCombo, QSlider *_pSlider, QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 
 	int GetDistrIndex();
 	void SetupSlider();

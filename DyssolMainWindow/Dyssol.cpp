@@ -1,7 +1,6 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "Dyssol.h"
-#include "SimulatorTab.h"
 #include "StatusWindow.h"
 #include "AboutWindow.h"
 #include "Stream.h"
@@ -9,6 +8,7 @@
 #include "FileSystem.h"
 #include "DyssolStringConstants.h"
 #include "DyssolSystemFunctions.h"
+#include "ThreadPool.h"
 #include <QDesktopWidget>
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -25,15 +25,16 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	resize(QDesktopWidget().availableGeometry(this).size() * 0.7);
 	SetFlowsheetModified(false);
 
+	InitializeThreadPool();
+
 	// setup flowsheet and simulator
 	m_Simulator.SetFlowsheet(&m_Flowsheet);
 
 	// setup config file
 	m_sSettingsPath = QFileInfo(QSettings(QSettings::IniFormat, QSettings::UserScope, StrConst::Dyssol_ApplicationName, StrConst::Dyssol_ConfigApp).fileName()).absolutePath();
-
 	// create directory for temporary data if it doesn't exist
-	if (!FileSystem::DirExists(m_sSettingsPath.toStdWString()))
-		FileSystem::CreateDir(m_sSettingsPath.toStdWString());
+	if (!FileSystem::DirExists(m_sSettingsPath.toStdString()))
+		FileSystem::CreateDir(m_sSettingsPath.toStdString());
 
 	const QString mainConfigFile = m_sSettingsPath + "/" + StrConst::Dyssol_ConfigFileName;
 	const QString tempConfigFile = QString{ "./" } + StrConst::Dyssol_ConfigFileName;
@@ -274,7 +275,7 @@ void Dyssol::SetupCache()
 
 	// set the default cache path to config.ini if it has not been set or does not exist
 	const QVariant cachePathVar = m_pSettings->value(StrConst::Dyssol_ConfigCachePath);
-	if (!cachePathVar.isValid() || cachePathVar.toString().isEmpty() || !FileSystem::DirExists(cachePathVar.toString().toStdWString()))
+	if (!cachePathVar.isValid() || cachePathVar.toString().isEmpty() || !FileSystem::DirExists(cachePathVar.toString().toStdString()))
 		m_pSettings->setValue(StrConst::Dyssol_ConfigCachePath, m_sSettingsPath);
 
 	// setup cache path
@@ -303,8 +304,8 @@ void Dyssol::ClearCache()
 	// close flowsheet
 	m_Flowsheet.Clear();
 	// clear cache
-	FileSystem::RemoveDir((m_pSettings->value(StrConst::Dyssol_ConfigCachePath).toString() + StrConst::Dyssol_CacheDirDebug).toStdWString());
-	FileSystem::RemoveDir((m_pSettings->value(StrConst::Dyssol_ConfigCachePath).toString() + StrConst::Dyssol_CacheDirRelease).toStdWString());
+	FileSystem::RemoveDir((m_pSettings->value(StrConst::Dyssol_ConfigCachePath).toString() + StrConst::Dyssol_CacheDirDebug).toStdString());
+	FileSystem::RemoveDir((m_pSettings->value(StrConst::Dyssol_ConfigCachePath).toString() + StrConst::Dyssol_CacheDirRelease).toStdString());
 }
 
 void Dyssol::CreateMenu()
@@ -514,7 +515,13 @@ void Dyssol::LoadMaterialsDatabase()
 
 size_t Dyssol::OtherRunningDyssolCount()
 {
+#ifdef _MSC_VER
 	return SystemFunctions::ActiveInstancesCount(StringFunctions::String2WString(std::string(StrConst::Dyssol_ApplicationName) + ".exe")) - 1;
+#else
+	// HACK
+	// TODO: implement for Linux to allow proper cache cleaning
+	return 1;
+#endif
 }
 
 void Dyssol::setVisible(bool _visible)
@@ -617,8 +624,13 @@ void Dyssol::LoadingFinished()
 
 void Dyssol::OpenHelp(const QString& _sFile) const
 {
+#ifdef _MSC_VER
 	QString sFileToOpen = QCoreApplication::applicationDirPath() + "/" + StrConst::Dyssol_HelpDir + "/" + _sFile + StrConst::Dyssol_HelpFileExt;
-	if (!FileSystem::FileExists(sFileToOpen.toStdWString())) // cannot find requested file in the running folder -> access through the link
+#else
+	QString sFileToOpen =  QString(INSTALL_DOCS_PATH) + "/" + _sFile + StrConst::Dyssol_HelpFileExt;
+#endif
+
+	if (!FileSystem::FileExists(sFileToOpen.toStdString())) // cannot find requested file in the running folder -> access through the link
 		sFileToOpen = QFile::symLinkTarget(m_sSettingsPath + "/" + StrConst::Dyssol_AppFolderPathLink) + "/" + StrConst::Dyssol_HelpDir + "/" + _sFile + StrConst::Dyssol_HelpFileExt;
 	QDesktopServices::openUrl(QUrl::fromLocalFile(sFileToOpen));
 }

@@ -44,6 +44,8 @@
 #define VISUAL_STUDIO_VERSION	"Visual Studio 2019 16.8"
 #elif (_MSC_VER == 1929)
 #define VISUAL_STUDIO_VERSION	"Visual Studio 2019 16.9"
+#else
+#define VISUAL_STUDIO_VERSION	"Unknown"
 #endif
 
 #ifdef _WIN64
