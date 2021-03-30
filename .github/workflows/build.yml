@@ -36,7 +36,7 @@ jobs:
       working-directory: ${{github.workspace}}/build
       shell: bash
       # Execute the build.  You can specify a specific target with "--target <NAME>"
-      run: cmake --build . --config $BUILD_TYPE
+      run: cmake --build . --parallel --config $BUILD_TYPE
 
   build-clang:
     # The CMake configure and build commands are platform agnostic and should work equally
@@ -71,4 +71,4 @@ jobs:
       working-directory: ${{github.workspace}}/build
       shell: bash
       # Execute the build.  You can specify a specific target with "--target <NAME>"
-      run: CC=/usr/bin/clang-10 CXX=/usr/bin/clang++-10 cmake --build . --config $BUILD_TYPE
+      run: CC=/usr/bin/clang-10 CXX=/usr/bin/clang++-10 cmake --build . --parallel --config $BUILD_TYPE
