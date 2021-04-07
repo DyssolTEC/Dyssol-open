@@ -2,6 +2,7 @@
 
 #include "FileSystem.h"
 #include <fcntl.h>
+#include <iostream>
 #ifdef _MSC_VER
 #include <corecrt_io.h>
 #include <direct.h>
@@ -256,7 +257,7 @@ namespace FileSystem
 			copied = ::readlink("/proc/self/exe", &path[0], path.size());
 			if (copied == -1) return {};
 		} while (copied >= path.size());
-		path[path.size()] = '\0';
+		path.push_back('\0');
 		fullPath = Convert(std::string{ path.begin(), path.end() });
 #endif
 		const std::wstring::size_type pos = fullPath.find_last_of(L"\\/");

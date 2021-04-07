@@ -22,11 +22,15 @@ CH5Handler::~CH5Handler()
 
 void CH5Handler::Create(const std::wstring& _sFileName, bool _bSingleFile /*= true*/)
 {
+	Exception::dontPrint();
+
 	OpenH5File(_sFileName, false, _bSingleFile);
 }
 
 void CH5Handler::Open(const std::wstring& _sFileName)
 {
+	Exception::dontPrint();
+
 	OpenH5File(_sFileName, true, true);
 	if (!m_bFileValid)
 		OpenH5File(_sFileName, true, false);
@@ -99,9 +103,7 @@ int CH5Handler::ReadAttribute(const std::string& _sPath, const std::string& _sAt
 void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::string& _sData) const
 {
 	const char* pCString = _sData.c_str();
-	StrType h5Datatype(PredType::C_S1, H5T_VARIABLE);
-	WriteValue(_sPath, _sDatasetName, 1, h5Datatype, &pCString);
-	h5Datatype.close();
+	WriteValue(_sPath, _sDatasetName, 1, h5String_type(), &pCString);
 }
 
 void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, double _dData) const
@@ -137,9 +139,7 @@ void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatas
 	for (size_t i = 0; i < _vData.size(); ++i)
 		vCStrings[i] = _vData[i].c_str();
 
-	StrType h5Datatype(PredType::C_S1, H5T_VARIABLE);
-	WriteValue(_sPath, _sDatasetName, _vData.size(), h5Datatype, &vCStrings.front());
-	h5Datatype.close();
+	WriteValue(_sPath, _sDatasetName, _vData.size(), h5String_type(), &vCStrings.front());
 }
 
 void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<uint32_t>& _vData) const
@@ -211,15 +211,12 @@ void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatas
 
 void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::string& _sData) const
 {
-	auto** buf = new char*[1];
-	if (ReadStrings(_sPath, _sDatasetName, buf))
-	{
-		_sData = buf[0];
-		delete[] buf[0];
-		delete[] buf;
-	}
+	char* buf{ nullptr };
+	if (ReadValue(_sPath, _sDatasetName, h5String_type(), &buf))
+		_sData = buf;
 	else
 		_sData.clear();
+	free(buf);		// use free() since malloc is used internally by HDF5
 }
 
 void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, double& _dData) const
@@ -249,21 +246,16 @@ void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatase
 
 void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<std::string>& _vData) const
 {
-	_vData.clear();
-	StrType h5Datatype(PredType::C_S1, H5T_VARIABLE);
-	const size_t nElemNum = ReadSize(_sPath, _sDatasetName);
-	if (nElemNum == 0) return;
-	auto** buf = new char*[nElemNum];
-	if (ReadStrings(_sPath, _sDatasetName, buf))
-	{
-		_vData.resize(nElemNum);
-		for (size_t i = 0; i < nElemNum; ++i)
-			_vData[i] = buf[i];
-	}
-	for (size_t i = 0; i < nElemNum; ++i)
-		delete[] buf[i];
-	delete[] buf;
-	h5Datatype.close();
+	_vData.resize(ReadSize(_sPath, _sDatasetName));
+	if (_vData.empty()) return;
+	std::vector<char*> buf(_vData.size(), nullptr);
+	if (ReadValue(_sPath, _sDatasetName, h5String_type(), buf.data()))
+		std::copy(buf.begin(), buf.end(), _vData.begin());
+	else
+		_vData.clear();
+
+	for (void* v : buf)
+		free(v);	// use free() since malloc is used internally by HDF5
 }
 
 void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<uint32_t>& _vData) const
@@ -330,7 +322,7 @@ void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatase
 				_vvData[i].resize(buffer[i].len);
 				auto* pTemp = static_cast<double*>(buffer[i].p);
 				std::copy(&pTemp[0], &pTemp[nCols], _vvData[i].begin());
-				delete[] static_cast<double*>(buffer[i].p);
+				free(buffer[i].p);
 			}
 			delete[] buffer;
 		}
@@ -381,7 +373,7 @@ void CH5Handler::ReadDataOld(const std::string& _sPath, const std::string& _sDat
 			}
 
 			for (size_t i = 0; i < nLen; ++i)
-				delete[] static_cast<double*>(buffer[i].p);
+				free(buffer[i].p);
 			delete[] buffer;
 		}
 
@@ -477,30 +469,6 @@ bool CH5Handler::ReadValue(const std::string& _sPath, const std::string& _sDatas
 	}
 }
 
-bool CH5Handler::ReadStrings(const std::string& _sPath, const std::string& _sDatasetName, char** _pRes) const
-{
-	if (!m_bFileValid) return false;
-
-	try
-	{
-		Group h5Group(m_ph5File->openGroup(_sPath));
-		DataSet h5Dataset = h5Group.openDataSet(_sDatasetName);
-		StrType h5Datatype(PredType::C_S1, H5T_VARIABLE);
-
-		h5Dataset.read(_pRes, h5Datatype);
-
-		h5Datatype.close();
-		h5Dataset.close();
-		h5Group.close();
-
-		return true;
-	}
-	catch (...)
-	{
-		return false;
-	}
-}
-
 void CH5Handler::OpenH5File(const std::wstring& _sFileName, bool _bOpen, bool _bSingleFile)
 {
 	Close();
@@ -559,6 +527,17 @@ H5::CompType& CH5Handler::h5STDValue_type()
 		type = std::make_unique<CompType>(sizeof(STDValue));
 		type->insertMember("time" , HOFFSET(STDValue, time ), PredType::NATIVE_DOUBLE);
 		type->insertMember("value", HOFFSET(STDValue, value), PredType::NATIVE_DOUBLE);
+	}
+	return *type;
+}
+
+H5::StrType& CH5Handler::h5String_type()
+{
+	static std::unique_ptr<StrType> type{};
+
+	if (!type)
+	{
+		type = std::make_unique<StrType>(PredType::C_S1, H5T_VARIABLE);
 	}
 	return *type;
 }
