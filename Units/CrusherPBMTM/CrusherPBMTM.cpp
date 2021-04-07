@@ -14,34 +14,34 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 void CCrusherPBMTM::CreateBasicInfo()
 {
 	/// Basic unit's info ///
-	m_sUnitName = "Crusher PBM TM";
-	m_sAuthorName = "SPE TUHH";
-	m_sUniqueID = "2FD8955A80D341288031E1063B9FC822";
+	SetUnitName("Crusher PBM TM");
+	SetAuthorName("SPE TUHH");
+	SetUniqueID("2FD8955A80D341288031E1063B9FC822");
 }
 
 void CCrusherPBMTM::CreateStructure()
 {
 		/// Add ports ///
-	AddPort("Input", INPUT_PORT);
-	AddPort("Output", OUTPUT_PORT);
+	AddPort("Input", EUnitPort::INPUT);
+	AddPort("Output", EUnitPort::OUTPUT);
 
 	/// Add unit parameters ///
-	AddGroupParameter("Selection", E2I(ESelection::CONSTANT),
+	AddComboParameter("Selection", E2I(ESelection::CONSTANT),
 		{ E2I(ESelection::CONSTANT), E2I(ESelection::LINEAR), E2I(ESelection::QUADRATIC), E2I(ESelection::POWER), E2I(ESelection::EXPONENTIAL),	E2I(ESelection::KING), E2I(ESelection::AUSTIN) },
 		{ "Constant",                "Linear",                "Quadratic",                "Power",                "Exponential",                "King",                "Austin"                }, "Selection function");
-	AddGroupParameter("Breakage", E2I(EBreakage::BINARY),
+	AddComboParameter("Breakage", E2I(EBreakage::BINARY),
 		{ E2I(EBreakage::BINARY), E2I(EBreakage::DIEMER), E2I(EBreakage::VOGEL), E2I(EBreakage::AUSTIN) },
 		{ "Binary",               "Diemer",               "Vogel",               "Austin"               }, "Breakage function");
 
-	AddConstParameter("S_scale", 0,	     1,      1,    "-",   "Scale factor for Selection function");
-	AddConstParameter("S1",		 UP_MIN, UP_MAX, 3,    "-",   "Parameter of Selection function");
-	AddConstParameter("S2",      UP_MIN, UP_MAX, 3,    "-",   "Parameter of Selection function");
-	AddConstParameter("S3",      UP_MIN, UP_MAX, 3,    "-",   "Parameter of Selection function");
-	AddConstParameter("B1",      UP_MIN, UP_MAX, 15,   "-",   "Parameter of Breakage function");
-	AddConstParameter("B2",      UP_MIN, UP_MAX, 5,    "-",   "Parameter of Breakage function");
-	AddConstParameter("B3",      UP_MIN, UP_MAX, 5,    "-",   "Parameter of Breakage function");
-	AddConstParameter("dt_min",  0,      1e+9,   0,    "s",   "Minimum time step for integration");
-	AddConstParameter("dt_max",  0,      1e+9,   1e+9, "s",   "Maximum time step for integration");
+	AddConstRealParameter("S_scale", 1   , "-", "Scale factor for Selection function", 0, 1   );
+	AddConstRealParameter("S1"     , 3   , "-", "Parameter of Selection function"             );
+	AddConstRealParameter("S2"     , 3   , "-", "Parameter of Selection function"             );
+	AddConstRealParameter("S3"     , 3   , "-", "Parameter of Selection function"             );
+	AddConstRealParameter("B1"     , 15  , "-", "Parameter of Breakage function"              );
+	AddConstRealParameter("B2"     , 5   , "-", "Parameter of Breakage function"              );
+	AddConstRealParameter("B3"     , 5   , "-", "Parameter of Breakage function"              );
+	AddConstRealParameter("dt_min" , 0   , "s", "Minimum time step for integration"  , 0, 1e+9);
+	AddConstRealParameter("dt_max" , 1e+9, "s", "Maximum time step for integration"  , 0, 1e+9);
 	AddComboParameter("Method", E2I(EMethod::NEWTON), { E2I(EMethod::NEWTON), E2I(EMethod::KR2) }, { "Newton", "Runge-Kutta" },	"Method for calculating transformation matrices");
 
 	AddParametersToGroup("Selection", "Constant",    { "S1" });
@@ -61,10 +61,10 @@ void CCrusherPBMTM::CreateStructure()
 	AddHoldup("Holdup");
 }
 
-void CCrusherPBMTM::Initialize(double _dTime)
+void CCrusherPBMTM::Initialize(double _time)
 {
 	/// Check presence of distribution by size ///
-	if (!IsPhaseDefined(SOA_SOLID))			RaiseWarning("Solid phase has not been defined.");
+	if (!IsPhaseDefined(EPhase::SOLID))		RaiseWarning("Solid phase has not been defined.");
 	if (!IsDistributionDefined(DISTR_SIZE))	RaiseWarning("Size distribution has not been defined.");
 
 	/// Get pointers to streams ///
@@ -73,7 +73,7 @@ void CCrusherPBMTM::Initialize(double _dTime)
 
 	/// Get pointers to holdups ///
 	m_holdup = GetHoldup("Holdup");
-	m_holdupMass = m_holdup->GetMass(_dTime);
+	m_holdupMass = m_holdup->GetMass(_time);
 
 	/// Get number of classes for PSD ///
 	m_classesNum = GetClassesNumber(DISTR_SIZE);
@@ -84,20 +84,20 @@ void CCrusherPBMTM::Initialize(double _dTime)
 		m_sizes[i] = m_grid[i + 1] - m_grid[i];
 
 	/// Configure transformation matrix ///
-	m_TM.SetDimensions(DISTR_SIZE, m_classesNum);
+	m_TM.SetDimensions(DISTR_SIZE, (unsigned)m_classesNum);
 
 	/// Unit parameters
-	m_selectionFun = static_cast<ESelection>(GetGroupParameterValue("Selection"));
-	m_breakageFun  = static_cast<EBreakage>(GetGroupParameterValue("Breakage"));
-	m_sscale = GetConstParameterValue("S_scale");
-	m_s1 = GetConstParameterValue("S1");
-	m_s2 = GetConstParameterValue("S2");
-	m_s3 = GetConstParameterValue("S3");
-	m_b1 = GetConstParameterValue("B1");
-	m_b2 = GetConstParameterValue("B2");
-	m_b3 = GetConstParameterValue("B3");
-	m_dtMin = GetConstParameterValue("dt_min");
-	m_dtMax = GetConstParameterValue("dt_max");
+	m_selectionFun = static_cast<ESelection>(GetComboParameterValue("Selection"));
+	m_breakageFun  = static_cast<EBreakage>(GetComboParameterValue("Breakage"));
+	m_sscale = GetConstRealParameterValue("S_scale");
+	m_s1 = GetConstRealParameterValue("S1");
+	m_s2 = GetConstRealParameterValue("S2");
+	m_s3 = GetConstRealParameterValue("S3");
+	m_b1 = GetConstRealParameterValue("B1");
+	m_b2 = GetConstRealParameterValue("B2");
+	m_b3 = GetConstRealParameterValue("B3");
+	m_dtMin = GetConstRealParameterValue("dt_min");
+	m_dtMax = GetConstRealParameterValue("dt_max");
 	m_method = static_cast<EMethod>(GetComboParameterValue("Method"));
 
 	/// Precalculate values
@@ -110,20 +110,20 @@ void CCrusherPBMTM::Initialize(double _dTime)
 	m_I = CMatrix2D::Identity(m_classesNum);
 }
 
-void CCrusherPBMTM::Simulate(double _dStartTime, double _dEndTime)
+void CCrusherPBMTM::Simulate(double _timeBeg, double _timeEnd)
 {
-	if (_dStartTime == 0)
-		m_outStream->CopyFromHoldup(m_holdup, 0, m_inStream->GetMassFlow(0));
+	if (_timeBeg == 0)
+		m_outStream->CopyFromHoldup(0, m_holdup, m_inStream->GetMassFlow(0));
 
-	double t1 = _dStartTime;
-	while (t1 < _dEndTime)
+	double t1 = _timeBeg;
+	while (t1 < _timeEnd)
 	{
-		const double dtCalc = m_dtMin == m_dtMax ? m_dtMin : MaxTimeStep(_dEndTime - t1, m_holdup->GetPSD(t1, PSD_q0, EPSDGridType::VOLUME));
+		const double dtCalc = m_dtMin == m_dtMax ? m_dtMin : MaxTimeStep(_timeEnd - t1, m_holdup->GetPSD(t1, PSD_q0, EPSDGridType::VOLUME));
 		const double dtTemp = std::min(m_dtMax, std::max(m_dtMin, dtCalc));
-		const double dt = t1 + dtTemp < _dEndTime ? dtTemp : _dEndTime - t1;
+		const double dt = t1 + dtTemp < _timeEnd ? dtTemp : _timeEnd - t1;
 		const double t2 = t1 + dt;
 
-		m_holdup->AddStream2(m_inStream, t1, t2);
+		m_holdup->AddStream(t1, t2, m_inStream);
 		switch (m_method)
 		{
 		case EMethod::NEWTON:	CalculateTransformationMatrixNewton(dt);	break;
@@ -131,7 +131,7 @@ void CCrusherPBMTM::Simulate(double _dStartTime, double _dEndTime)
 		}
 		m_holdup->ApplyTM(t2, m_TM);
 		m_holdup->SetMass(t2, m_holdupMass);
-		m_outStream->CopyFromHoldup(m_holdup, t2, m_inStream->GetMassFlow(_dEndTime));
+		m_outStream->CopyFromHoldup(t2, m_holdup, m_inStream->GetMassFlow(_timeEnd));
 		t1 = t2;
 	}
 }

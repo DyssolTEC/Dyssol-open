@@ -2,52 +2,50 @@
 
 #pragma once
 
-#include "DynamicUnit.h"
-#include "DAESolver.h"
-#include "MaterialStream.h"
+#include "UnitDevelopmentDefines.h"
 
 class CUnitDAEModel : public CDAEModel
 {
 public:
 	/// Indexes of state variables for solver ///
-	size_t m_nAtot;		// Total surface of all particles in the Granulator
-	size_t m_nMtot;		// Total mass of all particles in the Granulator
-	size_t m_nMout;		// Output mass flow of nuclei
-	size_t m_nMdust;	// Output dust
-	size_t m_nG;		// Growth rate
-	size_t m_nq3;		// PSD
+	size_t m_iAtot{};	// Total surface of all particles in the Granulator
+	size_t m_iMtot{};	// Total mass of all particles in the Granulator
+	size_t m_iMout{};	// Output mass flow of nuclei
+	size_t m_iMdust{};	// Output dust
+	size_t m_iG{};		// Growth rate
+	size_t m_iq3{};		// PSD
 
 public:
-	void CalculateResiduals(double _dTime, double* _pVars, double* _pDers, double* _pRes, void* _pUserData) override;
-	void ResultsHandler(double _dTime, double* _pVars, double* _pDerivs, void *_pUserData) override;
+	void CalculateResiduals(double _time, double* _vars, double* _ders, double* _res, void* _unit) override;
+	void ResultsHandler(double _time, double* _vars, double* _ders, void* _unit) override;
 };
 
 class CSimpleGranulator : public CDynamicUnit
 {
 private:
-	CUnitDAEModel m_Model;
-	CDAESolver m_Solver;
+	CUnitDAEModel m_model;
+	CDAESolver m_solver;
 
 public:
-	CHoldup* m_pHoldup;					// Holdup
-	CMaterialStream* m_pInSuspStream;	// Input of suspension
-	CMaterialStream* m_pInNuclStream;	// Input of nuclei
-	CMaterialStream* m_pInGasStream;	// Input gas stream
-	CMaterialStream* m_pOutNuclStream;	// Output of solids
-	CMaterialStream* m_pOutDustStream;	// Output of solids
+	CHoldup* m_holdup{};				// Holdup
+	CMaterialStream* m_inSolutStream{};	// Input of solution
+	CMaterialStream* m_inNuclStream{};	// Input of nuclei
+	CMaterialStream* m_inGasStream{};	// Input gas stream
+	CMaterialStream* m_outNuclStream{};	// Output of solids
+	CMaterialStream* m_outDustStream{};	// Output of solids
 
-	unsigned m_nClassesNum;				// Number of classes for PSD
-	std::vector<double> m_vSizeGrid;	// Size grid for PSD
-	std::vector<double> m_vAverDiam;	// Average values of size grid for PSD
-	std::vector<double> m_vClassSize;	// Class sizes of size grid for PSD
-	double m_dInitMass;					// Initial mass in the Granulator
-	std::vector<double> m_dPreCalc;		// Vector of precalculated values
+	size_t m_classesNum{};				// Number of classes for PSD
+	std::vector<double> m_sizeGrid;		// Size grid for PSD
+	std::vector<double> m_averDiam;		// Average values of size grid for PSD
+	std::vector<double> m_classSize;	// Class sizes of size grid for PSD
+	double m_initMass{};				// Initial mass in the Granulator
+	std::vector<double> m_preCalc;		// Vector of precalculated values
 
 public:
 	void CreateBasicInfo() override;
 	void CreateStructure() override;
-	void Initialize(double _dTime) override;
+	void Initialize(double _time) override;
 	void SaveState() override;
 	void LoadState() override;
-	void Simulate(double _dStartTime, double _dEndTime) override;
+	void Simulate(double _startTime, double _endTime) override;
 };

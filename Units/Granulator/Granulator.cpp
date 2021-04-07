@@ -2,8 +2,6 @@
 
 #define DLL_EXPORT
 #include "Granulator.h"
-#include "DistributionsFunctions.h"
-#include "TransformMatrix.h"
 
 extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 {
@@ -13,217 +11,216 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 void CSimpleGranulator::CreateBasicInfo()
 {
 	/// Set basic unit info ///
-	m_sUnitName = "Granulator";
-	m_sAuthorName = "SPE TUHH";
-	m_sUniqueID = "560E86013C6B4647A32A3AE346D5DB75";
+	SetUnitName("Granulator");
+	SetAuthorName("SPE TUHH");
+	SetUniqueID("560E86013C6B4647A32A3AE346D5DB75");
 }
 
 void CSimpleGranulator::CreateStructure()
 {
 	/// Add ports ///
-	AddPort("Suspension", INPUT_PORT);
-	AddPort("ExternalNuclei", INPUT_PORT);
-	AddPort("FluidizationGas", INPUT_PORT);
-	AddPort("Output", OUTPUT_PORT);
-	AddPort("DustOutput", OUTPUT_PORT);
+	AddPort("Solution", EUnitPort::INPUT);
+	AddPort("ExternalNuclei", EUnitPort::INPUT);
+	AddPort("FluidizationGas", EUnitPort::INPUT);
+	AddPort("Output", EUnitPort::OUTPUT);
+	AddPort("DustOutput", EUnitPort::OUTPUT);
 
 	/// Add unit parameters ///
-	AddTDParameter("Kos", 0.0, 1.0, 0.0, "-", "Overspray part of suspension");
-	AddConstParameter("RTol", 0.0, 1.0, 1e-6, "-", "Relative tolerance");
-	AddConstParameter("ATol", 0.0, 1.0, 1e-8, "-", "Absolute tolerance");
+	AddTDParameter       ("Kos" , 0.0 , "-", "Overspray part of solution", 0.0, 1.0);
+	AddConstRealParameter("RTol", 1e-6, "-", "Relative tolerance"          , 0.0, 1.0);
+	AddConstRealParameter("ATol", 1e-8, "-", "Absolute tolerance"          , 0.0, 1.0);
 
 	/// Add holdups ///
 	AddHoldup("HoldupMaterial");
 
 	/// Set this unit as user data of model ///
-	m_Model.SetUserData(this);
+	m_model.SetUserData(this);
 }
 
-void CSimpleGranulator::Initialize(double _dTime)
+void CSimpleGranulator::Initialize(double _time)
 {
 	/// Check flowsheet parameters ///
-	if (!IsPhaseDefined(SOA_SOLID))			RaiseError("Solid phase has not been defined.");
-	if (!IsPhaseDefined(SOA_LIQUID))		RaiseError("Liquid phase has not been defined.");
-	if (!IsPhaseDefined(SOA_VAPOR))			RaiseError("Gas phase has not been defined.");
+	if (!IsPhaseDefined(EPhase::SOLID))		RaiseError("Solid phase has not been defined.");
+	if (!IsPhaseDefined(EPhase::LIQUID))	RaiseError("Liquid phase has not been defined.");
+	if (!IsPhaseDefined(EPhase::VAPOR))		RaiseError("Gas phase has not been defined.");
 	if (!IsDistributionDefined(DISTR_SIZE))	RaiseError("Size distribution has not been defined.");
 
 	/// Get holdup ///
-	m_pHoldup = GetHoldup("HoldupMaterial");
+	m_holdup = GetHoldup("HoldupMaterial");
 
 	/// Get pointers to streams ///
-	m_pInSuspStream = GetPortStream("Suspension");
-	m_pInNuclStream = GetPortStream("ExternalNuclei");
-	m_pInGasStream = GetPortStream("FluidizationGas");
-	m_pOutNuclStream = GetPortStream("Output");
-	m_pOutDustStream = GetPortStream("DustOutput");
+	m_inSolutStream = GetPortStream("Solution");
+	m_inNuclStream = GetPortStream("ExternalNuclei");
+	m_inGasStream = GetPortStream("FluidizationGas");
+	m_outNuclStream = GetPortStream("Output");
+	m_outDustStream = GetPortStream("DustOutput");
 
 	/// Get number of classes for PSD ///
-	m_nClassesNum = GetClassesNumber(DISTR_SIZE);
+	m_classesNum = GetClassesNumber(DISTR_SIZE);
 	/// Get grid of PSD ///
-	m_vSizeGrid = GetNumericGrid(DISTR_SIZE);
-	m_vAverDiam = GetClassesMeans(DISTR_SIZE);
-	m_vClassSize = GetClassesSizes(DISTR_SIZE);
+	m_sizeGrid = GetNumericGrid(DISTR_SIZE);
+	m_averDiam = GetClassesMeans(DISTR_SIZE);
+	m_classSize = GetClassesSizes(DISTR_SIZE);
 	/// Get initial PSD ///
-	std::vector<double> vPSD = m_pHoldup->GetPSD(_dTime, PSD_q3);
+	std::vector<double> vPSD = m_holdup->GetPSD(_time, PSD_q3);
 
 	/// Get initial mass in holdup ///
-	m_dInitMass = m_pHoldup->GetPhaseMass(_dTime, SOA_SOLID);
+	m_initMass = m_holdup->GetPhaseMass(_time, EPhase::SOLID);
 
 	/// Calculate some initials ///
-	m_dPreCalc.clear();
-	m_dPreCalc.push_back(0);
-	for (unsigned i = 1; i < m_nClassesNum; ++i)
-		m_dPreCalc.push_back(std::pow((m_vSizeGrid[i] + m_vSizeGrid[i + 1]) / (m_vSizeGrid[i - 1] + m_vSizeGrid[i]), 3));
+	m_preCalc.clear();
+	m_preCalc.push_back(0);
+	for (size_t i = 1; i < m_classesNum; ++i)
+		m_preCalc.push_back(std::pow((m_sizeGrid[i] + m_sizeGrid[i + 1]) / (m_sizeGrid[i - 1] + m_sizeGrid[i]), 3));
 
 	/// Clear all state variables in model ///
-	m_Model.ClearVariables();
+	m_model.ClearVariables();
 
 	/// Add state variables to a model ///
-	m_Model.m_nAtot = m_Model.AddDAEVariable(false, 1, 0, 0);							// Total surface of all particles in the Granulator
-	m_Model.m_nMtot = m_Model.AddDAEVariable(false, m_pHoldup->GetMass(_dTime), 0, 0);	// Total mass of all particles in the Granulator
-	m_Model.m_nMout = m_Model.AddDAEVariable(false, 0, 0, 0);							// Output mass flow of nuclei
-	m_Model.m_nMdust = m_Model.AddDAEVariable(false, 0, 0, 0);							// Output mass flow of dust
-	m_Model.m_nG = m_Model.AddDAEVariable(false, 1e-8, 0, 0);							// Growth rate
-	for (unsigned i = 0; i < m_nClassesNum; ++i)										// Initial PSD
-		m_Model.AddDAEVariable(true, vPSD[i], 0, 1.0);
-	m_Model.m_nq3 = m_Model.m_nG + 1;
+	m_model.m_iAtot = m_model.AddDAEVariable(false, 1, 0, 0);							// Total surface of all particles in the Granulator
+	m_model.m_iMtot = m_model.AddDAEVariable(false, m_holdup->GetMass(_time), 0, 0);	// Total mass of all particles in the Granulator
+	m_model.m_iMout = m_model.AddDAEVariable(false, 0, 0, 0);							// Output mass flow of nuclei
+	m_model.m_iMdust = m_model.AddDAEVariable(false, 0, 0, 0);							// Output mass flow of dust
+	m_model.m_iG = m_model.AddDAEVariable(false, 1e-8, 0, 0);							// Growth rate
+	for (size_t i = 0; i < m_classesNum; ++i)											// Initial PSD
+		m_model.AddDAEVariable(true, vPSD[i], 0, 1.0);
+	m_model.m_iq3 = m_model.m_iG + 1;
 
-	AddStateVariable("Atot", 1, true);
-	AddStateVariable("Mtot", m_pHoldup->GetMass(_dTime), true);
-	AddStateVariable("Mout", 0, true);
-	AddStateVariable("Mdust", 0, true);
-	AddStateVariable("G", 1e-8, true);
-	for (unsigned i = 0; i < m_nClassesNum; ++i)
-		AddStateVariable("PSD" + std::to_string(i), vPSD[i], true);
+	AddStateVariable("Atot", 1);
+	AddStateVariable("Mtot", m_holdup->GetMass(_time));
+	AddStateVariable("Mout", 0);
+	AddStateVariable("Mdust", 0);
+	AddStateVariable("G", 1e-8);
+	for (size_t i = 0; i < m_classesNum; ++i)
+		AddStateVariable("PSD" + std::to_string(i), vPSD[i]);
 
 	/// Set tolerances to model ///
-	m_Model.SetTolerance(GetConstParameterValue("RTol"), GetConstParameterValue("ATol"));
+	m_model.SetTolerance(GetConstRealParameterValue("RTol"), GetConstRealParameterValue("ATol"));
 
 	/// Set model to a solver ///
-	if (!m_Solver.SetModel(&m_Model))
-		RaiseError(m_Solver.GetError());
+	if (!m_solver.SetModel(&m_model))
+		RaiseError(m_solver.GetError());
 }
 
 void CSimpleGranulator::SaveState()
 {
-	m_Solver.SaveState();
+	m_solver.SaveState();
 }
 
 void CSimpleGranulator::LoadState()
 {
-	m_Solver.LoadState();
+	m_solver.LoadState();
 }
 
-void CSimpleGranulator::Simulate(double _dStartTime, double _dEndTime)
+void CSimpleGranulator::Simulate(double _startTime, double _endTime)
 {
-	if (!m_Solver.Calculate(_dStartTime, _dEndTime))
-		RaiseError(m_Solver.GetError());
+	if (!m_solver.Calculate(_startTime, _endTime))
+		RaiseError(m_solver.GetError());
 }
 
-void CUnitDAEModel::ResultsHandler(double _dTime, double* _pVars, double* _pDerivs, void *_pUserData)
+void CUnitDAEModel::ResultsHandler(double _time, double* _vars, double* _ders, void *_unit)
 {
-	auto unit = static_cast<CSimpleGranulator*>(_pUserData);
+	auto* unit = static_cast<CSimpleGranulator*>(_unit);
 
-	const double dMSusp = unit->m_pInSuspStream->GetPhaseMassFlow(_dTime, SOA_SOLID);	// Mass flow of solid phase in suspension for current time
-	const double dKos = unit->GetTDParameterValue("Kos", _dTime);						// Overspray part in suspension for current time
-	const double dMe = dMSusp * (1 - dKos);												// Effective mass stream of the injected suspension for current time
-	const double dMInNucl = unit->m_pInNuclStream->GetPhaseMassFlow(_dTime, SOA_SOLID); // Mass of input nuclei - solid part
-	const double dMoutTemp = dMInNucl + dMe;
+	const double mSolut = unit->m_inSolutStream->GetPhaseMassFlow(_time, EPhase::SOLID);	// Mass flow of solid phase in solution for current time
+	const double Kos = unit->GetTDParameterValue("Kos", _time);								// Overspray part in solution for current time
+	const double me = mSolut * (1 - Kos);													// Effective mass stream of the injected solution for current time
+	const double mInNucl = unit->m_inNuclStream->GetPhaseMassFlow(_time, EPhase::SOLID);	// Mass of input nuclei - solid part
+	const double mOutTemp = mInNucl + me;
 
-	const double dDustMass = _pVars[m_nMdust];
+	const double dustMass = _vars[m_iMdust];
 
-	unit->m_pHoldup->AddTimePoint(_dTime);
+	unit->m_holdup->AddTimePoint(_time);
 
-	std::vector<double> vTemp(unit->m_nClassesNum, 0);
-	for (unsigned i = 0; i < unit->m_nClassesNum; ++i)
-		vTemp[i] = _pVars[m_nq3 + i] < 0 ? 0 : _pVars[m_nq3 + i];
+	std::vector<double> temp(unit->m_classesNum, 0);
+	for (size_t i = 0; i < unit->m_classesNum; ++i)
+		temp[i] = _vars[m_iq3 + i] < 0 ? 0 : _vars[m_iq3 + i];
 
 	// calculate and apply transformation matrix
-	const std::vector<double> vInDistr = unit->m_pHoldup->GetDistribution(_dTime, DISTR_SIZE);
-	const std::vector<double> vOutDistr = Convertq3ToMassFractions(unit->m_vSizeGrid, vTemp);
+	const std::vector<double> inDistr = unit->m_holdup->GetDistribution(_time, DISTR_SIZE);
+	const std::vector<double> outDistr = Convertq3ToMassFractions(unit->m_sizeGrid, temp);
 	CTransformMatrix TM;
-	CSimpleGranulator::CalculateTM(DISTR_SIZE, vInDistr, vOutDistr, TM);
-	unit->m_pHoldup->ApplyTM(_dTime, TM);
+	CSimpleGranulator::CalculateTM(DISTR_SIZE, inDistr, outDistr, TM);
+	unit->m_holdup->ApplyTM(_time, TM);
 
-	const double dHoldupMass = unit->m_pHoldup->GetMass(_dTime);
+	const double holdupMass = unit->m_holdup->GetMass(_time);
 
-	static_cast<CBaseStream*>(unit->m_pHoldup)->AddStream_Base(*static_cast<CBaseStream*>(unit->m_pInSuspStream), _dTime);	// hack to handle holdup as material stream
-	static_cast<CBaseStream*>(unit->m_pHoldup)->AddStream_Base(*static_cast<CBaseStream*>(unit->m_pInNuclStream), _dTime);
+	static_cast<CBaseStream*>(unit->m_holdup)->Add(_time, *static_cast<CBaseStream*>(unit->m_inSolutStream));	// HACK: to handle holdup as material stream
+	static_cast<CBaseStream*>(unit->m_holdup)->Add(_time, *static_cast<CBaseStream*>(unit->m_inNuclStream));
 
-	unit->m_pHoldup->RemoveTimePointsAfter(_dTime);
+	unit->m_holdup->RemoveTimePointsAfter(_time);
 
-	unit->m_pHoldup->SetMass(_dTime, dHoldupMass);
+	unit->m_holdup->SetMass(_time, holdupMass);
 
-	unit->m_pOutNuclStream->CopyFromHoldup(unit->m_pHoldup, _dTime, dMoutTemp);
-	unit->m_pOutNuclStream->SetSinglePhaseProp(_dTime, FRACTION, SOA_SOLID, 1);
-	unit->m_pOutNuclStream->SetSinglePhaseProp(_dTime, FRACTION, SOA_LIQUID, 0);
-	unit->m_pOutNuclStream->SetSinglePhaseProp(_dTime, FRACTION, SOA_VAPOR, 0);
+	unit->m_outNuclStream->CopyFromHoldup(_time, unit->m_holdup, mOutTemp);
+	unit->m_outNuclStream->SetPhaseFraction(_time, EPhase::SOLID, 1);
+	unit->m_outNuclStream->SetPhaseFraction(_time, EPhase::LIQUID, 0);
+	unit->m_outNuclStream->SetPhaseFraction(_time, EPhase::VAPOR, 0);
 
-	unit->m_pOutDustStream->CopyFromHoldup(unit->m_pHoldup, _dTime, unit->m_pHoldup->GetMass(_dTime));
-	unit->m_pOutDustStream->AddStream(unit->m_pInGasStream, _dTime);
-	unit->m_pOutDustStream->SetMassFlow(_dTime, dDustMass);
-	unit->m_pOutDustStream->SetSinglePhaseProp(_dTime, FRACTION, SOA_SOLID, 0);
-	const double dFrL = unit->m_pOutDustStream->GetSinglePhaseProp(_dTime, FRACTION, SOA_LIQUID);
-	const double dFrV = unit->m_pOutDustStream->GetSinglePhaseProp(_dTime, FRACTION, SOA_VAPOR);
-	unit->m_pOutDustStream->SetSinglePhaseProp(_dTime, FRACTION, SOA_LIQUID, dFrL / (dFrL + dFrV));
-	unit->m_pOutDustStream->SetSinglePhaseProp(_dTime, FRACTION, SOA_VAPOR, dFrV / (dFrL + dFrV));
+	unit->m_outDustStream->CopyFromHoldup(_time, unit->m_holdup, unit->m_holdup->GetMass(_time));
+	unit->m_outDustStream->AddStream(_time, unit->m_inGasStream);
+	unit->m_outDustStream->SetMassFlow(_time, dustMass);
+	unit->m_outDustStream->SetPhaseFraction(_time, EPhase::SOLID, 0);
+	const double frL = unit->m_outDustStream->GetPhaseFraction(_time, EPhase::LIQUID);
+	const double frV = unit->m_outDustStream->GetPhaseFraction(_time, EPhase::VAPOR);
+	unit->m_outDustStream->SetPhaseFraction(_time, EPhase::LIQUID, frL / (frL + frV));
+	unit->m_outDustStream->SetPhaseFraction(_time, EPhase::VAPOR, frV / (frL + frV));
 
-	unit->SetStateVariable(unsigned(m_nAtot), _pVars[m_nAtot]);
-	unit->SetStateVariable(unsigned(m_nMtot), _pVars[m_nMtot]);
-	unit->SetStateVariable(unsigned(m_nMout), _pVars[m_nMout]);
-	unit->SetStateVariable(unsigned(m_nMdust), _pVars[m_nMdust]);
-	unit->SetStateVariable(unsigned(m_nG), _pVars[m_nG]);
-	for (unsigned i = 0; i < unit->m_nClassesNum; ++i)
-		unit->SetStateVariable(unsigned(m_nq3) + i, _pVars[m_nq3 + i]);
-	unit->SaveStateVariables(_dTime);
+	unit->SetStateVariable("Atot" , _vars[m_iAtot] , _time);
+	unit->SetStateVariable("Mtot" , _vars[m_iMtot] , _time);
+	unit->SetStateVariable("Mout" , _vars[m_iMout] , _time);
+	unit->SetStateVariable("Mdust", _vars[m_iMdust], _time);
+	unit->SetStateVariable("G"    , _vars[m_iG]    , _time);
+	for (size_t i = 0; i < unit->m_classesNum; ++i)
+		unit->SetStateVariable("PSD" + std::to_string(i), _vars[m_iq3 + i], _time);
 }
 
-void CUnitDAEModel::CalculateResiduals(double _dTime, double* _pVars, double* _pDers, double* _pRes, void* _pUserData)
+void CUnitDAEModel::CalculateResiduals(double _time, double* _vars, double* _ders, double* _res, void* _unit)
 {
-	const auto unit = static_cast<CSimpleGranulator*>(_pUserData);
+	const auto* unit = static_cast<CSimpleGranulator*>(_unit);
 
-	const double dATot = _pVars[m_nAtot];
-	const double dMTot = _pVars[m_nMtot];
-	const double dMOut = _pVars[m_nMout];
-	const double dMDust = _pVars[m_nMdust];
-	const double dG = _pVars[m_nG];
+	const double ATot = _vars[m_iAtot];
+	const double mTot = _vars[m_iMtot];
+	const double mOut = _vars[m_iMout];
+	const double mDust = _vars[m_iMdust];
+	const double G = _vars[m_iG];
 
-	const double dTotGasMass = unit->m_pInGasStream->GetMassFlow(_dTime);
-	const double dMSusp = unit->m_pInSuspStream->GetPhaseMassFlow(_dTime, SOA_SOLID);				// Mass flow of solid phase in suspension for current time
-	const double dMNotSol = unit->m_pInSuspStream->GetMassFlow(_dTime) - dMSusp;					// Mass flow of all phases except solid in suspension for current time
-	const double dKos = unit->GetTDParameterValue("Kos", _dTime);									// Overspray part in suspension for current time
-	const double dMe = dMSusp * (1 - dKos);															// Effective mass stream of the injected suspension for current time
-	const double dSuspSolDens = unit->m_pInSuspStream->GetPhaseTPDProp(_dTime, DENSITY, SOA_SOLID);	// Density of the solid in the suspension
-	const double dMInNucl = unit->m_pInNuclStream->GetPhaseMassFlow(_dTime, SOA_SOLID);				// Mass of input nuclei - solid part
-	const double dMInNuclNotSol = unit->m_pInNuclStream->GetMassFlow(_dTime) - dMInNucl;			// Mass of input nuclei - not solid part
-	const std::vector<double> vPSD = unit->m_pInNuclStream->GetPSD(_dTime, PSD_q3);					// PSD of input stream
+	const double totGasMass = unit->m_inGasStream->GetMassFlow(_time);
+	const double mSusp = unit->m_inSolutStream->GetPhaseMassFlow(_time, EPhase::SOLID);					// Mass flow of solid phase in solution for current time
+	const double mNotSol = unit->m_inSolutStream->GetMassFlow(_time) - mSusp;							// Mass flow of all phases except solid in solution for current time
+	const double Kos = unit->GetTDParameterValue("Kos", _time);											// Overspray part in solution for current time
+	const double me = mSusp * (1 - Kos);																// Effective mass stream of the injected solution for current time
+	const double solutSolDens = unit->m_inSolutStream->GetPhaseProperty(_time, EPhase::SOLID, DENSITY);	// Density of the solid in the solution
+	const double mInNucl = unit->m_inNuclStream->GetPhaseMassFlow(_time, EPhase::SOLID);				// Mass of input nuclei - solid part
+	const double mInNuclNotSol = unit->m_inNuclStream->GetMassFlow(_time) - mInNucl;					// Mass of input nuclei - not solid part
+	const std::vector<double> psd = unit->m_inNuclStream->GetPSD(_time, PSD_q3);						// PSD of input stream
 
 	// Total surface of all particles (ATot)
-	double dTemp = 0;
-	for (unsigned i = 0; i < unit->m_nClassesNum; ++i)
-		dTemp += _pVars[m_nq3 + i] * unit->m_vClassSize[i] / unit->m_vAverDiam[i];
-	_pRes[m_nAtot] = dATot - dMTot * 6 * dTemp / dSuspSolDens;
+	double temp = 0;
+	for (size_t i = 0; i < unit->m_classesNum; ++i)
+		temp += _vars[m_iq3 + i] * unit->m_classSize[i] / unit->m_averDiam[i];
+	_res[m_iAtot] = ATot - mTot * 6 * temp / solutSolDens;
 
 	// Total mass of all particles (MTot)
-	_pRes[m_nMtot] = dMTot - unit->m_dInitMass;
+	_res[m_iMtot] = mTot - unit->m_initMass;
 
 	// Output mass flow of nuclei (MOut)
-	_pRes[m_nMout] = dMOut - (dMInNucl + dMe);
+	_res[m_iMout] = mOut - (mInNucl + me);
 
 	// Output mass flow of dust (MDust)
-	_pRes[m_nMdust] = dMDust - (dMInNuclNotSol + dMSusp*dKos + dMNotSol + dTotGasMass);
+	_res[m_iMdust] = mDust - (mInNuclNotSol + mSusp*Kos + mNotSol + totGasMass);
 
 	// Growth rate (G)
-	if (dATot != 0)
-		_pRes[m_nG] = dG - (2 * dMe / (dSuspSolDens * dATot));
+	if (ATot != 0)
+		_res[m_iG] = G - 2 * me / (solutSolDens * ATot);
 	else
-		_pRes[m_nG] = 0;
+		_res[m_iG] = 0;
 
 	// PSD (q3)
-	_pRes[m_nq3 + 0] = _pDers[m_nq3 + 0] - 0;
-	for (unsigned i = 1; i < unit->m_nClassesNum; ++i)
+	_res[m_iq3 + 0] = _ders[m_iq3 + 0] - 0;
+	for (size_t i = 1; i < unit->m_classesNum; ++i)
 	{
-		const double dDer = -dG / unit->m_vClassSize[i] * (_pVars[m_nq3 + i] - _pVars[m_nq3 + i - 1] * unit->m_dPreCalc[i]) + 1 / dMTot * (dMInNucl * vPSD[i] - dMOut * _pVars[m_nq3 + i]);
-		_pRes[m_nq3 + i] = _pDers[m_nq3 + i] - dDer;
+		const double der = -G / unit->m_classSize[i] * (_vars[m_iq3 + i] - _vars[m_iq3 + i - 1] * unit->m_preCalc[i]) + 1 / mTot * (mInNucl * psd[i] - mOut * _vars[m_iq3 + i]);
+		_res[m_iq3 + i] = _ders[m_iq3 + i] - der;
 	}
 }

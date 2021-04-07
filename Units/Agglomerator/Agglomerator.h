@@ -10,37 +10,37 @@ class CUnitDAEModel : public CDAEModel
 {
 public:
 	/// Indexes of state variables for solver ///
-	size_t m_nq0{};		// PSD
+	size_t m_iq0{};		// PSD
 
-	std::vector<double> m_vBRate, m_vDRate; // Variables to store current birth- and death-rate
+	std::vector<double> m_BRate, m_DRate; // Variables to store current birth- and death-rate
 
 public:
-	void CalculateResiduals(double _dTime, double* _pVars, double* _pDers, double* _pRes, void* _pUserData) override;
-	void ResultsHandler(double _dTime, double* _pVars, double* _pDerivs, void *_pUserData) override;
+	void CalculateResiduals(double _time, double* _vars, double* _ders, double* _res, void* _unit) override;
+	void ResultsHandler(double _time, double* _vars, double* _ders, void* _unit) override;
 };
 
 class CAgglomerator : public CDynamicUnit
 {
 private:
-	CUnitDAEModel m_Model{};
-	CDAESolver m_Solver{};
+	CUnitDAEModel m_model{};
+	CDAESolver m_solver{};
 
 public:
-	CAgglomerationSolver *m_pAggSolver{};	// External agglomeration calculator
+	CAgglomerationSolver* m_aggSolver{};	// External agglomeration calculator
 
-	CHoldup* m_pHoldup{};					// Internal holdup
-	CMaterialStream* m_pInStream{};			// Inlet
-	CMaterialStream* m_pOutStream{};		// Outlet
+	CHoldup* m_holdup{};					// Internal holdup
+	CMaterialStream* m_inStream{};			// Inlet
+	CMaterialStream* m_outStream{};			// Outlet
 
-	size_t m_nClassesNum{};					// Number of classes for PSD
-	std::vector<double> m_vSizeGrid;		// Size grid for PSD
-	std::vector<double> m_vSizes;			// Class sizes for PSD
+	size_t m_classesNum{};					// Number of classes for PSD
+	std::vector<double> m_sizeGrid;			// Size grid for PSD
+	std::vector<double> m_sizes;			// Class sizes for PSD
 
 public:
 	void CreateBasicInfo() override;
 	void CreateStructure() override;
-	void Initialize(double _dTime) override;
+	void Initialize(double _time) override;
 	void SaveState() override;
 	void LoadState() override;
-	void Simulate(double _dStartTime, double _dEndTime) override;
+	void Simulate(double _timeBeg, double _timeEnd) override;
 };

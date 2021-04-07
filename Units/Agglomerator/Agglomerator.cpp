@@ -12,9 +12,9 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 void CAgglomerator::CreateBasicInfo()
 {
 	/// Set basic unit info ///
-	SetUnitName  ("Agglomerator");
+	SetUnitName("Agglomerator");
 	SetAuthorName("SPE TUHH");
-	SetUniqueID  ("9F37215AA74D4B1699B7EC648F366219");
+	SetUniqueID("9F37215AA74D4B1699B7EC648F366219");
 }
 
 void CAgglomerator::CreateStructure()
@@ -38,110 +38,110 @@ void CAgglomerator::CreateStructure()
 	AddHoldup("Holdup");
 
 	/// Set this unit as user data of model ///
-	m_Model.SetUserData(this);
+	m_model.SetUserData(this);
 }
 
-void CAgglomerator::Initialize(double _dTime)
+void CAgglomerator::Initialize(double _time)
 {
 	/// Check flowsheet parameters ///
 	if (!IsPhaseDefined(EPhase::SOLID))		RaiseError("Solid phase has not been defined.");
 	if (!IsDistributionDefined(DISTR_SIZE))	RaiseError("Size distribution has not been defined.");
 
 	/// Get pointers to streams and holdups ///
-	m_pHoldup = GetHoldup("Holdup");
-	m_pInStream = GetPortStream("Input");
-	m_pOutStream = GetPortStream("Output");
+	m_holdup = GetHoldup("Holdup");
+	m_inStream = GetPortStream("Input");
+	m_outStream = GetPortStream("Output");
 
 	/// Get number of classes for PSD ///
-	m_nClassesNum = GetClassesNumber(DISTR_SIZE);
+	m_classesNum = GetClassesNumber(DISTR_SIZE);
 	/// Get grid of PSD ///
-	m_vSizeGrid = GetNumericGrid(DISTR_SIZE);
+	m_sizeGrid = GetNumericGrid(DISTR_SIZE);
 	/// Get particles' mean diameters ///
-	m_vSizes = GetClassesSizes(DISTR_SIZE);
+	m_sizes = GetClassesSizes(DISTR_SIZE);
 
 	/// Clear all state variables in model ///
-	m_Model.ClearVariables();
+	m_model.ClearVariables();
 
-	std::vector<double> vNinlet = m_pHoldup->GetPSD(_dTime, PSD_Number);
+	std::vector<double> Ninlet = m_holdup->GetPSD(_time, PSD_Number);
 
 	/// Add state variables to a model ///
-	for (size_t i = 0; i < m_nClassesNum; ++i)	// Initial PSD
-		m_Model.AddDAEVariable(true, vNinlet[i], 0);
-	m_Model.m_nq0 = 0;
+	for (size_t i = 0; i < m_classesNum; ++i)	// Initial PSD
+		m_model.AddDAEVariable(true, Ninlet[i], 0);
+	m_model.m_iq0 = 0;
 
 	/// Set tolerances to model ///
-	m_Model.SetTolerance(GetRelTolerance(), GetAbsTolerance());
+	m_model.SetTolerance(GetRelTolerance(), GetAbsTolerance());
 
 	/// Set model to a solver ///
-	const double dMaxStep = GetConstRealParameterValue("Step");
-	if (dMaxStep != 0.0)
-		m_Solver.SetMaxStep(dMaxStep);
-	if (!m_Solver.SetModel(&m_Model))
-		RaiseError(m_Solver.GetError());
+	const double maxStep = GetConstRealParameterValue("Step");
+	if (maxStep != 0.0)
+		m_solver.SetMaxStep(maxStep);
+	if (!m_solver.SetModel(&m_model))
+		RaiseError(m_solver.GetError());
 
 	/// Initialize agglomeration calculator ///
-	m_pAggSolver = GetSolverAgglomeration("Solver");
-	if (!m_pAggSolver)
+	m_aggSolver = GetSolverAgglomeration("Solver");
+	if (!m_aggSolver)
 	{
 		RaiseError("Cannot load Solver");
 		return;
 	}
 	/// Set parameters ///
-	m_pAggSolver->Initialize(m_vSizeGrid, GetConstRealParameterValue("Beta0"),
+	m_aggSolver->Initialize(m_sizeGrid, GetConstRealParameterValue("Beta0"),
 							static_cast<CAgglomerationSolver::EKernels>(GetComboParameterValue("Kernel")),
 							GetConstUIntParameterValue("Rank"));
 }
 
 void CAgglomerator::SaveState()
 {
-	m_Solver.SaveState();
+	m_solver.SaveState();
 }
 
 void CAgglomerator::LoadState()
 {
-	m_Solver.LoadState();
+	m_solver.LoadState();
 }
 
-void CAgglomerator::Simulate(double _dStartTime, double _dEndTime)
+void CAgglomerator::Simulate(double _timeBeg, double _timeEnd)
 {
-	if (!m_Solver.Calculate(_dStartTime, _dEndTime))
-		RaiseError(m_Solver.GetError());
+	if (!m_solver.Calculate(_timeBeg, _timeEnd))
+		RaiseError(m_solver.GetError());
 }
 
-void CUnitDAEModel::ResultsHandler(double _dTime, double* _pVars, double* _pDerivs, void* _pUserData)
+void CUnitDAEModel::ResultsHandler(double _time, double* _vars, double* _ders, void* _unit)
 {
-	auto* unit = static_cast<CAgglomerator*>(_pUserData);
+	auto* unit = static_cast<CAgglomerator*>(_unit);
 
-	unit->m_pHoldup->AddTimePoint(_dTime);
+	unit->m_holdup->AddTimePoint(_time);
 
-	const double dHoldupMass = unit->m_pHoldup->GetMass(_dTime);
-	unit->m_pHoldup->AddStream(std::max(unit->m_pInStream->GetPreviousTimePoint(_dTime), unit->m_pHoldup->GetPreviousTimePoint(_dTime)), _dTime, unit->m_pInStream);
-	unit->m_pHoldup->RemoveTimePointsAfter(_dTime);
-	unit->m_pHoldup->SetMass(_dTime, dHoldupMass);
+	const double holdupMass = unit->m_holdup->GetMass(_time);
+	unit->m_holdup->AddStream(std::max(unit->m_inStream->GetPreviousTimePoint(_time), unit->m_holdup->GetPreviousTimePoint(_time)), _time, unit->m_inStream);
+	unit->m_holdup->RemoveTimePointsAfter(_time);
+	unit->m_holdup->SetMass(_time, holdupMass);
 
-	unit->m_pHoldup->SetPSD(_dTime, PSD_MassFrac, ConvertNumbersToMassFractions(unit->m_vSizeGrid, std::vector<double>(_pVars + m_nq0, _pVars + m_nq0 + unit->m_nClassesNum)));
+	unit->m_holdup->SetPSD(_time, PSD_MassFrac, ConvertNumbersToMassFractions(unit->m_sizeGrid, std::vector<double>(_vars + m_iq0, _vars + m_iq0 + unit->m_classesNum)));
 
-	const double dOutMass = unit->m_pInStream->GetMassFlow(_dTime); // equal to in mass flow
-	unit->m_pOutStream->CopyFromHoldup(_dTime, unit->m_pHoldup, dOutMass);
+	const double outMass = unit->m_inStream->GetMassFlow(_time); // equal to in mass flow
+	unit->m_outStream->CopyFromHoldup(_time, unit->m_holdup, outMass);
 }
 
-void CUnitDAEModel::CalculateResiduals(double _dTime, double* _pVars, double* _pDers, double* _pRes, void* _pUserData)
+void CUnitDAEModel::CalculateResiduals(double _time, double* _vars, double* _ders, double* _res, void* _unit)
 {
-	const auto* unit = static_cast<CAgglomerator*>(_pUserData);
+	const auto* unit = static_cast<CAgglomerator*>(_unit);
 
-	const double dInMass = unit->m_pInStream->GetMassFlow(_dTime);
-	const double dHoldupMass = unit->m_pHoldup->GetMass(_dTime);
-	const double dOutMass = dInMass;
+	const double inMass = unit->m_inStream->GetMassFlow(_time);
+	const double holdupMass = unit->m_holdup->GetMass(_time);
+	const double outMass = inMass;
 
-	std::vector<double> vNinlet = unit->m_pInStream->GetPSD(_dTime, PSD_Number);
+	std::vector<double> Ninlet = unit->m_inStream->GetPSD(_time, PSD_Number);
 
 	// Call agglomeration function
-	unit->m_pAggSolver->Calculate(std::vector<double>(_pVars, _pVars + unit->m_nClassesNum), m_vBRate, m_vDRate);
+	unit->m_aggSolver->Calculate(std::vector<double>(_vars, _vars + unit->m_classesNum), m_BRate, m_DRate);
 
 	// Calculate derivatives
-	for (size_t i = 0; i < unit->m_nClassesNum; ++i)
+	for (size_t i = 0; i < unit->m_classesNum; ++i)
 	{
-		const double dDer = m_vBRate[i] - m_vDRate[i] + vNinlet[i] - _pVars[i] / dHoldupMass * dOutMass;
-		_pRes[m_nq0 + i] = _pDers[m_nq0 + i] - dDer;
+		const double der = m_BRate[i] - m_DRate[i] + Ninlet[i] - _vars[i] / holdupMass * outMass;
+		_res[m_iq0 + i] = _ders[m_iq0 + i] - der;
 	}
 }
