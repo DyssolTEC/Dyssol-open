@@ -112,7 +112,7 @@ void CMyDAEModel::ResultsHandler(double _time, double* _vars, double* _derivs, v
 	CHoldup* holdup = unit->GetHoldup("HoldupName");
 
 	/// Apply calculated variables ///
-	holdup->AddStream(_time, inStream);
+	holdup->AddStream(holdup->GetPreviousTimePoint(_time), _time, inStream);
 	outStream->CopyFromHoldup(_time, holdup, _vars[m_iVariable0]);
 
 

@@ -46,18 +46,13 @@ void CHoldup::CopyFromHoldup(double _timeDst, const CHoldup* _source, double _ti
 	Copy(_timeDst, *_source, _timeSrc);
 }
 
-void CHoldup::AddStream(double _timeEnd, const CStream* _source)
-{
-	AddStream(_source->GetPreviousTimePoint(_timeEnd), _timeEnd, _source);
-}
-
 void CHoldup::AddStream(double _timeBeg, double _timeEnd, const CStream* _source)
 {
 	if (_timeBeg > _timeEnd) return;
 	if (!HaveSameStructure(*this, *_source)) return;
 
 	// remove discarded time points
-	RemoveTimePointsAfter(_timeBeg);
+	RemoveTimePointsAfter(_timeEnd);
 
 	// special handling if there are no time points in the holdup
 	if (m_timePoints.empty())
@@ -90,8 +85,19 @@ void CHoldup::AddStream(double _timeBeg, double _timeEnd, const CStream* _source
 	// calculate mixture
 	const mix_type mix = CalculateMix(timeSrc, *stream, massSrc, _timeBeg, *this, massDst);
 
-	// set mixture data
-	SetMix(*this, _timeEnd, mix);
+	// create a temporary holdup
+	CHoldup temp;
+	temp.SetupStructure(_source);
+	temp.SetCacheSettings(SCacheSettings{ false, 0, {} });
+
+	// set obtained mixture to the temporary holdup
+	temp.SetMix(_timeEnd, mix);
+
+	// add temporary holdup to existing time point of this holdup
+	AddHoldup(_timeEnd, &temp);
+
+	// remove time points between begin and end, since they are not consistent anymore
+	RemoveTimePoints(_timeBeg, _timeEnd, false);
 
 	// clean up temporary stream if necessary
 	if (stream != _source)
@@ -104,7 +110,7 @@ void CHoldup::AddStreamInterval(double _timeBeg, double _timeEnd, const CStream*
 	if (!HaveSameStructure(*this, *_source)) return;
 
 	// remove discarded time points
-	RemoveTimePointsAfter(_timeBeg);
+	RemoveTimePointsAfter(_timeEnd);
 
 	// special handling if there are no time points in the holdup
 	if (m_timePoints.empty())
@@ -114,7 +120,7 @@ void CHoldup::AddStreamInterval(double _timeBeg, double _timeEnd, const CStream*
 	}
 
 	// get all time points
-	std::vector<double> timePoints = _source->GetTimePointsClosed(_timeBeg, _timeEnd);
+	std::vector<double> timePoints = VectorsUnionSorted(GetTimePointsClosed(_timeBeg, _timeEnd), _source->GetTimePointsClosed(_timeBeg, _timeEnd));
 
 	// prepare temporary vector for all data for each time point
 	std::vector<mix_type> mix(timePoints.size() - 1);
@@ -131,12 +137,24 @@ void CHoldup::AddStreamInterval(double _timeBeg, double _timeEnd, const CStream*
 		const double massSrc = _source->GetMassFlow((timePoints[i] + timePoints[i + 1]) / 2) * (timePoints[i + 1] - timePoints[i]);
 		const double massDst = GetMass(timePoints[i]);
 
+		// calculate mixture
 		mix[i] = CalculateMix(timeSrc, *_source, massSrc, timePoints[i], *this, massDst);
 	}
 
-	// set mixture data for each time point
+	// create a temporary holdup
+	CHoldup temp;
+	temp.SetupStructure(_source);
+	temp.SetCacheSettings(SCacheSettings{ false, 0, {} });
+
+	// set obtained mixtures to the temporary holdup
 	for (size_t i = 0; i < timePoints.size() - 1; ++i)
-		SetMix(*this, timePoints[i + 1], mix[i]);
+		temp.SetMix(timePoints[i + 1], mix[i]);
+
+	// remove the first time point, since it should not be mixed
+	timePoints.erase(timePoints.begin());
+
+	// add temporary holdup to existing time points of this holdup
+	AddHoldup(timePoints.front(), timePoints.back(), &temp);
 }
 
 void CHoldup::AddHoldup(double _time, const CHoldup* _source)

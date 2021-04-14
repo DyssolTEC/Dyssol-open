@@ -48,11 +48,11 @@ void CTimeDependentValue::RemoveTimePoint(double _time)
 	RemoveTimePoints(_time, _time);
 }
 
-void CTimeDependentValue::RemoveTimePoints(double _timeBeg, double _timeEnd)
+void CTimeDependentValue::RemoveTimePoints(double _timeBeg, double _timeEnd, bool _inclusive/* = true*/)
 {
 	if (m_data.empty()) return;
 	if (_timeBeg > _timeEnd) return;
-	const auto [beg, end] = Interval(_timeBeg, _timeEnd);
+	const auto [beg, end] = Interval(_timeBeg, _timeEnd, _inclusive);
 	if (beg == m_data.end()) return;
 	m_data.erase(beg, end);
 }
@@ -219,18 +219,22 @@ double CTimeDependentValue::PreviousTime(double _time) const
 	return (--pos)->time;
 }
 
-std::pair<std::vector<STDValue>::iterator, std::vector<STDValue>::iterator> CTimeDependentValue::Interval(double _timeBeg, double _timeEnd)
+std::pair<std::vector<STDValue>::iterator, std::vector<STDValue>::iterator> CTimeDependentValue::Interval(double _timeBeg, double _timeEnd, bool _inclusive/* = true*/)
 {
-	auto end = std::upper_bound(m_data.begin(), m_data.end(), STDValue{ _timeEnd, 0.0 });
+	auto end = _inclusive ? std::upper_bound(m_data.begin(), m_data.end(), STDValue{ _timeEnd, 0.0 })
+						  : std::lower_bound(m_data.begin(), m_data.end(), STDValue{ _timeEnd, 0.0 });
 	if (end == m_data.begin()) return { m_data.end(), m_data.end() };
-	auto beg = std::lower_bound(m_data.begin(), m_data.end(), STDValue{ _timeBeg, 0.0 });
+	auto beg = _inclusive ? std::lower_bound(m_data.begin(), m_data.end(), STDValue{ _timeBeg, 0.0 })
+						  : std::upper_bound(m_data.begin(), m_data.end(), STDValue{ _timeBeg, 0.0 });
 	return { beg, end };
 }
 
-std::pair<std::vector<STDValue>::const_iterator, std::vector<STDValue>::const_iterator> CTimeDependentValue::Interval(double _timeBeg, double _timeEnd) const
+std::pair<std::vector<STDValue>::const_iterator, std::vector<STDValue>::const_iterator> CTimeDependentValue::Interval(double _timeBeg, double _timeEnd, bool _inclusive/* = true*/) const
 {
-	auto end = std::upper_bound(m_data.begin(), m_data.end(), STDValue{ _timeEnd, 0.0 });
+	const auto end = _inclusive ? std::upper_bound(m_data.begin(), m_data.end(), STDValue{ _timeEnd, 0.0 })
+								: std::lower_bound(m_data.begin(), m_data.end(), STDValue{ _timeEnd, 0.0 });
 	if (end == m_data.begin()) return { m_data.end(), m_data.end() };
-	auto beg = std::lower_bound(m_data.begin(), m_data.end(), STDValue{ _timeBeg, 0.0 });
+	const auto beg = _inclusive ? std::lower_bound(m_data.begin(), m_data.end(), STDValue{ _timeBeg, 0.0 })
+								: std::upper_bound(m_data.begin(), m_data.end(), STDValue{ _timeBeg, 0.0 });
 	return { beg, end };
 }

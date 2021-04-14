@@ -60,11 +60,11 @@ void CPhase::CopyTimePoint(double _timeDst, double _timeSrc)
 	m_distribution.AddTimePoint(_timeDst, _timeSrc);
 }
 
-void CPhase::RemoveTimePoints(double _timeBeg, double _timeEnd)
+void CPhase::RemoveTimePoints(double _timeBeg, double _timeEnd, bool _inclusive/* = true*/)
 {
 	if (_timeBeg > _timeEnd) return;
-	m_fractions.RemoveTimePoints(_timeBeg, _timeEnd);
-	m_distribution.RemoveTimePoints(_timeBeg, _timeEnd);
+	m_fractions.RemoveTimePoints(_timeBeg, _timeEnd, _inclusive);
+	m_distribution.RemoveTimePoints(_timeBeg, _timeEnd, _inclusive);
 }
 
 void CPhase::RemoveAllTimePoints()

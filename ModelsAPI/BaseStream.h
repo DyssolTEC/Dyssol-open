@@ -94,8 +94,8 @@ public:
 	void CopyTimePoint(double _timeDst, double _timeSrc);
 	// Removes the specified time point if it does already exist.
 	void RemoveTimePoint(double _time);
-	// Removes all existing time points in the specified interval.
-	void RemoveTimePoints(double _timeBeg, double _timeEnd);
+	// Removes all existing time points in the specified interval, including or excluding boundaries.
+	void RemoveTimePoints(double _timeBeg, double _timeEnd, bool _inclusive = true);
 	// Removes all existing time points after the specified one, inclusive or exclusive _time.
 	void RemoveTimePointsAfter(double _time, bool _inclusive = false);
 	// Removes all existing time points.
@@ -402,8 +402,6 @@ protected:
 	using mix_type = std::tuple<std::map<EOverall, double>, std::map<EPhase, double>, std::map<EPhase, CDenseMDMatrix>>;
 	// Calculates the mixture of two streams. Does not perform any checks.
 	static mix_type CalculateMix(double _time1, const CBaseStream& _stream1, double _mass1, double _time2, const CBaseStream& _stream2, double _mass2);
-	// Sets the result of mixing two streams into the specified stream at the given time point.
-	static void SetMix(CBaseStream& _stream, double _time, const mix_type& _data);
 	// Calculates the pressure of the mixture of two streams. Does not perform any checks.
 	static double CalculateMixPressure(double _time1, const CBaseStream& _stream1, double _time2, const CBaseStream& _stream2);
 	// Calculates the temperature of the mixture of two streams. Does not perform any checks.
@@ -414,6 +412,8 @@ protected:
 	static double CalculateMixPhaseFractions(double _time1, const CBaseStream& _stream1, double _mass1, double _time2, const CBaseStream& _stream2, double _mass2, EPhase _phase);
 	// Calculates the multidimensional distributions of the mixture of two streams for the given phase. Does not perform any checks.
 	static CDenseMDMatrix CalculateMixDistribution(double _time1, const CBaseStream& _stream1, double _mass1, double _time2, const CBaseStream& _stream2, double _mass2, EPhase _phase);
+	// Sets the result of mixing two streams into this stream at the given time point.
+	void SetMix(double _time, const mix_type& _data);
 
 private:
 	// Inserts the new time into the list of time points, it it does not exist yet.

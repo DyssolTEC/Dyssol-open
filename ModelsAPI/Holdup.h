@@ -25,15 +25,11 @@ public:
 	// Copies all data from the given time point of another holdup to another time point of this stream. All data after the time point are removed from this holdup.
 	void CopyFromHoldup(double _timeDst, const CHoldup* _source, double _timeSrc);
 
-	/* Mixes the content of the specified stream at the given time interval with the current holdup. Before mixing, all data after the first time point are removed.
-	 * The beginning of the time interval as the first defined time point preceding the given end time point, i.e. [source.PreviousTime(timeEnd); timeEnd].
-	 * Takes into account only two given time points, regardless of whether they were defined in the stream. All possible time points within the interval are discarded.*/
-	void AddStream(double _timeEnd, const CStream* _source);
-	/* Mixes the content of the specified stream at the given time interval with the current holdup. Before mixing, all data after the first time point are removed.
+	/* Mixes the content of the specified stream at the given time interval with the holdup. Before mixing, all data after the end time point are removed.
 	 * Takes into account only two given time points, regardless of whether they were defined in the stream. All possible time points within the interval are discarded.*/
 	void AddStream(double _timeBeg, double _timeEnd, const CStream* _source);
-	/* Removes all data after the first time point and adds content of the specified stream at the given time interval to the current holdup.
-	 * Takes into account both the given boundary time points and all the time points within the interval defined in the stream.*/
+	/* Mixes the content of the specified stream at the given time interval with the holdup. Before mixing, all data after the end time point are removed.
+	 * Takes into account both the given boundary time points and all the time points within the interval defined in the stream and holdup.*/
 	void AddStreamInterval(double _timeBeg, double _timeEnd, const CStream* _source);
 
 	// Mixes the specified holdup with the current holdup at the given time point.

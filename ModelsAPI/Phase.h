@@ -36,8 +36,8 @@ public:
 	void AddTimePoint(double _time);
 	// Adds a new temp point _timeDst if it doesn't already exist and fills it with the data of existing time point _timeSrc.
 	void CopyTimePoint(double _timeDst, double _timeSrc);
-	// Removes all existing time points in the specified interval.
-	void RemoveTimePoints(double _timeBeg, double _timeEnd);
+	// Removes all existing time points in the specified interval, including or excluding boundaries.
+	void RemoveTimePoints(double _timeBeg, double _timeEnd, bool _inclusive = true);
 	// Removes all existing time points.
 	void RemoveAllTimePoints();
 

@@ -100,8 +100,8 @@ public:
 	void ChangeTimePoint( unsigned _nTimePointIndex, double _dNewTime );
 	/** Removes specified time point.*/
 	void RemoveTimePoint( double _dTime );
-	/** Removes time points from interval (incl).*/
-	void RemoveTimePoints( double _dStart, double _dEnd );
+	/** Removes time points from interval, including or excluding boundaries.*/
+	void RemoveTimePoints( double _dStart, double _dEnd, bool _inclusive = true);
 	/** Removes all time points after the specified time.
 	*	If _bIncludeTime == true, than _dTime will be includede in this time interval.*/
 	void RemoveTimePointsAfter( double _dTime, bool _bIncludeTime = false );

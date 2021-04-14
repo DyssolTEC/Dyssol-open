@@ -399,7 +399,7 @@ void CMDMatrix::RemoveTimePoint(double _dTime)
 	m_bCacheCoherent = false;
 }
 
-void CMDMatrix::RemoveTimePoints(double _dStart, double _dEnd)
+void CMDMatrix::RemoveTimePoints(double _dStart, double _dEnd, bool _inclusive/* = true*/)
 {
 	if( _dStart > _dEnd ) // wrong interval
 		return;
@@ -407,7 +407,7 @@ void CMDMatrix::RemoveTimePoints(double _dStart, double _dEnd)
 	if( m_vTimePoints.empty() ) // nothing to remove
 		return;
 
-	if( ( m_vTimePoints.front() == _dStart ) && ( m_vTimePoints.back() == _dEnd ) ) // remove all time points
+	if( ( m_vTimePoints.front() == _dStart ) && ( m_vTimePoints.back() == _dEnd ) && _inclusive) // remove all time points
 	{
 		RemoveAllTimePoints();
 		return;
@@ -418,6 +418,15 @@ void CMDMatrix::RemoveTimePoints(double _dStart, double _dEnd)
 
 	if( ( iLast >= m_vTimePoints.size() ) || ( m_vTimePoints[iLast] != _dEnd ) )
 		iLast--;
+
+	if (!_inclusive)
+	{
+		if (iFirst < m_vTimePoints.size() - 1 && m_vTimePoints[iFirst] == _dStart)		iFirst++;
+		if (iLast < m_vTimePoints.size() && iLast > 0 && m_vTimePoints[iLast] == _dEnd)	iLast--;
+		if (m_vTimePoints[iFirst] > m_vTimePoints[iLast]) return;
+		_dStart = m_vTimePoints[iFirst];
+		_dEnd = m_vTimePoints[iLast];
+	}
 
 	UnCacheData(_dStart,_dEnd);
 	m_dTempT1 = _dStart;

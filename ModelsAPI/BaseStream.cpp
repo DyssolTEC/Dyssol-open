@@ -140,29 +140,32 @@ void CBaseStream::RemoveTimePoint(double _time)
 	RemoveTimePoints(_time, _time);
 }
 
-void CBaseStream::RemoveTimePoints(double _timeBeg, double _timeEnd)
+void CBaseStream::RemoveTimePoints(double _timeBeg, double _timeEnd, bool _inclusive/* = true*/)
 {
 	if (m_timePoints.empty()) return;
 	if (_timeBeg > _timeEnd) return;
 
 	// remove time points
-	const auto beg = std::lower_bound(m_timePoints.begin(), m_timePoints.end(), _timeBeg);
-	const auto end = std::upper_bound(m_timePoints.begin(), m_timePoints.end(), _timeEnd);
-	if (end == m_timePoints.begin()) return;
+	const auto& beg = _inclusive ? std::lower_bound(m_timePoints.begin(), m_timePoints.end(), _timeBeg)
+								 : std::upper_bound(m_timePoints.begin(), m_timePoints.end(), _timeBeg);
+	const auto& end = _inclusive ? std::upper_bound(m_timePoints.begin(), m_timePoints.end(), _timeEnd)
+								 : std::lower_bound(m_timePoints.begin(), m_timePoints.end(), _timeEnd);
+	if (end == m_timePoints.begin() || beg == end) return;
 	m_timePoints.erase(beg, end);
 
 	// remove data in overall parameters
 	for (auto& [type, param] : m_overall)
-		param->RemoveTimePoints(_timeBeg, _timeEnd);
+		param->RemoveTimePoints(_timeBeg, _timeEnd, _inclusive);
 
 	// remove data in phases
 	for (auto& [state, phase] : m_phases)
-		phase->RemoveTimePoints(_timeBeg, _timeEnd);
+		phase->RemoveTimePoints(_timeBeg, _timeEnd, _inclusive);
 }
 
 void CBaseStream::RemoveTimePointsAfter(double _time, bool _inclusive/* = false*/)
 {
-	const auto& beg = _inclusive ? std::lower_bound(m_timePoints.begin(), m_timePoints.end(), _time) : std::upper_bound(m_timePoints.begin(), m_timePoints.end(), _time);
+	const auto& beg = _inclusive ? std::lower_bound(m_timePoints.begin(), m_timePoints.end(), _time)
+								 : std::upper_bound(m_timePoints.begin(), m_timePoints.end(), _time);
 	if (beg == m_timePoints.end()) return;
 	RemoveTimePoints(*beg, GetLastTimePoint());
 }
@@ -1298,7 +1301,7 @@ void CBaseStream::Add(double _timeBeg, double _timeEnd, const CBaseStream& _sour
 
 	// set mixture data for each time point
 	for (size_t i = 0; i < timePoints.size(); ++i)
-		SetMix(*this, timePoints[i], mix[i]);
+		SetMix(timePoints[i], mix[i]);
 }
 
 bool CBaseStream::AreEqual(double _time, const CBaseStream& _stream1, const CBaseStream& _stream2)
@@ -1667,17 +1670,17 @@ CBaseStream::mix_type CBaseStream::CalculateMix(double _time1, const CBaseStream
 	return { mixOverall, mixPhaseFrac, mixDistr };
 }
 
-void CBaseStream::SetMix(CBaseStream& _stream, double _time, const mix_type& _data)
+void CBaseStream::SetMix(double _time, const mix_type& _data)
 {
 	// add time point
-	_stream.AddTimePoint(_time);
+	AddTimePoint(_time);
 
 	// overall properties
-	for (auto& [type, param] : _stream.m_overall)
+	for (auto& [type, param] : m_overall)
 		param->SetValue(_time, std::get<0>(_data).at(type));
 
 	// phases
-	for (auto& [key, param] : _stream.m_phases)
+	for (auto& [key, param] : m_phases)
 	{
 		param->SetFraction(_time, std::get<1>(_data).at(key));
 		param->MDDistr()->SetDistribution(_time, std::get<2>(_data).at(key));

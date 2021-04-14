@@ -26,11 +26,16 @@ public:
 	std::string GetUnits() const;				// Returns the measurement units of the dependent value.
 
 	// TODO: remove this function
-	void AddTimePoint(double _time);							// Adds a new temp point _time if it doesn't already exist and fills it with the data of previous time point.
-	void CopyTimePoint(double _timeDst, double _timeSrc);		// Adds a new temp point _timeDst if it doesn't already exist and fills it with the data of existing time point _timeSrc.
-	void RemoveTimePoint(double _time);							// Removes the specified time point if it does already exist.
-	void RemoveTimePoints(double _timeBeg, double _timeEnd);	// Removes all existing time points in the specified interval.
-	void RemoveAllTimePoints();									// Removes all existing time points.
+	// Adds a new temp point _time if it doesn't already exist and fills it with the data of previous time point.
+	void AddTimePoint(double _time);
+	// Adds a new temp point _timeDst if it doesn't already exist and fills it with the data of existing time point _timeSrc.
+	void CopyTimePoint(double _timeDst, double _timeSrc);
+	// Removes the specified time point if it does already exist.
+	void RemoveTimePoint(double _time);
+	// Removes all existing time points in the specified interval, including or excluding boundaries.
+	void RemoveTimePoints(double _timeBeg, double _timeEnd, bool _inclusive = true);
+	// Removes all existing time points.
+	void RemoveAllTimePoints();
 
 	// TODO: remove
 	size_t GetTimePointsNumber() const;				// Returns the number of defined time points.
@@ -73,8 +78,8 @@ private:
 	bool HasTime(double _time) const;
 	// Returns the nearest time point before _time.
 	double PreviousTime(double _time) const;
-	// Returns iterators pointing on values between the specified interval. If the values cannot be found, return two iterators to the end.
-	std::pair<std::vector<STDValue>::iterator, std::vector<STDValue>::iterator> Interval(double _timeBeg, double _timeEnd);
-	// Returns const iterators pointing on values between the specified interval. If the values cannot be found, return two iterators to the end.
-	std::pair<std::vector<STDValue>::const_iterator, std::vector<STDValue>::const_iterator> Interval(double _timeBeg, double _timeEnd) const;
+	// Returns iterators pointing on values between the specified interval, including or excluding boundaries. If the values cannot be found, return two iterators to the end.
+	std::pair<std::vector<STDValue>::iterator, std::vector<STDValue>::iterator> Interval(double _timeBeg, double _timeEnd, bool _inclusive = true);
+	// Returns const iterators pointing on values between the specified interval, including or excluding boundaries. If the values cannot be found, return two iterators to the end.
+	std::pair<std::vector<STDValue>::const_iterator, std::vector<STDValue>::const_iterator> Interval(double _timeBeg, double _timeEnd, bool _inclusive = true) const;
 };
