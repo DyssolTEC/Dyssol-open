@@ -17,8 +17,8 @@ public:
 	std::vector<size_t> m_vnNormDistr;			// Norm vector for differences in distributions
 
 public:
-	void CalculateResiduals(double _dTime, double* _pVars, double* _pDers, double* _pRes, void* _pUserData) override;
-	void ResultsHandler(double _dTime, double* _pVars, double* _pDerivs, void* _pUserData) override;
+	void CalculateResiduals(double _time, double* _vars, double* _ders, double* _res, void* _unit) override;
+	void ResultsHandler(double _time, double* _vars, double* _ders, void* _unit) override;
 };
 
 class CBunker : public CDynamicUnit

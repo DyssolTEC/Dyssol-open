@@ -11,12 +11,15 @@ class CScreen : public CSteadyStateUnit
 		Plitt, Molerus, Teipel, Probability
 	};
 
-	CMaterialStream *m_inlet, *m_outletC, *m_outletF;	// Streams.
-	CTransformMatrix m_transformC, m_transformF;		// Transformation matrices for coarse and fine.
-	unsigned m_classesNumber;							// Number of PSD classes.
-	std::vector<double> m_grid;							// Diameter grid for PSD.
-	std::vector<double> m_diameters;					// Mean diameters for each grid class.
-	EModels m_model;									// Chosen classification model.
+	CMaterialStream* m_inlet{};			// Inlet stream.
+	CMaterialStream* m_outletC{};		// Outlet coarse stream.
+	CMaterialStream* m_outletF{};		// Outlet fine stream.
+	CTransformMatrix m_transformC;		// Transformation matrices for coarse.
+	CTransformMatrix m_transformF;		// Transformation matrices for fine.
+	size_t m_classesNumber{};			// Number of PSD classes.
+	std::vector<double> m_grid;			// Diameter grid for PSD.
+	std::vector<double> m_diameters;	// Mean diameters for each grid class.
+	EModels m_model{ Plitt };			// Chosen classification model.
 
 public:
 	void CreateBasicInfo() override;

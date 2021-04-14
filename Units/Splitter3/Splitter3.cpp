@@ -10,44 +10,44 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 
 void CSplitter3::CreateBasicInfo()
 {
-	m_sUnitName = "Splitter3";
-	m_sAuthorName = "SPE TUHH";
-	m_sUniqueID = "DF90D2471D2E4600800A3546B4BED43E";
+	SetUnitName("Splitter3");
+	SetAuthorName("SPE TUHH");
+	SetUniqueID("DF90D2471D2E4600800A3546B4BED43E");
 }
 
 void CSplitter3::CreateStructure()
 {
-	AddPort("In", INPUT_PORT);
-	AddPort("Out1", OUTPUT_PORT);
-	AddPort("Out2", OUTPUT_PORT);
-	AddPort("Out3", OUTPUT_PORT);
+	AddPort("In", EUnitPort::INPUT);
+	AddPort("Out1", EUnitPort::OUTPUT);
+	AddPort("Out2", EUnitPort::OUTPUT);
+	AddPort("Out3", EUnitPort::OUTPUT);
 
-	AddTDParameter("KSplitt1", 0, 1, 0.5, "-", "Fraction of inlet flow going to stream Out1");
-	AddTDParameter("KSplitt2", 0, 1, 0.5, "-", "Fraction of inlet flow going to stream Out2");
+	AddTDParameter("KSplitt1", 0.5, "-", "Fraction of inlet flow going to stream Out1", 0, 1);
+	AddTDParameter("KSplitt2", 0.5, "-", "Fraction of inlet flow going to stream Out2", 0, 1);
 }
 
-void CSplitter3::Simulate(double _dTime)
+void CSplitter3::Simulate(double _time)
 {
-	CMaterialStream* pInStream = GetPortStream("In");
-	CMaterialStream* pOutStream1 = GetPortStream("Out1");
-	CMaterialStream* pOutStream2 = GetPortStream("Out2");
-	CMaterialStream* pOutStream3 = GetPortStream("Out3");
+	CMaterialStream* inStream   = GetPortStream("In");
+	CMaterialStream* outStream1 = GetPortStream("Out1");
+	CMaterialStream* outStream2 = GetPortStream("Out2");
+	CMaterialStream* outStream3 = GetPortStream("Out3");
 
-	pOutStream1->CopyFromStream(pInStream, _dTime);
-	pOutStream2->CopyFromStream(pInStream, _dTime);
-	pOutStream3->CopyFromStream(pInStream, _dTime);
+	outStream1->CopyFromStream(_time, inStream);
+	outStream2->CopyFromStream(_time, inStream);
+	outStream3->CopyFromStream(_time, inStream);
 
-	const double dMassFlowIn = pInStream->GetMassFlow(_dTime);
-	const double dSplitFactor1 = GetTDParameterValue("KSplitt1", _dTime);
-	const double dSplitFactor2 = GetTDParameterValue("KSplitt2", _dTime);
-	if (dSplitFactor1 < 0 || dSplitFactor1 > 1)
+	const double massFlowIn = inStream->GetMassFlow(_time);
+	const double splitFactor1 = GetTDParameterValue("KSplitt1", _time);
+	const double splitFactor2 = GetTDParameterValue("KSplitt2", _time);
+	if (splitFactor1 < 0 || splitFactor1 > 1)
 		RaiseError("Parameter 'KSplitt1' has to be between 0 and 1.");
-	if (dSplitFactor2 < 0 || dSplitFactor2 > 1)
+	if (splitFactor2 < 0 || splitFactor2 > 1)
 		RaiseError("Parameter 'KSplitt2' has to be between 0 and 1.");
-	if (dSplitFactor1 + dSplitFactor2 > 1)
+	if (splitFactor1 + splitFactor2 > 1)
 		RaiseError("(KSplitt1 + KSplitt2) has to be between 0 and 1.");
 
-	pOutStream1->SetMassFlow(_dTime, dMassFlowIn * dSplitFactor1);
-	pOutStream2->SetMassFlow(_dTime, dMassFlowIn * dSplitFactor2);
-	pOutStream3->SetMassFlow(_dTime, dMassFlowIn * (1 - dSplitFactor1 - dSplitFactor2));
+	outStream1->SetMassFlow(_time, massFlowIn * splitFactor1);
+	outStream2->SetMassFlow(_time, massFlowIn * splitFactor2);
+	outStream3->SetMassFlow(_time, massFlowIn * (1 - splitFactor1 - splitFactor2));
 }

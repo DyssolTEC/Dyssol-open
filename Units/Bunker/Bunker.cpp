@@ -153,7 +153,7 @@ void CBunker::LoadState()
 //////////////////////////////////////////////////////////////////////////
 /// Solver
 
-void CMyDAEModel::ResultsHandler(double _dTime, double* _pVars, double* _pDerivs, void* _pUserData)
+void CMyDAEModel::ResultsHandler(double _time, double* _pVars, double* _pDerivs, void* _pUserData)
 {
 	/// General information ///
 	auto* unit = static_cast<CBunker*>(_pUserData);
@@ -170,26 +170,26 @@ void CMyDAEModel::ResultsHandler(double _dTime, double* _pVars, double* _pDerivs
 
 	// Previous time point of inlet stream
 	double dTimePrev = 0;
-	if (_dTime > 0)
+	if (_time > 0)
 	{
-		dTimePrev = pHoldup->GetPreviousTimePoint(_dTime);
+		dTimePrev = pHoldup->GetPreviousTimePoint(_time);
 		pHoldup->RemoveTimePointsAfter(dTimePrev);
 		/// Add input to bunker ///
-		pHoldup->AddStream(dTimePrev, _dTime, pInSolid);
+		pHoldup->AddStream(dTimePrev, _time, pInSolid);
 	}
 
-	std::vector<double> vTimePoints = pHoldup->GetTimePointsClosed(dTimePrev, _dTime);
+	std::vector<double> vTimePoints = pHoldup->GetTimePointsClosed(dTimePrev, _time);
 
 	for (size_t i = 1; i < vTimePoints.size() - 1; ++i)
 		pHoldup->RemoveTimePoint(vTimePoints[i]);
 
-	pHoldup->SetMass(_dTime, _pVars[m_nMassBunker]);
+	pHoldup->SetMass(_time, _pVars[m_nMassBunker]);
 
-	pOutStream->CopyFromHoldup(_dTime, pHoldup, _pVars[m_nMflow_Out]);
-	pOutStream->AddStream(_dTime, pInBypass);
+	pOutStream->CopyFromHoldup(_time, pHoldup, _pVars[m_nMflow_Out]);
+	pOutStream->AddStream(_time, pInBypass);
 }
 
-void CMyDAEModel::CalculateResiduals(double _dTime, double* _pVars, double* _pDers, double* _pRes, void* _pUserData)
+void CMyDAEModel::CalculateResiduals(double _time, double* _pVars, double* _pDers, double* _pRes, void* _pUserData)
 {
 	/// General information ///
 	// Pointer to unit
@@ -200,7 +200,7 @@ void CMyDAEModel::CalculateResiduals(double _dTime, double* _pVars, double* _pDe
 	CStream* pInSolid = unit->GetStream("InflowSolid");
 
 	// Previous time point of inlet stream
-	const double dTimePrev = pInSolid->GetPreviousTimePoint(_dTime);
+	const double dTimePrev = pInSolid->GetPreviousTimePoint(_time);
 
 	/// Flowsheet setup ///
 	const size_t nNumCompounds = unit->GetCompoundsNumber();
@@ -208,7 +208,7 @@ void CMyDAEModel::CalculateResiduals(double _dTime, double* _pVars, double* _pDe
 	const std::vector<EDistrTypes> vDistrTypes = unit->GetDistributionsTypes();
 
 	/// Inflow ///
-	const double dMflow_In = pInSolid->GetMassFlow(_dTime);
+	const double dMflow_In = pInSolid->GetMassFlow(_time);
 
 	/// Outflow ///
 	const double dMflow_Out = _pVars[m_nMflow_Out];
@@ -218,15 +218,15 @@ void CMyDAEModel::CalculateResiduals(double _dTime, double* _pVars, double* _pDe
 	const double dMassBunker = _pVars[m_nMassBunker];
 	// Mass flows at last and current time points
 	const double dMflowPrev = pInSolid->GetMassFlow(dTimePrev);
-	const double dMflow = pInSolid->GetMassFlow(_dTime);
+	const double dMflow = pInSolid->GetMassFlow(_time);
 	const double dNormMflow_update = std::pow(dMflow - dMflowPrev, 2);
 	// Temperatures at last and current time points
 	const double dTPrev = pInSolid->GetTemperature(dTimePrev);
-	const double dT = pInSolid->GetTemperature(_dTime);
+	const double dT = pInSolid->GetTemperature(_time);
 	const double dNormT_update = std::pow(dT - dTPrev, 2);
 	// Pressures at last and current time points
 	const double dPPrev = pInSolid->GetPressure(dTimePrev);
-	const double dP = pInSolid->GetPressure(_dTime);
+	const double dP = pInSolid->GetPressure(_time);
 	const double dNormP_update = std::pow(dP - dPPrev, 2);
 
 	/// Compound fractions ///
@@ -239,7 +239,7 @@ void CMyDAEModel::CalculateResiduals(double _dTime, double* _pVars, double* _pDe
 		// Phase compound fractions at last time point
 		const double dTempCompPhaseFracPrev = pInSolid->GetCompoundFraction(dTimePrev, compound, EPhase::SOLID);
 		// Phase compound fractions at current time point
-		const double dTempCompPhaseFrac = pInSolid->GetCompoundFraction(_dTime, compound, EPhase::SOLID);
+		const double dTempCompPhaseFrac = pInSolid->GetCompoundFraction(_time, compound, EPhase::SOLID);
 		// Squared difference of phase compound fractions
 		dNormCompounds_update += std::pow(dTempCompPhaseFracPrev - dTempCompPhaseFrac, 2);
 	}
@@ -256,7 +256,7 @@ void CMyDAEModel::CalculateResiduals(double _dTime, double* _pVars, double* _pDe
 		// Distribution vector at previous time point
 		std::vector<double> vDistrPrev = pInSolid->GetDistribution(dTimePrev, vDistrTypes[k]);
 		// Distribution vector at current time point
-		std::vector<double> vDistr = pInSolid->GetDistribution(_dTime, vDistrTypes[k]);
+		std::vector<double> vDistr = pInSolid->GetDistribution(_time, vDistrTypes[k]);
 
 		// Calculate squared sum of differences between distribution vectors
 		for (size_t l = 0; l < nNumClasses; ++l)

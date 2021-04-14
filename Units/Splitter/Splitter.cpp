@@ -10,34 +10,34 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 
 void CSplitter::CreateBasicInfo()
 {
-	m_sUnitName = "Splitter";
-	m_sAuthorName = "SPE TUHH";
-	m_sUniqueID = "85C77D52955242DCA863D43336A90B51";
+	SetUnitName("Splitter");
+	SetAuthorName("SPE TUHH");
+	SetUniqueID("85C77D52955242DCA863D43336A90B51");
 }
 
 void CSplitter::CreateStructure()
 {
-	AddPort("In", INPUT_PORT);
-	AddPort("Out1", OUTPUT_PORT);
-	AddPort("Out2", OUTPUT_PORT);
+	AddPort("In", EUnitPort::INPUT);
+	AddPort("Out1", EUnitPort::OUTPUT);
+	AddPort("Out2", EUnitPort::OUTPUT);
 
-	AddTDParameter("KSplitt", 0, 1, 0.5, "-", "Fraction of inlet flow going to outlet flow 1");
+	AddTDParameter("KSplitt", 0.5, "-", "Fraction of inlet flow going to outlet flow 1", 0, 1);
 }
 
-void CSplitter::Simulate(double _dTime)
+void CSplitter::Simulate(double _time)
 {
-	CMaterialStream* pInStream = GetPortStream("In");
-	CMaterialStream* pOutStream1 = GetPortStream("Out1");
-	CMaterialStream* pOutStream2 = GetPortStream("Out2");
+	CMaterialStream* inStream   = GetPortStream("In");
+	CMaterialStream* outStream1 = GetPortStream("Out1");
+	CMaterialStream* outStream2 = GetPortStream("Out2");
 
-	pOutStream1->CopyFromStream(pInStream, _dTime);
-	pOutStream2->CopyFromStream(pInStream, _dTime);
+	outStream1->CopyFromStream(_time, inStream);
+	outStream2->CopyFromStream(_time, inStream);
 
-	const double dMassFlowIn = pInStream->GetMassFlow(_dTime);
-	const double dSplitFactor = GetTDParameterValue("KSplitt", _dTime);
-	if (dSplitFactor < 0 || dSplitFactor > 1)
+	const double massFlowIn = inStream->GetMassFlow(_time);
+	const double splitFactor = GetTDParameterValue("KSplitt", _time);
+	if (splitFactor < 0 || splitFactor > 1)
 		RaiseError("Parameter 'KSplitt' has to be between 0 and 1.");
 
-	pOutStream1->SetMassFlow(_dTime, dMassFlowIn * dSplitFactor);
-	pOutStream2->SetMassFlow(_dTime, dMassFlowIn * (1 - dSplitFactor));
+	outStream1->SetMassFlow(_time, massFlowIn * splitFactor);
+	outStream2->SetMassFlow(_time, massFlowIn * (1 - splitFactor));
 }

@@ -14,26 +14,26 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 void CScreen::CreateBasicInfo()
 {
 	/// Basic unit's info ///
-	m_sUnitName = "Screen";
-	m_sAuthorName = "SPE TUHH";
-	m_sUniqueID = "F231006AE5AA46C6978B2DB563F31119";
+	SetUnitName("Screen");
+	SetAuthorName("SPE TUHH");
+	SetUniqueID("F231006AE5AA46C6978B2DB563F31119");
 }
 
 void CScreen::CreateStructure()
 {
-		/// Add ports ///
-	AddPort("Input",  INPUT_PORT);
-	AddPort("Coarse", OUTPUT_PORT);
-	AddPort("Fine",   OUTPUT_PORT);
+	/// Add ports ///
+	AddPort("Input",  EUnitPort::INPUT);
+	AddPort("Coarse", EUnitPort::OUTPUT);
+	AddPort("Fine",   EUnitPort::OUTPUT);
 
 	/// Add unit parameters ///
-	AddGroupParameter("Model", Plitt, { Plitt, Molerus, Teipel, Probability }, { "Plitt", "Molerus & Hoffmann", "Teipel & Hennig", "Probability" }, "Classification model");
-	AddTDParameter("Xcut",		0, UP_MAX, 0.002,  "m", "Cut size of the classification model");
-	AddTDParameter("Alpha",		0, 100,    8,      "-", "Sharpness of separation");
-	AddTDParameter("Beta",		0, 100,    0.5,    "-", "Sharpness of separation 2");
-	AddTDParameter("Offset",	0, 1,      0.2,    "-", "Separation offset");
-	AddTDParameter("Mean",		0, UP_MAX, 0.001,  "m", "Mean value of the normal output distribution");
-	AddTDParameter("Deviation", 0, UP_MAX, 0.0001, "m", "Standard deviation of the normal output distribution");
+	AddComboParameter("Model", Plitt, { Plitt, Molerus, Teipel, Probability }, { "Plitt", "Molerus & Hoffmann", "Teipel & Hennig", "Probability" }, "Classification model");
+	AddTDParameter("Xcut"     ,	0.002 , "m", "Cut size of the classification model"                , 0     );
+	AddTDParameter("Alpha"    ,	8     , "-", "Sharpness of separation"                             , 0, 100);
+	AddTDParameter("Beta"     ,	0.5   , "-", "Sharpness of separation 2"                           , 0, 100);
+	AddTDParameter("Offset"   ,	0.2   , "-", "Separation offset"                                   , 0, 1  );
+	AddTDParameter("Mean"     ,	0.001 , "m", "Mean value of the normal output distribution"        , 0     );
+	AddTDParameter("Deviation", 0.0001, "m", "Standard deviation of the normal output distribution", 0     );
 
 	/// Group unit parameters ///
 	AddParametersToGroup("Model", "Plitt",				{ "Xcut", "Alpha"                   });
@@ -45,7 +45,7 @@ void CScreen::CreateStructure()
 void CScreen::Initialize(double _time)
 {
 	/// Check flowsheet parameters ///
-	if (!IsPhaseDefined(SOA_SOLID))			RaiseError("Solid phase has not been defined.");
+	if (!IsPhaseDefined(EPhase::SOLID))		RaiseError("Solid phase has not been defined.");
 	if (!IsDistributionDefined(DISTR_SIZE))	RaiseError("Size distribution has not been defined.");
 
 	/// Get pointers to streams ///
@@ -61,20 +61,20 @@ void CScreen::Initialize(double _time)
 	/// Create and initialize transformation matrices ///
 	m_transformC.Clear();
 	m_transformF.Clear();
-	m_transformC.SetDimensions(DISTR_SIZE, m_classesNumber);
-	m_transformF.SetDimensions(DISTR_SIZE, m_classesNumber);
+	m_transformC.SetDimensions(DISTR_SIZE, (unsigned)m_classesNumber);
+	m_transformF.SetDimensions(DISTR_SIZE, (unsigned)m_classesNumber);
 
 	/// Get selected classification model ///
-	m_model = static_cast<EModels>(GetGroupParameterValue("Model"));
+	m_model = static_cast<EModels>(GetComboParameterValue("Model"));
 }
 
 void CScreen::Simulate(double _time)
 {
-	m_outletC->CopyFromStream(m_inlet, _time);
-	m_outletF->CopyFromStream(m_inlet, _time);
+	m_outletC->CopyFromStream(_time, m_inlet);
+	m_outletF->CopyFromStream(_time, m_inlet);
 
 	const double massFactor = CreateTransformMatrix(_time);
-	if (massFactor == -1) return; // cannot calculate transformation matrix
+	if (massFactor == -1.0) return; // cannot calculate transformation matrix
 
 	// apply transformation matrices
 	m_outletC->ApplyTM(_time, m_transformC);
@@ -105,10 +105,10 @@ double CScreen::CreateTransformMatrixPlitt(double _time)
 	const double alpha = GetTDParameterValue("Alpha", _time);
 
 	// check parameters
-	if (xcut == 0)		RaiseError("Parameter 'Xcut' may not be equal to 0");
+	if (xcut == 0.0)	RaiseError("Parameter 'Xcut' may not be equal to 0");
 
-	// return if any error occured
-	if (CheckError()) return -1;
+	// return if any error occurred
+	if (HasError()) return -1;
 
 	// calculate transformations matrices
 	double factor = 0;
@@ -130,10 +130,10 @@ double CScreen::CreateTransformMatrixMolerus(double _time)
 	const double alpha = GetTDParameterValue("Alpha", _time);
 
 	// Check parameters
-	if (xcut == 0)		RaiseError("Parameter 'Xcut' may not be equal to 0");
+	if (xcut == 0.0)	RaiseError("Parameter 'Xcut' may not be equal to 0");
 
-	// return if any error occured
-	if (CheckError()) return -1;
+	// return if any error occurred
+	if (HasError()) return -1;
 
 	// calculate transformations matrices
 	double factor = 0;
@@ -157,10 +157,10 @@ double CScreen::CreateTransformMatrixTeipel(double _time)
 	const double offset = GetTDParameterValue("Offset", _time);
 
 	// check parameters
-	if (xcut == 0)		RaiseError("Parameter 'Xcut' may not be equal to 0");
+	if (xcut == 0.0)	RaiseError("Parameter 'Xcut' may not be equal to 0");
 
-	// return if any error occured
-	if (CheckError()) return -1;
+	// return if any error occurred
+	if (HasError()) return -1;
 
 	// calculate transformations matrices
 	double factor = 0;
@@ -182,10 +182,10 @@ double CScreen::CreateTransformMatrixProbability(double _time)
 	const double sigma = GetTDParameterValue("Deviation", _time);
 
 	// check parameters
-	if (sigma == 0)	RaiseError("Parameter 'Deviation' may not be equal to 0");
+	if (sigma == 0.0)	RaiseError("Parameter 'Deviation' may not be equal to 0");
 
 	// return if any error occured.
-	if (CheckError()) return -1;
+	if (HasError()) return -1;
 
 	// calculate transformations matrices
 	double factor = 0;

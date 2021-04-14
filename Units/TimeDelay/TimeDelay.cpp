@@ -14,217 +14,202 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 void CTimeDelay::CreateBasicInfo()
 {
 	/// Basic unit's info ///
-	m_sUnitName = "Time delay";
-	m_sAuthorName = "SPE TUHH";
-	m_sUniqueID = "56D734DFB1EA441B859C2C70D6F43BBC";
+	SetUnitName("Time delay");
+	SetAuthorName("SPE TUHH");
+	SetUniqueID("56D734DFB1EA441B859C2C70D6F43BBC");
 }
 
 void CTimeDelay::CreateStructure()
 {
 	/// Add ports ///
-	AddPort("In", INPUT_PORT);
-	AddPort("Out", OUTPUT_PORT);
+	AddPort("In", EUnitPort::INPUT);
+	AddPort("Out", EUnitPort::OUTPUT);
 
 	/// Add unit parameters ///
-	AddConstParameter("Time delay", 0, 1e+6, 0, "s", "Unit time delay");
+	AddConstRealParameter("Time delay", 0, "s", "Unit time delay", 0, 1e+6);
 
 	/// Set this unit as user data of model ///
-	m_Model.SetUserData(this);
+	m_model.SetUserData(this);
 }
 
-void CTimeDelay::Initialize(double _dTime)
+void CTimeDelay::Initialize(double _time)
 {
-	m_timeDelay = GetConstParameterValue("Time delay");
+	m_timeDelay = GetConstRealParameterValue("Time delay");
 	if (m_timeDelay < 0)
 		RaiseError("Parameter 'Time delay' may not be negative.");
 
-	const size_t nNumPhases = GetPhasesNumber();
-	const size_t nNumDistr = GetDistributionsNumber();
+	const size_t numPhases = GetPhasesNumber();
+	const size_t numDistr  = GetDistributionsNumber();
 
 	/// Clear all state variables in model ///
-	m_Model.ClearVariables();
+	m_model.ClearVariables();
 
 	/// Add state variables to the model ///
-	m_Model.m_nMflow      = m_Model.AddDAEVariable(true, 0, 0, 0);
-	m_Model.m_nNormMflow  = m_Model.AddDAEVariable(true, 1, 0, 0);
-	m_Model.m_nNormT      = m_Model.AddDAEVariable(true, 1, 0, 0);
-	m_Model.m_nNormP      = m_Model.AddDAEVariable(true, 1, 0, 0);
-	m_Model.m_nNormPhases = m_Model.AddDAEVariable(true, 1, 0, 0);
-	m_Model.m_vnNormPhaseCompounds.resize(nNumPhases);
-	for (size_t i = 0; i < nNumPhases; ++i)
-		m_Model.m_vnNormPhaseCompounds[i] = m_Model.AddDAEVariable(true, 1, 0, 0);
-	m_Model.m_vnNormDistr.resize(nNumDistr);
-	for (size_t k = 0; k < nNumDistr; ++k)
-		m_Model.m_vnNormDistr[k] = m_Model.AddDAEVariable(true, 1, 0, 0);
+	m_model.m_iMflow              = m_model.AddDAEVariable(true, 0, 0, 0);
+	m_model.m_iNormMflow          = m_model.AddDAEVariable(true, 1, 0, 0);
+	m_model.m_iNormT              = m_model.AddDAEVariable(true, 1, 0, 0);
+	m_model.m_iNormP              = m_model.AddDAEVariable(true, 1, 0, 0);
+	m_model.m_iNormPhases         = m_model.AddDAEVariable(true, 1, 0, 0);
+	m_model.m_iNormPhaseCompounds = m_model.AddDAEVariables(true, std::vector<double>(numPhases, 1), 0, 0);
+	m_model.m_iNormDistr          = m_model.AddDAEVariables(true, std::vector<double>(numDistr, 1), 0, 0);
+
 	/// Set tolerances to the model ///
-	m_Model.SetTolerance(1e-3, 1e-5);
+	m_model.SetTolerance(1e-3, 1e-5);
 
 	/// Set model to the solver ///
-	if (!m_Solver.SetModel(&m_Model))
-		RaiseError(m_Solver.GetError());
+	if (!m_solver.SetModel(&m_model))
+		RaiseError(m_solver.GetError());
 }
 
-void CTimeDelay::Simulate(double _dStartTime, double _dEndTime)
+void CTimeDelay::Simulate(double _timeBeg, double _timeEnd)
 {
 	/// Run solver ///
-	if (!m_Solver.Calculate(_dStartTime, _dEndTime))
-		RaiseError(m_Solver.GetError());
+	if (!m_solver.Calculate(_timeBeg, _timeEnd))
+		RaiseError(m_solver.GetError());
 }
 
 void CTimeDelay::SaveState()
 {
 	/// Save solver's state ///
-	m_Solver.SaveState();
+	m_solver.SaveState();
 }
 
 void CTimeDelay::LoadState()
 {
 	/// Load solver's state ///
-	m_Solver.LoadState();
+	m_solver.LoadState();
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 /// Solver
 
-void CMyDAEModel::ResultsHandler(double _dTime, double* _pVars, double* _pDerivs, void* _pUserData)
+void CMyDAEModel::ResultsHandler(double _time, double* _vars, double* _ders, void* _unit)
 {
 	/// General information ///
-	const auto unit = static_cast<CTimeDelay*>(_pUserData);
+	auto* unit = static_cast<CTimeDelay*>(_unit);
 	// Pointer to inlet and outlet stream
-	CMaterialStream* pInStream = unit->GetPortStream("In");
-	CMaterialStream* pOutStream = unit->GetPortStream("Out");
+	CMaterialStream* inStream  = unit->GetPortStream("In");
+	CMaterialStream* outStream = unit->GetPortStream("Out");
 
 	/// Time delay of information ///
-	//if (_dTime < unit->m_timeDelay)
-	//{
-	//	pOutStream->CopyFromStream(_dTime, pInStream, 0);
-	//	pOutStream->SetMassFlow(_dTime, 0);
-	//}
-	//else
-	//{
-	//	pOutStream->CopyFromStream(_dTime, pInStream, _dTime - unit->m_timeDelay);
-	//	pOutStream->SetMassFlow(_dTime, _pVars[m_nMflow]);
-	//}
-
-	pOutStream->CopyFromStream(_dTime, pInStream, _dTime - unit->m_timeDelay);
-	pOutStream->SetMassFlow(_dTime, _pVars[m_nMflow]);
+	outStream->CopyFromStream(_time, inStream, _time - unit->m_timeDelay);
+	outStream->SetMassFlow(_time, _vars[m_iMflow]);
 }
 
-void CMyDAEModel::CalculateResiduals(double _dTime, double* _pVars, double* _pDers, double* _pRes, void* _pUserData)
+void CMyDAEModel::CalculateResiduals(double _time, double* _vars, double* _ders, double* _res, void* _unit)
 {
 	/// General information ///
 	// Pointer to unit
-	const auto unit = static_cast<CTimeDelay*>(_pUserData);
+	auto* unit = static_cast<CTimeDelay*>(_unit);
 	// Pointer to inlet stream
-	CMaterialStream* pInStream = unit->GetPortStream("In");
+	CMaterialStream* inStream = unit->GetPortStream("In");
 	// Previous time point of inlet stream
-	const double dTimePrev = pInStream->GetPreviousTimePoint(_dTime);
+	const double timePrev = inStream->GetPreviousTimePoint(_time);
 
 	/// Flowsheet setup ///
-	const unsigned nNumPhases = unit->GetPhasesNumber();
-	const unsigned nNumCompounds = unit->GetCompoundsNumber();
-	const unsigned nNumDistr = unit->GetDistributionsNumber();
-	const std::vector<EDistrTypes> vDistrTypes = unit->GetDistributionsTypes();
+	const size_t numPhases = unit->GetPhasesNumber();
+	const size_t numCompounds = unit->GetCompoundsNumber();
+	const size_t numDistr = unit->GetDistributionsNumber();
+	const std::vector<EDistrTypes> distrTypes = unit->GetDistributionsTypes();
 
 	/// MTP values ///
 	// Mass flows at last and current time points
-	const double dMflowPrev = pInStream->GetMassFlow(dTimePrev);
-	const double dMflow = pInStream->GetMassFlow(_dTime);
-	const double dNormMflow_update = std::pow(dMflow - dMflowPrev, 2);
+	const double MflowPrev = inStream->GetMassFlow(timePrev);
+	const double Mflow = inStream->GetMassFlow(_time);
+	const double normMflow_update = std::pow(Mflow - MflowPrev, 2);
 	// Temperatures at last and current time points
-	const double dTPrev = pInStream->GetTemperature(dTimePrev);
-	const double dT = pInStream->GetTemperature(_dTime);
-	const double dNormT_update = std::pow(dT - dTPrev, 2);
+	const double TPrev = inStream->GetTemperature(timePrev);
+	const double T = inStream->GetTemperature(_time);
+	const double normT_update = std::pow(T - TPrev, 2);
 	// Pressures at last and current time points
-	const double dPPrev = pInStream->GetPressure(dTimePrev);
-	const double dP = pInStream->GetPressure(_dTime);
-	const double dNormP_update = std::pow(dP - dPPrev, 2);
+	const double PPrev = inStream->GetPressure(timePrev);
+	const double P = inStream->GetPressure(_time);
+	const double normP_update = std::pow(P - PPrev, 2);
 
 	/// Phase & phase compound fractions ///
 	// Initialize norm for phase fractions
-	double dNormPhases_update = 0;
+	double normPhases_update = 0;
 	// Declare norm vector for phase compound fractions
-	std::vector<double> vNormPhaseCompounds_update(nNumCompounds, 0);
-	for (unsigned i = 0; i < nNumPhases; ++i)
+	std::vector<double> normPhaseCompounds_update(numCompounds, 0);
+	for (size_t i = 0; i < numPhases; ++i)
 	{
 		// Get state of aggregation of current phase
-		const unsigned nPhaseSOA = unit->GetPhaseSOA(i);
+		const auto phase = unit->GetPhaseType(i);
 		// Get phase fraction at last time point
-		const double dTempPhaseFracPrev = pInStream->GetPhaseMassFlow(dTimePrev, nPhaseSOA) / dMflowPrev;
+		const double tempPhaseFracPrev = inStream->GetPhaseMassFlow(timePrev, phase) / MflowPrev;
 		// Get phase fraction at current time point
-		const double dTempPhaseFrac = pInStream->GetPhaseMassFlow(_dTime, nPhaseSOA) / dMflow;
+		const double tempPhaseFrac = inStream->GetPhaseMassFlow(_time, phase) / Mflow;
 		// Squared difference of phase fractions
-		dNormPhases_update += std::pow(dTempPhaseFracPrev - dTempPhaseFrac, 2);
+		normPhases_update += std::pow(tempPhaseFracPrev - tempPhaseFrac, 2);
 
 		// Loop for phase compound fractions
-		for (unsigned j = 0; j < nNumCompounds; ++j)
+		for (const auto& compound : unit->GetAllCompounds())
 		{
 			// Phase compound fractions at last time point
-			const double dTempCompPhaseFracPrev = pInStream->GetCompoundPhaseFraction(dTimePrev, j, nPhaseSOA);
+			const double tempCompPhaseFracPrev = inStream->GetCompoundFraction(timePrev, compound, phase);
 			// Phase compound fractions at current time point
-			const double dTempCompPhaseFrac = pInStream->GetCompoundPhaseFraction(_dTime, j, nPhaseSOA);
+			const double tempCompPhaseFrac = inStream->GetCompoundFraction(_time, compound, phase);
 			// Squared difference of phase compound fractions
-			vNormPhaseCompounds_update[i] += std::pow(dTempCompPhaseFracPrev - dTempCompPhaseFrac, 2);
+			normPhaseCompounds_update[i] += std::pow(tempCompPhaseFracPrev - tempCompPhaseFrac, 2);
 		}
 
 		// Root of sum for 2-norm calculation for phase compound fractions
-		vNormPhaseCompounds_update[i] = std::sqrt(vNormPhaseCompounds_update[i]);
+		normPhaseCompounds_update[i] = std::sqrt(normPhaseCompounds_update[i]);
 	}
 	// Root of sum for 2-norm calculation for phase fractions
-	dNormPhases_update = std::sqrt(dNormPhases_update);
+	normPhases_update = std::sqrt(normPhases_update);
 
 
 	/// Multidimensional distributions ///
 	// Declare norm vector for distributions
-	std::vector<double> vNormDistr_update(nNumDistr);
-	for (size_t k = 0; k < nNumDistr; ++k)
+	std::vector<double> normDistr_update(numDistr);
+	for (size_t k = 0; k < numDistr; ++k)
 	{
 		// Distribution vector at previous time point
-		const std::vector<double> vDistrPrev = pInStream->GetDistribution(dTimePrev, vDistrTypes[k]);
+		const std::vector<double> distrPrev = inStream->GetDistribution(timePrev, distrTypes[k]);
 		// Distribution vector at current time point
-		const std::vector<double> vDistr = pInStream->GetDistribution(_dTime, vDistrTypes[k]);
+		const std::vector<double> distr = inStream->GetDistribution(_time, distrTypes[k]);
 
-		if (vDistrPrev.size() != vDistr.size())
+		if (distrPrev.size() != distr.size())
 		{
-			unit->RaiseError("Number of classes in distribution '" + std::vector<std::string>(DISTR_NAMES)[k] + "' not equal.");
+			unit->RaiseError("Number of classes in distribution '" + std::to_string(k) + "' not equal.");
 			return;
 		}
 
 		// Calculate squared sum of differences between distribution vectors
-		for (size_t l = 0; l < vDistr.size(); ++l)
-			vNormDistr_update[k] += std::pow(vDistr[l] - vDistrPrev[l], 2);
+		for (size_t l = 0; l < distr.size(); ++l)
+			normDistr_update[k] += std::pow(distr[l] - distrPrev[l], 2);
 		// Root of sum for 2-norm calculation for distributions
-		vNormDistr_update[k] = std::sqrt(vNormDistr_update[k]);
+		normDistr_update[k] = std::sqrt(normDistr_update[k]);
 	}
 
 	/// Calculate residuals ///
 	// No change if time is smaller than the time delay of the unit
-	if (_dTime < unit->m_timeDelay)
+	if (_time < unit->m_timeDelay)
 	{
-		_pRes[m_nMflow] = -_pDers[m_nMflow];
-		_pRes[m_nNormMflow] = -_pDers[m_nNormMflow];
-		_pRes[m_nNormT] = -_pDers[m_nNormT];
-		_pRes[m_nNormP] = -_pDers[m_nNormP];
+		_res[m_iMflow] = -_ders[m_iMflow];
+		_res[m_iNormMflow] = -_ders[m_iNormMflow];
+		_res[m_iNormT] = -_ders[m_iNormT];
+		_res[m_iNormP] = -_ders[m_iNormP];
 
-		_pRes[m_nNormPhases] = - _pDers[m_nNormPhases];
-		for (size_t i = 0; i < nNumPhases; ++i)
-			_pRes[m_vnNormPhaseCompounds[i]] = -_pDers[m_vnNormPhaseCompounds[i]];
-		for (size_t k = 0; k < nNumDistr; ++k)
-			_pRes[m_vnNormDistr[k]] = -_pDers[m_vnNormDistr[k]];
+		_res[m_iNormPhases] = - _ders[m_iNormPhases];
+		for (size_t i = 0; i < numPhases; ++i)
+			_res[m_iNormPhaseCompounds + i] = -_ders[m_iNormPhaseCompounds + i];
+		for (size_t k = 0; k < numDistr; ++k)
+			_res[m_iNormDistr + k] = -_ders[m_iNormDistr + k];
 	}
 	// Residuals of the derivatives equal the difference in the respective norms from from the last value of the
 	else
 	{
-		_pRes[m_nMflow] = -_pDers[m_nMflow] + (pInStream->GetMassFlow(_dTime - unit->m_timeDelay) - _pVars[m_nMflow]);
-		_pRes[m_nNormMflow] = -_pDers[m_nNormMflow] + (dNormMflow_update - _pVars[m_nNormMflow]);
-		_pRes[m_nNormT] = -_pDers[m_nNormT] + (dNormT_update - _pVars[m_nNormT]);
-		_pRes[m_nNormP] = -_pDers[m_nNormP] + (dNormP_update - _pVars[m_nNormP]);
+		_res[m_iMflow] = -_ders[m_iMflow] + (inStream->GetMassFlow(_time - unit->m_timeDelay) - _vars[m_iMflow]);
+		_res[m_iNormMflow] = -_ders[m_iNormMflow] + (normMflow_update - _vars[m_iNormMflow]);
+		_res[m_iNormT] = -_ders[m_iNormT] + (normT_update - _vars[m_iNormT]);
+		_res[m_iNormP] = -_ders[m_iNormP] + (normP_update - _vars[m_iNormP]);
 
-		_pRes[m_nNormPhases] = -_pDers[m_nNormPhases] + (dNormPhases_update - _pVars[m_nNormPhases]);
-		for (size_t i = 0; i < nNumPhases; ++i)
-			_pRes[m_vnNormPhaseCompounds[i]] = -_pDers[m_vnNormPhaseCompounds[i]] + (vNormPhaseCompounds_update[i] - _pVars[m_vnNormPhaseCompounds[i]]);
-		for (size_t k = 0; k < nNumDistr; ++k)
-			_pRes[m_vnNormDistr[k]] = -_pDers[m_vnNormDistr[k]] + (vNormDistr_update[k] - _pVars[m_vnNormDistr[k]]);
+		_res[m_iNormPhases] = -_ders[m_iNormPhases] + (normPhases_update - _vars[m_iNormPhases]);
+		for (size_t i = 0; i < numPhases; ++i)
+			_res[m_iNormPhaseCompounds + i] = -_ders[m_iNormPhaseCompounds + i] + (normPhaseCompounds_update[i] - _vars[m_iNormPhaseCompounds + i]);
+		for (size_t k = 0; k < numDistr; ++k)
+			_res[m_iNormDistr + k] = -_ders[m_iNormDistr + k] + (normDistr_update[k] - _vars[m_iNormDistr + k]);
 	}
 }

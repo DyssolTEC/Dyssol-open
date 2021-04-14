@@ -10,22 +10,21 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 
 void CInlet::CreateBasicInfo()
 {
-	m_sUnitName = "InletFlow";
-	m_sAuthorName = "SPE TUHH";
-	m_sUniqueID = "C55E0B290D8944C0832689B391867977";
+	SetUnitName("InletFlow");
+	SetAuthorName("SPE TUHH");
+	SetUniqueID("C55E0B290D8944C0832689B391867977");
 }
 
 void CInlet::CreateStructure()
 {
-	AddPort("InletMaterial", OUTPUT_PORT);
-
-	AddFeed("InputMaterial", "ECFA7F77A5DF46b9A4E8CC3344D9397E");
+	AddPort("InletMaterial", EUnitPort::OUTPUT);
+	AddFeed("InputMaterial");
 }
 
-void CInlet::Simulate(double _dStartTime, double _dEndTime)
+void CInlet::Simulate(double _timeBeg, double _timeEnd)
 {
-	CMaterialStream *pFeed = GetFeed("InputMaterial");
-	CMaterialStream *pOutputStream = GetPortStream("InletMaterial");
-	pOutputStream->CopyFromStream(pFeed, _dStartTime, _dEndTime);
-	pOutputStream->CopyFromStream(pFeed, _dEndTime);
+	CMaterialStream* feed = GetFeed("InputMaterial");
+	CMaterialStream* outputStream = GetPortStream("InletMaterial");
+	outputStream->CopyFromStream(_timeBeg, _timeEnd, feed);
+	outputStream->CopyFromStream(_timeEnd, feed);
 }

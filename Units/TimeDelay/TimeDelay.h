@@ -7,33 +7,33 @@
 class CMyDAEModel : public CDAEModel
 {
 public:
-	size_t m_nMflow;			// Mass flow
-	size_t m_nNormMflow;		// Norm for differences in mass flow
-	size_t m_nNormT;			// Norm for differences in temperature
-	size_t m_nNormP;			// Norm for differences in pressure
-	size_t m_nNormPhases;		// Norm for differences in phase fractions
-	std::vector<size_t> m_vnNormPhaseCompounds;	// Norm vector for differences in phase compound fractions
-	std::vector<size_t> m_vnNormDistr;			// Norm vector for differences in distributions
+	size_t m_iMflow{};				// Mass flow
+	size_t m_iNormMflow{};			// Norm for differences in mass flow
+	size_t m_iNormT{};				// Norm for differences in temperature
+	size_t m_iNormP{};				// Norm for differences in pressure
+	size_t m_iNormPhases{};			// Norm for differences in phase fractions
+	size_t m_iNormPhaseCompounds{};	// Norm vector for differences in phase compound fractions
+	size_t m_iNormDistr{};			// Norm vector for differences in distributions
 
 public:
-	void CalculateResiduals(double _dTime, double* _pVars, double* _pDers, double* _pRes, void* _pUserData) override;
-	void ResultsHandler(double _dTime, double* _pVars, double* _pDerivs, void* _pUserData) override;
+	void CalculateResiduals(double _time, double* _vars, double* _ders, double* _res, void* _unit) override;
+	void ResultsHandler(double _time, double* _vars, double* _ders, void* _unit) override;
 };
 
 class CTimeDelay : public CDynamicUnit
 {
 public:
-	double m_timeDelay;		// Requested time delay
+	double m_timeDelay{};		// Requested time delay
 
 private:
-	CMyDAEModel m_Model;		// Model of DAE
-	CDAESolver m_Solver;		// Solver of DAE
+	CMyDAEModel m_model;		// Model of DAE
+	CDAESolver m_solver;		// Solver of DAE
 
 public:
 	void CreateBasicInfo() override;
 	void CreateStructure() override;
-	void Initialize(double _dTime) override;
-	void Simulate(double _dStartTime, double _dEndTime) override;
+	void Initialize(double _time) override;
+	void Simulate(double _timeBeg, double _timeEnd) override;
 	void SaveState() override;
 	void LoadState() override;
 };

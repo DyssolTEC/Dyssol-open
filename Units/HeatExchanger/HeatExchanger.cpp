@@ -14,39 +14,39 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 void CHeatExchanger::CreateBasicInfo()
 {
 	/// Basic unit's info ///
-	m_sUnitName = "HeatExchanger";
-	m_sAuthorName = "TUHH SPE";
-	m_sUniqueID = "DB2C399331AA4F309DF63A819911251F";
+	SetUnitName("HeatExchanger");
+	SetAuthorName("TUHH SPE");
+	SetUniqueID("DB2C399331AA4F309DF63A819911251F");
 }
 
 void CHeatExchanger::CreateStructure()
 {
 	/// Add ports ///
-	AddPort("Input1", INPUT_PORT);
-	AddPort("Input2", INPUT_PORT);
-	AddPort("Output1", OUTPUT_PORT);
-	AddPort("Output2", OUTPUT_PORT);
+	AddPort("Input1", EUnitPort::INPUT);
+	AddPort("Input2", EUnitPort::INPUT);
+	AddPort("Output1", EUnitPort::OUTPUT);
+	AddPort("Output2", EUnitPort::OUTPUT);
 
 	/// Add unit parameters ///
-	AddConstParameter("Efficiency", 0, 1, 1, "-", "Efficiency of heat exchange");
+	AddConstRealParameter("Efficiency", 1, "-", "Efficiency of heat exchange", 0, 1);
 }
 
-void CHeatExchanger::Simulate(double _dTime)
+void CHeatExchanger::Simulate(double _time)
 {
-	const double dEfficiency = GetConstParameterValue("Efficiency");
+	const double efficiency = GetConstRealParameterValue("Efficiency");
 
 	// Get pointers to input streams
-	CMaterialStream* pInStream1 = GetPortStream("Input1");
-	CMaterialStream* pInStream2 = GetPortStream("Input2");
+	CMaterialStream* inStream1 = GetPortStream("Input1");
+	CMaterialStream* inStream2 = GetPortStream("Input2");
 
 	// Get pointers to output streams
-	CMaterialStream* pOutStream1 = GetPortStream("Output1");
-	CMaterialStream* pOutStream2 = GetPortStream("Output2");
+	CMaterialStream* outStream1 = GetPortStream("Output1");
+	CMaterialStream* outStream2 = GetPortStream("Output2");
 
 	// Copy information from input streams
-	pOutStream1->CopyFromStream(pInStream1, _dTime);
-	pOutStream2->CopyFromStream(pInStream2, _dTime);
+	outStream1->CopyFromStream(_time, inStream1);
+	outStream2->CopyFromStream(_time, inStream2);
 
 	// Perform heat transfer with specified efficiency between output streams
-	HeatExchange(pOutStream1, pOutStream2, _dTime, dEfficiency);
+	HeatExchange(_time, outStream1, outStream2, efficiency);
 }

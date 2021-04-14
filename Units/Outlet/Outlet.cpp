@@ -10,14 +10,14 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 
 void COutlet::CreateBasicInfo()
 {
-	m_sUnitName = "OutletFlow";
-	m_sAuthorName = "SPE TUHH";
-	m_sUniqueID = "40A70301168D4F9F84DF08918DA6F5E2";
+	SetUnitName("OutletFlow");
+	SetAuthorName("SPE TUHH");
+	SetUniqueID("40A70301168D4F9F84DF08918DA6F5E2");
 }
 
 void COutlet::CreateStructure()
 {
-	AddPort("In", INPUT_PORT);
+	AddPort("In", EUnitPort::INPUT);
 }
 
 void COutlet::Simulate(double _timeBeg, double _timeEnd)

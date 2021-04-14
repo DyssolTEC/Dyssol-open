@@ -10,25 +10,25 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 
 void CMixer::CreateBasicInfo()
 {
-	m_sUnitName = "Mixer";
-	m_sAuthorName = "SPE TUHH";
-	m_sUniqueID = "3872940337B3492CBAA5D7E9595EBD99";
+	SetUnitName("Mixer");
+	SetAuthorName("SPE TUHH");
+	SetUniqueID("3872940337B3492CBAA5D7E9595EBD99");
 }
 
 void CMixer::CreateStructure()
 {
-	AddPort("In1", INPUT_PORT);
-	AddPort("In2", INPUT_PORT);
-	AddPort("Out", OUTPUT_PORT);
+	AddPort("In1", EUnitPort::INPUT);
+	AddPort("In2", EUnitPort::INPUT);
+	AddPort("Out", EUnitPort::OUTPUT);
 }
 
-void CMixer::Simulate(double _dTime)
+void CMixer::Simulate(double _time)
 {
-	CMaterialStream* pInStream1 = GetPortStream("In1");
-	CMaterialStream* pInStream2 = GetPortStream("In2");
-	CMaterialStream* pOutStream = GetPortStream("Out");
+	CMaterialStream* inStream1 = GetPortStream("In1");
+	CMaterialStream* inStream2 = GetPortStream("In2");
+	CMaterialStream* outStream = GetPortStream("Out");
 
-	pOutStream->RemoveTimePointsAfter(_dTime, true);
-	pOutStream->CopyFromStream(pInStream1, _dTime);
-	pOutStream->AddStream(pInStream2, _dTime);
+	outStream->RemoveTimePointsAfter(_time, true);
+	outStream->CopyFromStream(_time, inStream1);
+	outStream->AddStream(_time, inStream2);
 }

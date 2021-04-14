@@ -2,13 +2,12 @@
 
 #pragma once
 
-#include "SteadyStateUnit.h"
-#include "MaterialStream.h"
+#include "UnitDevelopmentDefines.h"
 
 class CMixer3 : public CSteadyStateUnit
 {
 public:
 	void CreateBasicInfo() override;
 	void CreateStructure() override;
-	void Simulate(double _dTime) override;
+	void Simulate(double _time) override;
 };
