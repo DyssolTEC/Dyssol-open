@@ -258,6 +258,15 @@ CCurve* CPlot::AddCurve(const std::string& _name, const std::vector<CPoint>& _po
 	return curve;
 }
 
+std::vector<CCurve*> CPlot::AddCurves(const std::vector<std::string>& _names)
+{
+	if (std::any_of(_names.begin(), _names.end(), [&](const auto& name) { return GetCurve(name); })) return {};
+	auto res = ReservedVector<CCurve*>(_names.size());
+	for (const auto& name : _names)
+		res.push_back(AddCurve(name));
+	return res;
+}
+
 CCurve* CPlot::AddCurve(double _z)
 {
 	auto* curve = AddCurve(StringFunctions::Double2String(_z));
@@ -277,6 +286,15 @@ CCurve* CPlot::AddCurve(double _z, const std::vector<CPoint>& _points)
 	auto* curve = AddCurve(StringFunctions::Double2String(_z), _points);
 	if (curve) curve->SetZValue(_z);
 	return curve;
+}
+
+std::vector<CCurve*> CPlot::AddCurves(const std::vector<double>& _z)
+{
+	if (std::any_of(_z.begin(), _z.end(), [&](const auto& z) { return GetCurve(StringFunctions::Double2String(z)); })) return {};
+	auto res = ReservedVector<CCurve*>(_z.size());
+	for (const auto& z : _z)
+		res.push_back(AddCurve(z));
+	return res;
 }
 
 const CCurve* CPlot::GetCurve(const std::string& _name) const

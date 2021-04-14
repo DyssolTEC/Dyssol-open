@@ -118,12 +118,16 @@ public:
 	CCurve* AddCurve(const std::string& _name, const std::vector<double>& _x, const std::vector<double>& _y);
 	// Adds a new curve with the specified name to the plot and fills it with the given values. If a curve with the given name already exists, does nothing, and returns nullptr.
 	CCurve* AddCurve(const std::string& _name, const std::vector<CPoint>& _points);
+	// Adds several curves with the specified names to the plot. If any curve with the given name value already exists, does nothing, and returns empty vector.
+	std::vector<CCurve*> AddCurves(const std::vector<std::string>& _names);
 	// Adds a new curve with the specified Z value to the plot. If a curve with the given Z value already exists, does nothing, and returns nullptr.
 	CCurve* AddCurve(double _z);
 	// Adds a new curve with the specified Z value to the plot and fills it with the given values. X and Y must have the same length. If a curve with the given Z value already exists, does nothing, and returns nullptr.
 	CCurve* AddCurve(double _z, const std::vector<double>& _x, const std::vector<double>& _y);
 	// Adds a new curve with the specified Z value to the plot and fills it with the given values. If a curve with the given Z value already exists, does nothing, and returns nullptr.
 	CCurve* AddCurve(double _z, const std::vector<CPoint>& _points);
+	// Adds several curves with the specified Z values to the plot. If any curve with the given Z value already exists, does nothing, and returns empty vector.
+	std::vector<CCurve*> AddCurves(const std::vector<double>& _z);
 
 	// Returns a curve with the specified name.
 	const CCurve* GetCurve(const std::string& _name) const;
