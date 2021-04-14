@@ -8,9 +8,9 @@
   <ItemDefinitionGroup>
     <Link>
       <AdditionalDependencies>libhdf5.lib;libhdf5_cpp.lib;libhdf5_hl.lib;libhdf5_hl_cpp.lib;zlibstatic.lib;sundials_ida.lib;sundials_kinsol.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
     <ClCompile>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>

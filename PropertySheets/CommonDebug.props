@@ -6,6 +6,7 @@
   <ItemDefinitionGroup>
     <Link>
       <AdditionalDependencies>libhdf5_D.lib;libhdf5_cpp_D.lib;libhdf5_hl_D.lib;libhdf5_hl_cpp_D.lib;zlibstaticd.lib;sundials_ida_d.lib;sundials_kinsol_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <ClCompile>
       <SDLCheck>true</SDLCheck>

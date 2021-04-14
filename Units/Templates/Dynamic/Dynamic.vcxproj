@@ -89,17 +89,13 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile />
     <Link />
-    <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
+    <Link />
     <ClCompile />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile />
     <Link />
-    <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
+    <Link />
     <ClCompile />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
