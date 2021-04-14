@@ -27,6 +27,8 @@ public:
 
 	/** Sets new dimensions of the matrix. */
 	void Resize(size_t _rows, size_t _cols);
+	/** Sets new dimensions of the matrix and fills it with the specified value. */
+	void Assign(size_t _rows, size_t _cols, double _val);
 
 	/** Returns the current number of rows. */
 	size_t Rows() const;
@@ -60,6 +62,9 @@ public:
 	void Fill(double _val);
 	/** Removes all data and information about dimensions from the matrix. */
 	void Clear();
+
+	/** Returns a vector with all values joining all rows one after another. */
+	d_vect_t ToVector() const;
 
 
 	//////////////////////////////////////////////////////////////////////////

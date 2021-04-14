@@ -26,6 +26,12 @@ void CMatrix2D::Resize(size_t _rows, size_t _cols)
 	m_cols = _cols;
 }
 
+void CMatrix2D::Assign(size_t _rows, size_t _cols, double _val)
+{
+	Resize(_rows, _cols);
+	Fill(_val);
+}
+
 size_t CMatrix2D::Rows() const
 {
 	return m_rows;
@@ -97,6 +103,15 @@ void CMatrix2D::Clear()
 {
 	m_data.clear();
 	m_rows = m_cols = 0;
+}
+
+CMatrix2D::d_vect_t CMatrix2D::ToVector() const
+{
+	d_vect_t res;
+	res.reserve(m_rows * m_cols);
+	for (size_t i = 0; i < m_rows; ++i)
+		std::copy(m_data[i].begin(), m_data[i].end(), std::back_inserter(res));
+	return res;
 }
 
 void CMatrix2D::Normalize()
