@@ -945,11 +945,6 @@ void CQtPlot::RecalcBoundaries()
 	m_dMaxX = dMaxX;
 	m_dMinY = dMinY;
 	m_dMaxY = dMaxY;
-	if (m_dMaxX - m_dMinX < ACCURACY)
-	{
-		m_dMinX -= 0.001;
-		m_dMaxX += 0.001;
-	}
 	if (m_dMaxY - m_dMinY < ACCURACY)
 	{
 		m_dMinY -= 0.001;
