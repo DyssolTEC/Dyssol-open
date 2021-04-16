@@ -431,7 +431,7 @@ void Dyssol::SetCurrFlowsheetFile(const QString& _fileName)
 
 	m_sCurrFlowsheetFile = newFile;
 	AddFileToRecentList(m_sCurrFlowsheetFile);
-	const QString sWinNamePrefix = QString(StrConst::Dyssol_MainWindowName) + " (educational version)";
+	const QString sWinNamePrefix = QString(StrConst::Dyssol_MainWindowName);
 	if (!m_sCurrFlowsheetFile.isEmpty())
 		setWindowTitle(sWinNamePrefix + " - " + QString::fromStdWString(CH5Handler::DisplayFileName(m_sCurrFlowsheetFile.toStdWString())) + "[*]");
 	else
