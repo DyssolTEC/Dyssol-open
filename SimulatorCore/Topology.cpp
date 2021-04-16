@@ -113,7 +113,7 @@ bool CTopology::Analyse(u_matr_t& _vOrder, std::vector<u_pair_vect_t>& _vTears) 
 			++i;
 	}
 
-	return bRes1 & bRes2;
+	return bRes1 && bRes2;
 }
 
 bool CTopology::DeepFirstSearch(const u_matr_t& _graph, size_t _v, size_t _w)
@@ -256,6 +256,8 @@ void CTopology::TopologicalSortUtil(const u_matr_t& _graph, size_t _v, b_vect_t&
 // TODO: replace with Edmonds' algorithm to get the proper order
 CTopology::u_matr_t CTopology::MinSpanningTree(const u_matr_t& _vWeights)
 {
+	if (_vWeights.empty()) return {};
+
 	u_vect_t vMST(_vWeights.size(), -1);                                    // minimum spanning tree
 	u_vect_t vWeight(_vWeights.size(), std::numeric_limits<size_t>::max()); // array of minimum weights
 	b_vect_t vIncluded(_vWeights.size(), false);                            // vertices already included in MST
