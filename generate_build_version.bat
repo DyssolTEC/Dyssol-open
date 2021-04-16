@@ -18,4 +18,4 @@ for /f %%i in ('git rev-parse --short HEAD') do set CURR_COMMIT_HASH=%%i
 (
 echo #pragma once 
 echo const char CURRENT_BUILD_VERSION[] = "%DATE_TIME_F%.%CURR_COMMIT_HASH%";
-) > %~dp0\..\Utilities\BuildVersion.h
+) > %1.\Utilities\BuildVersion.h
