@@ -1,0 +1,60 @@
+name: MSBuild
+
+on: [push]
+
+env:
+  # Path to the solution file relative to the root of the project.
+  SOLUTION_FILE_PATH: .
+
+  # Configuration type to build.
+  # You can convert this to a build matrix if you need coverage of multiple configuration types.
+  # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+  BUILD_CONFIGURATION: Release
+  BUILD_PLATFORM: x64
+  
+  # Qt settings
+  QT_VERSION: 5.15.2
+  QT_VS_VERSION: msvc2019_64
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+        
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1
+      
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2
+      with:
+        # Version of Qt to install
+        version: ${{env.QT_VERSION}}
+        # Host platform
+        host: 'windows'
+        # Target platform for build
+        target: 'desktop'
+        # Architecture for Windows/Android
+        arch: win64_${{env.QT_VS_VERSION}}
+        # Whether or not to automatically run setup-python to find a valid python version.
+        setup-python: 'false'
+                
+    - name: Get QtMsBuild tools
+      working-directory: ${{github.workspace}}
+      # Get additional project files to build Qt solution with MSBuild. This work is usually done in Visual Studio with Qt VS Tools extension.
+      # So, just download this extension and extract requited files.
+      run: |
+        Invoke-WebRequest -Uri https://marketplace.visualstudio.com/_apis/public/gallery/publishers/TheQtCompany/vsextensions/QtVisualStudioTools2019/2/vspackage -OutFile vspackage.vsix
+        Expand-Archive vspackage.vsix -DestinationPath ./qtvsaddin
+        
+    - name: Build
+      working-directory: ${{github.workspace}}
+      env:
+        QtToolsPath: ${{env.Qt5_DIR}}/bin
+        QtMsBuild: ${{github.workspace}}/qtvsaddin/QtMsBuild
+      # Add additional options to the MSBuild command line here (like platform or verbosity level).
+      # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
+      run: |
+        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} ${{env.SOLUTION_FILE_PATH}}
