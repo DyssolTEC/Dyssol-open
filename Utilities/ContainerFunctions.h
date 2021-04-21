@@ -97,6 +97,13 @@ bool MapContainsKey(const std::map<K, V>& _map, K _key)
 	return _map.find(_key) != _map.end();
 }
 
+// Checks whether the multimap contains a specified key.
+template<typename K, typename V>
+bool MapContainsKey(const std::multimap<K, V>& _map, K _key)
+{
+	return _map.find(_key) != _map.end();
+}
+
 // Checks whether the map contains a specified value.
 template<typename K, typename V>
 bool MapContainsValue(const std::map<K, V>& _map, V _value)

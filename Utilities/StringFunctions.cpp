@@ -96,6 +96,16 @@ namespace StringFunctions
 		return true;
 	}
 
+	bool Contains(const std::string& _s, char _c)
+	{
+		return _s.find(_c) != std::string::npos;
+	}
+
+	bool Contains(const std::string& _s, const std::string& _subs)
+	{
+		return _s.find(_subs) != std::string::npos;
+	}
+
 	void ReplaceAll(std::string& _s, const std::string& _old, const std::string& _new)
 	{
 		if (_old.empty() || _s.empty()) return;
@@ -120,14 +130,14 @@ namespace StringFunctions
 
 	std::string ReplaceAll(const std::string& _s, const std::string& _old, const std::string& _new)
 	{
-		std::string res = _s;
+		std::string res{ _s };
 		ReplaceAll(res, _old, _new);
 		return res;
 	}
 
 	std::wstring ReplaceAll(const std::wstring& _s, const std::wstring& _old, const std::wstring& _new)
 	{
-		std::wstring res = _s;
+		std::wstring res{ _s };
 		ReplaceAll(res, _old, _new);
 		return res;
 	}
@@ -150,7 +160,7 @@ namespace StringFunctions
 
 	std::string TrimWhitespaces(const std::string& _s)
 	{
-		std::string res = _s;
+		std::string res{ _s };
 		TrimWhitespaces(res);
 		return res;
 	}
@@ -166,8 +176,16 @@ namespace StringFunctions
 
 	std::string TrimFromSymbols(const std::string& _s, const std::string& _symbols)
 	{
-		std::string res = _s;
+		std::string res{ _s };
 		TrimFromSymbols(res, _symbols);
+		return res;
+	}
+
+	std::string RemoveQuotes(const std::string& _s)
+	{
+		std::string res{ _s };
+		if (!res.empty() && (res.front() == '"' || res.front() == '\''))	res.erase(0, 1);
+		if (!res.empty() && (res.back()  == '"' || res.back()  == '\''))	res.erase(res.size() - 1, 1);
 		return res;
 	}
 
@@ -181,6 +199,20 @@ namespace StringFunctions
 		std::ostringstream ss;
 		ss << std::quoted(_s);
 		return ss.str();
+	}
+
+	std::string ToLowerCase(const std::string& _s)
+	{
+		std::string res{ _s };
+		std::transform(res.begin(), res.end(), res.begin(), tolower);
+		return res;
+	}
+
+	std::string ToUpperCase(const std::string& _s)
+	{
+		std::string res{ _s };
+		std::transform(res.begin(), res.end(), res.begin(), toupper);
+		return res;
 	}
 
 	std::string GetRestOfLine(std::istream* _is)
@@ -210,7 +242,7 @@ namespace StringFunctions
 	// Generates a random key of the given length.
 	std::string GenerateRandomKey(size_t _length /*= 20*/)
 	{
-		static const std::string symbols = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+		const std::string symbols = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 		std::random_device device;
 		std::default_random_engine engine{ device() };
 		std::uniform_int_distribution<size_t> distribution{ 0, symbols.length() - 1 };

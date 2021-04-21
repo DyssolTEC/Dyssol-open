@@ -692,9 +692,9 @@ namespace StrConst
 //////////////////////////////////////////////////////////////////////////
 /// CModulesManagerTab
 //////////////////////////////////////////////////////////////////////////
-	const char* const MMT_Dynamic     = " Dynamic Unit";
-	const char* const MMT_SteadyState = " Steady-state Unit";
-	const char* const MMT_Solver      = " Solver";
+	const char* const MMT_Dynamic     = "Dynamic unit";
+	const char* const MMT_SteadyState = "Steady-state unit";
+	const char* const MMT_Solver      = "solver";
 
 //////////////////////////////////////////////////////////////////////////
 /// CCalculationSequenceEditor

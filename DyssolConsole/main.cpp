@@ -1,5 +1,7 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
+#include "ArgumentsParser.h"
+#include "DyssolStringConstants.h"
 #include "ConfigFileParser.h"
 #include "ParametersHolder.h"
 #include "Simulator.h"
@@ -13,6 +15,71 @@
 #include "ThreadPool.h"
 #include "DyssolSystemDefines.h"
 #include <chrono>
+#include <filesystem>
+
+
+// Prints information about command line arguments.
+void PrintArgumentsInfo()
+{
+	std::cout << "Usage: DyssolC -key[=value] [-key[=value]]..." << std::endl;
+	std::cout << std::endl;
+	std::cout << "Mandatory arguments to start simulation:" << std::endl;
+	std::cout << "-s, --script          path to script file" << std::endl;
+	std::cout << std::endl;
+	std::cout << "Information:" << std::endl;
+	std::cout << "-v,  --version        print information about current version" << std::endl;
+	std::cout << "-m,  --models         print information about available models" << std::endl;
+	std::cout << "-mp, --models_path    additional path to look for available models" << std::endl;
+}
+
+// Prints information about the current version.
+void PrintVersionInfo()
+{
+	std::cout << "Version: " << CURRENT_VERSION_STR << std::endl;
+}
+
+// Prints a formatted entry of trhe given length.
+template<typename T> void PrintEntry(const T& _entry, std::streamsize _width)
+{
+	std::cout << std::left << std::setw(_width) << std::setfill(' ') << _entry;
+}
+
+// Prints information about available models.
+void PrintModelsInfo(const std::vector<std::filesystem::path>& _modelPaths)
+{
+	// create models manager
+	CModelsManager manager;
+	manager.AddDir(L".");				// add current directory as a path to units/solvers
+	for (const auto& dir : _modelPaths)	// add other directories as a path to units/solvers
+		manager.AddDir(dir);
+
+	// get available models
+	const auto units   = manager.GetAvailableUnits();
+	const auto solvers = manager.GetAvailableSolvers();
+
+	// print info
+	const size_t nameLen = 50;
+	const size_t typeLen = 30;
+	const size_t authLen = 50;
+	PrintEntry("Name"  , nameLen);
+	PrintEntry("Type"  , typeLen);
+	PrintEntry("Author", authLen);
+	std::cout << std::endl;
+	for (const auto& m : units)
+	{
+		PrintEntry(m.name, nameLen);
+		PrintEntry(m.isDynamic ? StrConst::MMT_Dynamic : StrConst::MMT_SteadyState, typeLen);
+		PrintEntry(m.author, authLen);
+		std::cout << std::endl;
+	}
+	for (const auto& m : solvers)
+	{
+		PrintEntry(m.name, nameLen);
+		PrintEntry(std::vector<std::string>{ SOLVERS_TYPE_NAMES }[static_cast<unsigned>(m.solverType)] + " " + StrConst::MMT_Solver, typeLen);
+		PrintEntry(m.author, authLen);
+		std::cout << std::endl;
+	}
+}
 
 void RunSimulation(const CConfigFileParser& _parser)
 {
@@ -259,34 +326,47 @@ void RunSimulation(const CConfigFileParser& _parser)
 	std::cout << "Simulation finished in " << std::chrono::duration_cast<std::chrono::seconds>(tEnd - tStart).count() << " [s]" << std::endl;
 }
 
+void RunDyssol(const std::string& _file)
+{
+	CConfigFileParser parser;
+	const bool parsed = parser.Parse(_file);
+	if (!parsed)
+	{
+		std::cout << "Error: The specified script file can not be parsed or contains errors." << std::endl;
+		return;
+	}
+
+	RunSimulation(parser);
+}
+
 int main(int argc, const char *argv[])
 {
-	if (argc < 2)
+	// possible keys with aliases
+	std::vector<std::vector<std::string>> keys;
+	keys.push_back({ "v" , "version"     });
+	keys.push_back({ "m" , "models"      });
+	keys.push_back({ "mp", "models_path" });
+	keys.push_back({ "s" , "script"      });
+
+	const CArgumentsParser parser(argc, argv, keys);
+
+	if (parser.TokensNumber() == 0)
 	{
-		std::cout << "Error: Path to a config file is not specified." << std::endl;
+		PrintArgumentsInfo();
 		return 0;
 	}
 
-	const std::string sParam(argv[1]);
-	if (sParam == "-models" || sParam == "-m")
+	if (parser.HasKey("v"))
+		PrintVersionInfo();
+	if (parser.HasKey("m"))
 	{
-		// TODO
+		std::vector<std::filesystem::path> fsPaths;
+		for (const auto& p : parser.GetValues("mp"))
+			fsPaths.emplace_back(p);
+		PrintModelsInfo(fsPaths);
 	}
-	else if (sParam == "-version" || sParam == "-v")
-	{
-		std::cout << "Version: " << CURRENT_VERSION_STR << std::endl;
-		//std::cout << "Build: " << CURRENT_BUILD_VERSION << std::endl;
-	}
-	else
-	{
-		CConfigFileParser parser;
-		const bool bParsed = parser.Parse(sParam);
-		if (!bParsed)
-		{
-			std::cout << "Error: The specified config file can not be parsed or contains errors." << std::endl;
-			return 0;
-		}
+	if (parser.HasKey("s"))
+		RunDyssol(parser.GetValue("s"));
 
-		RunSimulation(parser);
-	}
+	return 0;
 }
