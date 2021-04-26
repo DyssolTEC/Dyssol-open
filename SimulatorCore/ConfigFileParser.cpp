@@ -11,11 +11,13 @@
 #include "DyssolUtilities.h"
 #include "DyssolHelperDefines.h"
 #include "DyssolStringConstants.h"
+#include "DyssolHelperDefines.h"
 #include <fstream>
 #include <sstream>
 
 using namespace StringFunctions;
 
+#define TO_ARG_STR(X) std::string(MACRO_TOSTRING(X)).substr(12, std::string(MACRO_TOSTRING(X)).length()).append(12 + 20 - std::string(MACRO_TOSTRING(X)).length(), ' ')
 #define MAKE_ARGUMENT(ARGUM_NAME, ARGUM_TYPE) { ARGUM_NAME, StringFunctions::TrimWhitespaces(std::string(TO_ARG_STR(ARGUM_NAME))), ARGUM_TYPE, nullptr }
 
 CConfigFileParser::CConfigFileParser()

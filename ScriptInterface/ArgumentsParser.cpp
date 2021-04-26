@@ -34,7 +34,7 @@ CArgumentsParser::CArgumentsParser(int _argc, const char** _argv, std::vector<st
 	}
 }
 
-size_t CArgumentsParser::TokensNumber() const
+size_t CArgumentsParser::TokensCount() const
 {
 	return m_tokens.size();
 }

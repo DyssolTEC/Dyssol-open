@@ -83,8 +83,6 @@ void PrintModelsInfo(const std::vector<std::filesystem::path>& _modelPaths)
 
 void RunSimulation(const CConfigFileParser& _parser)
 {
-	InitializeThreadPool();
-
 	const std::wstring sSrcFile = _parser.GetValue<std::wstring>(EArguments::SOURCE_FILE);
 	const std::wstring sDstFile = _parser.IsValueDefined(EArguments::RESULT_FILE) ? _parser.GetValue<std::wstring>(EArguments::RESULT_FILE) : sSrcFile;
 	const std::wstring sMDBFile = _parser.GetValue<std::wstring>(EArguments::MATERIALS_DATABASE);
@@ -326,10 +324,14 @@ void RunSimulation(const CConfigFileParser& _parser)
 	std::cout << "Simulation finished in " << std::chrono::duration_cast<std::chrono::seconds>(tEnd - tStart).count() << " [s]" << std::endl;
 }
 
-void RunDyssol(const std::string& _file)
+void RunDyssol(const std::string& _script)
 {
+	InitializeThreadPool();
+
+	std::cout << "Script name:    " << _script << std::endl;
+
 	CConfigFileParser parser;
-	const bool parsed = parser.Parse(_file);
+	const bool parsed = parser.Parse(_script);
 	if (!parsed)
 	{
 		std::cout << "Error: The specified script file can not be parsed or contains errors." << std::endl;
@@ -350,7 +352,7 @@ int main(int argc, const char *argv[])
 
 	const CArgumentsParser parser(argc, argv, keys);
 
-	if (parser.TokensNumber() == 0)
+	if (parser.TokensCount() == 0)
 	{
 		PrintArgumentsInfo();
 		return 0;

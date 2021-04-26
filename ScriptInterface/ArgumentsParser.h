@@ -23,7 +23,7 @@ public:
 	CArgumentsParser(int _argc, const char** _argv, std::vector<std::vector<std::string>> _allowedKeys);
 
 	// Returns total number of parsed arguments.
-	[[nodiscard]] size_t TokensNumber() const;
+	[[nodiscard]] size_t TokensCount() const;
 	// Determines if the argument with the given key or its alias exists.
 	[[nodiscard]] bool HasKey(const std::string& _key) const;
 	// Returns value of the argument by its key. If there are several arguments with the same key, any of them may be returned. Returns an empty string if such key does not exist.
