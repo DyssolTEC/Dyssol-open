@@ -1,6 +1,8 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "ArgumentsParser.h"
+#include "ScriptParser.h"
+#include "ScriptRunner.h"
 #include "DyssolStringConstants.h"
 #include "ConfigFileParser.h"
 #include "ParametersHolder.h"
@@ -16,7 +18,6 @@
 #include "DyssolSystemDefines.h"
 #include <chrono>
 #include <filesystem>
-
 
 // Prints information about command line arguments.
 void PrintArgumentsInfo()
@@ -324,21 +325,18 @@ void RunSimulation(const CConfigFileParser& _parser)
 	std::cout << "Simulation finished in " << std::chrono::duration_cast<std::chrono::seconds>(tEnd - tStart).count() << " [s]" << std::endl;
 }
 
-void RunDyssol(const std::string& _script)
+void RunDyssol(const std::filesystem::path& _script)
 {
 	InitializeThreadPool();
 
-	std::cout << "Script name:    " << _script << std::endl;
+	std::cout << "Parsing script file: " << _script << std::endl;
 
-	CConfigFileParser parser;
-	const bool parsed = parser.Parse(_script);
-	if (!parsed)
-	{
-		std::cout << "Error: The specified script file can not be parsed or contains errors." << std::endl;
-		return;
-	}
+	const CScriptParser parser{ _script };
+	std::cout << "Jobs found: " << parser.JobsCount() << std::endl;
 
-	RunSimulation(parser);
+	CScriptRunner runner;
+	for (const auto& job : parser.Jobs())
+		runner.RunJob(*job);
 }
 
 int main(int argc, const char *argv[])

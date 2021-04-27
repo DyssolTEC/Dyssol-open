@@ -75,7 +75,7 @@ public:
 	std::wstring GetFileName() const;
 
 	// Creates new database by removing information about compounds and file name.
-	void CreateNewDatabase();
+	void Clear();
 
 	// Saves database to a text file with specified name. If the name is not specified, data will be written to the default file. Returns true on success.
 	bool SaveToFile(const std::wstring& _fileName = L"");

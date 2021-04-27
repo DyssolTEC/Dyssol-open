@@ -59,7 +59,7 @@ std::vector<std::string> CArgumentsParser::GetValues(const std::string& _key) co
 {
 	std::vector<std::string> res;
 	const auto [beg, end] = m_tokens.equal_range(_key);
-	for (auto  it = beg; it != end; ++it)
+	for (auto it = beg; it != end; ++it)
 		res.push_back(it->second);
 	return res;
 }

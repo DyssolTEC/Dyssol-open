@@ -15,6 +15,7 @@ class CSaveLoadThread : public CBasicThread
 public:
 
 private:
+	// TODO: make m_fileHandler a part of CFlowsheet
 	CH5Handler m_fileHandler;
 	QString m_sFileName;
 	CFlowsheet *m_pFlowsheet;

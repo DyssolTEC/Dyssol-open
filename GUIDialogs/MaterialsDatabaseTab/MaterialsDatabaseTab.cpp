@@ -99,7 +99,7 @@ void CMaterialsDatabaseTab::UpdateWholeView()
 void CMaterialsDatabaseTab::NewDatabase()
 {
 	if (!IsUserConfirm()) return;
-	m_pMaterialsDB->CreateNewDatabase();
+	m_pMaterialsDB->Clear();
 	UpdateWholeView();
 	SetMaterialsDatabaseModified(false);
 	emit MaterialDatabaseWasChanged();

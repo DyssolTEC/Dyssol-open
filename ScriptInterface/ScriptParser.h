@@ -17,13 +17,13 @@ public:
 	// Opens a _script file and parses it.
 	CScriptParser(const std::filesystem::path& _script);
 
-	// Process a single line of a script file.
-	void ProcessLine(const std::string& _line);
-
 	// Returns the number of parsed jobs.
-	size_t JobsCount() const;
+	[[nodiscard]] size_t JobsCount() const;
 	// Returns all parsed jobs.
-	std::vector<const CScriptJob*> Jobs() const;
+	[[nodiscard]] std::vector<const CScriptJob*> Jobs() const;
 
+private:
+	// Process a single line of a script file, cleared from comments.
+	void ProcessLine(const std::string& _line);
 };
 

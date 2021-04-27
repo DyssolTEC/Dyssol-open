@@ -4,14 +4,14 @@
 #include "ScriptDefines.h"
 #include <vector>
 #include <memory>
-
+#include <filesystem>
 
 // Description of each script job.
 class CScriptJob
 {
 	using entry_t = std::unique_ptr<ScriptInterface::SScriptEntry>;
 
-	std::vector<entry_t> m_entries; // List of all parsed script arguments.
+	std::vector<entry_t> m_entries{}; // List of all parsed script arguments.
 
 public:
 	// Adds new entry with the given key to the list and returns a pointer to it. If such key was not defined, does nothing and returns nullptr.
@@ -26,8 +26,8 @@ public:
 	{
 		auto entry = std::find_if(m_entries.begin(), m_entries.end(), [&](const entry_t& _e) { return _e->key == _key; });
 		if (entry == m_entries.end()) return {};
-		if (!std::holds_alternative<T>(entry)) return {};
-		return std::get<T>(entry->value);
+		if (!std::holds_alternative<T>(entry->get()->value)) return {};
+		return std::get<T>(entry->get()->value);
 	}
 
 	// Returns values of all the defined arguments with the given key.
@@ -36,7 +36,7 @@ public:
 	{
 		std::vector<T> res;
 		for (const auto& entry : m_entries)
-			if (entry->key == _key && std::holds_alternative<T>(entry))
+			if (entry->key == _key && std::holds_alternative<T>(entry->value))
 				res.push_back(std::get<T>(entry->value));
 		return res;
 	}

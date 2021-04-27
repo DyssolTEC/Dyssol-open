@@ -125,7 +125,7 @@ std::wstring CMaterialsDatabase::GetFileName() const
 	return m_sFileName;
 }
 
-void CMaterialsDatabase::CreateNewDatabase()
+void CMaterialsDatabase::Clear()
 {
 	m_sFileName.clear();
 	m_vCompounds.clear();
@@ -267,7 +267,7 @@ bool CMaterialsDatabase::SaveToFile(const std::wstring& _fileName /*= ""*/)
 
 bool CMaterialsDatabase::LoadFromFile(const std::wstring& _fileName /*= ""*/)
 {
-	CreateNewDatabase();
+	Clear();
 	const std::wstring fileName = _fileName.empty() ? MDBDescriptors::DEFAULT_MDB_FILE_NAME : _fileName;
 
 	std::ifstream inFile(UnicodePath(fileName));

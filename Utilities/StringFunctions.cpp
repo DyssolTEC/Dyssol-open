@@ -223,6 +223,17 @@ namespace StringFunctions
 		return res;
 	}
 
+	template <>
+	bool GetValueFromStream<bool>(std::istream* _is)
+	{
+		const auto str = GetValueFromStream<std::string>(_is);
+		if (str == "1" || ToUpperCase(str) == "YES" || ToUpperCase(str) == "TRUE" || ToUpperCase(str) == "ON")
+			return true;
+		if (str == "0" || ToUpperCase(str) == "NO" || ToUpperCase(str) == "FALSE" || ToUpperCase(str) == "OFF")
+			return false;
+		return false;
+	}
+
 	std::string UnifyPath(const std::string& _path)
 	{
 		std::string s = _path;
