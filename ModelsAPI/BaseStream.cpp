@@ -150,7 +150,7 @@ void CBaseStream::RemoveTimePoints(double _timeBeg, double _timeEnd, bool _inclu
 								 : std::upper_bound(m_timePoints.begin(), m_timePoints.end(), _timeBeg);
 	const auto& end = _inclusive ? std::upper_bound(m_timePoints.begin(), m_timePoints.end(), _timeEnd)
 								 : std::lower_bound(m_timePoints.begin(), m_timePoints.end(), _timeEnd);
-	if (end == m_timePoints.begin() || beg == end) return;
+	if (end == m_timePoints.begin() || beg == m_timePoints.end() || beg == end) return;
 	m_timePoints.erase(beg, end);
 
 	// remove data in overall parameters
