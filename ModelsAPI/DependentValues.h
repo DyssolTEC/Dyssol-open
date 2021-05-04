@@ -2,10 +2,9 @@
 
 #pragma once
 
-#include <ostream>
 #include <map>
 #include <vector>
-#include <ostream>
+#include <istream>
 
 /* Represents a dependent value, described with the list of [param:value].
  * Implements internal linear interpolation of values between existing parameters
@@ -70,7 +69,9 @@ public:
 	static CDependentValues Unique(const CDependentValues& _table);
 
 	// Output stream operator.
-	friend std::ostream& operator<<(std::ostream& _os, const CDependentValues& _obj);
+	friend std::ostream& operator<<(std::ostream& _s, const CDependentValues& _obj);
+	// Input stream operator.
+	friend std::istream& operator>>(std::istream& _s, CDependentValues& _obj);
 
 	// Comparison.
 	bool operator==(const CDependentValues& _v) const;

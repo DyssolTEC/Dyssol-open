@@ -27,7 +27,9 @@ private:
 	// Loads the flowsheet, materials database and models paths. Returns success flag.
 	bool LoadFiles(const CScriptJob& _job);
 	// Sets flowsheet parameters from the _job. Returns success flag.
-	bool SetParameters(const CScriptJob& _job);
+	bool SetupFlowsheetParameters(const CScriptJob& _job);
+	// Sets unit parameters from the _job. Returns success flag.
+	bool SetupUnits(const CScriptJob& _job);
 
 	// Performs the simulation. Returns success flag.
 	bool RunSimulation(const CScriptJob& _job);

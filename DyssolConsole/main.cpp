@@ -39,7 +39,7 @@ void PrintVersionInfo()
 	std::cout << "Version: " << CURRENT_VERSION_STR << std::endl;
 }
 
-// Prints a formatted entry of trhe given length.
+// Helper function to print a formatted entry justified left and filled with spaces until the given length.
 template<typename T> void PrintEntry(const T& _entry, std::streamsize _width)
 {
 	std::cout << std::left << std::setw(_width) << std::setfill(' ') << _entry;

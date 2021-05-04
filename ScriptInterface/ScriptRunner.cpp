@@ -1,10 +1,10 @@
 /* Copyright (c) 2021, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "ScriptRunner.h"
-
-#include <functional>
-
+#include "BaseUnit.h"
 #include "ScriptJob.h"
+#include "StringFunctions.h"
+#include <functional>
 
 using namespace ScriptInterface;
 namespace fs = std::filesystem;
@@ -30,7 +30,8 @@ bool CScriptRunner::ConfigureFlowsheet(const CScriptJob& _job)
 {
 	bool success = true;
 	if (success) success &= LoadFiles(_job);
-	if (success) success &= SetParameters(_job);
+	if (success) success &= SetupFlowsheetParameters(_job);
+	if (success) success &= SetupUnits(_job);
 	return success;
 }
 
@@ -48,7 +49,7 @@ bool CScriptRunner::LoadFiles(const CScriptJob& _job)
 
 	// load materials database
 	const auto MDBfile = _job.GetValue<fs::path>(EScriptKeys::MATERIALS_DATABASE);
-	std::cout << "Loading materials database file: " << MDBfile << std::endl;
+	std::cout << "Loading materials database file: \n\t" << MDBfile << std::endl;
 	if (!m_materialsDatabase.LoadFromFile(MDBfile))
 	{
 		std::cout << "Error: Materials database file can not be loaded" << std::endl;
@@ -56,12 +57,11 @@ bool CScriptRunner::LoadFiles(const CScriptJob& _job)
 	}
 
 	// set paths to models
-	const auto modelsPaths = _job.GetValues<fs::path>(EScriptKeys::MODELS_PATH);
-	std::cout << "Loading models from: " << fs::current_path() << std::endl;
+	std::cout << "Loading models from: \n\t" << fs::current_path() << std::endl;
 	m_modelsManager.AddDir(L".");		// add current directory as path to units/solvers
-	for (const auto& dir : modelsPaths)
+	for (const auto& dir : _job.GetValues<fs::path>(EScriptKeys::MODELS_PATH))
 	{
-		std::cout << "Loading models from: " << dir << std::endl;
+		std::cout << "Loading models from: \n\t" << dir << std::endl;
 		m_modelsManager.AddDir(dir);
 	}
 
@@ -69,7 +69,7 @@ bool CScriptRunner::LoadFiles(const CScriptJob& _job)
 	if (hasSrc)
 	{
 		const auto srcFile = _job.GetValue<fs::path>(EScriptKeys::SOURCE_FILE);
-		std::cout << "Loading flowsheet file: " << srcFile << std::endl;
+		std::cout << "Loading flowsheet file: \n\t" << srcFile << std::endl;
 		CH5Handler fileHandler;
 		if (!m_flowsheet.LoadFromFile(fileHandler, srcFile))
 		{
@@ -87,7 +87,7 @@ bool CScriptRunner::LoadFiles(const CScriptJob& _job)
 #define SET_PARAM4(KEY, TYPE, FUN, TYPE_CAST) if (_job.HasKey(KEY)) params->FUN(static_cast<TYPE_CAST>(_job.GetValue<TYPE>(KEY)))
 #define SET_PARAM(...) _EXPAND(_RESOLVE_MACRO(__VA_ARGS__, SET_PARAM4, SET_PARAM3)(__VA_ARGS__))
 
-bool CScriptRunner::SetParameters(const CScriptJob& _job)
+bool CScriptRunner::SetupFlowsheetParameters(const CScriptJob& _job)
 {
 	auto* params = m_flowsheet.GetParameters();
 
@@ -110,8 +110,60 @@ bool CScriptRunner::SetParameters(const CScriptJob& _job)
 	SET_PARAM(EScriptKeys::ITERATIONS_UPPER_LIMIT_1ST  , uint64_t, Iters1stUpperLimit     , uint32_t     );
 	SET_PARAM(EScriptKeys::RELAXATION_PARAMETER        , double  , RelaxationParam                       );
 	SET_PARAM(EScriptKeys::ACCELERATION_LIMIT          , double  , WegsteinAccelParam                    );
+	// TODO: make indexing from 1 or name them
 	SET_PARAM(EScriptKeys::CONVERGENCE_METHOD          , uint64_t, ConvergenceMethod      , EConvMethod  );
 	SET_PARAM(EScriptKeys::EXTRAPOLATION_METHOD        , uint64_t, ExtrapolationMethod    , EExtrapMethod);
+
+	return true;
+}
+
+bool CScriptRunner::SetupUnits(const CScriptJob& _job)
+{
+	// Returns a pointer to unit by its name or index.
+	const auto GetUnitPtr = [&](const SUnitParameterScriptEntry& _entry)
+	{
+		auto* unit = m_flowsheet.GetUnitByName(_entry.unitName);	// try to access by name
+		if (!unit) unit = m_flowsheet.GetUnit(_entry.unitIndex);	// try to access by index
+		return unit;												// return pointer
+	};
+
+	// Returns a pointer to unit parameter by its name or index.
+	const auto GetParamPtr = [&](CBaseUnit& _model, const SUnitParameterScriptEntry& _entry)
+	{
+		auto& manager = _model.GetUnitParametersManager();				// get unit parameters manager
+		auto* param = manager.GetParameter(_entry.paramName);			// try to access by name
+		if (!param) param = manager.GetParameter(_entry.paramIndex);	// try to access by index
+		return param;													// return pointer
+	};
+
+	for (const auto& entry : _job.GetValues<SUnitParameterScriptEntry>(EScriptKeys::UNIT_PARAMETER))
+	{
+		auto* unit = GetUnitPtr(entry);				// get pointer to unit
+		if (!unit)
+		{
+			std::cout << "Error while applying " << ARG2STR(EScriptKeys::UNIT_PARAMETER) << ": \n\t"
+				<< "Cannot load a unit neither by its name " << StringFunctions::Quote(entry.unitName)
+				<< " nor by its index " << StringFunctions::Quote(std::to_string(entry.unitIndex + 1)) << std::endl;
+			return false;
+		}
+		auto* model = unit->GetModel();				// get pointer to unit's model
+		if (!model)
+		{
+			std::cout << "Error while applying " << ARG2STR(EScriptKeys::UNIT_PARAMETER) << ": \n\t"
+				<< "Cannot load a model for unit " << StringFunctions::Quote(unit->GetName()) << std::endl;
+			return false;
+		}
+		auto* param = GetParamPtr(*model, entry);	// get pointer to unit parameter
+		if (!param)
+		{
+			std::cout << "Error while applying " << ARG2STR(EScriptKeys::UNIT_PARAMETER) << ": \n\t"
+				<< "Cannot load a parameter of unit " << StringFunctions::Quote(unit->GetName()) << " neither by its name " << StringFunctions::Quote(entry.paramName)
+				<< " nor by its index " << StringFunctions::Quote(std::to_string(entry.paramIndex + 1)) << std::endl;
+			return false;
+		}
+		std::stringstream ss{ entry.values };		// create a stream with parameter values
+		param->ValueFromStream(ss);					// read unit parameter values
+	}
 
 	return true;
 }

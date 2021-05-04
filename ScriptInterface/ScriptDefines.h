@@ -2,6 +2,7 @@
 
 #pragma once
 #include "DyssolHelperDefines.h"
+#include "UnitParameters.h"
 #include "ContainerFunctions.h"
 #include <filesystem>
 #include <string>
@@ -39,6 +40,7 @@ namespace ScriptInterface
 		RELAXATION_PARAMETER,
 		ACCELERATION_LIMIT,
 		EXTRAPOLATION_METHOD,
+		UNIT_PARAMETER,
 	};
 
 	// All possible types of script entries.
@@ -51,6 +53,17 @@ namespace ScriptInterface
 		DOUBLE,		// double
 		STRING,		// std::string
 		PATH,		// std::filesystem::path
+		UNIT_PARAM,	// SUnitParameterScriptEntry
+	};
+
+	// Help struct to parse unit parameters.
+	struct SUnitParameterScriptEntry
+	{
+		std::string unitName{};		// Name of the unit container. Either this or index will be read.
+		size_t unitIndex{};			// Index of the unit container. Either this or name will be read.
+		std::string paramName{};	// Name of the parameter. Either this or index will be read.
+		size_t paramIndex{};		// Index of the parameter. Either this or name will be read.
+		std::string values{};		// Value(s) of the unit parameter as a string.
 	};
 
 	// Descriptor for an entry of the script file.
@@ -65,7 +78,7 @@ namespace ScriptInterface
 	struct SScriptEntry : SScriptEntryDescriptor
 	{
 		// Value of the entry of different types.
-		std::variant<bool, int64_t, uint64_t, double, std::string, std::filesystem::path> value{};
+		std::variant<bool, int64_t, uint64_t, double, std::string, std::filesystem::path, SUnitParameterScriptEntry> value{};
 
 		SScriptEntry() = default;
 		SScriptEntry(const SScriptEntryDescriptor& _descr) : SScriptEntryDescriptor{ _descr } {}
@@ -85,11 +98,13 @@ namespace ScriptInterface
 	inline std::vector<SScriptEntryDescriptor> AllScriptArguments()
 	{
 		return {
+			// paths
 			MAKE_ARG(EScriptKeys::JOB                         , EEntryType::EMPTY),
 			MAKE_ARG(EScriptKeys::SOURCE_FILE                 , EEntryType::PATH),
 			MAKE_ARG(EScriptKeys::RESULT_FILE                 , EEntryType::PATH),
 			MAKE_ARG(EScriptKeys::MATERIALS_DATABASE          , EEntryType::PATH),
 			MAKE_ARG(EScriptKeys::MODELS_PATH                 , EEntryType::PATH),
+			// flowsheet parameters
 			MAKE_ARG(EScriptKeys::SIMULATION_TIME             , EEntryType::DOUBLE),
 			MAKE_ARG(EScriptKeys::RELATIVE_TOLERANCE          , EEntryType::DOUBLE),
 			MAKE_ARG(EScriptKeys::ABSOLUTE_TOLERANCE          , EEntryType::DOUBLE),
@@ -111,6 +126,8 @@ namespace ScriptInterface
 			MAKE_ARG(EScriptKeys::RELAXATION_PARAMETER        , EEntryType::DOUBLE),
 			MAKE_ARG(EScriptKeys::ACCELERATION_LIMIT          , EEntryType::DOUBLE),
 			MAKE_ARG(EScriptKeys::EXTRAPOLATION_METHOD        , EEntryType::UINT),
+			// unit settings
+			MAKE_ARG(EScriptKeys::UNIT_PARAMETER              , EEntryType::UNIT_PARAM),
 		};
 	}
 

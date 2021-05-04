@@ -5,8 +5,27 @@
 #include <iostream>
 
 using namespace StringFunctions;
+using namespace ScriptInterface;
 
 CScriptParser::CScriptParser(const std::filesystem::path& _script)
+{
+	Parse(_script);
+}
+
+size_t CScriptParser::JobsCount() const
+{
+	return m_jobs.size();
+}
+
+std::vector<const CScriptJob*> CScriptParser::Jobs() const
+{
+	std::vector<const CScriptJob*> res;
+	for (const auto& j : m_jobs)
+		res.push_back(j.get());
+	return res;
+}
+
+void CScriptParser::Parse(const std::filesystem::path& _script)
 {
 	std::ifstream scriptFile{ _script };
 	if (!scriptFile.good())
@@ -46,43 +65,35 @@ void CScriptParser::ProcessLine(const std::string& _line)
 		return;
 
 	// add new entry with the given key to the job with
-	ScriptInterface::SScriptEntry* entry = m_jobs.back()->AddEntry(key);
+	SScriptEntry* entry = m_jobs.back()->AddEntry(key);
 
 	// parse the line and write the value to this entry
 	switch (entry->type)
 	{
-	case ScriptInterface::EEntryType::EMPTY:
-		break;
-	case ScriptInterface::EEntryType::BOOL:
-		entry->value = GetValueFromStream<bool>(&ss);
-		break;
-	case ScriptInterface::EEntryType::INT:
-		entry->value = GetValueFromStream<int64_t>(&ss);
-		break;
-	case ScriptInterface::EEntryType::UINT:
-		entry->value = GetValueFromStream<uint64_t>(&ss);
-		break;
-	case ScriptInterface::EEntryType::DOUBLE:
-		entry->value = GetValueFromStream<double>(&ss);
-		break;
-	case ScriptInterface::EEntryType::STRING:
-		entry->value = GetRestOfLine(&ss);
-		break;
-	case ScriptInterface::EEntryType::PATH:
-		entry->value = std::filesystem::path{ GetRestOfLine(&ss) };
-		break;
+	case EEntryType::EMPTY:																		break;
+	case EEntryType::BOOL:			entry->value = GetValueFromStream<bool>(&ss);				break;
+	case EEntryType::INT:			entry->value = GetValueFromStream<int64_t>(&ss);			break;
+	case EEntryType::UINT:			entry->value = GetValueFromStream<uint64_t>(&ss);			break;
+	case EEntryType::DOUBLE:		entry->value = GetValueFromStream<double>(&ss);				break;
+	case EEntryType::STRING:		entry->value = GetRestOfLine(&ss);							break;
+	case EEntryType::PATH:			entry->value = std::filesystem::path{ GetRestOfLine(&ss) };	break;
+	case EEntryType::UNIT_PARAM:	entry->value = ReadUnitParameterFromStream(ss);				break;
 	}
 }
 
-size_t CScriptParser::JobsCount() const
+// Extracts name and index from the string.
+std::pair<std::string, size_t> ParseNameAndIndex(const std::string& _str)
 {
-	return m_jobs.size();
+	const std::string name = IsSimpleUInt(_str) ? "" : _str;
+	const size_t index     = IsSimpleUInt(_str) ? std::stoull(_str) - 1 : -1;
+	return { name, index };
 }
 
-std::vector<const CScriptJob*> CScriptParser::Jobs() const
+SUnitParameterScriptEntry CScriptParser::ReadUnitParameterFromStream(std::istream& _s) const
 {
-	std::vector<const CScriptJob*> res;
-	for (const auto& j : m_jobs)
-		res.push_back(j.get());
+	SUnitParameterScriptEntry res;
+	std::tie(res.unitName , res.unitIndex ) = ParseNameAndIndex(GetValueFromStream<std::string>(&_s));
+	std::tie(res.paramName, res.paramIndex) = ParseNameAndIndex(GetValueFromStream<std::string>(&_s));
+	res.values = GetRestOfLine(&_s);
 	return res;
 }

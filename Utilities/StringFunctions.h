@@ -33,6 +33,8 @@ namespace StringFunctions
 	bool CompareCaseInsensitive(const std::string& _s1, const std::string& _s2);	// Case insensitive strings comparison. Returns true if the stings are the same.
 	bool CompareCaseInsensitive(const std::wstring& _s1, const std::wstring& _s2);	// Case insensitive wide strings comparison. Returns true if the stings are the same.
 	bool IsDigits(const std::string& _s);											// Returns true if all symbols in the string are digits.
+	bool IsSimpleUInt(const std::string& _s);										// Checks if the string represents an unsigned int value.
+
 	bool Contains(const std::string& _s, char _c);									// Checks if the string contains a symbol.
 	bool Contains(const std::string& _s, const std::string& _subs);					// Checks if the string contains a substring.
 

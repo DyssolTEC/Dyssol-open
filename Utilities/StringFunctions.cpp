@@ -96,6 +96,11 @@ namespace StringFunctions
 		return true;
 	}
 
+	bool IsSimpleUInt(const std::string& _s)
+	{
+		return !_s.empty() && std::find_if(_s.begin(), _s.end(), [](auto c) { return !std::isdigit(c); }) == _s.end();
+	}
+
 	bool Contains(const std::string& _s, char _c)
 	{
 		return _s.find(_c) != std::string::npos;

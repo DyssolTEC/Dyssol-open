@@ -23,7 +23,13 @@ public:
 	[[nodiscard]] std::vector<const CScriptJob*> Jobs() const;
 
 private:
+	// Parses the script.
+	void Parse(const std::filesystem::path& _script);
+
 	// Process a single line of a script file, cleared from comments.
 	void ProcessLine(const std::string& _line);
+
+	// Extracts unit parameter script entry from the stream.
+	ScriptInterface::SUnitParameterScriptEntry ReadUnitParameterFromStream(std::istream& _s) const;
 };
 

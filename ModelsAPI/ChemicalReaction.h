@@ -57,6 +57,8 @@ public:
 	// Returns name of the reaction.
 	[[nodiscard]] std::string GetName() const;
 
+	// Adds a new empty chemical substance to the reaction.
+	SChemicalSubstanse* AddSubstance();
 	// Adds a new chemical substance to the reaction.
 	void AddSubstance(const SChemicalSubstanse& _substance);
 	// Removes substance with the specified index.

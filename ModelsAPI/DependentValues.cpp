@@ -2,7 +2,9 @@
 
 #include "DependentValues.h"
 #include "ContainerFunctions.h"
+#include "StringFunctions.h"
 #include <ostream>
+#include <sstream>
 #include <numeric>
 
 bool CDependentValues::IsEmpty() const
@@ -191,11 +193,34 @@ double CDependentValues::Interpolate(double _param) const
 	return (upper->second - lower->second) / (upper->first - lower->first) * (_param - lower->first) + lower->second; // linearly interpolated value
 }
 
-std::ostream& operator<<(std::ostream& _os, const CDependentValues& _obj)
+std::ostream& operator<<(std::ostream& _s, const CDependentValues& _obj)
 {
-	if (!_obj.m_data.empty())
-		_os << _obj.GetParamAt(0) << " " << _obj.GetValueAt(0);
-	for (size_t i = 1; i < _obj.m_data.size(); ++i)
-		_os << " " << _obj.GetParamAt(i) << " " << _obj.GetValueAt(i);
-	return _os;
+	_s << _obj.Size();
+	for (const auto& [param, value] : _obj.m_data)
+		_s << " " << param << " " << value;
+	return _s;
+}
+
+std::istream& operator>>(std::istream& _s, CDependentValues& _obj)
+{
+	_obj.m_data.clear();
+
+	std::stringstream numberOrValue{ StringFunctions::GetValueFromStream<std::string>(&_s) };
+	if (_s.eof())	// special treatment for single constant value
+	{
+		const auto value = StringFunctions::GetValueFromStream<double>(&numberOrValue);
+		_obj.m_data.insert({ 0.0, value });
+	}
+	else			// usual dependent values
+	{
+		const auto number = StringFunctions::GetValueFromStream<size_t>(&numberOrValue);
+		for (size_t i = 0; i < number; ++i)
+		{
+			// NB: order is important, therefore it is not possible to put both calls directly into insert function.
+			const auto param = StringFunctions::GetValueFromStream<double>(&_s);
+			const auto value = StringFunctions::GetValueFromStream<double>(&_s);
+			_obj.m_data.insert({ param, value });
+		}
+	}
+	return _s;
 }

@@ -69,12 +69,20 @@ public:
 	// Moves a unit with the specified unique key upwards/downwards in the list of units.
 	void ShiftUnit(const std::string& _key, EDirection _direction);
 
+	// Returns a unit by its index. If no such unit has been defined, returns nullptr.
+	[[nodiscard]] const CUnitContainer* GetUnit(size_t _index) const;
+	// Returns a unit by its index. If no such unit has been defined, returns nullptr.
+	CUnitContainer* GetUnit(size_t _index);
 	// Returns a unit with the specified unique key. If no such unit has been defined, returns nullptr.
-	const CUnitContainer* GetUnit(const std::string& _key) const;
+	[[nodiscard]] const CUnitContainer* GetUnit(const std::string& _key) const;
 	// Returns a unit with the specified unique key. If no such unit has been defined, returns nullptr.
 	CUnitContainer* GetUnit(const std::string& _key) ;
+	// Returns a unit with the specified name. If no such unit has been defined, returns nullptr. If several units have the same name, returns an arbitrary one.
+	[[nodiscard]] const CUnitContainer* GetUnitByName(const std::string& _name) const;
+	// Returns a unit with the specified name. If no such unit has been defined, returns nullptr. If several units have the same name, returns an arbitrary one.
+	CUnitContainer* GetUnitByName(const std::string& _name);
 	// Returns const pointers to all defined units.
-	std::vector<const CUnitContainer*> GetAllUnits() const;
+	[[nodiscard]] std::vector<const CUnitContainer*> GetAllUnits() const;
 	// Returns pointers to all defined units.
 	std::vector<CUnitContainer*> GetAllUnits();
 

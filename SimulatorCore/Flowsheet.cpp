@@ -100,6 +100,17 @@ void CFlowsheet::ShiftUnit(const std::string& _key, EDirection _direction)
 	SetTopologyModified(true);
 }
 
+const CUnitContainer* CFlowsheet::GetUnit(size_t _index) const
+{
+	if (_index >= m_units.size()) return nullptr;
+	return m_units[_index].get();
+}
+
+CUnitContainer* CFlowsheet::GetUnit(size_t _index)
+{
+	return const_cast<CUnitContainer*>(static_cast<const CFlowsheet&>(*this).GetUnit(_index));
+}
+
 const CUnitContainer* CFlowsheet::GetUnit(const std::string& _key) const
 {
 	for (const auto& unit : m_units)
@@ -111,6 +122,19 @@ const CUnitContainer* CFlowsheet::GetUnit(const std::string& _key) const
 CUnitContainer* CFlowsheet::GetUnit(const std::string& _key)
 {
 	return const_cast<CUnitContainer*>(static_cast<const CFlowsheet&>(*this).GetUnit(_key));
+}
+
+const CUnitContainer* CFlowsheet::GetUnitByName(const std::string& _name) const
+{
+	for (const auto& unit : m_units)
+		if (unit->GetName() == _name)
+			return unit.get();
+	return nullptr;
+}
+
+CUnitContainer* CFlowsheet::GetUnitByName(const std::string& _name)
+{
+	return const_cast<CUnitContainer*>(static_cast<const CFlowsheet&>(*this).GetUnitByName(_name));
 }
 
 std::vector<const CUnitContainer*> CFlowsheet::GetAllUnits() const
