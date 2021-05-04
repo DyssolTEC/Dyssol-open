@@ -164,7 +164,7 @@ std::istream& operator>>(std::istream& is, CCorrelation& val)
 	SInterval TInterval{ MDBDescriptors::TEMP_MIN , MDBDescriptors::TEMP_MAX };
 	SInterval PInterval{ MDBDescriptors::PRES_MIN , MDBDescriptors::PRES_MAX };
 	is >> type >> TInterval >> PInterval;
-	std::stringstream valuesStream(StringFunctions::TrimFromSymbols(StringFunctions::GetRestOfLine(&is), StrConst::COMMENT_SYMBOL));
+	std::stringstream valuesStream(StringFunctions::TrimFromSymbols(StringFunctions::GetRestOfLine(is), StrConst::COMMENT_SYMBOL));
 	std::vector<double> params;
 	while (!valuesStream.eof())
 	{

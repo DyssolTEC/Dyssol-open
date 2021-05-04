@@ -220,16 +220,16 @@ namespace StringFunctions
 		return res;
 	}
 
-	std::string GetRestOfLine(std::istream* _is)
+	std::string GetRestOfLine(std::istream& _is)
 	{
 		const std::istreambuf_iterator<char> eos;
-		std::string res(std::istreambuf_iterator<char>(*_is), eos);
+		std::string res(std::istreambuf_iterator<char>(_is), eos);
 		TrimWhitespaces(res);
 		return res;
 	}
 
 	template <>
-	bool GetValueFromStream<bool>(std::istream* _is)
+	bool GetValueFromStream<bool>(std::istream& _is)
 	{
 		const auto str = GetValueFromStream<std::string>(_is);
 		if (str == "0" || ToUpperCase(str) == "NO" || ToUpperCase(str) == "FALSE" || ToUpperCase(str) == "OFF")
@@ -240,10 +240,10 @@ namespace StringFunctions
 	}
 
 	template <>
-	std::string GetValueFromStream<std::string>(std::istream* _is)
+	std::string GetValueFromStream<std::string>(std::istream& _is)
 	{
 		std::string res{};
-		*_is >> std::quoted(res);
+		_is >> std::quoted(res);
 		return res;
 	}
 

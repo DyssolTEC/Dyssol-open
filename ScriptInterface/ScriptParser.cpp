@@ -49,7 +49,7 @@ void CScriptParser::ProcessLine(const std::string& _line)
 	std::stringstream ss{ _line };
 
 	// current script key
-	const auto key = ToUpperCase(GetValueFromStream<std::string>(&ss));
+	const auto key = ToUpperCase(GetValueFromStream<std::string>(ss));
 
 	// check that this key is allowed
 	if (!VectorContains(m_allKeys, key))
@@ -71,12 +71,12 @@ void CScriptParser::ProcessLine(const std::string& _line)
 	switch (entry->type)
 	{
 	case EEntryType::EMPTY:																		break;
-	case EEntryType::BOOL:			entry->value = GetValueFromStream<bool>(&ss);				break;
-	case EEntryType::INT:			entry->value = GetValueFromStream<int64_t>(&ss);			break;
-	case EEntryType::UINT:			entry->value = GetValueFromStream<uint64_t>(&ss);			break;
-	case EEntryType::DOUBLE:		entry->value = GetValueFromStream<double>(&ss);				break;
-	case EEntryType::STRING:		entry->value = GetRestOfLine(&ss);							break;
-	case EEntryType::PATH:			entry->value = std::filesystem::path{ GetRestOfLine(&ss) };	break;
+	case EEntryType::BOOL:			entry->value = GetValueFromStream<bool>(ss);				break;
+	case EEntryType::INT:			entry->value = GetValueFromStream<int64_t>(ss);				break;
+	case EEntryType::UINT:			entry->value = GetValueFromStream<uint64_t>(ss);			break;
+	case EEntryType::DOUBLE:		entry->value = GetValueFromStream<double>(ss);				break;
+	case EEntryType::STRING:		entry->value = GetRestOfLine(ss);							break;
+	case EEntryType::PATH:			entry->value = std::filesystem::path{ GetRestOfLine(ss) };	break;
 	case EEntryType::UNIT_PARAM:	entry->value = ReadUnitParameterFromStream(ss);				break;
 	}
 }
@@ -92,8 +92,8 @@ std::pair<std::string, size_t> ParseNameAndIndex(const std::string& _str)
 SUnitParameterScriptEntry CScriptParser::ReadUnitParameterFromStream(std::istream& _s) const
 {
 	SUnitParameterScriptEntry res;
-	std::tie(res.unitName , res.unitIndex ) = ParseNameAndIndex(GetValueFromStream<std::string>(&_s));
-	std::tie(res.paramName, res.paramIndex) = ParseNameAndIndex(GetValueFromStream<std::string>(&_s));
-	res.values = GetRestOfLine(&_s);
+	std::tie(res.unitName , res.unitIndex ) = ParseNameAndIndex(GetValueFromStream<std::string>(_s));
+	std::tie(res.paramName, res.paramIndex) = ParseNameAndIndex(GetValueFromStream<std::string>(_s));
+	res.values = GetRestOfLine(_s);
 	return res;
 }

@@ -182,9 +182,9 @@ template <typename T>
 std::istream& CListUnitParameter<T>::ValueFromStream(std::istream& _s)
 {
 	m_values.clear();
-	const auto number = StringFunctions::GetValueFromStream<size_t>(&_s);
+	const auto number = StringFunctions::GetValueFromStream<size_t>(_s);
 	for (size_t i = 0; i < number; ++i)
-		m_values.push_back(StringFunctions::GetValueFromStream<T>(&_s));
+		m_values.push_back(StringFunctions::GetValueFromStream<T>(_s));
 	return _s;
 }
 
@@ -458,7 +458,7 @@ std::ostream& CCheckBoxUnitParameter::ValueToStream(std::ostream& _s)
 
 std::istream& CCheckBoxUnitParameter::ValueFromStream(std::istream& _s)
 {
-	m_checked = StringFunctions::GetValueFromStream<bool>(&_s);
+	m_checked = StringFunctions::GetValueFromStream<bool>(_s);
 	return _s;
 }
 
@@ -835,18 +835,18 @@ std::ostream& CReactionUnitParameter::ValueToStream(std::ostream& _s)
 std::istream& CReactionUnitParameter::ValueFromStream(std::istream& _s)
 {
 	m_reactions.clear();
-	const auto numberReactions = StringFunctions::GetValueFromStream<size_t>(&_s);
+	const auto numberReactions = StringFunctions::GetValueFromStream<size_t>(_s);
 	for (size_t i = 0; i < numberReactions; ++i)
 	{
 		auto& r = m_reactions.emplace_back();
-		const auto numberSubstances = StringFunctions::GetValueFromStream<size_t>(&_s);
-		const auto baseSubstance = StringFunctions::GetValueFromStream<size_t>(&_s);
+		const auto numberSubstances = StringFunctions::GetValueFromStream<size_t>(_s);
+		const auto baseSubstance = StringFunctions::GetValueFromStream<size_t>(_s);
 		for (size_t j = 0; j < numberSubstances; ++j)
 		{
 			auto* s = r.AddSubstance();
-			s->key = StringFunctions::GetValueFromStream<std::string>(&_s);
-			s->nu = StringFunctions::GetValueFromStream<double>(&_s);
-			s->phase = StringFunctions::GetEnumFromStream<EPhase>(&_s);
+			s->key = StringFunctions::GetValueFromStream<std::string>(_s);
+			s->nu = StringFunctions::GetValueFromStream<double>(_s);
+			s->phase = StringFunctions::GetEnumFromStream<EPhase>(_s);
 		}
 		r.SetBaseSubstance(baseSubstance);
 	}

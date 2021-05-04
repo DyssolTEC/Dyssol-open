@@ -205,20 +205,20 @@ std::istream& operator>>(std::istream& _s, CDependentValues& _obj)
 {
 	_obj.m_data.clear();
 
-	std::stringstream numberOrValue{ StringFunctions::GetValueFromStream<std::string>(&_s) };
+	std::stringstream numberOrValue{ StringFunctions::GetValueFromStream<std::string>(_s) };
 	if (_s.eof())	// special treatment for single constant value
 	{
-		const auto value = StringFunctions::GetValueFromStream<double>(&numberOrValue);
+		const auto value = StringFunctions::GetValueFromStream<double>(numberOrValue);
 		_obj.m_data.insert({ 0.0, value });
 	}
 	else			// usual dependent values
 	{
-		const auto number = StringFunctions::GetValueFromStream<size_t>(&numberOrValue);
+		const auto number = StringFunctions::GetValueFromStream<size_t>(numberOrValue);
 		for (size_t i = 0; i < number; ++i)
 		{
 			// NB: order is important, therefore it is not possible to put both calls directly into insert function.
-			const auto param = StringFunctions::GetValueFromStream<double>(&_s);
-			const auto value = StringFunctions::GetValueFromStream<double>(&_s);
+			const auto param = StringFunctions::GetValueFromStream<double>(_s);
+			const auto value = StringFunctions::GetValueFromStream<double>(_s);
 			_obj.m_data.insert({ param, value });
 		}
 	}

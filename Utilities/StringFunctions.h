@@ -55,12 +55,12 @@ namespace StringFunctions
 	std::string ToLowerCase(const std::string& _s);	// Returns a copy of the string _s with all characters in lower case.
 	std::string ToUpperCase(const std::string& _s); // Returns a copy of the string _s with all characters in upper case.
 
-	std::string GetRestOfLine(std::istream* _is);												 // Returns the full string until the end-of-line without trailing whitespaces.
-	template<typename T> T GetValueFromStream(std::istream* _is) { T v{}; *_is >> v; return v; } // Returns the next value from the stream and advances stream's iterator correspondingly.
-	template<> bool GetValueFromStream(std::istream* _is);										 // Returns the next value from the stream and advances stream's iterator correspondingly. Overload for bool type.
-	template<> std::string GetValueFromStream(std::istream* _is);								 // Returns the next value from the stream and advances stream's iterator correspondingly. Overload for string type.
+	std::string GetRestOfLine(std::istream& _is);												// Returns the full string until the end-of-line without trailing whitespaces.
+	template<typename T> T GetValueFromStream(std::istream& _is) { T v{}; _is >> v; return v; }	// Returns the next value from the stream and advances stream's iterator correspondingly.
+	template<> bool GetValueFromStream(std::istream& _is);										// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for bool type.
+	template<> std::string GetValueFromStream(std::istream& _is);								// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for string type.
 	template<typename T>
-	std::enable_if_t<std::is_enum_v<T>, T> GetEnumFromStream(std::istream* _is)					 // Returns the next value from the stream and advances stream's iterator correspondingly. Version for enum types.
+	std::enable_if_t<std::is_enum_v<T>, T> GetEnumFromStream(std::istream& _is)					// Returns the next value from the stream and advances stream's iterator correspondingly. Version for enum types.
 	{ return static_cast<T>(GetValueFromStream<std::underlying_type_t<T>>(_is)); }
 
 	std::string UnifyPath(const std::string& _path);   // Brings the path to a unified view (slashes, backslashes).

@@ -256,7 +256,7 @@ bool CConfigFileParser::Parse(const std::string& _sFile)
 	while (std::getline(configFile, line))
 	{
 		std::stringstream ss(line);
-		const std::string sKey = GetValueFromStream<std::string>(&ss);
+		const std::string sKey = GetValueFromStream<std::string>(ss);
 		auto arg = std::find_if(m_arguments.begin(), m_arguments.end(), [sKey](const SArgument& a)->bool { return a.nameStr == sKey; });
 		if (arg == m_arguments.end())
 		{
@@ -270,16 +270,16 @@ bool CConfigFileParser::Parse(const std::string& _sFile)
 		switch (arg->type)
 		{
 		case EArgType::argDOUBLE:
-			*static_cast<double*>(arg->value) = GetValueFromStream<double>(&ss);
+			*static_cast<double*>(arg->value) = GetValueFromStream<double>(ss);
 			break;
 		case EArgType::argUNSIGNED:
-			*static_cast<unsigned*>(arg->value) = GetValueFromStream<unsigned>(&ss);
+			*static_cast<unsigned*>(arg->value) = GetValueFromStream<unsigned>(ss);
 			break;
 		case EArgType::argSTRING:
-			*static_cast<std::wstring*>(arg->value) = String2WString(TrimFromSymbols(GetRestOfLine(&ss), StrConst::COMMENT_SYMBOL));
+			*static_cast<std::wstring*>(arg->value) = String2WString(TrimFromSymbols(GetRestOfLine(ss), StrConst::COMMENT_SYMBOL));
 			break;
 		case EArgType::argSTRINGS:
-			static_cast<std::vector<std::wstring>*>(arg->value)->push_back(String2WString(TrimFromSymbols(GetRestOfLine(&ss), StrConst::COMMENT_SYMBOL)));
+			static_cast<std::vector<std::wstring>*>(arg->value)->push_back(String2WString(TrimFromSymbols(GetRestOfLine(ss), StrConst::COMMENT_SYMBOL)));
 			break;
 		case EArgType::argGRIDS:
 			static_cast<std::vector<SGridDimensionEx>*>(arg->value)->push_back(CreateGridFromSS(ss));
@@ -312,12 +312,12 @@ bool CConfigFileParser::IsValueDefined(const EArguments& _key) const
 SGridDimensionEx CConfigFileParser::CreateGridFromSS(std::stringstream& _ss) const
 {
 	SGridDimensionEx grid;
-	grid.iGrid = GetValueFromStream<unsigned>(&_ss) - 1;
-	grid.gridType = static_cast<EGridEntry>(GetValueFromStream<unsigned>(&_ss));
-	grid.nClasses = GetValueFromStream<unsigned>(&_ss);
+	grid.iGrid = GetValueFromStream<unsigned>(_ss) - 1;
+	grid.gridType = static_cast<EGridEntry>(GetValueFromStream<unsigned>(_ss));
+	grid.nClasses = GetValueFromStream<unsigned>(_ss);
 	if (grid.gridType == EGridEntry::GRID_NUMERIC)
-		grid.gridFun = static_cast<EGridFunction>(GetValueFromStream<unsigned>(&_ss));
-	std::stringstream ss2(TrimFromSymbols(GetRestOfLine(&_ss), StrConst::COMMENT_SYMBOL));
+		grid.gridFun = static_cast<EGridFunction>(GetValueFromStream<unsigned>(_ss));
+	std::stringstream ss2(TrimFromSymbols(GetRestOfLine(_ss), StrConst::COMMENT_SYMBOL));
 	if (grid.gridType == EGridEntry::GRID_NUMERIC && grid.gridFun == EGridFunction::GRID_FUN_MANUAL)
 	{
 		const size_t len = grid.gridType == EGridEntry::GRID_NUMERIC ? grid.nClasses + 1 : grid.nClasses * 2;
@@ -334,7 +334,7 @@ SGridDimensionEx CConfigFileParser::CreateGridFromSS(std::stringstream& _ss) con
 			ss2 >> grid.vStrGrid[ind++];
 	}
 	else
-		grid.vNumGrid = CDistributionsGrid::CalculateGrid(grid.gridFun, grid.nClasses, GetValueFromStream<double>(&_ss), GetValueFromStream<double>(&_ss));
+		grid.vNumGrid = CDistributionsGrid::CalculateGrid(grid.gridFun, grid.nClasses, GetValueFromStream<double>(_ss), GetValueFromStream<double>(_ss));
 
 	return grid;
 }
@@ -342,18 +342,18 @@ SGridDimensionEx CConfigFileParser::CreateGridFromSS(std::stringstream& _ss) con
 SUnitParameterEx CConfigFileParser::CreateUnitFromSS(std::stringstream& _ss) const
 {
 	SUnitParameterEx unit;
-	unit.iUnit  = GetValueFromStream<size_t>(&_ss) - 1;
-	unit.iParam = GetValueFromStream<size_t>(&_ss) - 1;
-	unit.sValue = TrimFromSymbols(GetRestOfLine(&_ss), StrConst::COMMENT_SYMBOL);
+	unit.iUnit  = GetValueFromStream<size_t>(_ss) - 1;
+	unit.iParam = GetValueFromStream<size_t>(_ss) - 1;
+	unit.sValue = TrimFromSymbols(GetRestOfLine(_ss), StrConst::COMMENT_SYMBOL);
 	std::stringstream ss1(unit.sValue);
-	unit.dValue = GetValueFromStream<double>(&ss1);
+	unit.dValue = GetValueFromStream<double>(ss1);
 	if (ss1.eof())
 		unit.tdValue.emplace_back(0, unit.dValue);
 	else
 	{
 		std::stringstream ss2(unit.sValue);
 		while (!ss2.eof() && ss2.good())
-			unit.tdValue.emplace_back(GetValueFromStream<double>(&ss2), GetValueFromStream<double>(&ss2));
+			unit.tdValue.emplace_back(GetValueFromStream<double>(ss2), GetValueFromStream<double>(ss2));
 	}
 	return unit;
 }
@@ -361,42 +361,42 @@ SUnitParameterEx CConfigFileParser::CreateUnitFromSS(std::stringstream& _ss) con
 SHoldupParam CConfigFileParser::CreateDistrFromSS(std::stringstream& _ss) const
 {
 	SHoldupParam holdup;
-	holdup.iUnit      = GetValueFromStream<size_t>(&_ss) - 1;
-	holdup.iHoldup    = GetValueFromStream<size_t>(&_ss) - 1;
-	holdup.iTimePoint = GetValueFromStream<size_t>(&_ss) - 1;
-	std::stringstream ss2(TrimFromSymbols(GetRestOfLine(&_ss), StrConst::COMMENT_SYMBOL));
+	holdup.iUnit      = GetValueFromStream<size_t>(_ss) - 1;
+	holdup.iHoldup    = GetValueFromStream<size_t>(_ss) - 1;
+	holdup.iTimePoint = GetValueFromStream<size_t>(_ss) - 1;
+	std::stringstream ss2(TrimFromSymbols(GetRestOfLine(_ss), StrConst::COMMENT_SYMBOL));
 	while (!ss2.eof() && ss2.good())
-		holdup.vValues.push_back(GetValueFromStream<double>(&ss2));
+		holdup.vValues.push_back(GetValueFromStream<double>(ss2));
 	return holdup;
 }
 
 SHoldupParam CConfigFileParser::CreateCompoundDistrFromSS(std::stringstream& _ss) const
 {
 	SHoldupParam holdup;
-	holdup.iUnit      = GetValueFromStream<size_t>(&_ss) - 1;
-	holdup.iHoldup    = GetValueFromStream<size_t>(&_ss) - 1;
-	holdup.iPhase     = GetValueFromStream<size_t>(&_ss) - 1;
-	holdup.iTimePoint = GetValueFromStream<size_t>(&_ss) - 1;
-	std::stringstream ss2(TrimFromSymbols(GetRestOfLine(&_ss), StrConst::COMMENT_SYMBOL));
+	holdup.iUnit      = GetValueFromStream<size_t>(_ss) - 1;
+	holdup.iHoldup    = GetValueFromStream<size_t>(_ss) - 1;
+	holdup.iPhase     = GetValueFromStream<size_t>(_ss) - 1;
+	holdup.iTimePoint = GetValueFromStream<size_t>(_ss) - 1;
+	std::stringstream ss2(TrimFromSymbols(GetRestOfLine(_ss), StrConst::COMMENT_SYMBOL));
 	while (!ss2.eof() && ss2.good())
-		holdup.vValues.push_back(GetValueFromStream<double>(&ss2));
+		holdup.vValues.push_back(GetValueFromStream<double>(ss2));
 	return holdup;
 }
 
 SHoldupParam CConfigFileParser::CreateSolidDistrFromSS(std::stringstream& _ss) const
 {
 	SHoldupParam holdup;
-	holdup.iUnit         = GetValueFromStream<size_t>(&_ss) - 1;
-	holdup.iHoldup       = GetValueFromStream<size_t>(&_ss) - 1;
-	holdup.iDistribution = GetValueFromStream<size_t>(&_ss) - 1;
-	holdup.iCompound     = GetValueFromStream<size_t>(&_ss) - 1;
-	holdup.iTimePoint    = GetValueFromStream<size_t>(&_ss) - 1;
-	holdup.psdType       = static_cast<EPSDTypes>(GetValueFromStream<unsigned>(&_ss));
-	holdup.distrFun      = static_cast<EDistrFunction>(GetValueFromStream<unsigned>(&_ss));
-	holdup.psdGridType   = static_cast<EPSDGridType>(GetValueFromStream<unsigned>(&_ss));
-	std::stringstream ss2(TrimFromSymbols(GetRestOfLine(&_ss), StrConst::COMMENT_SYMBOL));
+	holdup.iUnit         = GetValueFromStream<size_t>(_ss) - 1;
+	holdup.iHoldup       = GetValueFromStream<size_t>(_ss) - 1;
+	holdup.iDistribution = GetValueFromStream<size_t>(_ss) - 1;
+	holdup.iCompound     = GetValueFromStream<size_t>(_ss) - 1;
+	holdup.iTimePoint    = GetValueFromStream<size_t>(_ss) - 1;
+	holdup.psdType       = static_cast<EPSDTypes>(GetValueFromStream<unsigned>(_ss));
+	holdup.distrFun      = static_cast<EDistrFunction>(GetValueFromStream<unsigned>(_ss));
+	holdup.psdGridType   = static_cast<EPSDGridType>(GetValueFromStream<unsigned>(_ss));
+	std::stringstream ss2(TrimFromSymbols(GetRestOfLine(_ss), StrConst::COMMENT_SYMBOL));
 	while (!ss2.eof() && ss2.good())
-		holdup.vValues.push_back(GetValueFromStream<double>(&ss2));
+		holdup.vValues.push_back(GetValueFromStream<double>(ss2));
 	return holdup;
 }
 
