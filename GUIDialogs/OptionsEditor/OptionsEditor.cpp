@@ -51,10 +51,10 @@ void COptionsEditor::UpdateWholeView()
 	ui.lineEditUpperLimit->setText(QString::number(m_pParams->itersUpperLimit));
 	ui.lineEditLowerLimit->setText(QString::number(m_pParams->itersLowerLimit));
 	ui.lineEdit1stUpperLimit->setText(QString::number(m_pParams->iters1stUpperLimit));
-	ui.comboBoxConvMethod->setCurrentIndex(m_pParams->convergenceMethod);
+	ui.comboBoxConvMethod->setCurrentIndex(E2I(static_cast<EConvergenceMethod>(m_pParams->convergenceMethod)));
 	ui.lineEditAccelParam->setText(QString::number(m_pParams->wegsteinAccelParam));
 	ui.lineEditRelaxParam->setText(QString::number(m_pParams->relaxationParam));
-	ui.comboBoxExtrapMethod->setCurrentIndex(E2I(static_cast<EExtrapMethod>(m_pParams->extrapolationMethod)));
+	ui.comboBoxExtrapMethod->setCurrentIndex(E2I(static_cast<EExtrapolationMethod>(m_pParams->extrapolationMethod)));
 	ui.checkBoxCacheStreamsFlag->setChecked(m_pParams->cacheFlagStreamsAfterReload);
 	ui.checkBoxCacheHoldupsFlag->setChecked(m_pParams->cacheFlagHoldupsAfterReload);
 	ui.checkBoxCacheInternalFlag->setChecked(m_pParams->cacheFlagInternalAfterReload);
@@ -174,10 +174,10 @@ void COptionsEditor::ApplyChanges()
 	m_pParams->ItersUpperLimit(ui.lineEditUpperLimit->text().toInt());
 	m_pParams->ItersLowerLimit(ui.lineEditLowerLimit->text().toInt());
 	m_pParams->Iters1stUpperLimit(ui.lineEdit1stUpperLimit->text().toInt());
-	m_pParams->ConvergenceMethod(static_cast<EConvMethod>(ui.comboBoxConvMethod->currentIndex()));
+	m_pParams->ConvergenceMethod(static_cast<EConvergenceMethod>(ui.comboBoxConvMethod->currentIndex()));
 	m_pParams->WegsteinAccelParam(ui.lineEditAccelParam->text().toDouble());
 	m_pParams->RelaxationParam(ui.lineEditRelaxParam->text().toDouble());
-	m_pParams->ExtrapolationMethod(static_cast<EExtrapMethod>(ui.comboBoxExtrapMethod->currentIndex()));
+	m_pParams->ExtrapolationMethod(static_cast<EExtrapolationMethod>(ui.comboBoxExtrapMethod->currentIndex()));
 	m_pParams->CacheWindowAfterReload(ui.lineEditCacheWindow->text().toInt());
 	m_pParams->CacheFlagStreamsAfterReload(ui.checkBoxCacheStreamsFlag->isChecked());
 	m_pParams->CacheFlagHoldupsAfterReload(ui.checkBoxCacheHoldupsFlag->isChecked());

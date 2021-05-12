@@ -4,6 +4,7 @@
 #include "DyssolHelperDefines.h"
 #include "UnitParameters.h"
 #include "ContainerFunctions.h"
+#include "StringFunctions.h"
 #include <filesystem>
 #include <string>
 #include <vector>
@@ -41,29 +42,71 @@ namespace ScriptInterface
 		ACCELERATION_LIMIT,
 		EXTRAPOLATION_METHOD,
 		UNIT_PARAMETER,
+		HOLDUPS_KEEP_EXISTING_VALUES,
+		HOLDUP_OVERALL,
 	};
 
 	// All possible types of script entries.
 	enum class EEntryType
 	{
-		EMPTY,		// Key without value
-		BOOL,		// bool
-		INT,		// int64_t
-		UINT,		// uint64_t
-		DOUBLE,		// double
-		STRING,		// std::string
-		PATH,		// std::filesystem::path
-		UNIT_PARAM,	// SUnitParameterScriptEntry
+		EMPTY,			// Key without value
+		BOOL,			// bool
+		INT,			// int64_t
+		UINT,			// uint64_t
+		DOUBLE,			// double
+		STRING,			// std::string
+		PATH,			// std::filesystem::path
+		NAME_OR_KEY,	// SNameOrKey
+		UNIT_PARAM,		// SUnitParameterSE
+		HOLDUP_OVERALL,	// SHoldupOverallSE
 	};
 
-	// Help struct to parse unit parameters.
-	struct SUnitParameterScriptEntry
+	// Help structure to work with entries that can be defined either by their name or by their index.
+	struct SNameOrIndex
 	{
-		std::string unitName{};		// Name of the unit container. Either this or index will be read.
-		size_t unitIndex{};			// Index of the unit container. Either this or name will be read.
-		std::string paramName{};	// Name of the parameter. Either this or index will be read.
-		size_t paramIndex{};		// Index of the parameter. Either this or name will be read.
-		std::string values{};		// Value(s) of the unit parameter as a string.
+		std::string name{};	// Name of the entry. Either this or index must be set.
+		size_t index{};		// Index of the entry. Either this or name must be set.
+		friend std::istream& operator>>(std::istream& _s, SNameOrIndex& _obj) // Input stream operator.
+		{
+			const auto str = StringFunctions::GetValueFromStream<std::string>(_s);
+			_obj.name  = StringFunctions::IsSimpleUInt(str) ? "" : str;
+			_obj.index = StringFunctions::IsSimpleUInt(str) ? std::stoull(str) - 1 : -1;
+			return _s;
+		}
+	};
+
+	// Help structure to work with entries that can be defined either by their name or by their numerical key.
+	struct SNameOrKey
+	{
+		std::string name{};	// Name of the entry. Either this or key must be set.
+		uint64_t key{};		// Key of the entry. Either this or name must be set.
+		// Checks if the struct contains parsed key.
+		[[nodiscard]] bool HasKey() const { return key != static_cast<decltype(key)>(-1); }
+		// Input stream operator.
+		friend std::istream& operator>>(std::istream& _s, SNameOrKey& _obj)
+		{
+			const auto str = StringFunctions::GetValueFromStream<std::string>(_s);
+			_obj.name = StringFunctions::IsSimpleUInt(str) ? "" : str;
+			_obj.key  = StringFunctions::IsSimpleUInt(str) ? std::stoull(str) : -1;
+			return _s;
+		}
+	};
+
+	// Struct to parse script entries (SE) with unit parameters.
+	struct SUnitParameterSE
+	{
+		SNameOrIndex unit{};	// Name or index of the unit container.
+		SNameOrIndex param{};	// Name or index of the parameter.
+		std::string values{};	// Value(s) of the unit parameter as a string.
+	};
+
+	// Struct to parse script entries (SE) with unit holdups' overall parameters.
+	struct SHoldupOverallSE
+	{
+		SNameOrIndex unit{};		// Name or index of the unit container.
+		SNameOrIndex holdup{};		// Name or index of the holdup within the unit.
+		SNameOrKey param{};			// Name or key of the overall parameter.
+		CDependentValues values{};	// Time-dependent value(s) of the overall holdup's parameter.
 	};
 
 	// Descriptor for an entry of the script file.
@@ -78,7 +121,7 @@ namespace ScriptInterface
 	struct SScriptEntry : SScriptEntryDescriptor
 	{
 		// Value of the entry of different types.
-		std::variant<bool, int64_t, uint64_t, double, std::string, std::filesystem::path, SUnitParameterScriptEntry> value{};
+		std::variant<bool, int64_t, uint64_t, double, std::string, std::filesystem::path, SNameOrKey, SUnitParameterSE, SHoldupOverallSE> value{};
 
 		SScriptEntry() = default;
 		SScriptEntry(const SScriptEntryDescriptor& _descr) : SScriptEntryDescriptor{ _descr } {}
@@ -122,12 +165,14 @@ namespace ScriptInterface
 			MAKE_ARG(EScriptKeys::ITERATIONS_UPPER_LIMIT      , EEntryType::UINT),
 			MAKE_ARG(EScriptKeys::ITERATIONS_LOWER_LIMIT      , EEntryType::UINT),
 			MAKE_ARG(EScriptKeys::ITERATIONS_UPPER_LIMIT_1ST  , EEntryType::UINT),
-			MAKE_ARG(EScriptKeys::CONVERGENCE_METHOD          , EEntryType::UINT),
+			MAKE_ARG(EScriptKeys::CONVERGENCE_METHOD          , EEntryType::NAME_OR_KEY),
 			MAKE_ARG(EScriptKeys::RELAXATION_PARAMETER        , EEntryType::DOUBLE),
 			MAKE_ARG(EScriptKeys::ACCELERATION_LIMIT          , EEntryType::DOUBLE),
-			MAKE_ARG(EScriptKeys::EXTRAPOLATION_METHOD        , EEntryType::UINT),
+			MAKE_ARG(EScriptKeys::EXTRAPOLATION_METHOD        , EEntryType::NAME_OR_KEY),
 			// unit settings
 			MAKE_ARG(EScriptKeys::UNIT_PARAMETER              , EEntryType::UNIT_PARAM),
+			MAKE_ARG(EScriptKeys::HOLDUPS_KEEP_EXISTING_VALUES, EEntryType::BOOL),
+			MAKE_ARG(EScriptKeys::HOLDUP_OVERALL			  , EEntryType::HOLDUP_OVERALL),
 		};
 	}
 
@@ -141,11 +186,20 @@ namespace ScriptInterface
 	}
 
 	// Returns a script entry descriptor for the given key. If a descriptor for such key was not defined, returns a default descriptor with empty key.
-	inline SScriptEntryDescriptor ScriptKey2Descriptor(const std::string& _key)
+	inline SScriptEntryDescriptor Key2Descriptor(const std::string& _key)
 	{
 		const auto allArgs = AllScriptArguments();
 		const size_t index = VectorFind(allArgs, [&](const SScriptEntryDescriptor& _d) { return _d.keyStr == _key; });
 		if (index == static_cast<size_t>(-1)) return {};
 		return allArgs[index];
+	}
+
+	// Converts a script key to its string representation.
+	inline std::string StrKey(const EScriptKeys& _key)
+	{
+		const auto allArgs = AllScriptArguments();
+		const size_t index = VectorFind(allArgs, [&](const SScriptEntryDescriptor& _d) { return _d.key == _key; });
+		if (index == static_cast<size_t>(-1)) return {};
+		return allArgs[index].keyStr;
 	}
 }

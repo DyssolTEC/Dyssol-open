@@ -195,7 +195,6 @@ double CDependentValues::Interpolate(double _param) const
 
 std::ostream& operator<<(std::ostream& _s, const CDependentValues& _obj)
 {
-	_s << _obj.Size();
 	for (const auto& [param, value] : _obj.m_data)
 		_s << " " << param << " " << value;
 	return _s;
@@ -205,18 +204,15 @@ std::istream& operator>>(std::istream& _s, CDependentValues& _obj)
 {
 	_obj.m_data.clear();
 
-	std::stringstream numberOrValue{ StringFunctions::GetValueFromStream<std::string>(_s) };
+	const auto timeOrValue = StringFunctions::GetValueFromStream<double>(_s);
 	if (_s.eof())	// special treatment for single constant value
-	{
-		const auto value = StringFunctions::GetValueFromStream<double>(numberOrValue);
-		_obj.m_data.insert({ 0.0, value });
-	}
+		_obj.m_data.insert({ 0.0, timeOrValue });
 	else			// usual dependent values
 	{
-		const auto number = StringFunctions::GetValueFromStream<size_t>(numberOrValue);
-		for (size_t i = 0; i < number; ++i)
+		_obj.m_data.insert({ timeOrValue, StringFunctions::GetValueFromStream<double>(_s) });
+		while (!_s.eof())
 		{
-			// NB: order is important, therefore it is not possible to put both calls directly into insert function.
+			// NB: order is important, do not put both calls directly into insert function
 			const auto param = StringFunctions::GetValueFromStream<double>(_s);
 			const auto value = StringFunctions::GetValueFromStream<double>(_s);
 			_obj.m_data.insert({ param, value });

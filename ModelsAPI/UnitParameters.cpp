@@ -114,7 +114,7 @@ std::ostream& CConstUnitParameter<T>::ValueToStream(std::ostream& _s)
 template <typename T>
 std::istream& CConstUnitParameter<T>::ValueFromStream(std::istream& _s)
 {
-	_s >> m_value; return _s;
+	return _s >> m_value;
 }
 
 template<typename T>
@@ -172,7 +172,6 @@ CListUnitParameter<T>::CListUnitParameter(std::string _name, std::string _units,
 template <typename T>
 std::ostream& CListUnitParameter<T>::ValueToStream(std::ostream& _s)
 {
-	_s << m_values.size();
 	for (const auto& v : m_values)
 		_s << " " << v;
 	return _s;
@@ -182,8 +181,7 @@ template <typename T>
 std::istream& CListUnitParameter<T>::ValueFromStream(std::istream& _s)
 {
 	m_values.clear();
-	const auto number = StringFunctions::GetValueFromStream<size_t>(_s);
-	for (size_t i = 0; i < number; ++i)
+	while (!_s.eof())
 		m_values.push_back(StringFunctions::GetValueFromStream<T>(_s));
 	return _s;
 }
@@ -320,8 +318,7 @@ std::ostream& CTDUnitParameter::ValueToStream(std::ostream& _s)
 
 std::istream& CTDUnitParameter::ValueFromStream(std::istream& _s)
 {
-	_s >> m_values;
-	return _s;
+	return _s >> m_values;
 }
 
 void CTDUnitParameter::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
@@ -392,8 +389,7 @@ std::ostream& CStringUnitParameter::ValueToStream(std::ostream& _s)
 
 std::istream& CStringUnitParameter::ValueFromStream(std::istream& _s)
 {
-	_s >> m_value;
-	return _s;
+	return _s >> m_value;
 }
 
 void CStringUnitParameter::SaveToFile(CH5Handler& _h5Saver, const std::string& _path) const
@@ -545,8 +541,7 @@ std::ostream& CSolverUnitParameter::ValueToStream(std::ostream& _s)
 
 std::istream& CSolverUnitParameter::ValueFromStream(std::istream& _s)
 {
-	_s >> m_key;
-	return _s;
+	return _s >> m_key;
 }
 
 void CSolverUnitParameter::SaveToFile(CH5Handler& _h5Saver, const std::string& _path) const
@@ -656,8 +651,7 @@ std::ostream& CComboUnitParameter::ValueToStream(std::ostream& _s)
 
 std::istream& CComboUnitParameter::ValueFromStream(std::istream& _s)
 {
-	_s >> m_selected;
-	return _s;
+	return _s >> m_selected;
 }
 
 void CComboUnitParameter::SaveToFile(CH5Handler& _h5Saver, const std::string& _path) const
@@ -722,8 +716,7 @@ std::ostream& CCompoundUnitParameter::ValueToStream(std::ostream& _s)
 
 std::istream& CCompoundUnitParameter::ValueFromStream(std::istream& _s)
 {
-	_s >> m_key;
-	return _s;
+	return _s >> m_key;
 }
 
 void CCompoundUnitParameter::SaveToFile(CH5Handler& _h5Saver, const std::string& _path) const
@@ -822,7 +815,6 @@ void CReactionUnitParameter::RemoveReaction(size_t _index)
 
 std::ostream& CReactionUnitParameter::ValueToStream(std::ostream& _s)
 {
-	_s << m_reactions.size();
 	for (const auto& r : m_reactions)
 	{
 		_s << " " << r.GetSubstancesNumber() << " " << r.GetBaseSubstanceIndex();
@@ -835,17 +827,16 @@ std::ostream& CReactionUnitParameter::ValueToStream(std::ostream& _s)
 std::istream& CReactionUnitParameter::ValueFromStream(std::istream& _s)
 {
 	m_reactions.clear();
-	const auto numberReactions = StringFunctions::GetValueFromStream<size_t>(_s);
-	for (size_t i = 0; i < numberReactions; ++i)
+	while (!_s.eof())
 	{
 		auto& r = m_reactions.emplace_back();
 		const auto numberSubstances = StringFunctions::GetValueFromStream<size_t>(_s);
-		const auto baseSubstance = StringFunctions::GetValueFromStream<size_t>(_s);
+		const auto baseSubstance    = StringFunctions::GetValueFromStream<size_t>(_s);
 		for (size_t j = 0; j < numberSubstances; ++j)
 		{
-			auto* s = r.AddSubstance();
-			s->key = StringFunctions::GetValueFromStream<std::string>(_s);
-			s->nu = StringFunctions::GetValueFromStream<double>(_s);
+			auto* s  = r.AddSubstance();
+			s->key   = StringFunctions::GetValueFromStream<std::string>(_s);
+			s->nu    = StringFunctions::GetValueFromStream<double>(_s);
 			s->phase = StringFunctions::GetEnumFromStream<EPhase>(_s);
 		}
 		r.SetBaseSubstance(baseSubstance);

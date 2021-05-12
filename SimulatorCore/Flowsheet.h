@@ -147,6 +147,8 @@ public:
 	void RemoveOverallProperty(EOverall _property);
 	// Returns descriptors of all defined overall properties.
 	std::vector<SOverallDescriptor> GetOveralProperties() const;
+	// Checks whether the specified overall property is defined.
+	bool HasOverallProperty(EOverall _property) const;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Phases

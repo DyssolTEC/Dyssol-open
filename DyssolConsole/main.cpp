@@ -129,10 +129,10 @@ void RunSimulation(const CConfigFileParser& _parser)
 	if (_parser.IsValueDefined(EArguments::ITER_UPPER_LIMIT))	params->ItersUpperLimit(_parser.GetValue<unsigned>(EArguments::ITER_UPPER_LIMIT));
 	if (_parser.IsValueDefined(EArguments::ITER_LOWER_LIMIT))	params->ItersLowerLimit(_parser.GetValue<unsigned>(EArguments::ITER_LOWER_LIMIT));
 	if (_parser.IsValueDefined(EArguments::ITER_UPPER_LIMIT_1))	params->Iters1stUpperLimit(_parser.GetValue<unsigned>(EArguments::ITER_UPPER_LIMIT_1));
-	if (_parser.IsValueDefined(EArguments::CONVERGENCE_METHOD))	params->ConvergenceMethod(static_cast<EConvMethod>(_parser.GetValue<unsigned>(EArguments::CONVERGENCE_METHOD)));
+	if (_parser.IsValueDefined(EArguments::CONVERGENCE_METHOD))	params->ConvergenceMethod(static_cast<EConvergenceMethod>(_parser.GetValue<unsigned>(EArguments::CONVERGENCE_METHOD)));
 	if (_parser.IsValueDefined(EArguments::ACCEL_PARAMETER))	params->WegsteinAccelParam(_parser.GetValue<double>(EArguments::ACCEL_PARAMETER));
 	if (_parser.IsValueDefined(EArguments::RELAX_PARAMETER))	params->RelaxationParam(_parser.GetValue<double>(EArguments::RELAX_PARAMETER));
-	if (_parser.IsValueDefined(EArguments::EXTRAPOL_METHOD))	params->ExtrapolationMethod(static_cast<EExtrapMethod>(_parser.GetValue<unsigned>(EArguments::EXTRAPOL_METHOD)));
+	if (_parser.IsValueDefined(EArguments::EXTRAPOL_METHOD))	params->ExtrapolationMethod(static_cast<EExtrapolationMethod>(_parser.GetValue<unsigned>(EArguments::EXTRAPOL_METHOD)));
 
 	// setup grid
 	if (_parser.IsValueDefined(EArguments::DISTRIBUTION_GRID))

@@ -40,4 +40,15 @@ public:
 				res.push_back(std::get<T>(entry->value));
 		return res;
 	}
+
+	// Returns pointers to all the defined arguments with the given key.
+	// Returns an empty vector if such key does not exist or a wrong type is requested for this key.
+	template<typename T> [[nodiscard]] std::vector<T*> GetValuesPtr(ScriptInterface::EScriptKeys _key)
+	{
+		std::vector<T*> res;
+		for (const auto& entry : m_entries)
+			if (entry->key == _key && std::holds_alternative<T>(entry->value))
+				res.push_back(&std::get<T>(entry->value));
+		return res;
+	}
 };

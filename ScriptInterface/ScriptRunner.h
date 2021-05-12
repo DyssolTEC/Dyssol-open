@@ -6,6 +6,14 @@
 #include "ModelsManager.h"
 #include "Simulator.h"
 
+class CBaseStream;
+class CBaseUnitParameter;
+namespace ScriptInterface
+{
+	struct SNameOrIndex;
+	struct SNameOrKey;
+}
+
 class CScriptJob;
 
 /* Executes a script job. */
@@ -28,13 +36,21 @@ private:
 	bool LoadFiles(const CScriptJob& _job);
 	// Sets flowsheet parameters from the _job. Returns success flag.
 	bool SetupFlowsheetParameters(const CScriptJob& _job);
-	// Sets unit parameters from the _job. Returns success flag.
-	bool SetupUnits(const CScriptJob& _job);
+	// Sets units parameters from the _job. Returns success flag.
+	bool SetupUnitParameters(const CScriptJob& _job);
+	// Sets holdups parameters from the _job. Returns success flag.
+	bool SetupHoldups(const CScriptJob& _job);
 
 	// Performs the simulation. Returns success flag.
 	bool RunSimulation(const CScriptJob& _job);
 
 	// Clears current state of the runner.
 	void Clear();
-};
 
+	// Returns a pointer to a unit by its name or index. Returns nullptr if the search fails.
+	CUnitContainer* GetUnitPtr(const ScriptInterface::SNameOrIndex& _nameOrIndex);
+	// Returns a pointer to a unit parameter by its name or index. Returns nullptr if the search fails.
+	CBaseUnitParameter* GetUnitParamPtr(CBaseUnit& _model, const ScriptInterface::SNameOrIndex& _nameOrIndex);
+	// Returns a pointer to a holdup by its name or index. Returns nullptr if the search fails.
+	CBaseStream* GetHoldupPtr(CBaseUnit& _model, const ScriptInterface::SNameOrIndex& _nameOrIndex);
+};

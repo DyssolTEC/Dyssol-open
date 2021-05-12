@@ -4,7 +4,7 @@ using namespace ScriptInterface;
 
 SScriptEntry* CScriptJob::AddEntry(const std::string& _key)
 {
-	const auto descriptor = ScriptKey2Descriptor(_key);
+	const auto descriptor = Key2Descriptor(_key);
 	if (descriptor.keyStr.empty()) return {};
 	return m_entries.emplace_back(std::make_unique<SScriptEntry>(descriptor)).get();
 }

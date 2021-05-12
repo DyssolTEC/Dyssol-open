@@ -362,7 +362,7 @@ size_t CFlowsheet::GetOverallPropertiesNumber() const
 void CFlowsheet::AddOverallProperty(EOverall _property, const std::string& _name, const std::string& _units)
 {
 	// check if already exists
-	if (VectorContains(m_overall, [&](const auto& o) { return o.type == _property; })) return;
+	if (HasOverallProperty(_property)) return;
 
 	// add to the list of overall properties
 	m_overall.push_back({ _property, _name, _units });
@@ -383,7 +383,7 @@ void CFlowsheet::AddOverallProperty(EOverall _property, const std::string& _name
 void CFlowsheet::RemoveOverallProperty(EOverall _property)
 {
 	// check if exists
-	if (!VectorContains(m_overall, [&](const auto& o) { return o.type == _property; })) return;
+	if (!HasOverallProperty(_property)) return;
 
 	// remove from streams
 	for (auto& stream : m_streams)
@@ -404,6 +404,11 @@ void CFlowsheet::RemoveOverallProperty(EOverall _property)
 std::vector<SOverallDescriptor> CFlowsheet::GetOveralProperties() const
 {
 	return m_overall;
+}
+
+bool CFlowsheet::HasOverallProperty(EOverall _property) const
+{
+	return VectorContains(m_overall, [&](const auto& o) { return o.type == _property; });
 }
 
 size_t CFlowsheet::GetPhasesNumber() const

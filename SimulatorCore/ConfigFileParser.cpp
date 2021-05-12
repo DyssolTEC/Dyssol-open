@@ -89,10 +89,10 @@ void CConfigFileParser::SaveConfigFile(const std::wstring& _fileName, const std:
 	file << TO_ARG_STR(EArguments::ITER_UPPER_LIMIT)   << " " << parmas->itersUpperLimit << std::endl;
 	file << TO_ARG_STR(EArguments::ITER_LOWER_LIMIT)   << " " << parmas->itersLowerLimit << std::endl;
 	file << TO_ARG_STR(EArguments::ITER_UPPER_LIMIT_1) << " " << parmas->iters1stUpperLimit << std::endl;
-	file << TO_ARG_STR(EArguments::CONVERGENCE_METHOD) << " " << parmas->convergenceMethod << std::endl;
+	file << TO_ARG_STR(EArguments::CONVERGENCE_METHOD) << " " << E2I(static_cast<EConvergenceMethod>(parmas->convergenceMethod)) << std::endl;
 	file << TO_ARG_STR(EArguments::ACCEL_PARAMETER)    << " " << parmas->wegsteinAccelParam << std::endl;
 	file << TO_ARG_STR(EArguments::RELAX_PARAMETER)    << " " << parmas->relaxationParam << std::endl;
-	file << TO_ARG_STR(EArguments::EXTRAPOL_METHOD)    << " " << E2I(static_cast<EExtrapMethod>(parmas->extrapolationMethod)) << std::endl;
+	file << TO_ARG_STR(EArguments::EXTRAPOL_METHOD)    << " " << E2I(static_cast<EExtrapolationMethod>(parmas->extrapolationMethod)) << std::endl;
 	file << std::endl;
 
 	// distributions grid

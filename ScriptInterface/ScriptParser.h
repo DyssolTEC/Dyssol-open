@@ -29,7 +29,12 @@ private:
 	// Process a single line of a script file, cleared from comments.
 	void ProcessLine(const std::string& _line);
 
+	// Post-process read entries by resolving named variables to their end values.
+	void NamesToKeys();
+	
 	// Extracts unit parameter script entry from the stream.
-	ScriptInterface::SUnitParameterScriptEntry ReadUnitParameterFromStream(std::istream& _s) const;
+	ScriptInterface::SUnitParameterSE ReadUnitParameterFromStream(std::istream& _s) const;
+	// Extracts holdup overall parameter script entry from the stream.
+	ScriptInterface::SHoldupOverallSE ReadHoldupOverallFromStream(std::istream& _s) const;
 };
 
