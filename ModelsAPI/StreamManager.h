@@ -195,6 +195,10 @@ private:
 	template<typename T>
 	void RemoveObjects(std::vector<std::unique_ptr<T>>& _streams, const std::string& _name);
 
+	// Returns index of the stream with the specified name in the given list of streams.
+	template<typename T>
+	size_t GetObjectIndex(std::vector<std::unique_ptr<T>>& _streams, const std::string& _name);
+
 	// Saves all streams from the given list.
 	template<typename T>
 	void SaveObjects(CH5Handler& _h5File, const std::string& _path, const std::vector<std::unique_ptr<T>>& _streams, const std::string& _attribute, const std::string& _group, const std::string& _subgroup, const std::string& _namespath) const;
