@@ -1118,6 +1118,7 @@ void CBaseUnit::HeatExchange(double _time, CBaseStream* _stream1, CBaseStream* _
 
 void CBaseUnit::RaiseError(const std::string& _message)
 {
+	const std::lock_guard lock(m_messageMutex);
 	m_hasError = true;
 	const std::string suffix = m_errorMessage.empty() ? "" : "\n";
 	const std::string text = !_message.empty() ? _message : StrConst::BUnit_UnknownError;
@@ -1126,6 +1127,7 @@ void CBaseUnit::RaiseError(const std::string& _message)
 
 void CBaseUnit::RaiseWarning(const std::string& _message)
 {
+	const std::lock_guard lock(m_messageMutex);
 	m_hasWarning = true;
 	const std::string suffix = m_warningMessage.empty() ? "" : "\n";
 	const std::string text = !_message.empty() ? _message : StrConst::BUnit_UnknownWarning;
@@ -1134,6 +1136,7 @@ void CBaseUnit::RaiseWarning(const std::string& _message)
 
 void CBaseUnit::ShowInfo(const std::string& _message)
 {
+	const std::lock_guard lock(m_messageMutex);
 	if (_message.empty()) return;
 	m_hasInfo = true;
 	const std::string suffix = m_infoMessage.empty() ? "" : "\n";
@@ -1142,16 +1145,19 @@ void CBaseUnit::ShowInfo(const std::string& _message)
 
 bool CBaseUnit::HasError() const
 {
+	const std::lock_guard lock(m_messageMutex);
 	return m_hasError;
 }
 
 bool CBaseUnit::HasWarning() const
 {
+	const std::lock_guard lock(m_messageMutex);
 	return m_hasWarning;
 }
 
 bool CBaseUnit::HasInfo() const
 {
+	const std::lock_guard lock(m_messageMutex);
 	return m_hasInfo;
 }
 
@@ -1186,6 +1192,42 @@ void CBaseUnit::ClearInfo()
 {
 	m_hasInfo = false;
 	m_infoMessage.clear();
+}
+
+std::string CBaseUnit::PopErrorMessage()
+{
+	std::string message;
+	if (HasError())
+	{
+		const std::lock_guard lock(m_messageMutex);
+		message = GetErrorMessage();
+		ClearError();
+	}
+	return message;
+}
+
+std::string CBaseUnit::PopWarningMessage()
+{
+	std::string message;
+	if (HasWarning())
+	{
+		const std::lock_guard lock(m_messageMutex);
+		message = GetWarningMessage();
+		ClearWarning();
+	}
+	return message;
+}
+
+std::string CBaseUnit::PopInfoMessage()
+{
+	std::string message;
+	if (HasInfo())
+	{
+		const std::lock_guard lock(m_messageMutex);
+		message = GetInfoMessage();
+		ClearInfo();
+	}
+	return message;
 }
 
 void CBaseUnit::DoCreateStructure()

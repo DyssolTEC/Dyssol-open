@@ -67,7 +67,7 @@ private:
 	/// Simulate all units of a given partition on specified time interval.
 	void SimulateUnits(const CCalculationSequence::SPartition& _partition, double _t1, double _t2);
 	/// Simulate specified steady-state or dynamic unit on a given time or interval.
-	void SimulateUnit(CUnitContainer& _model, double _t1, double _t2 = -1);
+	void SimulateUnit(CUnitContainer& _unit, double _t1, double _t2 = -1);
 	/// Initialize the specified steady-state or dynamic unit at the given time.
 	void InitializeUnit(CUnitContainer& _model, double _t);
 

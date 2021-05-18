@@ -11,6 +11,7 @@
 #include "ContainerFunctions.h"
 #include "DistributionsGrid.h"
 #include "DyssolUtilities.h"
+#include <thread>
 
 CSimulator::CSimulator()
 {
@@ -287,36 +288,46 @@ void CSimulator::SimulateUnits(const CCalculationSequence::SPartition& _partitio
 	}
 }
 
-void CSimulator::SimulateUnit(CUnitContainer& _model, double _t1, double _t2 /*= -1*/)
+void CSimulator::SimulateUnit(CUnitContainer& _unit, double _t1, double _t2 /*= -1*/)
 {
+	auto* model = _unit.GetModel();
+
+	std::atomic stop_flag{ false };
+	std::thread checker{ [&]()
+	{
+		const auto Log = [&]
+		{
+			if (model->HasWarning()) m_log.WriteWarning(model->PopWarningMessage());
+			if (model->HasInfo())	 m_log.WriteInfo(model->PopInfoMessage());
+		};
+
+		while (!stop_flag)
+		{
+			Log();
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		}
+		Log();
+	} };
+
 	// simulate
 	try {
-		if(dynamic_cast<CDynamicUnit*>(_model.GetModel()))
-			_model.GetModel()->Simulate(_t1, _t2);
+		if(dynamic_cast<CDynamicUnit*>(model))
+			model->Simulate(_t1, _t2);
 		else
-			_model.GetModel()->Simulate(_t1);
+			model->Simulate(_t1);
 	}
 	catch (const std::logic_error& e) {
 		RaiseError(e.what());
 	}
 	// check for errors
-	if (_model.GetModel()->HasError())
+	if (model->HasError())
 	{
-		RaiseError(_model.GetModel()->GetErrorMessage());
-		_model.GetModel()->ClearError();
+		RaiseError(model->GetErrorMessage());
+		model->ClearError();
 	}
-	// check for warnings
-	if (_model.GetModel()->HasWarning())
-	{
-		m_log.WriteWarning(_model.GetModel()->GetWarningMessage());
-		_model.GetModel()->ClearWarning();
-	}
-	// check for info
-	if (_model.GetModel()->HasInfo())
-	{
-		m_log.WriteInfo(_model.GetModel()->GetInfoMessage());
-		_model.GetModel()->ClearInfo();
-	}
+
+	stop_flag = true;
+	checker.join();
 }
 
 void CSimulator::InitializeUnit(CUnitContainer& _model, double _t)
