@@ -263,6 +263,43 @@ bool CQtTable::GetCheckBoxChecked(int _row, int _col) const
 	return pCheckBox->isChecked();
 }
 
+QRadioButton* CQtTable::SetRadioButton(int _row, int _col, bool _checked)
+{
+	delete item(_row, _col);
+	auto* widget = new QWidget{ this };
+	auto* radio = new QRadioButton{ widget };
+	auto* layout = new QHBoxLayout{ widget };
+	layout->addWidget(radio);
+	layout->setAlignment(Qt::AlignCenter);
+	layout->setContentsMargins(0, 0, 0, 0);
+	widget->setLayout(layout);
+	radio->setChecked(_checked);
+	radio->setObjectName("RadioButton");
+	connect(radio, &QRadioButton::toggled, this, [=] { RadioButtonStateChanged(_row, _col, radio); });
+	setCellWidget(_row, _col, widget);
+	return radio;
+}
+
+QRadioButton* CQtTable::GetRadioButton(int _row, int _col) const
+{
+	return cellWidget(_row, _col)->findChild<QRadioButton*>("RadioButton");
+}
+
+void CQtTable::SetRadioButtonChecked(int _row, int _col, bool _checked) const
+{
+	auto* radio = GetRadioButton(_row, _col);
+	if (!radio) return;
+	QSignalBlocker blocker(radio);
+	radio->setChecked(_checked);
+}
+
+bool CQtTable::GetRadioButtonChecked(int _row, int _col) const
+{
+	auto* radio = GetRadioButton(_row, _col);
+	if (!radio) return false;
+	return radio->isChecked();
+}
+
 QComboBox* CQtTable::SetComboBox(const int _row, const int _col, const std::vector<QString>& _vNames, const std::vector<QVariant>& _vData, int _iSelected)
 {
 	delete item(_row, _col);

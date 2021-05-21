@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QComboBox>
 #include <QPushButton>
+#include <QRadioButton>
 #include <QToolButton>
 
 class CQtTable : public QTableWidget
@@ -59,6 +60,10 @@ public:
 	QCheckBox* GetCheckBox(int _row, int _col) const;
 	void SetCheckBoxChecked(int _row, int _col, bool _checked) const;
 	bool GetCheckBoxChecked(int _row, int _col) const;
+	QRadioButton* SetRadioButton(int _row, int _col, bool _checked = false);
+	QRadioButton* GetRadioButton(int _row, int _col) const;
+	void SetRadioButtonChecked(int _row, int _col, bool _checked) const;
+	bool GetRadioButtonChecked(int _row, int _col) const;
 	QComboBox* SetComboBox(int _row, int _col, const std::vector<QString>& _vNames, const std::vector<QVariant>& _vData, int _iSelected);
 	QComboBox* SetComboBox(int _row, int _col, const std::vector<std::string>& _names, const std::vector<std::string>& _data, const std::string& _dataSelected);
 	QComboBox* SetComboBox(int _row, int _col, const std::vector<std::string>& _names, const std::vector<size_t>& _data, size_t _dataSelected);
@@ -101,6 +106,7 @@ private:
 
 signals:
 	void CheckBoxStateChanged(int _row, int _col, QCheckBox* _pCheckBox);
+	void RadioButtonStateChanged(int _row, int _col, QRadioButton* _radioButton);
 	void ComboBoxIndexChanged(int _row, int _col, QComboBox* _pComboBox);
 	void PushButtonClicked(int _row, int _col, QPushButton* _pushButton);
 	void ToolButtonClicked(int _row, int _col, QToolButton* _pToolButton);

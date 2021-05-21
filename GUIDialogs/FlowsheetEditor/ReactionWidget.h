@@ -10,6 +10,7 @@ class CMaterialsDatabase;
 
 class CReactionWidget : public QWidget
 {
+	enum ECols : int { BASE = 0, NU, MATERIAL, PHASE, TYPE, ORDER };
 	Q_OBJECT
 	Ui::CReactionWidget ui{};
 
@@ -18,7 +19,6 @@ class CReactionWidget : public QWidget
 	const CMaterialsDatabase* m_database{ nullptr };		// Materials database.
 
 	QButtonGroup m_radioGroup;								// Group to manage radio buttons in substance widgets.
-	const int m_substanceWidgetHeightHint;					// Hint for the substance widget height.
 
 public:
 	CReactionWidget(CChemicalReaction* _reaction, const std::vector<std::string>* _compounds, const CMaterialsDatabase* _database, QWidget* _parent = nullptr);
@@ -30,17 +30,11 @@ private:
 
 	void UpdateWholeView();				// Updates all.
 
-	void ApplyBaseSubstance() const;	// Sets new base substance.
+	void AddSubstance();				// Adds new substance.
+	void RemoveSubstance();				// Removes selected substance.
 
-	void AddReactant();					// Adds new reactant.
-	void AddProduct();					// Adds new product.
-	void RemoveReactant();				// Removes selected reactant.
-	void RemoveProduct();				// Removes selected product.
-
-	void AddSubstance(CChemicalReaction::ESubstance _type);								// Adds new substance of the specified type.
-	void RemoveSubstance(CChemicalReaction::ESubstance _type);							// Removes selected substance of the specified type.
-	void AddListItem(CChemicalReaction::SChemicalSubstanse* _substance, size_t _index);	// Adds new substance item to the proper list.
+	void ApplyChanges() const;			// Updates current state of the reaction according to the user's selection.
 
 signals:
-	void SubstancesNumberChanged();			// Emitted when the number of substances changes.
+	void SubstancesNumberChanged();		// Emitted when the number of substances changes.
 };

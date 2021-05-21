@@ -25,13 +25,14 @@ public:
 	{
 		std::string key;					// Unique key of the chemical substance from MDB.
 		double nu{ 1.0 };					// Stoichiometric coefficient of this substance in the reaction.
+		double order{ 0.0 };				// Partial order of reaction for this substance.
 		EPhase phase{ EPhase::UNDEFINED };	// Phase of this substance.
 
 		double MM{};						// Molar mass of this substance.
 
 		SChemicalSubstanse() = default;
 		// Creates a new substance. _nu > 0: product, _nu < 0: reactant.
-		SChemicalSubstanse(std::string _key, double _nu, EPhase _phase) : key{ std::move(_key) }, nu{ _nu }, phase{ _phase } {}
+		SChemicalSubstanse(std::string _key, double _nu, double _order, EPhase _phase) : key{ std::move(_key) }, nu{ _nu }, order{ _order }, phase{ _phase } {}
 		// Returns type of the substance based on the value of stoichiometric coefficient.
 		[[nodiscard]] ESubstance GetType() const { return nu < 0 ? ESubstance::REACTANT : ESubstance::PRODUCT; }
 	};

@@ -532,6 +532,7 @@ namespace StrConst
 	const char* const Reac_H5Substance        = "Substance";
 	const char* const Reac_H5SubstanceKey     = "Key";
 	const char* const Reac_H5SubstanceNu      = "Nu";
+	const char* const Reac_H5SubstanceOrder   = "Order";
 	const char* const Reac_H5SubstancePhase   = "Phase";
 
 //////////////////////////////////////////////////////////////////////////

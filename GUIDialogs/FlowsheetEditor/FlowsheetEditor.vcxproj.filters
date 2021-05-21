@@ -18,9 +18,6 @@
     <ClCompile Include="FlowsheetEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SubstanceWidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ReactionWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -32,9 +29,6 @@
     <QtMoc Include="FlowsheetEditor.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="SubstanceWidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="ReactionWidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
@@ -44,9 +38,6 @@
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="FlowsheetEditor.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="SubstanceWidget.ui">
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="ReactionWidget.ui">
