@@ -274,7 +274,7 @@ bool CTDUnitParameter::IsEmpty() const
 
 bool CTDUnitParameter::IsInBounds() const
 {
-	for (const auto& [time, value] : m_values)
+	for (const auto& value : m_values.GetValuesList())
 		if (value < m_min || value > m_max)
 			return false;
 	return true;

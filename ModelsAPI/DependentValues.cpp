@@ -5,197 +5,165 @@
 #include <ostream>
 #include <numeric>
 
+CDependentValues::CDependentValues(const std::vector<double>& _params, const std::vector<double>& _values)
+{
+	SetValues(_params, _values);
+}
+
 bool CDependentValues::IsEmpty() const
 {
-	return m_data.empty();
+	return m_values.empty();
 }
 
 size_t CDependentValues::Size() const
 {
-	return m_data.size();
-}
-
-CDependentValues::iterator CDependentValues::begin()
-{
-	return m_data.begin();
-}
-
-CDependentValues::const_iterator CDependentValues::begin() const
-{
-	return m_data.begin();
-}
-
-CDependentValues::const_iterator CDependentValues::cbegin() const
-{
-	return m_data.cbegin();
-}
-
-CDependentValues::iterator CDependentValues::end()
-{
-	return m_data.end();
-}
-
-CDependentValues::const_iterator CDependentValues::end() const
-{
-	return m_data.end();
-}
-
-CDependentValues::const_iterator CDependentValues::cend() const
-{
-	return m_data.cend();
-}
-
-CDependentValues::value_type CDependentValues::front()
-{
-	return *m_data.begin();
-}
-
-CDependentValues::value_type CDependentValues::front() const
-{
-	return *m_data.begin();
-}
-
-CDependentValues::value_type CDependentValues::back()
-{
-	return *m_data.rbegin();
-}
-
-CDependentValues::value_type CDependentValues::back() const
-{
-	return *m_data.rbegin();
+	return m_values.size();
 }
 
 double CDependentValues::GetValue(double _param) const
 {
-	if (m_data.empty()) return 0;							// return zero, if there are no data at all
-	if (m_data.size() == 1) return m_data.begin()->second;	// return const value, if there is only a single value defined
-	return Interpolate(_param);								// return interpolation otherwise
+	if (m_values.empty()) return 0;						// return zero, if there are no data at all
+	if (m_values.size() == 1) return m_values.front();	// return const value, if there is only a single value defined
+	return Interpolate(_param);							// return interpolation otherwise
 }
 
 void CDependentValues::SetValue(double _param, double _value)
 {
-	m_data.insert_or_assign(_param, _value);
+	const auto pos = std::lower_bound(m_params.begin(), m_params.end(), _param);
+	if (pos == m_params.end())					// all existing parameters are smaller
+	{
+		m_values.emplace_back(_value);
+		m_params.emplace_back(_param);
+	}
+	else if (std::abs(*pos - _param) <= m_eps)	// this parameter already exists
+	{
+		m_values[std::distance(m_params.begin(), pos)] = _value;
+		*pos = _param;
+	}
+	else										// insert to the right position
+	{
+		m_values.insert(m_values.begin() + std::distance(m_params.begin(), pos), _value);
+		m_params.insert(pos, _param);
+	}
+}
+
+void CDependentValues::SetValues(const std::vector<double>& _params, const std::vector<double>& _values)
+{
+	if (m_params.size() != m_values.size()) return;
+	if (IsEmpty())
+	{
+		m_params = _params;
+		m_values = _values;
+	}
+	else
+		for (size_t i = 0; i < _params.size(); ++i)
+			SetValue(_params[i], _values[i]);
 }
 
 void CDependentValues::RemoveValue(double _param)
 {
-	m_data.erase(_param);
+	const auto pos = std::lower_bound(m_params.begin(), m_params.end(), _param);
+	if (pos != m_params.end() && std::abs(*pos - _param) <= m_eps)
+	{
+		m_values.erase(m_values.begin() + std::distance(m_params.begin(), pos));
+		m_params.erase(pos);
+	}
 }
 
 double CDependentValues::GetParamAt(size_t _index) const
 {
-	return GetPairAt(_index).first;
+	if (_index >= m_params.size()) return {};
+	return m_params[_index];
 }
 
 double CDependentValues::GetValueAt(size_t _index) const
 {
-	return GetPairAt(_index).second;
+	if (_index >= m_values.size()) return {};
+	return m_values[_index];
 }
 
-CDependentValues::value_type CDependentValues::GetPairAt(size_t _index) const
+std::pair<double, double> CDependentValues::GetPairAt(size_t _index) const
 {
-	if (_index >= m_data.size()) return {};
-	auto it = m_data.begin();
-	std::advance(it, _index);
-	return *it;
+	if (_index >= m_values.size()) return {};
+	return { m_params[_index], m_values[_index] };
 }
 
 void CDependentValues::RemovePairAt(size_t _index)
 {
-	if (_index >= m_data.size()) return;
-	auto it = m_data.begin();
-	std::advance(it, _index);
-	m_data.erase(it);
+	if (_index >= m_values.size()) return;
+	m_params.erase(m_params.begin() + _index);
+	m_values.erase(m_values.begin() + _index);
 }
 
 std::vector<double> CDependentValues::GetParamsList() const
 {
-	auto res = ReservedVector<double>(m_data.size());
-	for (const auto& [param, value] : m_data)
-		res.push_back(param);
-	return res;
+	return m_params;
 }
 
 std::vector<double> CDependentValues::GetValuesList() const
 {
-	auto res = ReservedVector<double>(m_data.size());
-	for (const auto& [param, value] : m_data)
-		res.push_back(value);
-	return res;
+	return m_values;
+}
+
+void CDependentValues::SetParamsList(const std::vector<double>& _params)
+{
+	if (_params.size() == m_params.size())
+		m_params = VectorSort(_params);
+}
+
+void CDependentValues::SetValuesList(const std::vector<double>& _values)
+{
+	if (_values.size() == m_values.size())
+		m_values = _values;
 }
 
 bool CDependentValues::HasParam(double _param) const
 {
-	return m_data.find(_param) != m_data.end();
+	return VectorContainsSorted(m_params, _param);
 }
 
 bool CDependentValues::IsConst() const
 {
-	if (m_data.empty()) return true;
-	const auto val0 = GetValueAt(0);
-	return std::all_of(m_data.begin(), m_data.end(), [&](const auto& pair) { return pair.second == val0; });
+	if (m_values.empty()) return true;
+	return std::adjacent_find(m_values.begin(), m_values.end(), std::not_equal_to<>()) == m_values.end();
 }
 
 void CDependentValues::Clear()
 {
-	m_data.clear();
-}
-
-CDependentValues CDependentValues::Unique(const CDependentValues& _table)
-{
-	auto params = _table.GetParamsList();
-	auto values = _table.GetValuesList();
-	// initial index locations
-	std::vector<size_t> iparams(params.size());
-	std::vector<size_t> ivalues(values.size());
-	std::iota(iparams.begin(), iparams.end(), 0);
-	std::iota(ivalues.begin(), ivalues.end(), 0);
-	// sort indices based on comparing values in vectors
-	std::stable_sort(iparams.begin(), iparams.end(), [&params](size_t i1, size_t i2) { return params[i1] < params[i2]; });
-	std::stable_sort(ivalues.begin(), ivalues.end(), [&values](size_t i1, size_t i2) { return values[i1] < values[i2]; });
-	// indices of elements to be deleted
-	std::set<size_t> todel;
-	// find all but first repeating params
-	for (size_t i = 1; i < iparams.size(); ++i)
-		if (params[iparams[i]] == params[iparams[i - 1]])
-			todel.insert(iparams[i]);
-	// find all but first repeating values
-	for (size_t i = 1; i < ivalues.size(); ++i)
-		if (values[ivalues[i]] == values[ivalues[i - 1]])
-			todel.insert(ivalues[i]);
-	// create a copy of the table
-	CDependentValues res = _table;
-	// remove not unique
-	for (const auto& i : todel)
-		res.RemoveValue(params[i]);
-	return res;
+	m_params.clear();
+	m_values.clear();
 }
 
 bool CDependentValues::operator==(const CDependentValues& _v) const
 {
-	return m_data == _v.m_data;
+	return m_params == _v.m_params && m_values == _v.m_values;
 }
 
 double CDependentValues::Interpolate(double _param) const
 {
-	auto upper = m_data.upper_bound(_param);
-	if (upper == m_data.end())		return (--upper)->second;	// nearest-neighbor extrapolation to the right
-	if (upper == m_data.begin())	return upper->second;		// nearest-neighbor extrapolation to the left
+	const auto upper = std::upper_bound(m_params.begin(), m_params.end(), _param);
+	if (upper == m_params.end())	return m_values.back();		// nearest-neighbor extrapolation to the right
+	if (upper == m_params.begin())	return m_values.front();	// nearest-neighbor extrapolation to the left
 
 	auto lower = upper;
 	--lower;
 
-	if (upper->first == _param)	return upper->second;		// exact value found
-	if (lower->first == _param)	return lower->second;		// exact value found
+	const double upar = *upper;
+	const double lpar = *lower;
+	const double uval = m_values[std::distance(m_params.begin(), upper)];
+	const double lval = m_values[std::distance(m_params.begin(), lower)];
 
-	return (upper->second - lower->second) / (upper->first - lower->first) * (_param - lower->first) + lower->second; // linearly interpolated value
+	if (std::abs(upar - _param) <= m_eps)	return uval;	// exact value found
+	if (std::abs(lpar - _param) <= m_eps)	return lval;	// exact value found
+
+	return (uval - lval) / (upar - lpar) * (_param - lpar) + lval; // linearly interpolated value
 }
 
 std::ostream& operator<<(std::ostream& _os, const CDependentValues& _obj)
 {
-	if (!_obj.m_data.empty())
-		_os << _obj.GetParamAt(0) << " " << _obj.GetValueAt(0);
-	for (size_t i = 1; i < _obj.m_data.size(); ++i)
-		_os << " " << _obj.GetParamAt(i) << " " << _obj.GetValueAt(i);
+	if (!_obj.m_values.empty())
+		_os << _obj.m_params[0] << " " << _obj.m_values[0];
+	for (size_t i = 1; i < _obj.m_values.size(); ++i)
+		_os << " " << _obj.m_params[i] << " " << _obj.m_values[i];
 	return _os;
 }

@@ -12,6 +12,13 @@ bool VectorContains(const std::vector<T>& _vec, T _value)
 	return std::find(_vec.begin(), _vec.end(), _value) != _vec.end();
 }
 
+// Checks whether the sorted vector contains a specified element.
+template<typename T>
+bool VectorContainsSorted(const std::vector<T>& _vec, T _value)
+{
+	return std::binary_search(_vec.begin(), _vec.end(), _value);
+}
+
 // Checks whether the vector contains a specified element.
 template<typename T, typename FUN>
 bool VectorContains(const std::vector<T>& _vec, const FUN& _fun)
@@ -81,6 +88,13 @@ bool VectorUnique(const std::vector<T>& _vec)
 {
 	std::set<T> unique(_vec.begin(), _vec.end());
 	return unique.size() == _vec.size();
+}
+
+// Checks if the sorted vector contains only unique elements.
+template<typename T>
+bool VectorUniqueSorted(const std::vector<T>& _vec)
+{
+	return std::adjacent_find(_vec.begin(), _vec.end()) == _vec.end();
 }
 
 // Adds two equally sized vectors element-wise and writes results to the third one.

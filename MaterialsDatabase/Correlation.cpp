@@ -66,10 +66,10 @@ std::vector<double> CCorrelation::GetParameters() const
 	else
 	{
 		std::vector<double> vRes;
-		for (const auto pair : m_valuesList)
+		for (size_t i = 0; i < m_valuesList.Size(); ++i)
 		{
-			vRes.push_back(pair.first);
-			vRes.push_back(pair.second);
+			vRes.push_back(m_valuesList.GetParamAt(i));
+			vRes.push_back(m_valuesList.GetValueAt(i));
 		}
 		return vRes;
 	}
