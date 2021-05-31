@@ -87,7 +87,7 @@ void CPlotsViewer::UpdateSlider()
 	if (!m_pModel || !m_pModel->GetModel()) return;
 	if(m_iPlot == -1) return;
 	const auto plots = m_pModel->GetModel()->GetPlotsManager().GetAllPlots();
-	if (plots[m_iPlot]->Is2D())	return;
+	if (m_iPlot >= static_cast<int>(plots.size()) || plots[m_iPlot]->Is2D()) return;
 
 	ui.horizontalSlider->setMaximum(static_cast<int>(plots[m_iPlot]->GetCurvesNumber()) - 1);
 	ui.horizontalSlider->setTickInterval( 1 );
@@ -114,7 +114,7 @@ void CPlotsViewer::UpdateSliderLabelName()
 	if (!m_pModel || !m_pModel->GetModel()) return;
 	if(m_iPlot == -1) return;
 	const auto plots = m_pModel->GetModel()->GetPlotsManager().GetAllPlots();
-	if (plots[m_iPlot]->Is2D())	return;
+	if (m_iPlot >= static_cast<int>(plots.size()) || plots[m_iPlot]->Is2D())	return;
 
 	ui.labelZName->setText( QString::fromStdString(plots[m_iPlot]->GetLabelZ()) + ":" );
 }
