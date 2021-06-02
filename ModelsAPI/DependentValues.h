@@ -6,6 +6,7 @@
 #include <map>
 #include <vector>
 #include <ostream>
+#include <limits>
 
 /* Represents a dependent value, described with the list of [param:value].
  * Implements internal linear interpolation of values between existing parameters
