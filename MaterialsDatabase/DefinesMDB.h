@@ -52,6 +52,7 @@ enum class ECorrelationTypes : unsigned
 	POLYNOMIAL_CP    = 7,	// y = a + b·T + c·T^2 + d·T^3 + e/(T^2)
 	POLYNOMIAL_H     = 8,	// y = a·T + b·(T^2)/2 + c·(T^3)/3 + d·(T^4)/4 − e/T + f − g
 	POLYNOMIAL_S     = 9,	// y = a·ln(T) + b·T + c·(T^2)/2 + d·(T^3)/3 − e/(2·T^2) + f
+	SUTHERLAND		 = 10,  // y = a·(b + c)/(T + c)·(T/b)^(3/2)
 };
 
 namespace MDBDescriptors
@@ -75,7 +76,8 @@ namespace MDBDescriptors
 		{ ECorrelationTypes::POLYNOMIAL_1 ,		{ "Polynomial" ,				L"y = a + bT + cT<sup>2</sup> + dT<sup>3</sup> + eT<sup>4</sup> + fT<sup>5</sup> + gT<sup>6</sup> + hT<sup>7</sup>" ,	8 } },
 		{ ECorrelationTypes::POLYNOMIAL_CP ,	{ "Shomate heat capacity" ,		L"y = a + bT + cT<sup>2</sup> + dT<sup>3</sup> + e/T<sup>2</sup>" ,														5 } },
 		{ ECorrelationTypes::POLYNOMIAL_H ,		{ "Shomate standard enthalpy" ,	L"y = aT + bT<sup>2</sup>/2 + cT<sup>3</sup>/3 + dT<sup>4</sup>/4 - e/T + f - g" ,										7 } },
-		{ ECorrelationTypes::POLYNOMIAL_S ,		{ "Shomate standard entropy" ,	L"y = a·ln(T) + bT + cT<sup>2</sup>/2 + dT<sup>3</sup>/3 - e/(2T<sup>2</sup>) + f" ,									6 } }
+		{ ECorrelationTypes::POLYNOMIAL_S ,		{ "Shomate standard entropy" ,	L"y = a·ln(T) + bT + cT<sup>2</sup>/2 + dT<sup>3</sup>/3 - e/(2T<sup>2</sup>) + f" ,									6 } },
+		{ ECorrelationTypes::SUTHERLAND,		{ "Sutherland's law"          ,	L"y = y = a·(b + c)/(T + c)·(T/b)<sup>3/2</sup>"                                                                    ,   3 } }
 	};
 }
 
