@@ -487,13 +487,13 @@ void CFlowsheetEditor::UnitParamValueChanged(int _row, int _col)
 		break;
 	}
 	case EUnitParameter::LIST_DOUBLE:
-		dynamic_cast<CListRealUnitParameter*>(param)->SetValue(_row, ui.tableUnitParams->GetItem(_row, _col).toDouble());
+		dynamic_cast<CListRealUnitParameter*>(param)->SetValue(0, ui.tableUnitParams->GetItem(_row, _col).toDouble());
 		break;
 	case EUnitParameter::LIST_UINT64:
-		dynamic_cast<CListUIntUnitParameter*>(param)->SetValue(_row, ui.tableUnitParams->GetItem(_row, _col).toUInt());
+		dynamic_cast<CListUIntUnitParameter*>(param)->SetValue(0, ui.tableUnitParams->GetItem(_row, _col).toUInt());
 		break;
 	case EUnitParameter::LIST_INT64:
-		dynamic_cast<CListIntUnitParameter*>(param)->SetValue(_row, ui.tableUnitParams->GetItem(_row, _col).toInt());
+		dynamic_cast<CListIntUnitParameter*>(param)->SetValue(0, ui.tableUnitParams->GetItem(_row, _col).toInt());
 		break;
 	case EUnitParameter::UNKNOWN:
 		break;
