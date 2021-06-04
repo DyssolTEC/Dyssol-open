@@ -468,6 +468,13 @@ void CFlowsheetEditor::UnitParamValueChanged(int _row, int _col)
 		dynamic_cast<CCompoundUnitParameter*>(param)->SetCompound(key.toStdString());
 		break;
 	}
+	case EUnitParameter::MDB_COMPOUND:
+	{
+		const QComboBox* combo = ui.tableUnitParams->GetComboBox(_row, _col);
+		const QString key = combo->itemData(combo->currentIndex()).toString();
+		dynamic_cast<CMDBCompoundUnitParameter*>(param)->SetCompound(key.toStdString());
+		break;
+	}
 	case EUnitParameter::REACTION:
 	{
 		auto* reactionParam = dynamic_cast<CReactionUnitParameter*>(param);
@@ -700,6 +707,14 @@ void CFlowsheetEditor::UpdateUnitParamTable() const
 			const auto* p = dynamic_cast<const CCompoundUnitParameter*>(param);
 			// create combo with total list of possible compounds
 			ui.tableUnitParams->SetComboBox(iRow, 2, m_materialsDB->GetCompoundsNames(m_pFlowsheet->GetCompounds()), m_pFlowsheet->GetCompounds(), p->GetCompound());
+			ui.tableUnitParams->SetItemNotEditable(iRow, 1, QString{});
+			break;
+		}
+		case EUnitParameter::MDB_COMPOUND:
+		{
+			const auto* p = dynamic_cast<const CMDBCompoundUnitParameter*>(param);
+			// create combo with total list of possible compounds
+			ui.tableUnitParams->SetComboBox(iRow, 2, m_materialsDB->GetCompoundsNames(), m_materialsDB->GetCompoundsKeys(), p->GetCompound());
 			ui.tableUnitParams->SetItemNotEditable(iRow, 1, QString{});
 			break;
 		}

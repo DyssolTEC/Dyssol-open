@@ -204,6 +204,8 @@ public:
 	CComboUnitParameter* AddComboParameter(const std::string& _name, size_t _initValue, const std::vector<size_t>& _items, const std::vector<std::string>& _itemsNames, const std::string& _description);
 	// Adds a new compound combo-box unit parameter, allowing to choose one of the defined compounds, and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
 	CCompoundUnitParameter* AddCompoundParameter(const std::string& _name, const std::string& _description);
+	// Adds a new MDB compound combo-box unit parameter, allowing to choose one of the MDB compounds, and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	CMDBCompoundUnitParameter* AddMDBCompoundParameter(const std::string& _name, const std::string& _description);
 	// Adds a new reaction unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
 	CReactionUnitParameter* AddReactionParameter(const std::string& _name, const std::string& _description);
 	// Adds a new real list unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
@@ -236,6 +238,8 @@ public:
 	size_t GetComboParameterValue(const std::string& _name) const;
 	// Returns value of the compound unit parameter. Throws logic_error exception if a compound unit parameter with the given name does not exist.
 	std::string GetCompoundParameterValue(const std::string& _name) const;
+	// Returns value of the MDB compound unit parameter. Throws logic_error exception if a compound unit parameter with the given name does not exist.
+	std::string GetMDBCompoundParameterValue(const std::string& _name) const;
 	// Returns value of the reaction unit parameter. Throws logic_error exception if a reaction unit parameter with the given name does not exist.
 	std::vector<CChemicalReaction> GetReactionParameterValue(const std::string& _name) const;
 	// Returns value of the real list unit parameter. Throws logic_error exception if a real list unit parameter with the given name does not exist.
