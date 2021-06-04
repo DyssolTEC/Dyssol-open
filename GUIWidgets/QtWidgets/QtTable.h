@@ -37,6 +37,7 @@ public:
 	void SetItemEditable(int _row, int _col, const QString& _text, const QVariant& _userData = -1);
 	void SetItemEditable(int _row, int _col, const std::string& _text, const QVariant& _userData = -1);
 	void SetItemEditable(int _row, int _col, double _value, const QVariant& _userData = -1);
+	void SetItemEditablePrecise(int _row, int _col, double _value, int _precision, const QVariant& _userData = -1);
 	void SetItemEditable(int _row, int _col);
 
 	void SetItemsColEditable(int _startrow, int _col, const std::vector<double>& _val);

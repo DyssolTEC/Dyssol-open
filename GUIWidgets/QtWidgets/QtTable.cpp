@@ -124,6 +124,11 @@ void CQtTable::SetItemEditable(int _row, int _col, double _value, const QVariant
 	SetItemEditable(_row, _col, QString::number(_value), _userData);
 }
 
+void CQtTable::SetItemEditablePrecise(int _row, int _col, double _value, int _precision, const QVariant& _userData)
+{
+	SetItemEditable(_row, _col, QString::number(_value, 'g', _precision), _userData);
+}
+
 void CQtTable::SetItemEditable(int _row, int _col)
 {
 	SetItemEditable(_row, _col, QString{});
