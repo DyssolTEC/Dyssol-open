@@ -548,6 +548,13 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundConst
 		if (res != 0.0)
 			return 1.0 / res;
 	}
+	else
+	{
+		double res{ 0.0 };
+		for (const auto& c : m_compounds)
+			res += GetCompoundFraction(_time, c, _phase) * GetCompoundProperty(c, _property);
+		return res;
+	}
 
 	return {};
 }

@@ -130,7 +130,10 @@ public:
 
 	// Returns names of compounds with the specified unique keys.
 	std::vector<std::string> GetCompoundsNames(const std::vector<std::string>& _keys) const;
-
+	// Returns names of all defined compounds.
+	[[nodiscard]] std::vector<std::string> GetCompoundsNames() const;
+	// Returns the list of compounds keys that have been defined in the database.
+	[[nodiscard]] std::vector<std::string> GetCompoundsKeys() const;
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Functions to work with properties values
@@ -174,12 +177,6 @@ public:
 
 
 private:
-	//////////////////////////////////////////////////////////////////////////
-	/// Functions to work with compounds
-
-	// Returns the list of compounds keys that have been defined in the database.
-	std::vector<std::string> GetCompoundsKeys() const;
-
 	//////////////////////////////////////////////////////////////////////////
 	/// Functions to work with interactions
 
