@@ -49,4 +49,4 @@ void CSaveLoadThread::StartTask()
 	emit Finished();
 }
 
-void CSaveLoadThread::StopTask() {}
+void CSaveLoadThread::RequestStop() {}

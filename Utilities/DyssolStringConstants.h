@@ -598,6 +598,7 @@ namespace StrConst
 	const char* const  ST_ButtonRunTextRun       = "Start simulation";
 	const char* const  ST_ButtonRunTextStop      = "Stop simulation";
 
+	const char* const  ST_LogSimStopRequest      = "Simulation stop requested...";
 	const char* const  ST_LogSimUserStop         = "Simulation was stopped by user!";
 	inline std::string ST_LogSimStart(const std::string& s1, const std::string& s2) {
 		return std::string("Simulation started at " + s1 + " on " + s2); }

@@ -9,6 +9,7 @@
 #include "UnitPorts.h"
 #include "StateVariable.h"
 #include "StreamManager.h"
+#include <mutex>
 
 #ifdef _DEBUG
 #define DYSSOL_CREATE_MODEL_FUN CreateDYSSOLUnitV4_DEBUG
@@ -83,6 +84,8 @@ private:
 	std::string m_errorMessage;		// Description of the last detected error.
 	std::string m_warningMessage;	// Description of the last detected warning.
 	std::string m_infoMessage;		// Description of the last info.
+
+	mutable std::mutex m_messageMutex;		// Mutex for thread-safe work with messages.
 
 public:
 	// TODO: initialize all pointers in constructor and make them references.
@@ -540,6 +543,13 @@ public:
 	void ClearWarning();
 	// Clears an info state.
 	void ClearInfo();
+
+	// Returns a textual description of the last error if any and clears the error state.
+	std::string PopErrorMessage();
+	// Returns a textual description of the last warning if any and clears the warning state.
+	std::string PopWarningMessage();
+	// Returns a textual description of the last info if any and clears the info state.
+	std::string PopInfoMessage();
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Simulation-time operations

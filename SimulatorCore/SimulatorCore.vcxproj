@@ -22,6 +22,7 @@
     <ClInclude Include="CalculationSequence.h" />
     <ClInclude Include="ConfigFileParser.h" />
     <ClInclude Include="Flowsheet.h" />
+    <ClInclude Include="LogUpdater.h" />
     <ClInclude Include="ModelsManager.h" />
     <ClInclude Include="ParametersHolder.h" />
     <ClInclude Include="Simulator.h" />

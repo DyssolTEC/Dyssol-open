@@ -5,6 +5,7 @@
 #include "SimulatorLog.h"
 #include "CalculationSequence.h"
 #include "DenseMDMatrix.h"
+#include "LogUpdater.h"
 #include <map>
 
 class CFlowsheet;
@@ -31,14 +32,15 @@ private:
 	std::map<std::string, bool> m_vInitialized;
 
 	/// Data for logging
-	CSimulatorLog m_log;			// Log itself.
-	double m_dTWStart;				// Current time window start.
-	double m_dTWEnd;				// Current time window end.
-	double m_dTWLength;				// Current time window length.
-	unsigned m_iTWIterationFull;	// Iteration number within a current time window [m_dTWStart .. ]. Does not reset if the size of current TW is reduced.
-	unsigned m_iTWIterationCurr;	// Iteration number within a current time window [m_dTWStart .. m_dTWEnd]. Reset if the size of current TW is reduced.
-	unsigned m_iWindowNumber;		// Current time window within a partition.
-	std::string m_unitName;		    // Name of the currently calculated unit.
+	CSimulatorLog m_log;				// Log itself.
+	CLogUpdater m_logUpdater{ &m_log };	// Log updater.
+	double m_dTWStart;					// Current time window start.
+	double m_dTWEnd;					// Current time window end.
+	double m_dTWLength;					// Current time window length.
+	unsigned m_iTWIterationFull;		// Iteration number within a current time window [m_dTWStart .. ]. Does not reset if the size of current TW is reduced.
+	unsigned m_iTWIterationCurr;		// Iteration number within a current time window [m_dTWStart .. m_dTWEnd]. Reset if the size of current TW is reduced.
+	unsigned m_iWindowNumber;			// Current time window within a partition.
+	std::string m_unitName;				// Name of the currently calculated unit.
 
 	//// parameters of convergence methods
 	bool m_bSteffensenTrigger;
@@ -67,9 +69,9 @@ private:
 	/// Simulate all units of a given partition on specified time interval.
 	void SimulateUnits(const CCalculationSequence::SPartition& _partition, double _t1, double _t2);
 	/// Simulate specified steady-state or dynamic unit on a given time or interval.
-	void SimulateUnit(CUnitContainer& _model, double _t1, double _t2 = -1);
+	void SimulateUnit(CUnitContainer& _unit, double _t1, double _t2 = -1);
 	/// Initialize the specified steady-state or dynamic unit at the given time.
-	void InitializeUnit(CUnitContainer& _model, double _t);
+	void InitializeUnit(CUnitContainer& _unit, double _t);
 
 	/// Checks convergence comparing all values from _vStreams1 and _vStreams2 in pairs on the specified time interval. The length of _vStreams1 and _vStreams2 must be the same.
 	bool CheckConvergence(const std::vector<CStream*>& _vStreams1, const std::vector<CStream*>& _vStreams2, double _t1, double _t2) const;
