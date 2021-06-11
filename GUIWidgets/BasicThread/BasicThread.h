@@ -24,7 +24,7 @@ public:
 
 public slots:
 	virtual void StartTask();
-	virtual void StopTask();
+	virtual void RequestStop();
 
 signals:
 	void Finished();

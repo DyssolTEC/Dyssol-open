@@ -101,12 +101,11 @@ void CSimulatorTab::StartSimulation()
 void CSimulatorTab::AbortSimulation() const
 {
 	// stop simulation
-	m_pProgressThread->StopTask();
+	m_pProgressThread->RequestStop();
 
 	// set the message to the log
-	UpdateLog(); // set the rest messages from the queue
 	ui.textBrowserLog->setTextColor(QColor(Qt::red));
-	ui.textBrowserLog->append(StrConst::ST_LogSimUserStop);
+	ui.textBrowserLog->append(StrConst::ST_LogSimStopRequest);
 	ui.textBrowserLog->setTextColor(QColor(Qt::black));
 }
 
@@ -119,6 +118,12 @@ void CSimulatorTab::SimulationFinished()
 
 	// update simulation log
 	UpdateLog();
+	if (m_pProgressThread->WasAborted())
+	{
+		ui.textBrowserLog->setTextColor(QColor(Qt::red));
+		ui.textBrowserLog->append(StrConst::ST_LogSimUserStop);
+		ui.textBrowserLog->setTextColor(QColor(Qt::black));
+	}
 
 	// setup GUI elements
 	ui.textBrowserLog->append(QString::fromStdString(StrConst::ST_LogSimFinishedTime(now.toString("hh:mm:ss").toStdString(), now.toString("dd.MM.yyyy").toStdString(), QString::number(m_simulationTimer.elapsed()/1000.).toStdString())));
