@@ -1145,19 +1145,16 @@ void CBaseUnit::ShowInfo(const std::string& _message)
 
 bool CBaseUnit::HasError() const
 {
-	const std::lock_guard lock(m_messageMutex);
 	return m_hasError;
 }
 
 bool CBaseUnit::HasWarning() const
 {
-	const std::lock_guard lock(m_messageMutex);
 	return m_hasWarning;
 }
 
 bool CBaseUnit::HasInfo() const
 {
-	const std::lock_guard lock(m_messageMutex);
 	return m_hasInfo;
 }
 
@@ -1197,10 +1194,10 @@ void CBaseUnit::ClearInfo()
 std::string CBaseUnit::PopErrorMessage()
 {
 	std::string message;
-	if (HasError())
+	const std::lock_guard lock(m_messageMutex);
+	if (m_hasError)
 	{
-		const std::lock_guard lock(m_messageMutex);
-		message = GetErrorMessage();
+		message = m_errorMessage;
 		ClearError();
 	}
 	return message;
@@ -1209,10 +1206,10 @@ std::string CBaseUnit::PopErrorMessage()
 std::string CBaseUnit::PopWarningMessage()
 {
 	std::string message;
-	if (HasWarning())
+	const std::lock_guard lock(m_messageMutex);
+	if (m_hasWarning)
 	{
-		const std::lock_guard lock(m_messageMutex);
-		message = GetWarningMessage();
+		message = m_warningMessage;
 		ClearWarning();
 	}
 	return message;
@@ -1221,10 +1218,10 @@ std::string CBaseUnit::PopWarningMessage()
 std::string CBaseUnit::PopInfoMessage()
 {
 	std::string message;
-	if (HasInfo())
+	const std::lock_guard lock(m_messageMutex);
+	if (m_hasInfo)
 	{
-		const std::lock_guard lock(m_messageMutex);
-		message = GetInfoMessage();
+		message = m_infoMessage;
 		ClearInfo();
 	}
 	return message;

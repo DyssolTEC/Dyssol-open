@@ -7,11 +7,11 @@
 #include "Phase.h"
 #include "UnitContainer.h"
 #include "DynamicUnit.h"
+#include "LogUpdater.h"
 #include "DyssolStringConstants.h"
 #include "ContainerFunctions.h"
 #include "DistributionsGrid.h"
 #include "DyssolUtilities.h"
-#include <thread>
 
 CSimulator::CSimulator()
 {
@@ -55,6 +55,9 @@ void CSimulator::Simulate()
 		for (const auto& model : partition.models)
 			m_vInitialized[model->GetKey()] = false;
 
+	// run logger updater
+	m_logUpdater.Run();
+
 	// set initial values to tear streams
 	m_pFlowsheet->GetCalculationSequence()->InitializeTearStreams(m_pParams->initTimeWindow);
 
@@ -78,6 +81,9 @@ void CSimulator::Simulate()
 			model->GetModel()->DoFinalizeUnit();
 		}
 	}
+
+	// stop logger updater
+	m_logUpdater.Stop();
 
 	// Save new initial values of tear streams
 	if(m_pParams->initializeTearStreamsAutoFlag)
@@ -292,22 +298,7 @@ void CSimulator::SimulateUnit(CUnitContainer& _unit, double _t1, double _t2 /*= 
 {
 	auto* model = _unit.GetModel();
 
-	std::atomic stop_flag{ false };
-	std::thread checker{ [&]()
-	{
-		const auto Log = [&]
-		{
-			if (model->HasWarning()) m_log.WriteWarning(model->PopWarningMessage());
-			if (model->HasInfo())	 m_log.WriteInfo(model->PopInfoMessage());
-		};
-
-		while (!stop_flag)
-		{
-			Log();
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		}
-		Log();
-	} };
+	m_logUpdater.SetModel(model);
 
 	// simulate
 	try {
@@ -319,35 +310,36 @@ void CSimulator::SimulateUnit(CUnitContainer& _unit, double _t1, double _t2 /*= 
 	catch (const std::logic_error& e) {
 		RaiseError(e.what());
 	}
+
+	m_logUpdater.ReleaseModel();
+
 	// check for errors
 	if (model->HasError())
-	{
-		RaiseError(model->GetErrorMessage());
-		model->ClearError();
-	}
-
-	stop_flag = true;
-	checker.join();
+		RaiseError(model->PopErrorMessage());
 }
 
-void CSimulator::InitializeUnit(CUnitContainer& _model, double _t)
+void CSimulator::InitializeUnit(CUnitContainer& _unit, double _t)
 {
+	auto* model = _unit.GetModel();
+
 	// write log
-	m_log.WriteInfo(StrConst::Sim_InfoUnitInitialization(m_unitName, _model.GetModel()->GetUnitName()));
+	m_log.WriteInfo(StrConst::Sim_InfoUnitInitialization(m_unitName, model->GetUnitName()));
+	//CLogUpdater logUpdater{ &m_log, model };
 	try {
-		_model.GetModel()->DoInitializeUnit();
+		model->DoInitializeUnit();
 	}
 	catch (const std::logic_error& e) {
 		RaiseError(e.what());
 	}
+	//logUpdater.Release();
 
-	if (_model.GetModel()->HasError())
-		RaiseError(_model.GetModel()->GetErrorMessage());
+	if (model->HasError())
+		RaiseError(model->GetErrorMessage());
 
 	// check unit parameters
-	for (const CBaseUnitParameter* param : _model.GetModel()->GetUnitParametersManager().GetParameters())
+	for (const CBaseUnitParameter* param : model->GetUnitParametersManager().GetParameters())
 		if (!param->IsInBounds())
-			m_log.WriteWarning(StrConst::Sim_WarningParamOutOfRange(_model.GetModel()->GetUnitName(), m_unitName, param->GetName()));
+			m_log.WriteWarning(StrConst::Sim_WarningParamOutOfRange(model->GetUnitName(), m_unitName, param->GetName()));
 }
 
 bool CSimulator::CheckConvergence(const std::vector<CStream*>& _vStreams1, const std::vector<CStream*>& _vStreams2, double _t1, double _t2) const
