@@ -7,7 +7,6 @@
 #include "Phase.h"
 #include "UnitContainer.h"
 #include "DynamicUnit.h"
-#include "LogUpdater.h"
 #include "DyssolStringConstants.h"
 #include "ContainerFunctions.h"
 #include "DistributionsGrid.h"

@@ -2,6 +2,8 @@
 
 #include "BaseUnit.h"
 #include "SimulatorLog.h"
+#include <thread>
+#include <atomic>
 
 class CLogUpdater
 {
