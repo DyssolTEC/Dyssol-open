@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 3.1.0)
 
-project(Dyssol VERSION 0.10.2.0 LANGUAGES CXX)
+project(Dyssol VERSION 0.10.2.2 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

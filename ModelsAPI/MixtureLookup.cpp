@@ -66,7 +66,7 @@ double CMixtureLookup::GetRight(double _left) const
 void CMixtureLookup::Set(const CDependentValues& _component, double _weight)
 {
 	m_table.SetLeftToRight(_component);
-	Multiply(_weight);
+	m_table.Mult(_weight);
 }
 
 void CMixtureLookup::Add(double _value)
@@ -102,23 +102,35 @@ void CMixtureLookup::Clear()
 
 void CMixtureLookup::Update()
 {
-	m_table.Clear();
+	std::vector<double> resParams;
+	for (auto& m_componet : m_componets)
+		resParams = VectorsUnionSorted(resParams, m_componet.GetParamsList());
+	std::vector allValues(m_componets.size(), std::vector<double>(resParams.size()));
 	for (size_t i = 0; i < m_componets.size(); ++i)
-		Add(m_componets[i], m_weights[i]);
+		for (size_t j = 0; j < resParams.size(); ++j)
+			allValues[i][j] = m_componets[i].GetValue(resParams[j]);
+	for (size_t i = 0; i < m_componets.size(); ++i)
+		std::transform(allValues[i].begin(), allValues[i].end(), allValues[i].begin(), [&](auto v) { return v * m_weights[i]; });
+	std::vector resValues(resParams.size(), 0.0);
+	for (size_t i = 0; i < m_componets.size(); ++i)
+		for (size_t j = 0; j < resParams.size(); ++j)
+			resValues[j] += allValues[i][j];
+	m_table.SetLeftToRight(CDependentValues{ resParams, resValues });
 }
 
 void CMixtureLookup::CTwoWayMapExt::Add(double _value)
 {
-	for (auto& [l, r] : m_direct)
-		r += _value;
+	auto values = m_direct.GetValuesList();
+	std::transform(values.begin(), values.end(), values.begin(), [&](double v) { return v + _value; });
+	m_direct.SetValuesList(values);
 	m_revert = Reverted(m_direct);
 }
 
 void CMixtureLookup::CTwoWayMapExt::Add(const CDependentValues& _table)
 {
 	// TODO: check performance
-	const auto unique = CDependentValues::Unique(_table);
-	const auto params = VectorsUnionUnsorted(m_direct.GetParamsList(), unique.GetParamsList());
+	const auto unique = Unique(_table);
+	const auto params = VectorsUnionSorted(m_direct.GetParamsList(), unique.GetParamsList());
 	const CDependentValues copy = m_direct; // can not directly use m_direct because of the interpolation
 	for (const auto& p : params)
 		m_direct.SetValue(p, copy.GetValue(p) + unique.GetValue(p));
@@ -128,8 +140,8 @@ void CMixtureLookup::CTwoWayMapExt::Add(const CDependentValues& _table)
 void CMixtureLookup::CTwoWayMapExt::AddMult(const CDependentValues& _table, double _value)
 {
 	// TODO: check performance
-	const auto unique = CDependentValues::Unique(_table);
-	const auto params = VectorsUnionUnsorted(m_direct.GetParamsList(), unique.GetParamsList());
+	const auto unique = Unique(_table);
+	const auto params = VectorsUnionSorted(m_direct.GetParamsList(), unique.GetParamsList());
 	const CDependentValues copy = m_direct; // can not directly use m_direct because of the interpolation
 	for (const auto& p : params)
 		m_direct.SetValue(p, copy.GetValue(p) + unique.GetValue(p) * _value);
@@ -138,7 +150,8 @@ void CMixtureLookup::CTwoWayMapExt::AddMult(const CDependentValues& _table, doub
 
 void CMixtureLookup::CTwoWayMapExt::Mult(double _value)
 {
-	for (auto& [l, r] : m_direct)
-		r *= _value;
+	auto values = m_direct.GetValuesList();
+	std::transform(values.begin(), values.end(), values.begin(), [&](double v) { return v * _value; });
+	m_direct.SetValuesList(values);
 	m_revert = Reverted(m_direct);
 }

@@ -3,6 +3,7 @@
 #pragma once
 
 #include <cmath>
+#include <numeric>
 
 double inline GetMMoment(int _moment, const std::vector<double>& _grid, const std::vector<double>& _q)
 {
@@ -225,12 +226,11 @@ std::vector<double> inline ConvertQ0ToMassFractions(const std::vector<double>& _
 
 std::vector<double> inline ConvertNumbersToq0(const std::vector<double>& _grid, const std::vector<double>& _number)
 {
+	const double Ntot = std::accumulate(_number.begin(), _number.end(), 0.0);
+	if (Ntot == 0.0) return std::vector(_number.size(), 0.0);
 	std::vector<double> q0(_number.size());
-	double dNtot = 0;
-	for (double v : _number)
-		dNtot += v;
 	for (size_t i = 0; i < _number.size(); ++i)
-		q0[i] = _number[i] / dNtot / (_grid[i + 1] - _grid[i]);
+		q0[i] = _number[i] / Ntot / (_grid[i + 1] - _grid[i]);
 	return q0;
 }
 

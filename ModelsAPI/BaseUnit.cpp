@@ -290,6 +290,14 @@ CCompoundUnitParameter* CBaseUnit::AddCompoundParameter(const std::string& _name
 	return m_unitParameters.GetCompoundParameter(_name);
 }
 
+CMDBCompoundUnitParameter* CBaseUnit::AddMDBCompoundParameter(const std::string& _name, const std::string& _description)
+{
+	if (m_unitParameters.IsNameExist(_name))
+		throw std::logic_error(StrConst::BUnit_ErrAddParam(m_unitName, _name, __func__));
+	m_unitParameters.AddMDBCompoundParameter(_name, _description);
+	return m_unitParameters.GetMDBCompoundParameter(_name);
+}
+
 CReactionUnitParameter* CBaseUnit::AddReactionParameter(const std::string& _name, const std::string& _description)
 {
 	if (m_unitParameters.IsNameExist(_name))
@@ -403,6 +411,13 @@ size_t CBaseUnit::GetComboParameterValue(const std::string& _name) const
 std::string CBaseUnit::GetCompoundParameterValue(const std::string& _name) const
 {
 	if (const CCompoundUnitParameter* param = m_unitParameters.GetCompoundParameter(_name))
+		return param->GetCompound();
+	throw std::logic_error(StrConst::BUnit_ErrGetParam(m_unitName, _name, __func__));
+}
+
+std::string CBaseUnit::GetMDBCompoundParameterValue(const std::string& _name) const
+{
+	if (const CMDBCompoundUnitParameter* param = m_unitParameters.GetMDBCompoundParameter(_name))
 		return param->GetCompound();
 	throw std::logic_error(StrConst::BUnit_ErrGetParam(m_unitName, _name, __func__));
 }

@@ -107,7 +107,6 @@
     <ClCompile Include="FlowsheetEditor.cpp" />
     <ClCompile Include="ReactionWidget.cpp" />
     <ClCompile Include="ReactionsEditor.cpp" />
-    <ClCompile Include="SubstanceWidget.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="FlowsheetEditor.h">
@@ -131,16 +130,12 @@
     <QtUic Include="FlowsheetEditor.ui" />
     <QtUic Include="ReactionWidget.ui" />
     <QtUic Include="ReactionsEditor.ui" />
-    <QtUic Include="SubstanceWidget.ui" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="ReactionsEditor.h" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="ReactionWidget.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <QtMoc Include="SubstanceWidget.h" />
   </ItemGroup>
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.props')">
     <Import Project="$(QtMsBuild)\qt.props" />

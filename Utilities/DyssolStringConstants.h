@@ -409,6 +409,8 @@ namespace StrConst
 	const char* const	Flow_ErrNoCompounds = "No compounds specified.";
 	inline std::string	Flow_ErrWrongCompound(const std::string& s1) {
 		return std::string("Cannot find compound '" + s1 + "' in the loaded materials database.");	}
+	inline std::string	Flow_ErrWrongCompoundParam(const std::string& s1, const std::string& s2) {
+		return std::string("Cannot find compound '" + s2 + "', defined in unit parameter '" + s1 + "', in the loaded materials database."); }
 	const char* const	Flow_ErrNoPhases = "No phases specified.";
 	inline std::string  Flow_ErrUnconnectedPorts(const std::string& s1, const std::string& s2) {
 		return "Port '" + s2 + "' in unit '" + s1 + "' is unconnected."; }
@@ -532,6 +534,7 @@ namespace StrConst
 	const char* const Reac_H5Substance        = "Substance";
 	const char* const Reac_H5SubstanceKey     = "Key";
 	const char* const Reac_H5SubstanceNu      = "Nu";
+	const char* const Reac_H5SubstanceOrder   = "Order";
 	const char* const Reac_H5SubstancePhase   = "Phase";
 
 //////////////////////////////////////////////////////////////////////////
