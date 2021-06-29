@@ -9,6 +9,7 @@
 #include "UnitPorts.h"
 #include "StateVariable.h"
 #include "StreamManager.h"
+#include <mutex>
 
 #ifdef _DEBUG
 #define DYSSOL_CREATE_MODEL_FUN CreateDYSSOLUnitV4_DEBUG
@@ -83,6 +84,8 @@ private:
 	std::string m_errorMessage;		// Description of the last detected error.
 	std::string m_warningMessage;	// Description of the last detected warning.
 	std::string m_infoMessage;		// Description of the last info.
+
+	mutable std::mutex m_messageMutex;		// Mutex for thread-safe work with messages.
 
 public:
 	// TODO: initialize all pointers in constructor and make them references.
@@ -204,6 +207,8 @@ public:
 	CComboUnitParameter* AddComboParameter(const std::string& _name, size_t _initValue, const std::vector<size_t>& _items, const std::vector<std::string>& _itemsNames, const std::string& _description);
 	// Adds a new compound combo-box unit parameter, allowing to choose one of the defined compounds, and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
 	CCompoundUnitParameter* AddCompoundParameter(const std::string& _name, const std::string& _description);
+	// Adds a new MDB compound combo-box unit parameter, allowing to choose one of the MDB compounds, and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	CMDBCompoundUnitParameter* AddMDBCompoundParameter(const std::string& _name, const std::string& _description);
 	// Adds a new reaction unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
 	CReactionUnitParameter* AddReactionParameter(const std::string& _name, const std::string& _description);
 	// Adds a new real list unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
@@ -236,6 +241,8 @@ public:
 	size_t GetComboParameterValue(const std::string& _name) const;
 	// Returns value of the compound unit parameter. Throws logic_error exception if a compound unit parameter with the given name does not exist.
 	std::string GetCompoundParameterValue(const std::string& _name) const;
+	// Returns value of the MDB compound unit parameter. Throws logic_error exception if a compound unit parameter with the given name does not exist.
+	std::string GetMDBCompoundParameterValue(const std::string& _name) const;
 	// Returns value of the reaction unit parameter. Throws logic_error exception if a reaction unit parameter with the given name does not exist.
 	std::vector<CChemicalReaction> GetReactionParameterValue(const std::string& _name) const;
 	// Returns value of the real list unit parameter. Throws logic_error exception if a real list unit parameter with the given name does not exist.
@@ -536,6 +543,13 @@ public:
 	void ClearWarning();
 	// Clears an info state.
 	void ClearInfo();
+
+	// Returns a textual description of the last error if any and clears the error state.
+	std::string PopErrorMessage();
+	// Returns a textual description of the last warning if any and clears the warning state.
+	std::string PopWarningMessage();
+	// Returns a textual description of the last info if any and clears the info state.
+	std::string PopInfoMessage();
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Simulation-time operations

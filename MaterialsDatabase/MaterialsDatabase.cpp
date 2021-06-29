@@ -676,6 +676,19 @@ std::vector<std::string> CMaterialsDatabase::GetCompoundsNames(const std::vector
 	return res;
 }
 
+std::vector<std::string> CMaterialsDatabase::GetCompoundsNames() const
+{
+	return GetCompoundsNames(GetCompoundsKeys());
+}
+
+std::vector<std::string> CMaterialsDatabase::GetCompoundsKeys() const
+{
+	std::vector<std::string> vKeys;
+	for (const auto& c : m_vCompounds)
+		vKeys.push_back(c.GetKey());
+	return vKeys;
+}
+
 double CMaterialsDatabase::GetConstPropertyValue(const std::string& _sCompoundUniqueKey, ECompoundConstProperties _nConstPropType) const
 {
 	if(const CCompound *comp = GetCompound(_sCompoundUniqueKey))
@@ -754,14 +767,6 @@ double CMaterialsDatabase::GetInteractionValue(const std::string& _sCompoundKey1
 		if (i.IsBetween(_sCompoundKey1, _sCompoundKey2))
 			return i.GetPropertyValue(_nInterPropType, _dT, _dP);
 	return 0;
-}
-
-std::vector<std::string> CMaterialsDatabase::GetCompoundsKeys() const
-{
-	std::vector<std::string> vKeys;
-	for (const auto& c : m_vCompounds)
-		vKeys.push_back(c.GetKey());
-	return vKeys;
 }
 
 CInteraction* CMaterialsDatabase::AddInteraction(const std::string& _sCompoundKey1, const std::string& _sCompoundKey2)

@@ -39,7 +39,7 @@ void CBasicThread::StartTask()
 	emit Finished();
 }
 
-void CBasicThread::StopTask()
+void CBasicThread::RequestStop()
 {
 
 }

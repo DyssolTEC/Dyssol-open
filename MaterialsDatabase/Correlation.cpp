@@ -66,10 +66,10 @@ std::vector<double> CCorrelation::GetParameters() const
 	else
 	{
 		std::vector<double> vRes;
-		for (const auto pair : m_valuesList)
+		for (size_t i = 0; i < m_valuesList.Size(); ++i)
 		{
-			vRes.push_back(pair.first);
-			vRes.push_back(pair.second);
+			vRes.push_back(m_valuesList.GetParamAt(i));
+			vRes.push_back(m_valuesList.GetValueAt(i));
 		}
 		return vRes;
 	}
@@ -117,19 +117,25 @@ double CCorrelation::GetValue(double _dT, double _dP) const
 	case ECorrelationTypes::EXPONENT_1:
 		if (m_vParameters[6] * _dT + m_vParameters[7] != 0)
 			return m_vParameters[0] * std::pow(m_vParameters[1], m_vParameters[2] + m_vParameters[3] * _dT + (m_vParameters[4] * _dT + m_vParameters[5]) / (m_vParameters[6] * _dT + m_vParameters[7])) + m_vParameters[8];
+		break;
 	case ECorrelationTypes::POW_1:
 		return m_vParameters[0] * std::pow(_dT, m_vParameters[1]);
 	case ECorrelationTypes::POLYNOMIAL_1:
 		return m_vParameters[0] + m_vParameters[1] * _dT + m_vParameters[2] * std::pow(_dT, 2) + m_vParameters[3] * std::pow(_dT, 3) + m_vParameters[4] * std::pow(_dT, 4) + m_vParameters[5] * std::pow(_dT, 5) + m_vParameters[6] * std::pow(_dT, 6) + m_vParameters[7] * std::pow(_dT, 7);
 	case ECorrelationTypes::POLYNOMIAL_CP:
-		if(_dT != 0)
+		if (_dT != 0)
 			return m_vParameters[0] + m_vParameters[1] * _dT + m_vParameters[2] * std::pow(_dT, 2.) + m_vParameters[3] * std::pow(_dT, 3.) + m_vParameters[4] / std::pow(_dT, 2.);
+		break;
 	case ECorrelationTypes::POLYNOMIAL_H:
 		if (_dT != 0)
 			return m_vParameters[0] * _dT + m_vParameters[1] * std::pow(_dT, 2.) / 2. + m_vParameters[2] * std::pow(_dT, 3.) / 3. + m_vParameters[3] * std::pow(_dT, 4.) / 4. - m_vParameters[4] / _dT + m_vParameters[5] - m_vParameters[6];
+		break;
 	case ECorrelationTypes::POLYNOMIAL_S:
 		if (_dT != 0)
 			return m_vParameters[0] * std::log(_dT) + m_vParameters[1] * _dT + m_vParameters[2] * std::pow(_dT, 2.) / 2. + m_vParameters[3] * std::pow(_dT, 3.) / 3. - m_vParameters[4] / (2 * std::pow(_dT, 2.)) + m_vParameters[5];
+		break;
+	case ECorrelationTypes::SUTHERLAND:
+		return m_vParameters[0] * (m_vParameters[1] + m_vParameters[2]) / (_dT + m_vParameters[2]) * pow(_dT / m_vParameters[1], 3. / 2.);
 	}
 
 	return 0;

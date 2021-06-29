@@ -28,9 +28,6 @@ public:
 	/* Mixes the content of the specified stream at the given time interval with the holdup. Before mixing, all data after the end time point are removed.
 	 * Takes into account only two given time points, regardless of whether they were defined in the stream. All possible time points within the interval are discarded.*/
 	void AddStream(double _timeBeg, double _timeEnd, const CStream* _source);
-	/* Mixes the content of the specified stream at the given time interval with the holdup. Before mixing, all data after the end time point are removed.
-	 * Takes into account both the given boundary time points and all the time points within the interval defined in the stream and holdup.*/
-	void AddStreamInterval(double _timeBeg, double _timeEnd, const CStream* _source);
 
 	// Mixes the specified holdup with the current holdup at the given time point.
 	void AddHoldup(double _time, const CHoldup* _source);

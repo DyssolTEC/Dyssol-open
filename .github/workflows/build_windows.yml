@@ -46,7 +46,7 @@ jobs:
       # Get additional project files to build Qt solution with MSBuild. This work is usually done in Visual Studio with Qt VS Tools extension.
       # So, just download this extension and extract requited files.
       run: |
-        Invoke-WebRequest -Uri https://marketplace.visualstudio.com/_apis/public/gallery/publishers/TheQtCompany/vsextensions/QtVisualStudioTools2019/2/vspackage -OutFile vspackage.vsix
+        Invoke-WebRequest -Uri https://marketplace.visualstudio.com/_apis/public/gallery/publishers/TheQtCompany/vsextensions/QtVisualStudioTools2019/2/vspackage -MaximumRetryCount 10 -RetryIntervalSec 30 -OutFile vspackage.vsix 
         Expand-Archive vspackage.vsix -DestinationPath ./qtvsaddin
         
     - name: Build

@@ -3,9 +3,12 @@ Dyssol is a tool for dynamic flowsheet simulation of complex production processe
 
 For more information, please check the [documentation](https://github.com/FlowsheetSimulation/Dyssol-open/tree/master/Documentation). 
 
-If you want refer to Dyssol please use contribution of [Skorych et al., 2020](https://doi.org/10.1016/j.softx.2020.100572).
+Video intruductions: [Basics](https://youtu.be/IHzr0NVYW6M) and [Simulation of granulation process](https://youtu.be/ni54JwvCVDc)
 
-For new versions and updates, please check [here](https://github.com/FlowsheetSimulation/Dyssol-open/releases/latest).
+For new versions and updates, please visit our [github page](https://github.com/FlowsheetSimulation/Dyssol-open/releases).
+
+To cite Dyssol please use the following: 
+Skorych, V., Dosta, M., & Heinrich, S. (2020). Dyssol — An open-source flowsheet simulation framework for particulate materials. SoftwareX, 12, 100572. [doi.org/10.1016/j.softx.2020.100572](https://doi.org/10.1016/j.softx.2020.100572).
 
 # Installation requirements 
 Dyssol should install and work on all latest versions of Windows.

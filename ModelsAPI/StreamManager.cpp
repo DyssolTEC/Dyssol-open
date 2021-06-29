@@ -67,13 +67,10 @@ void CStreamManager::RemoveTemporary()
 
 void CStreamManager::RemoveVariable()
 {
-	for (size_t i = 0; i < m_nVarHoldups; ++i)
+	while (m_nVarHoldups > 0)
 		RemoveHoldup(m_holdupsWork[m_nFixHoldups]->GetName());
-	for (size_t i = 0; i < m_nVarStreams; ++i)
+	while (m_nVarStreams > 0)
 		RemoveStream(m_streamsWork[m_nFixStreams]->GetName());
-	// reset number of variable objects
-	m_nVarHoldups = 0;
-	m_nVarStreams = 0;
 }
 
 void CStreamManager::ClearResults()
@@ -196,6 +193,8 @@ std::vector<CHoldup*> CStreamManager::GetHoldups()
 
 void CStreamManager::RemoveHoldup(const std::string& _name)
 {
+	if (m_nFixHoldups > 0 && GetObjectIndex(m_holdupsWork, _name) < m_nFixHoldups                ) m_nFixHoldups--;
+	if (m_nVarHoldups > 0 && GetObjectIndex(m_holdupsWork, _name) < m_nFixHoldups + m_nVarHoldups) m_nVarHoldups--;
 	RemoveObjects(m_holdupsInit, _name);
 	RemoveObjects(m_holdupsWork, _name);
 	RemoveObjects(m_holdupsStored, _name);
@@ -237,6 +236,8 @@ std::vector<CStream*> CStreamManager::GetStreams()
 
 void CStreamManager::RemoveStream(const std::string& _name)
 {
+	if (m_nFixStreams > 0 && GetObjectIndex(m_streamsWork, _name) < m_nFixStreams                ) m_nFixStreams--;
+	if (m_nVarStreams > 0 && GetObjectIndex(m_streamsWork, _name) < m_nFixStreams + m_nVarStreams) m_nVarStreams--;
 	RemoveObjects(m_streamsWork, _name);
 	RemoveObjects(m_streamsStored, _name);
 }
@@ -636,6 +637,12 @@ template <typename T>
 void CStreamManager::RemoveObjects(std::vector<std::unique_ptr<T>>& _streams, const std::string& _name)
 {
 	VectorDelete(_streams, [&](const std::unique_ptr<T>& s) { return s->GetName() == _name; });
+}
+
+template <typename T>
+size_t CStreamManager::GetObjectIndex(std::vector<std::unique_ptr<T>>& _streams, const std::string& _name)
+{
+	return VectorFind(_streams, [&](const std::unique_ptr<T>& s) { return s->GetName() == _name; });
 }
 
 template <typename T>

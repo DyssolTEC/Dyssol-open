@@ -305,7 +305,7 @@ bool CTDUnitParameter::IsEmpty() const
 
 bool CTDUnitParameter::IsInBounds() const
 {
-	for (const auto& [time, value] : m_values)
+	for (const auto& value : m_values.GetValuesList())
 		if (value < m_min || value > m_max)
 			return false;
 	return true;
@@ -743,6 +743,23 @@ void CCompoundUnitParameter::LoadFromFile(const CH5Handler& _h5Loader, const std
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// CCompoundMDBUnitParameter
+
+const unsigned CMDBCompoundUnitParameter::m_cnSaveVersion = 1;
+
+CMDBCompoundUnitParameter::CMDBCompoundUnitParameter() :
+	CCompoundUnitParameter()
+{
+	SetType(EUnitParameter::MDB_COMPOUND);
+}
+
+CMDBCompoundUnitParameter::CMDBCompoundUnitParameter(std::string _name, std::string _description) :
+	CCompoundUnitParameter(std::move(_name), std::move(_description))
+{
+	SetType(EUnitParameter::MDB_COMPOUND);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 /// CReactionUnitParameter
 
 const unsigned CReactionUnitParameter::m_cnSaveVersion = 1;
@@ -941,6 +958,12 @@ void CUnitParametersManager::AddCompoundParameter(const std::string& _name, cons
 	m_parameters.emplace_back(new CCompoundUnitParameter{ _name, _description });
 }
 
+void CUnitParametersManager::AddMDBCompoundParameter(const std::string& _name, const std::string& _description)
+{
+	if (IsNameExist(_name)) return;
+	m_parameters.emplace_back(new CMDBCompoundUnitParameter{ _name, _description });
+}
+
 void CUnitParametersManager::AddReactionParameter(const std::string& _name, const std::string& _description)
 {
 	if (IsNameExist(_name)) return;
@@ -1084,6 +1107,16 @@ CCompoundUnitParameter* CUnitParametersManager::GetCompoundParameter(size_t _ind
 	return const_cast<CCompoundUnitParameter*>(static_cast<const CUnitParametersManager&>(*this).GetCompoundParameter(_index));
 }
 
+const CMDBCompoundUnitParameter* CUnitParametersManager::GetMDBCompoundParameter(size_t _index) const
+{
+	return dynamic_cast<const CMDBCompoundUnitParameter*>(GetParameter(_index));
+}
+
+CMDBCompoundUnitParameter* CUnitParametersManager::GetMDBCompoundParameter(size_t _index)
+{
+	return const_cast<CMDBCompoundUnitParameter*>(static_cast<const CUnitParametersManager&>(*this).GetMDBCompoundParameter(_index));
+}
+
 const CReactionUnitParameter* CUnitParametersManager::GetReactionParameter(size_t _index) const
 {
 	return dynamic_cast<const CReactionUnitParameter*>(GetParameter(_index));
@@ -1214,6 +1247,16 @@ CCompoundUnitParameter* CUnitParametersManager::GetCompoundParameter(const std::
 	return GetCompoundParameter(Name2Index(_name));
 }
 
+const CMDBCompoundUnitParameter* CUnitParametersManager::GetMDBCompoundParameter(const std::string& _name) const
+{
+	return GetMDBCompoundParameter(Name2Index(_name));
+}
+
+CMDBCompoundUnitParameter* CUnitParametersManager::GetMDBCompoundParameter(const std::string& _name)
+{
+	return GetMDBCompoundParameter(Name2Index(_name));
+}
+
 const CReactionUnitParameter* CUnitParametersManager::GetReactionParameter(const std::string& _name) const
 {
 	return GetReactionParameter(Name2Index(_name));
@@ -1317,6 +1360,13 @@ std::string CUnitParametersManager::GetCompoundParameterValue(size_t _index) con
 	return {};
 }
 
+std::string CUnitParametersManager::GetMDBCompoundParameterValue(size_t _index) const
+{
+	if (const auto* p = GetCompoundParameter(_index))
+		return p->GetCompound();
+	return {};
+}
+
 std::vector<CChemicalReaction> CUnitParametersManager::GetReactionParameterValue(size_t _index) const
 {
 	if (const auto* p = GetReactionParameter(_index))
@@ -1390,6 +1440,11 @@ std::string CUnitParametersManager::GetCompoundParameterValue(const std::string&
 	return GetCompoundParameterValue(Name2Index(_name));
 }
 
+std::string CUnitParametersManager::GetMDBCompoundParameterValue(const std::string& _name) const
+{
+	return GetMDBCompoundParameterValue(Name2Index(_name));
+}
+
 std::vector<CChemicalReaction> CUnitParametersManager::GetReactionParameterValue(const std::string& _name) const
 {
 	return GetReactionParameterValue(Name2Index(_name));
@@ -1425,6 +1480,24 @@ std::vector<CReactionUnitParameter*> CUnitParametersManager::GetAllReactionParam
 	for (auto& p : m_parameters)
 		if (p->GetType() == EUnitParameter::REACTION)
 			res.push_back(dynamic_cast<CReactionUnitParameter*>(p.get()));
+	return res;
+}
+
+std::vector<const CCompoundUnitParameter*> CUnitParametersManager::GetAllCompoundParameters() const
+{
+	std::vector<const CCompoundUnitParameter*> res;
+	for (const auto& p : m_parameters)
+		if (p->GetType() == EUnitParameter::COMPOUND || p->GetType() == EUnitParameter::MDB_COMPOUND)
+			res.push_back(dynamic_cast<const CCompoundUnitParameter*>(p.get()));
+	return res;
+}
+
+std::vector<CCompoundUnitParameter*> CUnitParametersManager::GetAllCompoundParameters()
+{
+	std::vector<CCompoundUnitParameter*> res;
+	for (const auto& p : m_parameters)
+		if (p->GetType() == EUnitParameter::COMPOUND || p->GetType() == EUnitParameter::MDB_COMPOUND)
+			res.push_back(dynamic_cast<CCompoundUnitParameter*>(p.get()));
 	return res;
 }
 
@@ -1518,6 +1591,7 @@ void CUnitParametersManager::SaveToFile(CH5Handler& _h5Saver, const std::string&
 		case EUnitParameter::COMBO:				dynamic_cast<CComboUnitParameter*>          (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
 		case EUnitParameter::GROUP:				dynamic_cast<CComboUnitParameter*>          (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
 		case EUnitParameter::COMPOUND:			dynamic_cast<CCompoundUnitParameter*>       (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
+		case EUnitParameter::MDB_COMPOUND:		dynamic_cast<CMDBCompoundUnitParameter*>    (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
 		case EUnitParameter::REACTION:			dynamic_cast<CReactionUnitParameter*>       (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
 		case EUnitParameter::LIST_DOUBLE:		dynamic_cast<CListRealUnitParameter*>       (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
 		case EUnitParameter::LIST_INT64:		dynamic_cast<CListIntUnitParameter*>        (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
@@ -1572,6 +1646,7 @@ void CUnitParametersManager::LoadFromFile(const CH5Handler& _h5Loader, const std
 			case EUnitParameter::COMBO:				dynamic_cast<CComboUnitParameter*>          (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
 			case EUnitParameter::GROUP:				dynamic_cast<CComboUnitParameter*>          (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
 			case EUnitParameter::COMPOUND:			dynamic_cast<CCompoundUnitParameter*>       (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
+			case EUnitParameter::MDB_COMPOUND:		dynamic_cast<CMDBCompoundUnitParameter*>    (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
 			case EUnitParameter::REACTION:			dynamic_cast<CReactionUnitParameter*>       (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
 			case EUnitParameter::LIST_DOUBLE:		dynamic_cast<CListUnitParameter<double>*>   (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
 			case EUnitParameter::LIST_INT64: 		dynamic_cast<CListUnitParameter<int64_t>*>  (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;

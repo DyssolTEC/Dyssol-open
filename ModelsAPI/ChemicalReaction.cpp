@@ -190,6 +190,7 @@ void CChemicalReaction::SaveToFile(CH5Handler& _h5File, const std::string& _path
 		const std::string group = _h5File.CreateGroup(_path, StrConst::Reac_H5Substance + std::to_string(i));
 		_h5File.WriteData(group, StrConst::Reac_H5SubstanceKey  , m_substances[i]->key);
 		_h5File.WriteData(group, StrConst::Reac_H5SubstanceNu   , m_substances[i]->nu);
+		_h5File.WriteData(group, StrConst::Reac_H5SubstanceOrder, m_substances[i]->order);
 		_h5File.WriteData(group, StrConst::Reac_H5SubstancePhase, E2I(m_substances[i]->phase));
 	}
 }
@@ -209,8 +210,9 @@ void CChemicalReaction::LoadFromFile(const CH5Handler& _h5File, const std::strin
 	{
 		m_substances.emplace_back(new SChemicalSubstanse);
 		const std::string group = _path + "/" + StrConst::Reac_H5Substance + std::to_string(i);
-		_h5File.ReadData(group, StrConst::Reac_H5SubstanceKey, m_substances.back()->key);
-		_h5File.ReadData(group, StrConst::Reac_H5SubstanceNu , m_substances.back()->nu);
+		_h5File.ReadData(group, StrConst::Reac_H5SubstanceKey  , m_substances.back()->key);
+		_h5File.ReadData(group, StrConst::Reac_H5SubstanceNu   , m_substances.back()->nu);
+		_h5File.ReadData(group, StrConst::Reac_H5SubstanceOrder, m_substances.back()->order);
 		uint32_t temp;
 		_h5File.ReadData(group, StrConst::Reac_H5SubstancePhase, temp);
 		m_substances.back()->phase = static_cast<EPhase>(temp);

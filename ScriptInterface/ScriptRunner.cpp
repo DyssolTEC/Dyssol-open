@@ -6,6 +6,7 @@
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
 #include <functional>
+#include <sstream>
 
 using namespace ScriptInterface;
 using namespace StrConst;
@@ -165,8 +166,8 @@ bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 		}
 		// set values
 		if (m_flowsheet.HasOverallProperty(static_cast<EOverall>(entry.param.key)))
-			for (const auto& [time, value] : entry.values)
-				holdup->SetOverallProperty(time, static_cast<EOverall>(entry.param.key), value);
+			for (size_t i = 0; i < entry.values.Size(); ++i)
+				holdup->SetOverallProperty(entry.values.GetParamAt(i), static_cast<EOverall>(entry.param.key), entry.values.GetValueAt(i));
 		else
 			std::cout << DyssolC_WarningNoOverall(StrKey(EScriptKeys::HOLDUP_OVERALL), entry.param.key) << std::endl;
 	}

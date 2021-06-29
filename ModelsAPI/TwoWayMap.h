@@ -53,5 +53,7 @@ public:
 protected:
 	// Calculates a reverted table [X:Y] -> [Y:X].
 	static CDependentValues Reverted(const CDependentValues& _table);
+	// Returns a table with entries consisting of only unique X and Y.
+	static CDependentValues Unique(const CDependentValues& _table);
 };
 

@@ -1,9 +1,10 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "Matrix2D.h"
+#include "ThreadPool.h"
 #include <numeric>
 #include <algorithm>
-#include "ThreadPool.h"
+#include <iterator>
 
 CMatrix2D::CMatrix2D()
 {
@@ -21,7 +22,7 @@ CMatrix2D::CMatrix2D(size_t _rows, size_t _cols)
 void CMatrix2D::Resize(size_t _rows, size_t _cols)
 {
 	if (_rows == m_rows && _cols == m_cols) return;
-	m_data.resize(_rows, d_vect_t(_cols, 0));
+	m_data.assign(_rows, d_vect_t(_cols, 0.0));
 	m_rows = _rows;
 	m_cols = _cols;
 }

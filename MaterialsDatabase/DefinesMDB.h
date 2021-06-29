@@ -52,6 +52,7 @@ enum class ECorrelationTypes : unsigned
 	POLYNOMIAL_CP    = 7,	// y = a + b·T + c·T^2 + d·T^3 + e/(T^2)
 	POLYNOMIAL_H     = 8,	// y = a·T + b·(T^2)/2 + c·(T^3)/3 + d·(T^4)/4 − e/T + f − g
 	POLYNOMIAL_S     = 9,	// y = a·ln(T) + b·T + c·(T^2)/2 + d·(T^3)/3 − e/(2·T^2) + f
+	SUTHERLAND		 = 10,  // y = a·(b + c)/(T + c)·(T/b)^(3/2)
 };
 
 namespace MDBDescriptors
@@ -75,7 +76,8 @@ namespace MDBDescriptors
 		{ ECorrelationTypes::POLYNOMIAL_1 ,		{ "Polynomial" ,				L"y = a + bT + cT<sup>2</sup> + dT<sup>3</sup> + eT<sup>4</sup> + fT<sup>5</sup> + gT<sup>6</sup> + hT<sup>7</sup>" ,	8 } },
 		{ ECorrelationTypes::POLYNOMIAL_CP ,	{ "Shomate heat capacity" ,		L"y = a + bT + cT<sup>2</sup> + dT<sup>3</sup> + e/T<sup>2</sup>" ,														5 } },
 		{ ECorrelationTypes::POLYNOMIAL_H ,		{ "Shomate standard enthalpy" ,	L"y = aT + bT<sup>2</sup>/2 + cT<sup>3</sup>/3 + dT<sup>4</sup>/4 - e/T + f - g" ,										7 } },
-		{ ECorrelationTypes::POLYNOMIAL_S ,		{ "Shomate standard entropy" ,	L"y = a·ln(T) + bT + cT<sup>2</sup>/2 + dT<sup>3</sup>/3 - e/(2T<sup>2</sup>) + f" ,									6 } }
+		{ ECorrelationTypes::POLYNOMIAL_S ,		{ "Shomate standard entropy" ,	L"y = a·ln(T) + bT + cT<sup>2</sup>/2 + dT<sup>3</sup>/3 - e/(2T<sup>2</sup>) + f" ,									6 } },
+		{ ECorrelationTypes::SUTHERLAND,		{ "Sutherland's law"          ,	L"y = y = a·(b + c)/(T + c)·(T/b)<sup>3/2</sup>"                                                                    ,   3 } }
 	};
 }
 
@@ -154,15 +156,15 @@ namespace MDBDescriptors
 	// List of initial values of const properties
 	static constDescr defaultConstProperties
 	{
-		{ CRITICAL_PRESSURE ,							 { "Critical pressure" ,	 L"Pa" ,	 ""                                                                                                     , 220.55 } },
-		{ CRITICAL_TEMPERATURE ,						 { "Critical temperature" ,	 L"K" ,		 ""                                                                                                     , 647.13 } },
-		{ HEAT_OF_FUSION_AT_NORMAL_FREEZING_POINT ,		 { "Heat of fusion" ,		 L"J/mol" ,	 "Heat of fusion at normal freezing point"                                                              , 6002 } },
-		{ HEAT_OF_VAPORIZATION_AT_NORMAL_BOILING_POINT , { "Heat of vaporization " , L"J/mol" ,	 "Heat of vaporization at normal boiling point"                                                         , 40660.53 } },
+		{ CRITICAL_PRESSURE ,							 { "Critical pressure" ,	 L"Pa" ,	 ""                                                                                                     , 0 } },
+		{ CRITICAL_TEMPERATURE ,						 { "Critical temperature" ,	 L"K" ,		 ""                                                                                                     , 0 } },
+		{ HEAT_OF_FUSION_AT_NORMAL_FREEZING_POINT ,		 { "Heat of fusion" ,		 L"J/mol" ,	 "Heat of fusion at normal freezing point"                                                              , 0 } },
+		{ HEAT_OF_VAPORIZATION_AT_NORMAL_BOILING_POINT , { "Heat of vaporization " , L"J/mol" ,	 "Heat of vaporization at normal boiling point"                                                         , 0 } },
 		{ MOLAR_MASS ,									 { "Molar mass" ,			 L"kg/mol" , ""                                                                                                     , 0.0180154 } },
-		{ NORMAL_BOILING_POINT ,						 { "Normal boiling point" ,	 L"K" ,		 ""                                                                                                     , 373.15 } },
-		{ NORMAL_FREEZING_POINT ,						 { "Normal freezing point" , L"K" ,		 ""                                                                                                     , 273.15 } },
+		{ NORMAL_BOILING_POINT ,						 { "Normal boiling point" ,	 L"K" ,		 ""                                                                                                     , 0 } },
+		{ NORMAL_FREEZING_POINT ,						 { "Normal freezing point" , L"K" ,		 ""                                                                                                     , 0 } },
 		//{ REACTIVITY_TYPE ,								 { "Reactivity type" ,		 L"-"	,	 "Reactivity type\n[ 0 - reactive ], [ 1 - inert ], [ 2 - solvent ], [ 3 - insolvent ], [ 4 - solute ]" , 2 } },
-		{ STANDARD_FORMATION_ENTHALPY ,					 { "Formation enthalpy" ,	 L"J/mol" ,	 "Standard enthalpy of formation"                                                                       , -241826.4 } },
+		{ STANDARD_FORMATION_ENTHALPY ,					 { "Formation enthalpy" ,	 L"J/mol" ,	 "Standard enthalpy of formation"                                                                       , 0 } },
 		{ BOND_WORK_INDEX,							     { "Bond work index" ,	     L"kWh/t" ,	 "Bond work index"																						, 12 } },
 		{ SOA_AT_NORMAL_CONDITIONS ,					 { "State of aggregation" ,	 L"-" ,		 "State of aggregation at normal conditions\n[ 0 - solid ] [ 1 - liquid ] [ 2 - gas ] [ 3 - unknown ]"  , 1 } },
 	};
@@ -224,11 +226,11 @@ namespace MDBDescriptors
 	static tpdepDescr defaultTPDProperties =
 	{
 		{ ENTHALPY ,			 { "Enthalpy" ,				L"J/kg" 			, "" , ECorrelationTypes::CONSTANT , { 4277.4 } } },
-		{ THERMAL_CONDUCTIVITY , { "Thermal conductivity" ,	L"W/(m·K)" 			, "" , ECorrelationTypes::CONSTANT , { 0.55818 } } },
-		{ VAPOR_PRESSURE ,		 { "Vapor pressure" ,		L"Pa" 				, "" , ECorrelationTypes::CONSTANT , { 610.118 } } },
-		{ VISCOSITY ,			 { "Dynamic Viscosity" ,	L"Pa·s" 			, "" , ECorrelationTypes::CONSTANT , { 0.001731 } } },
+		{ THERMAL_CONDUCTIVITY , { "Thermal conductivity" ,	L"W/(m·K)" 			, "" , ECorrelationTypes::CONSTANT , { 0 } } },
+		{ VAPOR_PRESSURE ,		 { "Vapor pressure" ,		L"Pa" 				, "" , ECorrelationTypes::CONSTANT , { 0 } } },
+		{ VISCOSITY ,			 { "Dynamic Viscosity" ,	L"Pa·s" 			, "" , ECorrelationTypes::CONSTANT , { 0 } } },
 		{ DENSITY ,				 { "Density" ,				L"kg/m<sup>3</sup>" , "" , ECorrelationTypes::CONSTANT , { 1000 } } },
-		{ PERMITTIVITY ,		 { "Permittivity" ,			L"F/m" 				, "" , ECorrelationTypes::CONSTANT , { 7.78e-10 } } },
+		{ PERMITTIVITY ,		 { "Permittivity" ,			L"F/m" 				, "" , ECorrelationTypes::CONSTANT , { 0 } } },
 	};
 }
 

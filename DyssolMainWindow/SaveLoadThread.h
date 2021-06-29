@@ -33,5 +33,5 @@ public:
 
 public slots:
 	void StartTask() override;
-	void StopTask() override;
+	void RequestStop() override;
 };

@@ -290,6 +290,14 @@ CCompoundUnitParameter* CBaseUnit::AddCompoundParameter(const std::string& _name
 	return m_unitParameters.GetCompoundParameter(_name);
 }
 
+CMDBCompoundUnitParameter* CBaseUnit::AddMDBCompoundParameter(const std::string& _name, const std::string& _description)
+{
+	if (m_unitParameters.IsNameExist(_name))
+		throw std::logic_error(StrConst::BUnit_ErrAddParam(m_unitName, _name, __func__));
+	m_unitParameters.AddMDBCompoundParameter(_name, _description);
+	return m_unitParameters.GetMDBCompoundParameter(_name);
+}
+
 CReactionUnitParameter* CBaseUnit::AddReactionParameter(const std::string& _name, const std::string& _description)
 {
 	if (m_unitParameters.IsNameExist(_name))
@@ -403,6 +411,13 @@ size_t CBaseUnit::GetComboParameterValue(const std::string& _name) const
 std::string CBaseUnit::GetCompoundParameterValue(const std::string& _name) const
 {
 	if (const CCompoundUnitParameter* param = m_unitParameters.GetCompoundParameter(_name))
+		return param->GetCompound();
+	throw std::logic_error(StrConst::BUnit_ErrGetParam(m_unitName, _name, __func__));
+}
+
+std::string CBaseUnit::GetMDBCompoundParameterValue(const std::string& _name) const
+{
+	if (const CMDBCompoundUnitParameter* param = m_unitParameters.GetMDBCompoundParameter(_name))
 		return param->GetCompound();
 	throw std::logic_error(StrConst::BUnit_ErrGetParam(m_unitName, _name, __func__));
 }
@@ -1118,6 +1133,7 @@ void CBaseUnit::HeatExchange(double _time, CBaseStream* _stream1, CBaseStream* _
 
 void CBaseUnit::RaiseError(const std::string& _message)
 {
+	const std::lock_guard lock(m_messageMutex);
 	m_hasError = true;
 	const std::string suffix = m_errorMessage.empty() ? "" : "\n";
 	const std::string text = !_message.empty() ? _message : StrConst::BUnit_UnknownError;
@@ -1126,6 +1142,7 @@ void CBaseUnit::RaiseError(const std::string& _message)
 
 void CBaseUnit::RaiseWarning(const std::string& _message)
 {
+	const std::lock_guard lock(m_messageMutex);
 	m_hasWarning = true;
 	const std::string suffix = m_warningMessage.empty() ? "" : "\n";
 	const std::string text = !_message.empty() ? _message : StrConst::BUnit_UnknownWarning;
@@ -1134,6 +1151,7 @@ void CBaseUnit::RaiseWarning(const std::string& _message)
 
 void CBaseUnit::ShowInfo(const std::string& _message)
 {
+	const std::lock_guard lock(m_messageMutex);
 	if (_message.empty()) return;
 	m_hasInfo = true;
 	const std::string suffix = m_infoMessage.empty() ? "" : "\n";
@@ -1186,6 +1204,42 @@ void CBaseUnit::ClearInfo()
 {
 	m_hasInfo = false;
 	m_infoMessage.clear();
+}
+
+std::string CBaseUnit::PopErrorMessage()
+{
+	std::string message;
+	const std::lock_guard lock(m_messageMutex);
+	if (m_hasError)
+	{
+		message = m_errorMessage;
+		ClearError();
+	}
+	return message;
+}
+
+std::string CBaseUnit::PopWarningMessage()
+{
+	std::string message;
+	const std::lock_guard lock(m_messageMutex);
+	if (m_hasWarning)
+	{
+		message = m_warningMessage;
+		ClearWarning();
+	}
+	return message;
+}
+
+std::string CBaseUnit::PopInfoMessage()
+{
+	std::string message;
+	const std::lock_guard lock(m_messageMutex);
+	if (m_hasInfo)
+	{
+		message = m_infoMessage;
+		ClearInfo();
+	}
+	return message;
 }
 
 void CBaseUnit::DoCreateStructure()

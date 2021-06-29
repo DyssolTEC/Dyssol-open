@@ -4,6 +4,7 @@
 #include "DyssolUtilities.h"
 #include <fstream>
 #include <iostream>
+#include <sstream>
 
 using namespace StringFunctions;
 using namespace ScriptInterface;

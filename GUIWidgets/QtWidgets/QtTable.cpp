@@ -124,6 +124,11 @@ void CQtTable::SetItemEditable(int _row, int _col, double _value, const QVariant
 	SetItemEditable(_row, _col, QString::number(_value), _userData);
 }
 
+void CQtTable::SetItemEditablePrecise(int _row, int _col, double _value, int _precision, const QVariant& _userData)
+{
+	SetItemEditable(_row, _col, QString::number(_value, 'g', _precision), _userData);
+}
+
 void CQtTable::SetItemEditable(int _row, int _col)
 {
 	SetItemEditable(_row, _col, QString{});
@@ -261,6 +266,43 @@ bool CQtTable::GetCheckBoxChecked(int _row, int _col) const
 	auto *pCheckBox = cellWidget(_row, _col)->findChild<QCheckBox*>("CheckBox");
 	if (!pCheckBox) return false;
 	return pCheckBox->isChecked();
+}
+
+QRadioButton* CQtTable::SetRadioButton(int _row, int _col, bool _checked)
+{
+	delete item(_row, _col);
+	auto* widget = new QWidget{ this };
+	auto* radio = new QRadioButton{ widget };
+	auto* layout = new QHBoxLayout{ widget };
+	layout->addWidget(radio);
+	layout->setAlignment(Qt::AlignCenter);
+	layout->setContentsMargins(0, 0, 0, 0);
+	widget->setLayout(layout);
+	radio->setChecked(_checked);
+	radio->setObjectName("RadioButton");
+	connect(radio, &QRadioButton::toggled, this, [=] { RadioButtonStateChanged(_row, _col, radio); });
+	setCellWidget(_row, _col, widget);
+	return radio;
+}
+
+QRadioButton* CQtTable::GetRadioButton(int _row, int _col) const
+{
+	return cellWidget(_row, _col)->findChild<QRadioButton*>("RadioButton");
+}
+
+void CQtTable::SetRadioButtonChecked(int _row, int _col, bool _checked) const
+{
+	auto* radio = GetRadioButton(_row, _col);
+	if (!radio) return;
+	QSignalBlocker blocker(radio);
+	radio->setChecked(_checked);
+}
+
+bool CQtTable::GetRadioButtonChecked(int _row, int _col) const
+{
+	auto* radio = GetRadioButton(_row, _col);
+	if (!radio) return false;
+	return radio->isChecked();
 }
 
 QComboBox* CQtTable::SetComboBox(const int _row, const int _col, const std::vector<QString>& _vNames, const std::vector<QVariant>& _vData, int _iSelected)

@@ -25,6 +25,7 @@ enum class EUnitParameter
 	LIST_DOUBLE           = 13,
 	LIST_INT64            = 14,
 	LIST_UINT64           = 15,
+	MDB_COMPOUND          = 16,
 };
 
 // TODO: remove
@@ -363,6 +364,14 @@ public:
 	void LoadFromFile(const CH5Handler& _h5Loader, const std::string& _path);
 };
 
+class CMDBCompoundUnitParameter : public CCompoundUnitParameter
+{
+	static const unsigned m_cnSaveVersion;
+
+public:
+	CMDBCompoundUnitParameter();
+	CMDBCompoundUnitParameter(std::string _name, std::string _description);
+};
 
 class CReactionUnitParameter : public CBaseUnitParameter
 {
@@ -437,6 +446,8 @@ public:
 	void AddComboParameter(const std::string& _name, const std::string& _description, size_t _itemDefault, const std::vector<size_t>& _items, const std::vector<std::string>& _itemsNames);
 	// Adds new compound unit parameter. If parameter with the given name already exists, does nothing.
 	void AddCompoundParameter(const std::string& _name, const std::string& _description);
+	// Adds new MDB compound unit parameter. If parameter with the given name already exists, does nothing.
+	void AddMDBCompoundParameter(const std::string& _name, const std::string& _description);
 	// Adds new reaction unit parameter. If parameter with the given name already exists, does nothing.
 	void AddReactionParameter(const std::string& _name, const std::string& _description);
 	// Adds new real list unit parameter. If parameter with the given name already exists, does nothing.
@@ -494,6 +505,10 @@ public:
 	const CCompoundUnitParameter* GetCompoundParameter(size_t _index) const;
 	// Returns pointer to the compound unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
 	CCompoundUnitParameter* GetCompoundParameter(size_t _index);
+	// Returns const pointer to the MDB compound unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
+	const CMDBCompoundUnitParameter* GetMDBCompoundParameter(size_t _index) const;
+	// Returns pointer to the MDB compound unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
+	CMDBCompoundUnitParameter* GetMDBCompoundParameter(size_t _index);
 	// Returns const pointer to the reaction unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
 	const CReactionUnitParameter* GetReactionParameter(size_t _index) const;
 	// Returns pointer to the reaction unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
@@ -547,6 +562,10 @@ public:
 	const CCompoundUnitParameter* GetCompoundParameter(const std::string& _name) const;
 	// Returns pointer to the compound unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
 	CCompoundUnitParameter* GetCompoundParameter(const std::string& _name);
+	// Returns const pointer to the MDB compound unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
+	const CMDBCompoundUnitParameter* GetMDBCompoundParameter(const std::string& _name) const;
+	// Returns pointer to the MDB compound unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
+	CMDBCompoundUnitParameter* GetMDBCompoundParameter(const std::string& _name);
 	// Returns const pointer to the reaction unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
 	const CReactionUnitParameter* GetReactionParameter(const std::string& _name) const;
 	// Returns pointer to the reaction unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
@@ -582,6 +601,8 @@ public:
 	size_t GetComboParameterValue(size_t _index) const;
 	// Returns value of a compound unit parameter with the specified _index. If such parameter does not exist or is not a compound parameter, returns "".
 	std::string GetCompoundParameterValue(size_t _index) const;
+	// Returns value of a MDB compound unit parameter with the specified _index. If such parameter does not exist or is not a MDB compound parameter, returns "".
+	std::string GetMDBCompoundParameterValue(size_t _index) const;
 	// Returns value of a reaction unit parameter with the specified _index. If such parameter does not exist or is not a reaction parameter, returns empty vector.
 	std::vector<CChemicalReaction> GetReactionParameterValue(size_t _index) const;
 	// Returns value of a list real unit parameter with the specified _index. If such parameter does not exist or is not a list real parameter, returns 0.
@@ -609,6 +630,8 @@ public:
 	size_t GetComboParameterValue(const std::string& _name) const;
 	// Returns value of a compound unit parameter with the specified _name. If such parameter does not exist or is not a compound parameter, returns "".
 	std::string GetCompoundParameterValue(const std::string& _name) const;
+	// Returns value of a MDB compound unit parameter with the specified _name. If such parameter does not exist or is not a MDB compound parameter, returns "".
+	std::string GetMDBCompoundParameterValue(const std::string& _name) const;
 	// Returns value of a reaction unit parameter with the specified _name. If such parameter does not exist or is not a reaction parameter, returns "".
 	std::vector<CChemicalReaction> GetReactionParameterValue(const std::string& _name) const;
 	// Returns value of a list real unit parameter with the specified _name. If such parameter does not exist or is not a list real parameter, returns 0.
@@ -622,6 +645,11 @@ public:
 	std::vector<const CReactionUnitParameter*> GetAllReactionParameters() const;
 	// Returns pointers to all specified reaction unit parameters.
 	std::vector<CReactionUnitParameter*> GetAllReactionParameters();
+	// Returns const pointers to all specified compound and MDB compound unit parameters.
+	std::vector<const CCompoundUnitParameter*> GetAllCompoundParameters() const;
+	// Returns pointers to all specified compound and MDB compound unit parameters.
+	std::vector<CCompoundUnitParameter*> GetAllCompoundParameters();
+
 	// Returns const pointers to all specified solver unit parameters.
 	std::vector<const CSolverUnitParameter*> GetAllSolverParameters() const;
 	// Returns pointers to all specified solver unit parameters.

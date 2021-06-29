@@ -140,6 +140,7 @@ void CConfigFileParser::SaveConfigFile(const std::wstring& _fileName, const std:
 			case EUnitParameter::GROUP:				file << " " << dynamic_cast<const CComboUnitParameter*>(params[iParam])->GetValue();		break;
 			case EUnitParameter::CHECKBOX:			file << " " << dynamic_cast<const CCheckBoxUnitParameter*>(params[iParam])->IsChecked();	break;
 			case EUnitParameter::COMPOUND:			file << " " << dynamic_cast<const CCompoundUnitParameter*>(params[iParam])->GetCompound();	break;
+			case EUnitParameter::MDB_COMPOUND:		file << " " << dynamic_cast<const CMDBCompoundUnitParameter*>(params[iParam])->GetCompound();	break;
 			case EUnitParameter::SOLVER:			file << " " << WString2String(_modelsManager.GetSolverLibName(dynamic_cast<const CSolverUnitParameter*>(params[iParam])->GetKey()));	break;
 			case EUnitParameter::REACTION:			break; // TODO: implement
 			case EUnitParameter::LIST_DOUBLE:		break; // TODO: implement
