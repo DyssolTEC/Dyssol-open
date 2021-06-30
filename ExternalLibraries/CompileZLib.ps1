@@ -56,8 +56,8 @@ Rename-Item -Path "$ZLIB_INSTALL_PATH\lib" -NewName "$ZLIB_INSTALL_PATH\lib64"
 ################################################################################
 ### Copy *.pdb files
 
-Copy-Item "$ZLIB_BUILD_PATH\x32\zlibstatic.dir\Debug\zlibstatic.pdb" "$ZLIB_INSTALL_PATH\lib32\zlibstatic.pdb"
-Copy-Item "$ZLIB_BUILD_PATH\x64\zlibstatic.dir\Debug\zlibstatic.pdb" "$ZLIB_INSTALL_PATH\lib64\zlibstatic.pdb"
+Copy-Item "$ZLIB_BUILD_PATH\x32\Debug\zlibstaticd.pdb" "$ZLIB_INSTALL_PATH\lib32\zlibstaticd.pdb"
+Copy-Item "$ZLIB_BUILD_PATH\x64\Debug\zlibstaticd.pdb" "$ZLIB_INSTALL_PATH\lib64\zlibstaticd.pdb"
 
 ################################################################################
 ### Clean installation directory

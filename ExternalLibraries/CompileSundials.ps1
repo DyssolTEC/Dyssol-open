@@ -13,7 +13,7 @@ if (-not (Get-Command Expand-7Zip -ErrorAction Ignore)) {
 ### Paths
 
 $SUNDIALS_VERSION = "5.6.1"
-$SUNDIALS_DOWNLOAD_ADDRESS = "https://computation.llnl.gov/projects/sundials/download/sundials-$SUNDIALS_VERSION.tar.gz"
+$SUNDIALS_DOWNLOAD_ADDRESS = "https://github.com/LLNL/sundials/releases/download/v$SUNDIALS_VERSION/sundials-$SUNDIALS_VERSION.tar.gz"
 $SUNDIALS_NAME = "sundials-$SUNDIALS_VERSION"
 $SUNDIALS_TAR_NAME = "$SUNDIALS_NAME.tar"
 $SUNDIALS_ZIP_NAME = "$SUNDIALS_TAR_NAME.gz"
