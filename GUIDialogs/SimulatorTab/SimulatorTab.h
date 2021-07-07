@@ -3,10 +3,10 @@
 #pragma once
 
 #include "ui_SimulatorTab.h"
+#include "ProgressThread.h"
 #include <QTimer>
 #include <QElapsedTimer>
 
-class CProgressThread;
 class CSimulator;
 class CFlowsheet;
 
@@ -31,7 +31,7 @@ class CSimulatorTab : public QWidget
 	CFlowsheet* m_pFlowsheet;			// Pointer to a current flowsheet.
 	CSimulator* m_pSimulator;			// Pointer to a current simulator.
 
-	CProgressThread* m_pProgressThread;	// Separate thread for simulator.
+	CProgressThread m_progressThread{ m_pSimulator };	// Separate thread for simulator.
 
 	QElapsedTimer m_simulationTimer;	// Timer to determine simulation time.
 	QTimer m_logTimer;				    // Interrupt timer to update simulation log.
@@ -64,7 +64,7 @@ private slots:
 	void UpdateLog() const;
 
 private:
-	void AbortSimulation() const;
+	void AbortSimulation();
 
 	void ClearLog() const;
 	void UpdateSimulationTime() const;
