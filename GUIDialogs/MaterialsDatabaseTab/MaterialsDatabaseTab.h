@@ -16,7 +16,7 @@ private:
 
 	Ui::CMaterialsDatabaseTab ui;
 
-	CMaterialsDatabase* m_pMaterialsDB;
+	CMaterialsDatabase* m_materialsDB;
 	QSettings* m_pSettings;
 
 	bool m_bMaterialsDatabaseChanged=false;

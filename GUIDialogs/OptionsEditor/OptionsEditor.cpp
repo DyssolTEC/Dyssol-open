@@ -9,7 +9,7 @@ COptionsEditor::COptionsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pMa
 	: QDialog(parent, flags),
 	m_pFlowsheet(_pFlowsheet),
 	m_pParams(m_pFlowsheet->GetParameters()),
-	m_pMaterialsDB(_pMaterialsDB)
+	m_materialsDB(_pMaterialsDB)
 {
 	ui.setupUi(this);
 	ui.labelWarningStreams->setVisible(false);
