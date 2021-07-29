@@ -41,7 +41,7 @@ private:
 
 
 	const std::vector<std::unique_ptr<CUnitContainer>>* m_models{};	// Pointer to a vector of available models.
-	const std::vector<std::unique_ptr<CStream>>* m_streams{};	// Pointer to a vector of available streams.
+	const std::vector<std::shared_ptr<CStream>>* m_streams{};		// Pointer to a vector of available streams.
 
 	std::vector<SPartitionKeys> m_partitions;       // List of defined partitions.
 
@@ -49,7 +49,7 @@ private:
 
 public:
 	// Sets pointers to all existing models and streams.
-	CCalculationSequence(const std::vector<std::unique_ptr<CUnitContainer>>* _allModels, const std::vector<std::unique_ptr<CStream>>* _allStreams);
+	CCalculationSequence(const std::vector<std::unique_ptr<CUnitContainer>>* _allModels, const std::vector<std::shared_ptr<CStream>>* _allStreams);
 
 	// Clear calculation sequence and all initial tear streams.
 	void Clear();

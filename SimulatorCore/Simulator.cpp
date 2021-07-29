@@ -45,9 +45,6 @@ void CSimulator::Simulate()
 	SetupConvergenceMethod();
 	ClearLogState();
 
-	// clear previous results
-	m_pFlowsheet->ClearSimulationResults();
-
 	// Clear initialization flags
 	m_vInitialized.clear();
 	for (const auto& partition : m_pSequence->Partitions())
@@ -245,6 +242,9 @@ void CSimulator::SimulateUnits(const CCalculationSequence::SPartition& _partitio
 	{
 		// current model
 		m_unitName = model->GetName();
+
+		// copy input streams to output streams and convert grids if necessary
+		m_pFlowsheet->PrepareInputStreams(model, _t1, _t2);
 
 		// initialize unit if not yet initialized
 		if (!m_vInitialized[model->GetKey()])

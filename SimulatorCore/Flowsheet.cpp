@@ -29,6 +29,8 @@ void CFlowsheet::Clear()
 	// clear all data
 	m_units.clear();
 	m_streams.clear();
+	m_streamsI.clear();
+	m_streamsO.clear();
 	m_calculationSequence.Clear();
 	m_compounds.clear();
 	m_overall.clear();
@@ -129,6 +131,19 @@ std::vector<CUnitContainer*> CFlowsheet::GetAllUnits()
 	return res;
 }
 
+void CFlowsheet::PrepareInputStreams(const CUnitContainer* _unit, double _timeBeg, double _timeEnd)
+{
+	for (const auto& port : _unit->GetModel()->GetPortsManager().GetAllInputPorts())
+	{
+		const auto FindByKey = [&](std::shared_ptr<CStream>& _s) { return _s->GetKey() == port->GetStreamKey(); };
+		auto& streamI = *std::find_if(m_streamsI.begin(), m_streamsI.end(), FindByKey);
+		auto& streamO = *std::find_if(m_streamsO.begin(), m_streamsO.end(), FindByKey);
+		if (streamI != streamO)
+			// TODO: convert grids
+			streamI->CopyFromStream(_timeBeg, _timeEnd, streamO.get());
+	}
+}
+
 size_t CFlowsheet::GetStreamsNumber() const
 {
 	return m_streams.size();
@@ -158,28 +173,13 @@ void CFlowsheet::ShiftStream(const std::string& _key, EDirection _direction)
 {
 	const size_t index = VectorFind(m_streams, [&](const auto& s) { return s->GetKey() == _key; });
 	if (index == static_cast<size_t>(-1)) return;
-
-	// TODO: make it a template function in ContainerFunctions.h
-	switch (_direction)
-	{
-	case EDirection::UP:
-		if (index < m_streams.size() && index != 0)
-			std::iter_swap(m_streams.begin() + index, m_streams.begin() + index - 1);
-		break;
-	case EDirection::DOWN:
-		if (index < m_streams.size() && index != m_streams.size() - 1)
-			std::iter_swap(m_streams.begin() + index, m_streams.begin() + index + 1);
-		break;
-	}
+	VectorShift(m_streams, index, _direction);
 	SetTopologyModified(true);
 }
 
 const CStream* CFlowsheet::GetStream(const std::string& _key) const
 {
-	for (const auto& stream : m_streams)
-		if (stream->GetKey() == _key)
-			return stream.get();
-	return nullptr;
+	return DoGetStream(_key, m_streams);
 }
 
 CStream* CFlowsheet::GetStream(const std::string& _key)
@@ -441,6 +441,9 @@ bool CFlowsheet::IsPhaseDefined(EPhase _phase)
 
 std::string CFlowsheet::Initialize()
 {
+	// clear previous results
+	ClearSimulationResults();
+
 	// check that all units have assigned models
 	for (const auto& unit : m_units)
 		if (!unit->GetModel())
@@ -510,9 +513,28 @@ std::string CFlowsheet::Initialize()
 
 void CFlowsheet::SetStreamsToPorts()
 {
+	// create input and output streams
+	m_streamsO = m_streams;
+	m_streamsI = m_streams;
+	// replace pointers to main streams with own streams if needed
+	for (size_t i = 0; i < m_streamsI.size(); ++i)
+	{
+		// TODO: if grids are different
+		if (false)
+		{
+			// TODO: set proper grid
+			// TODO: think about caching
+			m_streamsI[i] = std::make_shared<CStream>(m_streams[i]->GetKey(), &m_materialsDB, &m_grid, &m_compounds, &m_overall, &m_phases, &m_cacheStreams, &m_tolerance, &m_thermodynamics);
+		}
+	}
+
 	for (auto& unit : m_units)
-		for (auto& port : unit->GetModel()->GetPortsManager().GetAllPorts())
-			port->SetStream(GetStream(port->GetStreamKey()));
+	{
+		for (auto& port : unit->GetModel()->GetPortsManager().GetAllInputPorts())
+			port->SetStream(const_cast<CStream*>(DoGetStream(port->GetStreamKey(), m_streamsI)));
+		for (auto& port : unit->GetModel()->GetPortsManager().GetAllOutputPorts())
+			port->SetStream(const_cast<CStream*>(DoGetStream(port->GetStreamKey(), m_streamsO)));
+	}
 }
 
 std::string CFlowsheet::CheckPortsConnections()
@@ -547,6 +569,8 @@ void CFlowsheet::ClearSimulationResults()
 {
 	for (auto& stream : m_streams)
 		stream->RemoveAllTimePoints();
+	m_streamsO.clear();
+	m_streamsI.clear();
 	for (auto& unit : m_units)
 		if (auto* model = unit->GetModel())
 			model->ClearSimulationResults();
@@ -820,6 +844,14 @@ bool CFlowsheet::LoadFromFile_v3(CH5Handler& _h5File, const std::string& _path)
 	_h5File.Close();
 	SetTopologyModified(false);
 	return true;
+}
+
+const CStream* CFlowsheet::DoGetStream(const std::string& _key, const std::vector<std::shared_ptr<CStream>>& _streams)
+{
+	for (const auto& stream : _streams)
+		if (stream->GetKey() == _key)
+			return stream.get();
+	return nullptr;
 }
 
 std::vector<std::string> CFlowsheet::GetAllUnitsKeys() const

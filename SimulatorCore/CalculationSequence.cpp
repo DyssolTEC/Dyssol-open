@@ -8,7 +8,7 @@
 #include "ContainerFunctions.h"
 #include "DyssolStringConstants.h"
 
-CCalculationSequence::CCalculationSequence(const std::vector<std::unique_ptr<CUnitContainer>>* _allModels, const std::vector<std::unique_ptr<CStream>>* _allStreams)
+CCalculationSequence::CCalculationSequence(const std::vector<std::unique_ptr<CUnitContainer>>* _allModels, const std::vector<std::shared_ptr<CStream>>* _allStreams)
 {
 	m_models = _allModels;
 	m_streams = _allStreams;
