@@ -17,7 +17,7 @@ class COptionsEditor : public QDialog
 
 	CFlowsheet* m_pFlowsheet;			// pointer to the flowsheet
 	CParametersHolder* m_pParams;	// pointer to the flowsheet parameters
-	CMaterialsDatabase* m_pMaterialsDB; // pointer to materials database
+	CMaterialsDatabase* m_materialsDB; // pointer to materials database
 
 	unsigned m_cacheWindowSizeBeforeEdit; // stores old the value of cacheWindowSize for undo
 

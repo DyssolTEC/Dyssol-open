@@ -1,3 +1,5 @@
+/* Copyright (c) 2021, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+
 #pragma once
 
 #include "BaseUnit.h"
@@ -47,7 +49,8 @@ public:
 	void Stop()
 	{
 		m_running = false;
-		m_thread.join();
+		if (m_thread.joinable())
+			m_thread.join();
 	}
 
 	void SetModel(CBaseUnit* _model)

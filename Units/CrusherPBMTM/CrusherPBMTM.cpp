@@ -133,6 +133,8 @@ void CCrusherPBMTM::Simulate(double _timeBeg, double _timeEnd)
 		m_holdup->SetMass(t2, m_holdupMass);
 		m_outStream->CopyFromHoldup(t2, m_holdup, m_inStream->GetMassFlow(_timeEnd));
 		t1 = t2;
+
+		ShowInfo(std::to_string(t2) + "s...");
 	}
 }
 

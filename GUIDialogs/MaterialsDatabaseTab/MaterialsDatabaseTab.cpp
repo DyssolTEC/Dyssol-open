@@ -12,7 +12,7 @@
 
 CMaterialsDatabaseTab::CMaterialsDatabaseTab(CMaterialsDatabase *_pMaterialsDatabase, QSettings* _pSettings, QWidget *parent)
 	: QDialog(parent),
-	m_pMaterialsDB(_pMaterialsDatabase),
+	m_materialsDB(_pMaterialsDatabase),
 	m_pSettings(_pSettings)
 {
 	ui.setupUi(this);
@@ -99,7 +99,7 @@ void CMaterialsDatabaseTab::UpdateWholeView()
 void CMaterialsDatabaseTab::NewDatabase()
 {
 	if (!IsUserConfirm()) return;
-	m_pMaterialsDB->Clear();
+	m_materialsDB->Clear();
 	UpdateWholeView();
 	SetMaterialsDatabaseModified(false);
 	emit MaterialDatabaseWasChanged();
@@ -108,9 +108,9 @@ void CMaterialsDatabaseTab::NewDatabase()
 void CMaterialsDatabaseTab::LoadDatabase()
 {
 	if (!IsUserConfirm()) return;
-	const QString sFileName = QFileDialog::getOpenFileName(this, StrConst::MDT_DialogLoadName, QString::fromStdWString(m_pMaterialsDB->GetFileName()), StrConst::MDT_DialogDMDBFilter);
+	const QString sFileName = QFileDialog::getOpenFileName(this, StrConst::MDT_DialogLoadName, QString::fromStdWString(m_materialsDB->GetFileName()), StrConst::MDT_DialogDMDBFilter);
 	if (!QFile::exists(sFileName.simplified())) return;
-	m_pMaterialsDB->LoadFromFile(sFileName.toStdWString());
+	m_materialsDB->LoadFromFile(sFileName.toStdWString());
 	m_pSettings->setValue(StrConst::Dyssol_ConfigDMDBPath, sFileName);
 	UpdateWholeView();
 	SetMaterialsDatabaseModified(false);
@@ -119,15 +119,15 @@ void CMaterialsDatabaseTab::LoadDatabase()
 
 void CMaterialsDatabaseTab::SaveDatabase()
 {
-	if (!QString::fromStdWString(m_pMaterialsDB->GetFileName()).simplified().isEmpty())
-		SaveToFile(QString::fromStdWString(m_pMaterialsDB->GetFileName()));
+	if (!QString::fromStdWString(m_materialsDB->GetFileName()).simplified().isEmpty())
+		SaveToFile(QString::fromStdWString(m_materialsDB->GetFileName()));
 	else
 		SaveDatabaseAs();
 }
 
 void CMaterialsDatabaseTab::SaveDatabaseAs()
 {
-	const QString sFileName = QFileDialog::getSaveFileName(this, StrConst::MDT_DialogSaveName, QString::fromStdWString(m_pMaterialsDB->GetFileName()), StrConst::MDT_DialogDMDBFilter);
+	const QString sFileName = QFileDialog::getSaveFileName(this, StrConst::MDT_DialogSaveName, QString::fromStdWString(m_materialsDB->GetFileName()), StrConst::MDT_DialogDMDBFilter);
 	if (sFileName.simplified().isEmpty()) return;
 	if (!SaveToFile(sFileName)) return;
 	m_pSettings->setValue(StrConst::Dyssol_ConfigDMDBPath, sFileName);
@@ -137,7 +137,7 @@ void CMaterialsDatabaseTab::SaveDatabaseAs()
 
 bool CMaterialsDatabaseTab::SaveToFile(const QString& _fileName)
 {
-	const bool bSuccess = m_pMaterialsDB->SaveToFile(_fileName.toStdWString());
+	const bool bSuccess = m_materialsDB->SaveToFile(_fileName.toStdWString());
 	if (bSuccess)
 		SetMaterialsDatabaseModified(false);
 	else
@@ -152,7 +152,7 @@ bool CMaterialsDatabaseTab::SaveToFile(const QString& _fileName)
 
 void CMaterialsDatabaseTab::AddCompound()
 {
-	CCompound* pCompound = m_pMaterialsDB->AddCompound();
+	CCompound* pCompound = m_materialsDB->AddCompound();
 	// pick name for new compound
 	std::string sNewName;
 	bool bAlreadyExist;
@@ -161,8 +161,8 @@ void CMaterialsDatabaseTab::AddCompound()
 	{
 		bAlreadyExist = false;
 		sNewName = "Compound" + std::to_string(index++);
-		for (size_t i = 0; i < m_pMaterialsDB->CompoundsNumber(); ++i)
-			if (m_pMaterialsDB->GetCompound(i)->GetName() == sNewName)
+		for (size_t i = 0; i < m_materialsDB->CompoundsNumber(); ++i)
+			if (m_materialsDB->GetCompound(i)->GetName() == sNewName)
 				bAlreadyExist = true;
 	} while (bAlreadyExist);
 
@@ -182,19 +182,19 @@ void CMaterialsDatabaseTab::DuplicateCompound()
 	if (!pBaseCompound) return;
 
 	const std::string sBaseKey1 = pBaseCompound->GetKey();
-	CCompound* pCompound = m_pMaterialsDB->AddCompound(*pBaseCompound);
+	CCompound* pCompound = m_materialsDB->AddCompound(*pBaseCompound);
 	SetMaterialsDatabaseModified(true);
 
 	// copy interactions
 	const std::string sKey1 = pCompound->GetKey();
-	for (size_t i = 0; i < m_pMaterialsDB->CompoundsNumber(); ++i)
+	for (size_t i = 0; i < m_materialsDB->CompoundsNumber(); ++i)
 	{
-		const std::string sKey2 = m_pMaterialsDB->GetCompound(i)->GetKey();
+		const std::string sKey2 = m_materialsDB->GetCompound(i)->GetKey();
 		std::string sBaseKey2 = sKey2;
 		if (sKey2 == sKey1 || sKey2 == sBaseKey1)	// interaction with itself
 			sBaseKey2 = sBaseKey1;
-		CInteraction* pInteraction = m_pMaterialsDB->GetInteraction(sKey1, sKey2);
-		const CInteraction* pBaseInteraction = m_pMaterialsDB->GetInteraction(sBaseKey1, sBaseKey2);
+		CInteraction* pInteraction = m_materialsDB->GetInteraction(sKey1, sKey2);
+		const CInteraction* pBaseInteraction = m_materialsDB->GetInteraction(sBaseKey1, sBaseKey2);
 		if (pInteraction && pBaseInteraction)
 		{
 			*pInteraction = *pBaseInteraction;
@@ -218,7 +218,7 @@ void CMaterialsDatabaseTab::RemoveCompound()
 		if (QMessageBox::question(this, StrConst::MDT_RemoveCompoundTitle, QString::fromStdString(StrConst::MDT_RemoveCompoundConfirm(pCompound->GetName())), QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel) == QMessageBox::Yes)
 		{
 			SetMaterialsDatabaseModified(true);
-			m_pMaterialsDB->RemoveCompound(pCompound->GetKey());
+			m_materialsDB->RemoveCompound(pCompound->GetKey());
 			UpdateCompoundsList();
 			UpdateCompoundProperties();
 			NewPropertySelected();
@@ -233,10 +233,10 @@ void CMaterialsDatabaseTab::ShiftCompoundUp()
 	{
 		SetMaterialsDatabaseModified(true);
 		const std::string sKey = pCompound->GetKey();
-		m_pMaterialsDB->ShiftCompoundUp(sKey);
+		m_materialsDB->ShiftCompoundUp(sKey);
 		UpdateCompoundsList();
 		UpdateInteractionsCompoundsLists();
-		SelectCompound(m_pMaterialsDB->GetCompound(sKey));
+		SelectCompound(m_materialsDB->GetCompound(sKey));
 		emit MaterialDatabaseWasChanged();
 	}
 }
@@ -247,10 +247,10 @@ void CMaterialsDatabaseTab::ShiftCompoundDown()
 	{
 		SetMaterialsDatabaseModified(true);
 		const std::string sKey = pCompound->GetKey();
-		m_pMaterialsDB->ShiftCompoundDown(sKey);
+		m_materialsDB->ShiftCompoundDown(sKey);
 		UpdateCompoundsList();
 		UpdateInteractionsCompoundsLists();
-		SelectCompound(m_pMaterialsDB->GetCompound(sKey));
+		SelectCompound(m_materialsDB->GetCompound(sKey));
 		emit MaterialDatabaseWasChanged();
 	}
 }
@@ -297,7 +297,7 @@ void CMaterialsDatabaseTab::AddProperty()
 	auto* adder = new CPropertyAdder(&prop, ActiveUDProps(), this);
 	if (adder->exec() == Accepted)
 	{
-		m_pMaterialsDB->AddProperty(prop);
+		m_materialsDB->AddProperty(prop);
 		SetMaterialsDatabaseModified(true);
 		CreateCompoundPropertiesTable();
 		UpdateCompoundProperties();
@@ -324,7 +324,7 @@ void CMaterialsDatabaseTab::DuplicateProperty()
 	const unsigned oldKey = GetPropertyKey(ui.tableProperties, iRow);
 	if (newProperty.type == EPropertyType::CONSTANT)
 	{
-		const auto oldProperty = m_pMaterialsDB->ActiveConstProperties()[static_cast<ECompoundConstProperties>(oldKey)];
+		const auto oldProperty = m_materialsDB->ActiveConstProperties()[static_cast<ECompoundConstProperties>(oldKey)];
 		newProperty.value       = oldProperty.defaultValue;
 		newProperty.name        = oldProperty.name + "_copy";
 		newProperty.units       = oldProperty.units;
@@ -332,14 +332,14 @@ void CMaterialsDatabaseTab::DuplicateProperty()
 	}
 	else
 	{
-		const auto oldProperty = m_pMaterialsDB->ActiveTPDepProperties()[static_cast<ECompoundTPProperties>(oldKey)];
+		const auto oldProperty = m_materialsDB->ActiveTPDepProperties()[static_cast<ECompoundTPProperties>(oldKey)];
 		newProperty.value       = oldProperty.defaultParameters.front();
 		newProperty.name        = oldProperty.name + "_copy";
 		newProperty.units       = oldProperty.units;
 		newProperty.description = oldProperty.description;
 	}
 
-	m_pMaterialsDB->AddProperty(newProperty);
+	m_materialsDB->AddProperty(newProperty);
 	SetMaterialsDatabaseModified(true);
 	CreateCompoundPropertiesTable();
 	UpdateCompoundProperties();
@@ -361,7 +361,7 @@ void CMaterialsDatabaseTab::RemoveProperty()
 		return;
 	}
 	if (QMessageBox::question(this, "Custom properties", "Do you really want to remove this property from materials database?") != QMessageBox::Yes) return;
-	m_pMaterialsDB->RemoveProperty(type, key);
+	m_materialsDB->RemoveProperty(type, key);
 	SetMaterialsDatabaseModified(true);
 	CreateCompoundPropertiesTable();
 	UpdateCompoundProperties();
@@ -386,7 +386,7 @@ void CMaterialsDatabaseTab::EditProperty()
 
 	if (newProperty.type == EPropertyType::CONSTANT)
 	{
-		const auto oldProperty = m_pMaterialsDB->ActiveConstProperties()[static_cast<ECompoundConstProperties>(newProperty.key)];
+		const auto oldProperty = m_materialsDB->ActiveConstProperties()[static_cast<ECompoundConstProperties>(newProperty.key)];
 		newProperty.value       = oldProperty.defaultValue;
 		newProperty.name        = oldProperty.name;
 		newProperty.units       = oldProperty.units;
@@ -394,7 +394,7 @@ void CMaterialsDatabaseTab::EditProperty()
 	}
 	else
 	{
-		const auto oldProperty = m_pMaterialsDB->ActiveTPDepProperties()[static_cast<ECompoundTPProperties>(newProperty.key)];
+		const auto oldProperty = m_materialsDB->ActiveTPDepProperties()[static_cast<ECompoundTPProperties>(newProperty.key)];
 		newProperty.value       = oldProperty.defaultParameters.front();
 		newProperty.name        = oldProperty.name;
 		newProperty.units       = oldProperty.units;
@@ -410,8 +410,8 @@ void CMaterialsDatabaseTab::EditProperty()
 	auto* adder = new CPropertyAdder(&newProperty, activeProps, this);
 	if (adder->exec() == Accepted)
 	{
-		m_pMaterialsDB->RemoveProperty(currType, currKey);
-		m_pMaterialsDB->AddProperty(newProperty);
+		m_materialsDB->RemoveProperty(currType, currKey);
+		m_materialsDB->AddProperty(newProperty);
 		SetMaterialsDatabaseModified(true);
 		CreateCompoundPropertiesTable();
 		UpdateCompoundProperties();
@@ -434,9 +434,9 @@ void CMaterialsDatabaseTab::NewPropertySelected() const
 	ui.propertyEditorMain->setEnabled(!bConst);
 	ui.propertyEditorMain->SetProperty(bConst ? nullptr : pCompound->GetTPProperty(static_cast<ECompoundTPProperties>(type)));
 	if(IsConstProperty(iRow))	// const property selected
-		ui.textDescription->setText(QString::fromStdString(m_pMaterialsDB->ActiveConstProperties()[static_cast<ECompoundConstProperties>(type)].description));
+		ui.textDescription->setText(QString::fromStdString(m_materialsDB->ActiveConstProperties()[static_cast<ECompoundConstProperties>(type)].description));
 	else						// TP  property selected
-		ui.textDescription->setText(QString::fromStdString(m_pMaterialsDB->ActiveTPDepProperties()[static_cast<ECompoundTPProperties>(type)].description));
+		ui.textDescription->setText(QString::fromStdString(m_materialsDB->ActiveTPDepProperties()[static_cast<ECompoundTPProperties>(type)].description));
 }
 
 void CMaterialsDatabaseTab::PropertyValueChanged(int _iRow, int _iCol)
@@ -508,7 +508,7 @@ void CMaterialsDatabaseTab::AddInterProperty()
 	auto* adder = new CPropertyAdder(&prop, ActiveUDProps(), this);
 	if (adder->exec() == Accepted)
 	{
-		m_pMaterialsDB->AddProperty(prop);
+		m_materialsDB->AddProperty(prop);
 		SetMaterialsDatabaseModified(true);
 		CreateInteractionPropertiesTable();
 		UpdateInteractionProperties();
@@ -533,13 +533,13 @@ void CMaterialsDatabaseTab::DuplicateInterProperty()
 	}
 
 	const unsigned oldKey = GetPropertyKey(ui.tableInterProperties, iRow);
-	SCompoundTPDPropertyDescriptor oldProperty = m_pMaterialsDB->ActiveInterProperties()[static_cast<EInteractionProperties>(oldKey)];
+	SCompoundTPDPropertyDescriptor oldProperty = m_materialsDB->ActiveInterProperties()[static_cast<EInteractionProperties>(oldKey)];
 	newProperty.value = oldProperty.defaultParameters.front();
 	newProperty.name = oldProperty.name + "_copy";
 	newProperty.units = oldProperty.units;
 	newProperty.description = oldProperty.description;
 
-	m_pMaterialsDB->AddProperty(newProperty);
+	m_materialsDB->AddProperty(newProperty);
 	SetMaterialsDatabaseModified(true);
 	CreateInteractionPropertiesTable();
 	UpdateInteractionProperties();
@@ -560,7 +560,7 @@ void CMaterialsDatabaseTab::RemoveInterProperty()
 		return;
 	}
 	if (QMessageBox::question(this, "Custom properties", "Do you really want to remove this property from materials database?") != QMessageBox::Yes) return;
-	m_pMaterialsDB->RemoveProperty(type, key);
+	m_materialsDB->RemoveProperty(type, key);
 	SetMaterialsDatabaseModified(true);
 	CreateInteractionPropertiesTable();
 	UpdateInteractionProperties();
@@ -581,7 +581,7 @@ void CMaterialsDatabaseTab::EditInterProperty()
 		QMessageBox::warning(this, "Custom properties", "This property can not be edited.");
 		return;
 	}
-	SCompoundTPDPropertyDescriptor oldProperty = m_pMaterialsDB->ActiveInterProperties()[static_cast<EInteractionProperties>(newProperty.key)];
+	SCompoundTPDPropertyDescriptor oldProperty = m_materialsDB->ActiveInterProperties()[static_cast<EInteractionProperties>(newProperty.key)];
 	newProperty.value = oldProperty.defaultParameters.front();
 	newProperty.name = oldProperty.name;
 	newProperty.units = oldProperty.units;
@@ -596,8 +596,8 @@ void CMaterialsDatabaseTab::EditInterProperty()
 	auto* adder = new CPropertyAdder(&newProperty, activeProps, this);
 	if (adder->exec() == Accepted)
 	{
-		m_pMaterialsDB->RemoveProperty(currType, currKey);
-		m_pMaterialsDB->AddProperty(newProperty);
+		m_materialsDB->RemoveProperty(currType, currKey);
+		m_materialsDB->AddProperty(newProperty);
 		SetMaterialsDatabaseModified(true);
 		CreateInteractionPropertiesTable();
 		UpdateInteractionProperties();
@@ -605,7 +605,7 @@ void CMaterialsDatabaseTab::EditInterProperty()
 		emit MaterialDatabaseWasChanged();
 	}
 	else
-		m_pMaterialsDB->AddProperty(newProperty);
+		m_materialsDB->AddProperty(newProperty);
 	delete adder;
 }
 
@@ -691,13 +691,13 @@ void CMaterialsDatabaseTab::InteractionInfoClicked(int _iRow)
 
 void CMaterialsDatabaseTab::UpdateWindowTitle()
 {
-	if (!m_pMaterialsDB) return;
-	setWindowTitle(StrConst::MDT_WindowTitle + QString{ ": " } + QString::fromStdWString(m_pMaterialsDB->GetFileName() + L"[*]"));
+	if (!m_materialsDB) return;
+	setWindowTitle(StrConst::MDT_WindowTitle + QString{ ": " } + QString::fromStdWString(m_materialsDB->GetFileName() + L"[*]"));
 }
 
 void CMaterialsDatabaseTab::UpdateFileButtonsActivity() const
 {
-	const QString sLockerFileName = QString::fromStdWString(m_pMaterialsDB->GetFileName()) + ".lock";
+	const QString sLockerFileName = QString::fromStdWString(m_materialsDB->GetFileName()) + ".lock";
 	QLockFile locker(sLockerFileName);
 	locker.setStaleLockTime(0);
 	const bool bSuccessfullyLocked = locker.tryLock(10);
@@ -707,15 +707,15 @@ void CMaterialsDatabaseTab::UpdateFileButtonsActivity() const
 
 void CMaterialsDatabaseTab::UpdateCompoundsList() const
 {
-	if (!m_pMaterialsDB) return;
+	if (!m_materialsDB) return;
 	QSignalBlocker blocker(ui.tableCompounds);
 
 	const int iOldRow = ui.tableCompounds->currentRow();
-	ui.tableCompounds->setRowCount(static_cast<int>(m_pMaterialsDB->CompoundsNumber()));
-	for (int i = 0; i < static_cast<int>(m_pMaterialsDB->CompoundsNumber()); ++i)
+	ui.tableCompounds->setRowCount(static_cast<int>(m_materialsDB->CompoundsNumber()));
+	for (int i = 0; i < static_cast<int>(m_materialsDB->CompoundsNumber()); ++i)
 	{
-		ui.tableCompounds->SetItemEditable(i, ECompTable::CT_NAME_COL, m_pMaterialsDB->GetCompound(i)->GetName(), QString::fromStdString(m_pMaterialsDB->GetCompound(i)->GetKey()));
-		ui.tableCompounds->SetItemEditable(i, ECompTable::CT_KEY_COL, m_pMaterialsDB->GetCompound(i)->GetKey(), QString::fromStdString(m_pMaterialsDB->GetCompound(i)->GetKey()));
+		ui.tableCompounds->SetItemEditable(i, ECompTable::CT_NAME_COL, m_materialsDB->GetCompound(i)->GetName(), QString::fromStdString(m_materialsDB->GetCompound(i)->GetKey()));
+		ui.tableCompounds->SetItemEditable(i, ECompTable::CT_KEY_COL, m_materialsDB->GetCompound(i)->GetKey(), QString::fromStdString(m_materialsDB->GetCompound(i)->GetKey()));
 	}
 	ui.tableCompounds->RestoreSelectedCell(iOldRow, ECompTable::CT_NAME_COL);
 }
@@ -730,7 +730,7 @@ void CMaterialsDatabaseTab::UpdateCompoundProperties() const
 	int iRow = 0;
 
 	// const properties
-	for (const auto& propDescr : m_pMaterialsDB->ActiveConstProperties())
+	for (const auto& propDescr : m_materialsDB->ActiveConstProperties())
 	{
 		const CConstProperty* prop = pCompound->GetConstProperty(propDescr.first);
 		if (!prop) continue;
@@ -740,7 +740,7 @@ void CMaterialsDatabaseTab::UpdateCompoundProperties() const
 	}
 
 	// PT properties
-	for (const auto& propDescr : m_pMaterialsDB->ActiveTPDepProperties())
+	for (const auto& propDescr : m_materialsDB->ActiveTPDepProperties())
 	{
 		const CTPDProperty* prop = pCompound->GetTPProperty(propDescr.first);
 		if (!prop) continue;
@@ -765,19 +765,19 @@ void CMaterialsDatabaseTab::UpdateInteractionsCompoundsLists() const
 	const int iOldRow2 = ui.listCompounds2->currentRow();
 	ui.listCompounds1->clear();
 	ui.listCompounds2->clear();
-	for (int i = 0; i < static_cast<int>(m_pMaterialsDB->CompoundsNumber()); ++i)
+	for (int i = 0; i < static_cast<int>(m_materialsDB->CompoundsNumber()); ++i)
 	{
-		QListWidgetItem *pItem1 = new QListWidgetItem(QString::fromStdString(m_pMaterialsDB->GetCompound(i)->GetName()));
-		pItem1->setData(Qt::UserRole, QString::fromStdString(m_pMaterialsDB->GetCompound(i)->GetKey()));
+		QListWidgetItem *pItem1 = new QListWidgetItem(QString::fromStdString(m_materialsDB->GetCompound(i)->GetName()));
+		pItem1->setData(Qt::UserRole, QString::fromStdString(m_materialsDB->GetCompound(i)->GetKey()));
 		ui.listCompounds1->insertItem(i, pItem1);
 
-		QListWidgetItem *pItem2 = new QListWidgetItem(QString::fromStdString(m_pMaterialsDB->GetCompound(i)->GetName()));
-		pItem2->setData(Qt::UserRole, QString::fromStdString(m_pMaterialsDB->GetCompound(i)->GetKey()));
+		QListWidgetItem *pItem2 = new QListWidgetItem(QString::fromStdString(m_materialsDB->GetCompound(i)->GetName()));
+		pItem2->setData(Qt::UserRole, QString::fromStdString(m_materialsDB->GetCompound(i)->GetKey()));
 		ui.listCompounds2->insertItem(i, pItem2);
 	}
-	if (iOldRow1 >= 0 && iOldRow1 < static_cast<int>(m_pMaterialsDB->CompoundsNumber()))
+	if (iOldRow1 >= 0 && iOldRow1 < static_cast<int>(m_materialsDB->CompoundsNumber()))
 		ui.listCompounds1->setCurrentRow(iOldRow1);
-	if (iOldRow2 >= 0 && iOldRow2 < static_cast<int>(m_pMaterialsDB->CompoundsNumber()))
+	if (iOldRow2 >= 0 && iOldRow2 < static_cast<int>(m_materialsDB->CompoundsNumber()))
 		ui.listCompounds2->setCurrentRow(iOldRow2);
 }
 
@@ -790,7 +790,7 @@ void CMaterialsDatabaseTab::UpdateInteractionProperties() const
 	QSignalBlocker blocker(ui.tableInterProperties);
 	int iRow = 0;
 
-	for (const auto& propDescr : m_pMaterialsDB->ActiveInterProperties())
+	for (const auto& propDescr : m_materialsDB->ActiveInterProperties())
 	{
 		const CTPDProperty* prop = pInteraction->GetProperty(propDescr.first);
 		const bool isConst = prop->CorrelationsNumber() == 1 && prop->GetCorrelation(0)->GetType() == ECorrelationTypes::CONSTANT;
@@ -806,11 +806,11 @@ void CMaterialsDatabaseTab::CreateCompoundPropertiesTable()
 {
 	QSignalBlocker blocker(ui.tableProperties);
 	ui.tableProperties->clearContents();
-	ui.tableProperties->setRowCount(static_cast<int>(m_pMaterialsDB->ActiveConstProperties().size() + m_pMaterialsDB->ActiveTPDepProperties().size()));
+	ui.tableProperties->setRowCount(static_cast<int>(m_materialsDB->ActiveConstProperties().size() + m_materialsDB->ActiveTPDepProperties().size()));
 	int iRow = 0;
 
 	// const properties
-	for (const auto& prop : m_pMaterialsDB->ActiveConstProperties())
+	for (const auto& prop : m_materialsDB->ActiveConstProperties())
 	{
 		AddCheckBoxOnTable(ui.tableProperties, iRow, EPropTable::PT_CONST_COL, true, false);
 		ui.tableProperties->SetItemNotEditable(iRow, EPropTable::PT_NAME_COL, prop.second.name, prop.first);
@@ -821,7 +821,7 @@ void CMaterialsDatabaseTab::CreateCompoundPropertiesTable()
 	}
 
 	// PT properties
-	for (const auto& prop : m_pMaterialsDB->ActiveTPDepProperties())
+	for (const auto& prop : m_materialsDB->ActiveTPDepProperties())
 	{
 		AddCheckBoxOnTable(ui.tableProperties, iRow, EPropTable::PT_CONST_COL, false, true);
 		ui.tableProperties->SetItemNotEditable(iRow, EPropTable::PT_NAME_COL, prop.second.name, prop.first);
@@ -838,10 +838,10 @@ void CMaterialsDatabaseTab::CreateInteractionPropertiesTable()
 {
 	QSignalBlocker blocker(ui.tableInterProperties);
 	ui.tableInterProperties->clearContents();
-	ui.tableInterProperties->setRowCount(static_cast<int>(m_pMaterialsDB->ActiveInterProperties().size()));
+	ui.tableInterProperties->setRowCount(static_cast<int>(m_materialsDB->ActiveInterProperties().size()));
 	int iRow = 0;
 
-	for (const auto& prop : m_pMaterialsDB->ActiveInterProperties())
+	for (const auto& prop : m_materialsDB->ActiveInterProperties())
 	{
 		AddCheckBoxOnTable(ui.tableInterProperties, iRow, EPropTable::PT_CONST_COL, false, true);
 		ui.tableInterProperties->SetItemNotEditable(iRow, EPropTable::PT_NAME_COL, prop.second.name, prop.first);
@@ -875,16 +875,16 @@ void CMaterialsDatabaseTab::AddToolButtonOnTable(CQtTable* _pTable, int _iRow, i
 
 CCompound* CMaterialsDatabaseTab::GetSelectedCompound(const int _row /*= -1*/) const
 {
-	return m_pMaterialsDB->GetCompound(ui.tableCompounds->GetItemUserData(_row, ECompTable::CT_NAME_COL).toStdString());
+	return m_materialsDB->GetCompound(ui.tableCompounds->GetItemUserData(_row, ECompTable::CT_NAME_COL).toStdString());
 }
 
 std::pair<CCompound*, CCompound*> CMaterialsDatabaseTab::GetSelectedInterCompounds() const
 {
 	std::pair<CCompound*, CCompound*> res{ nullptr, nullptr };
 	if (const QListWidgetItem* pItem = ui.listCompounds1->currentItem())
-		res.first = m_pMaterialsDB->GetCompound(pItem->data(Qt::UserRole).toString().toStdString());
+		res.first = m_materialsDB->GetCompound(pItem->data(Qt::UserRole).toString().toStdString());
 	if (const QListWidgetItem* pItem = ui.listCompounds2->currentItem())
-		res.second = m_pMaterialsDB->GetCompound(pItem->data(Qt::UserRole).toString().toStdString());
+		res.second = m_materialsDB->GetCompound(pItem->data(Qt::UserRole).toString().toStdString());
 	return  res;
 }
 
@@ -892,7 +892,7 @@ CInteraction* CMaterialsDatabaseTab::GetSelectedInteraction() const
 {
 	const auto compounds = GetSelectedInterCompounds();
 	if (!compounds.first || !compounds.second) return nullptr;
-	return  m_pMaterialsDB->GetInteraction(compounds.first->GetKey(), compounds.second->GetKey());
+	return  m_materialsDB->GetInteraction(compounds.first->GetKey(), compounds.second->GetKey());
 }
 
 unsigned CMaterialsDatabaseTab::GetPropertyKey(const CQtTable* _pTable, int _iRow)
@@ -902,12 +902,12 @@ unsigned CMaterialsDatabaseTab::GetPropertyKey(const CQtTable* _pTable, int _iRo
 
 bool CMaterialsDatabaseTab::IsConstProperty(int _iRow) const
 {
-	return _iRow < static_cast<int>(m_pMaterialsDB->ActiveConstProperties().size());
+	return _iRow < static_cast<int>(m_materialsDB->ActiveConstProperties().size());
 }
 
 void CMaterialsDatabaseTab::SelectCompound(const CCompound* _pCompound) const
 {
-	for (int i = 0; i < static_cast<int>(m_pMaterialsDB->CompoundsNumber()); ++i)
+	for (int i = 0; i < static_cast<int>(m_materialsDB->CompoundsNumber()); ++i)
 		if (GetSelectedCompound(i)->GetKey() == _pCompound->GetKey())
 		{
 			ui.tableCompounds->setCurrentCell(i, ECompTable::CT_NAME_COL);
@@ -966,13 +966,13 @@ std::vector<unsigned> CMaterialsDatabaseTab::ActiveUDProps() const
 {
 	using namespace MDBDescriptors;
 	std::vector<unsigned> res;
-	for (const auto& d : m_pMaterialsDB->ActiveConstProperties())
+	for (const auto& d : m_materialsDB->ActiveConstProperties())
 		if (FIRST_CONST_USER_PROP <= d.first && d.first < FIRST_CONST_USER_PROP + MAX_USER_DEFINED_PROP_NUMBER)
 			res.push_back(d.first);
-	for (const auto& d : m_pMaterialsDB->ActiveTPDepProperties())
+	for (const auto& d : m_materialsDB->ActiveTPDepProperties())
 		if (FIRST_TPDEP_USER_PROP <= d.first && d.first < FIRST_TPDEP_USER_PROP + MAX_USER_DEFINED_PROP_NUMBER)
 			res.push_back(d.first);
-	for (const auto& d : m_pMaterialsDB->ActiveInterProperties())
+	for (const auto& d : m_materialsDB->ActiveInterProperties())
 		if (FIRST_INTER_USER_PROP <= d.first && d.first < FIRST_INTER_USER_PROP + MAX_USER_DEFINED_PROP_NUMBER)
 			res.push_back(d.first);
 	return res;

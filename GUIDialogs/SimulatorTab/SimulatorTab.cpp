@@ -1,7 +1,6 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "SimulatorTab.h"
-#include "ProgressThread.h"
 #include "Flowsheet.h"
 #include "DyssolStringConstants.h"
 #include <QMessageBox>
@@ -10,16 +9,15 @@
 CSimulatorTab::CSimulatorTab(CFlowsheet* _pFlowsheet, CSimulator* _pSimulator, QWidget* _parent /*= 0*/) :
 	QWidget(_parent),
 	m_pFlowsheet{ _pFlowsheet },
-	m_pSimulator{ _pSimulator },
-	m_pProgressThread{ new CProgressThread(m_pSimulator) }
+	m_pSimulator{ _pSimulator }
 {
 	ui.setupUi(this);
 }
 
 CSimulatorTab::~CSimulatorTab()
 {
-	m_pProgressThread->Stop();
-	m_pProgressThread->deleteLater();
+	m_progressThread.Stop();
+	m_progressThread.deleteLater();
 }
 
 void CSimulatorTab::InitializeConnections() const
@@ -30,7 +28,7 @@ void CSimulatorTab::InitializeConnections() const
 	connect(ui.buttonClearRecycles,	          &QPushButton::clicked,	   this, &CSimulatorTab::ClearInitialRecycleStreams);
 	connect(ui.buttonClearResultsAndRecycles, &QPushButton::clicked,	   this, &CSimulatorTab::ClearAll);
 
-	connect(m_pProgressThread,	&CProgressThread::Finished,		this, &CSimulatorTab::SimulationFinished);
+	connect(&m_progressThread,	&CProgressThread::Finished,		this, &CSimulatorTab::SimulationFinished);
 	connect(&m_logTimer,	    &QTimer::timeout,				this, &CSimulatorTab::UpdateLog);
 }
 
@@ -93,15 +91,15 @@ void CSimulatorTab::StartSimulation()
 		// run simulation
 		BlockUI(true);
 		emit SimulatorStateToggled(true);
-		m_pProgressThread->Run();
+		m_progressThread.Run();
 		m_logTimer.start(100);
 	}
 }
 
-void CSimulatorTab::AbortSimulation() const
+void CSimulatorTab::AbortSimulation()
 {
 	// stop simulation
-	m_pProgressThread->RequestStop();
+	m_progressThread.RequestStop();
 
 	// set the message to the log
 	ui.textBrowserLog->setTextColor(QColor(Qt::red));
@@ -114,11 +112,11 @@ void CSimulatorTab::SimulationFinished()
 	// stop simulation threads and timers
 	const QDateTime now = QDateTime::currentDateTime();
 	m_logTimer.stop();
-	m_pProgressThread->Stop();
+	m_progressThread.Stop();
 
 	// update simulation log
 	UpdateLog();
-	if (m_pProgressThread->WasAborted())
+	if (m_progressThread.WasAborted())
 	{
 		ui.textBrowserLog->setTextColor(QColor(Qt::red));
 		ui.textBrowserLog->append(StrConst::ST_LogSimUserStop);
