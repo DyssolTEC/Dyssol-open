@@ -79,8 +79,10 @@ namespace StrConst
 		return "Simulation finished in " + std::to_string(time) + " [s]"; }
 	inline std::string DyssolC_WarningUnknown(const std::string& s) {
 		return "Warning while parsing script file: Unknown keyword " + StringFunctions::Quote(s); }
-	inline std::string DyssolC_WarningNoOverall(const std::string& p, int64_t i) {
-		return "Warning while applying " + p + ": \n\t" + "Overall property with key " + std::to_string(i) + " is not defined in the flowsheet. Skipping"; }
+	inline std::string DyssolC_WarningNoOverall(const std::string& p, int64_t i, const std::string& n) {
+		return "Warning while applying " + p + ": \n\t" + "Overall property with key " + std::to_string(i) + " (" + n +  ") is not defined in the flowsheet. Skipping"; }
+	inline std::string DyssolC_WarningNoPhase(const std::string& p, int64_t i, const std::string& n) {
+		return "Warning while applying " + p + ": \n\t" + "Phase with key " + std::to_string(i) + " (" + n + ") is not defined in the flowsheet. Skipping"; }
 	inline std::string DyssolC_ErrorNoScript() {
 		return "Error: Script file can not be opened"; }
 	inline std::string DyssolC_ErrorSrcDst(const std::string& src, const std::string& dst) {

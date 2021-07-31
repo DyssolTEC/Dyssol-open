@@ -84,7 +84,7 @@ void CScriptParser::ProcessLine(const std::string& _line)
 	case EEntryType::PATH:				entry->value = std::filesystem::path{ GetRestOfLine(ss) };	break;
 	case EEntryType::NAME_OR_KEY:		entry->value = GetValueFromStream<SNameOrKey>(ss);			break;
 	case EEntryType::UNIT_PARAM:		entry->value = ReadUnitParameterFromStream(ss);				break;
-	case EEntryType::HOLDUP_OVERALL:	entry->value = ReadHoldupOverallFromStream(ss);				break;
+	case EEntryType::HOLDUP_DEPENDENT:	entry->value = ReadHoldupDependentFromStream(ss);			break;
 	}
 }
 
@@ -120,6 +120,16 @@ void CScriptParser::NamesToKeys()
 		return static_cast<EOverall>(-1);
 	};
 
+	// Phases
+	const auto PhaseKey = [](const std::string& _name)
+	{
+		if (_name == "SOLID")					return EPhase::SOLID;
+		if (_name == "LIQUID")					return EPhase::LIQUID;
+		if (_name == "GAS" || _name == "VAPOR")	return EPhase::VAPOR;
+		std::cout << StrConst::DyssolC_WarningUnknown(_name) << std::endl;
+		return EPhase::UNDEFINED;
+	};
+
 	for (auto& job : m_jobs)
 	{
 		for (auto& param : job->GetValuesPtr<SNameOrKey>(EScriptKeys::CONVERGENCE_METHOD))
@@ -128,13 +138,16 @@ void CScriptParser::NamesToKeys()
 		for (auto& param : job->GetValuesPtr<SNameOrKey>(EScriptKeys::EXTRAPOLATION_METHOD))
 			if (!param->HasKey())
 				param->key = E2I(ExtrapolationKey(ToUpperCase(param->name)));
-		for (auto& entry : job->GetValuesPtr<SHoldupOverallSE>(EScriptKeys::HOLDUP_OVERALL))
+		for (auto& entry : job->GetValuesPtr<SHoldupDependentSE>(EScriptKeys::HOLDUP_OVERALL))
 			if (!entry->param.HasKey())
 				entry->param.key = E2I(OverallKey(ToUpperCase(entry->param.name)));
+		for (auto& entry : job->GetValuesPtr<SHoldupDependentSE>(EScriptKeys::HOLDUP_PHASES))
+			if (!entry->param.HasKey())
+				entry->param.key = E2I(PhaseKey(ToUpperCase(entry->param.name)));
 	}
 }
 
-// TODO: move to corresponding friend stream functions
+// TODO: maybe move to corresponding friend stream functions
 SUnitParameterSE CScriptParser::ReadUnitParameterFromStream(std::istream& _s) const
 {
 	SUnitParameterSE res;
@@ -144,9 +157,9 @@ SUnitParameterSE CScriptParser::ReadUnitParameterFromStream(std::istream& _s) co
 	return res;
 }
 
-SHoldupOverallSE CScriptParser::ReadHoldupOverallFromStream(std::istream& _s) const
+SHoldupDependentSE CScriptParser::ReadHoldupDependentFromStream(std::istream& _s) const
 {
-	SHoldupOverallSE res;
+	SHoldupDependentSE res;
 	res.unit   = GetValueFromStream<SNameOrIndex>(_s);
 	res.holdup = GetValueFromStream<SNameOrIndex>(_s);
 	res.param  = GetValueFromStream<SNameOrKey>(_s);

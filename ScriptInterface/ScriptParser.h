@@ -31,10 +31,10 @@ private:
 
 	// Post-process read entries by resolving named variables to their end values.
 	void NamesToKeys();
-	
+
 	// Extracts unit parameter script entry from the stream.
 	ScriptInterface::SUnitParameterSE ReadUnitParameterFromStream(std::istream& _s) const;
-	// Extracts holdup overall parameter script entry from the stream.
-	ScriptInterface::SHoldupOverallSE ReadHoldupOverallFromStream(std::istream& _s) const;
+	// Extracts holdup time-dependent parameter (overall, phases) script entry from the stream.
+	ScriptInterface::SHoldupDependentSE ReadHoldupDependentFromStream(std::istream& _s) const;
 };
 

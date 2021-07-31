@@ -45,7 +45,7 @@ bool CScriptRunner::LoadFiles(const CScriptJob& _job)
 	const bool hasSrc = _job.HasKey(EScriptKeys::SOURCE_FILE);
 	const bool hasDst = _job.HasKey(EScriptKeys::RESULT_FILE);
 	if (!hasSrc && !hasDst)
-		PRINT_AND_RETURN(DyssolC_ErrorSrcDst, StrKey(EScriptKeys::SOURCE_FILE), StrKey(EScriptKeys::RESULT_FILE));
+		PRINT_AND_RETURN(DyssolC_ErrorSrcDst, StrKey(EScriptKeys::SOURCE_FILE), StrKey(EScriptKeys::RESULT_FILE))
 	if (hasSrc && !hasDst)
 		std::cout << DyssolC_WriteSrc(StrKey(EScriptKeys::SOURCE_FILE), StrKey(EScriptKeys::RESULT_FILE)) << std::endl;
 
@@ -53,7 +53,7 @@ bool CScriptRunner::LoadFiles(const CScriptJob& _job)
 	const auto MDBfile = _job.GetValue<path>(EScriptKeys::MATERIALS_DATABASE);
 	std::cout << DyssolC_LoadMDB(MDBfile.string()) << std::endl;
 	if (!m_materialsDatabase.LoadFromFile(MDBfile))
-		PRINT_AND_RETURN(DyssolC_ErrorMDB);
+		PRINT_AND_RETURN(DyssolC_ErrorMDB)
 
 	// set paths to models
 	std::cout << DyssolC_LoadModels(current_path().string()) << std::endl;
@@ -71,7 +71,7 @@ bool CScriptRunner::LoadFiles(const CScriptJob& _job)
 		std::cout << DyssolC_LoadFlowsheet(srcFile.string()) << std::endl;
 		CH5Handler fileHandler;
 		if (!m_flowsheet.LoadFromFile(fileHandler, srcFile))
-			PRINT_AND_RETURN(DyssolC_ErrorLoad);
+			PRINT_AND_RETURN(DyssolC_ErrorLoad)
 	}
 
 	return true;
@@ -119,16 +119,13 @@ bool CScriptRunner::SetupUnitParameters(const CScriptJob& _job)
 	{
 		// get pointer to unit
 		auto* unit = GetUnitPtr(entry.unit);
-		if (!unit)
-			PRINT_AND_RETURN(DyssolC_ErrorParseUnit, StrKey(EScriptKeys::UNIT_PARAMETER), entry.unit.name, entry.unit.index);
+		if (!unit)		PRINT_AND_RETURN(DyssolC_ErrorParseUnit, StrKey(EScriptKeys::UNIT_PARAMETER), entry.unit.name, entry.unit.index)
 		// get pointer to unit's model
 		auto* model = unit->GetModel();
-		if (!model)
-			PRINT_AND_RETURN(DyssolC_ErrorParseModel, StrKey(EScriptKeys::UNIT_PARAMETER), unit->GetName());
+		if (!model)		PRINT_AND_RETURN(DyssolC_ErrorParseModel, StrKey(EScriptKeys::UNIT_PARAMETER), unit->GetName())
 		// get pointer to unit parameter
 		auto* param = GetUnitParamPtr(*model, entry.param);
-		if (!param)
-			PRINT_AND_RETURN(DyssolC_ErrorParseUP, StrKey(EScriptKeys::UNIT_PARAMETER), unit->GetName(), entry.param.name, entry.param.index);
+		if (!param)		PRINT_AND_RETURN(DyssolC_ErrorParseUP, StrKey(EScriptKeys::UNIT_PARAMETER), unit->GetName(), entry.param.name, entry.param.index)
 		std::stringstream ss{ entry.values };	// create a stream with parameter values
 		param->ValueFromStream(ss);				// read unit parameter values
 	}
@@ -140,24 +137,21 @@ bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 {
 	// The holdup may be cleaned before setting time-dependent values. But those holdups, which are not mentioned in the script file, must not be changed.
 	// If cleaning is requested, on the first access to the holdup, clean it, store in this vector and do not clean any further.
-	std::vector<CBaseStream*> processed;												// already processed holdups
+	std::vector<CBaseStream*> processed;	// already processed holdups
 	const bool keepTP = !_job.HasKey(EScriptKeys::HOLDUPS_KEEP_EXISTING_VALUES) || _job.GetValue<bool>(EScriptKeys::HOLDUPS_KEEP_EXISTING_VALUES);	// keep or remove time points
 
 	// setup holdups overall parameters
-	for (const auto& entry : _job.GetValues<SHoldupOverallSE>(EScriptKeys::HOLDUP_OVERALL))
+	for (const auto& entry : _job.GetValues<SHoldupDependentSE>(EScriptKeys::HOLDUP_OVERALL))
 	{
 		// get pointer to unit
 		auto* unit = GetUnitPtr(entry.unit);
-		if (!unit)
-			PRINT_AND_RETURN(DyssolC_ErrorParseUnit, StrKey(EScriptKeys::HOLDUP_OVERALL), entry.unit.name, entry.unit.index);
+		if (!unit)		PRINT_AND_RETURN(DyssolC_ErrorParseUnit, StrKey(EScriptKeys::HOLDUP_OVERALL), entry.unit.name, entry.unit.index)
 		// get pointer to unit's model
 		auto* model = unit->GetModel();
-		if (!model)
-			PRINT_AND_RETURN(DyssolC_ErrorParseModel, StrKey(EScriptKeys::HOLDUP_OVERALL), unit->GetName())
+		if (!model)		PRINT_AND_RETURN(DyssolC_ErrorParseModel, StrKey(EScriptKeys::HOLDUP_OVERALL), unit->GetName())
 		// get pointer to holdup
 		auto* holdup = GetHoldupPtr(*model, entry.holdup);
-		if (!holdup)
-			PRINT_AND_RETURN(DyssolC_ErrorParseHO, StrKey(EScriptKeys::HOLDUP_OVERALL), unit->GetName(), entry.holdup.name, entry.holdup.index);
+		if (!holdup)	PRINT_AND_RETURN(DyssolC_ErrorParseHO, StrKey(EScriptKeys::HOLDUP_OVERALL), unit->GetName(), entry.holdup.name, entry.holdup.index)
 		// remove all time points if requested and if it is the first access to this stream
 		if (!keepTP && !VectorContains(processed, holdup))
 		{
@@ -169,7 +163,33 @@ bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 			for (size_t i = 0; i < entry.values.Size(); ++i)
 				holdup->SetOverallProperty(entry.values.GetParamAt(i), static_cast<EOverall>(entry.param.key), entry.values.GetValueAt(i));
 		else
-			std::cout << DyssolC_WarningNoOverall(StrKey(EScriptKeys::HOLDUP_OVERALL), entry.param.key) << std::endl;
+			std::cout << DyssolC_WarningNoOverall(StrKey(EScriptKeys::HOLDUP_OVERALL), entry.param.key, entry.param.name) << std::endl;
+	}
+
+	// setup holdups phases fractions
+	for (const auto& entry : _job.GetValues<SHoldupDependentSE>(EScriptKeys::HOLDUP_PHASES))
+	{
+		// get pointer to unit
+		auto* unit = GetUnitPtr(entry.unit);
+		if (!unit)		PRINT_AND_RETURN(DyssolC_ErrorParseUnit, StrKey(EScriptKeys::HOLDUP_PHASES), entry.unit.name, entry.unit.index)
+		// get pointer to unit's model
+		auto* model = unit->GetModel();
+		if (!model)		PRINT_AND_RETURN(DyssolC_ErrorParseModel, StrKey(EScriptKeys::HOLDUP_PHASES), unit->GetName())
+		// get pointer to holdup
+		auto* holdup = GetHoldupPtr(*model, entry.holdup);
+		if (!holdup)	PRINT_AND_RETURN(DyssolC_ErrorParseHO, StrKey(EScriptKeys::HOLDUP_PHASES), unit->GetName(), entry.holdup.name, entry.holdup.index)
+		// remove all time points if requested and if it is the first access to this stream
+		if (!keepTP && !VectorContains(processed, holdup))
+		{
+			holdup->RemoveAllTimePoints();
+			processed.push_back(holdup);
+		}
+		// set values
+		if (m_flowsheet.HasPhase(static_cast<EPhase>(entry.param.key)))
+			for (size_t i = 0; i < entry.values.Size(); ++i)
+				holdup->SetPhaseFraction(entry.values.GetParamAt(i), static_cast<EPhase>(entry.param.key), entry.values.GetValueAt(i));
+		else
+			std::cout << DyssolC_WarningNoPhase(StrKey(EScriptKeys::HOLDUP_PHASES), entry.param.key, entry.param.name) << std::endl;
 	}
 
 	return true;
@@ -181,7 +201,7 @@ bool CScriptRunner::RunSimulation(const CScriptJob& _job)
 	std::cout << DyssolC_Initialize() << std::endl;
 	const std::string error = m_flowsheet.Initialize();
 	if (!error.empty())
-		PRINT_AND_RETURN(DyssolC_ErrorInit, error);
+		PRINT_AND_RETURN(DyssolC_ErrorInit, error)
 
 	// run simulation
 	m_simulator.SetFlowsheet(&m_flowsheet);

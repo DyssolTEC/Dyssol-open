@@ -44,21 +44,22 @@ namespace ScriptInterface
 		UNIT_PARAMETER,
 		HOLDUPS_KEEP_EXISTING_VALUES,
 		HOLDUP_OVERALL,
+		HOLDUP_PHASES,
 	};
 
 	// All possible types of script entries.
 	enum class EEntryType
 	{
-		EMPTY,			// Key without value
-		BOOL,			// bool
-		INT,			// int64_t
-		UINT,			// uint64_t
-		DOUBLE,			// double
-		STRING,			// std::string
-		PATH,			// std::filesystem::path
-		NAME_OR_KEY,	// SNameOrKey
-		UNIT_PARAM,		// SUnitParameterSE
-		HOLDUP_OVERALL,	// SHoldupOverallSE
+		EMPTY,				// Key without value
+		BOOL,				// bool
+		INT,				// int64_t
+		UINT,				// uint64_t
+		DOUBLE,				// double
+		STRING,				// std::string
+		PATH,				// std::filesystem::path
+		NAME_OR_KEY,		// SNameOrKey
+		UNIT_PARAM,			// SUnitParameterSE
+		HOLDUP_DEPENDENT,	// SHoldupDependentSE
 	};
 
 	// Help structure to work with entries that can be defined either by their name or by their index.
@@ -100,8 +101,8 @@ namespace ScriptInterface
 		std::string values{};	// Value(s) of the unit parameter as a string.
 	};
 
-	// Struct to parse script entries (SE) with unit holdups' overall parameters.
-	struct SHoldupOverallSE
+	// Struct to parse script entries (SE) with unit holdups' time-dependent parameters (overall, phases).
+	struct SHoldupDependentSE
 	{
 		SNameOrIndex unit{};		// Name or index of the unit container.
 		SNameOrIndex holdup{};		// Name or index of the holdup within the unit.
@@ -121,7 +122,7 @@ namespace ScriptInterface
 	struct SScriptEntry : SScriptEntryDescriptor
 	{
 		// Value of the entry of different types.
-		std::variant<bool, int64_t, uint64_t, double, std::string, std::filesystem::path, SNameOrKey, SUnitParameterSE, SHoldupOverallSE> value{};
+		std::variant<bool, int64_t, uint64_t, double, std::string, std::filesystem::path, SNameOrKey, SUnitParameterSE, SHoldupDependentSE> value{};
 
 		SScriptEntry() = default;
 		SScriptEntry(const SScriptEntryDescriptor& _descr) : SScriptEntryDescriptor{ _descr } {}
@@ -171,8 +172,10 @@ namespace ScriptInterface
 			MAKE_ARG(EScriptKeys::EXTRAPOLATION_METHOD        , EEntryType::NAME_OR_KEY),
 			// unit settings
 			MAKE_ARG(EScriptKeys::UNIT_PARAMETER              , EEntryType::UNIT_PARAM),
+			// holdup and input streams parameters
 			MAKE_ARG(EScriptKeys::HOLDUPS_KEEP_EXISTING_VALUES, EEntryType::BOOL),
-			MAKE_ARG(EScriptKeys::HOLDUP_OVERALL			  , EEntryType::HOLDUP_OVERALL),
+			MAKE_ARG(EScriptKeys::HOLDUP_OVERALL			  , EEntryType::HOLDUP_DEPENDENT),
+			MAKE_ARG(EScriptKeys::HOLDUP_PHASES				  , EEntryType::HOLDUP_DEPENDENT),
 		};
 	}
 
