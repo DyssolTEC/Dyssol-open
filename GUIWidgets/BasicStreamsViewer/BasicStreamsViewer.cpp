@@ -124,7 +124,7 @@ void CBasicStreamsViewer::SetupComboBoxProperties() const
 	for (const auto& phase : m_pFlowsheet->GetPhases())
 		ui.comboBoxProperties->addItem(QString::fromStdString(phase.name), E2I(EPropertyType::Phase1) + index++);
 	ui.comboBoxProperties->addItem(StrConst::BSV_PropSauterDiameter, E2I(EPropertyType::SauterDiameter));
-	if (m_pFlowsheet->IsPhaseDefined(EPhase::SOLID))
+	if (m_pFlowsheet->HasPhase(EPhase::SOLID))
 		ui.comboBoxProperties->addItem(StrConst::BSV_PropSolidDistribution, E2I(EPropertyType::SolidDistr));
 
 	block.unblock();
@@ -253,7 +253,7 @@ void CBasicStreamsViewer::GetSelectedDistributions()
 		case EPropertyType::SolidDistr:
 		case EPropertyType::SauterDiameter:
 		{
-			if (m_pFlowsheet->IsPhaseDefined(EPhase::SOLID))
+			if (m_pFlowsheet->HasPhase(EPhase::SOLID))
 				m_vSelectedMD.push_back(s->GetPhase(EPhase::SOLID)->MDDistr());
 			break;
 		}

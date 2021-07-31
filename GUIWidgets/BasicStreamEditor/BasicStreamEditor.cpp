@@ -101,7 +101,7 @@ void CBasicStreamEditor::UpdateTabs()
 	if (ui.mainTabWidget->count() > static_cast<int>(m_vMDMTablePhases.size()) + 2)
 		ui.mainTabWidget->removeTab(static_cast<int>(m_vMDMTablePhases.size()) + 2);
 
-	if (!m_pFlowsheet->IsPhaseDefined(EPhase::SOLID))
+	if (!m_pFlowsheet->HasPhase(EPhase::SOLID))
 	{
 		m_pSolidDistrEditor->GetViewState(m_vLastCombos, m_vLastSliders);
 		m_pSolidDistrEditor->setVisible(false);
@@ -124,7 +124,7 @@ void CBasicStreamEditor::UpdateTabs()
 		}
 	}
 
-	if (m_pFlowsheet->IsPhaseDefined(EPhase::SOLID))
+	if (m_pFlowsheet->HasPhase(EPhase::SOLID))
 	{
 		//m_pSolidDistrEditor = new CSolidDistributionsEditor(ui.mainTabWidget);
 		m_pSolidDistrEditor->SetFlowsheet(m_pFlowsheet, m_materialsDB);
@@ -158,7 +158,7 @@ void CBasicStreamEditor::UpdateTabContent()
 	if (nTabIndex == -1)
 		return;
 
-	if (m_pFlowsheet->IsPhaseDefined(EPhase::SOLID))
+	if (m_pFlowsheet->HasPhase(EPhase::SOLID))
 		m_pSolidDistrEditor->GetViewState(m_vLastCombos, m_vLastSliders);
 
 	if (nTabIndex == 0)
@@ -169,7 +169,7 @@ void CBasicStreamEditor::UpdateTabContent()
 		UpdatePhaseTab(nTabIndex - 2);
 	else
 	{
-		if (m_pFlowsheet->IsPhaseDefined(EPhase::SOLID))
+		if (m_pFlowsheet->HasPhase(EPhase::SOLID))
 			m_pSolidDistrEditor->SetViewState(m_vLastCombos, m_vLastSliders);
 		UpdateDistributionTab();
 		int nTimeRow = ui.timePointsTable->currentRow();
@@ -253,7 +253,7 @@ void CBasicStreamEditor::UpdateDistributionTab()
 {
 	if (!m_pFlowsheet) return;
 
-	if (!m_pFlowsheet->IsPhaseDefined(EPhase::SOLID))
+	if (!m_pFlowsheet->HasPhase(EPhase::SOLID))
 		return;
 
 	if (m_pSelectedHoldup == NULL)
@@ -372,7 +372,7 @@ void CBasicStreamEditor::TableTimeChanged(int _nRow, int _nCol, int _nPrevRow, i
 	if (ui.mainTabWidget->currentIndex() == m_vMDMTablePhases.size() + 2) // solid distribution tab
 	{
 		QApplication::setOverrideCursor(Qt::WaitCursor);
-		if (m_pFlowsheet->IsPhaseDefined(EPhase::SOLID))
+		if (m_pFlowsheet->HasPhase(EPhase::SOLID))
 		{
 			m_pSolidDistrEditor->GetViewState(m_vLastCombos, m_vLastSliders);
 			m_pSolidDistrEditor->SetViewState(m_vLastCombos, m_vLastSliders);
@@ -391,7 +391,7 @@ void CBasicStreamEditor::SaveViewState()
 {
 	m_nLastTab = ui.mainTabWidget->currentIndex() == -1 ? 0 : ui.mainTabWidget->currentIndex();
 	m_nLastTime = ui.timePointsTable->currentRow() == -1 ? 0 : ui.timePointsTable->currentRow();
-	if (m_pFlowsheet->IsPhaseDefined(EPhase::SOLID))
+	if (m_pFlowsheet->HasPhase(EPhase::SOLID))
 		m_pSolidDistrEditor->GetViewState(m_vLastCombos, m_vLastSliders);
 }
 
@@ -403,7 +403,7 @@ void CBasicStreamEditor::LoadViewState()
 		ui.mainTabWidget->setCurrentIndex(m_nLastTab);
 	if (m_nLastTime < ui.timePointsTable->rowCount())
 		ui.timePointsTable->selectRow(m_nLastTime);
-	if (m_pFlowsheet->IsPhaseDefined(EPhase::SOLID))
+	if (m_pFlowsheet->HasPhase(EPhase::SOLID))
 		m_pSolidDistrEditor->SetViewState(m_vLastCombos, m_vLastSliders);
 
 	QApplication::restoreOverrideCursor();

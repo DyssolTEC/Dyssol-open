@@ -434,7 +434,7 @@ std::vector<SPhaseDescriptor> CFlowsheet::GetPhases() const
 	return m_phases;
 }
 
-bool CFlowsheet::IsPhaseDefined(EPhase _phase)
+bool CFlowsheet::HasPhase(EPhase _phase)
 {
 	return VectorContains(m_phases, [&](const auto& p) { return p.state == _phase; });
 }

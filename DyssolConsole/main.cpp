@@ -204,7 +204,7 @@ void RunSimulation(const CConfigFileParser& _parser)
 		if (h.iHoldup >= holdups.size()) continue;
 		CBaseStream* pHoldup = holdups[h.iHoldup];
 		if (!pHoldup) continue;
-		if (!flowsheet.IsPhaseDefined(EPhase::SOLID)) continue;
+		if (!flowsheet.HasPhase(EPhase::SOLID)) continue;
 		const CDistributionsGrid* pGrid = flowsheet.GetDistributionsGrid();
 		if (h.iDistribution >= pGrid->GetDistributionsNumber()) continue;
 		const std::vector<double> vTPs = pHoldup->GetAllTimePoints();
