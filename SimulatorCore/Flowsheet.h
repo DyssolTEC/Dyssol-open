@@ -163,7 +163,7 @@ public:
 	// Returns descriptors of all defined phases.
 	std::vector<SPhaseDescriptor> GetPhases() const;
 	// Checks if a phase of the specified type exists in the flowsheet.
-	bool IsPhaseDefined(EPhase _phase);
+	bool HasPhase(EPhase _phase);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Related to simulation

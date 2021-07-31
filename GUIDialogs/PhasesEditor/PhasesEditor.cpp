@@ -170,7 +170,7 @@ bool CPhasesEditor::ApplyChanges()
 		std::string sPhaseName = ui.tableWidget->item( i, 0 )->text().toStdString();
 		auto state = static_cast<EPhase>(m_vCombos[i]->currentIndex() + 1);
 		vNewPhases.push_back(state);
-		if (m_pFlowsheet->IsPhaseDefined(state))
+		if (m_pFlowsheet->HasPhase(state))
 		{
 			const auto& phases = m_pFlowsheet->GetPhases();
 			const size_t index = VectorFind(phases, [&](const auto& p) { return p.state == state; });

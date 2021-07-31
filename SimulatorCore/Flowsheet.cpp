@@ -463,7 +463,7 @@ std::vector<SPhaseDescriptor> CFlowsheet::GetPhases() const
 	return m_phases;
 }
 
-bool CFlowsheet::IsPhaseDefined(EPhase _phase)
+bool CFlowsheet::HasPhase(EPhase _phase)
 {
 	return VectorContains(m_phases, [&](const auto& p) { return p.state == _phase; });
 }
@@ -521,18 +521,28 @@ std::string CFlowsheet::Initialize()
 
 	// check for empty feeds and holdups
 	for (const auto& unit : m_units)
-	{
-		const auto& feeds = unit->GetModel()->GetStreamsManager().GetFeedsInit();
-		if (!feeds.empty())
-			for (const auto& feed : feeds)
-				if (feed->GetAllTimePoints().empty())
-					return StrConst::Flow_ErrEmptyHoldup(unit->GetName(), feed->GetName());
-		const auto& holdups = unit->GetModel()->GetStreamsManager().GetHoldupsInit();
-		if (!holdups.empty())
-			for (const auto& holdup : holdups)
-				if (holdup->GetAllTimePoints().empty())
-					return StrConst::Flow_ErrEmptyHoldup(unit->GetName(), holdup->GetName());
-	}
+		for (const auto& h : unit->GetModel()->GetStreamsManager().GetAllInit())
+			if (h->GetAllTimePoints().empty())
+				return StrConst::Flow_ErrEmptyHoldup(unit->GetName(), h->GetName());
+
+	// check that mass fractions in feeds and holdups add to 1
+	for (const auto& unit : m_units)
+		for (const auto& h : unit->GetModel()->GetStreamsManager().GetAllInit())
+			for (double t : h->GetAllTimePoints())
+			{
+				if (h->GetMass(t) == 0.0) continue;
+				// check phase fractions
+				const double phaseSum = std::accumulate(m_phases.begin(), m_phases.end(), 0.0, [&](double a, const auto& p) { return a + h->GetPhaseFraction(t, p.state); });
+				if (std::fabs(phaseSum - 1.0) > 1e-10)
+					return StrConst::Flow_ErrPhaseFractions(unit->GetName(), h->GetName(), t);
+				// check compound fractions
+				for (const auto& p : m_phases)
+				{
+					const double compSum = std::accumulate(m_compounds.begin(), m_compounds.end(), 0.0, [&](double a, const auto& c) { return a + h->GetCompoundFraction(t, c, p.state); });
+					if (std::fabs(compSum - 1.0) > 1e-10)
+						return StrConst::Flow_ErrCompoundFractions(unit->GetName(), h->GetName(), p.name, t);
+				}
+			}
 
 	return {};
 }
