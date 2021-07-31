@@ -400,6 +400,10 @@ namespace StrConst
 		return std::string("Holdup '" + s2 + "' in unit '" + s1 + "' is empty."); }
 	inline std::string  Flow_ErrEmptyUnit(const std::string& s1) {
 		return std::string("No model is assigned to unit '" + s1 + "'."); }
+	inline std::string  Flow_ErrPhaseFractions(const std::string& u, const std::string& h, double t) {
+		return std::string("Phase fractions of holdup '" + h + "' in unit '" + u + "' at time point " + std::to_string(t) + " s do not sum up to 1."); }
+	inline std::string  Flow_ErrCompoundFractions(const std::string& u, const std::string& h, const std::string& p, double t) {
+		return std::string("Compound fractions of holdup '" + h + "' of phase '" + p + "' in unit '" + u + "' at time point " + std::to_string(t) + " s do not sum up to 1."); }
 	const char* const	Flow_ErrEmptyMDB = "Materials database file has not been loaded or empty.";
 	const char* const	Flow_ErrEmptySequence = "Calculation sequence is empty.";
 	const char* const	Flow_ErrWrongSequence = "Wrong calculation sequence.";
