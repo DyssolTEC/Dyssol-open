@@ -45,6 +45,7 @@ namespace ScriptInterface
 		HOLDUPS_KEEP_EXISTING_VALUES,
 		HOLDUP_OVERALL,
 		HOLDUP_PHASES,
+		HOLDUP_COMPOUNDS,
 	};
 
 	// All possible types of script entries.
@@ -60,6 +61,7 @@ namespace ScriptInterface
 		NAME_OR_KEY,		// SNameOrKey
 		UNIT_PARAM,			// SUnitParameterSE
 		HOLDUP_DEPENDENT,	// SHoldupDependentSE
+		HOLDUP_COMPOUNDS,	// SHoldupCompoundSE
 	};
 
 	// Help structure to work with entries that can be defined either by their name or by their index.
@@ -98,7 +100,7 @@ namespace ScriptInterface
 	{
 		SNameOrIndex unit{};	// Name or index of the unit container.
 		SNameOrIndex param{};	// Name or index of the parameter.
-		std::string values{};	// Value(s) of the unit parameter as a string.
+		std::string values{};	// Value(s) of the unit parameter as a string for postponed parsing.
 	};
 
 	// Struct to parse script entries (SE) with unit holdups' time-dependent parameters (overall, phases).
@@ -106,8 +108,16 @@ namespace ScriptInterface
 	{
 		SNameOrIndex unit{};		// Name or index of the unit container.
 		SNameOrIndex holdup{};		// Name or index of the holdup within the unit.
-		SNameOrKey param{};			// Name or key of the overall parameter.
-		CDependentValues values{};	// Time-dependent value(s) of the overall holdup's parameter.
+		std::vector<double> values;	// Value(s) of the time-dependent parameters as a string for postponed parsing.
+	};
+
+	// Struct to parse script entries (SE) with unit holdups' time-dependent compound fractions.
+	struct SHoldupCompoundsSE
+	{
+		SNameOrIndex unit{};			// Name or index of the unit container.
+		SNameOrIndex holdup{};			// Name or index of the holdup within the unit.
+		SNameOrKey phase{};				// Name or key of the phase.
+		std::vector<double> values{};	// Value(s) of the time-dependent compound fractions as a string for postponed parsing.
 	};
 
 	// Descriptor for an entry of the script file.
@@ -122,7 +132,7 @@ namespace ScriptInterface
 	struct SScriptEntry : SScriptEntryDescriptor
 	{
 		// Value of the entry of different types.
-		std::variant<bool, int64_t, uint64_t, double, std::string, std::filesystem::path, SNameOrKey, SUnitParameterSE, SHoldupDependentSE> value{};
+		std::variant<bool, int64_t, uint64_t, double, std::string, std::filesystem::path, SNameOrKey, SUnitParameterSE, SHoldupDependentSE, SHoldupCompoundsSE> value{};
 
 		SScriptEntry() = default;
 		SScriptEntry(const SScriptEntryDescriptor& _descr) : SScriptEntryDescriptor{ _descr } {}
@@ -176,6 +186,7 @@ namespace ScriptInterface
 			MAKE_ARG(EScriptKeys::HOLDUPS_KEEP_EXISTING_VALUES, EEntryType::BOOL),
 			MAKE_ARG(EScriptKeys::HOLDUP_OVERALL			  , EEntryType::HOLDUP_DEPENDENT),
 			MAKE_ARG(EScriptKeys::HOLDUP_PHASES				  , EEntryType::HOLDUP_DEPENDENT),
+			MAKE_ARG(EScriptKeys::HOLDUP_COMPOUNDS            , EEntryType::HOLDUP_COMPOUNDS),
 		};
 	}
 

@@ -247,6 +247,14 @@ namespace StringFunctions
 		return res;
 	}
 
+	template <>
+	std::vector<double> GetValueFromStream<std::vector<double>>(std::istream& _is)
+	{
+		std::vector<double> res;
+		std::copy(std::istream_iterator<double>{ _is }, std::istream_iterator<double>{}, std::back_inserter(res));
+		return res;
+	}
+
 	std::string UnifyPath(const std::string& _path)
 	{
 		std::string s = _path;

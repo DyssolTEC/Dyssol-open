@@ -36,5 +36,7 @@ private:
 	ScriptInterface::SUnitParameterSE ReadUnitParameterFromStream(std::istream& _s) const;
 	// Extracts holdup time-dependent parameter (overall, phases) script entry from the stream.
 	ScriptInterface::SHoldupDependentSE ReadHoldupDependentFromStream(std::istream& _s) const;
+	// Extracts holdup compounds fractions script entry from the stream.
+	ScriptInterface::SHoldupCompoundsSE ReadHoldupCompoundsFromStream(std::istream& _s) const;
 };
 

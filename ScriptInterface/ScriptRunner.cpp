@@ -158,15 +158,21 @@ bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 			holdup->RemoveAllTimePoints();
 			processed.push_back(holdup);
 		}
-		// set values
-		if (m_flowsheet.HasOverallProperty(static_cast<EOverall>(entry.param.key)))
-			for (size_t i = 0; i < entry.values.Size(); ++i)
-				holdup->SetOverallProperty(entry.values.GetParamAt(i), static_cast<EOverall>(entry.param.key), entry.values.GetValueAt(i));
+		// check the number of passed arguments
+		if (entry.values.size() != m_flowsheet.GetOverallPropertiesNumber() && entry.values.size() % (m_flowsheet.GetOverallPropertiesNumber() + 1) != 0)
+			PRINT_AND_RETURN(DyssolC_ErrorArgumentsNumber, StrKey(EScriptKeys::HOLDUP_OVERALL), unit->GetName(), entry.holdup.name, entry.holdup.index)
+		// set values: only values for time point 0 without time are given
+		if (entry.values.size() == m_flowsheet.GetOverallPropertiesNumber())
+			for (size_t iOvr = 0; iOvr < m_flowsheet.GetOverallPropertiesNumber(); ++iOvr)
+				holdup->SetOverallProperty(0.0, m_flowsheet.GetOveralProperties()[iOvr].type, entry.values[iOvr]);
+		// set values: values with time points are given
 		else
-			std::cout << DyssolC_WarningNoOverall(StrKey(EScriptKeys::HOLDUP_OVERALL), entry.param.key, entry.param.name) << std::endl;
+			for (size_t iTime = 0; iTime < entry.values.size(); iTime += 4)
+				for (size_t iOvr = 0; iOvr < m_flowsheet.GetOverallPropertiesNumber(); ++iOvr)
+					holdup->SetOverallProperty(entry.values[iTime], m_flowsheet.GetOveralProperties()[iOvr].type, entry.values[iTime + iOvr + 1]);
 	}
 
-	// setup holdups phases fractions
+	// setup holdups phase fractions
 	for (const auto& entry : _job.GetValues<SHoldupDependentSE>(EScriptKeys::HOLDUP_PHASES))
 	{
 		// get pointer to unit
@@ -184,12 +190,51 @@ bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 			holdup->RemoveAllTimePoints();
 			processed.push_back(holdup);
 		}
-		// set values
-		if (m_flowsheet.HasPhase(static_cast<EPhase>(entry.param.key)))
-			for (size_t i = 0; i < entry.values.Size(); ++i)
-				holdup->SetPhaseFraction(entry.values.GetParamAt(i), static_cast<EPhase>(entry.param.key), entry.values.GetValueAt(i));
+		// check the number of passed arguments
+		if (entry.values.size() != m_flowsheet.GetPhasesNumber() && entry.values.size() % (m_flowsheet.GetPhasesNumber() + 1) != 0)
+			PRINT_AND_RETURN(DyssolC_ErrorArgumentsNumber, StrKey(EScriptKeys::HOLDUP_PHASES), unit->GetName(), entry.holdup.name, entry.holdup.index)
+		// set values: only values for time point 0 without time are given
+		if (entry.values.size() == m_flowsheet.GetPhasesNumber())
+			for (size_t iPhase = 0; iPhase < m_flowsheet.GetPhasesNumber(); ++iPhase)
+				holdup->SetPhaseFraction(0.0, m_flowsheet.GetPhases()[iPhase].state, entry.values[iPhase]);
+		// set values: values with time points are given
 		else
-			std::cout << DyssolC_WarningNoPhase(StrKey(EScriptKeys::HOLDUP_PHASES), entry.param.key, entry.param.name) << std::endl;
+			for (size_t iTime = 0; iTime < entry.values.size(); iTime += 4)
+				for (size_t iPhase = 0; iPhase < m_flowsheet.GetPhasesNumber(); ++iPhase)
+					holdup->SetPhaseFraction(entry.values[iTime], m_flowsheet.GetPhases()[iPhase].state, entry.values[iTime + iPhase + 1]);
+	}
+
+	// setup holdups compound fractions
+	for (const auto& entry : _job.GetValues<SHoldupCompoundsSE>(EScriptKeys::HOLDUP_COMPOUNDS))
+	{
+		// get pointer to unit
+		auto* unit = GetUnitPtr(entry.unit);
+		if (!unit)		PRINT_AND_RETURN(DyssolC_ErrorParseUnit, StrKey(EScriptKeys::HOLDUP_COMPOUNDS), entry.unit.name, entry.unit.index)
+		// get pointer to unit's model
+		auto* model = unit->GetModel();
+		if (!model)		PRINT_AND_RETURN(DyssolC_ErrorParseModel, StrKey(EScriptKeys::HOLDUP_COMPOUNDS), unit->GetName())
+		// get pointer to holdup
+		auto* holdup = GetHoldupPtr(*model, entry.holdup);
+		if (!holdup)	PRINT_AND_RETURN(DyssolC_ErrorParseHO, StrKey(EScriptKeys::HOLDUP_COMPOUNDS), unit->GetName(), entry.holdup.name, entry.holdup.index)
+		// remove all time points if requested and if it is the first access to this stream
+		if (!keepTP && !VectorContains(processed, holdup))
+		{
+			holdup->RemoveAllTimePoints();
+			processed.push_back(holdup);
+		}
+		// check the number of passed arguments
+		if (entry.values.size() != m_flowsheet.GetCompoundsNumber() && entry.values.size() % (m_flowsheet.GetCompoundsNumber() + 1) != 0)
+			PRINT_AND_RETURN(DyssolC_ErrorArgumentsNumber, StrKey(EScriptKeys::HOLDUP_COMPOUNDS), unit->GetName(), entry.holdup.name, entry.holdup.index, entry.phase.name, entry.phase.key)
+		// check that all phases are defined
+		if (!m_flowsheet.HasPhase(static_cast<EPhase>(entry.phase.key)))
+			PRINT_AND_RETURN(DyssolC_ErrorNoPhase, StrKey(EScriptKeys::HOLDUP_COMPOUNDS), unit->GetName(), entry.holdup.name, entry.holdup.index, entry.phase.name, entry.phase.key)
+		// set values: only values for time point 0 without time are given
+		if (entry.values.size() == m_flowsheet.GetCompoundsNumber())
+			holdup->SetCompoundsFractions(0.0, static_cast<EPhase>(entry.phase.key), entry.values);
+		// set values: values with time points are given
+		else
+			for (size_t iTime = 0; iTime < entry.values.size(); iTime += 4)
+				holdup->SetCompoundsFractions(entry.values[iTime], static_cast<EPhase>(entry.phase.key), std::vector<double>{ entry.values.begin() + iTime + 1, entry.values.begin() + iTime + 1 + m_flowsheet.GetCompoundsNumber() });
 	}
 
 	return true;

@@ -59,6 +59,7 @@ namespace StringFunctions
 	template<typename T> T GetValueFromStream(std::istream& _is) { T v{}; _is >> v; return v; }	// Returns the next value from the stream and advances stream's iterator correspondingly.
 	template<> bool GetValueFromStream(std::istream& _is);										// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for bool type.
 	template<> std::string GetValueFromStream(std::istream& _is);								// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for string type.
+	template<> std::vector<double> GetValueFromStream(std::istream& _is);						// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for vector<double>.
 	template<typename T>
 	std::enable_if_t<std::is_enum_v<T>, T> GetEnumFromStream(std::istream& _is)					// Returns the next value from the stream and advances stream's iterator correspondingly. Version for enum types.
 	{ return static_cast<T>(GetValueFromStream<std::underlying_type_t<T>>(_is)); }

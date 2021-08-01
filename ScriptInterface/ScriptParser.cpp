@@ -85,6 +85,7 @@ void CScriptParser::ProcessLine(const std::string& _line)
 	case EEntryType::NAME_OR_KEY:		entry->value = GetValueFromStream<SNameOrKey>(ss);			break;
 	case EEntryType::UNIT_PARAM:		entry->value = ReadUnitParameterFromStream(ss);				break;
 	case EEntryType::HOLDUP_DEPENDENT:	entry->value = ReadHoldupDependentFromStream(ss);			break;
+	case EEntryType::HOLDUP_COMPOUNDS:	entry->value = ReadHoldupCompoundsFromStream(ss);			break;
 	}
 }
 
@@ -138,12 +139,9 @@ void CScriptParser::NamesToKeys()
 		for (auto& param : job->GetValuesPtr<SNameOrKey>(EScriptKeys::EXTRAPOLATION_METHOD))
 			if (!param->HasKey())
 				param->key = E2I(ExtrapolationKey(ToUpperCase(param->name)));
-		for (auto& entry : job->GetValuesPtr<SHoldupDependentSE>(EScriptKeys::HOLDUP_OVERALL))
-			if (!entry->param.HasKey())
-				entry->param.key = E2I(OverallKey(ToUpperCase(entry->param.name)));
-		for (auto& entry : job->GetValuesPtr<SHoldupDependentSE>(EScriptKeys::HOLDUP_PHASES))
-			if (!entry->param.HasKey())
-				entry->param.key = E2I(PhaseKey(ToUpperCase(entry->param.name)));
+		for (auto& entry : job->GetValuesPtr<SHoldupCompoundsSE>(EScriptKeys::HOLDUP_COMPOUNDS))
+			if (!entry->phase.HasKey())
+				entry->phase.key = E2I(PhaseKey(ToUpperCase(entry->phase.name)));
 	}
 }
 
@@ -162,7 +160,16 @@ SHoldupDependentSE CScriptParser::ReadHoldupDependentFromStream(std::istream& _s
 	SHoldupDependentSE res;
 	res.unit   = GetValueFromStream<SNameOrIndex>(_s);
 	res.holdup = GetValueFromStream<SNameOrIndex>(_s);
-	res.param  = GetValueFromStream<SNameOrKey>(_s);
-	res.values = GetValueFromStream<CDependentValues>(_s);
+	res.values = GetValueFromStream<std::vector<double>>(_s);	// format depends on the flowsheet settings, so postpone final parsing until the flowsheet is loaded
+	return res;
+}
+
+SHoldupCompoundsSE CScriptParser::ReadHoldupCompoundsFromStream(std::istream& _s) const
+{
+	SHoldupCompoundsSE res;
+	res.unit   = GetValueFromStream<SNameOrIndex>(_s);
+	res.holdup = GetValueFromStream<SNameOrIndex>(_s);
+	res.phase  = GetValueFromStream<SNameOrKey>(_s);
+	res.values = GetValueFromStream<std::vector<double>>(_s);	// format depends on the flowsheet settings, so postpone final parsing until the flowsheet is loaded
 	return res;
 }
