@@ -17,11 +17,10 @@ class CPhase
 	CTimeDependentValue m_fractions;		// Mass fraction of this phase at each time point.
 	CMDMatrix m_distribution;				// Multidimensional distributed parameters.
 
-	std::vector<std::string> m_compounds;	// Keys of chemical compounds described in this phase.
 	const CDistributionsGrid& m_grid;		// Pointer to a distribution grid.
 
 public:
-	CPhase(EPhase _state, std::string _name, const CDistributionsGrid& _grid, std::vector<std::string> _compounds, const SCacheSettings& _cache);
+	CPhase(EPhase _state, std::string _name, const CDistributionsGrid& _grid, const SCacheSettings& _cache);
 
 	// Returns name of the stream.
 	std::string GetName() const;

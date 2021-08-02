@@ -9,10 +9,9 @@
 
 // TODO: remove all reinterpret_cast and static_cast for MDMatrix
 
-CPhase::CPhase(EPhase _state, std::string _name, const CDistributionsGrid& _grid, std::vector<std::string> _compounds, const SCacheSettings& _cache) :
+CPhase::CPhase(EPhase _state, std::string _name, const CDistributionsGrid& _grid, const SCacheSettings& _cache) :
 	m_name{ std::move(_name) },
 	m_state{ _state },
-	m_compounds{ std::move(_compounds) },
 	m_grid{ _grid }
 {
 	SetCacheSettings(_cache);
@@ -21,7 +20,7 @@ CPhase::CPhase(EPhase _state, std::string _name, const CDistributionsGrid& _grid
 
 	if (_state != EPhase::SOLID)
 		// TODO: fix this when CMDMatrix uses size_t.
-		m_distribution.SetDimension(DISTR_COMPOUNDS, static_cast<unsigned>(m_compounds.size()));
+		m_distribution.SetDimension(DISTR_COMPOUNDS, m_grid.GetClassesByDistr(DISTR_COMPOUNDS));
 	else
 	{
 		// TODO: fix this when CMDMatrix uses EDistrTypes.
@@ -76,7 +75,6 @@ void CPhase::RemoveAllTimePoints()
 void CPhase::AddCompound(const std::string& _compoundKey)
 {
 	if (HasCompound(_compoundKey)) return;
-	m_compounds.push_back(_compoundKey);
 	m_distribution.AddClass(DISTR_COMPOUNDS);
 }
 
@@ -84,7 +82,6 @@ void CPhase::RemoveCompound(const std::string& _compoundKey)
 {
 	if (!HasCompound(_compoundKey)) return;
 	m_distribution.RemoveClass(DISTR_COMPOUNDS, CompoundIndex(_compoundKey));
-	VectorDelete(m_compounds, _compoundKey);
 }
 
 double CPhase::GetFraction(double _time) const
@@ -212,13 +209,14 @@ void CPhase::LoadFromFile(const CH5Handler& _h5File, const std::string& _path)
 
 bool CPhase::HasCompound(const std::string& _compoundKey) const
 {
-	return VectorContains(m_compounds, _compoundKey);
+	return VectorContains(m_grid.GetSymbolicGridByDistr(DISTR_COMPOUNDS), _compoundKey);
 }
 
 size_t CPhase::CompoundIndex(const std::string& _compoundKey) const
 {
-	for (size_t i = 0; i < m_compounds.size(); ++i)
-		if (m_compounds[i] == _compoundKey)
+	const auto& compounds = m_grid.GetSymbolicGridByDistr(DISTR_COMPOUNDS);
+	for (size_t i = 0; i < compounds.size(); ++i)
+		if (compounds[i] == _compoundKey)
 			return i;
 	return static_cast<size_t>(-1);
 }

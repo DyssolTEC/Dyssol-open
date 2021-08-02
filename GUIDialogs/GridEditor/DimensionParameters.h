@@ -5,6 +5,8 @@
 #include "ui_DimensionParameters.h"
 #include "DistributionsGrid.h"
 
+class CMaterialsDatabase;
+
 class CDimensionParameters : public QWidget
 {
 	Q_OBJECT
@@ -13,11 +15,12 @@ public:
 
 private:
 	Ui::CDimensionParameters ui;
+	const CMaterialsDatabase& m_materialsDB;	// Reference to a global database of materials.
 	SGridDimension m_grid;
 	bool m_bAvoidSignals;
 
 public:
-	CDimensionParameters(QWidget* parent = 0);
+	CDimensionParameters(const CMaterialsDatabase& _materialsDB, QWidget* parent = 0);
 
 	void SetDistributionType(EDistrTypes _type);
 	void SetGrid(const SGridDimension& _grid);
@@ -44,7 +47,7 @@ private:
 	void UpdateUnitsVisibility() const;
 	void UpdateLimitsVisibility() const;
 	void UpdateGrid();
-	void UpdateGridData(const std::vector<double>& _vNumGrid, const std::vector<std::string>& _vStrGrid) const;
+	void UpdateGridData(EDistrTypes _dim, const std::vector<double>& _vNumGrid, const std::vector<std::string>& _vStrGrid) const;
 
 	std::vector<double> CalculateGrid() const;
 	double ToSI(double _dVal) const;

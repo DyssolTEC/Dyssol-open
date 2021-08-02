@@ -3,8 +3,11 @@
 #include "DimensionParameters.h"
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
+#include "MaterialsDatabase.h"
 
-CDimensionParameters::CDimensionParameters(QWidget* parent) : QWidget(parent)
+CDimensionParameters::CDimensionParameters(const CMaterialsDatabase& _materialsDB, QWidget* parent)
+	: QWidget(parent)
+	, m_materialsDB{ _materialsDB }
 {
 	ui.setupUi(this);
 
@@ -40,7 +43,7 @@ void CDimensionParameters::SetGrid(const SGridDimension& _grid)
 	UpdateLimitsVisibility();
 	UpdateUnitsVisibility();
 	UpdateControls();
-	UpdateGridData(m_grid.numGrid, m_grid.strGrid);
+	UpdateGridData(m_grid.distrType, m_grid.numGrid, m_grid.strGrid);
 	UpdateGrid();
 }
 
@@ -256,10 +259,10 @@ void CDimensionParameters::UpdateGrid()
 	std::vector<double> vTempNumGrid = m_grid.numGrid;
 	FromSI(vTempNumGrid);
 
-	UpdateGridData(vTempNumGrid, m_grid.strGrid);
+	UpdateGridData(m_grid.distrType, vTempNumGrid, m_grid.strGrid);
 }
 
-void CDimensionParameters::UpdateGridData(const std::vector<double>& _vNumGrid, const std::vector<std::string>& _vStrGrid) const
+void CDimensionParameters::UpdateGridData(EDistrTypes _dim, const std::vector<double>& _vNumGrid, const std::vector<std::string>& _vStrGrid) const
 {
 	QSignalBlocker blocker(ui.tableWidgetGrid);
 
@@ -271,7 +274,18 @@ void CDimensionParameters::UpdateGridData(const std::vector<double>& _vNumGrid, 
 		break;
 	case EGridEntry::GRID_SYMBOLIC:
 		ui.tableWidgetGrid->setRowCount((int)_vStrGrid.size());
-		ui.tableWidgetGrid->SetItemsColEditable(0, 0, _vStrGrid);
+		if (_dim != DISTR_COMPOUNDS)
+			ui.tableWidgetGrid->SetItemsColEditable(0, 0, _vStrGrid);
+		else
+		{
+			std::vector<std::string> names;
+			for (const auto& key : _vStrGrid)
+				if (const auto* compound = m_materialsDB.GetCompound(key))
+					names.push_back(compound->GetName());
+				else
+					names.push_back(key);
+			ui.tableWidgetGrid->SetItemsColEditable(0, 0, names);
+		}
 		break;
 	case EGridEntry::GRID_UNDEFINED:
 		break;

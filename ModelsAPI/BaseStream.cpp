@@ -19,7 +19,7 @@ CBaseStream::CBaseStream(const std::string& _key) :
 }
 
 CBaseStream::CBaseStream(const std::string& _key, const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid,
-	const std::vector<std::string>* _compounds, const std::vector<SOverallDescriptor>* _overall, const std::vector<SPhaseDescriptor>* _phases,
+	const std::vector<SOverallDescriptor>* _overall, const std::vector<SPhaseDescriptor>* _phases,
 	const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics) :
 	m_key{ _key.empty() ? StringFunctions::GenerateRandomKey() : _key },
 	m_materialsDB{ _materialsDB },
@@ -28,7 +28,7 @@ CBaseStream::CBaseStream(const std::string& _key, const CMaterialsDatabase* _mat
 	SetCacheSettings(*_cache);
 	SetToleranceSettings(*_tolerance);
 	SetThermodynamicsSettings(*_thermodynamics);
-	for (const auto& key : *_compounds)
+	for (const auto& key : m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS))
 		AddCompound(key);
 	for (const auto& overall : *_overall)
 		AddOverallProperty(overall.type, overall.name, overall.units);
@@ -40,7 +40,6 @@ CBaseStream::CBaseStream(const CBaseStream& _other) :
 	m_materialsDB{ _other.m_materialsDB },
 	m_grid{ _other.m_grid },
 	m_timePoints{ _other.m_timePoints },
-	m_compounds{ _other.m_compounds },
 	m_cacheSettings{ _other.m_cacheSettings }
 {
 	m_key = StringFunctions::GenerateRandomKey();
@@ -55,7 +54,6 @@ void CBaseStream::Clear()
 	m_timePoints.clear();
 	m_overall.clear();
 	m_phases.clear();
-	m_compounds.clear();
 	ClearEnthalpyCalculator();
 }
 
@@ -65,7 +63,6 @@ void CBaseStream::SetupStructure(const CBaseStream* _other)
 	SetMaterialsDatabase(_other->m_materialsDB);
 	SetCacheSettings(_other->m_cacheSettings);
 	m_grid = _other->m_grid;
-	m_compounds = _other->m_compounds;
 	for (const auto& [type, old] : _other->m_overall)
 		AddOverallProperty(type, old->GetName(), old->GetUnits());
 	for (const auto& [type, old] : _other->m_phases)
@@ -344,7 +341,6 @@ void CBaseStream::AddCompound(const std::string& _compoundKey)
 {
 	if (HasCompound(_compoundKey)) return;
 
-	m_compounds.push_back(_compoundKey);
 	for (auto& [state, phase] : m_phases)
 		phase->AddCompound(_compoundKey);
 
@@ -355,7 +351,6 @@ void CBaseStream::RemoveCompound(const std::string& _compoundKey)
 {
 	if (!HasCompound(_compoundKey)) return;
 
-	VectorDelete(m_compounds, _compoundKey);
 	for (auto& [state, phase] : m_phases)
 		phase->RemoveCompound(_compoundKey);
 
@@ -364,14 +359,13 @@ void CBaseStream::RemoveCompound(const std::string& _compoundKey)
 
 void CBaseStream::ClearCompounds()
 {
-	const auto copy = m_compounds;
-	for (const auto& c : copy)
+	for (const auto& c : m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS))
 		RemoveCompound(c);
 }
 
 std::vector<std::string> CBaseStream::GetAllCompounds() const
 {
-	return m_compounds;
+	return m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS);
 }
 
 double CBaseStream::GetCompoundFraction(double _time, const std::string& _compoundKey) const
@@ -410,9 +404,10 @@ double CBaseStream::GetCompoundMass(double _time, const std::string& _compoundKe
 
 std::vector<double> CBaseStream::GetCompoundsFractions(double _time) const
 {
-	std::vector<double> res(m_compounds.size());
-	for (size_t i = 0; i < m_compounds.size(); ++i)
-		res[i] = GetCompoundFraction(_time, m_compounds[i]);
+	const auto& compounds = m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS);
+	std::vector<double> res(compounds.size());
+	for (size_t i = 0; i < compounds.size(); ++i)
+		res[i] = GetCompoundFraction(_time, compounds[i]);
 	return res;
 }
 
@@ -468,7 +463,7 @@ void CBaseStream::SetCompoundMolFraction(double _time, const std::string& _compo
 CPhase* CBaseStream::AddPhase(EPhase _phase, const std::string& _name)
 {
 	// add phase
-	auto [it, flag] = m_phases.insert({ _phase, std::make_unique<CPhase>(_phase, _name, *m_grid, m_compounds, m_cacheSettings) });
+	auto [it, flag] = m_phases.insert({ _phase, std::make_unique<CPhase>(_phase, _name, *m_grid, m_cacheSettings) });
 
 	if (flag) // a new phase added
 	{
@@ -539,7 +534,7 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundConst
 	if (_property == MOLAR_MASS)
 	{
 		double res = 0.0;
-		for (const auto& c : m_compounds)
+		for (const auto& c : m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS))
 		{
 			const double molarMass = GetCompoundProperty(c, MOLAR_MASS);
 			if (molarMass != 0.0)
@@ -551,7 +546,7 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundConst
 	else
 	{
 		double res{ 0.0 };
-		for (const auto& c : m_compounds)
+		for (const auto& c : m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS))
 			res += GetCompoundFraction(_time, c, _phase) * GetCompoundProperty(c, _property);
 		return res;
 	}
@@ -572,7 +567,7 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 	case VAPOR_PRESSURE:
 	{
 		std::vector<double> pressures;
-		for (const auto& c : m_compounds)
+		for (const auto& c : m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS))
 			pressures.push_back(m_materialsDB->GetTPPropertyValue(c, _property, T, P));
 		return VectorMin(pressures);
 	}
@@ -580,7 +575,7 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 		switch (_phase)
 		{
 		case EPhase::LIQUID:
-			for (const auto& c : m_compounds)
+			for (const auto& c : m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS))
 			{
 				const double visco = m_materialsDB->GetTPPropertyValue(c, _property, T, P);
 				if (visco != 0.0)
@@ -592,7 +587,7 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 		case EPhase::VAPOR:
 		{
 			double numerator = 0.0, denominator = 0.0;
-			for (const auto& c : m_compounds)
+			for (const auto& c : m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS))
 			{
 				const double visco = m_materialsDB->GetTPPropertyValue(c, _property, T, P);
 				const double mollMass = GetCompoundProperty(c, MOLAR_MASS);
@@ -605,7 +600,7 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 			break;
 		}
 		case EPhase::SOLID:
-			for (const auto& c : m_compounds)
+			for (const auto& c : m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS))
 				res += GetCompoundFraction(_time, c, _phase) * m_materialsDB->GetTPPropertyValue(c, _property, T, P);
 			return res;
 		case EPhase::UNDEFINED: return {};
@@ -615,19 +610,19 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 		switch (_phase)
 		{
 		case EPhase::LIQUID:
-			for (const auto& c : m_compounds)
+			for (const auto& c : m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS))
 				res += GetCompoundMolFraction(_time, c, _phase) / std::pow(m_materialsDB->GetTPPropertyValue(c, _property, T, P), 2.0);
 			if (res != 0.0)
 				return 1.0 / std::sqrt(res);
 			break;
 		case EPhase::VAPOR:
-			for (const auto& c1 : m_compounds)
+			for (const auto& c1 : m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS))
 			{
 				const double conduct1 = m_materialsDB->GetTPPropertyValue(c1, _property, T, P);
 				const double mollMass1 = GetCompoundProperty(c1, MOLAR_MASS);
 				const double numerator = GetCompoundMolFraction(_time, c1, _phase) * conduct1;
 				double denominator = 0.0;
-				for (const auto& c2 : m_compounds)
+				for (const auto& c2 : m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS))
 				{
 					const double conduct2 = m_materialsDB->GetTPPropertyValue(c2, _property, T, P);
 					const double mollMass2 = GetCompoundProperty(c2, MOLAR_MASS);
@@ -639,7 +634,7 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 			}
 			return res;
 		case EPhase::SOLID:
-			for (const auto& c : m_compounds)
+			for (const auto& c : m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS))
 				res += GetCompoundFraction(_time, c, _phase) * m_materialsDB->GetTPPropertyValue(c, _property, T, P);
 			return res;
 		case EPhase::UNDEFINED: return {};
@@ -648,13 +643,14 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 	case DENSITY:
 		if (_phase == EPhase::SOLID && m_grid->IsDistrTypePresent(DISTR_PART_POROSITY))
 		{
+			const auto& compounds = m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS);
 			CMatrix2D distr = m_phases.at(_phase)->MDDistr()->GetDistribution(_time, DISTR_COMPOUNDS, DISTR_PART_POROSITY);
-			const size_t nCompounds = m_compounds.size();
+			const size_t nCompounds = compounds.size();
 			const size_t nPorosities = m_grid->GetClassesByDistr(DISTR_PART_POROSITY);
 			const std::vector<double> vPorosities = m_grid->GetClassMeansByDistr(DISTR_PART_POROSITY);
 			for (size_t iCompound = 0; iCompound < nCompounds; ++iCompound)
 			{
-				const double density = GetCompoundProperty(_time, m_compounds[iCompound], DENSITY);
+				const double density = GetCompoundProperty(_time, compounds[iCompound], DENSITY);
 				for (size_t iPoros = 0; iPoros < nPorosities; ++iPoros)
 					res += density * (1 - vPorosities[iPoros]) * distr[iCompound][iPoros];
 			}
@@ -662,7 +658,7 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 		}
 		else
 		{
-			for (const auto& c : m_compounds)
+			for (const auto& c : m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS))
 			{
 				const double componentDensity = m_materialsDB->GetTPPropertyValue(c, _property, T, P);
 				if (componentDensity != 0.0)
@@ -694,7 +690,7 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 	case TP_PROP_USER_DEFINED_18:
 	case TP_PROP_USER_DEFINED_19:
 	case TP_PROP_USER_DEFINED_20:
-		for (const auto& c : m_compounds)
+		for (const auto& c : m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS))
 			res += GetCompoundFraction(_time, c, _phase) * m_materialsDB->GetTPPropertyValue(c, _property, T, P);
 		return res;
 	case TP_PROP_NO_PROERTY: break;
@@ -748,7 +744,7 @@ double CBaseStream::GetPhaseMol(double _time, EPhase _phase) const
 	if (!HasPhase(_phase)) return {};
 
 	double res = 0.0;
-	for (const auto& c : m_compounds)
+	for (const auto& c : m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS))
 		res += GetCompoundMol(_time, c, _phase);
 
 	return res;
@@ -1347,7 +1343,7 @@ CMixtureEnthalpyLookup* CBaseStream::GetEnthalpyCalculator() const
 {
 	// lazy initialization
 	if (!m_enthalpyCalculator)
-		m_enthalpyCalculator = std::make_unique<CMixtureEnthalpyLookup>(m_materialsDB, m_compounds, m_thermodynamicsSettings.limits, m_thermodynamicsSettings.intervals);
+		m_enthalpyCalculator = std::make_unique<CMixtureEnthalpyLookup>(m_materialsDB, m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS), m_thermodynamicsSettings.limits, m_thermodynamicsSettings.intervals);
 	return m_enthalpyCalculator.get();
 }
 
@@ -1475,9 +1471,6 @@ void CBaseStream::SaveToFile(CH5Handler& _h5File, const std::string& _path)
 	// time points
 	_h5File.WriteData(_path, StrConst::Stream_H5TimePoints, m_timePoints);
 
-	// compounds
-	_h5File.WriteData(_path, StrConst::Stream_H5Compounds, m_compounds);
-
 	// overall properties
 	_h5File.WriteData(_path, StrConst::Stream_H5OverallKeys, E2I(MapKeys(m_overall)));
 	const std::string groupOveralls = _h5File.CreateGroup(_path, StrConst::Stream_H5GroupOveralls);
@@ -1517,14 +1510,12 @@ void CBaseStream::LoadFromFile(const CH5Handler& _h5File, const std::string& _pa
 	m_timePoints.clear();
 	m_overall.clear();
 	m_phases.clear();
-	m_compounds.clear();
 	ClearEnthalpyCalculator();
 
 	// basic data
 	_h5File.ReadData(_path, StrConst::Stream_H5StreamName, m_name);
 	_h5File.ReadData(_path, StrConst::Stream_H5StreamKey,  m_key);
 	_h5File.ReadData(_path, StrConst::Stream_H5TimePoints, m_timePoints);
-	_h5File.ReadData(_path, StrConst::Stream_H5Compounds,  m_compounds);
 
 	// overall properties
 	std::vector<unsigned> keys;
@@ -1568,7 +1559,6 @@ void CBaseStream::LoadFromFile_v1(const CH5Handler& _h5File, const std::string& 
 	m_timePoints.clear();
 	m_overall.clear();
 	m_phases.clear();
-	m_compounds.clear();
 	ClearEnthalpyCalculator();
 
 	// prepare some values
@@ -1580,7 +1570,6 @@ void CBaseStream::LoadFromFile_v1(const CH5Handler& _h5File, const std::string& 
 	_h5File.ReadData(_path, StrConst::Stream_H5StreamName, m_name);
 	_h5File.ReadData(_path, StrConst::Stream_H5StreamKey,  m_key);
 	_h5File.ReadData(_path, StrConst::Stream_H5TimePoints, m_timePoints);
-	_h5File.ReadData(_path, StrConst::Stream_H5Compounds,  m_compounds);
 
 	// overall properties
 	_h5File.ReadData(distrPathBase + std::to_string(1), StrConst::Distr2D_H5TimePoints, times);
@@ -1787,7 +1776,7 @@ bool CBaseStream::HasOverallProperty(EOverall _property) const
 
 bool CBaseStream::HasCompound(const std::string& _compoundKey) const
 {
-	return VectorContains(m_compounds, _compoundKey);
+	return VectorContains(m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS), _compoundKey);
 }
 
 bool CBaseStream::HasCompounds(const std::vector<std::string>& _compoundKeys) const
@@ -1800,8 +1789,9 @@ bool CBaseStream::HasCompounds(const std::vector<std::string>& _compoundKeys) co
 
 size_t CBaseStream::CompoundIndex(const std::string& _compoundKey) const
 {
-	for (size_t i = 0; i < m_compounds.size(); ++i)
-		if (m_compounds[i] == _compoundKey)
+	const auto& compounds = m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS);
+	for (size_t i = 0; i < compounds.size(); ++i)
+		if (compounds[i] == _compoundKey)
 			return i;
 	return static_cast<size_t>(-1);
 }
@@ -1814,7 +1804,7 @@ bool CBaseStream::HasPhase(EPhase _phase) const
 std::vector<double> CBaseStream::GetPSDMassFraction(double _time, const std::vector<std::string>& _compoundKeys) const
 {
 	// for all available compounds
-	if (_compoundKeys.empty() || _compoundKeys.size() == m_compounds.size())
+	if (_compoundKeys.empty() || _compoundKeys.size() == m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS).size())
 		return m_phases.at(EPhase::SOLID)->MDDistr()->GetDistribution(_time, DISTR_SIZE);
 
 	// only for selected compounds
@@ -1830,14 +1820,15 @@ std::vector<double> CBaseStream::GetPSDMassFraction(double _time, const std::vec
 
 std::vector<double> CBaseStream::GetPSDNumber(double _time, const std::vector<std::string>& _compoundKeys, EPSDGridType _grid) const
 {
-	std::vector<std::string> activeCompounds = _compoundKeys.empty() || _compoundKeys.size() == m_compounds.size() ? m_compounds : _compoundKeys;
+	const auto& compounds = m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS);
+	std::vector<std::string> activeCompounds = _compoundKeys.empty() || _compoundKeys.size() == compounds.size() ? compounds : _compoundKeys;
 	const bool hasPorosity = m_grid->IsDistrTypePresent(DISTR_PART_POROSITY);
 	std::vector<double> volumes = _grid == EPSDGridType::VOLUME ? m_grid->GetPSDMeans(EPSDGridType::VOLUME) : DiameterToVolume(m_grid->GetPSDMeans(EPSDGridType::DIAMETER));
 	const double totalMass = GetPhaseMass(_time, EPhase::SOLID);
 	const size_t nSizeClasses = m_grid->GetClassesByDistr(DISTR_SIZE);
 
 	// single compound with no porosity, only one compound defined in the stream
-	if (!hasPorosity && activeCompounds.size() == 1 && m_compounds.size() == 1)
+	if (!hasPorosity && activeCompounds.size() == 1 && compounds.size() == 1)
 	{
 		std::vector<double> res = m_phases.at(EPhase::SOLID)->MDDistr()->GetDistribution(_time, DISTR_SIZE);
 		const double density = GetPhaseProperty(_time, EPhase::SOLID, DENSITY);
@@ -1866,7 +1857,7 @@ std::vector<double> CBaseStream::GetPSDNumber(double _time, const std::vector<st
 		CDenseMDMatrix distr = m_phases.at(EPhase::SOLID)->MDDistr()->GetDistribution(_time, DISTR_COMPOUNDS, DISTR_SIZE, DISTR_PART_POROSITY);
 
 		// filter by compounds
-		if (activeCompounds.size() != m_compounds.size())
+		if (activeCompounds.size() != compounds.size())
 		{
 			// TODO: remove cast
 			std::vector<size_t> classes = vector_cast<size_t>(distr.GetClasses());
@@ -1912,7 +1903,7 @@ std::vector<double> CBaseStream::GetPSDNumber(double _time, const std::vector<st
 		CMatrix2D distr = m_phases.at(EPhase::SOLID)->MDDistr()->GetDistribution(_time, DISTR_COMPOUNDS, DISTR_SIZE);
 
 		// filter by compounds
-		if (activeCompounds.size() != m_compounds.size())
+		if (activeCompounds.size() != compounds.size())
 		{
 			CMatrix2D tempDistr{ distr.Rows(), distr.Cols() - 1 };
 			for (size_t i = 0; i < activeCompounds.size(); ++i)
@@ -1993,14 +1984,15 @@ void CBaseStream::SetMass_Base(double _time, double _value)
 
 std::vector<std::string> CBaseStream::GetCompoundsList() const
 {
-	return m_compounds;
+	return GetAllCompounds();
 }
 
 std::vector<std::string> CBaseStream::GetCompoundsNames() const
 {
+	const auto& compounds = m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS);
 	std::vector<std::string> res;
-	res.reserve(m_compounds.size());
-	for (const auto& key : m_compounds)
+	res.reserve(compounds.size());
+	for (const auto& key : compounds)
 		if (const auto* compound = m_materialsDB->GetCompound(key))
 			res.push_back(compound->GetName());
 	return res;
@@ -2008,7 +2000,7 @@ std::vector<std::string> CBaseStream::GetCompoundsNames() const
 
 size_t CBaseStream::GetCompoundsNumber() const
 {
-	return m_compounds.size();
+	return m_grid->GetClassesByDistr(DISTR_COMPOUNDS);
 }
 
 double CBaseStream::GetCompoundPhaseFraction(double _time, const std::string& _compoundKey, unsigned _soa) const
@@ -2018,8 +2010,9 @@ double CBaseStream::GetCompoundPhaseFraction(double _time, const std::string& _c
 
 double CBaseStream::GetCompoundPhaseFraction(double _time, unsigned _index, unsigned _soa) const
 {
-	if (_index >= m_compounds.size()) return {};
-	return GetCompoundFraction(_time, m_compounds[_index], SOA2EPhase(_soa));
+	const auto& compounds = m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS);
+	if (_index >= compounds.size()) return {};
+	return GetCompoundFraction(_time, compounds[_index], SOA2EPhase(_soa));
 }
 
 void CBaseStream::SetCompoundPhaseFraction(double _time, const std::string& _compoundKey, unsigned _soa, double _value, unsigned _basis)

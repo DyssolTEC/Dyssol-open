@@ -35,7 +35,6 @@ class CStreamManager
 
 	const CMaterialsDatabase* m_materialsDB{ nullptr };				// Reference to a database of materials.
 	const CDistributionsGrid* m_grid{ nullptr };					// Reference to a distribution grid.
-	const std::vector<std::string>* m_compounds{ nullptr };			// Reference to compounds.
 	const std::vector<SOverallDescriptor>* m_overall{ nullptr };	// Reference to overall properties.
 	const std::vector<SPhaseDescriptor>* m_phases{ nullptr };		// Reference to phases.
 	const SCacheSettings* m_cache{ nullptr };						// Reference to cache settings.
@@ -50,7 +49,7 @@ class CStreamManager
 public:
 	// TODO: set it all in constructor and make them references when the same is done in BaseUnit.
 	// Sets pointers to all required data.
-	void SetPointers(const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid, const std::vector<std::string>* _compounds, const std::vector<SOverallDescriptor>* _overall,
+	void SetPointers(const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid, const std::vector<SOverallDescriptor>* _overall,
 		const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerances, const SThermodynamicsSettings* _thermodynamics);
 
 	// Is called when initial structure of the unit is configured.

@@ -23,7 +23,7 @@
  */
 class CFlowsheet
 {
-	static const unsigned m_saveVersion{ 4 }; // Current version of the saving procedure.
+	static const unsigned m_saveVersion{ 5 }; // Current version of the saving procedure.
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Global structural data and settings
@@ -34,7 +34,6 @@ class CFlowsheet
 	CParametersHolder m_parameters;				// Holder of different flowsheet settings.
 	// TODO: move it out of the flowsheet and save/load independently.
 	CDistributionsGrid m_grid;					// Global distribution grid.
-	std::vector<std::string> m_compounds;		// List of all defined compound keys.
 	std::vector<SOverallDescriptor> m_overall;	// List of all defined overall properties.
 	std::vector<SPhaseDescriptor> m_phases;		// List of all defined phases.
 	SCacheSettings m_cacheStreams{ m_parameters.cacheFlagStreams, m_parameters.cacheWindow, m_parameters.cachePath };				// Global cache settings for streams.
@@ -169,7 +168,7 @@ public:
 	// Returns descriptors of all defined phases.
 	std::vector<SPhaseDescriptor> GetPhases() const;
 	// Checks if a phase of the specified type exists in the flowsheet.
-	bool IsPhaseDefined(EPhase _phase);
+	bool HasPhase(EPhase _phase);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Related to simulation

@@ -13,7 +13,7 @@ public:
 	CHoldup(const std::string& _key = "");
 	// Constructor configuring the whole structure.
 	CHoldup(const std::string& _key, const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid,
-		const std::vector<std::string>* _compounds, const std::vector<SOverallDescriptor>* _overall, const std::vector<SPhaseDescriptor>* _phases,
+		const std::vector<SOverallDescriptor>* _overall, const std::vector<SPhaseDescriptor>* _phases,
 		const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics);
 	// Copy constructor.
 	CHoldup(const CBaseStream& _other);
