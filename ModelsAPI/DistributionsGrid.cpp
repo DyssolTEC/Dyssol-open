@@ -56,6 +56,13 @@ SGridDimension CDistributionsGrid::GetDimension(size_t _index) const
 	return {};
 }
 
+SGridDimension CDistributionsGrid::GetDimensionByDistr(EDistrTypes _distrType) const
+{
+	if (const SGridDimension* pGrid = GetDimPtr(_distrType))
+		return *pGrid;
+	return {};
+}
+
 void CDistributionsGrid::SetDimension(const SGridDimension& _dim)
 {
 	if (SGridDimension* pGrid = GetDimPtr(_dim.distrType))

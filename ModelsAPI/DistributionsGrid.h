@@ -42,6 +42,7 @@ public:
 	void AddDimension(const SGridDimension& _grid);
 	void AddDimension(EDistrTypes _distrType, EGridEntry _gridEntry, const std::vector<double>& _numGrid, const std::vector<std::string>& _strGrid, EGridUnit _unit = EGridUnit::UNIT_DEFAULT,  EGridFunction _gridFun = EGridFunction::GRID_FUN_MANUAL);
 	SGridDimension GetDimension(size_t _index) const;
+	SGridDimension GetDimensionByDistr(EDistrTypes _distrType) const;
 	void SetDimension(const SGridDimension& _dim);
 	size_t GetDistributionsNumber() const;
 

@@ -498,7 +498,6 @@ namespace StrConst
 
 	const char* const Stream_H5StreamName		= "StreamName";
 	const char* const Stream_H5StreamKey		= "StreamKey";
-	const char* const Stream_H5Compounds		= "Compounds";
 	const char* const Stream_H5TimePoints		= "TimePoints";
 	const char* const Stream_H5AttrPhasesNum	= "PhasesNumber";
 	const char* const Stream_H5GroupPhases		= "Phases";

@@ -40,7 +40,6 @@ protected:
 	std::vector<double> m_timePoints;											// Time points on which the stream is defined.
 	std::map<EOverall, std::unique_ptr<CTimeDependentValue>> m_overall;			// Defined overall properties.
 	std::map<EPhase, std::unique_ptr<CPhase>> m_phases;							// Defined phases.
-	std::vector<std::string> m_compounds;										// Keys of chemical compounds defined in this stream.
 	mutable std::unique_ptr<CMixtureEnthalpyLookup> m_enthalpyCalculator;		// Lookup table to calculate temperature<->enthalpy.
 	SCacheSettings m_cacheSettings;												// Settings for caching in the stream.
 	SToleranceSettings m_toleranceSettings;										// Settings for tolerances in the stream.
@@ -52,7 +51,7 @@ public:
 	CBaseStream(const std::string& _key = "");
 	// Constructor configuring the whole structure.
 	CBaseStream(const std::string& _key, const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid,
-		const std::vector<std::string>* _compounds, const std::vector<SOverallDescriptor>* _overall, const std::vector<SPhaseDescriptor>* _phases,
+		const std::vector<SOverallDescriptor>* _overall, const std::vector<SPhaseDescriptor>* _phases,
 		const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics);
 	// Copy constructor.
 	CBaseStream(const CBaseStream& _other);

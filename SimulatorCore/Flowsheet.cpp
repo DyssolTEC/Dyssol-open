@@ -30,7 +30,6 @@ void CFlowsheet::Clear()
 	m_units.clear();
 	m_streams.clear();
 	m_calculationSequence.Clear();
-	m_compounds.clear();
 	m_overall.clear();
 	m_phases.clear();
 	m_grid.Clear();
@@ -50,7 +49,6 @@ bool CFlowsheet::IsEmpty() const
 	return m_units.empty()
 		&& m_streams.empty()
 		&& m_calculationSequence.IsEmpty()
-		&& m_compounds.empty()
 		&& m_overall.size() <= 1
 		&& m_phases.empty()
 		&& m_grid.GetDistributionsNumber() <= 1;
@@ -64,7 +62,7 @@ size_t CFlowsheet::GetUnitsNumber() const
 CUnitContainer* CFlowsheet::AddUnit(const std::string& _key)
 {
 	const std::string uniqueID = StringFunctions::GenerateUniqueKey(_key, GetAllUnitsKeys());
-	auto* unit = new CUnitContainer(uniqueID, m_modelsManager, m_materialsDB, m_grid, m_compounds, m_overall, m_phases, m_cacheHoldups, m_tolerance, m_thermodynamics);
+	auto* unit = new CUnitContainer(uniqueID, m_modelsManager, m_materialsDB, m_grid, m_overall, m_phases, m_cacheHoldups, m_tolerance, m_thermodynamics);
 	m_units.emplace_back(unit);
 	SetTopologyModified(true);
 	return unit;
@@ -137,7 +135,7 @@ size_t CFlowsheet::GetStreamsNumber() const
 CStream* CFlowsheet::AddStream(const std::string& _key)
 {
 	const std::string uniqueID = StringFunctions::GenerateUniqueKey(_key, GetAllStreamsKeys());
-	auto* stream = new CStream(uniqueID, &m_materialsDB, &m_grid, &m_compounds, &m_overall, &m_phases, &m_cacheStreams, &m_tolerance, &m_thermodynamics);
+	auto* stream = new CStream(uniqueID, &m_materialsDB, &m_grid, &m_overall, &m_phases, &m_cacheStreams, &m_tolerance, &m_thermodynamics);
 	m_streams.emplace_back(stream);
 	SetTopologyModified(true);
 	return stream;
@@ -271,16 +269,13 @@ CCalculationSequence* CFlowsheet::GetCalculationSequence()
 
 size_t CFlowsheet::GetCompoundsNumber() const
 {
-	return m_compounds.size();
+	return m_grid.GetClassesByDistr(DISTR_COMPOUNDS);
 }
 
 void CFlowsheet::AddCompound(const std::string& _key)
 {
 	// check if already exists
-	if (VectorContains(m_compounds, _key)) return;
-
-	// add to the list of compounds
-	m_compounds.push_back(_key);
+	if (VectorContains(m_grid.GetSymbolicGridByDistr(DISTR_COMPOUNDS), _key)) return;
 
 	// add to streams
 	for (auto& stream : m_streams)
@@ -298,13 +293,13 @@ void CFlowsheet::AddCompound(const std::string& _key)
 	// TODO: remove this check, ensure compounds are always present
 	if (!m_grid.IsDistrTypePresent(DISTR_COMPOUNDS))
 		m_grid.AddDimension(DISTR_COMPOUNDS, EGridEntry::GRID_SYMBOLIC, {}, {});
-	m_grid.AddNamedClass(DISTR_COMPOUNDS, m_materialsDB.GetCompound(_key)->GetName());
+	m_grid.AddNamedClass(DISTR_COMPOUNDS, m_materialsDB.GetCompound(_key)->GetKey());
 }
 
 void CFlowsheet::RemoveCompound(const std::string& _key)
 {
 	// check if exists
-	if (!VectorContains(m_compounds, _key)) return;
+	if (!VectorContains(m_grid.GetSymbolicGridByDistr(DISTR_COMPOUNDS), _key)) return;
 
 	// remove from streams
 	for (auto& stream : m_streams)
@@ -319,15 +314,12 @@ void CFlowsheet::RemoveCompound(const std::string& _key)
 	m_calculationSequence.RemoveCompound(_key);
 
 	// remove from the grid
-	m_grid.RemoveNamedClass(DISTR_COMPOUNDS, VectorFind(m_compounds, _key));
-
-	// remove from the list of compounds
-	VectorDelete(m_compounds, _key);
+	m_grid.RemoveNamedClass(DISTR_COMPOUNDS, VectorFind(m_grid.GetSymbolicGridByDistr(DISTR_COMPOUNDS), _key));
 }
 
 std::vector<std::string> CFlowsheet::GetCompounds() const
 {
-	return m_compounds;
+	return m_grid.GetSymbolicGridByDistr(DISTR_COMPOUNDS);
 }
 
 size_t CFlowsheet::GetOverallPropertiesNumber() const
@@ -476,9 +468,9 @@ std::string CFlowsheet::Initialize()
 	// check compounds
 	if (m_materialsDB.CompoundsNumber() == 0)
 		return StrConst::Flow_ErrEmptyMDB;
-	if (m_compounds.empty())
+	if (m_grid.GetSymbolicGridByDistr(DISTR_COMPOUNDS).empty())
 		return StrConst::Flow_ErrNoCompounds;
-	for (const auto& key : m_compounds)
+	for (const auto& key : m_grid.GetSymbolicGridByDistr(DISTR_COMPOUNDS))
 		if (!m_materialsDB.GetCompound(key))
 			return StrConst::Flow_ErrWrongCompound(key);
 	for (auto& unit : m_units)
@@ -507,9 +499,10 @@ std::string CFlowsheet::Initialize()
 				if (std::fabs(phaseSum - 1.0) > 1e-10)
 					return StrConst::Flow_ErrPhaseFractions(unit->GetName(), h->GetName(), t);
 				// check compound fractions
+				const auto& compounds = m_grid.GetSymbolicGridByDistr(DISTR_COMPOUNDS);
 				for (const auto& p : m_phases)
 				{
-					const double compSum = std::accumulate(m_compounds.begin(), m_compounds.end(), 0.0, [&](double a, const auto& c) { return a + h->GetCompoundFraction(t, c, p.state); });
+					const double compSum = std::accumulate(compounds.begin(), compounds.end(), 0.0, [&](double a, const auto& c) { return a + h->GetCompoundFraction(t, c, p.state); });
 					if (std::fabs(compSum - 1.0) > 1e-10)
 						return StrConst::Flow_ErrCompoundFractions(unit->GetName(), h->GetName(), p.name, t);
 				}
@@ -660,9 +653,6 @@ bool CFlowsheet::SaveToFile(CH5Handler& _h5File, const std::wstring& _fileName)
 	// distributions grid
 	m_grid.SaveToFile(_h5File, _h5File.CreateGroup(root, StrConst::Flow_H5GroupDistrGrid));
 
-	// compounds
-	_h5File.WriteData(root, StrConst::Flow_H5Compounds, m_compounds);
-
 	// overall properties
 	const std::string overallGroup = _h5File.CreateGroup(root, StrConst::Flow_H5GroupOveralls);
 	_h5File.WriteAttribute(overallGroup, StrConst::Flow_H5AttrOverallsNum, static_cast<int>(m_overall.size()));
@@ -717,9 +707,13 @@ bool CFlowsheet::LoadFromFile(CH5Handler& _h5File, const std::wstring& _fileName
 
 	// distributions grid
 	m_grid.LoadFromFile(_h5File, root + StrConst::Flow_H5GroupDistrGrid);
-
-	// compounds
-	_h5File.ReadData(root, StrConst::Flow_H5Compounds, m_compounds);
+	if (version < 5)
+	{
+		// replace compound names with keys
+		auto dim = m_grid.GetDimensionByDistr(DISTR_COMPOUNDS);
+		_h5File.ReadData(root, StrConst::Flow_H5Compounds, dim.strGrid);
+		m_grid.SetDimension(dim);
+	}
 
 	// overall properties
 	const std::string overallsGroup = root + StrConst::Flow_H5GroupOveralls;
@@ -777,9 +771,10 @@ bool CFlowsheet::LoadFromFile_v3(CH5Handler& _h5File, const std::string& _path)
 
 	// distributions grid
 	m_grid.LoadFromFile(_h5File, root + StrConst::Flow_H5GroupDistrGrid);
-
-	// compounds
-	_h5File.ReadData(root, StrConst::Flow_H5Compounds, m_compounds);
+	// replace compound names with keys
+	auto dim = m_grid.GetDimensionByDistr(DISTR_COMPOUNDS);
+	_h5File.ReadData(root, StrConst::Flow_H5Compounds, dim.strGrid);
+	m_grid.SetDimension(dim);
 
 	// overall properties
 	AddOverallProperty(EOverall::OVERALL_MASS,        "Mass flow",   "kg/s");

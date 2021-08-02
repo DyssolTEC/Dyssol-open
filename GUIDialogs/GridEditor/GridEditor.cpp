@@ -5,8 +5,9 @@
 #include <QMessageBox>
 #include <QStandardItem>
 
-CGridEditor::CGridEditor(CFlowsheet* _pFlowsheet, QWidget* parent, Qt::WindowFlags flags)
+CGridEditor::CGridEditor(CFlowsheet* _pFlowsheet, const CMaterialsDatabase& _materialsDB, QWidget* parent, Qt::WindowFlags flags)
 	: QDialog(parent, flags)
+	, m_materialsDB{ _materialsDB }
 {
 	ui.setupUi(this);
 	this->setWindowFlags(this->windowFlags() | Qt::WindowMaximizeButtonHint | Qt::WindowMinimizeButtonHint);
@@ -43,7 +44,7 @@ QComboBox* CGridEditor::AddComboBoxDimensions(unsigned _nRow)
 
 CDimensionParameters* CGridEditor::AddDimensionParam()
 {
-	CDimensionParameters* pDimPar = new CDimensionParameters(this);
+	CDimensionParameters* pDimPar = new CDimensionParameters(m_materialsDB, this);
 	QListWidgetItem* pItem = new QListWidgetItem();
 	pItem->setSizeHint(pDimPar->minimumSizeHint()*1.1);
 	ui.listWidgetParams->addItem(pItem);

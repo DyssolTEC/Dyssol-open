@@ -49,7 +49,7 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	m_pMaterialsDatabaseTab = new CMaterialsDatabaseTab(&m_MaterialsDatabase, m_pSettings, this);
 	m_pCompoundsManager     = new CCompoundsManager(&m_Flowsheet, &m_MaterialsDatabase, this);
 	m_pFlowsheetEditor      = new CFlowsheetEditor(&m_Flowsheet, &m_MaterialsDatabase, &m_ModelsManager, this);
-	m_pGridEditor           = new CGridEditor(&m_Flowsheet, this);
+	m_pGridEditor           = new CGridEditor(&m_Flowsheet, m_MaterialsDatabase, this);
 	m_pHoldupsEditor        = new CHoldupsEditor(&m_Flowsheet, &m_MaterialsDatabase, this);
 	m_pOptionsEditor        = new COptionsEditor(&m_Flowsheet, &m_MaterialsDatabase, this);
 	m_pPhasesEditor         = new CPhasesEditor(&m_Flowsheet, this);

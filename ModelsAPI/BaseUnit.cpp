@@ -11,18 +11,17 @@
 #include <stdexcept>
 #include <numeric>
 
-void CBaseUnit::SetPointers(const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid, const std::vector<std::string>* _compounds, const std::vector<SOverallDescriptor>* _overall,
+void CBaseUnit::SetPointers(const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid, const std::vector<SOverallDescriptor>* _overall,
 	const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics)
 {
 	m_materialsDB    = _materialsDB;
 	m_grid           = _grid;
-	m_compounds      = _compounds;
 	m_overall        = _overall;
 	m_phases         = _phases;
 	m_cache          = _cache;
 	m_tolerance      = _tolerance;
 	m_thermodynamics = _thermodynamics;
-	m_streams.SetPointers(m_materialsDB, m_grid, m_compounds, m_overall, m_phases, m_cache, m_tolerance, m_thermodynamics);
+	m_streams.SetPointers(m_materialsDB, m_grid, m_overall, m_phases, m_cache, m_tolerance, m_thermodynamics);
 }
 
 std::string CBaseUnit::GetUnitName() const
@@ -739,19 +738,21 @@ std::string CBaseUnit::GetCompoundKey(const std::string& _compoundName) const
 
 std::string CBaseUnit::GetCompoundName(size_t _index) const
 {
-	if (_index >= m_compounds->size()) return {};
-	return GetCompoundName(m_compounds->at(_index));
+	const auto& compounds = m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS);
+	if (_index >= compounds.size()) return {};
+	return GetCompoundName(compounds[_index]);
 }
 
 std::string CBaseUnit::GetCompoundKey(size_t _index) const
 {
-	if (_index >= m_compounds->size()) return {};
-	return m_compounds->at(_index);
+	const auto& compounds = m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS);
+	if (_index >= compounds.size()) return {};
+	return compounds[_index];
 }
 
 size_t CBaseUnit::GetCompoundIndex(const std::string& _compoundKey) const
 {
-	return VectorFind(*m_compounds, _compoundKey);
+	return VectorFind(m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS), _compoundKey);
 }
 
 size_t CBaseUnit::GetCompoundIndexByName(const std::string& _compoundName) const
@@ -761,26 +762,27 @@ size_t CBaseUnit::GetCompoundIndexByName(const std::string& _compoundName) const
 
 std::vector<std::string> CBaseUnit::GetAllCompounds() const
 {
-	return *m_compounds;
+	return m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS);
 }
 
 std::vector<std::string> CBaseUnit::GetAllCompoundsNames() const
 {
+	const auto& compounds = m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS);
 	std::vector<std::string> res;
-	res.reserve(m_compounds->size());
-	for (const auto& compound : *m_compounds)
+	res.reserve(compounds.size());
+	for (const auto& compound : compounds)
 		res.push_back(GetCompoundName(compound));
 	return res;
 }
 
 size_t CBaseUnit::GetCompoundsNumber() const
 {
-	return m_compounds->size();
+	return m_grid->GetClassesByDistr(DISTR_COMPOUNDS);
 }
 
 bool CBaseUnit::IsCompoundDefined(const std::string& _compoundKey) const
 {
-	return VectorContains(*m_compounds, _compoundKey);
+	return VectorContains(m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS), _compoundKey);
 }
 
 bool CBaseUnit::IsCompoundNameDefined(const std::string& _compoundName) const
@@ -1057,7 +1059,7 @@ CMixtureEnthalpyLookup* CBaseUnit::GetEnthalpyCalculator() const
 {
 	// lazy initialization
 	if (!m_enthalpyCalculator)
-		m_enthalpyCalculator = std::make_unique<CMixtureEnthalpyLookup>(m_materialsDB, *m_compounds, m_thermodynamics->limits, m_thermodynamics->intervals);
+		m_enthalpyCalculator = std::make_unique<CMixtureEnthalpyLookup>(m_materialsDB, m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS), m_thermodynamics->limits, m_thermodynamics->intervals);
 	return m_enthalpyCalculator.get();
 }
 
@@ -1653,14 +1655,15 @@ double CBaseUnit::CalcTemperatureFromProperty(ECompoundTPProperties _property, c
 		return CalculateTemperatureFromEnthalpy(_value, _fractions);
 	else
 	{
+		const auto& compounds = m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS);
 		const double deltaT = (m_thermodynamics->limits.max - m_thermodynamics->limits.min) / static_cast<double>(m_thermodynamics->intervals);
-		std::vector<CDependentValues> components(m_compounds->size());
-		for (size_t iCmp = 0; iCmp < m_compounds->size(); ++iCmp)
+		std::vector<CDependentValues> components(compounds.size());
+		for (size_t iCmp = 0; iCmp < compounds.size(); ++iCmp)
 		{
 			for (size_t iInt = 0; iInt <= m_thermodynamics->intervals; ++iInt)
 			{
 				const double T = m_thermodynamics->limits.min + deltaT * static_cast<double>(iInt);
-				const double prop = m_materialsDB->GetTPPropertyValue(m_compounds->at(iCmp), _property, T, STANDARD_CONDITION_P);
+				const double prop = m_materialsDB->GetTPPropertyValue(compounds[iCmp], _property, T, STANDARD_CONDITION_P);
 				components[iCmp].SetValue(T, prop);
 			}
 		}
@@ -1671,14 +1674,15 @@ double CBaseUnit::CalcTemperatureFromProperty(ECompoundTPProperties _property, c
 
 double CBaseUnit::CalcPressureFromProperty(ECompoundTPProperties _property, const std::vector<double>& _fractions, double _value) const
 {
+	const auto& compounds = m_grid->GetSymbolicGridByDistr(DISTR_COMPOUNDS);
 	const double deltaP = (1000000 - 10000) / static_cast<double>(100);
-	std::vector<CDependentValues> components(m_compounds->size());
-	for (size_t iCmp = 0; iCmp < m_compounds->size(); ++iCmp)
+	std::vector<CDependentValues> components(compounds.size());
+	for (size_t iCmp = 0; iCmp < compounds.size(); ++iCmp)
 	{
 		for (size_t iInt = 0; iInt <= 100; ++iInt)
 		{
 			const double P = 10000 + deltaP * static_cast<double>(iInt);
-			const double prop = m_materialsDB->GetTPPropertyValue(m_compounds->at(iCmp), _property, STANDARD_CONDITION_T, P);
+			const double prop = m_materialsDB->GetTPPropertyValue(compounds[iCmp], _property, STANDARD_CONDITION_T, P);
 			components[iCmp].SetValue(P, prop);
 		}
 	}
