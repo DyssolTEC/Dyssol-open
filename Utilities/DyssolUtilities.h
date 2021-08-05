@@ -259,6 +259,88 @@ std::vector<double> inline CreateDistribution(EDistrFunction _distr, const std::
 	return std::vector<double>(_x.size(), 0);
 }
 
+// Creates an equidistant distribution grid according to the given function and parameters.
+std::vector<double> inline CreateGridEquidistant(size_t _classes, double _min, double _max)
+{
+	if (_max <= _min) return {};
+	std::vector<double> res(_classes + 1);
+	const double factor = (_max - _min) / _classes;
+	for (size_t i = 0; i < _classes + 1; ++i)
+		res[i] = _min + factor * i;
+	return res;
+}
+
+// Creates a geometrically incrementing distribution grid according to the given function and parameters.
+std::vector<double> inline CreateGridGeometricInc(size_t _classes, double _min, double _max)
+{
+	if (_max <= _min || _min == 0.0) return {};
+	std::vector<double> res(_classes + 1);
+	const double ratio = std::pow(_max / _min, 1. / _classes);
+	double sum = 0;
+	for (size_t i = 0; i < _classes; ++i)
+		sum += std::pow(ratio, i);
+	const double factor = (_max - _min) / sum;
+	res[0] = _min;
+	for (size_t i = 0; i < _classes; ++i)
+		res[i + 1] = res[i] + std::pow(ratio, i) * factor;
+	return res;
+}
+
+// Creates a geometrically decrementing distribution grid according to the given function and parameters.
+std::vector<double> inline CreateGridGeometricDec(size_t _classes, double _min, double _max)
+{
+	if (_max <= _min || _min == 0.0) return {};
+	std::vector<double> res(_classes + 1);
+	const double ratio = 1. / std::pow(_max / _min, 1. / _classes);
+	double sum = 0;
+	for (size_t i = 0; i < _classes; ++i)
+		sum += std::pow(ratio, i);
+	const double factor = (_max - _min) / sum;
+	res[0] = _min;
+	for (size_t i = 0; i < _classes; ++i)
+		res[i + 1] = res[i] + std::pow(ratio, i) * factor;
+	return res;
+}
+
+// Creates a logarithmically incrementing distribution grid according to the given function and parameters.
+std::vector<double> inline CreateGridLogarithmicInc(size_t _classes, double _min, double _max)
+{
+	if (_max <= _min || _min == 0.0) return {};
+	std::vector<double> res(_classes + 1);
+	const double l = 9. / _classes;
+	for (size_t i = 0; i < _classes + 1; ++i)
+		res[_classes - i] = _max - std::log10(1 + i * l) * (_max - _min);
+	return res;
+}
+
+// Creates a logarithmically decrementing distribution grid according to the given function and parameters.
+std::vector<double> inline CreateGridLogarithmicDec(size_t _classes, double _min, double _max)
+{
+	if (_max <= _min || _min == 0.0) return {};
+	std::vector<double> res(_classes + 1);
+	const double dL = 9. / _classes;
+	for (size_t i = 0; i < _classes + 1; ++i)
+		res[i] = _min + std::log10(1 + i * dL) * (_max - _min);
+	return res;
+}
+
+// Creates a distribution grid according to the given function and parameters.
+std::vector<double> inline CreateGrid(EGridFunction _fun, size_t _classes, double _min, double _max)
+{
+	switch (_fun)
+	{
+	case EGridFunction::GRID_FUN_EQUIDISTANT:		return CreateGridEquidistant(_classes, _min, _max);
+	case EGridFunction::GRID_FUN_GEOMETRIC_S2L:		return CreateGridGeometricInc(_classes, _min, _max);
+	case EGridFunction::GRID_FUN_GEOMETRIC_L2S:		return CreateGridGeometricDec(_classes, _min, _max);
+	case EGridFunction::GRID_FUN_LOGARITHMIC_S2L:	return CreateGridLogarithmicInc(_classes, _min, _max);
+	case EGridFunction::GRID_FUN_LOGARITHMIC_L2S:	return CreateGridLogarithmicDec(_classes, _min, _max);
+	case EGridFunction::GRID_FUN_MANUAL:
+	case EGridFunction::GRID_FUN_UNDEFINED:
+		return std::vector<double>(_classes + 1);
+	}
+	return {};
+}
+
 // Calculates volume of the sphere from its diameter.
 inline double DiameterToVolume(double _d)
 {

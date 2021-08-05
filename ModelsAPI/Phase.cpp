@@ -1,7 +1,7 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "Phase.h"
-#include "DistributionsGrid.h"
+#include "MultidimensionalGrid.h"
 #include "ContainerFunctions.h"
 #include "DyssolUtilities.h"
 #include "DyssolStringConstants.h"
@@ -9,10 +9,10 @@
 
 // TODO: remove all reinterpret_cast and static_cast for MDMatrix
 
-CPhase::CPhase(EPhase _state, std::string _name, const CDistributionsGrid& _grid, const SCacheSettings& _cache) :
+CPhase::CPhase(EPhase _state, std::string _name, CMultidimensionalGrid _grid, const SCacheSettings& _cache) :
+	m_grid{ std::move(_grid) },
 	m_name{ std::move(_name) },
-	m_state{ _state },
-	m_grid{ _grid }
+	m_state{ _state }
 {
 	SetCacheSettings(_cache);
 	m_fractions.SetName(m_name);
@@ -20,12 +20,13 @@ CPhase::CPhase(EPhase _state, std::string _name, const CDistributionsGrid& _grid
 
 	if (_state != EPhase::SOLID)
 		// TODO: fix this when CMDMatrix uses size_t.
-		m_distribution.SetDimension(DISTR_COMPOUNDS, m_grid.GetClassesByDistr(DISTR_COMPOUNDS));
+		m_distribution.SetDimension(DISTR_COMPOUNDS, (unsigned)m_grid.GetGridDimension(DISTR_COMPOUNDS)->ClassesNumber());
 	else
 	{
-		// TODO: fix this when CMDMatrix uses EDistrTypes.
-		std::vector<EDistrTypes> types = m_grid.GetDistrTypes();
-		m_distribution.SetDimensions(vector_cast<unsigned>(types), m_grid.GetClasses());
+		// TODO: fix this when CMDMatrix uses EDistrTypes and size_t.
+		const std::vector<EDistrTypes> types = m_grid.GetDimensionsTypes();
+		const std::vector<size_t> classes = m_grid.GetClassesNumbers();
+		m_distribution.SetDimensions(vector_cast<unsigned>(types), vector_cast<unsigned>(classes));
 	}
 }
 
@@ -74,14 +75,16 @@ void CPhase::RemoveAllTimePoints()
 
 void CPhase::AddCompound(const std::string& _compoundKey)
 {
-	if (HasCompound(_compoundKey)) return;
 	m_distribution.AddClass(DISTR_COMPOUNDS);
+	// add to the grid
+	m_grid.GetGridDimensionSymbolic(DISTR_COMPOUNDS)->AddClass(_compoundKey);
 }
 
 void CPhase::RemoveCompound(const std::string& _compoundKey)
 {
-	if (!HasCompound(_compoundKey)) return;
-	m_distribution.RemoveClass(DISTR_COMPOUNDS, CompoundIndex(_compoundKey));
+	m_distribution.RemoveClass(DISTR_COMPOUNDS, VectorFind(m_grid.GetGridDimensionSymbolic(DISTR_COMPOUNDS)->Grid(), _compoundKey));
+	// remove from the grid
+	m_grid.GetGridDimensionSymbolic(DISTR_COMPOUNDS)->RemoveClass(_compoundKey);
 }
 
 double CPhase::GetFraction(double _time) const
@@ -117,19 +120,29 @@ void CPhase::SetCompoundsDistribution(double _time, const std::vector<double>& _
 void CPhase::CopyFrom(double _time, const CPhase& _source)
 {
 	m_fractions.CopyFrom(_time, _source.m_fractions);
-	m_distribution.CopyFrom(_source.m_distribution, _time);
+	if (m_grid == _source.m_grid)
+		m_distribution.CopyFrom(_source.m_distribution, _time);
+	else
+		CopyDistributionsWithConvert(_time, _time, _source, *this);
 }
 
 void CPhase::CopyFrom(double _timeDst, const CPhase& _source, double _timeSrc)
 {
 	m_fractions.CopyFrom(_timeDst, _source.m_fractions, _timeSrc);
-	m_distribution.CopyFromTimePoint(_source.m_distribution, _timeSrc, _timeDst);
+	if (m_grid == _source.m_grid)
+		m_distribution.CopyFromTimePoint(_source.m_distribution, _timeSrc, _timeDst);
+	else
+		CopyDistributionsWithConvert(_timeSrc, _timeDst, _source, *this);
 }
 
 void CPhase::CopyFrom(double _timeBeg, double _timeEnd, const CPhase& _source)
 {
 	m_fractions.CopyFrom(_timeBeg, _timeEnd, _source.m_fractions);
-	m_distribution.CopyFrom(_source.m_distribution, _timeBeg, _timeEnd);
+	if (m_grid == _source.m_grid)
+		m_distribution.CopyFrom(_source.m_distribution, _timeBeg, _timeEnd);
+	else
+		for (double t : _source.m_distribution.GetTimePoints(_timeBeg, _timeEnd))
+			CopyDistributionsWithConvert(t, t, _source, *this);
 }
 
 void CPhase::Extrapolate(double _timeExtra, double _time)
@@ -177,10 +190,13 @@ void CPhase::SetCacheSettings(const SCacheSettings& _cache)
 	m_distribution.SetCacheParams(_cache.isEnabled, _cache.window);
 }
 
-void CPhase::UpdateDistributionsGrid()
+void CPhase::SetGrid(const CMultidimensionalGrid& _grid)
 {
 	if (m_state != EPhase::SOLID) return;
-	m_distribution.UpdateDimensions(E2I(m_grid.GetDistrTypes()), m_grid.GetClasses());
+	if (m_grid == _grid) return;
+	m_grid = _grid;
+	// TODO: fix this when CMDMatrix uses EDistrTypes and size_t.
+	m_distribution.UpdateDimensions(vector_cast<unsigned>(m_grid.GetDimensionsTypes()), vector_cast<unsigned>(m_grid.GetClassesNumbers()));
 }
 
 void CPhase::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
@@ -207,16 +223,30 @@ void CPhase::LoadFromFile(const CH5Handler& _h5File, const std::string& _path)
 	m_distribution.LoadFromFile(_h5File, _path + "/" + StrConst::Phase_H5Distribution);
 }
 
-bool CPhase::HasCompound(const std::string& _compoundKey) const
+template <typename T>
+void SetConvertedDistribution(EDistrTypes _dim, double _srcTime, double _dstTime, const CMDMatrix& _srcDistr, CMDMatrix& _dstDistr, const CGridDimension* _srcGridDim, const CGridDimension* _dstGridDim)
 {
-	return VectorContains(m_grid.GetSymbolicGridByDistr(DISTR_COMPOUNDS), _compoundKey);
+	const auto& srcGrid = dynamic_cast<const T*>(_srcGridDim)->Grid();
+	const auto& dstGrid = dynamic_cast<const T*>(_dstGridDim)->Grid();
+	const auto srcDistr = _srcDistr.GetDistribution(_srcTime, _dim);
+	_dstDistr.AddTimePoint(_dstTime);
+	_dstDistr.SetDistribution(_dstTime, _dim, Normalized(ConvertOnNewGrid(srcGrid, srcDistr, dstGrid)));
 }
 
-size_t CPhase::CompoundIndex(const std::string& _compoundKey) const
+void CPhase::CopyDistributionsWithConvert(double _srcTime, double _dstTime, const CPhase& _srcPhase, CPhase& _dstPhase)
 {
-	const auto& compounds = m_grid.GetSymbolicGridByDistr(DISTR_COMPOUNDS);
-	for (size_t i = 0; i < compounds.size(); ++i)
-		if (compounds[i] == _compoundKey)
-			return i;
-	return static_cast<size_t>(-1);
+	for (const auto& dim : _dstPhase.m_grid.GetDimensionsTypes())
+	{
+		const auto* srcGridDim = _srcPhase.m_grid.GetGridDimension(dim);
+		const auto* dstGridDim = _dstPhase.m_grid.GetGridDimension(dim);
+		if (srcGridDim && srcGridDim->GridType() == dstGridDim->GridType())
+		{
+			if (srcGridDim->GridType() == EGridEntry::GRID_NUMERIC)
+				SetConvertedDistribution<CGridDimensionNumeric >(dim, _srcTime, _dstTime, _srcPhase.m_distribution, _dstPhase.m_distribution, srcGridDim, dstGridDim);
+			else
+				SetConvertedDistribution<CGridDimensionSymbolic>(dim, _srcTime, _dstTime, _srcPhase.m_distribution, _dstPhase.m_distribution, srcGridDim, dstGridDim);
+		}
+		else
+			_dstPhase.m_distribution.SetDistribution(_dstTime, dim, std::vector<double>(dstGridDim->ClassesNumber(), 1.0 / static_cast<double>(dstGridDim->ClassesNumber())));
+	}
 }

@@ -33,13 +33,13 @@ class CStreamManager
 	double m_timeBegStored{ 0.0 };	// Begin of the time window that is currently stored in store streams.
 	double m_timeEndStored{ 0.0 };	// End of the time window that is currently stored in store streams.
 
-	const CMaterialsDatabase* m_materialsDB{ nullptr };				// Reference to a database of materials.
-	const CDistributionsGrid* m_grid{ nullptr };					// Reference to a distribution grid.
-	const std::vector<SOverallDescriptor>* m_overall{ nullptr };	// Reference to overall properties.
-	const std::vector<SPhaseDescriptor>* m_phases{ nullptr };		// Reference to phases.
-	const SCacheSettings* m_cache{ nullptr };						// Reference to cache settings.
-	const SToleranceSettings* m_tolerances{ nullptr };				// Reference to tolerance settings.
-	const SThermodynamicsSettings* m_thermodynamics{ nullptr };		// Reference to thermodynamics settings.
+	const CMaterialsDatabase* m_materialsDB{ nullptr };				// Pointer to a database of materials.
+	const CMultidimensionalGrid* m_grid{ nullptr };					// Pointer to a distribution grid.
+	const std::vector<SOverallDescriptor>* m_overall{ nullptr };	// Pointer to overall properties.
+	const std::vector<SPhaseDescriptor>* m_phases{ nullptr };		// Pointer to phases.
+	const SCacheSettings* m_cache{ nullptr };						// Pointer to cache settings.
+	const SToleranceSettings* m_tolerances{ nullptr };				// Pointer to tolerance settings.
+	const SThermodynamicsSettings* m_thermodynamics{ nullptr };		// Pointer to thermodynamics settings.
 
 	// All streams of all types, to simplify massive operations.
 	std::vector<std::vector<std::unique_ptr<CStream>>*> m_allStreams{ &m_feedsInit, &m_feedsWork, &m_streamsWork, &m_streamsStored };
@@ -49,7 +49,7 @@ class CStreamManager
 public:
 	// TODO: set it all in constructor and make them references when the same is done in BaseUnit.
 	// Sets pointers to all required data.
-	void SetPointers(const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid, const std::vector<SOverallDescriptor>* _overall,
+	void SetPointers(const CMaterialsDatabase* _materialsDB, const CMultidimensionalGrid* _grid, const std::vector<SOverallDescriptor>* _overall,
 		const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerances, const SThermodynamicsSettings* _thermodynamics);
 
 	// Is called when initial structure of the unit is configured.
@@ -150,8 +150,8 @@ public:
 	// Removes the specified phase from all streams.
 	void RemovePhase(EPhase _phase);
 
-	// Updates grids of distributed parameters in all streams.
-	void UpdateDistributionsGrid();
+	// Updates grids of distributed parameters and compounds in all streams.
+	void UpdateGrid();
 	// Updates tolerance settings in all units and streams.
 	void UpdateToleranceSettings();
 	// Updates cache settings in all streams.
@@ -161,9 +161,6 @@ public:
 
 	// Removes time points within the specified interval [timeBeg; timeEnd) that are closer together than step.
 	void ReduceTimePoints(double _timeBeg, double _timeEnd, double _step);
-
-	// Sets up the stream structure (MD dimensions, phases, materials, etc.) the same as it is configured in the flowsheet.
-	void SetupStreamStructure(CBaseStream& _stream) const;
 
 	// Saves data to file.
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;

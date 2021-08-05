@@ -5,7 +5,7 @@
 #include "Stream.h"
 #include "Phase.h"
 #include "MDMatrix.h"
-#include "DistributionsGrid.h"
+#include "MultidimensionalGrid.h"
 #include "MaterialsDatabase.h"
 #include "DistributionsFunctions.h"
 #include "DyssolStringConstants.h"
@@ -139,11 +139,11 @@ void CBasicStreamsViewer::SetupComboBoxDims(QComboBox* _combo, int _defaultPos) 
 	_combo->clear();
 	_combo->addItem(StrConst::BSV_ComboBoxNoDimension, DISTR_UNDEFINED);
 
-	for (size_t i = 0; i < m_pFlowsheet->GetDistributionsGrid()->GetDistributionsNumber(); ++i)
+	for (const auto& gridDim : ActiveGrid().GetGridDimensions())
 	{
-		const EDistrTypes type = m_pFlowsheet->GetDistributionsGrid()->GetDistrType(i);
+		const EDistrTypes type = gridDim->DimensionType();
 		const int iType = GetDistributionTypeIndex(type);
-		if (iType < DISTRIBUTIONS_NUMBER && m_pFlowsheet->GetDistributionsGrid()->GetGridEntryByIndex(i) == EGridEntry::GRID_NUMERIC)
+		if (iType < DISTRIBUTIONS_NUMBER && gridDim->GridType() == EGridEntry::GRID_NUMERIC)
 			_combo->addItem(std::vector<QString>{ DISTR_NAMES }[iType], E2I(std::vector<EDistrTypes>{ DISTR_TYPES }[iType]));
 	}
 
@@ -434,15 +434,16 @@ std::vector<std::string> CBasicStreamsViewer::TableHeaders(EDistrTypes _distr) c
 	std::vector<std::string> vHeaders;
 	std::vector<std::pair<double, double>> vNumGrid;
 
+
 	if (_distr != DISTR_UNDEFINED)
 	{
-		const EGridEntry gridType = m_pFlowsheet->GetDistributionsGrid()->GetGridEntryByDistr(_distr);
+		const EGridEntry gridType = ActiveGrid().GetGridDimension(_distr)->GridType();
 
 		switch (gridType)
 		{
 		case EGridEntry::GRID_NUMERIC:
 		{
-			std::vector<double> grid = m_pFlowsheet->GetDistributionsGrid()->GetNumericGridByDistr(_distr);
+			std::vector<double> grid = ActiveGrid().GetGridDimensionNumeric(_distr)->Grid();
 			vNumGrid.resize(grid.size() - 1);
 			for (int i = 0; i < static_cast<int>(grid.size()) - 1; ++i)
 				vNumGrid[i] = { grid[i] , grid[i + 1] };
@@ -450,7 +451,7 @@ std::vector<std::string> CBasicStreamsViewer::TableHeaders(EDistrTypes _distr) c
 		}
 		case EGridEntry::GRID_SYMBOLIC:
 		{
-			std::vector<std::string> grid = m_pFlowsheet->GetDistributionsGrid()->GetSymbolicGridByDistr(_distr);
+			std::vector<std::string> grid = ActiveGrid().GetGridDimensionSymbolic(_distr)->Grid();
 			for (const auto& cell : grid)
 				vHeaders.push_back(cell);
 			break;
@@ -602,8 +603,6 @@ void CBasicStreamsViewer::SetPhaseCompoundsToTable()
 void CBasicStreamsViewer::SetSauterDiameterToTable()
 {
 	if (m_vSelectedMD.empty()) return;
-	std::vector<double> vSizes = m_pFlowsheet->GetDistributionsGrid()->GetNumericGridByDistr(DISTR_SIZE);
-	if (vSizes.empty()) return;
 
 	ui.tabTable->SetGeometry(static_cast<int>(m_vSelectedTP.size()), static_cast<int>(m_vSelectedMD.size()) + 1);
 	ui.tabTable->SetColHeaderItem(0, StrConst::BSV_TableHeaderTime);
@@ -611,6 +610,7 @@ void CBasicStreamsViewer::SetSauterDiameterToTable()
 
 	for (int i = 0; i < static_cast<int>(m_vSelectedMD.size()); ++i)
 	{
+		std::vector<double> vSizes = m_vSelectedStreams[i]->GetGrid().GetPSDGrid();
 		ui.tabTable->SetColHeaderItem(i + 1, m_vSelectedStreams[i]->GetName() + "\n" + StrConst::BSV_TableHeaderSauter);
 		for (int iTP = 0; iTP < (int)m_vSelectedTP.size(); ++iTP)
 		{
@@ -665,8 +665,8 @@ void CBasicStreamsViewer::SetSolidDistrsToTableHeaders(EDistrCombination _type)
 	{
 		const EDistrTypes dimRow = ChosenDim(EDimType::Row);
 		const EDistrTypes dimCol = ChosenDim(EDimType::Col);
-		const int classesRow = static_cast<int>(m_pFlowsheet->GetDistributionsGrid()->GetClassesByDistr(dimRow));
-		const int classesCol = static_cast<int>(m_pFlowsheet->GetDistributionsGrid()->GetClassesByDistr(dimCol));
+		const int classesRow = static_cast<int>(ActiveGrid().GetGridDimension(dimRow)->ClassesNumber());
+		const int classesCol = static_cast<int>(ActiveGrid().GetGridDimension(dimCol)->ClassesNumber());
 		ui.tabTable->SetGeometry(classesRow, (classesCol + 1) * (int)m_vSelectedMD.size() - 1);
 		ui.tabTable->SetRowHeaderItems(0, TableHeaders(dimRow));
 		for (int i = 0; i < static_cast<int>(m_vSelectedMD.size()); ++i)
@@ -679,7 +679,7 @@ void CBasicStreamsViewer::SetSolidDistrsToTableHeaders(EDistrCombination _type)
 	case EDistrCombination::OneDimensionalVertical:
 	{
 		const EDistrTypes dim = ChosenDim(EDimType::Row);
-		const int classes = static_cast<int>(m_pFlowsheet->GetDistributionsGrid()->GetClassesByDistr(dim));
+		const int classes = static_cast<int>(ActiveGrid().GetGridDimension(dim)->ClassesNumber());
 		ui.tabTable->SetGeometry(classes, static_cast<int>(m_vSelectedMD.size()));
 		ui.tabTable->SetRowHeaderItems(0, TableHeaders(dim));
 		for (int i = 0; i < static_cast<int>(m_vSelectedMD.size()); ++i)
@@ -689,7 +689,7 @@ void CBasicStreamsViewer::SetSolidDistrsToTableHeaders(EDistrCombination _type)
 	case EDistrCombination::OneDimensionalHorizontal:
 	{
 		const EDistrTypes dim = ChosenDim(EDimType::Col);
-		const int classes = static_cast<int>(m_pFlowsheet->GetDistributionsGrid()->GetClassesByDistr(dim));
+		const int classes = static_cast<int>(ActiveGrid().GetGridDimension(dim)->ClassesNumber());
 		ui.tabTable->SetGeometry(static_cast<int>(m_vSelectedMD.size()), classes);
 		ui.tabTable->SetColHeaderItems(0, TableHeaders(dim));
 		for (int i = 0; i < static_cast<int>(m_vSelectedMD.size()); ++i)
@@ -717,10 +717,15 @@ void CBasicStreamsViewer::SetSolidDistrsToTableData(EDistrCombination _type)
 			distrs.push_back(ChosenDim(EDimType::Row));
 			distrs.push_back(ChosenDim(EDimType::Col));
 			coords.push_back(0);
-			const int classesRow = static_cast<int>(m_pFlowsheet->GetDistributionsGrid()->GetClassesByDistr(ChosenDim(EDimType::Row)));
-			const int classesCol = static_cast<int>(m_pFlowsheet->GetDistributionsGrid()->GetClassesByDistr(ChosenDim(EDimType::Col)));
+			const auto headerGrid1 = ActiveGrid().GetGridDimensionNumeric(ChosenDim(EDimType::Row))->Grid();
+			const auto headerGrid2 = ActiveGrid().GetGridDimensionNumeric(ChosenDim(EDimType::Col))->Grid();
+			const int classesRow = static_cast<int>(ActiveGrid().GetGridDimension(ChosenDim(EDimType::Row))->ClassesNumber());
+			const int classesCol = static_cast<int>(ActiveGrid().GetGridDimension(ChosenDim(EDimType::Col))->ClassesNumber());
 			for (int i = 0; i < static_cast<int>(m_vSelectedMD.size()); ++i)
 			{
+				const auto actualGrid1 = m_vSelectedStreams[i]->GetGrid().GetGridDimensionNumeric(ChosenDim(EDimType::Row))->Grid();
+				const auto actualGrid2 = m_vSelectedStreams[i]->GetGrid().GetGridDimensionNumeric(ChosenDim(EDimType::Col))->Grid();
+				if (headerGrid1 != actualGrid1 || headerGrid2 != actualGrid2) continue;
 				coords.back() = 0;
 				for (int j = 0; j < classesRow; ++j)
 				{
@@ -733,15 +738,40 @@ void CBasicStreamsViewer::SetSolidDistrsToTableData(EDistrCombination _type)
 		else
 		{
 			distrs.push_back(ChosenDim(_type == EDistrCombination::OneDimensionalVertical ? EDimType::Row : EDimType::Col));
+			const auto headerGrid = ActiveGrid().GetGridDimensionNumeric(static_cast<EDistrTypes>(distrs.back()))->Grid();
 			const std::vector<std::string> compounds = comp.empty() ? std::vector<std::string>{} : std::vector<std::string>{ comp };
 			const EPSDGridType meanType = ChosenPSDGridType();
 			std::vector<double> vals;
 			for (int i = 0; i < static_cast<int>(m_vSelectedMD.size()); ++i)
 			{
+				const auto actualGrid = m_vSelectedStreams[i]->GetGrid().GetGridDimensionNumeric(static_cast<EDistrTypes>(distrs.back()))->Grid();
+				const bool convert = headerGrid != actualGrid;
 				if (distrs.back() == DISTR_SIZE)
-					vals = m_vSelectedStreams[i]->GetPSD(m_dCurrentTime, ChosenPSDType(), compounds, meanType);
+				{
+					if (!convert)
+						vals = m_vSelectedStreams[i]->GetPSD(m_dCurrentTime, ChosenPSDType(), compounds, meanType);
+					else
+					{
+						const auto& t = ChosenPSDType();
+						if (t != PSD_Q0 && t != PSD_Q2 && t != PSD_Q3)
+							vals = ConvertOnNewGrid(actualGrid, m_vSelectedStreams[i]->GetPSD(m_dCurrentTime, t, compounds, meanType), headerGrid);
+						else
+						{
+							if (t == PSD_Q0)
+								vals = q2Q(headerGrid, ConvertOnNewGrid(actualGrid, m_vSelectedStreams[i]->GetPSD(m_dCurrentTime, PSD_q0, compounds, meanType), headerGrid));
+							else if (t == PSD_Q2)
+								vals = q2Q(headerGrid, ConvertOnNewGrid(actualGrid, m_vSelectedStreams[i]->GetPSD(m_dCurrentTime, PSD_q2, compounds, meanType), headerGrid));
+							else if (t == PSD_Q3)
+								vals = q2Q(headerGrid, ConvertOnNewGrid(actualGrid, m_vSelectedStreams[i]->GetPSD(m_dCurrentTime, PSD_q3, compounds, meanType), headerGrid));
+						}
+					}
+				}
 				else
+				{
 					vals = m_vSelectedMD[i]->GetVectorValue(m_dCurrentTime, distrs, coords);
+					if (convert)
+						vals = ConvertOnNewGrid(actualGrid, vals, headerGrid);
+				}
 
 				if (_type == EDistrCombination::OneDimensionalVertical)
 					ui.tabTable->SetItemsColNotEditable(0, i, vals);
@@ -835,15 +865,13 @@ void CBasicStreamsViewer::SetSauterDiameterToPlot()
 {
 	if (m_vSelectedMD.empty()) return;
 
-	std::vector<double> vSizes = m_pFlowsheet->GetDistributionsGrid()->GetNumericGridByDistr(DISTR_SIZE);
-	if (vSizes.empty()) return;
-
 	for (unsigned i = 0; i < m_vSelectedMD.size(); ++i)
 	{
 		const QColor color = Qt::GlobalColor(Qt::red + i % (Qt::transparent - Qt::red));
 		auto* pCurve = new QtPlot::SCurve(m_vSelectedStreams[i]->GetName(), color, QtPlot::LABEL_TIME, QtPlot::LABEL_SAUTER);
 		ui.tabPlot->AddCurve(pCurve);
 
+		std::vector<double> vSizes = m_vSelectedStreams[i]->GetGrid().GetPSDGrid();
 		std::vector<double> tp = m_vSelectedMD[i]->GetAllTimePoints();
 		std::vector<double> vals(tp.size());
 		for (size_t iTP = 0; iTP < tp.size(); ++iTP)
@@ -865,8 +893,6 @@ void CBasicStreamsViewer::SetSolidDistrsToPlot()
 	const EPSDGridType meanType = ChosenPSDGridType();
 	if (dim == DISTR_UNDEFINED) return;
 
-	const std::vector<double> vMedians = dim != DISTR_SIZE ? m_pFlowsheet->GetDistributionsGrid()->GetClassMeansByDistr(dim) : m_pFlowsheet->GetDistributionsGrid()->GetPSDMeans(meanType);
-
 	ui.tabPlot->SetManualLabelsNames(DistrSymbolicName(dim), QString::fromStdString(PSDSymbolicName(dim)));
 	for (unsigned i = 0; i < m_vSelectedMD.size(); ++i)
 	{
@@ -875,13 +901,20 @@ void CBasicStreamsViewer::SetSolidDistrsToPlot()
 		ui.tabPlot->AddCurve(pCurve);
 
 		std::vector<double> vals;
-		if(dim == DISTR_SIZE)
+		std::vector<double> vMedians;
+		if (dim == DISTR_SIZE)
+		{
 			vals = m_vSelectedStreams[i]->GetPSD(m_dCurrentTime, ChosenPSDType(), compounds, meanType);
+			vMedians = m_vSelectedStreams[i]->GetGrid().GetPSDMeans(meanType);
+		}
 		else
+		{
 			if (compounds.empty())	// for all compounds
 				vals = m_vSelectedMD[i]->GetVectorValue(m_dCurrentTime, dim);
 			else					// for only one compound
 				vals = m_vSelectedMD[i]->GetVectorValue(m_dCurrentTime, DISTR_COMPOUNDS, static_cast<unsigned>(VectorFind(m_pFlowsheet->GetCompounds(), comp)), dim);
+			vMedians = m_vSelectedStreams[i]->GetGrid().GetGridDimensionNumeric(dim)->GetClassesMeans();
+		}
 
 		ui.tabPlot->AddPoints(i, vMedians, vals);
 	}
@@ -951,6 +984,11 @@ void CBasicStreamsViewer::contextMenuEvent(QContextMenuEvent* _event)
 	QAction* exportToFile  = menu.addAction("Export to file");
 	connect(exportToFile, &QAction::triggered, this, &CBasicStreamsViewer::ExportToFile);
 	menu.exec(_event->globalPos());
+}
+
+const CMultidimensionalGrid& CBasicStreamsViewer::ActiveGrid() const
+{
+	return m_vSelectedStreams.size() != 1 ? m_pFlowsheet->GetGrid() : m_vSelectedStreams.front()->GetGrid();
 }
 
 void CBasicStreamsViewer::PropertyChanged()

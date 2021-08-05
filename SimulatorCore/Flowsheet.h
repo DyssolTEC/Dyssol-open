@@ -4,10 +4,10 @@
 
 #include "CalculationSequence.h"
 #include "UnitContainer.h"
-#include "DistributionsGrid.h"
 #include "DyssolTypes.h"
 #include "ParametersHolder.h"
 #include "Phase.h"
+#include "MultidimensionalGrid.h"
 
 /*
  * Stores the whole information about the flowsheet.
@@ -16,9 +16,8 @@
  * Data must be copied between them during the simulation.
  * It is inefficient if there is no grid conversion needed, so the split between input and output is rather virtual.
  * m_streams is the main list of streams, which users communicate with: they have a name, can be tear streams, are saved/loaded and visualized.
- * m_streamsO always points to main streams.
- * m_streamsI either also point to main stream (no conversion needed) or to their own objects (conversion needed).
- * Thus, additional streams are only created if they are needed, and unnecessary copy operations can be omitted.
+ * m_streamsI are input streams and either point to main stream (no conversion needed) or to their own objects (conversion needed).
+ * Thus, additional streams are only created if they are needed, and unnecessary copy operations are omitted.
  * Unique key for each input-output pair is kept the same.
  */
 class CFlowsheet
@@ -32,8 +31,8 @@ class CFlowsheet
 	CModelsManager& m_modelsManager;			// Reference to a global models manager.
 	// TODO: move it out of the flowsheet and save/load independently.
 	CParametersHolder m_parameters;				// Holder of different flowsheet settings.
-	// TODO: move it out of the flowsheet and save/load independently.
-	CDistributionsGrid m_grid;					// Global distribution grid.
+	// TODO: rename to grid.
+	CMultidimensionalGrid m_mainGrid;			// Global version of distribution grids.
 	std::vector<SOverallDescriptor> m_overall;	// List of all defined overall properties.
 	std::vector<SPhaseDescriptor> m_phases;		// List of all defined phases.
 	SCacheSettings m_cacheStreams{ m_parameters.cacheFlagStreams, m_parameters.cacheWindow, m_parameters.cachePath };				// Global cache settings for streams.
@@ -46,8 +45,8 @@ class CFlowsheet
 	//
 	std::vector<std::unique_ptr<CUnitContainer>> m_units;	// All defined units.
 	std::vector<std::shared_ptr<CStream>> m_streams;		// All defined streams.
-	std::vector<std::shared_ptr<CStream>> m_streamsO;		// All defined input streams. Always point to streams from m_streams.
-	std::vector<std::shared_ptr<CStream>> m_streamsI;		// All defined output streams. Either points to streams from m_streams or to own objects.
+
+	std::vector<std::shared_ptr<CStream>> m_streamsI;		// Input streams. Either point to streams from m_streams or to own objects.
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Topology
@@ -91,7 +90,7 @@ public:
 	std::vector<CUnitContainer*> GetAllUnits();
 
 	// Copies output streams to input streams if necessary.
-	void PrepareInputStreams(const CUnitContainer* _unit, double _timeBeg, double _timeEnd);
+	void PrepareInputStreams(const CUnitContainer* _unit, double _timeBeg, double _timeEnd) const;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Streams
@@ -188,8 +187,10 @@ public:
 	// Other
 	//
 
-	// Updates grids of distributed parameters in all units and streams.
-	void UpdateDistributionsGrid();
+	// Sets new main grid of distributed parameters to all stream and units that use it.
+	void SetMainGrid(const CMultidimensionalGrid& _grid);
+	// Updates the grids of distributed parameters in all units and connected streams.
+	void UpdateGrids();
 	// Updates cache settings in all units and streams.
 	void UpdateCacheSettings();
 	// Updates tolerance settings in all units and streams.
@@ -197,11 +198,8 @@ public:
 	// Updates thermodynamics settings in all units and streams.
 	void UpdateThermodynamicsSettings();
 
-	// TODO: remove them when grid is moved out of scope of the flowsheet.
-	// Returns a const pointer to distributions grid.
-	const CDistributionsGrid* GetDistributionsGrid() const;
-	// Returns a pointer to distributions grid.
-	CDistributionsGrid* GetDistributionsGrid();
+	// Returns current grid of distributed parameters.
+	const CMultidimensionalGrid& GetGrid() const;
 
 	// Returns a const pointer to parameters settings.
 	const CParametersHolder* GetParameters() const;
@@ -221,7 +219,7 @@ public:
 
 private:
 	// Returns a pointer to a stream with the specified unique key from the given vector. If no such stream defined, returns nullptr.
-	static const CStream* DoGetStream(const std::string& _key, const std::vector<std::shared_ptr<CStream>>& _streams);
+	static std::shared_ptr<CStream> DoGetStream(const std::string& _key, const std::vector<std::shared_ptr<CStream>>& _streams);
 
 	// Returns unique keys of all defined units.
 	std::vector<std::string> GetAllUnitsKeys() const;

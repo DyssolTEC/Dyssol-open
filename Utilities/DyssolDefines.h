@@ -99,7 +99,6 @@ enum class EGridEntry : uint32_t
 {
 	GRID_NUMERIC	= 0,
 	GRID_SYMBOLIC	= 2,
-	GRID_UNDEFINED	= 15
 };
 
 // ========== TYPES OF GRID FUNCTIONAL DISTRIBUTIONS

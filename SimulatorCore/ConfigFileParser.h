@@ -13,7 +13,7 @@ class CMaterialsDatabase;
 struct SGridDimensionEx
 {
 	unsigned iGrid{};					                        // Grid index.
-	EGridEntry gridType{ EGridEntry::GRID_UNDEFINED };          // Type of grid entries (GRID_NUMERIC | GRID_SYMBOLIC).
+	EGridEntry gridType{ EGridEntry::GRID_NUMERIC };            // Type of grid entries (GRID_NUMERIC | GRID_SYMBOLIC).
 	EGridFunction gridFun{ EGridFunction::GRID_FUN_UNDEFINED }; // Function, that was use to define the grid (GRID_FUN_MANUAL | GRID_FUN_EQUIDISTANT |...).
 	unsigned nClasses{};				                        // Number of classes.
 	std::vector<double> vNumGrid;		                        // Grid for GRID_NUMERIC.

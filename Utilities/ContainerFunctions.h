@@ -204,3 +204,11 @@ template<typename T> std::vector<T> ReservedVector(size_t _size)
 	res.reserve(_size);
 	return res;
 }
+
+// Returns vector of elements of _v1, which are not found in _v2. Both vectors are unsorted.
+template<typename T> std::vector<T> VectorDifference(const std::vector<T>& _v1, const std::vector<T>& _v2)
+{
+	std::vector<T> res;
+	std::copy_if(_v1.begin(), _v1.end(), std::back_inserter(res), [&_v2](const T& val) { return !VectorContains(_v2, val); });
+	return res;
+}

@@ -9,6 +9,7 @@ class CMaterialsDatabase;
 class CFlowsheet;
 class CBaseStream;
 class CMDMatrix;
+class CMultidimensionalGrid;
 
 class CSolidDistributionsEditor : public QWidget
 {
@@ -19,7 +20,7 @@ public:
 private:
 	CMaterialsDatabase* m_materialsDB;
 	CFlowsheet* m_pFlowsheet;
-	CDistributionsGrid* m_pGrid;
+	const CMultidimensionalGrid* m_pGrid;
 	CMDMatrix* m_pDistribution;
 	CBaseStream* m_pStream;
 

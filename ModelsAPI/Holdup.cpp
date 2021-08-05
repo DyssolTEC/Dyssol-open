@@ -15,7 +15,7 @@ CHoldup::CHoldup(const std::string& _key) :
 	m_overall[EOverall::OVERALL_MASS]->SetUnits("kg");
 }
 
-CHoldup::CHoldup(const std::string& _key, const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid,
+CHoldup::CHoldup(const std::string& _key, const CMaterialsDatabase* _materialsDB, const CMultidimensionalGrid& _grid,
 	const std::vector<SOverallDescriptor>* _overall, const std::vector<SPhaseDescriptor>* _phases,
 	const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics) :
 	CBaseStream{ _key, _materialsDB, _grid, _overall, _phases, _cache, _tolerance, _thermodynamics }
@@ -53,7 +53,7 @@ void CHoldup::CopyFromHoldup(double _timeDst, const CHoldup* _source, double _ti
 void CHoldup::AddStream(double _timeBeg, double _timeEnd, const CStream* _source)
 {
 	if (_timeBeg > _timeEnd) return;
-	if (!HaveSameStructure(*this, *_source)) return;
+	if (!HaveSameStructure2(*this, *_source)) return;
 
 	// remove discarded time points
 	RemoveTimePointsAfter(_timeEnd);

@@ -8,12 +8,12 @@
 CGridEditor::CGridEditor(CFlowsheet* _pFlowsheet, const CMaterialsDatabase& _materialsDB, QWidget* parent, Qt::WindowFlags flags)
 	: QDialog(parent, flags)
 	, m_materialsDB{ _materialsDB }
+	, m_pFlowsheet{ _pFlowsheet }
+	, m_pGrid{ _pFlowsheet->GetGrid() }
 {
 	ui.setupUi(this);
 	this->setWindowFlags(this->windowFlags() | Qt::WindowMaximizeButtonHint | Qt::WindowMinimizeButtonHint);
 
-	m_pFlowsheet = _pFlowsheet;
-	m_pGrid = _pFlowsheet->GetDistributionsGrid();
 }
 
 CGridEditor::~CGridEditor()
@@ -57,29 +57,31 @@ void CGridEditor::UpdateWholeView()
 	m_bAvoidSignal = true;
 	ui.tableWidgetDims->setRowCount(0);
 	ui.listWidgetParams->clear();
-	if (!m_pFlowsheet || !m_pGrid)
+	if (!m_pFlowsheet)
 	{
 		m_bAvoidSignal = false;
 		return;
 	}
 
-	ui.tableWidgetDims->setRowCount((int)m_pGrid->GetDistributionsNumber());
-	for (unsigned i = 0; i < m_pGrid->GetDistributionsNumber(); ++i)
+	ui.tableWidgetDims->setRowCount((int)m_pGrid.GetDimensionsNumber());
+	int i = 0;
+	for (const auto& gridDim : m_pGrid.GetGridDimensions())
 	{
 		QComboBox* pCombo = AddComboBoxDimensions(i);
 
-		int nTypeIndex = GetDistributionTypeIndex(m_pGrid->GetDistrType(i));
+		int nTypeIndex = GetDistributionTypeIndex(gridDim->DimensionType());
 		pCombo->setCurrentIndex(nTypeIndex);
 
 		CDimensionParameters* pDimPar = AddDimensionParam();
-		pDimPar->SetGrid(m_pGrid->GetDimension(i));
+		pDimPar->SetGrid(*gridDim);
 
 		// disable first combobox with compounds and connected widget
-		if (m_pGrid->GetDistrType(i) == DISTR_COMPOUNDS)
+		if (gridDim->DimensionType() == DISTR_COMPOUNDS)
 		{
 			pCombo->setEnabled(false);
 			pDimPar->setEnabled(false);
 		}
+		i++;
 	}
 	m_bAvoidSignal = false;
 }
@@ -181,15 +183,15 @@ bool CGridEditor::ApplyChanges()
 
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 
-	m_pGrid->Clear();
+	CMultidimensionalGrid newGrid;
 	for (int i = 0; i < ui.tableWidgetDims->rowCount(); ++i)
 	{
 		QComboBox* pCombo = ((QComboBox*)ui.tableWidgetDims->cellWidget(i, 0));
 		if (pCombo->currentIndex() == -1) continue;
 		CDimensionParameters* item = static_cast<CDimensionParameters*>(ui.listWidgetParams->itemWidget(ui.listWidgetParams->item(i)));
-		m_pGrid->AddDimension(item->GetGrid());
+		newGrid.AddDimension(*item->GetGrid());
 	}
-	m_pFlowsheet->UpdateDistributionsGrid();
+	m_pFlowsheet->SetMainGrid(newGrid);
 
 	emit DataChanged();
 

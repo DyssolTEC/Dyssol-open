@@ -5,7 +5,6 @@
 #include "BaseUnit.h"
 #include "Stream.h"
 #include "MaterialsDatabase.h"
-#include "DistributionsGrid.h"
 
 CDustFormationTesterTab::CDustFormationTesterTab(const CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, QWidget *parent)
 	: QDialog(parent),
@@ -188,7 +187,7 @@ void CDustFormationTesterTab::UpdateDataTable()
 	std::vector<std::string> vCompounds;
 	if (!sCompound.empty())
 		vCompounds.push_back(sCompound);
-	m_tester.SetGrid(m_pFlowsheet->GetDistributionsGrid()->GetNumericGridByDistr(DISTR_SIZE));
+	m_tester.SetGrid(m_pFlowsheet->GetGrid().GetPSDGrid());
 	ui.tableWidgetData->setRowCount(static_cast<int>(vTPs.size()));
 
 	for (int i = 0; i < static_cast<int>(vTPs.size()); ++i)

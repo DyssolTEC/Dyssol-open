@@ -1,6 +1,7 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "MDMatrix.h"
+#include "ContainerFunctions.h"
 #include "DyssolStringConstants.h"
 #include <cmath>
 
@@ -292,6 +293,9 @@ void CMDMatrix::AddClass(unsigned _nDim)
 
 void CMDMatrix::RemoveClass(unsigned _nDim, size_t _nClassIndex)
 {
+	const size_t iDim = VectorFind(m_vDimensions, _nDim);
+	if (iDim == static_cast<size_t>(-1)) return;
+	if (_nClassIndex >= m_vClasses[iDim]) return;
 	for( unsigned i=0; i<m_vDimensions.size(); ++i )
 	{
 		if( m_vDimensions[i] == _nDim )

@@ -9,7 +9,6 @@
 #include "DynamicUnit.h"
 #include "DyssolStringConstants.h"
 #include "ContainerFunctions.h"
-#include "DistributionsGrid.h"
 #include "DyssolUtilities.h"
 
 CSimulator::CSimulator()
@@ -55,7 +54,7 @@ void CSimulator::Simulate()
 	m_logUpdater.Run();
 
 	// set initial values to tear streams
-	m_pFlowsheet->GetCalculationSequence()->InitializeTearStreams(m_pParams->initTimeWindow);
+	m_pFlowsheet->GetCalculationSequence()->CopyInitToTearStreams(m_pParams->initTimeWindow);
 
 	// Simulate all units
 	for (const auto& partition : m_pSequence->Partitions())
@@ -85,7 +84,7 @@ void CSimulator::Simulate()
 	if(m_pParams->initializeTearStreamsAutoFlag)
 	{
 		m_log.WriteInfo(StrConst::Sim_InfoSaveInitTearStreams);
-		m_pFlowsheet->GetCalculationSequence()->UpdateInitialStreams(m_pParams->initTimeWindow);
+		m_pFlowsheet->GetCalculationSequence()->CopyTearToInitStreams(m_pParams->initTimeWindow);
 	}
 
 	m_nCurrentStatus = ESimulatorStatus::SIMULATOR_IDLE;
@@ -398,10 +397,6 @@ void CSimulator::ApplyExtrapolationMethod(const std::vector<CStream*>& _streams,
 void CSimulator::SetupConvergenceMethod()
 {
 	m_bSteffensenTrigger = true;
-	m_vDims = m_pFlowsheet->GetDistributionsGrid()->GetDistrTypes();
-	m_mMDnew.SetDimensions(vector_cast<unsigned>(m_vDims), m_pFlowsheet->GetDistributionsGrid()->GetClasses());
-	m_vMTPnew.resize(3);
-	m_vPFnew.resize(m_pFlowsheet->GetPhasesNumber());
 }
 
 void CSimulator::ApplyConvergenceMethod(const std::vector<CStream*>& _s3, std::vector<CStream*>& _s2, std::vector<CStream*>& _s1, double _t1, double _t2)
@@ -426,7 +421,7 @@ void CSimulator::ApplyConvergenceMethod(const std::vector<CStream*>& _s3, std::v
 			{
 				_s3[i]->SetPhaseFraction(time, phase.state, PredictValues(_s3[i]->GetPhaseFraction(time, phase.state), _s2[i]->GetPhaseFraction(time, phase.state), _s1[i]->GetPhaseFraction(time, phase.state)));
 				if (phase.state == EPhase::SOLID) // all distributed parameters
-					_s3[i]->SetDistribution(time, PredictValues(_s3[i]->GetDistribution(time, m_pFlowsheet->GetDistributionsGrid()->GetDistrTypes()), _s2[i]->GetDistribution(time, m_pFlowsheet->GetDistributionsGrid()->GetDistrTypes()), _s1[i]->GetDistribution(time, m_pFlowsheet->GetDistributionsGrid()->GetDistrTypes())));
+					_s3[i]->SetDistribution(time, PredictValues(_s3[i]->GetDistribution(time, _s3[i]->GetGrid().GetDimensionsTypes()), _s2[i]->GetDistribution(time, _s2[i]->GetGrid().GetDimensionsTypes()), _s1[i]->GetDistribution(time, _s1[i]->GetGrid().GetDimensionsTypes())));
 				else				// only distribution by compounds
 					_s3[i]->SetCompoundsFractions(time, phase.state, PredictValues(_s3[i]->GetCompoundsFractions(time, phase.state), _s2[i]->GetCompoundsFractions(time, phase.state), _s1[i]->GetCompoundsFractions(time, phase.state)));
 			}

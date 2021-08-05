@@ -2,10 +2,11 @@
 
 #pragma once
 
-#include "DistributionsGrid.h"
 #include <QComboBox>
 #include <QLabel>
 #include <QHBoxLayout>
+
+class CMultidimensionalGrid;
 
 class CParamsItem : public QWidget
 {
@@ -14,11 +15,11 @@ private:
 	QSlider* m_pSlider;
 	QComboBox* m_pCombo;
 	QLabel* m_pLabel;
-	CDistributionsGrid* m_pGrid;
+	const CMultidimensionalGrid* m_pGrid;
 	QHBoxLayout *m_pLayout;
 
 public:
-	CParamsItem(CDistributionsGrid *_pGrid, QComboBox *_pCombo, QSlider *_pSlider, QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
+	CParamsItem(const CMultidimensionalGrid* _pGrid, QComboBox *_pCombo, QSlider *_pSlider, QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 
 	int GetDistrIndex();
 	void SetupSlider();

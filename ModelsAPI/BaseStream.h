@@ -2,19 +2,16 @@
 
 #pragma once
 
-#include "DyssolTypes.h"
-#include "DyssolDefines.h"
 #include "DefinesMDB.h"
 #include "MixtureEnthalpyLookup.h"
+#include "MultidimensionalGrid.h"
 #include <limits>
-#include <memory>
 
 class CH5Handler;
 class CDenseMDMatrix;
 class CPhase;
 class CTimeDependentValue;
 class CMaterialsDatabase;
-class CDistributionsGrid;
 class CMatrix2D;
 class CTransformMatrix;
 
@@ -25,19 +22,19 @@ class CHoldup;
 /* Base class for material flow description.*/
 class CBaseStream
 {
-	static const unsigned m_saveVersion{ 2 }; // Current version of the saving procedure.
+	static const unsigned m_saveVersion{ 3 }; // Current version of the saving procedure.
 
 	std::string m_name{ "Stream" };	// Name of the stream.
 	std::string m_key;				// Unique key of the stream.
 
 protected:
-	// TODO: make in global and rename
+	// TODO: make it global and rename
 	inline static const double m_epsilon{ 16 * std::numeric_limits<double>::epsilon() };
 
 	const CMaterialsDatabase* m_materialsDB{ nullptr };	// Pointer to a database of materials.
-	const CDistributionsGrid* m_grid{ nullptr };		// Pointer to a distribution grid.
 
 	std::vector<double> m_timePoints;											// Time points on which the stream is defined.
+	CMultidimensionalGrid m_grid;												// Defined distribution grid.
 	std::map<EOverall, std::unique_ptr<CTimeDependentValue>> m_overall;			// Defined overall properties.
 	std::map<EPhase, std::unique_ptr<CPhase>> m_phases;							// Defined phases.
 	mutable std::unique_ptr<CMixtureEnthalpyLookup> m_enthalpyCalculator;		// Lookup table to calculate temperature<->enthalpy.
@@ -50,7 +47,7 @@ public:
 	// Basic constructor.
 	CBaseStream(const std::string& _key = "");
 	// Constructor configuring the whole structure.
-	CBaseStream(const std::string& _key, const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid,
+	CBaseStream(const std::string& _key, const CMaterialsDatabase* _materialsDB, const CMultidimensionalGrid& _grid,
 		const std::vector<SOverallDescriptor>* _overall, const std::vector<SPhaseDescriptor>* _phases,
 		const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics);
 	// Copy constructor.
@@ -67,8 +64,17 @@ public:
 	// Sets up the stream structure (MD dimensions, phases, materials, etc.) the same as an in the given stream. Removes all existing data.
 	void SetupStructure(const CBaseStream* _other);
 
-	// Checks whether both streams have the same structure (phases, dimensions, etc.).
-	static bool HaveSameStructure(const CBaseStream& _stream1, const CBaseStream& _stream2);
+	// Checks whether both streams have the same overall properties.
+	static bool HaveSameOverall(const CBaseStream& _stream1, const CBaseStream& _stream2);
+	// Checks whether both streams have the same phases.
+	static bool HaveSamePhases(const CBaseStream& _stream1, const CBaseStream& _stream2);
+	// Checks whether both streams have the same solids distribution grids.
+	static bool HaveSameGrids(const CBaseStream& _stream1, const CBaseStream& _stream2);
+	// Checks whether both streams have the same overall properties and phases.
+	static bool HaveSameOverallAndPhases(const CBaseStream& _stream1, const CBaseStream& _stream2);
+	// TODO: rename to HaveSameStructure
+	// Checks whether both streams have the same overall properties, phases and grids.
+	static bool HaveSameStructure2(const CBaseStream& _stream1, const CBaseStream& _stream2);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Basic stream properties
@@ -158,9 +164,6 @@ public:
 	void AddCompound(const std::string& _compoundKey);
 	// Removes a compound with the specified unique key from the stream.
 	void RemoveCompound(const std::string& _compoundKey);
-	// TODO: remove this.
-	// Removes all defined compounds.
-	void ClearCompounds();
 	// Returns all defined materials.
 	std::vector<std::string> GetAllCompounds() const;
 
@@ -364,15 +367,15 @@ public:
 	// Other
 	//
 
+	// Returns current grid of distributed parameters.
+	const CMultidimensionalGrid& GetGrid() const;
+
 	// TODO: remove, initialize MDB in constructor
 	// Sets pointer to the used materials database.
-	void SetMaterialsDatabase(const CMaterialsDatabase* _database);
+	void SetMaterialsDatabasePtr(const CMaterialsDatabase* _database);
 
-	// TODO: remove, initialize grid in constructor
-	// Sets pointer to the used distributions grid.
-	void SetGrid(const CDistributionsGrid* _grid);
-	// Updates grids of distributed parameters.
-	void UpdateDistributionsGrid();
+	// Sets grids of distributed parameters.
+	void SetGrid(const CMultidimensionalGrid& _grid);
 
 	// Sets new cache settings.
 	void SetCacheSettings(const SCacheSettings& _settings);

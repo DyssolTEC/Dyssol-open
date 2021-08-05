@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include <numeric>
+#include <string>
 
 double inline GetMMoment(int _moment, const std::vector<double>& _grid, const std::vector<double>& _q)
 {
@@ -275,7 +276,20 @@ std::vector<double> inline ConvertNumbersToMassFractions(const std::vector<doubl
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-std::vector<double> inline ConvertOnNewGrid(const std::vector<double>& _grid, const std::vector<double>& _q, std::vector<double>& _gridNew)
+// Converts the distribution _q defined on the symbolic _grid to the new grid _gridNew.
+std::vector<double> inline ConvertOnNewGrid(const std::vector<std::string>& _grid, const std::vector<double>& _q, const std::vector<std::string>& _gridNew)
+{
+	std::vector<double> res(_gridNew.size());
+	for (size_t i = 0; i < _gridNew.size(); ++i)
+	{
+		const auto it = std::find(_grid.begin(), _grid.end(), _gridNew[i]);
+		res[i] = it != _grid.end() ? _q[std::distance(_grid.begin(), it)] : 0.0;
+	}
+	return res;
+}
+
+// Converts the distribution _q defined on the numeric _grid to the new grid _gridNew.
+std::vector<double> inline ConvertOnNewGrid(const std::vector<double>& _grid, const std::vector<double>& _q, const std::vector<double>& _gridNew)
 {
 	std::vector<double> qNew(_gridNew.size() - 1);
 	const std::vector<double> QDistr = q2Q(_grid, _q);

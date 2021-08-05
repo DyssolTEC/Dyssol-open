@@ -5,7 +5,7 @@
 #include "ModelsManager.h"
 #include "DyssolTypes.h"
 
-class CDistributionsGrid;
+class CMultidimensionalGrid;
 class CMaterialsDatabase;
 class CH5Handler;
 
@@ -24,13 +24,15 @@ class CUnitContainer
 
 	CModelsManager& m_modelsManager;	// A holder of all accessible models.
 
+	// TODO: rename to m_grid
+
 	////////////////////////////////////////////////////////////////////////////////
 	// References to flowsheet structural data and settings
 	//
 
 	// TODO: gather them in some global structure.
 	const CMaterialsDatabase& m_materialsDB;			// Reference to a database of materials.
-	const CDistributionsGrid& m_grid;					// Reference to a distribution grid.
+	const CMultidimensionalGrid& m_grid;				// Reference to the main distributions grid.
 	const std::vector<SOverallDescriptor>& m_overall;	// Reference to overall properties.
 	const std::vector<SPhaseDescriptor>& m_phases;		// Reference to phases.
 	const SCacheSettings& m_cache;						// Reference to cache settings.
@@ -40,7 +42,7 @@ class CUnitContainer
 public:
 	// Basic constructor.
 	CUnitContainer(const std::string& _id, CModelsManager& _modelsManager,
-		const CMaterialsDatabase& _materialsDB, const CDistributionsGrid& _grid, const std::vector<SOverallDescriptor>& _overall,
+		const CMaterialsDatabase& _materialsDB, const CMultidimensionalGrid& _grid, const std::vector<SOverallDescriptor>& _overall,
 		const std::vector<SPhaseDescriptor>& _phases, const SCacheSettings& _cache, const SToleranceSettings& _tolerance, const SThermodynamicsSettings& _thermodynamics);
 	CUnitContainer(const CUnitContainer& _other)            = delete;
 	CUnitContainer(CUnitContainer&& _other)                 = delete;

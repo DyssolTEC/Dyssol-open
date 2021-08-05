@@ -32,6 +32,7 @@ void CCalculationSequence::SetSequence(const std::vector<std::vector<std::string
 		for (const auto& streamKey : _streamsKeys[iPartition])
 			m_partitions[iPartition].tearStreams.push_back(streamKey);
 	}
+	UpdateInitialStreams();
 }
 
 void CCalculationSequence::SetModel(size_t _iPartition, size_t _iModel, const std::string& _modelKey)
@@ -39,6 +40,7 @@ void CCalculationSequence::SetModel(size_t _iPartition, size_t _iModel, const st
 	if (_iPartition >= m_partitions.size()) return;
 	if (_iModel >= m_partitions[_iPartition].models.size()) return;
 	m_partitions[_iPartition].models[_iModel] = _modelKey;
+	UpdateInitialStreams();
 }
 
 void CCalculationSequence::SetStream(size_t _iPartition, size_t _iStream, const std::string& _streamKey)
@@ -46,28 +48,33 @@ void CCalculationSequence::SetStream(size_t _iPartition, size_t _iStream, const 
 	if (_iPartition >= m_partitions.size()) return;
 	if (_iStream >= m_partitions[_iPartition].tearStreams.size()) return;
 	m_partitions[_iPartition].tearStreams[_iStream] = _streamKey;
+	UpdateInitialStreams();
 }
 
 void CCalculationSequence::AddPartition(const std::vector<std::string>& _modelsKeys, const std::vector<std::string>& _tearStreamsKeys)
 {
 	m_partitions.emplace_back(SPartitionKeys{ _modelsKeys , _tearStreamsKeys });
+	UpdateInitialStreams();
 }
 
 void CCalculationSequence::AddModel(size_t _iPartition, const std::string& _modelKey)
 {
 	if (_iPartition >= m_partitions.size()) return;
 	m_partitions[_iPartition].models.push_back(_modelKey);
+	UpdateInitialStreams();
 }
 
 void CCalculationSequence::AddStream(size_t _iPartition, const std::string& _streamKey)
 {
 	if (_iPartition >= m_partitions.size()) return;
 	m_partitions[_iPartition].tearStreams.push_back(_streamKey);
+	UpdateInitialStreams();
 }
 
 void CCalculationSequence::DeletePartition(size_t _iPartition)
 {
 	VectorDelete(m_partitions, _iPartition);
+	UpdateInitialStreams();
 }
 
 void CCalculationSequence::DeleteModel(const std::string& _modelKey)
@@ -78,36 +85,43 @@ void CCalculationSequence::DeleteModel(const std::string& _modelKey)
 
 	// remove empty partitions
 	VectorDelete(m_partitions, [&](const SPartitionKeys& p) { return p.models.empty(); });
+
+	UpdateInitialStreams();
 }
 
 void CCalculationSequence::DeleteModel(size_t _iPartition, size_t _iModel)
 {
 	if (_iPartition >= m_partitions.size()) return;
 	VectorDelete(m_partitions[_iPartition].models, _iModel);
+	UpdateInitialStreams();
 }
 
 void CCalculationSequence::DeleteStream(const std::string& _streamKey)
 {
 	for (auto& partition : m_partitions)
 		VectorDelete(partition.tearStreams, [&](const std::string& k) { return k == _streamKey; });
+	UpdateInitialStreams();
 }
 
 void CCalculationSequence::DeleteStream(size_t _iPartition, size_t _iStream)
 {
 	if (_iPartition >= m_partitions.size()) return;
 	VectorDelete(m_partitions[_iPartition].tearStreams, _iStream);
+	UpdateInitialStreams();
 }
 
 void CCalculationSequence::ShiftPartitionUp(size_t _iPartition)
 {
 	if (_iPartition == 0 || _iPartition >= m_partitions.size()) return;
 	std::iter_swap(m_partitions.begin() + _iPartition, m_partitions.begin() + _iPartition - 1);
+	UpdateInitialStreams();
 }
 
 void CCalculationSequence::ShiftPartitionDown(size_t _iPartition)
 {
 	if (_iPartition == m_partitions.size() - 1 || _iPartition >= m_partitions.size()) return;
 	std::iter_swap(m_partitions.begin() + _iPartition, m_partitions.begin() + _iPartition + 1);
+	UpdateInitialStreams();
 }
 
 void CCalculationSequence::ShiftModelUp(size_t _iPartition, size_t _iModel)
@@ -115,6 +129,7 @@ void CCalculationSequence::ShiftModelUp(size_t _iPartition, size_t _iModel)
 	if (_iPartition >= m_partitions.size()) return;
 	if (_iModel == 0 || _iModel >= m_partitions[_iPartition].models.size()) return;
 	std::iter_swap(m_partitions[_iPartition].models.begin() + _iModel, m_partitions[_iPartition].models.begin() + _iModel - 1);
+	UpdateInitialStreams();
 }
 
 void CCalculationSequence::ShiftModelDown(size_t _iPartition, size_t _iModel)
@@ -122,6 +137,7 @@ void CCalculationSequence::ShiftModelDown(size_t _iPartition, size_t _iModel)
 	if (_iPartition >= m_partitions.size()) return;
 	if (_iModel == m_partitions[_iPartition].models.size() - 1 || _iModel >= m_partitions[_iPartition].models.size()) return;
 	std::iter_swap(m_partitions[_iPartition].models.begin() + _iModel, m_partitions[_iPartition].models.begin() + _iModel + 1);
+	UpdateInitialStreams();
 }
 
 void CCalculationSequence::ShiftStreamUp(size_t _iPartition, size_t _iStream)
@@ -129,6 +145,7 @@ void CCalculationSequence::ShiftStreamUp(size_t _iPartition, size_t _iStream)
 	if (_iPartition >= m_partitions.size()) return;
 	if (_iStream == 0 || _iStream >= m_partitions[_iPartition].tearStreams.size()) return;
 	std::iter_swap(m_partitions[_iPartition].tearStreams.begin() + _iStream, m_partitions[_iPartition].tearStreams.begin() + _iStream - 1);
+	UpdateInitialStreams();
 }
 
 void CCalculationSequence::ShiftStreamDown(size_t _iPartition, size_t _iStream)
@@ -136,6 +153,7 @@ void CCalculationSequence::ShiftStreamDown(size_t _iPartition, size_t _iStream)
 	if (_iPartition >= m_partitions.size()) return;
 	if (_iStream == m_partitions[_iPartition].tearStreams.size() - 1 || _iStream >= m_partitions[_iPartition].tearStreams.size()) return;
 	std::iter_swap(m_partitions[_iPartition].tearStreams.begin() + _iStream, m_partitions[_iPartition].tearStreams.begin() + _iStream + 1);
+	UpdateInitialStreams();
 }
 
 std::vector<CUnitContainer*> CCalculationSequence::PartitionModels(size_t _iPartition) const
@@ -152,7 +170,7 @@ std::vector<CUnitContainer*> CCalculationSequence::PartitionModels(size_t _iPart
 std::vector<CStream*> CCalculationSequence::PartitionTearStreams(size_t _iPartition) const
 {
 	if (_iPartition >= m_partitions.size()) return {};
-	std::vector<CStream*> res{ m_partitions[_iPartition].tearStreams.size(), nullptr };;
+	std::vector<CStream*> res{ m_partitions[_iPartition].tearStreams.size(), nullptr };
 	for (size_t i = 0; i < m_partitions[_iPartition].tearStreams.size(); ++i)
 		for (const auto& stream : *m_streams)
 			if (stream && stream->GetKey() == m_partitions[_iPartition].tearStreams[i])
@@ -221,27 +239,23 @@ std::string CCalculationSequence::Check() const
 	return {};
 }
 
-void CCalculationSequence::CreateInitialStreams()
+void CCalculationSequence::UpdateInitialStreams()
 {
-	// create initial tear streams
+	// create or remove initial tear streams
 	m_initialTearStreams.resize(PartitionsNumber());
-	for (size_t i = 0; i < PartitionsNumber(); ++i)
-		if (TearStreamsNumber(i))
-		{
-			for (size_t j=0; j<TearStreamsNumber(i); ++j)
-			{
-				if (m_initialTearStreams[i].size() <= j)
-					m_initialTearStreams[i].emplace_back(new CStream(*PartitionTearStreams(i).front()));
-			}
-		}
-	for (size_t i=0; i< m_initialTearStreams.size(); ++i)
-	{
-		for (size_t j = 0; j < m_initialTearStreams[i].size(); ++j)
-		{
-			if (!CBaseStream::HaveSameStructure(*m_initialTearStreams[i][j], *PartitionTearStreams(i)[j]))	// TODO: check whether it is needed
-				m_initialTearStreams[i][j]->SetupStructure(PartitionTearStreams(i)[j]);
-		}
-	}
+	for (size_t iPart = 0; iPart < PartitionsNumber(); ++iPart)
+		// just remove excessive
+		if (m_initialTearStreams[iPart].size() > TearStreamsNumber(iPart))
+			m_initialTearStreams[iPart].resize(TearStreamsNumber(iPart));
+		// create new as copies of real streams
+		else
+			for (size_t iStr = m_initialTearStreams[iPart].size(); iStr < TearStreamsNumber(iPart); ++iStr)
+				m_initialTearStreams[iPart].emplace_back(std::make_unique<CStream>(*PartitionTearStreams(iPart)[iStr]));
+	// update structures of the streams to set overall, phases, grids, etc.
+	for (size_t iPart = 0; iPart < m_initialTearStreams.size(); ++iPart)
+		for (size_t iStr = 0; iStr < m_initialTearStreams[iPart].size(); ++iStr)
+			if (!CBaseStream::HaveSameStructure2(*m_initialTearStreams[iPart][iStr], *PartitionTearStreams(iPart)[iStr]))
+				m_initialTearStreams[iPart][iStr]->SetupStructure(PartitionTearStreams(iPart)[iStr]);
 }
 
 void CCalculationSequence::ClearInitialStreamsData()
@@ -251,7 +265,7 @@ void CCalculationSequence::ClearInitialStreamsData()
 			stream->RemoveAllTimePoints();
 }
 
-void CCalculationSequence::InitializeTearStreams(double _timeWindow)
+void CCalculationSequence::CopyInitToTearStreams(double _timeWindow)
 {
 	for (size_t i = 0; i < PartitionsNumber(); ++i)
 		for (size_t j = 0; j < TearStreamsNumber(i); ++j)
@@ -262,7 +276,7 @@ void CCalculationSequence::InitializeTearStreams(double _timeWindow)
 		}
 }
 
-void CCalculationSequence::UpdateInitialStreams(double _timeWindow)
+void CCalculationSequence::CopyTearToInitStreams(double _timeWindow)
 {
 	for (size_t i = 0; i < PartitionsNumber(); ++i)
 		for (size_t j = 0; j < TearStreamsNumber(i); ++j)
@@ -285,55 +299,6 @@ std::vector<std::vector<CStream*>> CCalculationSequence::GetAllInitialStreams()
 		for (size_t j = 0; j < TearStreamsNumber(i); ++j)
 			res[i].push_back(m_initialTearStreams[i][j].get());
 	return res;
-}
-
-void CCalculationSequence::AddCompound(const std::string& _compoundKey)
-{
-	for (auto& partition : m_initialTearStreams)
-		for (auto& stream : partition)
-			stream->AddCompound(_compoundKey);
-}
-
-void CCalculationSequence::RemoveCompound(const std::string& _compoundKey)
-{
-	for (auto& partition : m_initialTearStreams)
-		for (auto& stream : partition)
-			stream->RemoveCompound(_compoundKey);
-}
-
-void CCalculationSequence::AddOverallProperty(EOverall _property, const std::string& _name, const std::string& _units)
-{
-	for (auto& part : m_initialTearStreams)
-		for (auto& str : part)
-			str->AddOverallProperty(_property, _name, _units);
-}
-
-void CCalculationSequence::RemoveOverallProperty(EOverall _property)
-{
-	for (auto& part : m_initialTearStreams)
-		for (auto& str : part)
-			str->RemoveOverallProperty(_property);
-}
-
-void CCalculationSequence::AddPhase(EPhase _phase, const std::string& _name)
-{
-	for (auto& part : m_initialTearStreams)
-		for (auto& str : part)
-			str->AddPhase(_phase, _name);
-}
-
-void CCalculationSequence::RemovePhase(EPhase _phase)
-{
-	for (auto& part : m_initialTearStreams)
-		for (auto& str : part)
-			str->RemovePhase(_phase);
-}
-
-void CCalculationSequence::UpdateDistributionsGrid()
-{
-	for (auto& part : m_initialTearStreams)
-		for (auto& str : part)
-			str->UpdateDistributionsGrid();
 }
 
 void CCalculationSequence::UpdateCacheSettings(const SCacheSettings& _cache)
@@ -411,7 +376,7 @@ void CCalculationSequence::LoadFromFile(CH5Handler& _h5Loader, const std::string
 		_h5Loader.ReadData(sPath, StrConst::Seq_H5TearStreamsKeys, m_partitions[i].tearStreams);
 	}
 
-	CreateInitialStreams();
+	UpdateInitialStreams();
 
 	for (int i = 0; i < partitionsNumber; ++i)
 	{
@@ -429,6 +394,8 @@ void CCalculationSequence::LoadFromFile(CH5Handler& _h5Loader, const std::string
 
 void CCalculationSequence::LoadFromFile_v1(CH5Handler& _h5Loader, const std::string& _path)
 {
+	// TODO: set grid for older versions
+
 	// TODO: move old StrConst names here.
 	const int partitionsNumber = _h5Loader.ReadAttribute(_path, StrConst::Seq_H5AttrPartitionsNum);
 	m_partitions.resize(partitionsNumber);
@@ -439,7 +406,7 @@ void CCalculationSequence::LoadFromFile_v1(CH5Handler& _h5Loader, const std::str
 		_h5Loader.ReadData(sPath, StrConst::Seq_H5TearStreamsKeys, m_partitions[i].tearStreams);
 	}
 
-	CreateInitialStreams();
+	UpdateInitialStreams();
 
 	const std::string initTearStreamsPath = "/" + std::string(StrConst::Flow_H5GroupInitTearStreams);
 	for (size_t i = 0; i < m_initialTearStreams.size(); ++i)
@@ -476,7 +443,7 @@ void CCalculationSequence::LoadFromFile_v0(CH5Handler& _h5Loader, const std::str
 	}
 
 	// initial streams are not available - just create them
-	CreateInitialStreams();
+	UpdateInitialStreams();
 }
 
 bool CCalculationSequence::IsModelInSequence(const std::string& _modelKey) const

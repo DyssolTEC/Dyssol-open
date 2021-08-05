@@ -17,7 +17,7 @@ CFlowsheet::CFlowsheet(CModelsManager& _modelsManager, const CMaterialsDatabase&
 
 void CFlowsheet::Create()
 {
-	m_grid.AddDimension(DISTR_COMPOUNDS, EGridEntry::GRID_SYMBOLIC, {}, {});
+	m_mainGrid.AddSymbolicDimension(DISTR_COMPOUNDS);
 	m_overall.emplace_back(SOverallDescriptor{ EOverall::OVERALL_MASS, "Mass flow" , "kg/s" });
 	// TODO: remove when added by user
 	m_overall.emplace_back(SOverallDescriptor{ EOverall::OVERALL_TEMPERATURE, "Temperature" , "K" });
@@ -30,11 +30,10 @@ void CFlowsheet::Clear()
 	m_units.clear();
 	m_streams.clear();
 	m_streamsI.clear();
-	m_streamsO.clear();
 	m_calculationSequence.Clear();
 	m_overall.clear();
 	m_phases.clear();
-	m_grid.Clear();
+	m_mainGrid.Clear();
 
 	// set parameters to default
 	m_parameters.SetDefaultValues();
@@ -53,7 +52,7 @@ bool CFlowsheet::IsEmpty() const
 		&& m_calculationSequence.IsEmpty()
 		&& m_overall.size() <= 1
 		&& m_phases.empty()
-		&& m_grid.GetDistributionsNumber() <= 1;
+		&& m_mainGrid.GetDimensionsNumber() <= 1;
 }
 
 size_t CFlowsheet::GetUnitsNumber() const
@@ -64,7 +63,7 @@ size_t CFlowsheet::GetUnitsNumber() const
 CUnitContainer* CFlowsheet::AddUnit(const std::string& _key)
 {
 	const std::string uniqueID = StringFunctions::GenerateUniqueKey(_key, GetAllUnitsKeys());
-	auto* unit = new CUnitContainer(uniqueID, m_modelsManager, m_materialsDB, m_grid, m_overall, m_phases, m_cacheHoldups, m_tolerance, m_thermodynamics);
+	auto* unit = new CUnitContainer(uniqueID, m_modelsManager, m_materialsDB, m_mainGrid, m_overall, m_phases, m_cacheHoldups, m_tolerance, m_thermodynamics);
 	m_units.emplace_back(unit);
 	SetTopologyModified(true);
 	return unit;
@@ -129,15 +128,13 @@ std::vector<CUnitContainer*> CFlowsheet::GetAllUnits()
 	return res;
 }
 
-void CFlowsheet::PrepareInputStreams(const CUnitContainer* _unit, double _timeBeg, double _timeEnd)
+void CFlowsheet::PrepareInputStreams(const CUnitContainer* _unit, double _timeBeg, double _timeEnd) const
 {
 	for (const auto& port : _unit->GetModel()->GetPortsManager().GetAllInputPorts())
 	{
-		const auto FindByKey = [&](std::shared_ptr<CStream>& _s) { return _s->GetKey() == port->GetStreamKey(); };
-		auto& streamI = *std::find_if(m_streamsI.begin(), m_streamsI.end(), FindByKey);
-		auto& streamO = *std::find_if(m_streamsO.begin(), m_streamsO.end(), FindByKey);
+		auto streamI = DoGetStream(port->GetStreamKey(), m_streamsI);
+		auto streamO = DoGetStream(port->GetStreamKey(), m_streams);
 		if (streamI != streamO)
-			// TODO: convert grids
 			streamI->CopyFromStream(_timeBeg, _timeEnd, streamO.get());
 	}
 }
@@ -150,7 +147,7 @@ size_t CFlowsheet::GetStreamsNumber() const
 CStream* CFlowsheet::AddStream(const std::string& _key)
 {
 	const std::string uniqueID = StringFunctions::GenerateUniqueKey(_key, GetAllStreamsKeys());
-	auto* stream = new CStream(uniqueID, &m_materialsDB, &m_grid, &m_overall, &m_phases, &m_cacheStreams, &m_tolerance, &m_thermodynamics);
+	auto* stream = new CStream(uniqueID, &m_materialsDB, m_mainGrid, &m_overall, &m_phases, &m_cacheStreams, &m_tolerance, &m_thermodynamics);
 	m_streams.emplace_back(stream);
 	SetTopologyModified(true);
 	return stream;
@@ -177,7 +174,7 @@ void CFlowsheet::ShiftStream(const std::string& _key, EDirection _direction)
 
 const CStream* CFlowsheet::GetStream(const std::string& _key) const
 {
-	return DoGetStream(_key, m_streams);
+	return DoGetStream(_key, m_streams).get();
 }
 
 CStream* CFlowsheet::GetStream(const std::string& _key)
@@ -269,37 +266,35 @@ CCalculationSequence* CFlowsheet::GetCalculationSequence()
 
 size_t CFlowsheet::GetCompoundsNumber() const
 {
-	return m_grid.GetClassesByDistr(DISTR_COMPOUNDS);
+	if (!m_mainGrid.HasDimension(DISTR_COMPOUNDS)) return 0;
+	return m_mainGrid.GetGridDimension(DISTR_COMPOUNDS)->ClassesNumber();
 }
 
 void CFlowsheet::AddCompound(const std::string& _key)
 {
 	// check if already exists
-	if (VectorContains(m_grid.GetSymbolicGridByDistr(DISTR_COMPOUNDS), _key)) return;
+	if (VectorContains(GetCompounds(), _key)) return;
 
 	// add to streams
 	for (auto& stream : m_streams)
 		stream->AddCompound(_key);
 
-	// adds to units
+	// add to units
 	for (auto& unit : m_units)
 		if (auto* model = unit->GetModel())
 			model->AddCompound(_key);
 
-	// add to initial tear streams
-	m_calculationSequence.AddCompound(_key);
-
 	// add to the grid
-	// TODO: remove this check, ensure compounds are always present
-	if (!m_grid.IsDistrTypePresent(DISTR_COMPOUNDS))
-		m_grid.AddDimension(DISTR_COMPOUNDS, EGridEntry::GRID_SYMBOLIC, {}, {});
-	m_grid.AddNamedClass(DISTR_COMPOUNDS, m_materialsDB.GetCompound(_key)->GetKey());
+	m_mainGrid.GetGridDimensionSymbolic(DISTR_COMPOUNDS)->AddClass(_key);
+
+	// update initial tear streams according to new settings
+	m_calculationSequence.UpdateInitialStreams();
 }
 
 void CFlowsheet::RemoveCompound(const std::string& _key)
 {
 	// check if exists
-	if (!VectorContains(m_grid.GetSymbolicGridByDistr(DISTR_COMPOUNDS), _key)) return;
+	if (!VectorContains(GetCompounds(), _key)) return;
 
 	// remove from streams
 	for (auto& stream : m_streams)
@@ -310,16 +305,17 @@ void CFlowsheet::RemoveCompound(const std::string& _key)
 		if (auto* model = unit->GetModel())
 			model->RemoveCompound(_key);
 
-	// remove from initial tear streams
-	m_calculationSequence.RemoveCompound(_key);
-
 	// remove from the grid
-	m_grid.RemoveNamedClass(DISTR_COMPOUNDS, VectorFind(m_grid.GetSymbolicGridByDistr(DISTR_COMPOUNDS), _key));
+	m_mainGrid.GetGridDimensionSymbolic(DISTR_COMPOUNDS)->RemoveClass(_key);
+
+	// update initial tear streams according to new settings
+	m_calculationSequence.UpdateInitialStreams();
 }
 
 std::vector<std::string> CFlowsheet::GetCompounds() const
 {
-	return m_grid.GetSymbolicGridByDistr(DISTR_COMPOUNDS);
+	if (!m_mainGrid.HasDimension(DISTR_COMPOUNDS)) return {};
+	return m_mainGrid.GetGridDimensionSymbolic(DISTR_COMPOUNDS)->Grid();
 }
 
 size_t CFlowsheet::GetOverallPropertiesNumber() const
@@ -344,8 +340,8 @@ void CFlowsheet::AddOverallProperty(EOverall _property, const std::string& _name
 		if (auto* model = unit->GetModel())
 			model->AddOverallProperty(_property, _name, _units);
 
-	// add to all initial tear streams
-	m_calculationSequence.AddOverallProperty(_property, _name, _units);
+	// update initial tear streams according to new settings
+	m_calculationSequence.UpdateInitialStreams();
 }
 
 void CFlowsheet::RemoveOverallProperty(EOverall _property)
@@ -362,8 +358,8 @@ void CFlowsheet::RemoveOverallProperty(EOverall _property)
 		if (auto* model = unit->GetModel())
 			model->RemoveOverallProperty(_property);
 
-	// remove from initial tear streams
-	m_calculationSequence.RemoveOverallProperty(_property);
+	// update initial tear streams according to new settings
+	m_calculationSequence.UpdateInitialStreams();
 
 	// remove from the list of overall properties
 	VectorDelete(m_overall, [&](const auto& o) { return o.type == _property; });
@@ -396,8 +392,8 @@ void CFlowsheet::AddPhase(EPhase _phase, const std::string& _name)
 		if (auto* model = unit->GetModel())
 			model->AddPhase(_phase, _name);
 
-	// add to all initial tear streams
-	m_calculationSequence.AddPhase(_phase, _name);
+	// update initial tear streams according to new settings
+	m_calculationSequence.UpdateInitialStreams();
 }
 
 void CFlowsheet::RemovePhase(EPhase _phase)
@@ -414,8 +410,8 @@ void CFlowsheet::RemovePhase(EPhase _phase)
 		if (auto* model = unit->GetModel())
 			model->RemovePhase(_phase);
 
-	// remove from initial tear streams
-	m_calculationSequence.RemovePhase(_phase);
+	// update initial tear streams according to new settings
+	m_calculationSequence.UpdateInitialStreams();
 
 	// remove from the list of overall properties
 	VectorDelete(m_phases, [&](const auto& p) { return p.state == _phase; });
@@ -458,9 +454,6 @@ std::string CFlowsheet::Initialize()
 	}
 	SetTopologyModified(false);
 
-	// prepare initialize tear streams
-	m_calculationSequence.CreateInitialStreams();
-
 	// load and check external solvers in units
 	for (auto& unit : m_units)
 	{
@@ -471,9 +464,9 @@ std::string CFlowsheet::Initialize()
 	// check compounds
 	if (m_materialsDB.CompoundsNumber() == 0)
 		return StrConst::Flow_ErrEmptyMDB;
-	if (m_grid.GetSymbolicGridByDistr(DISTR_COMPOUNDS).empty())
+	if (GetCompounds().empty())
 		return StrConst::Flow_ErrNoCompounds;
-	for (const auto& key : m_grid.GetSymbolicGridByDistr(DISTR_COMPOUNDS))
+	for (const auto& key : GetCompounds())
 		if (!m_materialsDB.GetCompound(key))
 			return StrConst::Flow_ErrWrongCompound(key);
 	for (auto& unit : m_units)
@@ -502,7 +495,7 @@ std::string CFlowsheet::Initialize()
 				if (std::fabs(phaseSum - 1.0) > 1e-10)
 					return StrConst::Flow_ErrPhaseFractions(unit->GetName(), h->GetName(), t);
 				// check compound fractions
-				const auto& compounds = m_grid.GetSymbolicGridByDistr(DISTR_COMPOUNDS);
+				const auto& compounds = GetCompounds();
 				for (const auto& p : m_phases)
 				{
 					const double compSum = std::accumulate(compounds.begin(), compounds.end(), 0.0, [&](double a, const auto& c) { return a + h->GetCompoundFraction(t, c, p.state); });
@@ -516,27 +509,30 @@ std::string CFlowsheet::Initialize()
 
 void CFlowsheet::SetStreamsToPorts()
 {
-	// create input and output streams
-	m_streamsO = m_streams;
-	m_streamsI = m_streams;
-	// replace pointers to main streams with own streams if needed
-	for (size_t i = 0; i < m_streamsI.size(); ++i)
-	{
-		// TODO: if grids are different
-		if (false)
-		{
-			// TODO: set proper grid
-			// TODO: think about caching
-			m_streamsI[i] = std::make_shared<CStream>(m_streams[i]->GetKey(), &m_materialsDB, &m_grid, &m_compounds, &m_overall, &m_phases, &m_cacheStreams, &m_tolerance, &m_thermodynamics);
-		}
-	}
+	// setup output streams with proper grids
+	for (auto& unit : m_units)
+		for (auto& port : unit->GetModel()->GetPortsManager().GetAllOutputPorts())
+			DoGetStream(port->GetStreamKey(), m_streams)->SetGrid(unit->GetModel()->GetGrid());
 
+	// create input streams with proper grids
+	m_streamsI = m_streams; // copy pointers to main (output) streams
+	for (auto& unit : m_units)
+		if (unit->GetModel()->GetGrid() != m_mainGrid) // separate input stream is needed
+			for (auto& port : unit->GetModel()->GetPortsManager().GetAllInputPorts())
+			{
+				// find the corresponding stream in the list
+				const size_t index = VectorFind(m_streamsI, [&](auto& s) { return s->GetKey() == port->GetStreamKey(); });
+				// create new with proper grid
+				m_streamsI[index] = std::make_shared<CStream>(m_streamsI[index]->GetKey(), &m_materialsDB, m_mainGrid, &m_overall, &m_phases, &m_cacheStreams, &m_tolerance, &m_thermodynamics);
+			}
+
+	// set stream pointers to ports
 	for (auto& unit : m_units)
 	{
 		for (auto& port : unit->GetModel()->GetPortsManager().GetAllInputPorts())
-			port->SetStream(const_cast<CStream*>(DoGetStream(port->GetStreamKey(), m_streamsI)));
+			port->SetStream(DoGetStream(port->GetStreamKey(), m_streamsI).get());
 		for (auto& port : unit->GetModel()->GetPortsManager().GetAllOutputPorts())
-			port->SetStream(const_cast<CStream*>(DoGetStream(port->GetStreamKey(), m_streamsO)));
+			port->SetStream(DoGetStream(port->GetStreamKey(), m_streams).get());
 	}
 }
 
@@ -572,21 +568,41 @@ void CFlowsheet::ClearSimulationResults()
 {
 	for (auto& stream : m_streams)
 		stream->RemoveAllTimePoints();
-	m_streamsO.clear();
 	m_streamsI.clear();
 	for (auto& unit : m_units)
 		if (auto* model = unit->GetModel())
 			model->ClearSimulationResults();
 }
 
-void CFlowsheet::UpdateDistributionsGrid()
+void CFlowsheet::SetMainGrid(const CMultidimensionalGrid& _grid)
 {
-	for (auto& stream : m_streams)
-		stream->UpdateDistributionsGrid();
 	for (auto& unit : m_units)
-		if (auto* model = unit->GetModel())
-			model->UpdateDistributionsGrid();
-	m_calculationSequence.UpdateDistributionsGrid();
+		if (unit->GetModel() && unit->GetModel()->GetGrid() == m_mainGrid)
+			unit->GetModel()->SetGrid(_grid);
+	for (auto& stream : m_streams)
+		if (stream->GetGrid() == m_mainGrid)
+			stream->SetGrid(_grid);
+	m_mainGrid = _grid;
+	m_calculationSequence.UpdateInitialStreams();
+}
+
+void CFlowsheet::UpdateGrids()
+{
+	std::vector<std::string> updated;
+	// update in connected streams
+	for (auto& unit : m_units)
+		if (unit->GetModel())
+			for (auto& port : unit->GetModel()->GetPortsManager().GetAllOutputPorts())
+				if (auto stream = DoGetStream(port->GetStreamKey(), m_streams))
+				{
+					stream->SetGrid(unit->GetModel()->GetGrid());
+					updated.push_back(stream->GetKey());
+				}
+	// update in the rest streams
+	for (auto& key : VectorDifference(GetAllStreamsKeys(), updated))
+		GetStream(key)->SetGrid(m_mainGrid);
+	// update initial tear streams
+	m_calculationSequence.UpdateInitialStreams();
 }
 
 void CFlowsheet::UpdateCacheSettings()
@@ -626,14 +642,9 @@ void CFlowsheet::UpdateThermodynamicsSettings()
 	m_calculationSequence.UpdateThermodynamicsSettings(m_thermodynamics);
 }
 
-const CDistributionsGrid* CFlowsheet::GetDistributionsGrid() const
+const CMultidimensionalGrid& CFlowsheet::GetGrid() const
 {
-	return &m_grid;
-}
-
-CDistributionsGrid* CFlowsheet::GetDistributionsGrid()
-{
-	return &m_grid;
+	return m_mainGrid;
 }
 
 const CParametersHolder* CFlowsheet::GetParameters() const
@@ -675,7 +686,7 @@ bool CFlowsheet::SaveToFile(CH5Handler& _h5File, const std::wstring& _fileName)
 	m_calculationSequence.SaveToFile(_h5File, _h5File.CreateGroup(root, StrConst::Flow_H5GroupCalcSeq));
 
 	// distributions grid
-	m_grid.SaveToFile(_h5File, _h5File.CreateGroup(root, StrConst::Flow_H5GroupDistrGrid));
+	m_mainGrid.SaveToFile(_h5File, _h5File.CreateGroup(root, StrConst::H5GroupDistrGrid));
 
 	// overall properties
 	const std::string overallGroup = _h5File.CreateGroup(root, StrConst::Flow_H5GroupOveralls);
@@ -730,13 +741,13 @@ bool CFlowsheet::LoadFromFile(CH5Handler& _h5File, const std::wstring& _fileName
 	UpdateThermodynamicsSettings();	// needed to fill global thermodynamics structure with possibly updated data
 
 	// distributions grid
-	m_grid.LoadFromFile(_h5File, root + StrConst::Flow_H5GroupDistrGrid);
+	m_mainGrid.LoadFromFile(_h5File, root + StrConst::H5GroupDistrGrid);
 	if (version < 5)
 	{
 		// replace compound names with keys
-		auto dim = m_grid.GetDimensionByDistr(DISTR_COMPOUNDS);
-		_h5File.ReadData(root, StrConst::Flow_H5Compounds, dim.strGrid);
-		m_grid.SetDimension(dim);
+		std::vector<std::string> keys;
+		_h5File.ReadData(root, StrConst::Flow_H5Compounds, keys);
+		m_mainGrid.GetGridDimensionSymbolic(DISTR_COMPOUNDS)->SetGrid(keys);
 	}
 
 	// overall properties
@@ -794,11 +805,11 @@ bool CFlowsheet::LoadFromFile_v3(CH5Handler& _h5File, const std::string& _path)
 	UpdateCacheSettings();		// needed to fill global cache structure with possibly updated data
 
 	// distributions grid
-	m_grid.LoadFromFile(_h5File, root + StrConst::Flow_H5GroupDistrGrid);
+	m_mainGrid.LoadFromFile(_h5File, root + StrConst::H5GroupDistrGrid);
 	// replace compound names with keys
-	auto dim = m_grid.GetDimensionByDistr(DISTR_COMPOUNDS);
-	_h5File.ReadData(root, StrConst::Flow_H5Compounds, dim.strGrid);
-	m_grid.SetDimension(dim);
+	std::vector<std::string> keys;
+	_h5File.ReadData(root, StrConst::Flow_H5Compounds, keys);
+	m_mainGrid.GetGridDimensionSymbolic(DISTR_COMPOUNDS)->SetGrid(keys);
 
 	// overall properties
 	AddOverallProperty(EOverall::OVERALL_MASS,        "Mass flow",   "kg/s");
@@ -851,11 +862,11 @@ bool CFlowsheet::LoadFromFile_v3(CH5Handler& _h5File, const std::string& _path)
 	return true;
 }
 
-const CStream* CFlowsheet::DoGetStream(const std::string& _key, const std::vector<std::shared_ptr<CStream>>& _streams)
+std::shared_ptr<CStream> CFlowsheet::DoGetStream(const std::string& _key, const std::vector<std::shared_ptr<CStream>>& _streams)
 {
-	for (const auto& stream : _streams)
+	for (auto& stream : _streams)
 		if (stream->GetKey() == _key)
-			return stream.get();
+			return stream;
 	return nullptr;
 }
 

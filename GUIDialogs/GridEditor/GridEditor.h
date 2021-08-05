@@ -6,6 +6,7 @@
 #include "DimensionParameters.h"
 
 class CFlowsheet;
+class CMultidimensionalGrid;
 
 class CGridEditor : public QDialog
 {
@@ -15,7 +16,7 @@ private:
 
 	const CMaterialsDatabase& m_materialsDB;	// Reference to a global database of materials.
 	CFlowsheet* m_pFlowsheet; // pointer to the flowsheet
-	CDistributionsGrid* m_pGrid;
+	const CMultidimensionalGrid& m_pGrid;
 	bool m_bAvoidSignal;
 
 public:

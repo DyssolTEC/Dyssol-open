@@ -3,9 +3,21 @@
 #pragma once
 
 #include "ui_DimensionParameters.h"
-#include "DistributionsGrid.h"
+#include "MultidimensionalGrid.h"
 
 class CMaterialsDatabase;
+
+/// Types of grid units for size.
+enum class EGridUnit : uint32_t
+{
+	UNIT_M = 0,
+	UNIT_MM = 1,
+	UNIT_UM = 2,
+	UNIT_M3 = 3,
+	UNIT_MM3 = 4,
+	UNIT_UM3 = 5,
+	UNIT_DEFAULT = 256
+};
 
 class CDimensionParameters : public QWidget
 {
@@ -16,15 +28,16 @@ public:
 private:
 	Ui::CDimensionParameters ui;
 	const CMaterialsDatabase& m_materialsDB;	// Reference to a global database of materials.
-	SGridDimension m_grid;
+	std::unique_ptr<CGridDimension> m_grid;
+	EGridUnit m_gridUnit{ EGridUnit::UNIT_DEFAULT };
 	bool m_bAvoidSignals;
 
 public:
 	CDimensionParameters(const CMaterialsDatabase& _materialsDB, QWidget* parent = 0);
 
 	void SetDistributionType(EDistrTypes _type);
-	void SetGrid(const SGridDimension& _grid);
-	SGridDimension GetGrid() const;
+	void SetGrid(const CGridDimension& _grid);
+	CGridDimension* GetGrid() const;
 	EDPErrors IsValid() const;
 
 private:

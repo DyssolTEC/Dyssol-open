@@ -377,7 +377,6 @@ namespace StrConst
 	const char* const Flow_H5GroupInitTearStreams	 = "InitTearStreams";
 	const char* const Flow_H5GroupPartitionName	     = "Partition";
 	const char* const Flow_H5GroupInitTearStreamName = "InitTearStream";
-	const char* const Flow_H5GroupDistrGrid		     = "DistrGrid";
 	const char* const Flow_H5Compounds			     = "Compounds";
 	const char* const Flow_H5AttrOverallsNum         = "OverallsNumber";
 	const char* const Flow_H5GroupOveralls           = "OverallProperties";
@@ -544,6 +543,7 @@ namespace StrConst
 /// HDF5 saving/loading
 //////////////////////////////////////////////////////////////////////////
 	const char* const H5AttrSaveVersion = "SaveVersion";
+	const char* const H5GroupDistrGrid  = "DistrGrid";
 
 //////////////////////////////////////////////////////////////////////////
 /// CH5Handler
