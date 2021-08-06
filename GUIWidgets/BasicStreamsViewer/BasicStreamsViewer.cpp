@@ -752,17 +752,18 @@ void CBasicStreamsViewer::SetSolidDistrsToTableData(EDistrCombination _type)
 						vals = m_vSelectedStreams[i]->GetPSD(m_dCurrentTime, ChosenPSDType(), compounds, meanType);
 					else
 					{
-						const auto& t = ChosenPSDType();
-						if (t != PSD_Q0 && t != PSD_Q2 && t != PSD_Q3)
-							vals = ConvertOnNewGrid(actualGrid, m_vSelectedStreams[i]->GetPSD(m_dCurrentTime, t, compounds, meanType), headerGrid);
-						else
+						vals = ConvertOnNewGrid(actualGrid, m_vSelectedStreams[i]->GetPSD(m_dCurrentTime, PSD_MassFrac, compounds, meanType), headerGrid);
+						switch (ChosenPSDType())
 						{
-							if (t == PSD_Q0)
-								vals = q2Q(headerGrid, ConvertOnNewGrid(actualGrid, m_vSelectedStreams[i]->GetPSD(m_dCurrentTime, PSD_q0, compounds, meanType), headerGrid));
-							else if (t == PSD_Q2)
-								vals = q2Q(headerGrid, ConvertOnNewGrid(actualGrid, m_vSelectedStreams[i]->GetPSD(m_dCurrentTime, PSD_q2, compounds, meanType), headerGrid));
-							else if (t == PSD_Q3)
-								vals = q2Q(headerGrid, ConvertOnNewGrid(actualGrid, m_vSelectedStreams[i]->GetPSD(m_dCurrentTime, PSD_q3, compounds, meanType), headerGrid));
+						case PSD_q3:		vals = ConvertMassFractionsToq3(headerGrid, vals);	break;
+						case PSD_Q3:		vals = ConvertMassFractionsToQ3(vals);				break;
+						case PSD_q0:		vals = ConvertMassFractionsToq0(headerGrid, vals);	break;
+						case PSD_Q0:		vals = ConvertMassFractionsToQ0(headerGrid, vals);	break;
+						case PSD_q2:		vals = ConvertMassFractionsToq2(headerGrid, vals);	break;
+						case PSD_Q2:		vals = ConvertMassFractionsToQ2(headerGrid, vals);	break;
+						// TODO: implement
+						case PSD_Number:	std::fill(vals.begin(), vals.end(), 0.0);			break;
+						case PSD_MassFrac:														break;
 						}
 					}
 				}

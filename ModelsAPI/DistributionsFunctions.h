@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <cmath>
 #include <numeric>
 #include <string>
@@ -276,21 +277,40 @@ std::vector<double> inline ConvertNumbersToMassFractions(const std::vector<doubl
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Converts the distribution _q defined on the symbolic _grid to the new grid _gridNew.
-std::vector<double> inline ConvertOnNewGrid(const std::vector<std::string>& _grid, const std::vector<double>& _q, const std::vector<std::string>& _gridNew)
+// Converts the mass fraction distribution _w defined on the symbolic _grid to the new grid _gridNew.
+std::vector<double> inline ConvertOnNewGrid(const std::vector<std::string>& _grid, const std::vector<double>& _w, const std::vector<std::string>& _gridNew)
 {
+	if (_grid == _gridNew) return _w;
 	std::vector<double> res(_gridNew.size());
 	for (size_t i = 0; i < _gridNew.size(); ++i)
 	{
 		const auto it = std::find(_grid.begin(), _grid.end(), _gridNew[i]);
-		res[i] = it != _grid.end() ? _q[std::distance(_grid.begin(), it)] : 0.0;
+		res[i] = it != _grid.end() ? _w[std::distance(_grid.begin(), it)] : 0.0;
 	}
 	return res;
 }
 
-// Converts the distribution _q defined on the numeric _grid to the new grid _gridNew.
-std::vector<double> inline ConvertOnNewGrid(const std::vector<double>& _grid, const std::vector<double>& _q, const std::vector<double>& _gridNew)
+// Converts the mass fraction distribution _w defined on the numeric _grid to the new grid _gridNew.
+std::vector<double> inline ConvertOnNewGrid(const std::vector<double>& _grid, const std::vector<double>& _w, const std::vector<double>& _gridNew)
 {
+	if (_grid == _gridNew) return _w;
+	if (std::all_of(_w.begin(), _w.end(), [](double d) { return d == 0.0; })) return std::vector<double>(_gridNew.size() - 1, 0.0);
+	const std::vector<double> QDistr = ConvertMassFractionsToQ3(_w);
+	std::vector<double> res(_gridNew.size() - 1);
+	double Q1 = GetQ(QDistr, _grid, _gridNew[0]);
+	for (size_t i = 0; i < _gridNew.size() - 1; ++i)
+	{
+		const double Q2 = GetQ(QDistr, _grid, _gridNew[i + 1]);
+		res[i] = (Q2 - Q1) / (_gridNew[i + 1] - _gridNew[i]);
+		Q1 = Q2;
+	}
+	return res;
+}
+
+// Converts density distribution _q defined on the numeric _grid to the new grid _gridNew.
+std::vector<double> inline ConvertqOnNewGrid(const std::vector<double>& _grid, const std::vector<double>& _q, const std::vector<double>& _gridNew)
+{
+	if (_grid == _gridNew) return _q;
 	std::vector<double> qNew(_gridNew.size() - 1);
 	const std::vector<double> QDistr = q2Q(_grid, _q);
 	double Q1 = GetQ(QDistr, _grid, _gridNew[0]);
@@ -305,17 +325,17 @@ std::vector<double> inline ConvertOnNewGrid(const std::vector<double>& _grid, co
 
 std::vector<double> inline Convertq0Toq0(const std::vector<double>& _gridOld, const std::vector<double>& _q0Old, std::vector<double>& _gridNew)
 {
-	return ConvertOnNewGrid(_gridOld, _q0Old, _gridNew);
+	return ConvertqOnNewGrid(_gridOld, _q0Old, _gridNew);
 }
 
 std::vector<double> inline Convertq2Toq2(const std::vector<double>& _gridOld, const std::vector<double>& _q2Old, std::vector<double>& _gridNew)
 {
-	return ConvertOnNewGrid(_gridOld, _q2Old, _gridNew);
+	return ConvertqOnNewGrid(_gridOld, _q2Old, _gridNew);
 }
 
 std::vector<double> inline Convertq3Toq3(const std::vector<double>& _gridOld, const std::vector<double>& _q3Old, std::vector<double>& _gridNew)
 {
-	return ConvertOnNewGrid(_gridOld, _q3Old, _gridNew);
+	return ConvertqOnNewGrid(_gridOld, _q3Old, _gridNew);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -517,14 +517,16 @@ void CFlowsheet::SetStreamsToPorts()
 	// create input streams with proper grids
 	m_streamsI = m_streams; // copy pointers to main (output) streams
 	for (auto& unit : m_units)
-		if (unit->GetModel()->GetGrid() != m_mainGrid) // separate input stream is needed
-			for (auto& port : unit->GetModel()->GetPortsManager().GetAllInputPorts())
+		for (auto& port : unit->GetModel()->GetPortsManager().GetAllInputPorts())
+		{
+			// find the corresponding stream in the list
+			const size_t index = VectorFind(m_streamsI, [&](auto& s) { return s->GetKey() == port->GetStreamKey(); });
+			if (unit->GetModel()->GetGrid() != m_streamsI[index]->GetGrid()) // separate input stream is needed
 			{
-				// find the corresponding stream in the list
-				const size_t index = VectorFind(m_streamsI, [&](auto& s) { return s->GetKey() == port->GetStreamKey(); });
 				// create new with proper grid
-				m_streamsI[index] = std::make_shared<CStream>(m_streamsI[index]->GetKey(), &m_materialsDB, m_mainGrid, &m_overall, &m_phases, &m_cacheStreams, &m_tolerance, &m_thermodynamics);
+				m_streamsI[index] = std::make_shared<CStream>(m_streamsI[index]->GetKey(), &m_materialsDB, unit->GetModel()->GetGrid(), &m_overall, &m_phases, &m_cacheStreams, &m_tolerance, &m_thermodynamics);
 			}
+		}
 
 	// set stream pointers to ports
 	for (auto& unit : m_units)

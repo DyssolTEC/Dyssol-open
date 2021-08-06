@@ -20,6 +20,7 @@ class CGridDimension
 
 public:
 	CGridDimension() = default;
+	explicit CGridDimension(EGridEntry _entry);
 	explicit CGridDimension(EDistrTypes _type, EGridEntry _entry);
 	CGridDimension(const CGridDimension& _other) = default;
 	CGridDimension(CGridDimension&& _other) = default;
@@ -38,9 +39,9 @@ public:
 	void SetType(EDistrTypes _type);
 
 	// Saves grid to a HDF5 file.
-	virtual void SaveToFile(CH5Handler& _h5File, const std::string& _path);
+	//virtual void SaveToFile(CH5Handler& _h5File, const std::string& _path);
 	// Loads grid from a HDF5 file.
-	virtual void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
+	//virtual void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
 };
 
 /*
@@ -54,7 +55,7 @@ class CGridDimensionNumeric : public CGridDimension
 	std::vector<double> m_grid{ 0 , 1 };						// Grid itself.
 
 public:
-	CGridDimensionNumeric() = default;
+	CGridDimensionNumeric();
 	explicit CGridDimensionNumeric(EDistrTypes _type);
 	CGridDimensionNumeric(EDistrTypes _type, std::vector<double> _grid, EGridFunction _function = EGridFunction::GRID_FUN_MANUAL);
 
@@ -76,9 +77,9 @@ public:
 	[[nodiscard]] std::vector<double> GetClassesSizes() const;
 
 	// Saves grid to a HDF5 file.
-	void SaveToFile(CH5Handler& _h5File, const std::string& _path) override;
+	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
 	// Loads grid from a HDF5 file.
-	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path) override;
+	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
 };
 
 /*
@@ -91,7 +92,7 @@ class CGridDimensionSymbolic : public CGridDimension
 	std::vector<std::string> m_grid;	// Grid itself.
 
 public:
-	CGridDimensionSymbolic() = default;
+	CGridDimensionSymbolic();
 	explicit CGridDimensionSymbolic(EDistrTypes _type);
 	CGridDimensionSymbolic(EDistrTypes _type, const std::vector<std::string>& _grid);
 
@@ -109,9 +110,9 @@ public:
 	void RemoveClass(const std::string& _entry);
 
 	// Saves grid to a HDF5 file.
-	void SaveToFile(CH5Handler& _h5File, const std::string& _path) override;
+	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
 	// Loads grid from a HDF5 file.
-	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path) override;
+	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
 };
 
 /*
