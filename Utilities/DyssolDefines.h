@@ -148,6 +148,7 @@ enum class EDependencyTypes
 {
 	DEPENDENCE_UNKNOWN = 0,
 	DEPENDENCE_TEMP = 1,
+
 	DEPENDENCE_PRES = 2
 };
 

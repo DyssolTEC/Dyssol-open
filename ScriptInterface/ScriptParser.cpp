@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <functional>
 
 using namespace StringFunctions;
 using namespace ScriptInterface;
@@ -75,17 +76,18 @@ void CScriptParser::ProcessLine(const std::string& _line)
 	// parse the line and write the value to this entry
 	switch (entry->type)
 	{
-	case EEntryType::EMPTY:																			break;
-	case EEntryType::BOOL:				entry->value = GetValueFromStream<bool>(ss);				break;
-	case EEntryType::INT:				entry->value = GetValueFromStream<int64_t>(ss);				break;
-	case EEntryType::UINT:				entry->value = GetValueFromStream<uint64_t>(ss);			break;
-	case EEntryType::DOUBLE:			entry->value = GetValueFromStream<double>(ss);				break;
-	case EEntryType::STRING:			entry->value = GetRestOfLine(ss);							break;
-	case EEntryType::PATH:				entry->value = std::filesystem::path{ GetRestOfLine(ss) };	break;
-	case EEntryType::NAME_OR_KEY:		entry->value = GetValueFromStream<SNameOrKey>(ss);			break;
-	case EEntryType::UNIT_PARAM:		entry->value = ReadUnitParameterFromStream(ss);				break;
-	case EEntryType::HOLDUP_DEPENDENT:	entry->value = ReadHoldupDependentFromStream(ss);			break;
-	case EEntryType::HOLDUP_COMPOUNDS:	entry->value = ReadHoldupCompoundsFromStream(ss);			break;
+	case EEntryType::EMPTY:																					break;
+	case EEntryType::BOOL:					entry->value = GetValueFromStream<bool>(ss);					break;
+	case EEntryType::INT:					entry->value = GetValueFromStream<int64_t>(ss);					break;
+	case EEntryType::UINT:					entry->value = GetValueFromStream<uint64_t>(ss);				break;
+	case EEntryType::DOUBLE:				entry->value = GetValueFromStream<double>(ss);					break;
+	case EEntryType::STRING:				entry->value = GetRestOfLine(ss);								break;
+	case EEntryType::PATH:					entry->value = std::filesystem::path{ GetRestOfLine(ss) };		break;
+	case EEntryType::NAME_OR_KEY:			entry->value = GetValueFromStream<SNameOrKey>(ss);				break;
+	case EEntryType::UNIT_PARAMETER:		entry->value = GetValueFromStream<SUnitParameterSE>(ss);		break;
+	case EEntryType::HOLDUP_DEPENDENT:		entry->value = GetValueFromStream<SHoldupDependentSE>(ss);		break;
+	case EEntryType::HOLDUP_COMPOUNDS:		entry->value = GetValueFromStream<SHoldupCompoundsSE>(ss);		break;
+	case EEntryType::HOLDUP_DISTRIBUTION:	entry->value = GetValueFromStream<SHoldupDistributionSE>(ss);	break;
 	}
 }
 
@@ -131,45 +133,90 @@ void CScriptParser::NamesToKeys()
 		return EPhase::UNDEFINED;
 	};
 
+	// Distribution types
+	const auto DistributionType = [](const std::string& _name)
+	{
+		if (_name == "COMPOUNDS")			return EDistrTypes::DISTR_COMPOUNDS;
+		if (_name == "SIZE")				return EDistrTypes::DISTR_SIZE;
+		if (_name == "PARTICLE_POROSITY")	return EDistrTypes::DISTR_PART_POROSITY;
+		if (_name == "FORM_FACTOR")			return EDistrTypes::DISTR_FORM_FACTOR;
+		if (_name == "COLOR")				return EDistrTypes::DISTR_COLOR;
+		if (_name == "USER_DEFINED_01")		return EDistrTypes::DISTR_USER_DEFINED_01;
+		if (_name == "USER_DEFINED_02")		return EDistrTypes::DISTR_USER_DEFINED_02;
+		if (_name == "USER_DEFINED_03")		return EDistrTypes::DISTR_USER_DEFINED_03;
+		if (_name == "USER_DEFINED_04")		return EDistrTypes::DISTR_USER_DEFINED_04;
+		if (_name == "USER_DEFINED_05")		return EDistrTypes::DISTR_USER_DEFINED_05;
+		if (_name == "USER_DEFINED_06")		return EDistrTypes::DISTR_USER_DEFINED_06;
+		if (_name == "USER_DEFINED_07")		return EDistrTypes::DISTR_USER_DEFINED_07;
+		if (_name == "USER_DEFINED_08")		return EDistrTypes::DISTR_USER_DEFINED_08;
+		if (_name == "USER_DEFINED_09")		return EDistrTypes::DISTR_USER_DEFINED_09;
+		if (_name == "USER_DEFINED_10")		return EDistrTypes::DISTR_USER_DEFINED_10;
+		std::cout << StrConst::DyssolC_WarningUnknown(_name) << std::endl;
+		return EDistrTypes::DISTR_UNDEFINED;
+	};
+
+	// PSD types
+	const auto PSDType = [](const std::string& _name)
+	{
+		if (_name == "MASS_FRACTION")	return EPSDTypes::PSD_MassFrac;
+		if (_name == "NUMBER")			return EPSDTypes::PSD_Number;
+		if (_name == "Q0_DENSITY")		return EPSDTypes::PSD_q0;
+		if (_name == "Q0_CUMULATIVE")	return EPSDTypes::PSD_Q0;
+		if (_name == "Q2_DENSITY")		return EPSDTypes::PSD_q2;
+		if (_name == "Q2_CUMULATIVE")	return EPSDTypes::PSD_Q2;
+		if (_name == "Q3_DENSITY")		return EPSDTypes::PSD_q3;
+		if (_name == "Q3_CUMULATIVE")	return EPSDTypes::PSD_Q3;
+		std::cout << StrConst::DyssolC_WarningUnknown(_name) << std::endl;
+		return EPSDTypes::PSD_MassFrac;
+	};
+
+	// Types of PSD mean values
+	const auto PSDMean = [](const std::string& _name)
+	{
+		if (_name == "DIAMETER")	return EPSDGridType::DIAMETER;
+		if (_name == "VOLUME")		return EPSDGridType::VOLUME;
+		std::cout << StrConst::DyssolC_WarningUnknown(_name) << std::endl;
+		return EPSDGridType::DIAMETER;
+	};
+
+	// Types of PSD mean values
+	const auto DistributionFunction = [](const std::string& _name)
+	{
+		if (_name == "MANUAL")		return EDistrFunction::Manual;
+		if (_name == "NORMAL")		return EDistrFunction::Normal;
+		if (_name == "LOG_NORMAL")	return EDistrFunction::LogNormal;
+		if (_name == "RRSB")		return EDistrFunction::RRSB;
+		if (_name == "GGS")			return EDistrFunction::GGS;
+		std::cout << StrConst::DyssolC_WarningUnknown(_name) << std::endl;
+		return EDistrFunction::Manual;
+	};
+
+	// Applies one of the above functions to convert a name to a key
+	const auto& Convert = [](SNameOrKey& _entry, auto func)
+	{
+		if (!_entry.HasKey())
+			_entry.key = E2I(func(ToUpperCase(_entry.name)));
+	};
+
 	for (auto& job : m_jobs)
 	{
 		for (auto& param : job->GetValuesPtr<SNameOrKey>(EScriptKeys::CONVERGENCE_METHOD))
-			if (!param->HasKey())
-				param->key = E2I(ConvergenceKey(ToUpperCase(param->name)));
+			Convert(*param, ConvergenceKey);
 		for (auto& param : job->GetValuesPtr<SNameOrKey>(EScriptKeys::EXTRAPOLATION_METHOD))
-			if (!param->HasKey())
-				param->key = E2I(ExtrapolationKey(ToUpperCase(param->name)));
+			Convert(*param, ExtrapolationKey);
 		for (auto& entry : job->GetValuesPtr<SHoldupCompoundsSE>(EScriptKeys::HOLDUP_COMPOUNDS))
-			if (!entry->phase.HasKey())
-				entry->phase.key = E2I(PhaseKey(ToUpperCase(entry->phase.name)));
+			Convert(entry->phase, PhaseKey);
+		for (auto& entry : job->GetValuesPtr<SHoldupDistributionSE>(EScriptKeys::HOLDUP_DISTRIBUTION))
+		{
+			Convert(entry->distrType, DistributionType);
+			Convert(entry->function , DistributionFunction);
+			if (static_cast<EDistrTypes>(entry->distrType.key) == EDistrTypes::DISTR_SIZE)
+			{
+				Convert(entry->psdType , PSDType);
+				Convert(entry->psdMeans, PSDMean);
+			}
+			if (ToUpperCase(entry->compound) == "MIXTURE" || ToUpperCase(entry->compound) == "TOTAL_MIXTURE")
+				entry->compound.clear();
+		}
 	}
-}
-
-// TODO: maybe move to corresponding friend stream functions
-SUnitParameterSE CScriptParser::ReadUnitParameterFromStream(std::istream& _s) const
-{
-	SUnitParameterSE res;
-	res.unit   = GetValueFromStream<SNameOrIndex>(_s);
-	res.param  = GetValueFromStream<SNameOrIndex>(_s);
-	res.values = GetRestOfLine(_s);	// format depends on parameter type, but type resolution is only possible when the flowsheet is loaded, so postpone final parsing
-	return res;
-}
-
-SHoldupDependentSE CScriptParser::ReadHoldupDependentFromStream(std::istream& _s) const
-{
-	SHoldupDependentSE res;
-	res.unit   = GetValueFromStream<SNameOrIndex>(_s);
-	res.holdup = GetValueFromStream<SNameOrIndex>(_s);
-	res.values = GetValueFromStream<std::vector<double>>(_s);	// format depends on the flowsheet settings, so postpone final parsing until the flowsheet is loaded
-	return res;
-}
-
-SHoldupCompoundsSE CScriptParser::ReadHoldupCompoundsFromStream(std::istream& _s) const
-{
-	SHoldupCompoundsSE res;
-	res.unit   = GetValueFromStream<SNameOrIndex>(_s);
-	res.holdup = GetValueFromStream<SNameOrIndex>(_s);
-	res.phase  = GetValueFromStream<SNameOrKey>(_s);
-	res.values = GetValueFromStream<std::vector<double>>(_s);	// format depends on the flowsheet settings, so postpone final parsing until the flowsheet is loaded
-	return res;
 }

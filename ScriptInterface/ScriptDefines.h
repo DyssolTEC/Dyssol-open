@@ -46,22 +46,24 @@ namespace ScriptInterface
 		HOLDUP_OVERALL,
 		HOLDUP_PHASES,
 		HOLDUP_COMPOUNDS,
+		HOLDUP_DISTRIBUTION,
 	};
 
 	// All possible types of script entries.
 	enum class EEntryType
 	{
-		EMPTY,				// Key without value
-		BOOL,				// bool
-		INT,				// int64_t
-		UINT,				// uint64_t
-		DOUBLE,				// double
-		STRING,				// std::string
-		PATH,				// std::filesystem::path
-		NAME_OR_KEY,		// SNameOrKey
-		UNIT_PARAM,			// SUnitParameterSE
-		HOLDUP_DEPENDENT,	// SHoldupDependentSE
-		HOLDUP_COMPOUNDS,	// SHoldupCompoundSE
+		EMPTY,					// Key without value
+		BOOL,					// bool
+		INT,					// int64_t
+		UINT,					// uint64_t
+		DOUBLE,					// double
+		STRING,					// std::string
+		PATH,					// std::filesystem::path
+		NAME_OR_KEY,			// SNameOrKey
+		UNIT_PARAMETER,			// SUnitParameterSE
+		HOLDUP_DEPENDENT,		// SHoldupDependentSE
+		HOLDUP_COMPOUNDS,		// SHoldupCompoundSE
+		HOLDUP_DISTRIBUTION,	// SHoldupDistributionSE
 	};
 
 	// Help structure to work with entries that can be defined either by their name or by their index.
@@ -101,6 +103,14 @@ namespace ScriptInterface
 		SNameOrIndex unit{};	// Name or index of the unit container.
 		SNameOrIndex param{};	// Name or index of the parameter.
 		std::string values{};	// Value(s) of the unit parameter as a string for postponed parsing.
+		// Input stream operator.
+		friend std::istream& operator>>(std::istream& _s, SUnitParameterSE& _obj)
+		{
+			_obj.unit   = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
+			_obj.param  = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
+			_obj.values = StringFunctions::GetRestOfLine(_s);	// format depends on parameter type, but type resolution is only possible when the flowsheet is loaded, so postpone final parsing
+			return _s;
+		}
 	};
 
 	// Struct to parse script entries (SE) with unit holdups' time-dependent parameters (overall, phases).
@@ -108,7 +118,14 @@ namespace ScriptInterface
 	{
 		SNameOrIndex unit{};		// Name or index of the unit container.
 		SNameOrIndex holdup{};		// Name or index of the holdup within the unit.
-		std::vector<double> values;	// Value(s) of the time-dependent parameters as a string for postponed parsing.
+		std::vector<double> values;	// Value(s) of the time-dependent parameters for postponed parsing.
+		friend std::istream& operator>>(std::istream& _s, SHoldupDependentSE& _obj)
+		{
+			_obj.unit   = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
+			_obj.holdup = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
+			_obj.values = StringFunctions::GetValueFromStream<std::vector<double>>(_s);	// format depends on the flowsheet settings, so postpone final parsing until the flowsheet is loaded
+			return _s;
+		}
 	};
 
 	// Struct to parse script entries (SE) with unit holdups' time-dependent compound fractions.
@@ -117,7 +134,44 @@ namespace ScriptInterface
 		SNameOrIndex unit{};			// Name or index of the unit container.
 		SNameOrIndex holdup{};			// Name or index of the holdup within the unit.
 		SNameOrKey phase{};				// Name or key of the phase.
-		std::vector<double> values{};	// Value(s) of the time-dependent compound fractions as a string for postponed parsing.
+		std::vector<double> values{};	// Value(s) of the time-dependent compound fractions for postponed parsing.
+		friend std::istream& operator>>(std::istream& _s, SHoldupCompoundsSE& _obj)
+		{
+			_obj.unit   = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
+			_obj.holdup = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
+			_obj.phase  = StringFunctions::GetValueFromStream<SNameOrKey>(_s);
+			_obj.values = StringFunctions::GetValueFromStream<std::vector<double>>(_s);	// format depends on the flowsheet settings, so postpone final parsing until the flowsheet is loaded
+			return _s;
+		}
+	};
+
+	// Struct to parse script entries (SE) with unit holdups' time-dependent distributed parameters of solids.
+	struct SHoldupDistributionSE
+	{
+		SNameOrIndex unit{};			// Name or index of the unit container.
+		SNameOrIndex holdup{};			// Name or index of the holdup within the unit.
+		SNameOrKey distrType{};			// Type of the distributed parameter (SIZE/PART_POROSITY/FORM_FACTOR/...).
+		std::string compound{};			// Name or key of the compound, or MIXTURE keyword.
+		SNameOrKey psdType{};			// Type of the PSD (MASS_FRACTION/NUMBER/Q0_DENSITY/Q0_CUMULATIVE/...).
+		SNameOrKey psdMeans{};			// Type of the mean values for PSD (DIAMETER/VOLUME).
+		SNameOrKey function{};			// Function to define distribution (MANUAL/NORMAL/RRSB/...).
+		std::vector<double> values{};	// Value(s) of the time-dependent distributed parameters for postponed parsing.
+		friend std::istream& operator>>(std::istream& _s, SHoldupDistributionSE& _obj)
+		{
+			_obj.unit      = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
+			_obj.holdup    = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
+			_obj.distrType = StringFunctions::GetValueFromStream<SNameOrKey>(_s);
+			_obj.compound  = StringFunctions::GetValueFromStream<std::string>(_s);
+			// special treatment for PSD
+			if (!_obj.distrType.HasKey() && StringFunctions::ToUpperCase(_obj.distrType.name) == "SIZE" || _obj.distrType.HasKey() && _obj.distrType.key == DISTR_SIZE)
+			{
+				_obj.psdType  = StringFunctions::GetValueFromStream<SNameOrKey>(_s);
+				_obj.psdMeans = StringFunctions::GetValueFromStream<SNameOrKey>(_s);
+			}
+			_obj.function = StringFunctions::GetValueFromStream<SNameOrKey>(_s);
+			_obj.values   = StringFunctions::GetValueFromStream<std::vector<double>>(_s);
+			return _s;
+		}
 	};
 
 	// Descriptor for an entry of the script file.
@@ -132,7 +186,8 @@ namespace ScriptInterface
 	struct SScriptEntry : SScriptEntryDescriptor
 	{
 		// Value of the entry of different types.
-		std::variant<bool, int64_t, uint64_t, double, std::string, std::filesystem::path, SNameOrKey, SUnitParameterSE, SHoldupDependentSE, SHoldupCompoundsSE> value{};
+		std::variant<bool, int64_t, uint64_t, double, std::string, std::filesystem::path,
+			SNameOrKey, SUnitParameterSE, SHoldupDependentSE, SHoldupCompoundsSE, SHoldupDistributionSE> value{};
 
 		SScriptEntry() = default;
 		SScriptEntry(const SScriptEntryDescriptor& _descr) : SScriptEntryDescriptor{ _descr } {}
@@ -181,12 +236,13 @@ namespace ScriptInterface
 			MAKE_ARG(EScriptKeys::ACCELERATION_LIMIT          , EEntryType::DOUBLE),
 			MAKE_ARG(EScriptKeys::EXTRAPOLATION_METHOD        , EEntryType::NAME_OR_KEY),
 			// unit settings
-			MAKE_ARG(EScriptKeys::UNIT_PARAMETER              , EEntryType::UNIT_PARAM),
+			MAKE_ARG(EScriptKeys::UNIT_PARAMETER              , EEntryType::UNIT_PARAMETER),
 			// holdup and input streams parameters
 			MAKE_ARG(EScriptKeys::HOLDUPS_KEEP_EXISTING_VALUES, EEntryType::BOOL),
 			MAKE_ARG(EScriptKeys::HOLDUP_OVERALL			  , EEntryType::HOLDUP_DEPENDENT),
 			MAKE_ARG(EScriptKeys::HOLDUP_PHASES				  , EEntryType::HOLDUP_DEPENDENT),
 			MAKE_ARG(EScriptKeys::HOLDUP_COMPOUNDS            , EEntryType::HOLDUP_COMPOUNDS),
+			MAKE_ARG(EScriptKeys::HOLDUP_DISTRIBUTION         , EEntryType::HOLDUP_DISTRIBUTION),
 		};
 	}
 
