@@ -3,44 +3,141 @@
 #include "QtTree.h"
 #include <QEvent>
 
-CQtTree::CQtTree(QWidget *parent) : QTreeWidget(parent)
+CQtTree::CQtTree(QWidget* _parent)
+	: QTreeWidget{ _parent }
 {
 }
 
-QTreeWidgetItem* CQtTree::AddItem(int _col, const std::string& _text, const QVariant& _userData)
+QTreeWidgetItem* CQtTree::CreateItem(EFlags _flags)
 {
-	auto* item = new QTreeWidgetItem(this);
-	item->setData(_col, Qt::UserRole, _userData);
-	item->setText(_col, QString::fromStdString(_text));
-	return item;
+	return CreateItem<QTreeWidget>(this, -1, "", _flags, -1);
 }
 
-QTreeWidgetItem* CQtTree::AddChildItem(QTreeWidgetItem* _parent, int _col, const std::string& _text, const QVariant& _userData)
+QTreeWidgetItem* CQtTree::CreateItem(QTreeWidgetItem* _parent, EFlags _flags)
 {
-	auto* item = new QTreeWidgetItem(_parent);
-	item->setData(_col, Qt::UserRole, _userData);
-	item->setText(_col, QString::fromStdString(_text));
-	return item;
+	return CreateItem<QTreeWidgetItem>(_parent, -1, "", _flags, -1);
 }
 
-QComboBox* CQtTree::AddChildItemComboBox(QTreeWidgetItem* _parent, int _col, const std::vector<QString>& _names, const std::vector<QVariant>& _userData, const QVariant& _selected)
+QTreeWidgetItem* CQtTree::CreateItem(int _col, const std::string& _text, EFlags _flags, const QVariant& _data)
 {
-	auto* item = new QTreeWidgetItem(_parent);
-	auto* combo = new QComboBox();
-	setItemWidget(item, _col, combo);
-	int iSelected = -1;
+	return CreateItem<QTreeWidget>(this, _col, _text, _flags, _data);
+}
+
+QTreeWidgetItem* CQtTree::CreateItem(QTreeWidgetItem* _parent, int _col, const std::string& _text, EFlags _flags, const QVariant& _data)
+{
+	return CreateItem<QTreeWidgetItem>(_parent, _col, _text, _flags, _data);
+}
+
+void CQtTree::SetText(QTreeWidgetItem* _item, int _col, const std::string& _text, const QVariant& _data)
+{
+	if (_col < 0) return;
+	_item->setText(_col, QString::fromStdString(_text));
+	if (_data != -1)
+		_item->setData(_col, Qt::UserRole, _data);
+}
+
+QComboBox* CQtTree::SetComboBox(QTreeWidgetItem* _item, int _col, const std::vector<QString>& _names, const std::vector<QVariant>& _data, const QVariant& _selected)
+{
+	auto* combo = new QComboBox{ this };
+	int selected = -1;
 	for (size_t i = 0; i < _names.size(); ++i)
 	{
-		combo->insertItem(combo->count(), _names[i], i < _userData.size() ? _userData[i] : QVariant());
-		if (_userData[i] == _selected)
-			iSelected = static_cast<int>(i);
+		combo->addItem(_names[i], i < _data.size() ? _data[i] : QVariant{});
+		if (_data[i] == _selected)
+			selected = static_cast<int>(i);
 	}
-	combo->setCurrentIndex(iSelected);
+	combo->setCurrentIndex(selected);
 	combo->installEventFilter(this);
-	item->setSizeHint(_col, { combo->sizeHint().width() + 10, combo->sizeHint().height() });
-	connect(combo, QOverload<int>::of(&QComboBox::highlighted), this, [=] { setCurrentItem(item); });
-	connect(combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=] { ComboBoxIndexChanged(combo, item); });
+	_item->setSizeHint(_col, { combo->sizeHint().width() + 10, combo->sizeHint().height() });
+	connect(combo, QOverload<int>::of(&QComboBox::highlighted), this, [=] { setCurrentItem(_item); });
+	connect(combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=] { ComboBoxIndexChanged(combo, _item); });
+	setItemWidget(_item, _col, combo);
 	return combo;
+}
+
+void CQtTree::SetupComboBox(QTreeWidgetItem* _item, int _col, const std::vector<QString>& _names, const std::vector<QVariant>& _data, const QVariant& _selected) const
+{
+	auto* combo = dynamic_cast<QComboBox*>(itemWidget(_item, _col));
+	if (!combo) return;
+	QSignalBlocker blocker{ combo };
+	combo->clear();
+	int selected = -1;
+	for (size_t i = 0; i < _names.size(); ++i)
+	{
+		combo->addItem(_names[i], i < _data.size() ? _data[i] : QVariant{});
+		if (_data[i] == _selected)
+			selected = static_cast<int>(i);
+	}
+	combo->setCurrentIndex(selected);
+}
+
+void CQtTree::SetupComboBox(QTreeWidgetItem* _item, int _col, const std::vector<std::string>& _names, const std::vector<std::string>& _data, const std::string& _selected) const
+{
+	if (_names.size() != _data.size()) return;
+	std::vector<QString> names;
+	std::vector<QVariant> data;
+	for (int i = 0; i < static_cast<int>(_names.size()); ++i)
+	{
+		names.emplace_back(QString::fromStdString(_names[i]));
+		data.emplace_back(QString::fromStdString(_data[i]));
+	}
+	SetupComboBox(_item, _col, names, data, QString::fromStdString(_selected));
+}
+
+void CQtTree::SetComboBoxValue(QTreeWidgetItem* _item, int _col, const QVariant& _value) const
+{
+	auto* combo = dynamic_cast<QComboBox*>(itemWidget(_item, _col));
+	if (!combo) return;
+	QSignalBlocker blocker{ combo };
+	for (int i = 0; i < combo->count(); ++i)
+		if (combo->itemData(i) == _value)
+		{
+			combo->setCurrentIndex(i);
+			return;
+		}
+	combo->setCurrentIndex(-1);
+}
+
+QVariant CQtTree::GetComboBoxValue(QTreeWidgetItem* _item, int _col) const
+{
+	const auto* combo = dynamic_cast<QComboBox*>(itemWidget(_item, _col));
+	if (!combo) return{};
+	return combo->itemData(combo->currentIndex());
+}
+
+QCheckBox* CQtTree::SetCheckBox(QTreeWidgetItem* _item, int _col, const QString& _text, bool _value)
+{
+	auto* check = new QCheckBox{ _text, this };
+	QSignalBlocker blocker{ check };
+	check->setChecked(_value);
+	connect(check, &QCheckBox::stateChanged, this, [=] { CheckBoxStateChanged(check, _item); });
+	setItemWidget(_item, _col, check);
+	return check;
+}
+
+void CQtTree::SetCheckBoxValue(QTreeWidgetItem* _item, int _col, bool _value) const
+{
+	auto* check = dynamic_cast<QCheckBox*>(itemWidget(_item, _col));
+	if (!check) return;
+	QSignalBlocker blocker{ check };
+	check->setChecked(_value);
+}
+
+bool CQtTree::GetCheckBoxValue(QTreeWidgetItem* _item, int _col) const
+{
+	const auto* check = dynamic_cast<QCheckBox*>(itemWidget(_item, _col));
+	if (!check) return{};
+	return check->isChecked();
+}
+
+void CQtTree::SetItemFlags(QTreeWidgetItem* _item, EFlags _flags)
+{
+	if (Contains(_flags, EFlags::Edit))			_item->setFlags(_item->flags() | Qt::ItemIsEditable);
+	if (Contains(_flags, EFlags::NoEdit))		_item->setFlags(_item->flags() & ~Qt::ItemIsEditable);
+	if (Contains(_flags, EFlags::Select))		_item->setFlags(_item->flags() | Qt::ItemIsSelectable);
+	if (Contains(_flags, EFlags::NoSelect))		_item->setFlags(_item->flags() & ~Qt::ItemIsSelectable);
+	if (Contains(_flags, EFlags::Enabled))		_item->setFlags(_item->flags() | Qt::ItemIsEnabled);
+	if (Contains(_flags, EFlags::Diasabled))	_item->setFlags(_item->flags() & ~Qt::ItemIsEnabled);
 }
 
 void CQtTree::SetCurrentItem(const std::vector<size_t>& _indices)
@@ -52,11 +149,35 @@ void CQtTree::SetCurrentItem(const std::vector<size_t>& _indices)
 	setCurrentItem(item);
 }
 
+void CQtTree::SetCurrentItem(const QVariant& _data)
+{
+	setCurrentItem(GetItem(_data));
+}
+
+QTreeWidgetItem* CQtTree::GetItem(const QVariant& _data) const
+{
+	for (auto* item : findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard | Qt::MatchRecursive))
+		for (int i = 0; i < item->columnCount(); ++i)
+			if (item->data(i, Qt::UserRole) == _data)
+				return item;
+	return nullptr;
+}
+
+QString CQtTree::GetData(const QTreeWidgetItem* _item, int _col) const
+{
+	if (!_item || _col >= _item->columnCount()) return {};
+	return _item->data(_col, Qt::UserRole).toString();
+}
+
+QString CQtTree::GetCurrentData(int _col) const
+{
+	return GetData(currentItem(), _col);
+}
+
 bool CQtTree::blockSignals(bool _flag)
 {
-	QList<QComboBox*> listComboBox = findChildren<QComboBox*>(QString(), Qt::FindChildrenRecursively);
-	for (auto& cb : listComboBox)
-		cb->blockSignals(_flag);
+	for (auto* w : findChildren<QComboBox*>(QString(), Qt::FindChildrenRecursively)) w->blockSignals(_flag);
+	for (auto* w : findChildren<QCheckBox*>(QString(), Qt::FindChildrenRecursively)) w->blockSignals(_flag);
 	return QTreeWidget::blockSignals(_flag);
 }
 
@@ -65,4 +186,29 @@ bool CQtTree::eventFilter(QObject* _object, QEvent* _event)
 	if (_event->type() == QEvent::Wheel && dynamic_cast<QComboBox*>(_object))
 		return true;
 	return QTreeWidget::eventFilter(_object, _event);
+}
+
+template <typename T>
+QTreeWidgetItem* CQtTree::CreateItem(T* _parent, int _col, const std::string& _text, EFlags _flags, const QVariant& _data)
+{
+	auto* item = new QTreeWidgetItem{ _parent };
+	if (_col != -1 && _data != -1)
+		item->setData(_col, Qt::UserRole, _data);
+	if (_col != -1 && !_text.empty())
+		item->setText(_col, QString::fromStdString(_text));
+	if (_flags != EFlags::Default)
+		SetItemFlags(item, _flags);
+	return item;
+}
+
+bool CQtTree::Contains(EFlags _composition, EFlags _flag)
+{
+	using type = std::underlying_type<EFlags>::type;
+	return static_cast<type>(_composition) & static_cast<type>(_flag);
+}
+
+CQtTree::EFlags operator|(CQtTree::EFlags _f1, CQtTree::EFlags _f2)
+{
+	using type = std::underlying_type<CQtTree::EFlags>::type;
+	return static_cast<CQtTree::EFlags>(static_cast<type>(_f1) | static_cast<type>(_f2));
 }

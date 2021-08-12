@@ -14,7 +14,9 @@ class CGridDimension
 {
 	static const unsigned m_saveVersion{ 1 }; // Current version of the saving procedure.
 
+	// TODO: rename type (dimension or ->distribution)
 	EDistrTypes m_type{ DISTR_SIZE };				// Distribution type.
+	// TODO: rename type
 	// TODO: maybe remove
 	EGridEntry m_entry{ EGridEntry::GRID_NUMERIC };	// Entry type.
 
@@ -27,6 +29,13 @@ public:
 	CGridDimension& operator=(const CGridDimension& _other) = default;
 	CGridDimension& operator=(CGridDimension&& _other) = default;
 	virtual ~CGridDimension() = default;
+
+	// Returns a non-managed pointer to a copy of this.
+	virtual CGridDimension* Clone() const;
+	// Compares two objects.
+	friend bool operator==(const CGridDimension& _lhs, const CGridDimension& _rhs);
+	// Compares two objects.
+	friend bool operator!=(const CGridDimension& _lhs, const CGridDimension& _rhs);
 
 	// Returns the type of the dimension.
 	[[nodiscard]] EDistrTypes DimensionType() const;
@@ -42,6 +51,10 @@ public:
 	//virtual void SaveToFile(CH5Handler& _h5File, const std::string& _path);
 	// Loads grid from a HDF5 file.
 	//virtual void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
+
+protected:
+	// Compares for equality with another object.
+	virtual bool Equal(const CGridDimension& _other) const;
 };
 
 /*
@@ -51,6 +64,7 @@ class CGridDimensionNumeric : public CGridDimension
 {
 	static const unsigned m_saveVersion{ 1 }; // Current version of the saving procedure.
 
+	// TODO: remove
 	EGridFunction m_function{ EGridFunction::GRID_FUN_MANUAL };	// Function to define grid.
 	std::vector<double> m_grid{ 0 , 1 };						// Grid itself.
 
@@ -58,6 +72,9 @@ public:
 	CGridDimensionNumeric();
 	explicit CGridDimensionNumeric(EDistrTypes _type);
 	CGridDimensionNumeric(EDistrTypes _type, std::vector<double> _grid, EGridFunction _function = EGridFunction::GRID_FUN_MANUAL);
+
+	// Returns a non-managed pointer to a copy of this.
+	CGridDimensionNumeric* Clone() const override;
 
 	// Returns the number of classes defined in this grid dimension.
 	[[nodiscard]] size_t ClassesNumber() const override;
@@ -80,6 +97,10 @@ public:
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
 	// Loads grid from a HDF5 file.
 	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
+
+private:
+	// Compares for equality with another object.
+	[[nodiscard]] bool Equal(const CGridDimension& _other) const override;
 };
 
 /*
@@ -95,6 +116,9 @@ public:
 	CGridDimensionSymbolic();
 	explicit CGridDimensionSymbolic(EDistrTypes _type);
 	CGridDimensionSymbolic(EDistrTypes _type, const std::vector<std::string>& _grid);
+
+	// Returns a non-managed pointer to a copy of this.
+	CGridDimensionSymbolic* Clone() const override;
 
 	// Returns the number of classes defined in this grid dimension.
 	[[nodiscard]] size_t ClassesNumber() const override;
@@ -113,6 +137,10 @@ public:
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
 	// Loads grid from a HDF5 file.
 	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
+
+private:
+	// Compares for equality with another object.
+	[[nodiscard]] bool Equal(const CGridDimension& _other) const override;
 };
 
 /*

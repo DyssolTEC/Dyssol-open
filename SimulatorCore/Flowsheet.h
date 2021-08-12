@@ -189,7 +189,7 @@ public:
 
 	// Sets new main grid of distributed parameters to all stream and units that use it.
 	void SetMainGrid(const CMultidimensionalGrid& _grid);
-	// Updates the grids of distributed parameters in all units and connected streams.
+	// Updates the grids of distributed parameters in all units and connected streams. Must be called to notify the flowsheet that units' grids have changed.
 	void UpdateGrids();
 	// Updates cache settings in all units and streams.
 	void UpdateCacheSettings();

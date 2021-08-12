@@ -581,7 +581,16 @@ namespace StrConst
 	const char* const GE_GridTypeLogarithmicL2S = "Logarithmic dec";
 	const char* const GE_GridEntryNumeric       = "Numeric";
 	const char* const GE_GridEntrySymbolic	    = "Symbolic";
-
+	const char* const GE_ErrorDuplicates        = "Unable to apply: duplicated distributions.";
+	const char* const GE_ErrorUndefined         = "Unable to apply: undefined distribution.";
+	inline std::string GE_ErrorEmpty(const std::string& s) {
+		return std::string("Unable to apply: distribution grid for '" + s + "' is empty."); }
+	inline std::string GE_ErrorNegative(const std::string& s) {
+		return std::string("Unable to apply: distribution grid for '" + s + "' contains negative values."); }
+	inline std::string GE_ErrorSequence(const std::string& s) {
+		return std::string("Unable to apply: distribution grid for '" + s + "' does not form an ascending sequence."); }
+	inline std::string GE_ErrorGaps(const std::string& s) {
+		return std::string("Unable to apply: distribution grid for '" + s + "' contains empty values."); }
 
 //////////////////////////////////////////////////////////////////////////
 /// CModelsManager

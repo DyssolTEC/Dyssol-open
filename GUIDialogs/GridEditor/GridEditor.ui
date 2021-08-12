@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1045</width>
+    <width>768</width>
     <height>600</height>
    </rect>
   </property>
@@ -17,166 +17,144 @@
    <iconset resource="../../DyssolMainWindow/Resources.qrc">
     <normaloff>:/Icons/WinIcon</normaloff>:/Icons/WinIcon</iconset>
   </property>
-  <layout class="QGridLayout" name="gridLayout" columnstretch="1,6">
+  <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="CQtTable" name="tableWidgetDims">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+    <widget class="QSplitter" name="splitter">
+     <widget class="CQtTree" name="treeGrids">
+      <column>
+       <property name="text">
+        <string/>
        </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
+      </column>
+      <column>
+       <property name="text">
+        <string>Grids</string>
        </property>
-       <property name="editTriggers">
-        <set>QAbstractItemView::NoEditTriggers</set>
+      </column>
+      <item>
+       <property name="text">
+        <string>1</string>
        </property>
-       <property name="selectionMode">
-        <enum>QAbstractItemView::SingleSelection</enum>
+       <property name="text">
+        <string>Global</string>
        </property>
-       <property name="selectionBehavior">
-        <enum>QAbstractItemView::SelectRows</enum>
+      </item>
+      <item>
+       <property name="text">
+        <string/>
        </property>
-       <property name="columnCount">
-        <number>1</number>
+       <property name="text">
+        <string>Unit-specific</string>
        </property>
-       <attribute name="horizontalHeaderCascadingSectionResizes">
-        <bool>false</bool>
-       </attribute>
-       <attribute name="horizontalHeaderHighlightSections">
-        <bool>true</bool>
-       </attribute>
-       <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-        <bool>false</bool>
-       </attribute>
-       <attribute name="horizontalHeaderStretchLastSection">
-        <bool>true</bool>
-       </attribute>
-       <column>
+       <item>
         <property name="text">
-         <string>Distributions</string>
+         <string>0</string>
         </property>
-       </column>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="text">
+         <string>FeedNucl</string>
+        </property>
+       </item>
        <item>
-        <widget class="QPushButton" name="pushButtonPlus">
-         <property name="text">
-          <string>+</string>
+        <property name="text">
+         <string>1</string>
+        </property>
+        <property name="text">
+         <string>Granulator</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>0</string>
+        </property>
+        <property name="text">
+         <string>Product</string>
+        </property>
+       </item>
+      </item>
+     </widget>
+     <widget class="QWidget" name="">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QListWidget" name="listDims">
+         <property name="selectionMode">
+          <enum>QAbstractItemView::SingleSelection</enum>
          </property>
-         <property name="autoDefault">
-          <bool>false</bool>
+         <property name="verticalScrollMode">
+          <enum>QAbstractItemView::ScrollPerPixel</enum>
+         </property>
+         <property name="horizontalScrollMode">
+          <enum>QAbstractItemView::ScrollPerPixel</enum>
+         </property>
+         <property name="flow">
+          <enum>QListView::LeftToRight</enum>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButtonMinus">
-         <property name="text">
-          <string>-</string>
-         </property>
-         <property name="autoDefault">
-          <bool>false</bool>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QPushButton" name="buttonPlus">
+           <property name="toolTip">
+            <string>Add new distribution</string>
+           </property>
+           <property name="statusTip">
+            <string>Add new distribution</string>
+           </property>
+           <property name="whatsThis">
+            <string>Add new distribution</string>
+           </property>
+           <property name="text">
+            <string>+</string>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="buttonMinus">
+           <property name="toolTip">
+            <string>Delete selected distribution</string>
+           </property>
+           <property name="statusTip">
+            <string>Delete selected distribution</string>
+           </property>
+           <property name="whatsThis">
+            <string>Delete selected distribution</string>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDialogButtonBox" name="buttonBox">
+           <property name="standardButtons">
+            <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
-     </item>
-    </layout>
-   </item>
-   <item row="0" column="1">
-    <layout class="QVBoxLayout" name="verticalLayout_2">
-     <item>
-      <widget class="QListWidget" name="listWidgetParams">
-       <property name="selectionMode">
-        <enum>QAbstractItemView::NoSelection</enum>
-       </property>
-       <property name="verticalScrollMode">
-        <enum>QAbstractItemView::ScrollPerPixel</enum>
-       </property>
-       <property name="horizontalScrollMode">
-        <enum>QAbstractItemView::ScrollPerPixel</enum>
-       </property>
-       <property name="flow">
-        <enum>QListView::LeftToRight</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButtonOk">
-         <property name="text">
-          <string>OK</string>
-         </property>
-         <property name="autoDefault">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButtonCancel">
-         <property name="text">
-          <string>Cancel</string>
-         </property>
-         <property name="autoDefault">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButtonApply">
-         <property name="text">
-          <string>Apply</string>
-         </property>
-         <property name="autoDefault">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
+     </widget>
+    </widget>
    </item>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>CQtTable</class>
-   <extends>QTableWidget</extends>
-   <header location="global">QtTable.h</header>
-   <container>1</container>
+   <class>CQtTree</class>
+   <extends>QTreeWidget</extends>
+   <header location="global">QtTree.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>tableWidgetDims</tabstop>
-  <tabstop>pushButtonPlus</tabstop>
-  <tabstop>pushButtonMinus</tabstop>
-  <tabstop>listWidgetParams</tabstop>
-  <tabstop>pushButtonOk</tabstop>
-  <tabstop>pushButtonCancel</tabstop>
-  <tabstop>pushButtonApply</tabstop>
+  <tabstop>listDims</tabstop>
  </tabstops>
  <resources>
   <include location="../../DyssolMainWindow/Resources.qrc"/>

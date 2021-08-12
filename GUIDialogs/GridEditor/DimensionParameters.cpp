@@ -1,486 +1,422 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "DimensionParameters.h"
+#include "MultidimensionalGrid.h"
 #include "DyssolStringConstants.h"
+#include "ContainerFunctions.h"
 #include "DyssolUtilities.h"
 #include "MaterialsDatabase.h"
+#include "SignalBlocker.h"
+#include <QStandardItem>
 
-CDimensionParameters::CDimensionParameters(const CMaterialsDatabase& _materialsDB, QWidget* parent)
-	: QWidget(parent)
+CDimensionParameters::CDimensionParameters(const CGridDimension& _grid, const CMaterialsDatabase& _materialsDB, QWidget* _parent)
+	: QWidget{ _parent }
 	, m_materialsDB{ _materialsDB }
+	, m_grid{ _grid.Clone() }
 {
 	ui.setupUi(this);
-
-	m_bAvoidSignals = false;
-	m_grid = std::make_unique<CGridDimensionNumeric>();
-	SetupComboBoxGridFunction();
-	SetupComboBoxGridEntry();
+	SetupComboBoxDistribution();
+	SetupComboBoxEntry();
+	SetupComboBoxFunction();
 	SetupComboBoxUnits();
 
-	connect(ui.comboBoxGridEntry,	QOverload<int>::of(&QComboBox::currentIndexChanged),	this, &CDimensionParameters::GridEntryChanged);
-	connect(ui.comboBoxGridFun,		QOverload<int>::of(&QComboBox::currentIndexChanged), 	this, &CDimensionParameters::GridFunChanged);
-	connect(ui.spinBoxClasses,		QOverload<int>::of(&QSpinBox::valueChanged),			this, &CDimensionParameters::ClassesChanged);
-	connect(ui.comboBoxUnits,		QOverload<int>::of(&QComboBox::currentIndexChanged),	this, &CDimensionParameters::UnitsChanged);
-	connect(ui.comboBoxDispUnits,	QOverload<int>::of(&QComboBox::currentIndexChanged),	this, &CDimensionParameters::UnitsChanged);
-	connect(ui.lineEditLimitMin,	&QLineEdit::textEdited,									this, &CDimensionParameters::LimitsChanged);
-	connect(ui.lineEditLimitMax,	&QLineEdit::textEdited,									this, &CDimensionParameters::LimitsChanged);
-	connect(ui.tableWidgetGrid,		&CQtTable::cellChanged,									this, &CDimensionParameters::GridDataChanged);
+	connect(ui.comboDistribution, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CDimensionParameters::DistributionChanged);
+	connect(ui.comboEntry       , QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CDimensionParameters::EntryChanged);
+	connect(ui.comboFun         , QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CDimensionParameters::FunctionChanged);
+	connect(ui.comboUnits       , QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CDimensionParameters::UnitsChanged);
+	connect(ui.spinClasses      , QOverload<int>::of(&QSpinBox::valueChanged)        , this, &CDimensionParameters::ClassesChanged);
+	connect(ui.lineMin          , &QLineEdit::textEdited                             , this, &CDimensionParameters::LimitsChanged);
+	connect(ui.lineMax          , &QLineEdit::textEdited                             , this, &CDimensionParameters::LimitsChanged);
+	connect(ui.tableGrid        , &CQtTable::cellChanged                             , this, &CDimensionParameters::GridChanged);
 
 	UpdateWholeView();
 }
 
-void CDimensionParameters::SetDistributionType(EDistrTypes _type)
+EDistrTypes CDimensionParameters::GetDistributionType() const
 {
-	if (!m_grid) return;
-	m_grid->SetType(_type);
-	UpdateTableName();
-	UpdateUnitsVisibility();
+	return m_grid->DimensionType();
 }
 
-void CDimensionParameters::SetGrid(const CGridDimension& _grid)
+void CDimensionParameters::SetupComboBoxDistribution() const
 {
-	if (_grid.GridType() == EGridEntry::GRID_NUMERIC)
-		m_grid.reset(new CGridDimensionNumeric(dynamic_cast<const CGridDimensionNumeric&>(_grid)));
-	else
-		m_grid.reset(new CGridDimensionSymbolic(dynamic_cast<const CGridDimensionSymbolic&>(_grid)));
-
-	UpdateTableName();
-	UpdateLimitsVisibility();
-	UpdateUnitsVisibility();
-	UpdateControls();
-	UpdateGridData(m_grid->DimensionType(),
-		m_grid->GridType() == EGridEntry::GRID_NUMERIC ? dynamic_cast<CGridDimensionNumeric*>(m_grid.get())->Grid() : std::vector<double>{},
-		m_grid->GridType() == EGridEntry::GRID_SYMBOLIC ? dynamic_cast<CGridDimensionSymbolic*>(m_grid.get())->Grid() : std::vector<std::string>{});
-	UpdateGrid();
-}
-
-CGridDimension* CDimensionParameters::GetGrid() const
-{
-	return m_grid.get();
-}
-
-CDimensionParameters::EDPErrors CDimensionParameters::IsValid() const
-{
-	if (!m_grid) return { EDPErrors::DP_ERROR_EMPTY };
-	switch (m_grid->GridType())
+	[[maybe_unused]] CSignalBlocker blocker{ ui.comboDistribution };
+	auto types = E2I(std::vector{ DISTR_TYPES });
+	auto names = std::vector<QString>(DISTR_NAMES);
+	ui.comboDistribution->addItem("", DISTR_UNDEFINED);
+	for (size_t i = 0; i < names.size(); ++i)
 	{
-	case EGridEntry::GRID_NUMERIC:
-	{
-		const auto& grid = dynamic_cast<CGridDimensionNumeric*>(m_grid.get())->Grid();
-		for (size_t i = 0; i < grid.size(); ++i)
+		ui.comboDistribution->addItem(names[i], types[i]);
+		// disable compounds
+		if (types[i] == DISTR_COMPOUNDS)
 		{
-			if (grid[i] < 0)
-				return EDPErrors::DP_ERROR_NEGATIVE;
-			if (i > 0 && grid[i] <= grid[i - 1])
-				return EDPErrors::DP_ERROR_SEQUENCE;
+			QStandardItem* item = qobject_cast<const QStandardItemModel*>(ui.comboDistribution->model())->item(ui.comboDistribution->count() - 1);
+			item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
 		}
-		break;
 	}
-	case EGridEntry::GRID_SYMBOLIC:
-		for (const auto& str : dynamic_cast<CGridDimensionSymbolic*>(m_grid.get())->Grid())
-			if (str.empty())
-				return EDPErrors::DP_ERROR_EMPTY;
-		break;
-	}
-
-	return EDPErrors::DP_ERROR_NO_ERRORS;
+	// always show all entries
+	ui.comboDistribution->setMaxVisibleItems(DISTRIBUTIONS_NUMBER + 1);
 }
 
-void CDimensionParameters::SetupComboBoxGridEntry() const
+void CDimensionParameters::SetupComboBoxEntry() const
 {
-	ui.comboBoxGridEntry->clear();
-	ui.comboBoxGridEntry->insertItem(E2I(EGridEntry::GRID_NUMERIC),  StrConst::GE_GridEntryNumeric,  E2I(EGridEntry::GRID_NUMERIC));
-	ui.comboBoxGridEntry->insertItem(E2I(EGridEntry::GRID_SYMBOLIC), StrConst::GE_GridEntrySymbolic, E2I(EGridEntry::GRID_SYMBOLIC));
-	SelectGridEntry(EGridEntry::GRID_NUMERIC);
+	[[maybe_unused]] CSignalBlocker blocker{ ui.comboEntry };
+	ui.comboEntry->addItem(StrConst::GE_GridEntryNumeric , E2I(EGridEntry::GRID_NUMERIC));
+	ui.comboEntry->addItem(StrConst::GE_GridEntrySymbolic, E2I(EGridEntry::GRID_SYMBOLIC));
 }
 
-void CDimensionParameters::SetupComboBoxGridFunction() const
+void CDimensionParameters::SetupComboBoxFunction() const
 {
-	ui.comboBoxGridFun->clear();
-	ui.comboBoxGridFun->insertItem(E2I(EGridFunction::GRID_FUN_MANUAL), StrConst::GE_GridTypeManual, E2I(EGridFunction::GRID_FUN_MANUAL));
-	ui.comboBoxGridFun->insertItem(E2I(EGridFunction::GRID_FUN_EQUIDISTANT), StrConst::GE_GridTypeEquidistant, E2I(EGridFunction::GRID_FUN_EQUIDISTANT));
-	ui.comboBoxGridFun->insertItem(E2I(EGridFunction::GRID_FUN_GEOMETRIC_S2L), StrConst::GE_GridTypeGeometricS2L, E2I(EGridFunction::GRID_FUN_GEOMETRIC_S2L));
-	ui.comboBoxGridFun->insertItem(E2I(EGridFunction::GRID_FUN_LOGARITHMIC_S2L), StrConst::GE_GridTypeLogarithmicS2L, E2I(EGridFunction::GRID_FUN_LOGARITHMIC_S2L));
-	ui.comboBoxGridFun->insertItem(E2I(EGridFunction::GRID_FUN_GEOMETRIC_L2S), StrConst::GE_GridTypeGeometricL2S, E2I(EGridFunction::GRID_FUN_GEOMETRIC_L2S));
-	ui.comboBoxGridFun->insertItem(E2I(EGridFunction::GRID_FUN_LOGARITHMIC_L2S), StrConst::GE_GridTypeLogarithmicL2S, E2I(EGridFunction::GRID_FUN_LOGARITHMIC_L2S));
-	SelectGridFunction(EGridFunction::GRID_FUN_MANUAL);
+	[[maybe_unused]] CSignalBlocker blocker{ ui.comboFun };
+	ui.comboFun->addItem(StrConst::GE_GridTypeManual        , E2I(EGridFunction::GRID_FUN_MANUAL));
+	ui.comboFun->addItem(StrConst::GE_GridTypeEquidistant   , E2I(EGridFunction::GRID_FUN_EQUIDISTANT));
+	ui.comboFun->addItem(StrConst::GE_GridTypeGeometricS2L  , E2I(EGridFunction::GRID_FUN_GEOMETRIC_S2L));
+	ui.comboFun->addItem(StrConst::GE_GridTypeLogarithmicS2L, E2I(EGridFunction::GRID_FUN_LOGARITHMIC_S2L));
+	ui.comboFun->addItem(StrConst::GE_GridTypeGeometricL2S  , E2I(EGridFunction::GRID_FUN_GEOMETRIC_L2S));
+	ui.comboFun->addItem(StrConst::GE_GridTypeLogarithmicL2S, E2I(EGridFunction::GRID_FUN_LOGARITHMIC_L2S));
 }
 
 void CDimensionParameters::SetupComboBoxUnits() const
 {
-	ui.comboBoxUnits->clear();
-	ui.comboBoxUnits->insertItem(static_cast<int>(EGridUnit::UNIT_M),	"m");
-	ui.comboBoxUnits->insertItem(static_cast<int>(EGridUnit::UNIT_MM),	"mm");
-	ui.comboBoxUnits->insertItem(static_cast<int>(EGridUnit::UNIT_UM),	"um");
-	ui.comboBoxUnits->insertItem(static_cast<int>(EGridUnit::UNIT_M3),	"m3");
-	ui.comboBoxUnits->insertItem(static_cast<int>(EGridUnit::UNIT_MM3),	"mm3");
-	ui.comboBoxUnits->insertItem(static_cast<int>(EGridUnit::UNIT_UM3),	"um3");
-
-	ui.comboBoxDispUnits->clear();
-	ui.comboBoxDispUnits->insertItem(static_cast<int>(EGridUnit::UNIT_M),	"m");
-	ui.comboBoxDispUnits->insertItem(static_cast<int>(EGridUnit::UNIT_MM),	"mm");
-	ui.comboBoxDispUnits->insertItem(static_cast<int>(EGridUnit::UNIT_UM),	"um");
-	ui.comboBoxDispUnits->insertItem(static_cast<int>(EGridUnit::UNIT_M3),	"m3");
-	ui.comboBoxDispUnits->insertItem(static_cast<int>(EGridUnit::UNIT_MM3),	"mm3");
-	ui.comboBoxDispUnits->insertItem(static_cast<int>(EGridUnit::UNIT_UM3),	"um3");
+	[[maybe_unused]] CSignalBlocker blocker{ ui.comboUnits };
+	ui.comboUnits->addItem("m"  , E2I(EGridUnit::UNIT_M));
+	ui.comboUnits->addItem("mm" , E2I(EGridUnit::UNIT_MM));
+	ui.comboUnits->addItem("um" , E2I(EGridUnit::UNIT_UM));
+	ui.comboUnits->addItem("m3" , E2I(EGridUnit::UNIT_M3));
+	ui.comboUnits->addItem("mm3", E2I(EGridUnit::UNIT_MM3));
+	ui.comboUnits->addItem("um3", E2I(EGridUnit::UNIT_UM3));
 }
 
-void CDimensionParameters::SelectGridEntry(EGridEntry _entry) const
+void CDimensionParameters::UpdateWholeView() const
 {
-	for (int i = 0; i < ui.comboBoxGridEntry->count(); ++i)
-		if (ui.comboBoxGridEntry->itemData(i).toInt() == E2I(_entry))
-			ui.comboBoxGridEntry->setCurrentIndex(i);
+	// order is important: function -> units -> limits
+	UpdateDistribution();
+	UpdateClasses();
+	UpdateEntry();
+	UpdateFunction();
+	UpdateUnits();
+	UpdateLimits();
+	UpdateGrid();
+	UpdateWidgetsVisibility();
 }
 
-EGridEntry CDimensionParameters::GetSelectedGridEntry() const
+void CDimensionParameters::UpdateDistribution() const
 {
-	return static_cast<EGridEntry>(ui.comboBoxGridEntry->currentData().toInt());
+	SelectComboboxValue(ui.comboDistribution, E2I(m_grid->DimensionType()));
 }
 
-void CDimensionParameters::SelectGridFunction(EGridFunction _function) const
+void CDimensionParameters::UpdateClasses() const
 {
-	for (int i = 0; i < ui.comboBoxGridFun->count(); ++i)
-		if (ui.comboBoxGridFun->itemData(i).toInt() == E2I(_function))
-			ui.comboBoxGridFun->setCurrentIndex(i);
+	[[maybe_unused]] CSignalBlocker blocker{ ui.spinClasses };
+	ui.spinClasses->setValue(static_cast<int>(m_grid->ClassesNumber()));
 }
 
-EGridFunction CDimensionParameters::GetSelectedGridFunction() const
+void CDimensionParameters::UpdateEntry() const
 {
-	return static_cast<EGridFunction>(ui.comboBoxGridFun->currentData().toInt());
+	SelectComboboxValue(ui.comboEntry, E2I(m_grid->GridType()));
 }
 
-void CDimensionParameters::SelectGridUnit(EGridUnit _unit) const
+void CDimensionParameters::UpdateFunction() const
 {
-	for (int i = 0; i < ui.comboBoxUnits->count(); ++i)
-		if (i == E2I(_unit))
-			ui.comboBoxUnits->setCurrentIndex(i);
+	SelectComboboxValue(ui.comboFun, E2I(DetermineGridFunction()));
 }
 
-EGridUnit CDimensionParameters::GetSelectedGridUnit() const
+void CDimensionParameters::UpdateLimits() const
 {
-	return static_cast<EGridUnit>(ui.comboBoxUnits->currentIndex());
+	[[maybe_unused]] CSignalBlocker blocker{ ui.lineMin, ui.lineMax };
+	if (m_grid->GridType() != EGridEntry::GRID_NUMERIC) return;
+	const auto& vals = dynamic_cast<CGridDimensionNumeric*>(m_grid.get())->Grid();
+	ui.lineMin->setText(QString::number(FromM(vals.front())));
+	ui.lineMax->setText(QString::number(FromM(vals.back ())));
 }
 
-void CDimensionParameters::SelectDisplayGridUnit(EGridUnit _unit) const
+void CDimensionParameters::UpdateUnits() const
 {
-	for (int i = 0; i < ui.comboBoxDispUnits->count(); ++i)
-		if (i == E2I(_unit))
-			ui.comboBoxDispUnits->setCurrentIndex(i);
+	SelectComboboxValue(ui.comboUnits, E2I(DetermineUnits()));
 }
 
-EGridUnit CDimensionParameters::GetSelectedDisplayGridUnit() const
+void CDimensionParameters::UpdateGrid() const
 {
-	return static_cast<EGridUnit>(ui.comboBoxDispUnits->currentIndex());
+	[[maybe_unused]] CSignalBlocker blocker{ ui.tableGrid };
+	if (m_grid->GridType() == EGridEntry::GRID_NUMERIC)
+	{
+		const auto vals = dynamic_cast<CGridDimensionNumeric*>(m_grid.get())->Grid();
+		ui.tableGrid->setRowCount(static_cast<int>(vals.size()));
+		ui.tableGrid->SetItemsColEditable(0, 0, FromM(vals));
+	}
+	else if (m_grid->GridType() == EGridEntry::GRID_SYMBOLIC)
+	{
+		std::vector<std::string> vals = dynamic_cast<CGridDimensionSymbolic*>(m_grid.get())->Grid();
+		ui.tableGrid->setRowCount(static_cast<int>(vals.size()));
+		if (m_grid->DimensionType() == DISTR_COMPOUNDS)
+			for (auto& v : vals)
+				if (const auto* compound = m_materialsDB.GetCompound(v))
+					v = compound->GetName();
+		ui.tableGrid->SetItemsColEditable(0, 0, vals);
+	}
 }
 
-void CDimensionParameters::UpdateWholeView()
+void CDimensionParameters::UpdateWidgetsVisibility() const
 {
-	UpdateLimitsVisibility();
-	UpdateUnitsVisibility();
+	const bool visibleFun = m_grid->GridType() == EGridEntry::GRID_NUMERIC;
+	ui.labelFun->setVisible(visibleFun);
+	ui.comboFun->setVisible(visibleFun);
+	const bool visibleUnits = m_grid->DimensionType() == DISTR_SIZE && m_grid->GridType() == EGridEntry::GRID_NUMERIC;
+	ui.labelUnits->setVisible(visibleUnits);
+	ui.comboUnits->setVisible(visibleUnits);
+	const bool visibleLimits = m_grid->GridType() == EGridEntry::GRID_NUMERIC && static_cast<EGridFunction>(ui.comboFun->currentData().toUInt()) != EGridFunction::GRID_FUN_MANUAL;
+	ui.labelMin->setVisible(visibleLimits);
+	ui.lineMin->setVisible(visibleLimits);
+	ui.labelMax->setVisible(visibleLimits);
+	ui.lineMax->setVisible(visibleLimits);
+}
+
+void CDimensionParameters::DistributionChanged() const
+{
+	m_grid->SetType(static_cast<EDistrTypes>(ui.comboDistribution->currentData().toUInt()));
+	UpdateWidgetsVisibility();
+}
+
+void CDimensionParameters::ClassesChanged() const
+{
+	SetGrid();
 	UpdateGrid();
 }
 
-void CDimensionParameters::UpdateTableName() const
+void CDimensionParameters::EntryChanged()
 {
-	if (!m_grid) return;
-	const unsigned iDistr = GetDistributionTypeIndex(m_grid->DimensionType());
-	const QString sName = QStringList{ DISTR_NAMES }[iDistr];
-	ui.tableWidgetGrid->setHorizontalHeaderItem(0, new QTableWidgetItem(sName));
+	const auto entry = static_cast<EGridEntry>(ui.comboEntry->currentData().toUInt());
+	if (entry == EGridEntry::GRID_NUMERIC)
+		m_grid.reset(new CGridDimensionNumeric(m_grid->DimensionType(), CalculateGridNumeric()));
+	else if (entry == EGridEntry::GRID_SYMBOLIC)
+		m_grid.reset(new CGridDimensionSymbolic(m_grid->DimensionType(), CalculateGridSymbolic()));
+	UpdateWidgetsVisibility();
+	UpdateGrid();
 }
 
-void CDimensionParameters::UpdateControls()
+void CDimensionParameters::FunctionChanged() const
 {
-	if (!m_grid) return;
-	m_bAvoidSignals = true;
-
-	const auto& gridNum = m_grid->GridType() == EGridEntry::GRID_NUMERIC ? dynamic_cast<CGridDimensionNumeric*>(m_grid.get())->Grid() : std::vector<double>{};
-	const auto& gridStr = m_grid->GridType() == EGridEntry::GRID_SYMBOLIC ? dynamic_cast<CGridDimensionSymbolic*>(m_grid.get())->Grid() : std::vector<std::string>{};
-	SelectGridEntry(m_grid->GridType());
-	SelectGridFunction(m_grid->GridType() == EGridEntry::GRID_NUMERIC ? dynamic_cast<CGridDimensionNumeric*>(m_grid.get())->Function() : EGridFunction::GRID_FUN_MANUAL);
-	SelectGridUnit(m_gridUnit);
-	SelectDisplayGridUnit(m_gridUnit);
-	if (!gridNum.empty())
-	{
-		ui.lineEditLimitMin->setText(QString::number(SizeFromSI(gridNum.front(), static_cast<EGridUnit>(ui.comboBoxUnits->currentIndex()))));
-		ui.lineEditLimitMax->setText(QString::number(SizeFromSI(gridNum.back(),  static_cast<EGridUnit>(ui.comboBoxUnits->currentIndex()))));
-	}
-	switch (m_grid->GridType())
-	{
-	case EGridEntry::GRID_NUMERIC:
-		ui.spinBoxClasses->setValue((int)gridNum.size() - 1);
-		break;
-	case EGridEntry::GRID_SYMBOLIC:
-		ui.spinBoxClasses->setValue((int)gridStr.size());
-		break;
-	}
-
-	m_bAvoidSignals = false;
+	SetGrid();
+	UpdateWidgetsVisibility();
+	UpdateGrid();
 }
 
-void CDimensionParameters::UpdateUnitsVisibility() const
+void CDimensionParameters::LimitsChanged() const
 {
-	if (!m_grid) return;
-	const bool bVisible1 = m_grid->DimensionType() == DISTR_SIZE && m_grid->GridType() == EGridEntry::GRID_NUMERIC;
-	ui.labelUnits->setVisible(bVisible1);
-	ui.comboBoxUnits->setVisible(bVisible1);
-	const bool bVisible2 = bVisible1 && (m_grid->GridType() == EGridEntry::GRID_NUMERIC && dynamic_cast<CGridDimensionNumeric*>(m_grid.get())->Function() != EGridFunction::GRID_FUN_MANUAL);
-	ui.labelDispUnits->setVisible(bVisible2);
-	ui.comboBoxDispUnits->setVisible(bVisible2);
+	SetGrid();
+	UpdateWidgetsVisibility();
+	UpdateGrid();
 }
 
-void CDimensionParameters::UpdateLimitsVisibility() const
+void CDimensionParameters::UnitsChanged() const
 {
-	if (!m_grid) return;
-	const bool bVisible1 = m_grid->GridType() == EGridEntry::GRID_NUMERIC;
-	ui.labelDistrFunction->setVisible(bVisible1);
-	ui.comboBoxGridFun->setVisible(bVisible1);
-	const bool bVisible2 = m_grid->GridType() == EGridEntry::GRID_NUMERIC && (m_grid->GridType() == EGridEntry::GRID_NUMERIC && dynamic_cast<CGridDimensionNumeric*>(m_grid.get())->Function() != EGridFunction::GRID_FUN_MANUAL);
-	ui.labelMin->setVisible(bVisible2);
-	ui.lineEditLimitMin->setVisible(bVisible2);
-	ui.labelMax->setVisible(bVisible2);
-	ui.lineEditLimitMax->setVisible(bVisible2);
+	if (m_grid->DimensionType() != DISTR_SIZE || m_grid->GridType() != EGridEntry::GRID_NUMERIC) return;
+	UpdateLimits();
+	UpdateGrid();
 }
 
-void CDimensionParameters::UpdateGrid()
+void CDimensionParameters::GridChanged() const
 {
-	if (!m_grid) return;
-	switch (m_grid->GridType())
-	{
-	case EGridEntry::GRID_NUMERIC:
-	{
-		auto* numeric = dynamic_cast<CGridDimensionNumeric*>(m_grid.get());
-		switch (numeric->Function())
-		{
-		case EGridFunction::GRID_FUN_MANUAL:
-		{
-			auto grid = numeric->Grid();
-			grid.resize(ui.spinBoxClasses->value() + 1);
-			numeric->SetGrid(grid);
-			break;
-		}
-		case EGridFunction::GRID_FUN_EQUIDISTANT:
-		case EGridFunction::GRID_FUN_GEOMETRIC_S2L:
-		case EGridFunction::GRID_FUN_LOGARITHMIC_S2L:
-		case EGridFunction::GRID_FUN_GEOMETRIC_L2S:
-		case EGridFunction::GRID_FUN_LOGARITHMIC_L2S:
-			numeric->SetGrid(CalculateGrid());
-			break;
-		case EGridFunction::GRID_FUN_UNDEFINED:
-			break;
-		}
-		break;
-	}
-	case EGridEntry::GRID_SYMBOLIC:	// just use current values
-	{
-		auto grid = dynamic_cast<CGridDimensionSymbolic*>(m_grid.get())->Grid();
-		grid.resize(ui.spinBoxClasses->value());
-		dynamic_cast<CGridDimensionSymbolic*>(m_grid.get())->SetGrid(grid);
-		break;
-	}
-	}
-
-	auto gridNum = m_grid->GridType() == EGridEntry::GRID_NUMERIC ? dynamic_cast<CGridDimensionNumeric*>(m_grid.get())->Grid() : std::vector<double>{};
-	const auto& gridStr = m_grid->GridType() == EGridEntry::GRID_SYMBOLIC ? dynamic_cast<CGridDimensionSymbolic*>(m_grid.get())->Grid() : std::vector<std::string>{};
-	FromSI(gridNum);
-
-	UpdateGridData(m_grid->DimensionType(), gridNum, gridStr);
+	SetGrid();
+	UpdateFunction();
+	UpdateLimits();
+	UpdateGrid();
 }
 
-void CDimensionParameters::UpdateGridData(EDistrTypes _dim, const std::vector<double>& _vNumGrid, const std::vector<std::string>& _vStrGrid) const
+void CDimensionParameters::SetGrid() const
 {
-	if (!m_grid) return;
-	QSignalBlocker blocker(ui.tableWidgetGrid);
-
-	switch (m_grid->GridType())
-	{
-	case EGridEntry::GRID_NUMERIC:
-		ui.tableWidgetGrid->setRowCount((int)_vNumGrid.size());
-		ui.tableWidgetGrid->SetItemsColEditable(0, 0, _vNumGrid);
-		break;
-	case EGridEntry::GRID_SYMBOLIC:
-		ui.tableWidgetGrid->setRowCount((int)_vStrGrid.size());
-		if (_dim != DISTR_COMPOUNDS)
-			ui.tableWidgetGrid->SetItemsColEditable(0, 0, _vStrGrid);
-		else
-		{
-			std::vector<std::string> names;
-			for (const auto& key : _vStrGrid)
-				if (const auto* compound = m_materialsDB.GetCompound(key))
-					names.push_back(compound->GetName());
-				else
-					names.push_back(key);
-			ui.tableWidgetGrid->SetItemsColEditable(0, 0, names);
-		}
-		break;
-	}
+	if (m_grid->GridType() == EGridEntry::GRID_NUMERIC)
+		dynamic_cast<CGridDimensionNumeric*>(m_grid.get())->SetGrid(CalculateGridNumeric());
+	else if (m_grid->GridType() == EGridEntry::GRID_SYMBOLIC)
+		dynamic_cast<CGridDimensionSymbolic*>(m_grid.get())->SetGrid(CalculateGridSymbolic());
 }
 
-std::vector<double> CDimensionParameters::CalculateGrid() const
+std::vector<double> CDimensionParameters::CalculateGridNumeric() const
 {
-	const double dMin = ui.lineEditLimitMin->text().toDouble();
-	const double dMax = ui.lineEditLimitMax->text().toDouble();
-
-	std::vector<double> vRes = CreateGrid(dynamic_cast<CGridDimensionNumeric*>(m_grid.get())->Function(), ui.spinBoxClasses->value(), dMin, dMax);
-	ToSI(vRes);
-	return vRes;
-}
-
-double CDimensionParameters::ToSI(double _dVal) const
-{
-	if (m_grid->DimensionType() == DISTR_SIZE && m_grid->GridType() == EGridEntry::GRID_NUMERIC)
-		return SizeToSI(_dVal, static_cast<EGridUnit>(ui.comboBoxUnits->currentIndex()));
-	return _dVal;
-}
-
-void CDimensionParameters::ToSI(std::vector<double>& _vVal) const
-{
-	if (m_grid->DimensionType() == DISTR_SIZE && m_grid->GridType() == EGridEntry::GRID_NUMERIC)
-		for (double& val : _vVal)
-			val = ToSI(val);
-}
-
-double CDimensionParameters::SizeToSI(double _dVal, EGridUnit _srcUnits) const
-{
-	switch (_srcUnits)
-	{
-	case EGridUnit::UNIT_M:		  return _dVal;
-	case EGridUnit::UNIT_MM:	  return _dVal / 1000;
-	case EGridUnit::UNIT_UM:	  return _dVal / 1000000;
-	case EGridUnit::UNIT_M3:	  return std::pow(6 * _dVal / MATH_PI, 1. / 3.);
-	case EGridUnit::UNIT_MM3:	  return std::pow(6 * _dVal / 1e+9 / MATH_PI, 1. / 3.);
-	case EGridUnit::UNIT_UM3:	  return std::pow(6 * _dVal / 1e+18 / MATH_PI, 1. / 3.);
-	case EGridUnit::UNIT_DEFAULT: return _dVal;
-	}
-	return _dVal;
-}
-
-double CDimensionParameters::FromSI(double _dVal) const
-{
-	if (m_grid->DimensionType() == DISTR_SIZE && m_grid->GridType() == EGridEntry::GRID_NUMERIC)
-		return SizeFromSI(_dVal, static_cast<EGridUnit>(ui.comboBoxDispUnits->currentIndex()));
-	return _dVal;
-}
-
-void CDimensionParameters::FromSI(std::vector<double>& _vVal) const
-{
-	if (m_grid->DimensionType() == DISTR_SIZE && m_grid->GridType() == EGridEntry::GRID_NUMERIC)
-		for (double& val : _vVal)
-			val = FromSI(val);
-}
-
-double CDimensionParameters::SizeFromSI(double _dVal, EGridUnit _dstUnits) const
-{
-	switch (_dstUnits)
-	{
-	case EGridUnit::UNIT_M:		  return _dVal;
-	case EGridUnit::UNIT_MM:	  return _dVal * 1000;
-	case EGridUnit::UNIT_UM:	  return _dVal * 1000000;
-	case EGridUnit::UNIT_M3:	  return MATH_PI / 6 * std::pow(_dVal, 3.);
-	case EGridUnit::UNIT_MM3:	  return MATH_PI / 6 * std::pow(_dVal, 3.) * 1e+9;
-	case EGridUnit::UNIT_UM3:	  return MATH_PI / 6 * std::pow(_dVal, 3.) * 1e+18;
-	case EGridUnit::UNIT_DEFAULT: return _dVal;
-	}
-	return _dVal;
-}
-
-
-void CDimensionParameters::GridEntryChanged()
-{
-	if (!m_grid) return;
-	if (m_bAvoidSignals) return;
-	if (m_grid->GridType() == GetSelectedGridEntry()) return;
-	if (GetSelectedGridEntry() == EGridEntry::GRID_NUMERIC)
-		m_grid.reset(new CGridDimensionNumeric(m_grid->DimensionType()));
+	const auto fun = static_cast<EGridFunction>(ui.comboFun->currentData().toUInt());
+	const size_t number = ui.spinClasses->value() + 1;
+	std::vector<double> res(number);
+	if (fun != EGridFunction::GRID_FUN_MANUAL)
+		res = CreateGrid(fun, ui.spinClasses->value(), ui.lineMin->text().toDouble(), ui.lineMax->text().toDouble());
 	else
-		m_grid.reset(new CGridDimensionSymbolic(m_grid->DimensionType()));
-	UpdateUnitsVisibility();
-	UpdateLimitsVisibility();
-	UpdateGrid();
-}
-
-void CDimensionParameters::ClassesChanged()
-{
-	if (m_bAvoidSignals) return;
-	UpdateGrid();
-}
-
-void CDimensionParameters::GridFunChanged()
-{
-	if (!m_grid) return;
-	if (m_bAvoidSignals) return;
-	m_bAvoidSignals = true;
-	if (auto* numeric = dynamic_cast<CGridDimensionNumeric*>(m_grid.get()))
 	{
-		const EGridFunction gridFunOld = numeric->Function();
-		numeric->SetFunction(GetSelectedGridFunction());
-		if (gridFunOld == EGridFunction::GRID_FUN_MANUAL && numeric->Function() != EGridFunction::GRID_FUN_MANUAL && !numeric->Grid().empty())
-		{
-			const double dV1 = FromSI(numeric->Grid().front());
-			const double dV2 = FromSI(numeric->Grid().back());
-			ui.lineEditLimitMin->setText(QString::number(dV1));
-			ui.lineEditLimitMax->setText(QString::number(dV2));
-		}
+		const auto values = ui.tableGrid->GetItemsCol(0, 0);
+		for (size_t i = 0; i < res.size() && i < values.size(); ++i)
+			res[i] = values[i].toDouble();
 	}
-	m_bAvoidSignals = false;
-	UpdateLimitsVisibility();
-	UpdateUnitsVisibility();
-	UpdateGrid();
+	res.resize(number); // ensure it has proper size
+	return ToM(res);
 }
 
-void CDimensionParameters::LimitsChanged()
+std::vector<std::string> CDimensionParameters::CalculateGridSymbolic() const
 {
-	if (m_bAvoidSignals) return;
-	UpdateLimitsVisibility();
-	UpdateGrid();
+	const auto values = ui.tableGrid->GetItemsCol(0, 0);
+	std::vector<std::string> res(ui.spinClasses->value());
+	for (size_t i = 0; i < res.size() && i < values.size(); ++i)
+		res[i] = values[i].toStdString();
+	return res;
 }
 
-void CDimensionParameters::GridDataChanged()
+EGridFunction CDimensionParameters::DetermineGridFunction() const
 {
-	if (!m_grid) return;
-	if (m_bAvoidSignals) return;
+	if (m_grid->GridType() != EGridEntry::GRID_NUMERIC) return EGridFunction::GRID_FUN_MANUAL;
+	const auto& vals = dynamic_cast<CGridDimensionNumeric*>(m_grid.get())->Grid();
+	if (vals.size() < 3 || vals.front() >= vals.back()) return EGridFunction::GRID_FUN_MANUAL;
+	const auto allfuns = { EGridFunction::GRID_FUN_EQUIDISTANT, EGridFunction::GRID_FUN_GEOMETRIC_S2L, EGridFunction::GRID_FUN_GEOMETRIC_L2S,
+		EGridFunction::GRID_FUN_LOGARITHMIC_S2L, EGridFunction::GRID_FUN_LOGARITHMIC_L2S };
+	for (const auto& fun : allfuns)
+	{
+		if (IsOfFunction(vals, fun))
+			return fun;
+		// additionally check for volumes
+		if (m_grid->DimensionType() == DISTR_SIZE && IsOfFunction(vals, fun, EGridUnit::UNIT_M3))
+			return fun;
+	}
+	return EGridFunction::GRID_FUN_MANUAL;
+}
 
-	switch (m_grid->GridType())
+CDimensionParameters::EGridUnit CDimensionParameters::DetermineUnits() const
+{
+	if (m_grid->GridType() != EGridEntry::GRID_NUMERIC) return EGridUnit::UNIT_DEFAULT;
+	if (m_grid->DimensionType() != DISTR_SIZE) return EGridUnit::UNIT_DEFAULT;
+	const auto& vals = dynamic_cast<CGridDimensionNumeric*>(m_grid.get())->Grid();
+	if (vals.empty()) return EGridUnit::UNIT_DEFAULT;
+	const auto fun = static_cast<EGridFunction>(ui.comboFun->currentData().toUInt());
+	const bool diams = fun == EGridFunction::GRID_FUN_MANUAL || !IsOfFunction(vals, fun, EGridUnit::UNIT_M3); // diameters or volumes
+	const double ref = diams ? vals.back() : DiameterToVolume(vals.back()); // value to be analyzed
+	if (diams)
 	{
-	case EGridEntry::GRID_NUMERIC:
-	{
-		auto* numeric = dynamic_cast<CGridDimensionNumeric*>(m_grid.get());
-		std::vector<double> data(ui.tableWidgetGrid->rowCount());
-		for (int iRow = 0; iRow < ui.tableWidgetGrid->rowCount(); ++iRow)
-		{
-			const double dVal = ui.tableWidgetGrid->item(iRow, 0)->text().toDouble();
-			data[iRow] = ToSI(dVal);
-			const double dDispVal = FromSI(data[iRow]);
-			ui.tableWidgetGrid->item(iRow, 0)->setText(QString::number(dDispVal));
-		}
-		numeric->SetGrid(data);
-		break;
+		if (ref < 1000e-6) return EGridUnit::UNIT_UM;
+		if (ref < 1000e-4) return EGridUnit::UNIT_MM;
+		return EGridUnit::UNIT_M;
 	}
-	case EGridEntry::GRID_SYMBOLIC:
+	else
 	{
-		auto* symbolic = dynamic_cast<CGridDimensionSymbolic*>(m_grid.get());
-		std::vector<std::string> data(ui.tableWidgetGrid->rowCount());
-		for (int iRow = 0; iRow < ui.tableWidgetGrid->rowCount(); ++iRow)
-		{
-			data[iRow] = ui.tableWidgetGrid->item(iRow, 0)->text().toStdString();
-			ui.tableWidgetGrid->item(iRow, 0)->setText(QString::fromStdString(data[iRow]));
-		}
-		symbolic->SetGrid(data);
-		break;
-	}
+		if (ref < 1000e-18) return EGridUnit::UNIT_UM3;
+		if (ref < 1000e-9)  return EGridUnit::UNIT_MM3;
+		return EGridUnit::UNIT_M3;
 	}
 }
 
-void CDimensionParameters::UnitsChanged(int _index)
+bool CDimensionParameters::IsOfFunction(const std::vector<double>& _v, EGridFunction _fun, EGridUnit _units) const
 {
-	if (!m_grid) return;
-	if (m_bAvoidSignals) return;
-	if (m_grid->DimensionType() == DISTR_SIZE && (m_grid->GridType() == EGridEntry::GRID_SYMBOLIC || dynamic_cast<CGridDimensionNumeric*>(m_grid.get())->Function() == EGridFunction::GRID_FUN_MANUAL))
+	const auto ref = ToM(CreateGrid(_fun, _v.size() - 1, FromM(_v.front(), _units), FromM(_v.back(), _units)), _units);
+	if (ref.empty()) return false;
+	const size_t iSmallestNonZero = VectorFind(_v, [](double v) { return v > 0; });
+	if (iSmallestNonZero == static_cast<size_t>(-1)) return false;
+	const double eps = _v[iSmallestNonZero] * 1e-5;
+	const auto Cmp = [&](double d1, double d2) { return std::fabs(d2 - d1) <= eps; };
+	return std::equal(_v.begin(), _v.end(), ref.begin(), Cmp);
+}
+
+double CDimensionParameters::ToM(double _val, EGridUnit _units) const
+{
+	return ToM(std::vector(1, _val), _units).front();
+}
+
+double CDimensionParameters::FromM(double _val, EGridUnit _units) const
+{
+	return FromM(std::vector(1, _val), _units).front();
+}
+
+std::vector<double> CDimensionParameters::ToM(const std::vector<double>& _vals, EGridUnit _units) const
+{
+	auto res = _vals;
+	if (m_grid->DimensionType() == DISTR_SIZE && m_grid->GridType() == EGridEntry::GRID_NUMERIC)
 	{
-		m_bAvoidSignals = true;
-		ui.comboBoxUnits->setCurrentIndex(_index);
-		ui.comboBoxDispUnits->setCurrentIndex(_index);
-		m_bAvoidSignals = false;
+		const EGridUnit units = _units == EGridUnit::UNIT_DEFAULT ? static_cast<EGridUnit>(ui.comboUnits->currentData().toUInt()) : _units;
+		for (double& val : res)
+			val = SizeToM(val, units);
 	}
-	m_gridUnit = GetSelectedGridUnit();
-	UpdateGrid();
+	return res;
+}
+
+std::vector<double> CDimensionParameters::FromM(const std::vector<double>& _vals, EGridUnit _units) const
+{
+	auto res = _vals;
+	if (m_grid->DimensionType() == DISTR_SIZE && m_grid->GridType() == EGridEntry::GRID_NUMERIC)
+	{
+		const EGridUnit units = _units == EGridUnit::UNIT_DEFAULT ? static_cast<EGridUnit>(ui.comboUnits->currentData().toUInt()) : _units;
+		for (double& val : res)
+			val = SizeFromM(val, units);
+	}
+	return res;
+}
+
+double CDimensionParameters::SizeToM(double _val, EGridUnit _units) const
+{
+	switch (_units)
+	{
+	case EGridUnit::UNIT_M:		  return _val;
+	case EGridUnit::UNIT_MM:	  return _val / 1e+3;
+	case EGridUnit::UNIT_UM:	  return _val / 1e+6;
+	case EGridUnit::UNIT_M3:	  return VolumeToDiameter(_val);
+	case EGridUnit::UNIT_MM3:	  return VolumeToDiameter(_val) / 1e+3;
+	case EGridUnit::UNIT_UM3:	  return VolumeToDiameter(_val) / 1e+6;
+	case EGridUnit::UNIT_DEFAULT: return _val;
+	}
+	return _val;
+}
+
+double CDimensionParameters::SizeFromM(double _val, EGridUnit _units) const
+{
+	switch (_units)
+	{
+	case EGridUnit::UNIT_M:		  return _val;
+	case EGridUnit::UNIT_MM:	  return _val * 1e+3;
+	case EGridUnit::UNIT_UM:	  return _val * 1e+6;
+	case EGridUnit::UNIT_M3:	  return DiameterToVolume(_val);
+	case EGridUnit::UNIT_MM3:	  return DiameterToVolume(_val) * 1e+9;
+	case EGridUnit::UNIT_UM3:	  return DiameterToVolume(_val) * 1e+18;
+	case EGridUnit::UNIT_DEFAULT: return _val;
+	}
+	return _val;
+}
+
+void CDimensionParameters::SelectComboboxValue(QComboBox* _combo, uint32_t _data)
+{
+	[[maybe_unused]] CSignalBlocker blocker{ _combo };
+	for (int i = 0; i < _combo->count(); ++i)
+		if (_combo->itemData(i).toUInt() == _data)
+			_combo->setCurrentIndex(i);
+}
+
+bool CDimensionParameters::SetMessageAndReturn(const std::string& _message) const
+{
+	m_message = _message;
+	return false;
+}
+
+bool CDimensionParameters::IsValid() const
+{
+	m_message.clear();
+	if (m_grid->DimensionType() == DISTR_UNDEFINED)
+		return SetMessageAndReturn(StrConst::GE_ErrorUndefined);
+	const auto distrName = std::vector<std::string>(DISTR_NAMES)[GetDistributionTypeIndex(static_cast<EDistrTypes>(ui.comboDistribution->currentData().toUInt()))];
+	if (m_grid->GridType() == EGridEntry::GRID_NUMERIC)
+	{
+		const auto& grid = dynamic_cast<CGridDimensionNumeric*>(m_grid.get())->Grid();
+		if (grid.empty())
+			return SetMessageAndReturn(StrConst::GE_ErrorEmpty(distrName));
+		if (std::any_of(grid.begin(), grid.end(), [](auto v) { return v < 0; }))
+			return SetMessageAndReturn(StrConst::GE_ErrorNegative(distrName));
+		if (!std::is_sorted(grid.begin(), grid.end()))
+			return SetMessageAndReturn(StrConst::GE_ErrorSequence(distrName));
+	}
+	else if (m_grid->GridType() == EGridEntry::GRID_SYMBOLIC)
+	{
+		const auto grid = dynamic_cast<CGridDimensionSymbolic*>(m_grid.get())->Grid();
+		if (std::any_of(grid.begin(), grid.end(), [](auto v) { return v.empty(); }))
+			return SetMessageAndReturn(StrConst::GE_ErrorGaps(distrName));
+	}
+	return true;
+}
+
+QString CDimensionParameters::LastMessage() const
+{
+	return QString::fromStdString(m_message);
+}
+
+CGridDimension& CDimensionParameters::GetGrid() const
+{
+	return *m_grid;
 }
