@@ -82,11 +82,11 @@ void CParamsItem::UpdateLabel()
 	switch( nState )
 	{
 	case EGridEntry::GRID_NUMERIC:
-		vNumGrid = m_pGrid->GetGridDimensionNumeric(static_cast<EDistrTypes>(nDistr))->Grid();
+		vNumGrid = m_pGrid->GetNumericGrid(static_cast<EDistrTypes>(nDistr));
 		sLabelText = "[" + QString::number( vNumGrid[nCurrIndex] ) + " : " + QString::number( vNumGrid[nCurrIndex+1] ) + "]";
 		break;
 	case EGridEntry::GRID_SYMBOLIC:
-		vStrGrid = m_pGrid->GetGridDimensionSymbolic(static_cast<EDistrTypes>(nDistr))->Grid();
+		vStrGrid = m_pGrid->GetSymbolicGrid(static_cast<EDistrTypes>(nDistr));
 		sLabelText = QString::fromStdString(vStrGrid[nCurrIndex]);
 		break;
 	default:

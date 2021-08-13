@@ -31,7 +31,6 @@ class CFlowsheet
 	CModelsManager& m_modelsManager;			// Reference to a global models manager.
 	// TODO: move it out of the flowsheet and save/load independently.
 	CParametersHolder m_parameters;				// Holder of different flowsheet settings.
-	// TODO: rename to grid.
 	CMultidimensionalGrid m_mainGrid;			// Global version of distribution grids.
 	std::vector<SOverallDescriptor> m_overall;	// List of all defined overall properties.
 	std::vector<SPhaseDescriptor> m_phases;		// List of all defined phases.

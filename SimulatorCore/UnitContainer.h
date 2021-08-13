@@ -24,8 +24,6 @@ class CUnitContainer
 
 	CModelsManager& m_modelsManager;	// A holder of all accessible models.
 
-	// TODO: rename to m_grid
-
 	////////////////////////////////////////////////////////////////////////////////
 	// References to flowsheet structural data and settings
 	//

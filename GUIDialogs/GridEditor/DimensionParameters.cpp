@@ -40,8 +40,8 @@ EDistrTypes CDimensionParameters::GetDistributionType() const
 void CDimensionParameters::SetupComboBoxDistribution() const
 {
 	[[maybe_unused]] CSignalBlocker blocker{ ui.comboDistribution };
-	auto types = E2I(std::vector{ DISTR_TYPES });
-	auto names = std::vector<QString>(DISTR_NAMES);
+	const auto types = E2I(std::vector{ DISTR_TYPES });
+	const auto names = std::vector<QString>{ DISTR_NAMES };
 	ui.comboDistribution->addItem("", DISTR_UNDEFINED);
 	for (size_t i = 0; i < names.size(); ++i)
 	{
@@ -145,7 +145,7 @@ void CDimensionParameters::UpdateGrid() const
 	}
 	else if (m_grid->GridType() == EGridEntry::GRID_SYMBOLIC)
 	{
-		std::vector<std::string> vals = dynamic_cast<CGridDimensionSymbolic*>(m_grid.get())->Grid();
+		auto vals = dynamic_cast<CGridDimensionSymbolic*>(m_grid.get())->Grid();
 		ui.tableGrid->setRowCount(static_cast<int>(vals.size()));
 		if (m_grid->DimensionType() == DISTR_COMPOUNDS)
 			for (auto& v : vals)

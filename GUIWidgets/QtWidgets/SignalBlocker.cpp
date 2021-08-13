@@ -17,6 +17,11 @@ CSignalBlocker::CSignalBlocker(std::initializer_list<QObject*> _objects)
 
 CSignalBlocker::~CSignalBlocker()
 {
+	Unblock();
+}
+
+void CSignalBlocker::Unblock()
+{
 	for (size_t i = 0; i < m_objects.size(); ++i)
 		m_objects[i]->blockSignals(m_flags[i]);
 }

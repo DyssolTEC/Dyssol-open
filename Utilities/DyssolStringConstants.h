@@ -141,8 +141,6 @@ namespace StrConst
 /// CBaseUnit
 //////////////////////////////////////////////////////////////////////////
 	const char* const BUnit_DefaultPortName   = "Port";
-	// TODO: remove
-	const char* const BUnit_StoreStreamSuffix = "_STORE";
 
 	const char* const BUnit_UnspecValue	   = "Unspecified";
 	const char* const BUnit_NoWarnings	   = "";
@@ -226,31 +224,8 @@ namespace StrConst
 		return BUnit_Err1(s1, s3, s2) + "A holdup with such name does not exist in this unit."; }
 	inline std::string BUnit_ErrGetStream(const std::string& s1, const std::string& s2, const std::string& s3) {
 		return BUnit_Err1(s1, s3, s2) + "A stream with such name does not exist in this unit."; }
-	inline std::string BUnit_ErrGetHoldup(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetHoldup('" + s2 + "'): holdup with such name does not exist in this unit."); }
-	inline std::string BUnit_ErrAddFeed(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "': Feed '" + s2 + "' has duplicates. Feeds names must be unique within the unit."); }
-	inline std::string BUnit_ErrGetFeed(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetFeed('" + s2 + "'): feed with such name does not exist in this unit."); }
-	inline std::string BUnit_ErrGetStream(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetMaterialStream('" + s2 + "'): material stream with such name does not exist in this unit."); }
 	inline std::string BUnit_ErrGetParam(const std::string& s1, const std::string& s2, const std::string& s3) {
 		return std::string("Error in unit '" + s1 + "', function call " + s3 + "('" + s2 + "'): unit parameter with such combination of name and type does not exist in this unit.");	}
-	// TODO: rename to BUnit_ErrGetSolver
-	inline std::string BUnit_ErrGetSolverParam(const std::string& s1, const std::string& s2, const std::string& s3) {
-		return std::string("Error in unit '" + s1 + "', function call " + s3 + "('" + s2 + "'): solver with such combination of name and type does not exist in this unit."); }
-	inline std::string BUnit_ErrGetConstParam(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetConstParameterValue('" + s2 + "'): const unit parameter with such name does not exist in this unit."); }
-	inline std::string BUnit_ErrGetTDParam(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetTDParameterValue('" + s2 + ", 'Time'): time-dependent unit parameter with this name does not exist in this unit."); }
-	inline std::string BUnit_ErrGetStrParam(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetStringParameterValue('" + s2 + "'): string unit parameter with such name does not exist in this unit."); }
-	inline std::string BUnit_ErrGetBoxParam(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetCheckBoxParameterValue('" + s2 + "'): check box unit parameter with such name does not exist in this unit."); }
-	inline std::string BUnit_ErrGetComboParam(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetComboParameterValue('" + s2 + "'): combo unit parameter with such name does not exist in this unit."); }
-	inline std::string BUnit_ErrGetCompParam(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetCompoundParameterValue('" + s2 + "'): compound unit parameter with such name does not exist in this unit."); }
 	inline std::string BUnit_ErrAddParam(const std::string& s1, const std::string& s2, const std::string& s3) {
 		return BUnit_Err1(s1, s3, s2) + "Unit parameter '" + s2 + "' has duplicates. Unit parameters names must be unique within the unit."; }
 	inline std::string BUnit_ErrAddComboParam(const std::string& s1, const std::string& s2, const std::string& s3) {
@@ -261,18 +236,10 @@ namespace StrConst
 		return BUnit_Err3(s1, s4, s2, s3, "{}") + "A group with name '" + s3 + "' does not exist in this group unit parameter."; }
 	inline std::string BUnit_ErrGroupParamParam(const std::string& s1, const std::string& s2, const std::string& s3, const std::string& s4, const std::string& s5) {
 		return BUnit_Err3(s1, s5, s2, s3, s4) + std::string("A unit parameter with name  '" + s4 + "' does not exist in this unit."); }
-	inline std::string BUnit_ErrGroupParamGroup(const std::string& s1, const std::string& s2, const std::string& s3) {
-		return std::string("Error in unit '" + s1 + "', function call AddParametersToGroup('" + s2 + "', '" + s3 + "', {}): group with such name does not exist in this group unit parameter."); }
-	inline std::string BUnit_ErrGroupParamParam(const std::string& s1, const std::string& s2, const std::string& s3, const std::string& s4) {
-		return std::string("Error in unit '" + s1 + "', function call AddParametersToGroup('" + s2 + "', '" + s3 + "', {'" + s4 + "'}): unit parameter with such name does not exist in this unit."); }
 	inline std::string BUnit_ErrAddSV(const std::string& s1, const std::string& s2, const std::string& s3) {
 		return BUnit_Err1(s1, s3, s2) + "State variable '" + s2 + "' has duplicates. State variables names must be unique within the unit."; }
 	inline std::string BUnit_ErrGetSV(const std::string& s1, const std::string& s2, const std::string& s3) {
 		return BUnit_Err1(s1, s3, s2) + "A state variable with such name does not exist in this unit.";}
-	inline std::string BUnit_ErrGetSV(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetStateVariable('" + s2 + "'): state variable with such name does not exist in this unit."); }
-	inline std::string BUnit_ErrSetSV(const std::string& s1, const std::string& s2, const std::string& s3) {
-		return std::string("Error in unit '" + s1 + "', function call SetStateVariable('" + s2 + "', " + s3 + "): state variable with such name does not exist in this unit."); }
 	inline std::string BUnit_ErrAddPlot(const std::string& s1, const std::string& s2, const std::string& s3) {
 		return BUnit_Err1(s1, s3, s2) + ("Plot '" + s2 + "' has duplicates. Plots names must be unique within the unit."); }
 	inline std::string BUnit_ErrAddCurve2D(const std::string& s1, const std::string& s2, const std::string& s3, const std::string& s4) {
@@ -285,26 +252,10 @@ namespace StrConst
 		return BUnit_Err2(s1, s4, s3, s2) + "A curve with such name does not exist in plot '" + s2 + "'."; }
 	inline std::string BUnit_ErrGetCurve3D(const std::string& s1, const std::string& s2, double s3, const std::string& s4) {
 		return BUnit_Err2(s1, s4, StringFunctions::Double2String(s3), s2) + "A curve with such Z-value does not exist in plot '" + s2 + "'."; }
-	inline std::string BUnit_ErrAddPlot(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "': Plot '" + s2 + "' has duplicates. Plots names must be unique within the unit."); }
-	inline std::string BUnit_ErrAddCurve(const std::string& s1, const std::string& s2, const std::string& s3) {
-		return std::string("Error in unit '" + s1 + "', function call AddCurveOnPlot('" + s2 + "', '" + s3 + "'): plot with such name does not exist in this unit."); }
-	inline std::string BUnit_ErrAddPoint(const std::string& s1, const std::string& s2, const std::string& s3, const std::string& s4, const std::string& s5) {
-		return std::string("Error in unit '" + s1 + "', function call AddPointOnCurve('" + s2 + "', '" + s3 + "', '" + s4 + "', '" + s5 + "'): plot or curve with such name does not exist in this unit."); }
-	inline std::string BUnit_ErrGetSolver(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetSolverParameterValue('" + s2 + "'): solver parameter with such name does not exist in this unit."); }
-	inline std::string BUnit_ErrGetSolver1(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetSolverAgglomeration('" + s2 + "'): solver with this name does not belong to the type CAgglomerationSolver."); }
-	inline std::string BUnit_ErrGetSolver2(const std::string& s1, const std::string& s2) {
-		return std::string("Error in unit '" + s1 + "', function call GetSolverPBM(\"" + s2 + "'): solver with this name does not belong to the type CPBMSolver."); }
 	inline std::string BUnit_ErrCopyToPort(const std::string& s1, const std::string& s2, const std::string& s3, const std::string& s4) {
 		return BUnit_Err2(s1, s4, s2, s3) + "Cannot copy to input port with name '" + s3 + "'."; }
 	inline std::string BUnit_ErrCopyFromPort(const std::string& s1, const std::string& s2, const std::string& s3, const std::string& s4) {
 		return BUnit_Err2(s1, s4, s2, s3) + "Cannot copy from output port with name '" + s2 + "'."; }
-	inline std::string BUnit_WarnAddCurve(const std::string& s1, const std::string& s2, const std::string& s3) {
-		return std::string("In unit '" + s1 + "', function call AddCurveOnPlot('" + s2 + "', '" + s3 + "'): cannot add named curve to 3d plot - use function AddCurveOnPlot(string PlotName, double ZValue) instead."); }
-	inline std::string BUnit_WarnAddPoint(const std::string& s1, const std::string& s2, const std::string& s3, const std::string& s4, const std::string& s5) {
-		return std::string("In unit '" + s1 + "', function call AddPointOnCurve('" + s2 + "', '" + s3 + "', '" + s4 + "', '" + s5 + "'): cannot add points on plot - vectors '" + s4 + "' and '" + s5 + "' are not equal in size."); }
 
 //////////////////////////////////////////////////////////////////////////
 /// CUnitParameters

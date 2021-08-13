@@ -72,9 +72,8 @@ public:
 	static bool HaveSameGrids(const CBaseStream& _stream1, const CBaseStream& _stream2);
 	// Checks whether both streams have the same overall properties and phases.
 	static bool HaveSameOverallAndPhases(const CBaseStream& _stream1, const CBaseStream& _stream2);
-	// TODO: rename to HaveSameStructure
 	// Checks whether both streams have the same overall properties, phases and grids.
-	static bool HaveSameStructure2(const CBaseStream& _stream1, const CBaseStream& _stream2);
+	static bool HaveSameStructure(const CBaseStream& _stream1, const CBaseStream& _stream2);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Basic stream properties

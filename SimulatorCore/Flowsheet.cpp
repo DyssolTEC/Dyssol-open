@@ -314,8 +314,7 @@ void CFlowsheet::RemoveCompound(const std::string& _key)
 
 std::vector<std::string> CFlowsheet::GetCompounds() const
 {
-	if (!m_mainGrid.HasDimension(DISTR_COMPOUNDS)) return {};
-	return m_mainGrid.GetGridDimensionSymbolic(DISTR_COMPOUNDS)->Grid();
+	return m_mainGrid.GetSymbolicGrid(DISTR_COMPOUNDS);
 }
 
 size_t CFlowsheet::GetOverallPropertiesNumber() const

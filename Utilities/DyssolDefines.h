@@ -132,16 +132,6 @@ enum EPSDTypes
 	PSD_Q2       = 7
 };
 
-// ========== For stream addition
-
-// TODO: remove
-enum ETimePointsComposition
-{
-	BOTH_TP	= 0,
-	DST_TP	= 1,
-	SRC_TP	= 2
-};
-
 // ========== For lookup table creation
 enum class EDependencyTypes
 {

@@ -53,7 +53,7 @@ void CHoldup::CopyFromHoldup(double _timeDst, const CHoldup* _source, double _ti
 void CHoldup::AddStream(double _timeBeg, double _timeEnd, const CStream* _source)
 {
 	if (_timeBeg > _timeEnd) return;
-	if (!HaveSameStructure2(*this, *_source)) return;
+	if (!HaveSameStructure(*this, *_source)) return;
 
 	// remove discarded time points
 	RemoveTimePointsAfter(_timeEnd);

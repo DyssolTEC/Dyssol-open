@@ -8,6 +8,20 @@
 #include <algorithm>
 #include <utility>
 
+struct FindByType
+{
+	explicit FindByType(EDistrTypes _type) : m_type{ _type } {}
+	bool operator()(const std::unique_ptr<CGridDimension>& _d) const
+	{
+		return _d->DimensionType() == m_type;
+	}
+private:
+	EDistrTypes m_type;
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////// CGridDimension
+
 CGridDimension::CGridDimension(EGridEntry _entry)
 	: m_entry{ _entry }
 {
@@ -60,18 +74,8 @@ void CGridDimension::SetType(EDistrTypes _type)
 	m_type = _type;
 }
 
-
-//void CGridDimension::SaveToFile(CH5Handler& _h5File, const std::string& _path)
-//{
-//	_h5File.WriteData(_path, StrConst::DGrid_H5DistrType, E2I(m_type));
-//	_h5File.WriteData(_path, StrConst::DGrid_H5GridType , E2I(m_entry));
-//}
-//
-//void CGridDimension::LoadFromFile(const CH5Handler& _h5File, const std::string& _path)
-//{
-//	_h5File.ReadData(_path, StrConst::DGrid_H5DistrType, reinterpret_cast<uint32_t&>(m_type));
-//	_h5File.ReadData(_path, StrConst::DGrid_H5GridType , reinterpret_cast<uint32_t&>(m_entry));
-//}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////// CGridDimensionNumeric
 
 CGridDimensionNumeric::CGridDimensionNumeric()
 	: CGridDimension{ EGridEntry::GRID_NUMERIC }
@@ -83,9 +87,8 @@ CGridDimensionNumeric::CGridDimensionNumeric(EDistrTypes _type)
 {
 }
 
-CGridDimensionNumeric::CGridDimensionNumeric(EDistrTypes _type, std::vector<double> _grid, EGridFunction _function)
+CGridDimensionNumeric::CGridDimensionNumeric(EDistrTypes _type, std::vector<double> _grid)
 	: CGridDimension{ _type, EGridEntry::GRID_NUMERIC }
-	, m_function{ _function }
 	, m_grid{ std::move(_grid) }
 {
 }
@@ -108,11 +111,10 @@ std::vector<double> CGridDimensionNumeric::GetClassesSizes() const
 	return res;
 }
 
-void CGridDimensionNumeric::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
+void CGridDimensionNumeric::SaveToFile(const CH5Handler& _h5File, const std::string& _path) const
 {
 	_h5File.WriteData(_path, StrConst::DGrid_H5DistrType, E2I(DimensionType()));
 	_h5File.WriteData(_path, StrConst::DGrid_H5GridType, E2I(GridType()));
-	_h5File.WriteData(_path, StrConst::DGrid_H5GridFun, E2I(m_function));
 	_h5File.WriteData(_path, StrConst::DGrid_H5NumGrid, m_grid);
 }
 
@@ -121,7 +123,6 @@ void CGridDimensionNumeric::LoadFromFile(const CH5Handler& _h5File, const std::s
 	EDistrTypes type;
 	_h5File.ReadData(_path, StrConst::DGrid_H5DistrType, reinterpret_cast<uint32_t&>(type));
 	SetType(type);
-	_h5File.ReadData(_path, StrConst::DGrid_H5GridFun, reinterpret_cast<uint32_t&>(m_function));
 	_h5File.ReadData(_path, StrConst::DGrid_H5NumGrid, m_grid);
 }
 
@@ -133,7 +134,7 @@ CGridDimensionNumeric* CGridDimensionNumeric::Clone() const
 bool CGridDimensionNumeric::Equal(const CGridDimension& _other) const
 {
 	const auto* p = dynamic_cast<const CGridDimensionNumeric*>(&_other);
-	return p && CGridDimension::Equal(_other) && m_function == p->m_function && m_grid == p->m_grid;
+	return p && CGridDimension::Equal(_other) && m_grid == p->m_grid;
 }
 
 size_t CGridDimensionNumeric::ClassesNumber() const
@@ -146,20 +147,13 @@ std::vector<double> CGridDimensionNumeric::Grid() const
 	return m_grid;
 }
 
-EGridFunction CGridDimensionNumeric::Function() const
-{
-	return m_function;
-}
-
 void CGridDimensionNumeric::SetGrid(const std::vector<double>& _grid)
 {
 	m_grid = _grid;
 }
 
-void CGridDimensionNumeric::SetFunction(EGridFunction _fun)
-{
-	m_function = _fun;
-}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////// CGridDimensionSymbolic
 
 CGridDimensionSymbolic::CGridDimensionSymbolic()
 	: CGridDimension{ EGridEntry::GRID_SYMBOLIC }
@@ -171,9 +165,9 @@ CGridDimensionSymbolic::CGridDimensionSymbolic(EDistrTypes _type)
 {
 }
 
-CGridDimensionSymbolic::CGridDimensionSymbolic(EDistrTypes _type, const std::vector<std::string>& _grid)
+CGridDimensionSymbolic::CGridDimensionSymbolic(EDistrTypes _type, std::vector<std::string> _grid)
 	: CGridDimension{ _type, EGridEntry::GRID_SYMBOLIC }
-	, m_grid{ _grid }
+	, m_grid{ std::move(_grid) }
 {
 }
 
@@ -188,7 +182,7 @@ void CGridDimensionSymbolic::RemoveClass(const std::string& _entry)
 	VectorDelete(m_grid, _entry);
 }
 
-void CGridDimensionSymbolic::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
+void CGridDimensionSymbolic::SaveToFile(const CH5Handler& _h5File, const std::string& _path) const
 {
 	_h5File.WriteData(_path, StrConst::DGrid_H5DistrType, E2I(DimensionType()));
 	_h5File.WriteData(_path, StrConst::DGrid_H5GridType, E2I(GridType()));
@@ -229,16 +223,8 @@ void CGridDimensionSymbolic::SetGrid(const std::vector<std::string>& _grid)
 	m_grid = _grid;
 }
 
-struct FindByType
-{
-	explicit FindByType(EDistrTypes _type) : m_type{ _type } {}
-	bool operator()(const std::unique_ptr<CGridDimension>& _d) const
-	{
-		return _d->DimensionType() == m_type;
-	}
-private:
-	EDistrTypes m_type;
-};
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////// CMultidimensionalGrid
 
 CMultidimensionalGrid::CMultidimensionalGrid(const CMultidimensionalGrid& _other)
 {
@@ -300,19 +286,14 @@ void CMultidimensionalGrid::AddDimension(const CGridDimension& _gridDimension)
 		AddSymbolicDimension(dynamic_cast<const CGridDimensionSymbolic&>(_gridDimension));
 }
 
-CGridDimensionNumeric* CMultidimensionalGrid::AddNumericDimension()
-{
-	return AddNumericDimension(CGridDimensionNumeric{ DISTR_UNDEFINED });
-}
-
 CGridDimensionNumeric* CMultidimensionalGrid::AddNumericDimension(EDistrTypes _type)
 {
 	return AddNumericDimension(CGridDimensionNumeric{ _type });
 }
 
-CGridDimensionNumeric* CMultidimensionalGrid::AddNumericDimension(EDistrTypes _type, const std::vector<double>& _grid, EGridFunction _function)
+CGridDimensionNumeric* CMultidimensionalGrid::AddNumericDimension(EDistrTypes _type, const std::vector<double>& _grid)
 {
-	return AddNumericDimension({ _type, _grid, _function });
+	return AddNumericDimension({ _type, _grid });
 }
 
 CGridDimensionNumeric* CMultidimensionalGrid::AddNumericDimension(const CGridDimensionNumeric& _gridDimension)
@@ -321,11 +302,6 @@ CGridDimensionNumeric* CMultidimensionalGrid::AddNumericDimension(const CGridDim
 	const auto& grid = _gridDimension.Grid();
 	if (!grid.empty() && !std::is_sorted(grid.begin(), grid.end())) return {};
 	return dynamic_cast<CGridDimensionNumeric*>(m_grids.emplace_back(std::make_unique<CGridDimensionNumeric>(_gridDimension)).get());
-}
-
-CGridDimensionSymbolic* CMultidimensionalGrid::AddSymbolicDimension()
-{
-	return AddSymbolicDimension(CGridDimensionSymbolic{ DISTR_UNDEFINED });
 }
 
 CGridDimensionSymbolic* CMultidimensionalGrid::AddSymbolicDimension(EDistrTypes _type)
@@ -341,6 +317,7 @@ CGridDimensionSymbolic* CMultidimensionalGrid::AddSymbolicDimension(EDistrTypes 
 CGridDimensionSymbolic* CMultidimensionalGrid::AddSymbolicDimension(const CGridDimensionSymbolic& _gridDimension)
 {
 	if (HasDimension(_gridDimension.DimensionType())) return {};
+	if (!VectorUnique(_gridDimension.Grid())) return {};
 	return dynamic_cast<CGridDimensionSymbolic*>(m_grids.emplace_back(std::make_unique<CGridDimensionSymbolic>(_gridDimension)).get());
 }
 
@@ -392,6 +369,20 @@ std::vector<CGridDimension*> CMultidimensionalGrid::GetGridDimensions()
 	return res;
 }
 
+std::vector<double> CMultidimensionalGrid::GetNumericGrid(EDistrTypes _type) const
+{
+	if (const auto* dim = GetGridDimensionNumeric(_type))
+		return dim->Grid();
+	return {};
+}
+
+std::vector<std::string> CMultidimensionalGrid::GetSymbolicGrid(EDistrTypes _type) const
+{
+	if (const auto* dim = GetGridDimensionSymbolic(_type))
+		return dim->Grid();
+	return {};
+}
+
 std::vector<double> CMultidimensionalGrid::GetPSDGrid(EPSDGridType _type) const
 {
 	const auto* dim = GetGridDimensionNumeric(DISTR_SIZE);
@@ -432,7 +423,7 @@ bool CMultidimensionalGrid::operator==(const CMultidimensionalGrid& _other) cons
 {
 	if (m_grids.size() != _other.m_grids.size()) return false;
 	for (size_t i = 0; i < m_grids.size(); ++i)
-		if (*m_grids[i].get() != *_other.m_grids[i].get())
+		if (*m_grids[i] != *_other.m_grids[i])
 			return false;
 	return true;
 }
@@ -442,7 +433,7 @@ bool CMultidimensionalGrid::operator!=(const CMultidimensionalGrid& _other) cons
 	return !(*this == _other);
 }
 
-void CMultidimensionalGrid::SaveToFile(CH5Handler& _h5File, const std::string& _path)
+void CMultidimensionalGrid::SaveToFile(const CH5Handler& _h5File, const std::string& _path)
 {
 	if (!_h5File.IsValid()) return;
 
@@ -501,17 +492,15 @@ void CMultidimensionalGrid::LoadFromFile_v2(const CH5Handler& _h5File, const std
 	for (int i = 0; i < gridsNum; ++i)
 	{
 		EDistrTypes distrType{};
-		EGridFunction gridFun{};
 		std::vector<double> numGrid;
 		std::vector<std::string> strGrid;
 		const std::string path = _path + "/" + StrConst::DGrid_H5GroupName + std::to_string(i);
 		_h5File.ReadData(path, StrConst::DGrid_H5DistrType, reinterpret_cast<uint32_t&>(distrType));
-		_h5File.ReadData(path, StrConst::DGrid_H5GridFun  , reinterpret_cast<uint32_t&>(gridFun));
 		_h5File.ReadData(path, StrConst::DGrid_H5NumGrid, numGrid);
 		_h5File.ReadData(path, StrConst::DGrid_H5StrGrid, strGrid);
 
 		if (!numGrid.empty())
-			AddNumericDimension(distrType, numGrid, gridFun);
+			AddNumericDimension(distrType, numGrid);
 		else
 			AddSymbolicDimension(distrType, strGrid);
 	}

@@ -82,7 +82,7 @@ void CPhase::AddCompound(const std::string& _compoundKey)
 
 void CPhase::RemoveCompound(const std::string& _compoundKey)
 {
-	m_distribution.RemoveClass(DISTR_COMPOUNDS, VectorFind(m_grid.GetGridDimensionSymbolic(DISTR_COMPOUNDS)->Grid(), _compoundKey));
+	m_distribution.RemoveClass(DISTR_COMPOUNDS, VectorFind(m_grid.GetSymbolicGrid(DISTR_COMPOUNDS), _compoundKey));
 	// remove from the grid
 	m_grid.GetGridDimensionSymbolic(DISTR_COMPOUNDS)->RemoveClass(_compoundKey);
 }

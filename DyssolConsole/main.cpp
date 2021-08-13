@@ -75,7 +75,7 @@ void RunSimulation(const CConfigFileParser& _parser)
 		for (auto g : _parser.GetValue<std::vector<SGridDimensionEx>>(EArguments::DISTRIBUTION_GRID))
 		{
 			if (g.gridType == EGridEntry::GRID_NUMERIC)
-				grid.AddNumericDimension(flowsheet.GetGrid().GetDimensionsTypes()[g.iGrid], g.vNumGrid, g.gridFun);
+				grid.AddNumericDimension(flowsheet.GetGrid().GetDimensionsTypes()[g.iGrid], g.vNumGrid);
 			else
 				grid.AddSymbolicDimension(flowsheet.GetGrid().GetDimensionsTypes()[g.iGrid], g.vStrGrid);
 		}

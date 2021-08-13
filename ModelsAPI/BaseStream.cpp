@@ -91,7 +91,7 @@ bool CBaseStream::HaveSameOverallAndPhases(const CBaseStream& _stream1, const CB
 	return HaveSameOverall(_stream1, _stream2) && HaveSamePhases(_stream1, _stream2);
 }
 
-bool CBaseStream::HaveSameStructure2(const CBaseStream& _stream1, const CBaseStream& _stream2)
+bool CBaseStream::HaveSameStructure(const CBaseStream& _stream1, const CBaseStream& _stream2)
 {
 	return HaveSameOverall(_stream1, _stream2) && HaveSamePhases(_stream1, _stream2) && HaveSameGrids(_stream1, _stream2);
 }
@@ -376,7 +376,7 @@ void CBaseStream::RemoveCompound(const std::string& _compoundKey)
 
 std::vector<std::string> CBaseStream::GetAllCompounds() const
 {
-	return m_grid.GetGridDimensionSymbolic(DISTR_COMPOUNDS)->Grid();
+	return m_grid.GetSymbolicGrid(DISTR_COMPOUNDS);
 }
 
 double CBaseStream::GetCompoundFraction(double _time, const std::string& _compoundKey) const
@@ -1294,7 +1294,7 @@ void CBaseStream::Add(double _time, const CBaseStream& _source)
 
 void CBaseStream::Add(double _timeBeg, double _timeEnd, const CBaseStream& _source)
 {
-	if (!HaveSameStructure2(*this, _source)) return;
+	if (!HaveSameStructure(*this, _source)) return;
 
 	// gather all time points
 	std::vector<double> timePoints = VectorsUnionSorted(_source.GetTimePoints(_timeBeg, _timeEnd), GetTimePoints(_timeBeg, _timeEnd));
@@ -1325,7 +1325,7 @@ bool CBaseStream::AreEqual(double _time, const CBaseStream& _stream1, const CBas
 		return std::fabs(_v1 - _v2) < std::fabs(_v1) * _stream1.m_toleranceSettings.toleranceRel + _stream1.m_toleranceSettings.toleranceAbs;
 	};
 
-	if (!HaveSameStructure2(_stream1, _stream2)) return false;
+	if (!HaveSameStructure(_stream1, _stream2)) return false;
 
 	// overall parameters
 	for (const auto& [key, param] : _stream1.m_overall)

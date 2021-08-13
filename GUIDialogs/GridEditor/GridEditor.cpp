@@ -81,6 +81,7 @@ void CGridEditor::UpdateGridsList() const
 		ui.treeGrids->resizeColumnToContents(i);
 	units->setExpanded(!allSame);
 	// restore/set current item
+	blocker.Unblock();
 	ui.treeGrids->SetCurrentItem(oldData);
 	if (!ui.treeGrids->currentItem())
 		ui.treeGrids->SetCurrentItem("global");
@@ -122,7 +123,7 @@ void CGridEditor::GridActivityChanged(const QCheckBox* _checkbox, const QTreeWid
 	if (reply != QMessageBox::Yes) return UpdateGridsList();
 	model->SetGrid(m_flowsheet->GetGrid());
 	m_flowsheet->UpdateGrids(); // notify the flowsheet
-	UpdateDimensionsList();
+	GridSelected();				// update selection and view
 }
 
 void CGridEditor::AddDistributionClicked()

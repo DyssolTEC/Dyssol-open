@@ -12,12 +12,9 @@ class CH5Handler;
  */
 class CGridDimension
 {
-	static const unsigned m_saveVersion{ 1 }; // Current version of the saving procedure.
+	static constexpr unsigned m_saveVersion{ 1 };	// Current version of the saving procedure.
 
-	// TODO: rename type (dimension or ->distribution)
 	EDistrTypes m_type{ DISTR_SIZE };				// Distribution type.
-	// TODO: rename type
-	// TODO: maybe remove
 	EGridEntry m_entry{ EGridEntry::GRID_NUMERIC };	// Entry type.
 
 public:
@@ -31,7 +28,7 @@ public:
 	virtual ~CGridDimension() = default;
 
 	// Returns a non-managed pointer to a copy of this.
-	virtual CGridDimension* Clone() const;
+	[[nodiscard]] virtual CGridDimension* Clone() const;
 	// Compares two objects.
 	friend bool operator==(const CGridDimension& _lhs, const CGridDimension& _rhs);
 	// Compares two objects.
@@ -47,14 +44,9 @@ public:
 	// Sets new distribution type.
 	void SetType(EDistrTypes _type);
 
-	// Saves grid to a HDF5 file.
-	//virtual void SaveToFile(CH5Handler& _h5File, const std::string& _path);
-	// Loads grid from a HDF5 file.
-	//virtual void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
-
 protected:
 	// Compares for equality with another object.
-	virtual bool Equal(const CGridDimension& _other) const;
+	[[nodiscard]] virtual bool Equal(const CGridDimension& _other) const;
 };
 
 /*
@@ -62,31 +54,25 @@ protected:
  */
 class CGridDimensionNumeric : public CGridDimension
 {
-	static const unsigned m_saveVersion{ 1 }; // Current version of the saving procedure.
+	static constexpr unsigned m_saveVersion{ 1 };	// Current version of the saving procedure.
 
-	// TODO: remove
-	EGridFunction m_function{ EGridFunction::GRID_FUN_MANUAL };	// Function to define grid.
-	std::vector<double> m_grid{ 0 , 1 };						// Grid itself.
+	std::vector<double> m_grid{ 0 , 1 };			// Grid itself.
 
 public:
 	CGridDimensionNumeric();
 	explicit CGridDimensionNumeric(EDistrTypes _type);
-	CGridDimensionNumeric(EDistrTypes _type, std::vector<double> _grid, EGridFunction _function = EGridFunction::GRID_FUN_MANUAL);
+	CGridDimensionNumeric(EDistrTypes _type, std::vector<double> _grid);
 
 	// Returns a non-managed pointer to a copy of this.
-	CGridDimensionNumeric* Clone() const override;
+	[[nodiscard]] CGridDimensionNumeric* Clone() const override;
 
 	// Returns the number of classes defined in this grid dimension.
 	[[nodiscard]] size_t ClassesNumber() const override;
 	// Returns current numerical grid.
 	[[nodiscard]] std::vector<double> Grid() const;
-	// Returns the function that was used to define the grid.
-	[[nodiscard]] EGridFunction Function() const;
 
 	// Sets new grid.
 	void SetGrid(const std::vector<double>& _grid);
-	// Sets new function.
-	void SetFunction(EGridFunction _fun);
 
 	// Returns mean values for each class.
 	[[nodiscard]] std::vector<double> GetClassesMeans() const;
@@ -94,7 +80,7 @@ public:
 	[[nodiscard]] std::vector<double> GetClassesSizes() const;
 
 	// Saves grid to a HDF5 file.
-	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
+	void SaveToFile(const CH5Handler& _h5File, const std::string& _path) const;
 	// Loads grid from a HDF5 file.
 	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
 
@@ -108,17 +94,17 @@ private:
  */
 class CGridDimensionSymbolic : public CGridDimension
 {
-	static const unsigned m_saveVersion{ 1 }; // Current version of the saving procedure.
+	static constexpr unsigned m_saveVersion{ 1 };	// Current version of the saving procedure.
 
-	std::vector<std::string> m_grid;	// Grid itself.
+	std::vector<std::string> m_grid;				// Grid itself.
 
 public:
 	CGridDimensionSymbolic();
 	explicit CGridDimensionSymbolic(EDistrTypes _type);
-	CGridDimensionSymbolic(EDistrTypes _type, const std::vector<std::string>& _grid);
+	CGridDimensionSymbolic(EDistrTypes _type, std::vector<std::string> _grid);
 
 	// Returns a non-managed pointer to a copy of this.
-	CGridDimensionSymbolic* Clone() const override;
+	[[nodiscard]] CGridDimensionSymbolic* Clone() const override;
 
 	// Returns the number of classes defined in this grid dimension.
 	[[nodiscard]] size_t ClassesNumber() const override;
@@ -134,7 +120,7 @@ public:
 	void RemoveClass(const std::string& _entry);
 
 	// Saves grid to a HDF5 file.
-	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
+	void SaveToFile(const CH5Handler& _h5File, const std::string& _path) const;
 	// Loads grid from a HDF5 file.
 	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
 
@@ -150,7 +136,7 @@ private:
  */
 class CMultidimensionalGrid
 {
-	static const unsigned m_saveVersion{ 3 }; // Current version of the saving procedure.
+	static constexpr unsigned m_saveVersion{ 3 }; // Current version of the saving procedure.
 
 	std::vector<std::unique_ptr<CGridDimension>> m_grids;	// All defined dimensions.
 
@@ -166,63 +152,61 @@ public:
 	void Clear();
 
 	// Returns number of classes for each defined dimension.
-	std::vector<size_t> GetClassesNumbers() const;
+	[[nodiscard]] std::vector<size_t> GetClassesNumbers() const;
 	// Returns types of each defined dimension.
-	std::vector<EDistrTypes> GetDimensionsTypes() const;
+	[[nodiscard]] std::vector<EDistrTypes> GetDimensionsTypes() const;
 	// Returns types of the grids of each defined dimension.
-	std::vector<EGridEntry> GetGridsTypes() const;
+	[[nodiscard]] std::vector<EGridEntry> GetGridsTypes() const;
 
 	// Returns the number of defined dimensions in the grid.
-	size_t GetDimensionsNumber() const;
+	[[nodiscard]] size_t GetDimensionsNumber() const;
 
 	// Adds a new dimension with the given parameters to the grid if it does not exist yet.
 	void AddDimension(const CGridDimension& _gridDimension);
 
-	// Adds a new empty numerical dimension to the grid.
-	CGridDimensionNumeric* AddNumericDimension();
 	// Adds a new numerical dimension to the grid if it does not exist yet.
-	CGridDimensionNumeric* AddNumericDimension(EDistrTypes _type);
+	CGridDimensionNumeric* AddNumericDimension(EDistrTypes _type = DISTR_UNDEFINED);
 	// Adds a new numerical dimension to the grid if it does not exist yet.
-	CGridDimensionNumeric* AddNumericDimension(EDistrTypes _type, const std::vector<double>& _grid, EGridFunction _function = EGridFunction::GRID_FUN_MANUAL);
-	// TODO: maybe remove this version
+	CGridDimensionNumeric* AddNumericDimension(EDistrTypes _type, const std::vector<double>& _grid);
 	// Adds a new numerical dimension with the given parameters to the grid if it does not exist yet.
 	CGridDimensionNumeric* AddNumericDimension(const CGridDimensionNumeric& _gridDimension);
 
-	// Adds a new empty symbolic dimension to the grid.
-	CGridDimensionSymbolic* AddSymbolicDimension();
 	// Adds a new symbolic dimension to the grid if it does not exist yet.
-	CGridDimensionSymbolic* AddSymbolicDimension(EDistrTypes _type);
+	CGridDimensionSymbolic* AddSymbolicDimension(EDistrTypes _type = DISTR_UNDEFINED);
 	// Adds a new symbolic dimension to the grid if it does not exist yet.
 	CGridDimensionSymbolic* AddSymbolicDimension(EDistrTypes _type, const std::vector<std::string>& _grid);
-	// TODO: maybe remove this version
 	// Adds a new numerical dimension with the given parameters to the grid if it does not exist yet.
 	CGridDimensionSymbolic* AddSymbolicDimension(const CGridDimensionSymbolic& _gridDimension);
 
 	// Returns grid dimension by its type. Returns nullptr if such dimension does not exist.
-	const CGridDimension* GetGridDimension(EDistrTypes _type) const;
+	[[nodiscard]] const CGridDimension* GetGridDimension(EDistrTypes _type) const;
 	// Returns grid dimension by its type. Returns nullptr if such dimension does not exist.
-	CGridDimension* GetGridDimension(EDistrTypes _type);
+	[[nodiscard]] CGridDimension* GetGridDimension(EDistrTypes _type);
 	// Returns numeric grid dimension by its type. Returns nullptr if such dimension does not exist.
-	const CGridDimensionNumeric* GetGridDimensionNumeric(EDistrTypes _type) const;
+	[[nodiscard]] const CGridDimensionNumeric* GetGridDimensionNumeric(EDistrTypes _type) const;
 	// Returns numeric grid dimension by its type. Returns nullptr if such dimension does not exist.
-	CGridDimensionNumeric* GetGridDimensionNumeric(EDistrTypes _type);
+	[[nodiscard]] CGridDimensionNumeric* GetGridDimensionNumeric(EDistrTypes _type);
 	// Returns symbolic grid dimension by its type. Returns nullptr if such dimension does not exist.
-	const CGridDimensionSymbolic* GetGridDimensionSymbolic(EDistrTypes _type) const;
+	[[nodiscard]] const CGridDimensionSymbolic* GetGridDimensionSymbolic(EDistrTypes _type) const;
 	// Returns symbolic grid dimension by its type. Returns nullptr if such dimension does not exist.
-	CGridDimensionSymbolic* GetGridDimensionSymbolic(EDistrTypes _type);
+	[[nodiscard]] CGridDimensionSymbolic* GetGridDimensionSymbolic(EDistrTypes _type);
 
 	// Returns all defined grid dimensions.
-	std::vector<const CGridDimension*> GetGridDimensions() const;
+	[[nodiscard]] std::vector<const CGridDimension*> GetGridDimensions() const;
 	// Returns all defined grid dimensions.
-	std::vector<CGridDimension*> GetGridDimensions();
+	[[nodiscard]] std::vector<CGridDimension*> GetGridDimensions();
 
+	// Returns a numeric grid defined for the given distribution type if the distribution with such grid type exists.
+	[[nodiscard]] std::vector<double> GetNumericGrid(EDistrTypes _type) const;
+	// Returns a symbolic grid defined for the given distribution type if the distribution with such grid type exists.
+	[[nodiscard]] std::vector<std::string> GetSymbolicGrid(EDistrTypes _type) const;
 	// Returns a grid defined for PSD if it exists.
-	std::vector<double> GetPSDGrid(EPSDGridType _type = EPSDGridType::DIAMETER) const;
+	[[nodiscard]] std::vector<double> GetPSDGrid(EPSDGridType _type = EPSDGridType::DIAMETER) const;
 	// Returns mean values of each class of the grid defined for PSD if it exists.
-	std::vector<double> GetPSDMeans(EPSDGridType _type = EPSDGridType::DIAMETER) const;
+	[[nodiscard]] std::vector<double> GetPSDMeans(EPSDGridType _type = EPSDGridType::DIAMETER) const;
 
 	// Checks if the grid for this dimension is already defined.
-	bool HasDimension(EDistrTypes _type) const;
+	[[nodiscard]] bool HasDimension(EDistrTypes _type) const;
 
 	// Equality operator
 	bool operator==(const CMultidimensionalGrid& _other) const;
@@ -230,12 +214,11 @@ public:
 	bool operator!=(const CMultidimensionalGrid& _other) const;
 
 	// Saves grid to a HDF5 file.
-	void SaveToFile(CH5Handler& _h5File, const std::string& _path);
+	void SaveToFile(const CH5Handler& _h5File, const std::string& _path);
 	// Loads grid from a HDF5 file.
 	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
 	// Loads grid from a HDF5 file. Compatibility version.
 	void LoadFromFile_v2(const CH5Handler& _h5File, const std::string& _path);
 	// Loads grid from a HDF5 file. Compatibility version.
 	void LoadFromFile_v1(const CH5Handler& _h5File, const std::string& _path);
-private:
 };

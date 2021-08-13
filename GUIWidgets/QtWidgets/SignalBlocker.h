@@ -18,4 +18,6 @@ public:
 	CSignalBlocker(CSignalBlocker&& _other) noexcept = delete;
 	CSignalBlocker& operator=(const CSignalBlocker& _other) = delete;
 	CSignalBlocker& operator=(CSignalBlocker&& _other) noexcept = delete;
+
+	void Unblock();
 };

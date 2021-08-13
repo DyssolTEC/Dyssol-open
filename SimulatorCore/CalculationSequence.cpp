@@ -254,7 +254,7 @@ void CCalculationSequence::UpdateInitialStreams()
 	// update structures of the streams to set overall, phases, grids, etc.
 	for (size_t iPart = 0; iPart < m_initialTearStreams.size(); ++iPart)
 		for (size_t iStr = 0; iStr < m_initialTearStreams[iPart].size(); ++iStr)
-			if (!CBaseStream::HaveSameStructure2(*m_initialTearStreams[iPart][iStr], *PartitionTearStreams(iPart)[iStr]))
+			if (!CBaseStream::HaveSameStructure(*m_initialTearStreams[iPart][iStr], *PartitionTearStreams(iPart)[iStr]))
 				m_initialTearStreams[iPart][iStr]->SetupStructure(PartitionTearStreams(iPart)[iStr]);
 }
 
@@ -394,8 +394,6 @@ void CCalculationSequence::LoadFromFile(CH5Handler& _h5Loader, const std::string
 
 void CCalculationSequence::LoadFromFile_v1(CH5Handler& _h5Loader, const std::string& _path)
 {
-	// TODO: set grid for older versions
-
 	// TODO: move old StrConst names here.
 	const int partitionsNumber = _h5Loader.ReadAttribute(_path, StrConst::Seq_H5AttrPartitionsNum);
 	m_partitions.resize(partitionsNumber);

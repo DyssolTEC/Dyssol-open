@@ -459,13 +459,13 @@ std::vector<std::string> CSolidDistributionsEditor::GetHeaders(EDistrTypes _dist
 	case EGridEntry::GRID_NUMERIC:
 	{
 		std::vector<std::string> headers;
-		const std::vector<double> grid = _distr != DISTR_SIZE ? m_pGrid->GetGridDimensionNumeric(_distr)->Grid() : m_pGrid->GetPSDGrid(psdGridType);
+		const std::vector<double> grid = _distr != DISTR_SIZE ? m_pGrid->GetNumericGrid(_distr) : m_pGrid->GetPSDGrid(psdGridType);
 		for (int i = 0; i < static_cast<int>(grid.size()) - 1; ++i)
 			headers.push_back(StringFunctions::Double2String(grid[i]) + " : " + StringFunctions::Double2String(grid[i + 1]) + " " + sUnits);
 		return headers;
 	}
 	case EGridEntry::GRID_SYMBOLIC:
-		return m_pGrid->GetGridDimensionSymbolic(_distr)->Grid();
+		return m_pGrid->GetSymbolicGrid(_distr);
 	}
 	return {};
 }

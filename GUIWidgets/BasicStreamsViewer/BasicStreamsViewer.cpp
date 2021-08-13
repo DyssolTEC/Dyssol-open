@@ -443,7 +443,7 @@ std::vector<std::string> CBasicStreamsViewer::TableHeaders(EDistrTypes _distr) c
 		{
 		case EGridEntry::GRID_NUMERIC:
 		{
-			std::vector<double> grid = ActiveGrid().GetGridDimensionNumeric(_distr)->Grid();
+			std::vector<double> grid = ActiveGrid().GetNumericGrid(_distr);
 			vNumGrid.resize(grid.size() - 1);
 			for (int i = 0; i < static_cast<int>(grid.size()) - 1; ++i)
 				vNumGrid[i] = { grid[i] , grid[i + 1] };
@@ -451,7 +451,7 @@ std::vector<std::string> CBasicStreamsViewer::TableHeaders(EDistrTypes _distr) c
 		}
 		case EGridEntry::GRID_SYMBOLIC:
 		{
-			std::vector<std::string> grid = ActiveGrid().GetGridDimensionSymbolic(_distr)->Grid();
+			std::vector<std::string> grid = ActiveGrid().GetSymbolicGrid(_distr);
 			for (const auto& cell : grid)
 				vHeaders.push_back(cell);
 			break;
@@ -717,14 +717,14 @@ void CBasicStreamsViewer::SetSolidDistrsToTableData(EDistrCombination _type)
 			distrs.push_back(ChosenDim(EDimType::Row));
 			distrs.push_back(ChosenDim(EDimType::Col));
 			coords.push_back(0);
-			const auto headerGrid1 = ActiveGrid().GetGridDimensionNumeric(ChosenDim(EDimType::Row))->Grid();
-			const auto headerGrid2 = ActiveGrid().GetGridDimensionNumeric(ChosenDim(EDimType::Col))->Grid();
+			const auto headerGrid1 = ActiveGrid().GetNumericGrid(ChosenDim(EDimType::Row));
+			const auto headerGrid2 = ActiveGrid().GetNumericGrid(ChosenDim(EDimType::Col));
 			const int classesRow = static_cast<int>(ActiveGrid().GetGridDimension(ChosenDim(EDimType::Row))->ClassesNumber());
 			const int classesCol = static_cast<int>(ActiveGrid().GetGridDimension(ChosenDim(EDimType::Col))->ClassesNumber());
 			for (int i = 0; i < static_cast<int>(m_vSelectedMD.size()); ++i)
 			{
-				const auto actualGrid1 = m_vSelectedStreams[i]->GetGrid().GetGridDimensionNumeric(ChosenDim(EDimType::Row))->Grid();
-				const auto actualGrid2 = m_vSelectedStreams[i]->GetGrid().GetGridDimensionNumeric(ChosenDim(EDimType::Col))->Grid();
+				const auto actualGrid1 = m_vSelectedStreams[i]->GetGrid().GetNumericGrid(ChosenDim(EDimType::Row));
+				const auto actualGrid2 = m_vSelectedStreams[i]->GetGrid().GetNumericGrid(ChosenDim(EDimType::Col));
 				if (headerGrid1 != actualGrid1 || headerGrid2 != actualGrid2) continue;
 				coords.back() = 0;
 				for (int j = 0; j < classesRow; ++j)
@@ -738,13 +738,13 @@ void CBasicStreamsViewer::SetSolidDistrsToTableData(EDistrCombination _type)
 		else
 		{
 			distrs.push_back(ChosenDim(_type == EDistrCombination::OneDimensionalVertical ? EDimType::Row : EDimType::Col));
-			const auto headerGrid = ActiveGrid().GetGridDimensionNumeric(static_cast<EDistrTypes>(distrs.back()))->Grid();
+			const auto headerGrid = ActiveGrid().GetNumericGrid(static_cast<EDistrTypes>(distrs.back()));
 			const std::vector<std::string> compounds = comp.empty() ? std::vector<std::string>{} : std::vector<std::string>{ comp };
 			const EPSDGridType meanType = ChosenPSDGridType();
 			std::vector<double> vals;
 			for (int i = 0; i < static_cast<int>(m_vSelectedMD.size()); ++i)
 			{
-				const auto actualGrid = m_vSelectedStreams[i]->GetGrid().GetGridDimensionNumeric(static_cast<EDistrTypes>(distrs.back()))->Grid();
+				const auto actualGrid = m_vSelectedStreams[i]->GetGrid().GetNumericGrid(static_cast<EDistrTypes>(distrs.back()));
 				const bool convert = headerGrid != actualGrid;
 				if (distrs.back() == DISTR_SIZE)
 				{

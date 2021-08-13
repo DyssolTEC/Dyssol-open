@@ -771,7 +771,7 @@ size_t CBaseUnit::GetCompoundIndexByName(const std::string& _compoundName) const
 
 std::vector<std::string> CBaseUnit::GetAllCompounds() const
 {
-	return m_grid.GetGridDimensionSymbolic(DISTR_COMPOUNDS)->Grid();
+	return m_grid.GetSymbolicGrid(DISTR_COMPOUNDS);
 }
 
 std::vector<std::string> CBaseUnit::GetAllCompoundsNames() const
@@ -888,14 +888,12 @@ size_t CBaseUnit::GetClassesNumber(EDistrTypes _distribution) const
 
 std::vector<double> CBaseUnit::GetNumericGrid(EDistrTypes _distribution) const
 {
-	if (m_grid.GetGridDimension(_distribution)->GridType() != EGridEntry::GRID_NUMERIC) return {};
-	return m_grid.GetGridDimensionNumeric(_distribution)->Grid();
+	return m_grid.GetNumericGrid(_distribution);
 }
 
 std::vector<std::string> CBaseUnit::GetSymbolicGrid(EDistrTypes _distribution) const
 {
-	if (m_grid.GetGridDimension(_distribution)->GridType() != EGridEntry::GRID_SYMBOLIC) return {};
-	return m_grid.GetGridDimensionSymbolic(_distribution)->Grid();
+	return m_grid.GetSymbolicGrid(_distribution);
 }
 
 std::vector<double> CBaseUnit::GetClassesSizes(EDistrTypes _distribution) const
