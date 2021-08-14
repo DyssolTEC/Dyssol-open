@@ -4,6 +4,7 @@
 
 #include "DyssolTypes.h"
 #include <vector>
+#include <memory>
 
 class CH5Handler;
 

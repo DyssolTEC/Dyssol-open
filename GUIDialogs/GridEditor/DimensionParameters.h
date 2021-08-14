@@ -4,6 +4,7 @@
 
 #include "ui_DimensionParameters.h"
 #include "DyssolDefines.h"
+#include <memory>
 
 class CGridDimension;
 class CMaterialsDatabase;
