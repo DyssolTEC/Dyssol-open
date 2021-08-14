@@ -44,10 +44,6 @@ private:
 
 	//// parameters of convergence methods
 	bool m_bSteffensenTrigger;
-	std::vector<EDistrTypes> m_vDims;
-	CDenseMDMatrix m_mMDnew;
-	std::vector<double> m_vMTPnew;
-	std::vector<double> m_vPFnew;
 
 public:
 	CSimulator();

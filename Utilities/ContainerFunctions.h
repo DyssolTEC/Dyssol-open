@@ -1,5 +1,8 @@
+/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+
 #pragma once
 
+#include "DyssolTypes.h"
 #include <algorithm>
 #include <map>
 #include <set>
@@ -80,6 +83,23 @@ void VectorDelete(std::vector<T>& _vec, size_t _index)
 {
 	if (_index < _vec.size())
 		_vec.erase(_vec.begin() + _index);
+}
+
+// Moves an element with the given index upwards/downwards in the vector.
+template<typename T>
+void VectorShift(std::vector<T>& _vec, size_t _index, EDirection _direction)
+{
+	switch (_direction)
+	{
+	case EDirection::UP:
+		if (_index < _vec.size() && _index != 0)
+			std::iter_swap(_vec.begin() + _index, _vec.begin() + _index - 1);
+		break;
+	case EDirection::DOWN:
+		if (_index < _vec.size() && _index != _vec.size() - 1)
+			std::iter_swap(_vec.begin() + _index, _vec.begin() + _index + 1);
+		break;
+	}
 }
 
 // Checks if the vector contains only unique elements.
@@ -189,5 +209,13 @@ template<typename T> std::vector<T> ReservedVector(size_t _size)
 {
 	std::vector<T> res;
 	res.reserve(_size);
+	return res;
+}
+
+// Returns vector of elements of _v1, which are not found in _v2. Both vectors are unsorted.
+template<typename T> std::vector<T> VectorDifference(const std::vector<T>& _v1, const std::vector<T>& _v2)
+{
+	std::vector<T> res;
+	std::copy_if(_v1.begin(), _v1.end(), std::back_inserter(res), [&_v2](const T& val) { return !VectorContains(_v2, val); });
 	return res;
 }

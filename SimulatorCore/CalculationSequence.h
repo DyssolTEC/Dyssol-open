@@ -27,7 +27,7 @@ public:
 	struct SPartition
 	{
 		std::vector<CUnitContainer*> models;	// List of pointers to models belonging to this partition.
-		std::vector<CStream*> tearStreams;	// List of pointers to tear streams belonging to this partition.
+		std::vector<CStream*> tearStreams;		// List of pointers to tear streams belonging to this partition.
 	};
 
 private:
@@ -41,7 +41,7 @@ private:
 
 
 	const std::vector<std::unique_ptr<CUnitContainer>>* m_models{};	// Pointer to a vector of available models.
-	const std::vector<std::unique_ptr<CStream>>* m_streams{};	// Pointer to a vector of available streams.
+	const std::vector<std::shared_ptr<CStream>>* m_streams{};		// Pointer to a vector of available streams.
 
 	std::vector<SPartitionKeys> m_partitions;       // List of defined partitions.
 
@@ -49,7 +49,7 @@ private:
 
 public:
 	// Sets pointers to all existing models and streams.
-	CCalculationSequence(const std::vector<std::unique_ptr<CUnitContainer>>* _allModels, const std::vector<std::unique_ptr<CStream>>* _allStreams);
+	CCalculationSequence(const std::vector<std::unique_ptr<CUnitContainer>>* _allModels, const std::vector<std::shared_ptr<CStream>>* _allStreams);
 
 	// Clear calculation sequence and all initial tear streams.
 	void Clear();
@@ -112,41 +112,24 @@ public:
 	std::string Check() const;
 
 	// Creates the required number of initial streams according to a current calculation sequence and configures their structure, preparing for simulation start.
-	void CreateInitialStreams();
+	void UpdateInitialStreams();
 	// Clears all time points in initial tear streams.
 	void ClearInitialStreamsData();
 	// Copies initial streams to tear streams to initialize them.
-	void InitializeTearStreams(double _timeWindow);
+	void CopyInitToTearStreams(double _timeWindow);
 	// Copies current data of tear streams to initial streams.
-	void UpdateInitialStreams(double _timeWindow);
+	void CopyTearToInitStreams(double _timeWindow);
 
 	// Returns all initial tear streams.
 	std::vector<std::vector<const CStream*>> GetAllInitialStreams() const;
 	// Returns all initial tear streams.
 	std::vector<std::vector<CStream*>> GetAllInitialStreams();
 
-	// Adds a compound with the specified unique key to all streams.
-	void AddCompound(const std::string& _compoundKey);
-	// Removes a compound with the specified unique key from all streams.
-	void RemoveCompound(const std::string& _compoundKey);
-
-	// Adds an overall property to all streams.
-	void AddOverallProperty(EOverall _property, const std::string& _name, const std::string& _units);
-	// Removes an overall property from all streams.
-	void RemoveOverallProperty(EOverall _property);
-
-	// Adds the specified phase to all streams.
-	void AddPhase(EPhase _phase, const std::string& _name);
-	// Removes the specified phase from all streams.
-	void RemovePhase(EPhase _phase);
-
-	// Updates grids of distributed parameters in all streams.
-	void UpdateDistributionsGrid();
-	// Updates cache settings in all streams.
+	// Updates cache settings in all initial tear streams.
 	void UpdateCacheSettings(const SCacheSettings& _cache);
-	// Updates tolerance settings in all streams.
+	// Updates tolerance settings in all initial tear streams.
 	void UpdateToleranceSettings(const SToleranceSettings& _tolerance);
-	// Updates thermodynamics settings in all streams.
+	// Updates thermodynamics settings in all initial tear streams.
 	void UpdateThermodynamicsSettings(const SThermodynamicsSettings& _settings);
 
 	void SaveToFile(CH5Handler& _h5Saver, const std::string& _path);

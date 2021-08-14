@@ -99,7 +99,6 @@ enum class EGridEntry : uint32_t
 {
 	GRID_NUMERIC	= 0,
 	GRID_SYMBOLIC	= 2,
-	GRID_UNDEFINED	= 15
 };
 
 // ========== TYPES OF GRID FUNCTIONAL DISTRIBUTIONS
@@ -131,16 +130,6 @@ enum EPSDTypes
 	PSD_Number   = 5,
 	PSD_q2       = 6,
 	PSD_Q2       = 7
-};
-
-// ========== For stream addition
-
-// TODO: remove
-enum ETimePointsComposition
-{
-	BOTH_TP	= 0,
-	DST_TP	= 1,
-	SRC_TP	= 2
 };
 
 // ========== For lookup table creation

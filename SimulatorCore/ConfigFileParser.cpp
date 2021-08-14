@@ -1,7 +1,7 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "ConfigFileParser.h"
-#include "DistributionsGrid.h"
+#include "MultidimensionalGrid.h"
 #include "ModelsManager.h"
 #include "Flowsheet.h"
 #include "BaseUnit.h"
@@ -96,26 +96,26 @@ void CConfigFileParser::SaveConfigFile(const std::wstring& _fileName, const std:
 	file << std::endl;
 
 	// distributions grid
-	const auto& grid = _flowsheet.GetDistributionsGrid();
-	for (size_t i = 0; i < grid->GetDistributionsNumber(); ++i)
+	const auto& grid = _flowsheet.GetGrid();
+	int i = 0;
+	for (const auto& gridDim : grid.GetGridDimensions())
 	{
-		const EGridEntry type = grid->GetGridEntryByIndex(i);
-		file << TO_ARG_STR(EArguments::DISTRIBUTION_GRID) << " " << i + 1 << " " << E2I(type) << " " << grid->GetClassesByIndex(i) << " ";
+		const EGridEntry type = gridDim->GridType();
+		file << TO_ARG_STR(EArguments::DISTRIBUTION_GRID) << " " << i + 1 << " " << E2I(type) << " " << gridDim->ClassesNumber() << " ";
 		switch (type)
 		{
 		case EGridEntry::GRID_NUMERIC:
 			file << E2I(EGridFunction::GRID_FUN_MANUAL) << " ";
-			for (double v : grid->GetNumericGridByIndex(i))
+			for (double v : dynamic_cast<const CGridDimensionNumeric*>(gridDim)->Grid())
 				file << " " << v;
 			break;
 		case EGridEntry::GRID_SYMBOLIC:
-			for (const std::string& v : grid->GetSymbolicGridByIndex(i))
+			for (const std::string& v : dynamic_cast<const CGridDimensionSymbolic*>(gridDim)->Grid())
 				file << " " << v;
 			break;
-		case EGridEntry::GRID_UNDEFINED:
-			break;
 		}
-		file << "\t" << StrConst::COMMENT_SYMBOL << " " << std::vector<std::string>{ DISTR_NAMES }[GetDistributionTypeIndex(grid->GetDistrType(i))] << std::endl;
+		file << "\t" << StrConst::COMMENT_SYMBOL << " " << std::vector<std::string>{ DISTR_NAMES }[GetDistributionTypeIndex(gridDim->DimensionType())] << std::endl;
+		i++;
 	}
 	file << std::endl;
 
@@ -225,7 +225,7 @@ void CConfigFileParser::SaveConfigFile(const std::wstring& _fileName, const std:
 		for (size_t iHoldup = 0; iHoldup < holdups.size(); ++iHoldup)
 		{
 			const std::vector<double> tp = holdups[iHoldup]->GetAllTimePoints();
-			const std::vector<EDistrTypes> distrs = grid->GetDistrTypes();
+			const std::vector<EDistrTypes> distrs = grid.GetDimensionsTypes();
 			for (size_t iDistr = 1; iDistr < distrs.size(); ++iDistr)
 			{
 				const auto& compoundKey = _flowsheet.GetCompounds();
@@ -335,7 +335,7 @@ SGridDimensionEx CConfigFileParser::CreateGridFromSS(std::stringstream& _ss) con
 			ss2 >> grid.vStrGrid[ind++];
 	}
 	else
-		grid.vNumGrid = CDistributionsGrid::CalculateGrid(grid.gridFun, grid.nClasses, GetValueFromStream<double>(_ss), GetValueFromStream<double>(_ss));
+		grid.vNumGrid = CreateGrid(grid.gridFun, grid.nClasses, GetValueFromStream<double>(_ss), GetValueFromStream<double>(_ss));
 
 	return grid;
 }

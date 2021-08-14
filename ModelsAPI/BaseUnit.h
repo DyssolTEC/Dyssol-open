@@ -35,7 +35,7 @@ class CStream;
  * Basically, it describes a mathematical Model. A bit misleading name of the class is kept for compatibility reasons. */
 class CBaseUnit
 {
-	static const unsigned m_saveVersion{ 3 };	// Current version of the saving procedure.
+	static const unsigned m_saveVersion{ 4 };	// Current version of the saving procedure.
 
 protected:
 	////////////////////////////////////////////////////////////////////////////////
@@ -52,14 +52,14 @@ private:
 	// References to flowsheet structural data and settings
 	//
 
+	CMultidimensionalGrid m_grid;	// Defined distribution grid.
+
 	// TODO: gather them in some global structure.
 	const CMaterialsDatabase* m_materialsDB{ nullptr };				// Reference to a database of materials.
-	const CDistributionsGrid* m_grid{ nullptr };					// Reference to a distribution grid.
-	const std::vector<std::string>* m_compounds{ nullptr };			// Reference to compounds.
 	const std::vector<SOverallDescriptor>* m_overall{ nullptr };	// Reference to overall properties.
 	const std::vector<SPhaseDescriptor>* m_phases{ nullptr };		// Reference to phases.
 	const SCacheSettings* m_cache{ nullptr };						// Reference to cache settings.
-	const SToleranceSettings* m_tolerance{ nullptr };				// Reference to tolerance settings.
+	const SToleranceSettings* m_tolerances{ nullptr };				// Reference to tolerance settings.
 	const SThermodynamicsSettings* m_thermodynamics{ nullptr };		// Reference to thermodynamics settings.
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -97,8 +97,8 @@ public:
 	virtual ~CBaseUnit()                           = default;
 
 	// TODO: set it all in constructor and make them references.
-	// Sets pointers to all required data.
-	void SetPointers(const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid, const std::vector<std::string>* _compounds, const std::vector<SOverallDescriptor>* _overall,
+	// Sets pointers and values of all required data.
+	void SetSettings(const CMaterialsDatabase* _materialsDB, const CMultidimensionalGrid& _grid, const std::vector<SOverallDescriptor>* _overall,
 		const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics);
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -179,7 +179,7 @@ public:
 	// Removes the stream with the specified name from the unit. If such stream does not exist, a logic_error exception is thrown.
 	void RemoveStream(const std::string& _name);
 
-	// Sets up the stream structure (MD dimensions, phases, materials, etc.) the same as it is configured in the flowsheet. Removes all existing data.
+	// Sets up the stream structure (MD dimensions, phases, materials, etc.) the same as it is configured in the unit. Removes all existing data.
 	void SetupStream(CBaseStream* _stream) const;
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -408,8 +408,8 @@ public:
 	// Distributed properties
 	//
 
-	// Updates grids of distributed parameters.
-	void UpdateDistributionsGrid();
+	// Updates grids of distributed parameters and compounds.
+	void SetGrid(const CMultidimensionalGrid& _grid);
 
 	// Returns the number of defined distributed parameters.
 	size_t GetDistributionsNumber() const;
@@ -417,7 +417,7 @@ public:
 	std::vector<EDistrTypes> GetDistributionsTypes() const;
 	// Returns numbers of classes of all defined distributed parameters.
 	std::vector<size_t> GetDistributionsClasses() const;
-	// Returns grid type (GRID_NUMERIC, GRID_SYMBOLIC) of the given distributed parameter. Returns GRID_UNDEFINED if the given distributed parameter is not defined.
+	// Returns grid type (GRID_NUMERIC, GRID_SYMBOLIC) of the given distributed parameter. Returns -1 if the given distributed parameter is not defined.
 	EGridEntry GetDistributionGridType(EDistrTypes _distribution) const;
 
 	// Returns the number of classes defined for the specified distributed parameter.
@@ -458,8 +458,8 @@ public:
 	// Returns a pointer to the current materials database.
 	const CMaterialsDatabase* GetMaterialsDatabase() const;
 
-	// Returns a pointer to the current grid od distributed parameters.
-	const CDistributionsGrid* GetGrid() const;
+	// Returns current grid of distributed parameters.
+	const CMultidimensionalGrid& GetGrid() const;
 
 	// Returns current tolerance settings.
 	SToleranceSettings GetToleranceSettings() const;

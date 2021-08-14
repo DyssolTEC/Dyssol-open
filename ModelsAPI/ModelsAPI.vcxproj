@@ -106,6 +106,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseUnit.cpp" />
+    <ClCompile Include="MultidimensionalGrid.cpp" />
     <ClCompile Include="ChemicalReaction.cpp" />
     <ClCompile Include="MixtureEnthalpyLookup.cpp" />
     <ClCompile Include="MixtureLookup.cpp" />
@@ -121,7 +122,6 @@
     <ClCompile Include="Matrix2D.cpp" />
     <ClCompile Include="DenseMDMatrix.cpp" />
     <ClCompile Include="DependentValues.cpp" />
-    <ClCompile Include="DistributionsGrid.cpp" />
     <ClCompile Include="MDMatrix.cpp" />
     <ClCompile Include="TDArray.cpp" />
     <ClCompile Include="TransformMatrix.cpp" />
@@ -131,6 +131,7 @@
   <ItemGroup>
     <ClInclude Include="BaseUnit.h" />
     <ClInclude Include="ChemicalReaction.h" />
+    <ClInclude Include="MultidimensionalGrid.h" />
     <ClInclude Include="Holdup.h" />
     <ClInclude Include="MixtureLookup.h" />
     <ClInclude Include="MixtureEnthalpyLookup.h" />
@@ -143,7 +144,6 @@
     <ClInclude Include="DenseMDMatrix.h" />
     <ClInclude Include="DependentValues.h" />
     <ClInclude Include="DistributionsFunctions.h" />
-    <ClInclude Include="DistributionsGrid.h" />
     <ClInclude Include="DynamicUnit.h" />
     <ClInclude Include="MDMatrix.h" />
     <ClInclude Include="Phase.h" />

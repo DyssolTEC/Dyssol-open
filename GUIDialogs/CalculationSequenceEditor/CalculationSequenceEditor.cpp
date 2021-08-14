@@ -69,17 +69,17 @@ void CCalculationSequenceEditor::UpdatePartitionsList() const
 	for (size_t i = 0; i < m_pSequence->PartitionsNumber(); ++i)
 	{
 		// partition
-		QTreeWidgetItem* partitionItem = ui.treeWidget->AddItem(0, StrConst::CSE_Partition + std::to_string(i + 1), QVariant::fromValue(i));
+		QTreeWidgetItem* partitionItem = ui.treeWidget->CreateItem(0, StrConst::CSE_Partition + std::to_string(i + 1), CQtTree::EFlags::NoEdit | CQtTree::EFlags::Select, QVariant::fromValue(i));
 
 		// models
-		QTreeWidgetItem* modelsItem = ui.treeWidget->AddChildItem(partitionItem, 0, StrConst::CSE_Models, QVariant::fromValue(i));
+		QTreeWidgetItem* modelsItem = ui.treeWidget->CreateItem(partitionItem, 0, StrConst::CSE_Models, CQtTree::EFlags::NoEdit | CQtTree::EFlags::NoSelect, QVariant::fromValue(i));
 		for (const auto& model : m_pSequence->PartitionModels(i))
-			ui.treeWidget->AddChildItemComboBox(modelsItem, 0, modelsNames, modelsKeys, model ? QString::fromStdString(model->GetKey()) : "");
+			ui.treeWidget->SetComboBox(ui.treeWidget->CreateItem(modelsItem), 0, modelsNames, modelsKeys, model ? QString::fromStdString(model->GetKey()) : "");
 
 		// tear streams
-		QTreeWidgetItem* streamsItem = ui.treeWidget->AddChildItem(partitionItem, 0, StrConst::CSE_Streams, QVariant::fromValue(i));
+		QTreeWidgetItem* streamsItem = ui.treeWidget->CreateItem(partitionItem, 0, StrConst::CSE_Streams, CQtTree::EFlags::NoEdit | CQtTree::EFlags::NoSelect, QVariant::fromValue(i));
 		for (const auto& stream : m_pSequence->PartitionTearStreams(i))
-			ui.treeWidget->AddChildItemComboBox(streamsItem, 0, streamsNames, streamsKeys, stream ? QString::fromStdString(stream->GetKey()) : "");
+			ui.treeWidget->SetComboBox(ui.treeWidget->CreateItem(streamsItem), 0, streamsNames, streamsKeys, stream ? QString::fromStdString(stream->GetKey()) : "");
 	}
 
 	ui.treeWidget->expandAll();
@@ -164,7 +164,7 @@ void CCalculationSequenceEditor::AddPartition()
 {
 	m_pSequence->AddPartition({}, {});
 	UpdatePartitionsList();
-	ui.treeWidget->SetCurrentItem({ m_pSequence->PartitionsNumber() - 1 });
+	ui.treeWidget->SetCurrentItem(std::vector{ m_pSequence->PartitionsNumber() - 1 });
 	emit DataChanged();
 }
 
@@ -172,7 +172,7 @@ void CCalculationSequenceEditor::RemovePartition(size_t _iPartition)
 {
 	m_pSequence->DeletePartition(_iPartition);
 	UpdatePartitionsList();
-	ui.treeWidget->SetCurrentItem({ _iPartition });
+	ui.treeWidget->SetCurrentItem(std::vector<size_t>{ _iPartition });
 	emit DataChanged();
 }
 
@@ -180,7 +180,7 @@ void CCalculationSequenceEditor::UpPartition(size_t _iPartition)
 {
 	m_pSequence->ShiftPartitionUp(_iPartition);
 	UpdatePartitionsList();
-	ui.treeWidget->SetCurrentItem({ _iPartition > 0 ? _iPartition - 1 : _iPartition });
+	ui.treeWidget->SetCurrentItem(std::vector<size_t>{ _iPartition > 0 ? _iPartition - 1 : _iPartition });
 	emit DataChanged();
 }
 
@@ -188,7 +188,7 @@ void CCalculationSequenceEditor::DownPartition(size_t _iPartition)
 {
 	m_pSequence->ShiftPartitionDown(_iPartition);
 	UpdatePartitionsList();
-	ui.treeWidget->SetCurrentItem({ _iPartition < m_pSequence->PartitionsNumber() - 1 ? _iPartition + 1 : _iPartition });
+	ui.treeWidget->SetCurrentItem(std::vector<size_t>{ _iPartition < m_pSequence->PartitionsNumber() - 1 ? _iPartition + 1 : _iPartition });
 	emit DataChanged();
 }
 
@@ -196,7 +196,7 @@ void CCalculationSequenceEditor::AddModel(size_t _iPartition)
 {
 	m_pSequence->AddModel(_iPartition, {});
 	UpdatePartitionsList();
-	ui.treeWidget->SetCurrentItem({ _iPartition, 0, m_pSequence->ModelsNumber(_iPartition) - 1 });
+	ui.treeWidget->SetCurrentItem(std::vector<size_t>{ _iPartition, 0, m_pSequence->ModelsNumber(_iPartition) - 1 });
 	emit DataChanged();
 }
 
@@ -205,7 +205,7 @@ void CCalculationSequenceEditor::RemoveModel(size_t _iPartition, size_t _iModel)
 	if (_iModel == static_cast<size_t>(-1)) return;
 	m_pSequence->DeleteModel(_iPartition, _iModel);
 	UpdatePartitionsList();
-	ui.treeWidget->SetCurrentItem({ _iPartition, 0, _iModel });
+	ui.treeWidget->SetCurrentItem(std::vector<size_t>{ _iPartition, 0, _iModel });
 	emit DataChanged();
 }
 
@@ -214,7 +214,7 @@ void CCalculationSequenceEditor::UpModel(size_t _iPartition, size_t _iModel)
 	if (_iModel == static_cast<size_t>(-1)) return;
 	m_pSequence->ShiftModelUp(_iPartition, _iModel);
 	UpdatePartitionsList();
-	ui.treeWidget->SetCurrentItem({ _iPartition, 0, _iModel > 0 ? _iModel - 1 : _iModel });
+	ui.treeWidget->SetCurrentItem(std::vector<size_t>{ _iPartition, 0, _iModel > 0 ? _iModel - 1 : _iModel });
 	emit DataChanged();
 }
 
@@ -223,7 +223,7 @@ void CCalculationSequenceEditor::DownModel(size_t _iPartition, size_t _iModel)
 	if (_iModel == static_cast<size_t>(-1)) return;
 	m_pSequence->ShiftModelDown(_iPartition, _iModel);
 	UpdatePartitionsList();
-	ui.treeWidget->SetCurrentItem({ _iPartition, 0, _iModel < m_pSequence->ModelsNumber(_iPartition) - 1 ? _iModel + 1 : _iModel });
+	ui.treeWidget->SetCurrentItem(std::vector<size_t>{ _iPartition, 0, _iModel < m_pSequence->ModelsNumber(_iPartition) - 1 ? _iModel + 1 : _iModel });
 	emit DataChanged();
 }
 
@@ -231,7 +231,7 @@ void CCalculationSequenceEditor::AddStream(size_t _iPartition)
 {
 	m_pSequence->AddStream(_iPartition, {});
 	UpdatePartitionsList();
-	ui.treeWidget->SetCurrentItem({ _iPartition, 1, m_pSequence->TearStreamsNumber(_iPartition) - 1 });
+	ui.treeWidget->SetCurrentItem(std::vector<size_t>{ _iPartition, 1, m_pSequence->TearStreamsNumber(_iPartition) - 1 });
 	emit DataChanged();
 }
 
@@ -240,7 +240,7 @@ void CCalculationSequenceEditor::RemoveStream(size_t _iPartition, size_t _iStrea
 	if (_iStream == static_cast<size_t>(-1)) return;
 	m_pSequence->DeleteStream(_iPartition, _iStream);
 	UpdatePartitionsList();
-	ui.treeWidget->SetCurrentItem({ _iPartition, 1, _iStream });
+	ui.treeWidget->SetCurrentItem(std::vector<size_t>{ _iPartition, 1, _iStream });
 	emit DataChanged();
 }
 
@@ -249,7 +249,7 @@ void CCalculationSequenceEditor::UpStream(size_t _iPartition, size_t _iStream)
 	if (_iStream == static_cast<size_t>(-1)) return;
 	m_pSequence->ShiftStreamUp(_iPartition, _iStream);
 	UpdatePartitionsList();
-	ui.treeWidget->SetCurrentItem({ _iPartition, 1, _iStream > 0 ? _iStream - 1 : _iStream });
+	ui.treeWidget->SetCurrentItem(std::vector<size_t>{ _iPartition, 1, _iStream > 0 ? _iStream - 1 : _iStream });
 	emit DataChanged();
 }
 
@@ -258,7 +258,7 @@ void CCalculationSequenceEditor::DownStream(size_t _iPartition, size_t _iStream)
 	if (_iStream == static_cast<size_t>(-1)) return;
 	m_pSequence->ShiftStreamDown(_iPartition, _iStream);
 	UpdatePartitionsList();
-	ui.treeWidget->SetCurrentItem({ _iPartition, 1, _iStream < m_pSequence->TearStreamsNumber(_iPartition) - 1 ? _iStream + 1 : _iStream });
+	ui.treeWidget->SetCurrentItem(std::vector<size_t>{ _iPartition, 1, _iStream < m_pSequence->TearStreamsNumber(_iPartition) - 1 ? _iStream + 1 : _iStream });
 	emit DataChanged();
 }
 
@@ -266,7 +266,7 @@ void CCalculationSequenceEditor::SetNewModel(size_t _iPartition, size_t _iModel,
 {
 	m_pSequence->SetModel(_iPartition, _iModel, _key);
 	UpdatePartitionsList();
-	ui.treeWidget->SetCurrentItem({ _iPartition , 0, _iModel });
+	ui.treeWidget->SetCurrentItem(std::vector<size_t>{ _iPartition , 0, _iModel });
 	emit DataChanged();
 }
 

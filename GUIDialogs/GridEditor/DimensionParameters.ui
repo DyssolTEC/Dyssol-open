@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>318</width>
-    <height>469</height>
+    <width>160</width>
+    <height>489</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,46 +17,207 @@
    <iconset resource="../../DyssolMainWindow/Resources.qrc">
     <normaloff>:/Icons/WinIcon</normaloff>:/Icons/WinIcon</iconset>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,0">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,1">
+   <item>
+    <widget class="QComboBox" name="comboDistribution">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="toolTip">
+      <string>Distribution type</string>
+     </property>
+     <property name="statusTip">
+      <string>Distribution type</string>
+     </property>
+     <property name="whatsThis">
+      <string>Distribution type</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line">
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <property name="lineWidth">
+      <number>3</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="1">
-      <widget class="QComboBox" name="comboBoxGridEntry"/>
-     </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="label">
+     <item row="5" column="0">
+      <widget class="QLabel" name="labelUnits">
+       <property name="toolTip">
+        <string>Units for PSD grid</string>
+       </property>
+       <property name="statusTip">
+        <string>Units for PSD grid</string>
+       </property>
+       <property name="whatsThis">
+        <string>Units for PSD grid</string>
+       </property>
        <property name="text">
-        <string>Classes:</string>
+        <string>Units</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_3">
+     <item row="4" column="0">
+      <widget class="QLabel" name="labelMax">
+       <property name="toolTip">
+        <string>Maximum grid limit</string>
+       </property>
+       <property name="statusTip">
+        <string>Maximum grid limit</string>
+       </property>
+       <property name="whatsThis">
+        <string>Maximum grid limit</string>
+       </property>
        <property name="text">
-        <string>Entry:</string>
+        <string>Max</string>
        </property>
       </widget>
-     </item>
-     <item row="1" column="3">
-      <widget class="QComboBox" name="comboBoxUnits"/>
      </item>
      <item row="1" column="0">
-      <widget class="QLabel" name="labelDistrFunction">
+      <widget class="QLabel" name="labelEntry">
+       <property name="toolTip">
+        <string>Grid type</string>
+       </property>
+       <property name="statusTip">
+        <string>Grid type</string>
+       </property>
+       <property name="whatsThis">
+        <string>Grid type</string>
+       </property>
        <property name="text">
-        <string>Type:</string>
+        <string>Type</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="labelFun">
+       <property name="toolTip">
+        <string>Function to define grid</string>
+       </property>
+       <property name="statusTip">
+        <string>Function to define grid</string>
+       </property>
+       <property name="whatsThis">
+        <string>Function to define grid</string>
+       </property>
+       <property name="text">
+        <string>Grid</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QComboBox" name="comboUnits">
+       <property name="toolTip">
+        <string>Units for PSD grid</string>
+       </property>
+       <property name="statusTip">
+        <string>Units for PSD grid</string>
+       </property>
+       <property name="whatsThis">
+        <string>Units for PSD grid</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="labelMin">
+       <property name="toolTip">
+        <string>Minimum grid limit</string>
+       </property>
+       <property name="statusTip">
+        <string>Minimum grid limit</string>
+       </property>
+       <property name="whatsThis">
+        <string>Minimum grid limit</string>
+       </property>
+       <property name="text">
+        <string>Min</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="lineMin">
+       <property name="toolTip">
+        <string>Minimum grid limit</string>
+       </property>
+       <property name="statusTip">
+        <string>Minimum grid limit</string>
+       </property>
+       <property name="whatsThis">
+        <string>Minimum grid limit</string>
+       </property>
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QComboBox" name="comboFun">
+       <property name="toolTip">
+        <string>Function to define grid</string>
+       </property>
+       <property name="statusTip">
+        <string>Function to define grid</string>
+       </property>
+       <property name="whatsThis">
+        <string>Function to define grid</string>
        </property>
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QComboBox" name="comboBoxGridFun"/>
+      <widget class="QComboBox" name="comboEntry">
+       <property name="toolTip">
+        <string>Grid type</string>
+       </property>
+       <property name="statusTip">
+        <string>Grid type</string>
+       </property>
+       <property name="whatsThis">
+        <string>Grid type</string>
+       </property>
+      </widget>
      </item>
-     <item row="0" column="3">
-      <widget class="QSpinBox" name="spinBoxClasses">
+     <item row="0" column="0">
+      <widget class="QLabel" name="labelClasses">
+       <property name="statusTip">
+        <string>Number of classes</string>
+       </property>
+       <property name="accessibleName">
+        <string>Number of classes</string>
+       </property>
+       <property name="accessibleDescription">
+        <string>Number of classes</string>
+       </property>
+       <property name="text">
+        <string>Classes</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QSpinBox" name="spinClasses">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Number of classes</string>
+       </property>
+       <property name="statusTip">
+        <string>Number of classes</string>
+       </property>
+       <property name="whatsThis">
+        <string>Number of classes</string>
        </property>
        <property name="minimum">
         <number>1</number>
@@ -66,36 +227,17 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="2">
-      <widget class="QLabel" name="labelUnits">
-       <property name="text">
-        <string>Units:</string>
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="lineMax">
+       <property name="toolTip">
+        <string>Maximum grid limit</string>
        </property>
-      </widget>
-     </item>
-     <item row="2" column="2">
-      <widget class="QLabel" name="labelMax">
-       <property name="text">
-        <string>Max:</string>
+       <property name="statusTip">
+        <string>Maximum grid limit</string>
        </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="labelMin">
-       <property name="text">
-        <string>Min:</string>
+       <property name="whatsThis">
+        <string>Maximum grid limit</string>
        </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QLineEdit" name="lineEditLimitMin">
-       <property name="text">
-        <string>0</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="3">
-      <widget class="QLineEdit" name="lineEditLimitMax">
        <property name="text">
         <string>1</string>
        </property>
@@ -104,7 +246,7 @@
     </layout>
    </item>
    <item>
-    <widget class="CQtTable" name="tableWidgetGrid">
+    <widget class="CQtTable" name="tableGrid">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -114,6 +256,9 @@
      <property name="columnCount">
       <number>1</number>
      </property>
+     <attribute name="horizontalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
      <attribute name="horizontalHeaderStretchLastSection">
       <bool>true</bool>
      </attribute>
@@ -122,33 +267,6 @@
      </attribute>
      <column/>
     </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QLabel" name="labelDispUnits">
-       <property name="text">
-        <string>Units to display:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="comboBoxDispUnits"/>
-     </item>
-    </layout>
    </item>
   </layout>
  </widget>
@@ -162,14 +280,14 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>comboBoxGridEntry</tabstop>
-  <tabstop>spinBoxClasses</tabstop>
-  <tabstop>comboBoxGridFun</tabstop>
-  <tabstop>comboBoxUnits</tabstop>
-  <tabstop>lineEditLimitMin</tabstop>
-  <tabstop>lineEditLimitMax</tabstop>
-  <tabstop>tableWidgetGrid</tabstop>
-  <tabstop>comboBoxDispUnits</tabstop>
+  <tabstop>comboDistribution</tabstop>
+  <tabstop>spinClasses</tabstop>
+  <tabstop>comboEntry</tabstop>
+  <tabstop>comboFun</tabstop>
+  <tabstop>lineMin</tabstop>
+  <tabstop>lineMax</tabstop>
+  <tabstop>comboUnits</tabstop>
+  <tabstop>tableGrid</tabstop>
  </tabstops>
  <resources>
   <include location="../../DyssolMainWindow/Resources.qrc"/>

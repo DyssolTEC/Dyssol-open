@@ -238,15 +238,15 @@ bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 		const bool manual = fun == EDistrFunction::Manual;									// whether manual distribution defined
 		const size_t& len = entry.values.size();											// length of the values vector
 		// TODO: use holdup's grid instead of the global grid
-		const auto& grid = m_flowsheet.GetDistributionsGrid();								// distributions grid
-		const size_t& classes = grid->GetClassesByDistr(distr);								// number of classes in the distribution
-		const auto means = distr != DISTR_SIZE ? grid->GetClassMeansByDistr(distr) : grid->GetPSDMeans(mean); // mean valued for the PSD grid
+		const auto& grid = m_flowsheet.GetGrid();											// distributions grid
+		const size_t& classes = grid.GetGridDimension(distr)->ClassesNumber();				// number of classes in the distribution
+		const auto means = distr != DISTR_SIZE ? grid.GetGridDimensionNumeric(distr)->GetClassesMeans() : grid.GetPSDMeans(mean); // mean valued for the PSD grid
 		const bool hasTime = manual && len % (classes + 1) == 0 || !manual && len % 3 == 0;	// whether time is defined
 		const bool mix = entry.compound.empty();											// whether the distribution is defined for the total mixture of for a single compound
 		// check the number of passed arguments
 		if (manual && len != classes && len % (classes + 1) != 0 || !manual && len != 2 && len % 3 != 0)
 			PRINT_AND_RETURN(DyssolC_ErrorArgumentsNumber, StrKey(EScriptKeys::HOLDUP_DISTRIBUTION), unit->GetName(), entry.holdup.name, entry.holdup.index)
-		if (!grid->IsDistrTypePresent(distr))
+		if (!grid.HasDimension(distr))
 			PRINT_AND_RETURN(DyssolC_ErrorNoDistribution, StrKey(EScriptKeys::HOLDUP_DISTRIBUTION), unit->GetName(), entry.holdup.name, entry.holdup.index, entry.distrType.name, entry.distrType.key)
 		// get and check compound key
 		const auto* compound = m_materialsDatabase.GetCompound(entry.compound) ? m_materialsDatabase.GetCompound(entry.compound) : m_materialsDatabase.GetCompoundByName(entry.compound);

@@ -21,9 +21,6 @@
     <ClCompile Include="DependentValues.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DistributionsGrid.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MDMatrix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -81,6 +78,9 @@
     <ClCompile Include="ChemicalReaction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MultidimensionalGrid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DenseMDMatrix.h">
@@ -90,9 +90,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DistributionsFunctions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DistributionsGrid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DynamicUnit.h">
@@ -162,6 +159,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ChemicalReaction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MultidimensionalGrid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

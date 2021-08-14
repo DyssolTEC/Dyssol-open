@@ -5,6 +5,8 @@
 #include "DyssolStringConstants.h"
 #include <QMessageBox>
 
+#include "MultidimensionalGrid.h"
+
 CDistrFunctionDialog::CDistrFunctionDialog(QWidget* parent /*= nullptr*/) : QDialog(parent)
 {
 	ui.setupUi(this);
@@ -32,14 +34,14 @@ void CDistrFunctionDialog::setVisible(bool _bVisible)
 	QDialog::setVisible(_bVisible);
 }
 
-void CDistrFunctionDialog::SetDistributionsGrid(CDistributionsGrid* _pGrid, EDistrTypes _nType, EPSDGridType _nPSDGridType)
+void CDistrFunctionDialog::SetDistributionsGrid(const CMultidimensionalGrid* _pGrid, EDistrTypes _nType, EPSDGridType _nPSDGridType)
 {
 	m_nDimType = _nType;
 	if (!_pGrid) return;
 	m_pGrid = _pGrid;
 	m_PSDGridType = _nPSDGridType;
 	if (m_nDimType != DISTR_SIZE)
-		m_vSizes = _pGrid->GetClassMeansByDistr(_nType);
+		m_vSizes = _pGrid->GetGridDimensionNumeric(_nType)->GetClassesMeans();
 	else
 		m_vSizes = _pGrid->GetPSDMeans(_nPSDGridType);
 }

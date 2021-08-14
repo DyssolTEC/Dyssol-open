@@ -2,27 +2,25 @@
 
 #include "BaseUnit.h"
 #include "TransformMatrix.h"
-#include "TimeDependentValue.h"
 #include "MaterialsDatabase.h"
-#include "DistributionsGrid.h"
+#include "MultidimensionalGrid.h"
 #include "ContainerFunctions.h"
 #include "DyssolUtilities.h"
 #include "DyssolStringConstants.h"
 #include <stdexcept>
 #include <numeric>
 
-void CBaseUnit::SetPointers(const CMaterialsDatabase* _materialsDB, const CDistributionsGrid* _grid, const std::vector<std::string>* _compounds, const std::vector<SOverallDescriptor>* _overall,
+void CBaseUnit::SetSettings(const CMaterialsDatabase* _materialsDB, const CMultidimensionalGrid& _grid, const std::vector<SOverallDescriptor>* _overall,
 	const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics)
 {
 	m_materialsDB    = _materialsDB;
 	m_grid           = _grid;
-	m_compounds      = _compounds;
 	m_overall        = _overall;
 	m_phases         = _phases;
 	m_cache          = _cache;
-	m_tolerance      = _tolerance;
+	m_tolerances      = _tolerance;
 	m_thermodynamics = _thermodynamics;
-	m_streams.SetPointers(m_materialsDB, m_grid, m_compounds, m_overall, m_phases, m_cache, m_tolerance, m_thermodynamics);
+	m_streams.SetPointers(m_materialsDB, &m_grid, m_overall, m_phases, m_cache, m_tolerances, m_thermodynamics);
 }
 
 std::string CBaseUnit::GetUnitName() const
@@ -202,9 +200,15 @@ void CBaseUnit::SetupStream(CBaseStream* _stream) const
 {
 	if (!_stream) return;
 	_stream->Clear();
+	_stream->SetMaterialsDatabasePtr(m_materialsDB);
+	_stream->SetCacheSettings(*m_cache);
+	_stream->SetToleranceSettings(*m_tolerances);
+	_stream->SetThermodynamicsSettings(*m_thermodynamics);
 	_stream->SetGrid(m_grid);
-	_stream->SetMaterialsDatabase(m_materialsDB);
-	m_streams.SetupStreamStructure(*_stream);
+	for (const auto& overall : *m_overall)
+		_stream->AddOverallProperty(overall.type, overall.name, overall.units);
+	for (const auto& phase : *m_phases)
+		_stream->AddPhase(phase.state, phase.name);
 }
 
 const CUnitParametersManager& CBaseUnit::GetUnitParametersManager() const
@@ -713,12 +717,16 @@ void CBaseUnit::ReduceTimePoints(double _timeBeg, double _timeEnd, double _step)
 
 void CBaseUnit::AddCompound(const std::string& _compoundKey)
 {
+	// add to the grid
+	m_grid.GetGridDimensionSymbolic(DISTR_COMPOUNDS)->AddClass(_compoundKey);
 	m_streams.AddCompound(_compoundKey);
 	ClearEnthalpyCalculator();
 }
 
 void CBaseUnit::RemoveCompound(const std::string& _compoundKey)
 {
+	// remove from the grid
+	m_grid.GetGridDimensionSymbolic(DISTR_COMPOUNDS)->RemoveClass(_compoundKey);
 	m_streams.RemoveCompound(_compoundKey);
 	ClearEnthalpyCalculator();
 }
@@ -739,19 +747,21 @@ std::string CBaseUnit::GetCompoundKey(const std::string& _compoundName) const
 
 std::string CBaseUnit::GetCompoundName(size_t _index) const
 {
-	if (_index >= m_compounds->size()) return {};
-	return GetCompoundName(m_compounds->at(_index));
+	const auto& compounds = GetAllCompounds();
+	if (_index >= compounds.size()) return {};
+	return GetCompoundName(compounds[_index]);
 }
 
 std::string CBaseUnit::GetCompoundKey(size_t _index) const
 {
-	if (_index >= m_compounds->size()) return {};
-	return m_compounds->at(_index);
+	const auto& compounds = GetAllCompounds();
+	if (_index >= compounds.size()) return {};
+	return compounds[_index];
 }
 
 size_t CBaseUnit::GetCompoundIndex(const std::string& _compoundKey) const
 {
-	return VectorFind(*m_compounds, _compoundKey);
+	return VectorFind(GetAllCompounds(), _compoundKey);
 }
 
 size_t CBaseUnit::GetCompoundIndexByName(const std::string& _compoundName) const
@@ -761,26 +771,27 @@ size_t CBaseUnit::GetCompoundIndexByName(const std::string& _compoundName) const
 
 std::vector<std::string> CBaseUnit::GetAllCompounds() const
 {
-	return *m_compounds;
+	return m_grid.GetSymbolicGrid(DISTR_COMPOUNDS);
 }
 
 std::vector<std::string> CBaseUnit::GetAllCompoundsNames() const
 {
+	const auto& compounds = GetAllCompounds();
 	std::vector<std::string> res;
-	res.reserve(m_compounds->size());
-	for (const auto& compound : *m_compounds)
+	res.reserve(compounds.size());
+	for (const auto& compound : compounds)
 		res.push_back(GetCompoundName(compound));
 	return res;
 }
 
 size_t CBaseUnit::GetCompoundsNumber() const
 {
-	return m_compounds->size();
+	return m_grid.GetGridDimension(DISTR_COMPOUNDS)->ClassesNumber();
 }
 
 bool CBaseUnit::IsCompoundDefined(const std::string& _compoundKey) const
 {
-	return VectorContains(*m_compounds, _compoundKey);
+	return VectorContains(GetAllCompounds(), _compoundKey);
 }
 
 bool CBaseUnit::IsCompoundNameDefined(const std::string& _compoundName) const
@@ -840,89 +851,102 @@ bool CBaseUnit::IsPhaseDefined(EPhase _phase) const
 	return std::any_of(m_phases->begin(), m_phases->end(), [&](const auto& _p) { return _p.state == _phase; });
 }
 
-void CBaseUnit::UpdateDistributionsGrid()
+void CBaseUnit::SetGrid(const CMultidimensionalGrid& _grid)
 {
-	m_streams.UpdateDistributionsGrid();
+	if (m_grid == _grid) return;
+	// save new grid
+	m_grid = _grid;
+	// update all streams accordingly
+	m_streams.UpdateGrid();
 }
 
 size_t CBaseUnit::GetDistributionsNumber() const
 {
-	return m_grid->GetDistributionsNumber();
+	return m_grid.GetDimensionsNumber();
 }
 
 std::vector<EDistrTypes> CBaseUnit::GetDistributionsTypes() const
 {
-	return m_grid->GetDistrTypes();
+	return m_grid.GetDimensionsTypes();
 }
 
 std::vector<size_t> CBaseUnit::GetDistributionsClasses() const
 {
-	return vector_cast<size_t>(m_grid->GetClasses());
+	return m_grid.GetClassesNumbers();
 }
 
 EGridEntry CBaseUnit::GetDistributionGridType(EDistrTypes _distribution) const
 {
-	return m_grid->GetGridEntryByDistr(_distribution);
+	if (!m_grid.HasDimension(_distribution)) return static_cast<EGridEntry>(-1);
+	return m_grid.GetGridDimension(_distribution)->GridType();
 }
 
 size_t CBaseUnit::GetClassesNumber(EDistrTypes _distribution) const
 {
-	return m_grid->GetClassesByDistr(_distribution);
+	return m_grid.GetGridDimension(_distribution)->ClassesNumber();
 }
 
 std::vector<double> CBaseUnit::GetNumericGrid(EDistrTypes _distribution) const
 {
-	return m_grid->GetNumericGridByDistr(_distribution);
+	return m_grid.GetNumericGrid(_distribution);
 }
 
 std::vector<std::string> CBaseUnit::GetSymbolicGrid(EDistrTypes _distribution) const
 {
-	return m_grid->GetSymbolicGridByDistr(_distribution);
+	return m_grid.GetSymbolicGrid(_distribution);
 }
 
 std::vector<double> CBaseUnit::GetClassesSizes(EDistrTypes _distribution) const
 {
-	return m_grid->GetClassSizesByDistr(_distribution);
+	if (m_grid.GetGridDimension(_distribution)->GridType() != EGridEntry::GRID_NUMERIC) return {};
+	return m_grid.GetGridDimensionNumeric(_distribution)->GetClassesSizes();
 }
 
 std::vector<double> CBaseUnit::GetClassesMeans(EDistrTypes _distribution) const
 {
-	return m_grid->GetClassMeansByDistr(_distribution);
+	if (m_grid.GetGridDimension(_distribution)->GridType() != EGridEntry::GRID_NUMERIC) return {};
+	return m_grid.GetGridDimensionNumeric(_distribution)->GetClassesMeans();
 }
 
 std::vector<double> CBaseUnit::GetPSDGridDiameters() const
 {
-	return m_grid->GetNumericGridByDistr(DISTR_SIZE);
+	return m_grid.GetPSDGrid();
 }
 
 std::vector<double> CBaseUnit::GetPSDGridSurfaces() const
 {
-	return DiameterToSurface(m_grid->GetNumericGridByDistr(DISTR_SIZE));
+	return DiameterToSurface(GetPSDGridDiameters());
 }
 
 std::vector<double> CBaseUnit::GetPSDGridVolumes() const
 {
-	return DiameterToVolume(m_grid->GetNumericGridByDistr(DISTR_SIZE));
+	return DiameterToVolume(GetPSDGridDiameters());
 }
 
 std::vector<double> CBaseUnit::GetPSDMeanDiameters() const
 {
-	return m_grid->GetClassMeansByDistr(DISTR_SIZE);
+	return m_grid.GetPSDMeans(EPSDGridType::DIAMETER);
 }
 
 std::vector<double> CBaseUnit::GetPSDMeanSurfaces() const
 {
-	return DiameterToSurface(m_grid->GetClassMeansByDistr(DISTR_SIZE));
+	// TODO: make the same as GetPSDMeanDiameters/GetPSDMeanVolumes
+	const auto grid = GetPSDGridDiameters();
+	std::vector<double> res;
+	for (size_t i = 0; i < grid.size() - 1; ++i)
+		res.push_back((DiameterToSurface(grid[i]) + DiameterToSurface(grid[i + 1])) / 2);
+	return res;
 }
 
 std::vector<double> CBaseUnit::GetPSDMeanVolumes() const
 {
-	return DiameterToVolume(m_grid->GetClassMeansByDistr(DISTR_SIZE));
+	return m_grid.GetPSDMeans(EPSDGridType::VOLUME);
 }
 
+// TODO: rename to HasDistribution, mark this as deprecated
 bool CBaseUnit::IsDistributionDefined(EDistrTypes _distribution) const
 {
-	return m_grid->IsDistrTypePresent(_distribution);
+	return m_grid.HasDimension(_distribution);
 }
 
 void CBaseUnit::CalculateTM(EDistrTypes _distribution, const std::vector<double>& _inValue, const std::vector<double>& _outValue, CTransformMatrix& _matrix)
@@ -982,24 +1006,24 @@ const CMaterialsDatabase* CBaseUnit::GetMaterialsDatabase() const
 	return m_materialsDB;
 }
 
-const CDistributionsGrid* CBaseUnit::GetGrid() const
+const CMultidimensionalGrid& CBaseUnit::GetGrid() const
 {
 	return m_grid;
 }
 
 SToleranceSettings CBaseUnit::GetToleranceSettings() const
 {
-	return *m_tolerance;
+	return *m_tolerances;
 }
 
 double CBaseUnit::GetAbsTolerance() const
 {
-	return m_tolerance->toleranceAbs;
+	return m_tolerances->toleranceAbs;
 }
 
 double CBaseUnit::GetRelTolerance() const
 {
-	return m_tolerance->toleranceRel;
+	return m_tolerances->toleranceRel;
 }
 
 SThermodynamicsSettings CBaseUnit::GetThermodynamicsSettings() const
@@ -1057,7 +1081,7 @@ CMixtureEnthalpyLookup* CBaseUnit::GetEnthalpyCalculator() const
 {
 	// lazy initialization
 	if (!m_enthalpyCalculator)
-		m_enthalpyCalculator = std::make_unique<CMixtureEnthalpyLookup>(m_materialsDB, *m_compounds, m_thermodynamics->limits, m_thermodynamics->intervals);
+		m_enthalpyCalculator = std::make_unique<CMixtureEnthalpyLookup>(m_materialsDB, GetAllCompounds(), m_thermodynamics->limits, m_thermodynamics->intervals);
 	return m_enthalpyCalculator.get();
 }
 
@@ -1310,6 +1334,7 @@ void CBaseUnit::SaveToFile(CH5Handler& _h5File, const std::string& _path)
 
 	_h5File.WriteData(_path, StrConst::BUnit_H5UnitKey, m_uniqueID);
 
+	m_grid.SaveToFile(_h5File, _h5File.CreateGroup(_path, StrConst::H5GroupDistrGrid));
 	m_ports.SaveToFile(_h5File, _h5File.CreateGroup(_path, StrConst::BUnit_H5GroupPorts));
 	m_streams.SaveToFile(_h5File, _h5File.CreateGroup(_path, StrConst::BUnit_H5GroupInternalMaterials));
 	m_unitParameters.SaveToFile(_h5File, _h5File.CreateGroup(_path, StrConst::BUnit_H5GroupParams));
@@ -1338,6 +1363,8 @@ void CBaseUnit::LoadFromFile(CH5Handler& _h5File, const std::string& _path)
 
 	_h5File.ReadData(_path, StrConst::BUnit_H5UnitKey, m_uniqueID);
 
+	if (version >= 4)
+		m_grid.LoadFromFile(_h5File, _path + "/" + StrConst::H5GroupDistrGrid);
 	m_ports.LoadFromFile(_h5File, _path + "/" + StrConst::BUnit_H5GroupPorts);
 	m_streams.LoadFromFile(_h5File, _path + "/" + StrConst::BUnit_H5GroupInternalMaterials);
 	m_unitParameters.LoadFromFile(_h5File, _path + "/" + StrConst::BUnit_H5GroupParams);
@@ -1653,14 +1680,15 @@ double CBaseUnit::CalcTemperatureFromProperty(ECompoundTPProperties _property, c
 		return CalculateTemperatureFromEnthalpy(_value, _fractions);
 	else
 	{
+		const auto& compounds = GetAllCompounds();
 		const double deltaT = (m_thermodynamics->limits.max - m_thermodynamics->limits.min) / static_cast<double>(m_thermodynamics->intervals);
-		std::vector<CDependentValues> components(m_compounds->size());
-		for (size_t iCmp = 0; iCmp < m_compounds->size(); ++iCmp)
+		std::vector<CDependentValues> components(compounds.size());
+		for (size_t iCmp = 0; iCmp < compounds.size(); ++iCmp)
 		{
 			for (size_t iInt = 0; iInt <= m_thermodynamics->intervals; ++iInt)
 			{
 				const double T = m_thermodynamics->limits.min + deltaT * static_cast<double>(iInt);
-				const double prop = m_materialsDB->GetTPPropertyValue(m_compounds->at(iCmp), _property, T, STANDARD_CONDITION_P);
+				const double prop = m_materialsDB->GetTPPropertyValue(compounds[iCmp], _property, T, STANDARD_CONDITION_P);
 				components[iCmp].SetValue(T, prop);
 			}
 		}
@@ -1671,14 +1699,15 @@ double CBaseUnit::CalcTemperatureFromProperty(ECompoundTPProperties _property, c
 
 double CBaseUnit::CalcPressureFromProperty(ECompoundTPProperties _property, const std::vector<double>& _fractions, double _value) const
 {
+	const auto& compounds = GetAllCompounds();
 	const double deltaP = (1000000 - 10000) / static_cast<double>(100);
-	std::vector<CDependentValues> components(m_compounds->size());
-	for (size_t iCmp = 0; iCmp < m_compounds->size(); ++iCmp)
+	std::vector<CDependentValues> components(compounds.size());
+	for (size_t iCmp = 0; iCmp < compounds.size(); ++iCmp)
 	{
 		for (size_t iInt = 0; iInt <= 100; ++iInt)
 		{
 			const double P = 10000 + deltaP * static_cast<double>(iInt);
-			const double prop = m_materialsDB->GetTPPropertyValue(m_compounds->at(iCmp), _property, STANDARD_CONDITION_T, P);
+			const double prop = m_materialsDB->GetTPPropertyValue(compounds[iCmp], _property, STANDARD_CONDITION_T, P);
 			components[iCmp].SetValue(P, prop);
 		}
 	}

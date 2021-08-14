@@ -11,7 +11,7 @@
 #include "ModelsManager.h"
 #include "BaseUnit.h"
 #include "MaterialsDatabase.h"
-#include "DistributionsGrid.h"
+#include "MultidimensionalGrid.h"
 #include "DyssolUtilities.h"
 #include "StringFunctions.h"
 #include "ThreadPool.h"
@@ -137,17 +137,15 @@ void RunSimulation(const CConfigFileParser& _parser)
 	// setup grid
 	if (_parser.IsValueDefined(EArguments::DISTRIBUTION_GRID))
 	{
+		CMultidimensionalGrid grid;
 		for (auto g : _parser.GetValue<std::vector<SGridDimensionEx>>(EArguments::DISTRIBUTION_GRID))
 		{
-			SGridDimension dim = flowsheet.GetDistributionsGrid()->GetDimension(g.iGrid);
-			dim.gridFun = g.gridFun;
-			dim.gridEntry = g.gridType;
-			dim.classes = g.nClasses;
-			dim.numGrid = g.vNumGrid;
-			dim.strGrid = g.vStrGrid;
-			flowsheet.GetDistributionsGrid()->SetDimension(dim);
+			if (g.gridType == EGridEntry::GRID_NUMERIC)
+				grid.AddNumericDimension(flowsheet.GetGrid().GetDimensionsTypes()[g.iGrid], g.vNumGrid);
+			else
+				grid.AddSymbolicDimension(flowsheet.GetGrid().GetDimensionsTypes()[g.iGrid], g.vStrGrid);
 		}
-		flowsheet.UpdateDistributionsGrid();
+		flowsheet.SetMainGrid(grid);
 	}
 
 	auto units = flowsheet.GetAllUnits();
@@ -271,13 +269,14 @@ void RunSimulation(const CConfigFileParser& _parser)
 		CBaseStream* pHoldup = holdups[h.iHoldup];
 		if (!pHoldup) continue;
 		if (!flowsheet.HasPhase(EPhase::SOLID)) continue;
-		const CDistributionsGrid* pGrid = flowsheet.GetDistributionsGrid();
-		if (h.iDistribution >= pGrid->GetDistributionsNumber()) continue;
+		const CMultidimensionalGrid& pGrid = flowsheet.GetGrid();
+		if (h.iDistribution >= pGrid.GetDimensionsNumber()) continue;
 		const std::vector<double> vTPs = pHoldup->GetAllTimePoints();
 		if (h.iTimePoint >= vTPs.size()) continue;
-		const EPSDGridType sizeType = pGrid->GetDistrType(h.iDistribution) == DISTR_SIZE ? h.psdGridType : EPSDGridType::DIAMETER;
-		const std::vector<double> vMedians = pGrid->GetDistrType(h.iDistribution) == DISTR_SIZE ? pGrid->GetPSDMeans(sizeType) : pGrid->GetClassMeansByIndex(h.iDistribution);
-		std::vector<double> values(pGrid->GetClassesByIndex(h.iDistribution));
+		const auto distrType = flowsheet.GetGrid().GetDimensionsTypes()[h.iDistribution];
+		const EPSDGridType sizeType = distrType == DISTR_SIZE ? h.psdGridType : EPSDGridType::DIAMETER;
+		const std::vector<double> vMedians = distrType == DISTR_SIZE ? pGrid.GetPSDMeans(sizeType) : (pGrid.GetGridDimension(distrType)->GridType() == EGridEntry::GRID_NUMERIC ? pGrid.GetGridDimensionNumeric(distrType)->GetClassesMeans() : std::vector<double>{});
+		std::vector<double> values(pGrid.GetGridDimension(distrType)->ClassesNumber());
 		switch (h.distrFun)
 		{
 		case EDistrFunction::Manual:								values = h.vValues;															break;
@@ -287,17 +286,17 @@ void RunSimulation(const CConfigFileParser& _parser)
 		case EDistrFunction::GGS:		if (h.vValues.size() >= 2)	values = CreateDistributionGGS(vMedians, h.vValues[0], h.vValues[1]);		break;
 		}
 
-		values.resize(pGrid->GetClassesByIndex(h.iDistribution)); // to ensure it is of required length
-		if (pGrid->GetDistrType(h.iDistribution) == DISTR_SIZE)
+		values.resize(pGrid.GetGridDimension(distrType)->ClassesNumber()); // to ensure it is of required length
+		if (distrType == DISTR_SIZE)
 			if (h.iCompound < flowsheet.GetCompoundsNumber())
 				pHoldup->SetPSD(vTPs[h.iTimePoint], h.psdType, compounds[h.iCompound], values);
 			else
 				pHoldup->SetPSD(vTPs[h.iTimePoint], h.psdType, values);
 		else
 			if (h.iCompound < flowsheet.GetCompoundsNumber())
-				pHoldup->SetDistribution(vTPs[h.iTimePoint], pGrid->GetDistrType(h.iDistribution), compounds[h.iCompound], values);
+				pHoldup->SetDistribution(vTPs[h.iTimePoint], distrType, compounds[h.iCompound], values);
 			else
-				pHoldup->SetDistribution(vTPs[h.iTimePoint], pGrid->GetDistrType(h.iDistribution), values);
+				pHoldup->SetDistribution(vTPs[h.iTimePoint], distrType, values);
 	}
 
 	// initialize flowsheet

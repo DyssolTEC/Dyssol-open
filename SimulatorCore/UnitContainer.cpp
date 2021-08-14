@@ -5,13 +5,12 @@
 #include "DyssolStringConstants.h"
 
 CUnitContainer::CUnitContainer(const std::string& _id, CModelsManager& _modelsManager,
-	const CMaterialsDatabase& _materialsDB, const CDistributionsGrid& _grid, const std::vector<std::string>& _compounds, const std::vector<SOverallDescriptor>& _overall,
+	const CMaterialsDatabase& _materialsDB, const CMultidimensionalGrid& _grid, const std::vector<SOverallDescriptor>& _overall,
 	const std::vector<SPhaseDescriptor>& _phases, const SCacheSettings& _cache, const SToleranceSettings& _tolerance, const SThermodynamicsSettings& _thermodynamics) :
 	m_uniqueID{ _id.empty() ? StringFunctions::GenerateRandomKey() : _id },
 	m_modelsManager{ _modelsManager },
 	m_materialsDB{ _materialsDB },
 	m_grid{ _grid },
-	m_compounds{ _compounds },
 	m_overall{ _overall },
 	m_phases{ _phases },
 	m_cache{ _cache },
@@ -52,7 +51,7 @@ void CUnitContainer::SetModel(const std::string& _uniqueID)
 	m_model = m_modelsManager.InstantiateUnit(_uniqueID);
 	if (m_model)
 	{
-		m_model->SetPointers(&m_materialsDB, &m_grid, &m_compounds, &m_overall, &m_phases, &m_cache, &m_tolerance, &m_thermodynamics);
+		m_model->SetSettings(&m_materialsDB, m_grid, &m_overall, &m_phases, &m_cache, &m_tolerance, &m_thermodynamics);
 		// TODO: catch exceptions from Add-functions
 		m_model->DoCreateStructure();
 	}

@@ -1,8 +1,9 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "ParamsItem.h"
+#include "MultidimensionalGrid.h"
 
-CParamsItem::CParamsItem( CDistributionsGrid *_pGrid, QComboBox *_pCombo, QSlider *_pSlider, QWidget *parent, Qt::WindowFlags flags )
+CParamsItem::CParamsItem(const CMultidimensionalGrid *_pGrid, QComboBox *_pCombo, QSlider *_pSlider, QWidget *parent, Qt::WindowFlags flags )
 	: QWidget( parent, flags )
 {
 	m_pGrid = _pGrid;
@@ -39,8 +40,8 @@ void CParamsItem::SetupSlider()
 
 	int nDistr = m_pCombo->itemData( m_pCombo->currentIndex() ).toInt();
 	size_t nMax;
-	if( nDistr != -1 )
-		nMax = m_pGrid->GetClassesByDistr( static_cast<EDistrTypes>(nDistrIndex) );
+	if (nDistr != -1)
+		nMax = m_pGrid->GetGridDimension(static_cast<EDistrTypes>(nDistrIndex))->ClassesNumber();
 	else
 		nMax = 0;
 	//unsigned nMax = m_pGrid->GetClassesNumberByIndex( static_cast<unsigned>(nDistrIndex) );
@@ -76,16 +77,16 @@ void CParamsItem::UpdateLabel()
 	}
 
 	int nCurrIndex = m_pSlider->sliderPosition();
-	EGridEntry nState = m_pGrid->GetGridEntryByDistr( static_cast<EDistrTypes>(nDistr) );
+	EGridEntry nState = m_pGrid->GetGridDimension(static_cast<EDistrTypes>(nDistr))->GridType();
 
 	switch( nState )
 	{
 	case EGridEntry::GRID_NUMERIC:
-		vNumGrid = m_pGrid->GetNumericGridByDistr( static_cast<EDistrTypes>(nDistr) );
+		vNumGrid = m_pGrid->GetNumericGrid(static_cast<EDistrTypes>(nDistr));
 		sLabelText = "[" + QString::number( vNumGrid[nCurrIndex] ) + " : " + QString::number( vNumGrid[nCurrIndex+1] ) + "]";
 		break;
 	case EGridEntry::GRID_SYMBOLIC:
-		vStrGrid = m_pGrid->GetSymbolicGridByDistr( static_cast<EDistrTypes>(nDistr) );
+		vStrGrid = m_pGrid->GetSymbolicGrid(static_cast<EDistrTypes>(nDistr));
 		sLabelText = QString::fromStdString(vStrGrid[nCurrIndex]);
 		break;
 	default:

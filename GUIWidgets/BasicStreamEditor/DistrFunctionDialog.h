@@ -2,8 +2,10 @@
 
 #pragma once
 
+#include "DyssolDefines.h"
 #include "ui_Functional.h"
-#include "DistributionsGrid.h"
+
+class CMultidimensionalGrid;
 
 class CDistrFunctionDialog : public QDialog
 {
@@ -16,14 +18,14 @@ private:
 	std::vector<double> m_vSizes;
 	std::vector<double> m_vDistr;
 	EDistrFunction m_distrFun;
-	CDistributionsGrid* m_pGrid;
+	const CMultidimensionalGrid* m_pGrid;
 	EDistrTypes m_nDimType;
 	EPSDGridType m_PSDGridType;
 
 public:
 	CDistrFunctionDialog(QWidget* parent = nullptr);
 
-	void SetDistributionsGrid(CDistributionsGrid* _pGrid, EDistrTypes _nType, EPSDGridType _nPSDGridType);
+	void SetDistributionsGrid(const CMultidimensionalGrid* _pGrid, EDistrTypes _nType, EPSDGridType _nPSDGridType);
 
 	std::vector<double> GetDistribution() const;
 

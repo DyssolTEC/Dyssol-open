@@ -3,13 +3,16 @@
 #pragma once
 
 #include "MDMatrix.h"
+#include "MultidimensionalGrid.h"
 #include "TimeDependentValue.h"
 
-class CDistributionsGrid;
+class CMultidimensionalGrid;
 
 class CPhase
 {
 	static const uint16_t m_saveVersion{ 0 }; // Version of the saving procedure.
+
+	CMultidimensionalGrid m_grid;			// Defined distribution grid.
 
 	// TODO: remove it from here, leave only in flowsheet
 	std::string m_name { "Phase" };			// Name.
@@ -17,11 +20,8 @@ class CPhase
 	CTimeDependentValue m_fractions;		// Mass fraction of this phase at each time point.
 	CMDMatrix m_distribution;				// Multidimensional distributed parameters.
 
-	std::vector<std::string> m_compounds;	// Keys of chemical compounds described in this phase.
-	const CDistributionsGrid& m_grid;		// Pointer to a distribution grid.
-
 public:
-	CPhase(EPhase _state, std::string _name, const CDistributionsGrid& _grid, std::vector<std::string> _compounds, const SCacheSettings& _cache);
+	CPhase(EPhase _state, std::string _name, CMultidimensionalGrid _grid, const SCacheSettings& _cache);
 
 	// Returns name of the stream.
 	std::string GetName() const;
@@ -88,8 +88,8 @@ public:
 	// Sets new caching parameters.
 	void SetCacheSettings(const SCacheSettings& _cache);
 
-	// Updates grids of distributed parameters.
-	void UpdateDistributionsGrid();
+	// Sets grids of distributed parameters.
+	void SetGrid(const CMultidimensionalGrid& _grid);
 
 	// Saves data to file.
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
@@ -97,8 +97,6 @@ public:
 	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
 
 private:
-	// Checks whether the specified compound is defined in the stream.
-	bool HasCompound(const std::string& _compoundKey) const;
-	// Returns index of the compound.
-	size_t CompoundIndex(const std::string& _compoundKey) const;
+	// Copies data from source distribution to destination converting the data to destination grids.
+	static void CopyDistributionsWithConvert(double _srcTime, double _dstTime, const CPhase& _srcPhase, CPhase& _dstPhase);
 };

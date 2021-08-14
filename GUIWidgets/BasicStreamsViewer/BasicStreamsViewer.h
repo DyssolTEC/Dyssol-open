@@ -12,6 +12,7 @@ class CFlowsheet;
 class CBaseStream;
 class CTimeDependentValue;
 class CMDMatrix;
+class CMultidimensionalGrid;
 
 class CBasicStreamsViewer : public QWidget
 {
@@ -137,6 +138,9 @@ private:
 	void ExportToFile();
 	/// Create and show context menu on right-click.
 	void contextMenuEvent(QContextMenuEvent* _event) override;
+
+	// Returns grid dimensions, either from the single selected stream or from the flowsheet.
+	const CMultidimensionalGrid& ActiveGrid() const;
 
 private slots:
 	void PropertyChanged();

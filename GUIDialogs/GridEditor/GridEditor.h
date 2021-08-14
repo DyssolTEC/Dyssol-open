@@ -4,41 +4,55 @@
 
 #include "ui_GridEditor.h"
 #include "DimensionParameters.h"
+#include "MultidimensionalGrid.h"
 
 class CFlowsheet;
 
 class CGridEditor : public QDialog
 {
 	Q_OBJECT
-private:
-	Ui::CGridEditorClass ui;
+	Ui::CGridEditorClass ui{};
 
-	CFlowsheet* m_pFlowsheet; // pointer to the flowsheet
-	CDistributionsGrid* m_pGrid;
-	bool m_bAvoidSignal;
+	const CMaterialsDatabase& m_materialsDB;	// Reference to a global database of materials.
+	CFlowsheet* m_flowsheet;					// Pointer to the flowsheet.
+	CMultidimensionalGrid m_grid;				// Working copy of the grid.
 
 public:
-	CGridEditor(CFlowsheet* _pFlowsheet, QWidget* parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
-	~CGridEditor();
+	CGridEditor(CFlowsheet* _flowsheet, const CMaterialsDatabase& _materialsDB, QWidget* _parent = nullptr, Qt::WindowFlags _flags = Qt::WindowFlags());
 
-	void InitializeConnections();
+	// Connects all signals and slots.
+	void InitializeConnections() const;
+
+	// Change visibility of the dialog.
+	void setVisible(bool _visible) override;
+	// Tries to apply all changes and closes the dialog on success.
+	void accept() override;
+
+	// Updates all widgets.
 	void UpdateWholeView();
 
 private:
-	QComboBox* AddComboBoxDimensions(unsigned _nRow);
-	CDimensionParameters* AddDimensionParam();
+	// Updates the list of grids sources.
+	void UpdateGridsList() const;
+	// Updates the list of grid dimensions.
+	void UpdateDimensionsList();
 
-	bool Validate();
+	// Called when new grid is selected.
+	void GridSelected();
+	// Called when activity of unit-specific changes.
+	void GridActivityChanged(const QCheckBox* _checkbox, const QTreeWidgetItem* _item);
+	// Called when add distribution button clicked.
+	void AddDistributionClicked();
+	// Called when remove distribution button clicked.
+	void RemDistributionClicked();
 
-public slots:
-	void setVisible(bool _bVisible);
-	void accept();
+	// Adds new grid dimension widget to the view.
+	CDimensionParameters* AddGridDimension(const CGridDimension& _dim);
 
-private slots:
-	void AddDimensionClicked();
-	void RemoveDimensionClicked();
-	void DimensionTypeChanged(int _nRow, int _nCol, QComboBox* _pComboBox) const;
+	// Tries to apply all changes if they are valid.
 	bool ApplyChanges();
+	// Checks validity of all settings.
+	bool IsValid();
 
 signals:
 	void DataChanged();

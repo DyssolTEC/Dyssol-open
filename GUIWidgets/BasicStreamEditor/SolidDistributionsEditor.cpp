@@ -51,13 +51,13 @@ void CSolidDistributionsEditor::SetFlowsheet(CFlowsheet* _pFlowsheet, CMaterials
 {
 	m_materialsDB = _materialsDB;
 	m_pFlowsheet = _pFlowsheet;
-	m_pGrid = m_pFlowsheet->GetDistributionsGrid();
 }
 
 void CSolidDistributionsEditor::SetDistribution(CMDMatrix* _pDistribution, CBaseStream* _pStream)
 {
 	m_pDistribution = _pDistribution;
 	m_pStream = _pStream;
+	m_pGrid = &m_pStream->GetGrid();
 	UpdateWholeView();
 }
 
@@ -146,11 +146,11 @@ void CSolidDistributionsEditor::UpdateCombos()
 	m_vSliders.clear();
 
 	// check if DISTR_COMPOUNDS exists
-	if (!m_pGrid->IsDistrTypePresent(DISTR_COMPOUNDS))
+	if (!m_pGrid->HasDimension(DISTR_COMPOUNDS))
 		return;
 
 	// add additional dimensions. magic 3 is for 'Rows', 'Columns' and 'Compounds' combos
-	for (int i = 0; i < static_cast<int>(m_pGrid->GetDistributionsNumber()) - 3; ++i)
+	for (int i = 0; i < static_cast<int>(m_pGrid->GetDimensionsNumber()) - 3; ++i)
 		AddAdditionalDim();
 
 	// setup 'Columns' combo
@@ -288,7 +288,7 @@ void CSolidDistributionsEditor::SetupComboBoxDimensions(QComboBox* _pCombo)
 	_pCombo->clear();
 	// add all distributions except DISTR_COMPOUNDS to combo
 	_pCombo->addItem(StrConst::SDE_TotalMixture, DISTR_UNDEFINED);
-	for (auto& t : m_pGrid->GetDistrTypes())
+	for (auto& t : m_pGrid->GetDimensionsTypes())
 		if (t != DISTR_COMPOUNDS)
 			_pCombo->addItem(std::vector<QString>(DISTR_NAMES)[GetDistributionTypeIndex(t)], t);
 	// connect combobox to slot
@@ -450,22 +450,22 @@ void CSolidDistributionsEditor::SetDistributionTableHeaders() const
 
 std::vector<std::string> CSolidDistributionsEditor::GetHeaders(EDistrTypes _distr) const
 {
+	if (!m_pGrid->HasDimension(_distr)) return {};
 	const EPSDGridType psdGridType = ChosenPSDGridType();
 	const std::string sUnits = _distr != DISTR_SIZE ? "" : psdGridType == EPSDGridType::DIAMETER ? StrConst::FUN_DiameterUnits : StrConst::FUN_VolumeUnits;
 
-	switch (m_pGrid->GetGridEntryByDistr(_distr))
+	switch (m_pGrid->GetGridDimension(_distr)->GridType())
 	{
 	case EGridEntry::GRID_NUMERIC:
 	{
 		std::vector<std::string> headers;
-		const std::vector<double> grid = _distr != DISTR_SIZE ? m_pGrid->GetNumericGridByDistr(_distr) : m_pGrid->GetPSDGrid(psdGridType);
+		const std::vector<double> grid = _distr != DISTR_SIZE ? m_pGrid->GetNumericGrid(_distr) : m_pGrid->GetPSDGrid(psdGridType);
 		for (int i = 0; i < static_cast<int>(grid.size()) - 1; ++i)
 			headers.push_back(StringFunctions::Double2String(grid[i]) + " : " + StringFunctions::Double2String(grid[i + 1]) + " " + sUnits);
 		return headers;
 	}
 	case EGridEntry::GRID_SYMBOLIC:
-		return m_pGrid->GetSymbolicGridByDistr(_distr);
-	case EGridEntry::GRID_UNDEFINED: break;
+		return m_pGrid->GetSymbolicGrid(_distr);
 	}
 	return {};
 }
