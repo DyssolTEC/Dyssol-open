@@ -1,10 +1,8 @@
 /* Copyright (c) 2021, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
+#include "ScriptDefines.h"
 #include "ScriptJob.h"
-#include <filesystem>
-#include <string>
-#include <vector>
 
 /* Parses script files. */
 class CScriptParser

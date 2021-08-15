@@ -128,13 +128,16 @@
     <ClCompile Include="ScriptJob.cpp" />
     <ClCompile Include="ScriptParser.cpp" />
     <ClCompile Include="ScriptRunner.cpp" />
+    <ClCompile Include="ScriptTypes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArgumentsParser.h" />
+    <ClInclude Include="NameConverters.h" />
     <ClInclude Include="ScriptDefines.h" />
     <ClInclude Include="ScriptJob.h" />
     <ClInclude Include="ScriptParser.h" />
     <ClInclude Include="ScriptRunner.h" />
+    <ClInclude Include="ScriptTypes.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

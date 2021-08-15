@@ -1,18 +1,36 @@
 /* Copyright (c) 2021, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
+/*
+ * Main defines of the script interface.
+ * All script keywords as they appear in the script are described in EScriptKeys.
+ * EEntryType describes all possible types each line of the script can represent.
+ * Each script line is read into SScriptEntry - it can hold any type defined in EEntryType.
+ * How to read each type from EEntryType is given in ParseScriptEntry().
+ * To make this function work, each type must define operator>>(std::istream&, T&), as it is given in ScriptTypes.h
+ * The correspondence between EScriptKeys and EEntryType is set in AllScriptArguments().
+ * To add a new type:
+ *   1. Define the new type in ScriptTypes.h.
+ *   2. Implement operator>>(std::istream&, T&) for this type in ScriptTypes.cpp.
+ *   3. Add the type to std::variant of the SScriptEntry struct.
+ *   4. Add the name of this type to EEntryType.
+ *   5. Define the parsing rule for this name in ParseScriptEntry().
+ * To add a new script key of existing type:
+ *   1. Add it to EScriptKeys.
+ *   2. Set the correspondence in AllScriptArguments().
+ *   3. Use in ScriptRunner.cpp, e.g. as job.GetValue<double>(EScriptKeys::SIMULATION_TIME).
+ */
+
 #pragma once
 #include "DyssolHelperDefines.h"
-#include "UnitParameters.h"
 #include "ContainerFunctions.h"
 #include "StringFunctions.h"
+#include "ScriptTypes.h"
 #include <filesystem>
-#include <string>
-#include <vector>
 #include <variant>
 
 namespace ScriptInterface
 {
-	// All possible script keys.
+	// All possible script keys, as they appear in script files.
 	enum class EScriptKeys
 	{
 		JOB,
@@ -66,114 +84,6 @@ namespace ScriptInterface
 		HOLDUP_DISTRIBUTION,	// SHoldupDistributionSE
 	};
 
-	// Help structure to work with entries that can be defined either by their name or by their index.
-	struct SNameOrIndex
-	{
-		std::string name{};	// Name of the entry. Either this or index must be set.
-		size_t index{};		// Index of the entry. Either this or name must be set.
-		friend std::istream& operator>>(std::istream& _s, SNameOrIndex& _obj) // Input stream operator.
-		{
-			const auto str = StringFunctions::GetValueFromStream<std::string>(_s);
-			_obj.name  = StringFunctions::IsSimpleUInt(str) ? "" : str;
-			_obj.index = StringFunctions::IsSimpleUInt(str) ? std::stoull(str) - 1 : -1;
-			return _s;
-		}
-	};
-
-	// Help structure to work with entries that can be defined either by their name or by their numerical key.
-	struct SNameOrKey
-	{
-		std::string name{};	// Name of the entry. Either this or key must be set.
-		uint64_t key{};		// Key of the entry. Either this or name must be set.
-		// Checks if the struct contains parsed key.
-		[[nodiscard]] bool HasKey() const { return key != static_cast<decltype(key)>(-1); }
-		// Input stream operator.
-		friend std::istream& operator>>(std::istream& _s, SNameOrKey& _obj)
-		{
-			const auto str = StringFunctions::GetValueFromStream<std::string>(_s);
-			_obj.name = StringFunctions::IsSimpleUInt(str) ? "" : str;
-			_obj.key  = StringFunctions::IsSimpleUInt(str) ? std::stoull(str) : -1;
-			return _s;
-		}
-	};
-
-	// Struct to parse script entries (SE) with unit parameters.
-	struct SUnitParameterSE
-	{
-		SNameOrIndex unit{};	// Name or index of the unit container.
-		SNameOrIndex param{};	// Name or index of the parameter.
-		std::string values{};	// Value(s) of the unit parameter as a string for postponed parsing.
-		// Input stream operator.
-		friend std::istream& operator>>(std::istream& _s, SUnitParameterSE& _obj)
-		{
-			_obj.unit   = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
-			_obj.param  = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
-			_obj.values = StringFunctions::GetRestOfLine(_s);	// format depends on parameter type, but type resolution is only possible when the flowsheet is loaded, so postpone final parsing
-			return _s;
-		}
-	};
-
-	// Struct to parse script entries (SE) with unit holdups' time-dependent parameters (overall, phases).
-	struct SHoldupDependentSE
-	{
-		SNameOrIndex unit{};		// Name or index of the unit container.
-		SNameOrIndex holdup{};		// Name or index of the holdup within the unit.
-		std::vector<double> values;	// Value(s) of the time-dependent parameters for postponed parsing.
-		friend std::istream& operator>>(std::istream& _s, SHoldupDependentSE& _obj)
-		{
-			_obj.unit   = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
-			_obj.holdup = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
-			_obj.values = StringFunctions::GetValueFromStream<std::vector<double>>(_s);	// format depends on the flowsheet settings, so postpone final parsing until the flowsheet is loaded
-			return _s;
-		}
-	};
-
-	// Struct to parse script entries (SE) with unit holdups' time-dependent compound fractions.
-	struct SHoldupCompoundsSE
-	{
-		SNameOrIndex unit{};			// Name or index of the unit container.
-		SNameOrIndex holdup{};			// Name or index of the holdup within the unit.
-		SNameOrKey phase{};				// Name or key of the phase.
-		std::vector<double> values{};	// Value(s) of the time-dependent compound fractions for postponed parsing.
-		friend std::istream& operator>>(std::istream& _s, SHoldupCompoundsSE& _obj)
-		{
-			_obj.unit   = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
-			_obj.holdup = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
-			_obj.phase  = StringFunctions::GetValueFromStream<SNameOrKey>(_s);
-			_obj.values = StringFunctions::GetValueFromStream<std::vector<double>>(_s);	// format depends on the flowsheet settings, so postpone final parsing until the flowsheet is loaded
-			return _s;
-		}
-	};
-
-	// Struct to parse script entries (SE) with unit holdups' time-dependent distributed parameters of solids.
-	struct SHoldupDistributionSE
-	{
-		SNameOrIndex unit{};			// Name or index of the unit container.
-		SNameOrIndex holdup{};			// Name or index of the holdup within the unit.
-		SNameOrKey distrType{};			// Type of the distributed parameter (SIZE/PART_POROSITY/FORM_FACTOR/...).
-		std::string compound{};			// Name or key of the compound, or MIXTURE keyword.
-		SNameOrKey psdType{};			// Type of the PSD (MASS_FRACTION/NUMBER/Q0_DENSITY/Q0_CUMULATIVE/...).
-		SNameOrKey psdMeans{};			// Type of the mean values for PSD (DIAMETER/VOLUME).
-		SNameOrKey function{};			// Function to define distribution (MANUAL/NORMAL/RRSB/...).
-		std::vector<double> values{};	// Value(s) of the time-dependent distributed parameters for postponed parsing.
-		friend std::istream& operator>>(std::istream& _s, SHoldupDistributionSE& _obj)
-		{
-			_obj.unit      = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
-			_obj.holdup    = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
-			_obj.distrType = StringFunctions::GetValueFromStream<SNameOrKey>(_s);
-			_obj.compound  = StringFunctions::GetValueFromStream<std::string>(_s);
-			// special treatment for PSD
-			if (!_obj.distrType.HasKey() && StringFunctions::ToUpperCase(_obj.distrType.name) == "SIZE" || _obj.distrType.HasKey() && _obj.distrType.key == DISTR_SIZE)
-			{
-				_obj.psdType  = StringFunctions::GetValueFromStream<SNameOrKey>(_s);
-				_obj.psdMeans = StringFunctions::GetValueFromStream<SNameOrKey>(_s);
-			}
-			_obj.function = StringFunctions::GetValueFromStream<SNameOrKey>(_s);
-			_obj.values   = StringFunctions::GetValueFromStream<std::vector<double>>(_s);
-			return _s;
-		}
-	};
-
 	// Descriptor for an entry of the script file.
 	struct SScriptEntryDescriptor
 	{
@@ -192,6 +102,26 @@ namespace ScriptInterface
 		SScriptEntry() = default;
 		SScriptEntry(const SScriptEntryDescriptor& _descr) : SScriptEntryDescriptor{ _descr } {}
 	};
+
+	// Reads the string line from the input stream into SScriptEntry depending on the entry type.
+	inline void ParseScriptEntry(SScriptEntry& _entry, std::istream& ss)
+	{
+		switch (_entry.type)
+		{
+		case EEntryType::EMPTY:																									break;
+		case EEntryType::BOOL:					_entry.value = StringFunctions::GetValueFromStream<bool>(ss);					break;
+		case EEntryType::INT:					_entry.value = StringFunctions::GetValueFromStream<int64_t>(ss);				break;
+		case EEntryType::UINT:					_entry.value = StringFunctions::GetValueFromStream<uint64_t>(ss);				break;
+		case EEntryType::DOUBLE:				_entry.value = StringFunctions::GetValueFromStream<double>(ss);					break;
+		case EEntryType::STRING:				_entry.value = StringFunctions::GetRestOfLine(ss);								break;
+		case EEntryType::PATH:					_entry.value = std::filesystem::path{ StringFunctions::GetRestOfLine(ss) };		break;
+		case EEntryType::NAME_OR_KEY:			_entry.value = StringFunctions::GetValueFromStream<SNameOrKey>(ss);				break;
+		case EEntryType::UNIT_PARAMETER:		_entry.value = StringFunctions::GetValueFromStream<SUnitParameterSE>(ss);		break;
+		case EEntryType::HOLDUP_DEPENDENT:		_entry.value = StringFunctions::GetValueFromStream<SHoldupDependentSE>(ss);		break;
+		case EEntryType::HOLDUP_COMPOUNDS:		_entry.value = StringFunctions::GetValueFromStream<SHoldupCompoundsSE>(ss);		break;
+		case EEntryType::HOLDUP_DISTRIBUTION:	_entry.value = StringFunctions::GetValueFromStream<SHoldupDistributionSE>(ss);	break;
+		}
+	}
 
 	// Number of symbols to discard: length of 'EScriptKeys::'.
 	constexpr size_t DISCARD = 13;

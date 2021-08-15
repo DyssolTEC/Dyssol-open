@@ -2,9 +2,6 @@
 
 #pragma once
 #include "ScriptDefines.h"
-#include <vector>
-#include <memory>
-#include <filesystem>
 
 // Description of each script job.
 class CScriptJob

@@ -5,7 +5,6 @@
 #include "ScriptJob.h"
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
-#include <functional>
 #include <sstream>
 
 using namespace ScriptInterface;

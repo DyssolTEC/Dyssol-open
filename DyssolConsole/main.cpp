@@ -275,6 +275,7 @@ void RunSimulation(const CConfigFileParser& _parser)
 		if (h.iTimePoint >= vTPs.size()) continue;
 		const auto distrType = flowsheet.GetGrid().GetDimensionsTypes()[h.iDistribution];
 		const EPSDGridType sizeType = distrType == DISTR_SIZE ? h.psdGridType : EPSDGridType::DIAMETER;
+		// TODO: if symbolic grid - will fail
 		const std::vector<double> vMedians = distrType == DISTR_SIZE ? pGrid.GetPSDMeans(sizeType) : (pGrid.GetGridDimension(distrType)->GridType() == EGridEntry::GRID_NUMERIC ? pGrid.GetGridDimensionNumeric(distrType)->GetClassesMeans() : std::vector<double>{});
 		std::vector<double> values(pGrid.GetGridDimension(distrType)->ClassesNumber());
 		switch (h.distrFun)
