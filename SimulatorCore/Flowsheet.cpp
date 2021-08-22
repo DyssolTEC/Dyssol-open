@@ -336,6 +336,18 @@ void CFlowsheet::RemoveCompound(const std::string& _key)
 	m_calculationSequence.UpdateInitialStreams();
 }
 
+void CFlowsheet::SetCompounds(const std::vector<std::string>& _keys)
+{
+	if (GetCompounds() == _keys) return;
+	// TODO: do not remove all, and sort properly
+	// remove all current compounds
+	for (const auto& c : GetCompounds())
+		RemoveCompound(c);
+	// add new compounds
+	for (const auto& c : _keys)
+		AddCompound(c);
+}
+
 std::vector<std::string> CFlowsheet::GetCompounds() const
 {
 	return m_mainGrid.GetSymbolicGrid(DISTR_COMPOUNDS);

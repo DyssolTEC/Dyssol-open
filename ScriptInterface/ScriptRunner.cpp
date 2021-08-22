@@ -33,6 +33,7 @@ bool CScriptRunner::ConfigureFlowsheet(const CScriptJob& _job)
 	bool success = true;
 	if (success) success &= LoadFiles(_job);
 	if (success) success &= SetupFlowsheet(_job);
+	// TODO: put inside SetupFlowsheet
 	if (success) success &= SetupFlowsheetParameters(_job);
 	if (success) success &= SetupUnitParameters(_job);
 	if (success) success &= SetupHoldups(_job);
@@ -85,11 +86,23 @@ bool CScriptRunner::LoadFiles(const CScriptJob& _job)
 
 bool CScriptRunner::SetupFlowsheet(const CScriptJob& _job)
 {
+	// setup compounds
+	std::vector<std::string> compoundKeys;
+	for (const auto& entry : _job.GetValue<std::vector<std::string>>(EScriptKeys::COMPOUNDS))
+	{
+		const auto* cmp = GetCompoundPtr(entry);
+		if (!cmp)
+			return PrintAndReturn(DyssolC_ErrorParseCompounds(StrKey(EScriptKeys::COMPOUNDS), entry));
+		compoundKeys.push_back(cmp->GetKey());
+	}
+	m_flowsheet.SetCompounds(compoundKeys);
+
 	// The grids may be cleaned before setting new values. Those grids, which are not mentioned in the script file, are not changed.
 	// If cleaning is requested, on the first access to the grid's holder, clean it, store the key of the holder in this vector and do not clean any further.
 	std::vector<std::string> processed;	// already processed grid's holders
 	const bool keepG = !_job.HasKey(EScriptKeys::GRIDS_KEEP_EXISTING_VALUES) || _job.GetValue<bool>(EScriptKeys::GRIDS_KEEP_EXISTING_VALUES);	// keep or remove values in grids before setting new ones
 
+	// setup distribution grids
 	for (const auto& entry : _job.GetValues<SGridDimensionSE>(EScriptKeys::DISTRIBUTION_GRID))
 	{
 		// type of the grid
@@ -415,3 +428,10 @@ CBaseStream* CScriptRunner::GetHoldupPtr(CBaseUnit& _model, const SNameOrIndex& 
 	return holdup;														// return pointer
 }
 
+CCompound* CScriptRunner::GetCompoundPtr(const std::string& _nameOrKey)
+{
+	auto* compound = m_materialsDatabase.GetCompound(_nameOrKey);		// try to access by key
+	if (!compound)
+		compound = m_materialsDatabase.GetCompoundByName(_nameOrKey);	// try to access by name
+	return compound;
+}

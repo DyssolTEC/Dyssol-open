@@ -59,4 +59,6 @@ private:
 	CBaseUnitParameter* GetUnitParamPtr(CBaseUnit& _model, const ScriptInterface::SNameOrIndex& _nameOrIndex);
 	// Returns a pointer to a holdup by its name or index. Returns nullptr if the search fails.
 	CBaseStream* GetHoldupPtr(CBaseUnit& _model, const ScriptInterface::SNameOrIndex& _nameOrIndex);
+	// Returns a pointer to a compound by its name or key. Returns nullptr if the search fails.
+	CCompound* GetCompoundPtr(const std::string& _nameOrKey);
 };

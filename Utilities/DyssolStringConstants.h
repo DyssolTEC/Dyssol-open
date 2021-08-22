@@ -107,6 +107,8 @@ namespace StrConst
 		return "Error while applying " + p + ", unit " + StringFunctions::Quote(u) + ", holdup " + (!n.empty() ? StringFunctions::Quote(n) : std::to_string(i + 1)) + ":\n\tDistribution " + (!d.empty() ? d : std::to_string(id)) + " is not defined in the flowsheet"; }
 	inline std::string DyssolC_ErrorArgumentsNumberGrid(const std::string& p, const std::string& u, const std::string& n, int64_t i) {
 		return "Error while applying " + p + ", unit " + StringFunctions::Quote(u) + ", distribution " + (!n.empty() ? StringFunctions::Quote(n) : std::to_string(i + 1)) + ":\n\tWrong number of arguments"; }
+	inline std::string DyssolC_ErrorParseCompounds(const std::string& p, const std::string& c) {
+		return "Error while applying " + p + ": \n\t" + "Cannot find a compound " + StringFunctions::Quote(c) + " neither by its name nor by its key"; }
 	inline std::string DyssolC_ErrorInit(const std::string& s) {
 		return "Error during initialization: " + s; }
 	inline std::string DyssolC_ErrorFinish() {

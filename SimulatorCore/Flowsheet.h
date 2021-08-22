@@ -145,6 +145,8 @@ public:
 	void AddCompound(const std::string& _key);
 	// Remove a compound with the specified unique key from the flowsheet.
 	void RemoveCompound(const std::string& _key);
+	// Sets new set of compounds.
+	void SetCompounds(const std::vector<std::string>& _keys);
 	// Returns unique keys of all defined compounds.
 	std::vector<std::string> GetCompounds() const;
 
