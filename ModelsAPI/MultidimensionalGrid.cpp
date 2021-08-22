@@ -353,6 +353,12 @@ CGridDimensionSymbolic* CMultidimensionalGrid::GetGridDimensionSymbolic(EDistrTy
 	return const_cast<CGridDimensionSymbolic*>(static_cast<const CMultidimensionalGrid&>(*this).GetGridDimensionSymbolic(_type));
 }
 
+void CMultidimensionalGrid::RemoveDimension(EDistrTypes _type)
+{
+	if (!HasDimension(_type)) return;
+	VectorDelete(m_grids, FindByType{ _type });
+}
+
 std::vector<const CGridDimension*> CMultidimensionalGrid::GetGridDimensions() const
 {
 	std::vector<const CGridDimension*> res(m_grids.size());

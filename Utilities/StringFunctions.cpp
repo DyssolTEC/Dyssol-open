@@ -255,6 +255,16 @@ namespace StringFunctions
 		return res;
 	}
 
+	template <>
+	std::vector<std::string> GetValueFromStream<std::vector<std::string>>(std::istream& _is)
+	{
+		std::vector<std::string> res;
+		while (!_is.eof())
+			if (const auto s = TrimWhitespaces(GetValueFromStream<std::string>(_is)); !s.empty())
+				res.push_back(s);
+		return res;
+	}
+
 	std::string UnifyPath(const std::string& _path)
 	{
 		std::string s = _path;

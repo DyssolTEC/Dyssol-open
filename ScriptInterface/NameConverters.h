@@ -82,7 +82,7 @@ namespace ScriptInterface
 		return static_cast<EPSDGridType>(-1);
 	}
 
-	// Converts the name of a PSD distribution function  to its enumeration key.
+	// Converts the name of a PSD distribution function to its enumeration key.
 	inline EDistrFunction DistributionFunctionName2Enum(const std::string& _s)
 	{
 		if (_s == "MANUAL")		return EDistrFunction::Manual;
@@ -93,9 +93,29 @@ namespace ScriptInterface
 		return static_cast<EDistrFunction>(-1);
 	}
 
+	// Converts the name of a grid entry type to its enumeration key.
+	inline EGridEntry GridEntryName2Enum(const std::string& _s)
+	{
+		if (_s == "NUMERIC")	return EGridEntry::GRID_NUMERIC;
+		if (_s == "SYMBOLIC")	return EGridEntry::GRID_SYMBOLIC;
+		return static_cast<EGridEntry>(-1);
+	}
+
+	// Converts the name of a grid function to its enumeration key.
+	inline EGridFunction GridFunctionName2Enum(const std::string& _s)
+	{
+		if (_s == "MANUAL")				return EGridFunction::GRID_FUN_MANUAL;
+		if (_s == "EQUIDISTANT")		return EGridFunction::GRID_FUN_EQUIDISTANT;
+		if (_s == "GEOMETRIC_INC")		return EGridFunction::GRID_FUN_GEOMETRIC_S2L;
+		if (_s == "GEOMETRIC_DEC")		return EGridFunction::GRID_FUN_GEOMETRIC_L2S;
+		if (_s == "LOGARITHMIC_INC")	return EGridFunction::GRID_FUN_LOGARITHMIC_S2L;
+		if (_s == "LOGARITHMIC_DEC")	return EGridFunction::GRID_FUN_LOGARITHMIC_L2S;
+		return static_cast<EGridFunction>(-1);
+	}
+
 	// Applies one of the above functions to convert the name to the enumeration key.
 	template<typename T>
-	SNameOrKey Convert(const SNameOrKey& _entry, std::function<T(const std::string&)> _func)
+	SNameOrKey Convert(const SNameOrKey& _entry, const std::function<T(const std::string&)>& _func)
 	{
 		SNameOrKey res = _entry;
 		if (!res.HasKey())

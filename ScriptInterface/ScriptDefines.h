@@ -65,23 +65,26 @@ namespace ScriptInterface
 		HOLDUP_PHASES,
 		HOLDUP_COMPOUNDS,
 		HOLDUP_DISTRIBUTION,
+		GRIDS_KEEP_EXISTING_VALUES,
+		DISTRIBUTION_GRID,
 	};
 
 	// All possible types of script entries.
 	enum class EEntryType
 	{
-		EMPTY,					// Key without value
-		BOOL,					// bool
-		INT,					// int64_t
-		UINT,					// uint64_t
-		DOUBLE,					// double
-		STRING,					// std::string
-		PATH,					// std::filesystem::path
-		NAME_OR_KEY,			// SNameOrKey
-		UNIT_PARAMETER,			// SUnitParameterSE
-		HOLDUP_DEPENDENT,		// SHoldupDependentSE
-		HOLDUP_COMPOUNDS,		// SHoldupCompoundSE
-		HOLDUP_DISTRIBUTION,	// SHoldupDistributionSE
+		EMPTY              , // Key without value
+		BOOL               , // bool
+		INT                , // int64_t
+		UINT               , // uint64_t
+		DOUBLE             , // double
+		STRING             , // std::string
+		PATH               , // std::filesystem::path
+		NAME_OR_KEY        , // SNameOrKey
+		UNIT_PARAMETER     , // SUnitParameterSE
+		HOLDUP_DEPENDENT   , // SHoldupDependentSE
+		HOLDUP_COMPOUNDS   , // SHoldupCompoundSE
+		HOLDUP_DISTRIBUTION, // SHoldupDistributionSE
+		GRID_DIMENSION     , // SGridDimensionSE
 	};
 
 	// Descriptor for an entry of the script file.
@@ -97,29 +100,31 @@ namespace ScriptInterface
 	{
 		// Value of the entry of different types.
 		std::variant<bool, int64_t, uint64_t, double, std::string, std::filesystem::path,
-			SNameOrKey, SUnitParameterSE, SHoldupDependentSE, SHoldupCompoundsSE, SHoldupDistributionSE> value{};
+			SNameOrKey, SUnitParameterSE, SHoldupDependentSE, SHoldupCompoundsSE, SHoldupDistributionSE,
+			SGridDimensionSE> value{};
 
 		SScriptEntry() = default;
 		SScriptEntry(const SScriptEntryDescriptor& _descr) : SScriptEntryDescriptor{ _descr } {}
 	};
 
 	// Reads the string line from the input stream into SScriptEntry depending on the entry type.
-	inline void ParseScriptEntry(SScriptEntry& _entry, std::istream& ss)
+	inline void ParseScriptEntry(SScriptEntry& _entry, std::istream& is)
 	{
 		switch (_entry.type)
 		{
 		case EEntryType::EMPTY:																									break;
-		case EEntryType::BOOL:					_entry.value = StringFunctions::GetValueFromStream<bool>(ss);					break;
-		case EEntryType::INT:					_entry.value = StringFunctions::GetValueFromStream<int64_t>(ss);				break;
-		case EEntryType::UINT:					_entry.value = StringFunctions::GetValueFromStream<uint64_t>(ss);				break;
-		case EEntryType::DOUBLE:				_entry.value = StringFunctions::GetValueFromStream<double>(ss);					break;
-		case EEntryType::STRING:				_entry.value = StringFunctions::GetRestOfLine(ss);								break;
-		case EEntryType::PATH:					_entry.value = std::filesystem::path{ StringFunctions::GetRestOfLine(ss) };		break;
-		case EEntryType::NAME_OR_KEY:			_entry.value = StringFunctions::GetValueFromStream<SNameOrKey>(ss);				break;
-		case EEntryType::UNIT_PARAMETER:		_entry.value = StringFunctions::GetValueFromStream<SUnitParameterSE>(ss);		break;
-		case EEntryType::HOLDUP_DEPENDENT:		_entry.value = StringFunctions::GetValueFromStream<SHoldupDependentSE>(ss);		break;
-		case EEntryType::HOLDUP_COMPOUNDS:		_entry.value = StringFunctions::GetValueFromStream<SHoldupCompoundsSE>(ss);		break;
-		case EEntryType::HOLDUP_DISTRIBUTION:	_entry.value = StringFunctions::GetValueFromStream<SHoldupDistributionSE>(ss);	break;
+		case EEntryType::BOOL:					_entry.value = StringFunctions::GetValueFromStream<bool>(is);					break;
+		case EEntryType::INT:					_entry.value = StringFunctions::GetValueFromStream<int64_t>(is);				break;
+		case EEntryType::UINT:					_entry.value = StringFunctions::GetValueFromStream<uint64_t>(is);				break;
+		case EEntryType::DOUBLE:				_entry.value = StringFunctions::GetValueFromStream<double>(is);					break;
+		case EEntryType::STRING:				_entry.value = StringFunctions::GetRestOfLine(is);								break;
+		case EEntryType::PATH:					_entry.value = std::filesystem::path{ StringFunctions::GetRestOfLine(is) };		break;
+		case EEntryType::NAME_OR_KEY:			_entry.value = StringFunctions::GetValueFromStream<SNameOrKey>(is);				break;
+		case EEntryType::UNIT_PARAMETER:		_entry.value = StringFunctions::GetValueFromStream<SUnitParameterSE>(is);		break;
+		case EEntryType::HOLDUP_DEPENDENT:		_entry.value = StringFunctions::GetValueFromStream<SHoldupDependentSE>(is);		break;
+		case EEntryType::HOLDUP_COMPOUNDS:		_entry.value = StringFunctions::GetValueFromStream<SHoldupCompoundsSE>(is);		break;
+		case EEntryType::HOLDUP_DISTRIBUTION:	_entry.value = StringFunctions::GetValueFromStream<SHoldupDistributionSE>(is);	break;
+		case EEntryType::GRID_DIMENSION:	    _entry.value = StringFunctions::GetValueFromStream<SGridDimensionSE>(is);		break;
 		}
 	}
 
@@ -173,6 +178,9 @@ namespace ScriptInterface
 			MAKE_ARG(EScriptKeys::HOLDUP_PHASES				  , EEntryType::HOLDUP_DEPENDENT),
 			MAKE_ARG(EScriptKeys::HOLDUP_COMPOUNDS            , EEntryType::HOLDUP_COMPOUNDS),
 			MAKE_ARG(EScriptKeys::HOLDUP_DISTRIBUTION         , EEntryType::HOLDUP_DISTRIBUTION),
+			// flowsheet settings
+			MAKE_ARG(EScriptKeys::GRIDS_KEEP_EXISTING_VALUES  , EEntryType::BOOL),
+			MAKE_ARG(EScriptKeys::DISTRIBUTION_GRID           , EEntryType::GRID_DIMENSION),
 		};
 	}
 

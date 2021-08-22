@@ -8,63 +8,77 @@ using namespace StringFunctions;
 
 std::istream& ScriptInterface::operator>>(std::istream& _s, ScriptInterface::SNameOrIndex& _obj) // Input stream operator.
 {
-	const auto str = StringFunctions::GetValueFromStream<std::string>(_s);
-	_obj.name = StringFunctions::IsSimpleUInt(str) ? "" : str;
-	_obj.index = StringFunctions::IsSimpleUInt(str) ? std::stoull(str) - 1 : -1;
+	const auto str = GetValueFromStream<std::string>(_s);
+	_obj.name  = IsSimpleUInt(str) ? "" : str;
+	_obj.index = IsSimpleUInt(str) ? std::stoull(str) - 1 : -1;
 	return _s;
 }
 
 std::istream& ScriptInterface::operator>>(std::istream& _s, SNameOrKey& _obj)
 {
-	const auto str = StringFunctions::GetValueFromStream<std::string>(_s);
-	_obj.name = StringFunctions::IsSimpleUInt(str) ? "" : str;
-	_obj.key = StringFunctions::IsSimpleUInt(str) ? std::stoull(str) : -1;
+	const auto str = GetValueFromStream<std::string>(_s);
+	_obj.name = IsSimpleUInt(str) ? "" : str;
+	_obj.key  = IsSimpleUInt(str) ? std::stoull(str) : -1;
 	return _s;
 }
 
 std::istream& ScriptInterface::operator>>(std::istream& _s, SUnitParameterSE& _obj)
 {
-	_obj.unit = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
-	_obj.param = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
-	// format depends on parameter type, but type resolution is only possible when the flowsheet is loaded, so postpone final parsing
-	_obj.values = StringFunctions::GetRestOfLine(_s);
+	_obj.unit   = GetValueFromStream<SNameOrIndex>(_s);
+	_obj.param  = GetValueFromStream<SNameOrIndex>(_s);
+	_obj.values = GetRestOfLine(_s); // format depends on parameter type, so postpone final parsing until the flowsheet is loaded
 	return _s;
 }
 
 std::istream& ScriptInterface::operator>>(std::istream& _s, SHoldupDependentSE& _obj)
 {
-	_obj.unit = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
-	_obj.holdup = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
-	// format depends on the flowsheet settings, so postpone final parsing until the flowsheet is loaded
-	_obj.values = StringFunctions::GetValueFromStream<std::vector<double>>(_s);
+	_obj.unit   = GetValueFromStream<SNameOrIndex>(_s);
+	_obj.holdup = GetValueFromStream<SNameOrIndex>(_s);
+	_obj.values = GetValueFromStream<std::vector<double>>(_s); // format depends on the flowsheet settings, so postpone final parsing until the flowsheet is loaded
 	return _s;
 }
 
 std::istream& ScriptInterface::operator>>(std::istream& _s, SHoldupCompoundsSE& _obj)
 {
-	_obj.unit = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
-	_obj.holdup = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
-	_obj.phase = Convert<EPhase>(StringFunctions::GetValueFromStream<SNameOrKey>(_s), &PhaseName2Enum);
-	// format depends on the flowsheet settings, so postpone final parsing until the flowsheet is loaded
-	_obj.values = StringFunctions::GetValueFromStream<std::vector<double>>(_s);
+	_obj.unit   = GetValueFromStream<SNameOrIndex>(_s);
+	_obj.holdup = GetValueFromStream<SNameOrIndex>(_s);
+	_obj.phase  = Convert<EPhase>(GetValueFromStream<SNameOrKey>(_s), &PhaseName2Enum);
+	_obj.values = GetValueFromStream<std::vector<double>>(_s); // format depends on the flowsheet settings, so postpone final parsing until the flowsheet is loaded
 	return _s;
 }
 
 std::istream& ScriptInterface::operator>>(std::istream& _s, SHoldupDistributionSE& _obj)
 {
-	_obj.unit = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
-	_obj.holdup = StringFunctions::GetValueFromStream<SNameOrIndex>(_s);
-	_obj.distrType = Convert<EDistrTypes>(StringFunctions::GetValueFromStream<SNameOrKey>(_s), &DistributionName2Enum);
-	_obj.compound = StringFunctions::GetValueFromStream<std::string>(_s);
-	if (StringFunctions::ToUpperCase(_obj.compound) == "MIXTURE" || StringFunctions::ToUpperCase(_obj.compound) == "TOTAL_MIXTURE")
-		_obj.compound.clear();
+	_obj.unit         = GetValueFromStream<SNameOrIndex>(_s);
+	_obj.holdup       = GetValueFromStream<SNameOrIndex>(_s);
+	_obj.distrType    = Convert<EDistrTypes>(GetValueFromStream<SNameOrKey>(_s), &DistributionName2Enum);
+	_obj.compound     = GetValueFromStream<std::string>(_s);
 	// special treatment for PSD
 	if (_obj.distrType.key == DISTR_SIZE)
 	{
-		_obj.psdType = Convert<EPSDTypes>(StringFunctions::GetValueFromStream<SNameOrKey>(_s), &PSDTypeName2Enum);
-		_obj.psdMeans = Convert<EPSDGridType>(StringFunctions::GetValueFromStream<SNameOrKey>(_s), &PSDMeanName2Enum);
+		_obj.psdType  = Convert<EPSDTypes>(GetValueFromStream<SNameOrKey>(_s), &PSDTypeName2Enum);
+		_obj.psdMeans = Convert<EPSDGridType>(GetValueFromStream<SNameOrKey>(_s), &PSDMeanName2Enum);
 	}
-	_obj.function = Convert<EDistrFunction>(StringFunctions::GetValueFromStream<SNameOrKey>(_s), &DistributionFunctionName2Enum);
-	_obj.values = StringFunctions::GetValueFromStream<std::vector<double>>(_s);
+	_obj.function     = Convert<EDistrFunction>(GetValueFromStream<SNameOrKey>(_s), &DistributionFunctionName2Enum);
+	_obj.values       = GetValueFromStream<std::vector<double>>(_s);
+	return _s;
+}
+
+std::istream& ScriptInterface::operator>>(std::istream& _s, SGridDimensionSE& _obj)
+{
+	_obj.unit             = GetValueFromStream<SNameOrIndex>(_s);
+	_obj.distrType        = Convert<EDistrTypes>(GetValueFromStream<SNameOrKey>(_s), &DistributionName2Enum);
+	_obj.entryType        = Convert<EGridEntry>(GetValueFromStream<SNameOrKey>(_s), &GridEntryName2Enum);
+	if (static_cast<EGridEntry>(_obj.entryType.key) == EGridEntry::GRID_NUMERIC)
+	{
+		_obj.function     = Convert<EGridFunction>(GetValueFromStream<SNameOrKey>(_s), &GridFunctionName2Enum);
+		if (static_cast<EDistrTypes>(_obj.distrType.key) == DISTR_SIZE)
+			_obj.psdMeans = Convert<EPSDGridType>(GetValueFromStream<SNameOrKey>(_s), &PSDMeanName2Enum);
+	}
+	_obj.classes          = GetValueFromStream<size_t>(_s);
+	if (static_cast<EGridEntry>(_obj.entryType.key) == EGridEntry::GRID_NUMERIC)
+		_obj.valuesNum    = GetValueFromStream<std::vector<double>>(_s);
+	else if (static_cast<EGridEntry>(_obj.entryType.key) == EGridEntry::GRID_SYMBOLIC)
+		_obj.valuesSym    = GetValueFromStream<std::vector<std::string>>(_s);
 	return _s;
 }

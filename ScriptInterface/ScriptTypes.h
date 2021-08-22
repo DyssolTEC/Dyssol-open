@@ -72,4 +72,18 @@ namespace ScriptInterface
 		std::vector<double> values{};	// Value(s) of the time-dependent distributed parameters for postponed parsing.
 		friend std::istream& operator>>(std::istream& _s, SHoldupDistributionSE& _obj);
 	};
+
+	// Struct to parse script entries (SE) with distribution grids.
+	struct SGridDimensionSE
+	{
+		SNameOrIndex unit{};					// Name or index of the unit container or GLOBAL keyword (index 0).
+		SNameOrKey distrType{};					// Type of the distributed parameter (SIZE/PART_POROSITY/FORM_FACTOR/...).
+		SNameOrKey entryType{};					// Type of grid entries (NUMERIC/SYMBOLIC).
+		SNameOrKey function{};					// Function to define the grid (MANUAL/EQUIDISTANT/GEOMETRIC_INC/...).
+		SNameOrKey psdMeans{};					// Type of the mean values for PSD (DIAMETER/VOLUME).
+		size_t classes{};						// Number of classes.
+		std::vector<double> valuesNum{};		// Values of grid boundaries of function parameters for numeric grid.
+		std::vector<std::string> valuesSym{};	// Value(s) of classes names for symbolic grid.
+		friend std::istream& operator>>(std::istream& _s, SGridDimensionSE& _obj);
+	};
 }

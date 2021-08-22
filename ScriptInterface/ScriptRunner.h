@@ -10,6 +10,7 @@ class CBaseStream;
 class CBaseUnitParameter;
 namespace ScriptInterface
 {
+	enum class EScriptKeys;
 	struct SNameOrIndex;
 	struct SNameOrKey;
 }
@@ -34,6 +35,8 @@ private:
 
 	// Loads the flowsheet, materials database and models paths. Returns success flag.
 	bool LoadFiles(const CScriptJob& _job);
+	// Sets flowsheet main settings from the _job. Returns success flag.
+	bool SetupFlowsheet(const CScriptJob& _job);
 	// Sets flowsheet parameters from the _job. Returns success flag.
 	bool SetupFlowsheetParameters(const CScriptJob& _job);
 	// Sets units parameters from the _job. Returns success flag.
@@ -46,6 +49,9 @@ private:
 
 	// Clears current state of the runner.
 	void Clear();
+
+	// Tries to obtain a pointer to a model and unit. Return the pointers on success or an error message on fail.
+	std::tuple<CBaseUnit*, CUnitContainer*, std::string> TryGetModelPtr(const ScriptInterface::SNameOrIndex& _unit, const ScriptInterface::EScriptKeys& _scriptKey);
 
 	// Returns a pointer to a unit by its name or index. Returns nullptr if the search fails.
 	CUnitContainer* GetUnitPtr(const ScriptInterface::SNameOrIndex& _nameOrIndex);

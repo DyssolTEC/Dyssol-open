@@ -6,6 +6,7 @@
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
 #include <sstream>
+#include <functional>
 
 using namespace ScriptInterface;
 using namespace StrConst;
@@ -31,21 +32,26 @@ bool CScriptRunner::ConfigureFlowsheet(const CScriptJob& _job)
 {
 	bool success = true;
 	if (success) success &= LoadFiles(_job);
+	if (success) success &= SetupFlowsheet(_job);
 	if (success) success &= SetupFlowsheetParameters(_job);
 	if (success) success &= SetupUnitParameters(_job);
 	if (success) success &= SetupHoldups(_job);
 	return success;
 }
 
-#define PRINT_AND_RETURN(MESSAGE, ...) { std::cout << MESSAGE(__VA_ARGS__) << std::endl; return false; }
-#define PRINT_AND_RETURN2(MESSAGE)     { std::cout << MESSAGE << std::endl; return false; }
+// Outputs the message into console and return false.
+bool PrintAndReturn(const std::string& _message)
+{
+	std::cout << _message << std::endl;
+	return false;
+}
 
 bool CScriptRunner::LoadFiles(const CScriptJob& _job)
 {
 	const bool hasSrc = _job.HasKey(EScriptKeys::SOURCE_FILE);
 	const bool hasDst = _job.HasKey(EScriptKeys::RESULT_FILE);
 	if (!hasSrc && !hasDst)
-		PRINT_AND_RETURN(DyssolC_ErrorSrcDst, StrKey(EScriptKeys::SOURCE_FILE), StrKey(EScriptKeys::RESULT_FILE))
+		return PrintAndReturn(DyssolC_ErrorSrcDst(StrKey(EScriptKeys::SOURCE_FILE), StrKey(EScriptKeys::RESULT_FILE)));
 	if (hasSrc && !hasDst)
 		std::cout << DyssolC_WriteSrc(StrKey(EScriptKeys::SOURCE_FILE), StrKey(EScriptKeys::RESULT_FILE)) << std::endl;
 
@@ -53,7 +59,7 @@ bool CScriptRunner::LoadFiles(const CScriptJob& _job)
 	const auto MDBfile = _job.GetValue<path>(EScriptKeys::MATERIALS_DATABASE);
 	std::cout << DyssolC_LoadMDB(MDBfile.string()) << std::endl;
 	if (!m_materialsDatabase.LoadFromFile(MDBfile))
-		PRINT_AND_RETURN(DyssolC_ErrorMDB)
+		return PrintAndReturn(DyssolC_ErrorMDB());
 
 	// set paths to models
 	std::cout << DyssolC_LoadModels(current_path().string()) << std::endl;
@@ -71,7 +77,72 @@ bool CScriptRunner::LoadFiles(const CScriptJob& _job)
 		std::cout << DyssolC_LoadFlowsheet(srcFile.string()) << std::endl;
 		CH5Handler fileHandler;
 		if (!m_flowsheet.LoadFromFile(fileHandler, srcFile))
-			PRINT_AND_RETURN(DyssolC_ErrorLoad)
+			return PrintAndReturn(DyssolC_ErrorLoad());
+	}
+
+	return true;
+}
+
+bool CScriptRunner::SetupFlowsheet(const CScriptJob& _job)
+{
+	// The grids may be cleaned before setting new values. Those grids, which are not mentioned in the script file, are not changed.
+	// If cleaning is requested, on the first access to the grid's holder, clean it, store the key of the holder in this vector and do not clean any further.
+	std::vector<std::string> processed;	// already processed grid's holders
+	const bool keepG = !_job.HasKey(EScriptKeys::GRIDS_KEEP_EXISTING_VALUES) || _job.GetValue<bool>(EScriptKeys::GRIDS_KEEP_EXISTING_VALUES);	// keep or remove values in grids before setting new ones
+
+	for (const auto& entry : _job.GetValues<SGridDimensionSE>(EScriptKeys::DISTRIBUTION_GRID))
+	{
+		// type of the grid
+		const bool mainGrid = entry.unit.name == "GLOBAL";
+		// get all pointers and values
+		const auto [model, unit, message] = !mainGrid ? TryGetModelPtr(entry.unit, EScriptKeys::DISTRIBUTION_GRID) : std::make_tuple(nullptr, nullptr, "");
+		if (!mainGrid && !model)
+			return PrintAndReturn(message);
+		CMultidimensionalGrid grid = mainGrid ? m_flowsheet.GetGrid() : model->GetGrid();
+		// clean the grid if requested and if it is the first access to this grid
+		if (const std::string key = mainGrid ? "GLOBAL" : unit->GetKey(); !keepG && !VectorContains(processed, key))
+		{
+			// remove all except compounds
+			for (const auto& t : grid.GetDimensionsTypes())
+				if (t != DISTR_COMPOUNDS)
+					grid.RemoveDimension(t);
+			// remember
+			processed.push_back(key);
+		}
+		// get some values for the ease of use
+		const auto& type = static_cast<EDistrTypes>(entry.distrType.key);
+		const auto& entryType = static_cast<EGridEntry>(entry.entryType.key);
+		const auto& function = static_cast<EGridFunction>(entry.function.key);
+		// remove grid dimension if it already exists
+		if (grid.HasDimension(type))
+			grid.RemoveDimension(type);
+		// set new grid dimension
+		if (entryType == EGridEntry::GRID_NUMERIC)
+		{
+			// check number of arguments
+			if (function != EGridFunction::GRID_FUN_MANUAL && entry.valuesNum.size() != 2 || function == EGridFunction::GRID_FUN_MANUAL && entry.valuesNum.size() != entry.classes + 1)
+				// TODO: use DyssolC_ErrorArgumentsNumber
+				return PrintAndReturn(DyssolC_ErrorArgumentsNumberGrid(StrKey(EScriptKeys::DISTRIBUTION_GRID), unit->GetName(), entry.distrType.name, entry.distrType.key));
+			// create grid
+			std::vector<double> res = function == EGridFunction::GRID_FUN_MANUAL ? entry.valuesNum : CreateGrid(function, entry.classes, entry.valuesNum[0], entry.valuesNum[1]);
+			// convert volumes to diameters if required
+			if (type == DISTR_SIZE && static_cast<EPSDGridType>(entry.psdMeans.key) == EPSDGridType::VOLUME)
+				res = VolumeToDiameter(res);
+			// add grid dimension
+			grid.AddNumericDimension(type, res);
+		}
+		else if (entryType == EGridEntry::GRID_SYMBOLIC)
+		{
+			if (entry.valuesSym.size() != entry.classes)
+				return PrintAndReturn(DyssolC_ErrorArgumentsNumberGrid(StrKey(EScriptKeys::DISTRIBUTION_GRID), unit->GetName(), entry.distrType.name, entry.distrType.key));
+			// add grid dimension
+			grid.AddSymbolicDimension(type, entry.valuesSym);
+		}
+		// set grid
+		if (mainGrid)
+			m_flowsheet.SetMainGrid(grid);
+		else
+			model->SetGrid(grid);
 	}
 
 	return true;
@@ -117,15 +188,14 @@ bool CScriptRunner::SetupUnitParameters(const CScriptJob& _job)
 {
 	for (const auto& entry : _job.GetValues<SUnitParameterSE>(EScriptKeys::UNIT_PARAMETER))
 	{
-		// get pointer to unit
-		auto* unit = GetUnitPtr(entry.unit);
-		if (!unit)		PRINT_AND_RETURN(DyssolC_ErrorParseUnit, StrKey(EScriptKeys::UNIT_PARAMETER), entry.unit.name, entry.unit.index)
-		// get pointer to unit's model
-		auto* model = unit->GetModel();
-		if (!model)		PRINT_AND_RETURN(DyssolC_ErrorParseModel, StrKey(EScriptKeys::UNIT_PARAMETER), unit->GetName())
+		// get pointer to unit and model
+		auto [model, unit, message] = TryGetModelPtr(entry.unit, EScriptKeys::UNIT_PARAMETER);
+		if (!model)
+			return PrintAndReturn(message);
 		// get pointer to unit parameter
 		auto* param = GetUnitParamPtr(*model, entry.param);
-		if (!param)		PRINT_AND_RETURN(DyssolC_ErrorParseUP, StrKey(EScriptKeys::UNIT_PARAMETER), unit->GetName(), entry.param.name, entry.param.index)
+		if (!param)
+			return PrintAndReturn(DyssolC_ErrorParseUP(StrKey(EScriptKeys::UNIT_PARAMETER), unit->GetName(), entry.param.name, entry.param.index));
 		std::stringstream ss{ entry.values };	// create a stream with parameter values
 		param->ValueFromStream(ss);				// read unit parameter values
 	}
@@ -133,25 +203,23 @@ bool CScriptRunner::SetupUnitParameters(const CScriptJob& _job)
 	return true;
 }
 
+// TODO: split
 bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 {
-	// The holdup may be cleaned before setting time-dependent values. But those holdups, which are not mentioned in the script file, must not be changed.
+	// The holdup may be cleaned before setting time-dependent values. Those holdups, which are not mentioned in the script file, are not changed.
 	// If cleaning is requested, on the first access to the holdup, clean it, store in this vector and do not clean any further.
 	std::vector<CBaseStream*> processed;	// already processed holdups
 	const bool keepTP = !_job.HasKey(EScriptKeys::HOLDUPS_KEEP_EXISTING_VALUES) || _job.GetValue<bool>(EScriptKeys::HOLDUPS_KEEP_EXISTING_VALUES);	// keep or remove time points
 
 	// Obtains the required holdup, cleans it if required and returns a pointer to it.
-	const auto ObtainHoldup = [&](const SNameOrIndex& _unit, const SNameOrIndex& _holdup, EScriptKeys _scriptKey) -> std::tuple<CBaseStream*, CUnitContainer*, std::string>
+	const auto TryGetHoldupPtr = [&](const SNameOrIndex& _unit, const SNameOrIndex& _holdup, EScriptKeys _scriptKey) -> std::tuple<CBaseStream*, CUnitContainer*, std::string>
 	{
-		// get pointer to unit
-		auto* unit = GetUnitPtr(_unit);
-		if (!unit)		return std::make_tuple(nullptr, nullptr, DyssolC_ErrorParseUnit(StrKey(EScriptKeys::HOLDUP_OVERALL), _unit.name, _unit.index));
-		// get pointer to unit's model
-		auto* model = unit->GetModel();
-		if (!model)		return std::make_tuple(nullptr, nullptr, DyssolC_ErrorParseModel(StrKey(EScriptKeys::HOLDUP_OVERALL), unit->GetName()));
+		// get pointer to unit and model
+		auto [model, unit, message] = TryGetModelPtr(_unit, _scriptKey);
+		if (!model)		return std::make_tuple(nullptr, nullptr, message);
 		// get pointer to holdup
 		auto* holdup = GetHoldupPtr(*model, _holdup);
-		if (!holdup)	return std::make_tuple(nullptr, nullptr, DyssolC_ErrorParseHO(StrKey(EScriptKeys::HOLDUP_OVERALL), unit->GetName(), _holdup.name, _holdup.index));
+		if (!holdup)	return std::make_tuple(nullptr, nullptr, DyssolC_ErrorParseHO(StrKey(_scriptKey), unit->GetName(), _holdup.name, _holdup.index));
 		// remove all time points if requested and if it is the first access to this stream
 		if (!keepTP && !VectorContains(processed, holdup))
 		{
@@ -166,11 +234,12 @@ bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 	for (const auto& entry : _job.GetValues<SHoldupDependentSE>(EScriptKeys::HOLDUP_OVERALL))
 	{
 		// get pointer to holdup
-		auto [holdup, unit, message] = ObtainHoldup(entry.unit, entry.holdup, EScriptKeys::HOLDUP_OVERALL);
-		if (!holdup) PRINT_AND_RETURN2(message)
+		auto [holdup, unit, message] = TryGetHoldupPtr(entry.unit, entry.holdup, EScriptKeys::HOLDUP_OVERALL);
+		if (!holdup)
+			return PrintAndReturn(message);
 		// check the number of passed arguments
 		if (entry.values.size() != m_flowsheet.GetOverallPropertiesNumber() && entry.values.size() % (m_flowsheet.GetOverallPropertiesNumber() + 1) != 0)
-			PRINT_AND_RETURN(DyssolC_ErrorArgumentsNumber, StrKey(EScriptKeys::HOLDUP_OVERALL), unit->GetName(), entry.holdup.name, entry.holdup.index)
+			return PrintAndReturn(DyssolC_ErrorArgumentsNumber(StrKey(EScriptKeys::HOLDUP_OVERALL), unit->GetName(), entry.holdup.name, entry.holdup.index));
 		// set values: only values for time point 0 without time are given
 		if (entry.values.size() == m_flowsheet.GetOverallPropertiesNumber())
 			for (size_t iOvr = 0; iOvr < m_flowsheet.GetOverallPropertiesNumber(); ++iOvr)
@@ -186,11 +255,12 @@ bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 	for (const auto& entry : _job.GetValues<SHoldupDependentSE>(EScriptKeys::HOLDUP_PHASES))
 	{
 		// get pointer to holdup
-		auto [holdup, unit, message] = ObtainHoldup(entry.unit, entry.holdup, EScriptKeys::HOLDUP_PHASES);
-		if (!holdup) PRINT_AND_RETURN2(message)
+		auto [holdup, unit, message] = TryGetHoldupPtr(entry.unit, entry.holdup, EScriptKeys::HOLDUP_PHASES);
+		if (!holdup)
+			return PrintAndReturn(message);
 		// check the number of passed arguments
 		if (entry.values.size() != m_flowsheet.GetPhasesNumber() && entry.values.size() % (m_flowsheet.GetPhasesNumber() + 1) != 0)
-			PRINT_AND_RETURN(DyssolC_ErrorArgumentsNumber, StrKey(EScriptKeys::HOLDUP_PHASES), unit->GetName(), entry.holdup.name, entry.holdup.index)
+			return PrintAndReturn(DyssolC_ErrorArgumentsNumber(StrKey(EScriptKeys::HOLDUP_PHASES), unit->GetName(), entry.holdup.name, entry.holdup.index));
 		// set values: only values for time point 0 without time are given
 		if (entry.values.size() == m_flowsheet.GetPhasesNumber())
 			for (size_t iPhase = 0; iPhase < m_flowsheet.GetPhasesNumber(); ++iPhase)
@@ -206,14 +276,15 @@ bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 	for (const auto& entry : _job.GetValues<SHoldupCompoundsSE>(EScriptKeys::HOLDUP_COMPOUNDS))
 	{
 		// get pointer to holdup
-		auto [holdup, unit, message] = ObtainHoldup(entry.unit, entry.holdup, EScriptKeys::HOLDUP_COMPOUNDS);
-		if (!holdup) PRINT_AND_RETURN2(message)
+		auto [holdup, unit, message] = TryGetHoldupPtr(entry.unit, entry.holdup, EScriptKeys::HOLDUP_COMPOUNDS);
+		if (!holdup)
+			return PrintAndReturn(message);
 		// check the number of passed arguments
 		if (entry.values.size() != m_flowsheet.GetCompoundsNumber() && entry.values.size() % (m_flowsheet.GetCompoundsNumber() + 1) != 0)
-			PRINT_AND_RETURN(DyssolC_ErrorArgumentsNumber, StrKey(EScriptKeys::HOLDUP_COMPOUNDS), unit->GetName(), entry.holdup.name, entry.holdup.index, entry.phase.name, entry.phase.key)
+			return PrintAndReturn(DyssolC_ErrorArgumentsNumber(StrKey(EScriptKeys::HOLDUP_COMPOUNDS), unit->GetName(), entry.holdup.name, entry.holdup.index, entry.phase.name, entry.phase.key));
 		// check that all phases are defined
 		if (!m_flowsheet.HasPhase(static_cast<EPhase>(entry.phase.key)))
-			PRINT_AND_RETURN(DyssolC_ErrorNoPhase, StrKey(EScriptKeys::HOLDUP_COMPOUNDS), unit->GetName(), entry.holdup.name, entry.holdup.index, entry.phase.name, entry.phase.key)
+			return PrintAndReturn(DyssolC_ErrorNoPhase(StrKey(EScriptKeys::HOLDUP_COMPOUNDS), unit->GetName(), entry.holdup.name, entry.holdup.index, entry.phase.name, entry.phase.key));
 		// set values: only values for time point 0 without time are given
 		if (entry.values.size() == m_flowsheet.GetCompoundsNumber())
 			holdup->SetCompoundsFractions(0.0, static_cast<EPhase>(entry.phase.key), entry.values);
@@ -227,8 +298,9 @@ bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 	for (const auto& entry : _job.GetValues<SHoldupDistributionSE>(EScriptKeys::HOLDUP_DISTRIBUTION))
 	{
 		// get pointer to holdup
-		auto [holdup, unit, message] = ObtainHoldup(entry.unit, entry.holdup, EScriptKeys::HOLDUP_DISTRIBUTION);
-		if (!holdup) PRINT_AND_RETURN2(message)
+		auto [holdup, unit, message] = TryGetHoldupPtr(entry.unit, entry.holdup, EScriptKeys::HOLDUP_DISTRIBUTION);
+		if (!holdup)
+			return PrintAndReturn(message);
 		// read required values for ease of use
 		const auto distr = static_cast<EDistrTypes>(entry.distrType.key);					// distribution type
 		const auto fun = static_cast<EDistrFunction>(entry.function.key);					// distribution function type
@@ -236,22 +308,21 @@ bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 		const auto psd = static_cast<EPSDTypes>(entry.psdType.key);							// PSD type
 		const bool manual = fun == EDistrFunction::Manual;									// whether manual distribution defined
 		const size_t& len = entry.values.size();											// length of the values vector
-		// TODO: use holdup's grid instead of the global grid
-		const auto& grid = m_flowsheet.GetGrid();											// distributions grid
+		const auto& grid = holdup->GetGrid();												// distributions grid
 		const size_t& classes = grid.GetGridDimension(distr)->ClassesNumber();				// number of classes in the distribution
 		const auto means = distr != DISTR_SIZE ? grid.GetGridDimensionNumeric(distr)->GetClassesMeans() : grid.GetPSDMeans(mean); // mean valued for the PSD grid
 		const bool hasTime = manual && len % (classes + 1) == 0 || !manual && len % 3 == 0;	// whether time is defined
-		const bool mix = entry.compound.empty();											// whether the distribution is defined for the total mixture of for a single compound
+		const bool mix = entry.compound == "MIXTURE";										// whether the distribution is defined for the total mixture of for a single compound
 		// check the number of passed arguments
 		if (manual && len != classes && len % (classes + 1) != 0 || !manual && len != 2 && len % 3 != 0)
-			PRINT_AND_RETURN(DyssolC_ErrorArgumentsNumber, StrKey(EScriptKeys::HOLDUP_DISTRIBUTION), unit->GetName(), entry.holdup.name, entry.holdup.index)
+			return PrintAndReturn(DyssolC_ErrorArgumentsNumber(StrKey(EScriptKeys::HOLDUP_DISTRIBUTION), unit->GetName(), entry.holdup.name, entry.holdup.index));
 		if (!grid.HasDimension(distr))
-			PRINT_AND_RETURN(DyssolC_ErrorNoDistribution, StrKey(EScriptKeys::HOLDUP_DISTRIBUTION), unit->GetName(), entry.holdup.name, entry.holdup.index, entry.distrType.name, entry.distrType.key)
+			return PrintAndReturn(DyssolC_ErrorNoDistribution(StrKey(EScriptKeys::HOLDUP_DISTRIBUTION), unit->GetName(), entry.holdup.name, entry.holdup.index, entry.distrType.name, entry.distrType.key));
 		// get and check compound key
 		const auto* compound = m_materialsDatabase.GetCompound(entry.compound) ? m_materialsDatabase.GetCompound(entry.compound) : m_materialsDatabase.GetCompoundByName(entry.compound);
 		const std::string key = compound ? compound->GetKey() : "";
 		if (!mix && key.empty())
-			PRINT_AND_RETURN(DyssolC_ErrorNoCompound, StrKey(EScriptKeys::HOLDUP_DISTRIBUTION), unit->GetName(), entry.holdup.name, entry.holdup.index, key)
+			return PrintAndReturn(DyssolC_ErrorNoCompound(StrKey(EScriptKeys::HOLDUP_DISTRIBUTION), unit->GetName(), entry.holdup.name, entry.holdup.index, key));
 		// split times and values
 		const size_t dT = manual ? classes : 2;		// step between time points
 		const size_t offs = hasTime ? 1 : 0;		// additional offset due to the time point itself
@@ -282,7 +353,7 @@ bool CScriptRunner::RunSimulation(const CScriptJob& _job)
 	std::cout << DyssolC_Initialize() << std::endl;
 	const std::string error = m_flowsheet.Initialize();
 	if (!error.empty())
-		PRINT_AND_RETURN(DyssolC_ErrorInit, error)
+		return PrintAndReturn(DyssolC_ErrorInit(error));
 
 	// run simulation
 	m_simulator.SetFlowsheet(&m_flowsheet);
@@ -307,6 +378,18 @@ void CScriptRunner::Clear()
 	m_flowsheet.Clear();
 	m_modelsManager.Clear();
 	m_materialsDatabase.Clear();
+}
+
+std::tuple<CBaseUnit*, CUnitContainer*, std::string> CScriptRunner::TryGetModelPtr(const SNameOrIndex& _unit, const EScriptKeys& _scriptKey)
+{
+	// get pointer to unit
+	auto* unit = GetUnitPtr(_unit);
+	if (!unit)		return std::make_tuple(nullptr, nullptr, DyssolC_ErrorParseUnit(StrKey(_scriptKey), _unit.name, _unit.index));
+	// get pointer to unit's model
+	auto* model = unit->GetModel();
+	if (!model)		return std::make_tuple(nullptr, unit   , DyssolC_ErrorParseModel(StrKey(_scriptKey), unit->GetName()));
+	// return pointer to model and empty error message
+	return std::make_tuple(model, unit, "");
 }
 
 CUnitContainer* CScriptRunner::GetUnitPtr(const SNameOrIndex& _nameOrIndex)
