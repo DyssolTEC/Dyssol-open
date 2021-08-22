@@ -68,6 +68,7 @@ namespace ScriptInterface
 		GRIDS_KEEP_EXISTING_VALUES,
 		DISTRIBUTION_GRID,
 		COMPOUNDS,
+		PHASES,
 	};
 
 	// All possible types of script entries.
@@ -87,6 +88,7 @@ namespace ScriptInterface
 		HOLDUP_COMPOUNDS   , // SHoldupCompoundSE
 		HOLDUP_DISTRIBUTION, // SHoldupDistributionSE
 		GRID_DIMENSION     , // SGridDimensionSE
+		PHASES             , // SPhasesSE
 	};
 
 	// Descriptor for an entry of the script file.
@@ -103,7 +105,7 @@ namespace ScriptInterface
 		// Value of the entry of different types.
 		std::variant<bool, int64_t, uint64_t, double, std::string, std::vector<std::string>, std::filesystem::path,
 			SNameOrKey, SUnitParameterSE, SHoldupDependentSE, SHoldupCompoundsSE, SHoldupDistributionSE,
-			SGridDimensionSE> value{};
+			SGridDimensionSE, SPhasesSE> value{};
 
 		SScriptEntry() = default;
 		SScriptEntry(const SScriptEntryDescriptor& _descr) : SScriptEntryDescriptor{ _descr } {}
@@ -128,6 +130,7 @@ namespace ScriptInterface
 		case EEntryType::HOLDUP_COMPOUNDS:		_entry.value = StringFunctions::GetValueFromStream<SHoldupCompoundsSE>(is);			break;
 		case EEntryType::HOLDUP_DISTRIBUTION:	_entry.value = StringFunctions::GetValueFromStream<SHoldupDistributionSE>(is);		break;
 		case EEntryType::GRID_DIMENSION:	    _entry.value = StringFunctions::GetValueFromStream<SGridDimensionSE>(is);			break;
+		case EEntryType::PHASES:				_entry.value = StringFunctions::GetValueFromStream<SPhasesSE>(is);					break;
 		}
 	}
 
@@ -185,6 +188,7 @@ namespace ScriptInterface
 			MAKE_ARG(EScriptKeys::GRIDS_KEEP_EXISTING_VALUES  , EEntryType::BOOL),
 			MAKE_ARG(EScriptKeys::DISTRIBUTION_GRID           , EEntryType::GRID_DIMENSION),
 			MAKE_ARG(EScriptKeys::COMPOUNDS                   , EEntryType::STRINGS),
+			MAKE_ARG(EScriptKeys::PHASES                      , EEntryType::PHASES),
 		};
 	}
 

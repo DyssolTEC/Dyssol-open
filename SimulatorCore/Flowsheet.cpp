@@ -339,7 +339,7 @@ void CFlowsheet::RemoveCompound(const std::string& _key)
 void CFlowsheet::SetCompounds(const std::vector<std::string>& _keys)
 {
 	if (GetCompounds() == _keys) return;
-	// TODO: do not remove all, and sort properly
+	// TODO: do not clean, just add/remove required and sort properly
 	// remove all current compounds
 	for (const auto& c : GetCompounds())
 		RemoveCompound(c);
@@ -455,6 +455,18 @@ void CFlowsheet::RemovePhase(EPhase _phase)
 
 	// remove from the list of overall properties
 	VectorDelete(m_phases, [&](const auto& p) { return p.state == _phase; });
+}
+
+void CFlowsheet::SetPhases(const std::vector<SPhaseDescriptor>& _phases)
+{
+	if (GetPhases() == _phases) return;
+	// TODO: do not clean, just add/remove required and sort properly
+	// remove all current phases
+	for (const auto& p : GetPhases())
+		RemovePhase(p.state);
+	// add new phases
+	for (const auto& p : _phases)
+		AddPhase(p.state, p.name);
 }
 
 std::vector<SPhaseDescriptor> CFlowsheet::GetPhases() const

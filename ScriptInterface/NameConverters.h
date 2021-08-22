@@ -121,7 +121,7 @@ namespace ScriptInterface
 		if (!res.HasKey())
 		{
 			res.key = E2I<T>(_func(StringFunctions::ToUpperCase(_entry.name)));
-			if (res.key == -1)
+			if (static_cast<T>(res.key) == static_cast<T>(-1))
 				std::cout << StrConst::DyssolC_WarningUnknown(_entry.name) << std::endl;
 		}
 		return res;

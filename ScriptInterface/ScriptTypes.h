@@ -86,4 +86,12 @@ namespace ScriptInterface
 		std::vector<std::string> valuesSym{};	// Value(s) of classes names for symbolic grid.
 		friend std::istream& operator>>(std::istream& _s, SGridDimensionSE& _obj);
 	};
+
+	// Struct to parse script entries (SE) with phase descriptors.
+	struct SPhasesSE
+	{
+		std::vector<std::string> names;	// Names of phases.
+		std::vector<SNameOrKey> types;	// Types of phases.
+		friend std::istream& operator>>(std::istream& _s, SPhasesSE& _obj);
+	};
 }

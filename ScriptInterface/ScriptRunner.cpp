@@ -88,14 +88,24 @@ bool CScriptRunner::SetupFlowsheet(const CScriptJob& _job)
 {
 	// setup compounds
 	std::vector<std::string> compoundKeys;
-	for (const auto& entry : _job.GetValue<std::vector<std::string>>(EScriptKeys::COMPOUNDS))
+	for (const auto& list : _job.GetValues<std::vector<std::string>>(EScriptKeys::COMPOUNDS))
 	{
-		const auto* cmp = GetCompoundPtr(entry);
-		if (!cmp)
-			return PrintAndReturn(DyssolC_ErrorParseCompounds(StrKey(EScriptKeys::COMPOUNDS), entry));
-		compoundKeys.push_back(cmp->GetKey());
+		for (const auto& val : list)
+		{
+			const auto* cmp = GetCompoundPtr(val);
+			if (!cmp)
+				return PrintAndReturn(DyssolC_ErrorParseCompounds(StrKey(EScriptKeys::COMPOUNDS), val));
+			compoundKeys.push_back(cmp->GetKey());
+		}
 	}
 	m_flowsheet.SetCompounds(compoundKeys);
+
+	// setup phases
+	std::vector<SPhaseDescriptor> phases;
+	for (const auto& entry : _job.GetValues<SPhasesSE>(EScriptKeys::PHASES))
+		for (size_t i = 0; i < entry.types.size(); ++i)
+			phases.push_back(SPhaseDescriptor{ static_cast<EPhase>(entry.types[i].key), entry.names[i] });
+	m_flowsheet.SetPhases(phases);
 
 	// The grids may be cleaned before setting new values. Those grids, which are not mentioned in the script file, are not changed.
 	// If cleaning is requested, on the first access to the grid's holder, clean it, store the key of the holder in this vector and do not clean any further.

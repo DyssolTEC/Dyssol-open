@@ -80,6 +80,7 @@ struct SPhaseDescriptor
 {
 	EPhase state;		// Phase state.
 	std::string name;	// Phase name.
+	bool operator==(const SPhaseDescriptor& _other) const { return state == _other.state && name == _other.name; }
 };
 
 struct SOverallDescriptor

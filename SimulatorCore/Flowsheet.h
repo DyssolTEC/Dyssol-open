@@ -175,6 +175,8 @@ public:
 	void AddPhase(EPhase _phase, const std::string& _name);
 	// Remove a phase with the specified type from the flowsheet.
 	void RemovePhase(EPhase _phase);
+	// Sets new set of phases.
+	void SetPhases(const std::vector<SPhaseDescriptor>& _phases);
 	// Returns descriptors of all defined phases.
 	std::vector<SPhaseDescriptor> GetPhases() const;
 	// Checks if a phase of the specified type exists in the flowsheet.

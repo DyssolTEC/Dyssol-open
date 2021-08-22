@@ -82,3 +82,15 @@ std::istream& ScriptInterface::operator>>(std::istream& _s, SGridDimensionSE& _o
 		_obj.valuesSym    = GetValueFromStream<std::vector<std::string>>(_s);
 	return _s;
 }
+
+std::istream& ScriptInterface::operator>>(std::istream& _s, SPhasesSE& _obj)
+{
+	_obj.names.clear();
+	_obj.types.clear();
+	while (!_s.eof())
+	{
+		_obj.names.push_back(GetValueFromStream<std::string>(_s));
+		_obj.types.push_back(Convert<EPhase>(GetValueFromStream<SNameOrKey>(_s), &PhaseName2Enum));
+	}
+	return _s;
+}
