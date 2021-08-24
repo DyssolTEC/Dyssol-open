@@ -54,7 +54,8 @@ enum class EArguments
 	UNIT_HOLDUP_PHASES,
 	UNIT_HOLDUP_COMP,
 	UNIT_HOLDUP_SOLID,
-	EXPORT_MASS
+	EXPORT_MASS,
+	EXPORT_PSD,
 };
 
 struct SCacheSettings
