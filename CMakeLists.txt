@@ -97,6 +97,7 @@ ENABLE_TESTING()
 SET(TESTS
 	"01_Unit_Screen_Plit"
   "02_Crusher_Bond"
+  "03_Granulation_Process"
 )
 
 FOREACH(test ${TESTS})
