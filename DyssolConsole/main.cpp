@@ -42,6 +42,7 @@ void ExportResults(const CConfigFileParser& _parser, const CFlowsheet& _flowshee
 	for (const auto& e : _parser.GetValue<std::vector<SExportStreamDataMass>>(EArguments::EXPORT_MASS))
 	{
 		std::ofstream file(StringFunctions::UnicodePath(e.filePath), std::ios_base::app);
+		file.precision(6);
 		const CStream* stream = FindStreamByName(e.streamName);
 		file << "MASS " << stream->GetName();
 		for (const double t : stream->GetAllTimePoints())
@@ -53,6 +54,7 @@ void ExportResults(const CConfigFileParser& _parser, const CFlowsheet& _flowshee
 	for (const auto& e : _parser.GetValue<std::vector<SExportStreamDataMass>>(EArguments::EXPORT_PSD))
 	{
 		std::ofstream file(StringFunctions::UnicodePath(e.filePath), std::ios_base::app);
+		file.precision(6);
 		const CStream* stream = FindStreamByName(e.streamName);
 		file << "PSD " << stream->GetName();
 		for (const double t : stream->GetAllTimePoints())
