@@ -29,19 +29,40 @@ void ExportResults(const CConfigFileParser& _parser, const CFlowsheet& _flowshee
 	if (!_parser.IsValueDefined(EArguments::EXPORT_MASS)) return;
 
 	// remove specified files
-	for (const auto& e : _parser.GetValue<std::vector<SExportMass>>(EArguments::EXPORT_MASS))
+	std::vector<SExportStreamDataMass> allFiles;
+	const auto v1 = _parser.GetValue<std::vector<SExportStreamDataMass>>(EArguments::EXPORT_MASS);
+	const auto v2 = _parser.GetValue<std::vector<SExportStreamDataMass>>(EArguments::EXPORT_PSD);
+	allFiles.insert(allFiles.end(), v1.begin(), v1.end());
+	allFiles.insert(allFiles.end(), v2.begin(), v2.end());
+	for (const auto& e : allFiles)
 		if (FileSystem::FileExists(e.filePath))
 			FileSystem::RemoveFile(e.filePath);
 
-	// export values
-	for (const auto& e : _parser.GetValue<std::vector<SExportMass>>(EArguments::EXPORT_MASS))
+	// export mass flows
+	for (const auto& e : _parser.GetValue<std::vector<SExportStreamDataMass>>(EArguments::EXPORT_MASS))
 	{
 		std::ofstream file(StringFunctions::UnicodePath(e.filePath), std::ios_base::app);
+		file.precision(6);
 		const CStream* stream = FindStreamByName(e.streamName);
-		const auto tp = stream->GetAllTimePoints();
-		file << stream->GetName();
-		for (const double t : tp)
+		file << "MASS " << stream->GetName();
+		for (const double t : stream->GetAllTimePoints())
 			file << " " << t << " " << stream->GetMass(t);
+		file << std::endl;
+	}
+
+	// export PSDs
+	for (const auto& e : _parser.GetValue<std::vector<SExportStreamDataMass>>(EArguments::EXPORT_PSD))
+	{
+		std::ofstream file(StringFunctions::UnicodePath(e.filePath), std::ios_base::app);
+		file.precision(6);
+		const CStream* stream = FindStreamByName(e.streamName);
+		file << "PSD " << stream->GetName();
+		for (const double t : stream->GetAllTimePoints())
+		{
+			file << " " << t;
+			for (double v : stream->GetPSD(t, PSD_MassFrac))
+				file << " " << v;
+		}
 		file << std::endl;
 	}
 }

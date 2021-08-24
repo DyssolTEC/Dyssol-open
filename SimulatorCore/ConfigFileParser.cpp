@@ -47,7 +47,8 @@ CConfigFileParser::CConfigFileParser()
 		MAKE_ARGUMENT(EArguments::UNIT_HOLDUP_PHASES,	EArgType::argHLDP_DISTRS),
 		MAKE_ARGUMENT(EArguments::UNIT_HOLDUP_COMP,		EArgType::argHLDP_COMPS),
 		MAKE_ARGUMENT(EArguments::UNIT_HOLDUP_SOLID,	EArgType::argHLDP_SOLIDS),
-		MAKE_ARGUMENT(EArguments::EXPORT_MASS,	        EArgType::argEXPORT_MASS)
+		MAKE_ARGUMENT(EArguments::EXPORT_MASS,	        EArgType::argEXPORT_STREAM_DATA),
+		MAKE_ARGUMENT(EArguments::EXPORT_PSD,	        EArgType::argEXPORT_STREAM_DATA)
 	};
 }
 
@@ -296,8 +297,8 @@ bool CConfigFileParser::Parse(const std::string& _sFile)
 		case EArgType::argHLDP_SOLIDS:
 			static_cast<std::vector<SHoldupParam>*>(arg->value)->push_back(CreateSolidDistrFromSS(ss));
 			break;
-		case EArgType::argEXPORT_MASS:
-			static_cast<std::vector<SExportMass>*>(arg->value)->push_back(ExportMassFromSS(ss));
+		case EArgType::argEXPORT_STREAM_DATA:
+			static_cast<std::vector<SExportStreamDataMass>*>(arg->value)->push_back(ExportStreamDataFromSS(ss));
 			break;
 		}
 	}
@@ -403,9 +404,9 @@ SHoldupParam CConfigFileParser::CreateSolidDistrFromSS(std::stringstream& _ss) c
 	return holdup;
 }
 
-SExportMass CConfigFileParser::ExportMassFromSS(std::stringstream& _ss) const
+SExportStreamDataMass CConfigFileParser::ExportStreamDataFromSS(std::stringstream& _ss) const
 {
-	SExportMass res;
+	SExportStreamDataMass res;
 	res.streamName = GetValueFromStream<std::string>(&_ss);
 	res.filePath   = TrimFromSymbols(GetRestOfLine(&_ss), StrConst::COMMENT_SYMBOL);
 	return res;
@@ -432,7 +433,7 @@ void CConfigFileParser::AllocateMemory(SArgument* _arg)
 	case EArgType::argHLDP_DISTRS:	_arg->value = new std::vector<SHoldupParam>();		break;
 	case EArgType::argHLDP_COMPS:	_arg->value = new std::vector<SHoldupParam>();		break;
 	case EArgType::argHLDP_SOLIDS:	_arg->value = new std::vector<SHoldupParam>();		break;
-	case EArgType::argEXPORT_MASS:	_arg->value = new std::vector<SExportMass>();		break;
+	case EArgType::argEXPORT_STREAM_DATA:	_arg->value = new std::vector<SExportStreamDataMass>();		break;
 	}
 }
 
@@ -449,7 +450,7 @@ void CConfigFileParser::DeallocateMemory(SArgument* _arg)
 	case EArgType::argHLDP_DISTRS:	delete static_cast<std::vector<SHoldupParam>*>(_arg->value);		break;
 	case EArgType::argHLDP_COMPS:	delete static_cast<std::vector<SHoldupParam>*>(_arg->value);		break;
 	case EArgType::argHLDP_SOLIDS:	delete static_cast<std::vector<SHoldupParam>*>(_arg->value);		break;
-	case EArgType::argEXPORT_MASS:	delete static_cast<std::vector<SExportMass>*>(_arg->value);			break;
+	case EArgType::argEXPORT_STREAM_DATA:	delete static_cast<std::vector<SExportStreamDataMass>*>(_arg->value);			break;
 	}
 	_arg->value = nullptr;
 }
