@@ -50,7 +50,7 @@ jobs:
       working-directory: ${{github.workspace}}/build
       shell: bash
       # Execute the build.  You can specify a specific target with "--target <NAME>"
-      run: make test
+      run: CTEST_OUTPUT_ON_FAILURE=1 make test
 
   build-clang:
     # The CMake configure and build commands are platform agnostic and should work equally
