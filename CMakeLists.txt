@@ -93,11 +93,11 @@ SET(INSTALL_DOCS_PATH  ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/Dyssol/d
 ENABLE_TESTING()
 
 
-set(TESTS
+SET(TESTS
 	"01_Unit_Screen_Plit"
 )
 
-FOREACH(test  ${TESTS})
+FOREACH(test ${TESTS})
   SET(CURRENT_TEST ${test})
   CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/tests/${CURRENT_TEST}/script.txt" "${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/script.txt")
   CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/tests/compare.sh" "${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/compare.sh")
@@ -110,6 +110,5 @@ FOREACH(test  ${TESTS})
   ADD_TEST(NAME basic_01_diff
           COMMAND sh ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/compare.sh
   )
-
-ENDFOREACH(i  ${TESTS})
+ENDFOREACH(test ${TESTS})
 
