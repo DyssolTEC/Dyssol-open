@@ -88,19 +88,28 @@ ADD_SUBDIRECTORY("${CMAKE_SOURCE_DIR}/Solvers")
 ADD_SUBDIRECTORY("${CMAKE_SOURCE_DIR}/DyssolMainWindow")
 
 
+SET(INSTALL_DOCS_PATH  ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/Dyssol/docs)
 
 ENABLE_TESTING()
-ADD_TEST(NAME basic_DyssolC
-         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-         COMMAND ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/DyssolC)
 
-#===========================================================
-#Execute standard checks
-#ADD_CUSTOM_TARGET(test)
-#ADD_CUSTOM_COMMAND(
-#                  TARGET test POST_BUILD
-#                  COMMAND ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/DyssolC 
-#                  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-#                  DEPENDS ${CMAKE_INSTALL_BINDIR}/DyssolC
-#                  )
-#===========================================================
+
+set(TESTS
+	"01_Unit_Screen_Plit"
+)
+
+FOREACH(test  ${TESTS})
+  SET(CURRENT_TEST ${test})
+  CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/tests/${CURRENT_TEST}/script.txt" "${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/script.txt")
+  CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/tests/compare.sh" "${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/compare.sh")
+
+  ADD_TEST(NAME basic_01_run
+          WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+          COMMAND ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/DyssolC ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/script.txt
+  )
+
+  ADD_TEST(NAME basic_01_diff
+          COMMAND sh ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/compare.sh
+  )
+
+ENDFOREACH(i  ${TESTS})
+
