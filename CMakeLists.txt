@@ -87,11 +87,12 @@ ADD_SUBDIRECTORY("${CMAKE_SOURCE_DIR}/Units")
 ADD_SUBDIRECTORY("${CMAKE_SOURCE_DIR}/Solvers")
 ADD_SUBDIRECTORY("${CMAKE_SOURCE_DIR}/DyssolMainWindow")
 
-
 SET(INSTALL_DOCS_PATH  ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/Dyssol/docs)
 
-ENABLE_TESTING()
+#===============================================
+# Testing ======================================
 
+ENABLE_TESTING()
 
 SET(TESTS
 	"01_Unit_Screen_Plit"
