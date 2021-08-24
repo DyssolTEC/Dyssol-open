@@ -1,0 +1,5 @@
+SOURCE_FILE			${CMAKE_SOURCE_DIR}/DyssolInstallers/Data/Example Flowsheets/Units/Crusher Bond.dflw
+RESULT_FILE			${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/Res.dlfw
+MODELS_PATH			${INSTALL_UNITS_LIB_PATH}
+MATERIALS_DATABASE	${CMAKE_SOURCE_DIR}/Materials.dmdb
+EXPORT_MASS Out  ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res

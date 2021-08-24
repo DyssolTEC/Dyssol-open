@@ -95,6 +95,7 @@ ENABLE_TESTING()
 
 SET(TESTS
 	"01_Unit_Screen_Plit"
+  "02_Crusher_Bond"
 )
 
 FOREACH(test ${TESTS})
@@ -102,12 +103,12 @@ FOREACH(test ${TESTS})
   CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/tests/${CURRENT_TEST}/script.txt" "${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/script.txt")
   CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/tests/compare.sh" "${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/compare.sh")
 
-  ADD_TEST(NAME basic_01_run
+  ADD_TEST(NAME ${CURRENT_TEST}_run
           WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
           COMMAND ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/DyssolC ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/script.txt
   )
 
-  ADD_TEST(NAME basic_01_diff
+  ADD_TEST(NAME ${CURRENT_TEST}_diff
           COMMAND sh ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/compare.sh
   )
 ENDFOREACH(test ${TESTS})

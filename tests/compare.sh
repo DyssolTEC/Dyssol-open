@@ -9,5 +9,6 @@ if cmp -s "$ideal" "$real"; then
     exit 0
 else
     printf 'The file "%s" is different from "%s"\n' "$ideal" "$real"
+    diff "$ideal" "$real"
     exit 1
 fi
