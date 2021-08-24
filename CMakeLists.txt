@@ -86,3 +86,21 @@ INSTALL(DIRECTORY ${CMAKE_SOURCE_DIR}/Documentation/ DESTINATION ${INSTALL_DOCS_
 ADD_SUBDIRECTORY("${CMAKE_SOURCE_DIR}/Units")
 ADD_SUBDIRECTORY("${CMAKE_SOURCE_DIR}/Solvers")
 ADD_SUBDIRECTORY("${CMAKE_SOURCE_DIR}/DyssolMainWindow")
+
+
+
+ENABLE_TESTING()
+ADD_TEST(NAME basic_DyssolC
+         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+         COMMAND ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/DyssolC)
+
+#===========================================================
+#Execute standard checks
+#ADD_CUSTOM_TARGET(test)
+#ADD_CUSTOM_COMMAND(
+#                  TARGET test POST_BUILD
+#                  COMMAND ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/DyssolC 
+#                  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+#                  DEPENDS ${CMAKE_INSTALL_BINDIR}/DyssolC
+#                  )
+#===========================================================
