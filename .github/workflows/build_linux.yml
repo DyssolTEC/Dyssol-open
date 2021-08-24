@@ -179,7 +179,7 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source
       # and build directories, but this is only available with CMake 3.13 and higher.
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: ASAN_OPTIONS=detect_odr_violation=0 CC=/usr/bin/clang-10 CXX=/usr/bin/clang++-10  cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/inst -DCMAKE_CXX_FLAGS="-fno-omit-frame-pointer -fsanitize=address"
+      run: CC=/usr/bin/clang-10 CXX=/usr/bin/clang++-10  cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/inst -DCMAKE_CXX_FLAGS="-fno-omit-frame-pointer -fsanitize=address"
 
     - name: Build
       working-directory: ${{github.workspace}}/build
