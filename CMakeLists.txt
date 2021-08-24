@@ -95,9 +95,9 @@ SET(INSTALL_DOCS_PATH  ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/Dyssol/d
 ENABLE_TESTING()
 
 SET(TESTS
-	"01_Unit_Screen_Plit"
+  "01_Unit_Screen_Plit"
   "02_Crusher_Bond"
-  #"03_Granulation_Process"
+  "03_Granulation_Process"
 )
 
 FOREACH(test ${TESTS})

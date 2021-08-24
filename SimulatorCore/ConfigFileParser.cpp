@@ -47,6 +47,7 @@ CConfigFileParser::CConfigFileParser()
 		MAKE_ARGUMENT(EArguments::UNIT_HOLDUP_PHASES,	EArgType::argHLDP_DISTRS),
 		MAKE_ARGUMENT(EArguments::UNIT_HOLDUP_COMP,		EArgType::argHLDP_COMPS),
 		MAKE_ARGUMENT(EArguments::UNIT_HOLDUP_SOLID,	EArgType::argHLDP_SOLIDS),
+		MAKE_ARGUMENT(EArguments::TEXT_EXPORT_FILE,	    EArgType::argSTRING),
 		MAKE_ARGUMENT(EArguments::EXPORT_MASS,	        EArgType::argEXPORT_STREAM_DATA),
 		MAKE_ARGUMENT(EArguments::EXPORT_PSD,	        EArgType::argEXPORT_STREAM_DATA)
 	};
@@ -408,7 +409,13 @@ SExportStreamDataMass CConfigFileParser::ExportStreamDataFromSS(std::stringstrea
 {
 	SExportStreamDataMass res;
 	res.streamName = GetValueFromStream<std::string>(&_ss);
-	res.filePath   = TrimFromSymbols(GetRestOfLine(&_ss), StrConst::COMMENT_SYMBOL);
+	const auto times = TrimFromSymbols(GetRestOfLine(&_ss), StrConst::COMMENT_SYMBOL);
+	if (!times.empty())
+	{
+		std::stringstream ss2(times);
+		while (!ss2.eof() && ss2.good())
+			res.timePoints.push_back(GetValueFromStream<double>(&ss2));
+	}
 	return res;
 }
 

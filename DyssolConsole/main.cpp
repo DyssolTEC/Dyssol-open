@@ -18,6 +18,8 @@
 
 void ExportResults(const CConfigFileParser& _parser, const CFlowsheet& _flowsheet)
 {
+	if (!_parser.IsValueDefined(EArguments::TEXT_EXPORT_FILE)) return;
+
 	const auto FindStreamByName = [&](const std::string& _name) -> const CStream*
 	{
 		const auto streams = _flowsheet.GetAllStreams();
@@ -26,26 +28,16 @@ void ExportResults(const CConfigFileParser& _parser, const CFlowsheet& _flowshee
 		return *it;
 	};
 
-	if (!_parser.IsValueDefined(EArguments::EXPORT_MASS)) return;
-
-	// remove specified files
-	std::vector<SExportStreamDataMass> allFiles;
-	const auto v1 = _parser.GetValue<std::vector<SExportStreamDataMass>>(EArguments::EXPORT_MASS);
-	const auto v2 = _parser.GetValue<std::vector<SExportStreamDataMass>>(EArguments::EXPORT_PSD);
-	allFiles.insert(allFiles.end(), v1.begin(), v1.end());
-	allFiles.insert(allFiles.end(), v2.begin(), v2.end());
-	for (const auto& e : allFiles)
-		if (FileSystem::FileExists(e.filePath))
-			FileSystem::RemoveFile(e.filePath);
+	// open export text file
+	std::ofstream file(StringFunctions::UnicodePath(_parser.GetValue<std::wstring>(EArguments::TEXT_EXPORT_FILE)));
+	file.precision(6);
 
 	// export mass flows
 	for (const auto& e : _parser.GetValue<std::vector<SExportStreamDataMass>>(EArguments::EXPORT_MASS))
 	{
-		std::ofstream file(StringFunctions::UnicodePath(e.filePath), std::ios_base::app);
-		file.precision(6);
 		const CStream* stream = FindStreamByName(e.streamName);
 		file << "MASS " << stream->GetName();
-		for (const double t : stream->GetAllTimePoints())
+		for (const double t : !e.timePoints.empty() ? e.timePoints : stream->GetAllTimePoints())
 			file << " " << t << " " << stream->GetMass(t);
 		file << std::endl;
 	}
@@ -53,14 +45,12 @@ void ExportResults(const CConfigFileParser& _parser, const CFlowsheet& _flowshee
 	// export PSDs
 	for (const auto& e : _parser.GetValue<std::vector<SExportStreamDataMass>>(EArguments::EXPORT_PSD))
 	{
-		std::ofstream file(StringFunctions::UnicodePath(e.filePath), std::ios_base::app);
-		file.precision(6);
 		const CStream* stream = FindStreamByName(e.streamName);
 		file << "PSD " << stream->GetName();
-		for (const double t : stream->GetAllTimePoints())
+		for (const double t : !e.timePoints.empty() ? e.timePoints : stream->GetAllTimePoints())
 		{
 			file << " " << t;
-			for (double v : stream->GetPSD(t, PSD_MassFrac))
+			for (const double v : stream->GetPSD(t, PSD_MassFrac))
 				file << " " << v;
 		}
 		file << std::endl;
