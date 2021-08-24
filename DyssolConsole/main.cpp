@@ -301,7 +301,7 @@ int main(int argc, const char *argv[])
 	if (argc < 2)
 	{
 		std::cout << "Error: Path to a config file is not specified." << std::endl;
-		return 0;
+		return 1;
 	}
 
 	const std::string sParam(argv[1]);
@@ -321,7 +321,7 @@ int main(int argc, const char *argv[])
 		if (!bParsed)
 		{
 			std::cout << "Error: The specified config file can not be parsed or contains errors." << std::endl;
-			return 0;
+			return 1;
 		}
 
 		RunSimulation(parser);
