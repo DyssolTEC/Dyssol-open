@@ -12,7 +12,39 @@
 #include "StringFunctions.h"
 #include "ThreadPool.h"
 #include "DyssolSystemDefines.h"
+#include "FileSystem.h"
 #include <chrono>
+#include <fstream>
+
+void ExportResults(const CConfigFileParser& _parser, const CFlowsheet& _flowsheet)
+{
+	const auto FindStreamByName = [&](const std::string& _name) -> const CStream*
+	{
+		const auto streams = _flowsheet.GetAllStreams();
+		const auto it = std::find_if(streams.begin(), streams.end(), [&](const CStream* _s) { return _s->GetName() == _name; });
+		if (it == streams.end()) return {};
+		return *it;
+	};
+
+	if (!_parser.IsValueDefined(EArguments::EXPORT_MASS)) return;
+
+	// remove specified files
+	for (const auto& e : _parser.GetValue<std::vector<SExportMass>>(EArguments::EXPORT_MASS))
+		if (FileSystem::FileExists(e.filePath))
+			FileSystem::RemoveFile(e.filePath);
+
+	// export values
+	for (const auto& e : _parser.GetValue<std::vector<SExportMass>>(EArguments::EXPORT_MASS))
+	{
+		std::ofstream file(StringFunctions::UnicodePath(e.filePath), std::ios_base::app);
+		const CStream* stream = FindStreamByName(e.streamName);
+		const auto tp = stream->GetAllTimePoints();
+		file << stream->GetName();
+		for (const double t : tp)
+			file << " " << t << " " << stream->GetMass(t);
+		file << std::endl;
+	}
+}
 
 void RunSimulation(const CConfigFileParser& _parser)
 {
@@ -259,6 +291,9 @@ void RunSimulation(const CConfigFileParser& _parser)
 	flowsheet.SaveToFile(fileHandler, sDstFile);
 
 	std::cout << "Simulation finished in " << std::chrono::duration_cast<std::chrono::seconds>(tEnd - tStart).count() << " [s]" << std::endl;
+
+	// export results to text files if necessary
+	ExportResults(_parser, flowsheet);
 }
 
 int main(int argc, const char *argv[])
