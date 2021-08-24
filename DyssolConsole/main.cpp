@@ -12,7 +12,60 @@
 #include "StringFunctions.h"
 #include "ThreadPool.h"
 #include "DyssolSystemDefines.h"
+#include "FileSystem.h"
 #include <chrono>
+#include <fstream>
+
+void ExportResults(const CConfigFileParser& _parser, const CFlowsheet& _flowsheet)
+{
+	const auto FindStreamByName = [&](const std::string& _name) -> const CStream*
+	{
+		const auto streams = _flowsheet.GetAllStreams();
+		const auto it = std::find_if(streams.begin(), streams.end(), [&](const CStream* _s) { return _s->GetName() == _name; });
+		if (it == streams.end()) return {};
+		return *it;
+	};
+
+	if (!_parser.IsValueDefined(EArguments::EXPORT_MASS)) return;
+
+	// remove specified files
+	std::vector<SExportStreamDataMass> allFiles;
+	const auto v1 = _parser.GetValue<std::vector<SExportStreamDataMass>>(EArguments::EXPORT_MASS);
+	const auto v2 = _parser.GetValue<std::vector<SExportStreamDataMass>>(EArguments::EXPORT_PSD);
+	allFiles.insert(allFiles.end(), v1.begin(), v1.end());
+	allFiles.insert(allFiles.end(), v2.begin(), v2.end());
+	for (const auto& e : allFiles)
+		if (FileSystem::FileExists(e.filePath))
+			FileSystem::RemoveFile(e.filePath);
+
+	// export mass flows
+	for (const auto& e : _parser.GetValue<std::vector<SExportStreamDataMass>>(EArguments::EXPORT_MASS))
+	{
+		std::ofstream file(StringFunctions::UnicodePath(e.filePath), std::ios_base::app);
+		file.precision(6);
+		const CStream* stream = FindStreamByName(e.streamName);
+		file << "MASS " << stream->GetName();
+		for (const double t : stream->GetAllTimePoints())
+			file << " " << t << " " << stream->GetMass(t);
+		file << std::endl;
+	}
+
+	// export PSDs
+	for (const auto& e : _parser.GetValue<std::vector<SExportStreamDataMass>>(EArguments::EXPORT_PSD))
+	{
+		std::ofstream file(StringFunctions::UnicodePath(e.filePath), std::ios_base::app);
+		file.precision(6);
+		const CStream* stream = FindStreamByName(e.streamName);
+		file << "PSD " << stream->GetName();
+		for (const double t : stream->GetAllTimePoints())
+		{
+			file << " " << t;
+			for (double v : stream->GetPSD(t, PSD_MassFrac))
+				file << " " << v;
+		}
+		file << std::endl;
+	}
+}
 
 void RunSimulation(const CConfigFileParser& _parser)
 {
@@ -259,6 +312,9 @@ void RunSimulation(const CConfigFileParser& _parser)
 	flowsheet.SaveToFile(fileHandler, sDstFile);
 
 	std::cout << "Simulation finished in " << std::chrono::duration_cast<std::chrono::seconds>(tEnd - tStart).count() << " [s]" << std::endl;
+
+	// export results to text files if necessary
+	ExportResults(_parser, flowsheet);
 }
 
 int main(int argc, const char *argv[])
@@ -266,7 +322,7 @@ int main(int argc, const char *argv[])
 	if (argc < 2)
 	{
 		std::cout << "Error: Path to a config file is not specified." << std::endl;
-		return 0;
+		return 1;
 	}
 
 	const std::string sParam(argv[1]);
@@ -286,7 +342,7 @@ int main(int argc, const char *argv[])
 		if (!bParsed)
 		{
 			std::cout << "Error: The specified config file can not be parsed or contains errors." << std::endl;
-			return 0;
+			return 1;
 		}
 
 		RunSimulation(parser);

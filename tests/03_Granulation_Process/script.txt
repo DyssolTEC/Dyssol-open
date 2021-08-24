@@ -1,0 +1,16 @@
+SOURCE_FILE			${CMAKE_SOURCE_DIR}/DyssolInstallers/Data/Example Flowsheets/Processes/Granulation Process.dflw
+RESULT_FILE			${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/Res.dlfw
+MODELS_PATH		   	${INSTALL_UNITS_LIB_PATH}
+MATERIALS_DATABASE	   ${CMAKE_SOURCE_DIR}/Materials.dmdb
+EXPORT_MASS InSusp     ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
+EXPORT_MASS InNucl     ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
+EXPORT_MASS InGas      ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
+EXPORT_MASS MixNucl    ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
+EXPORT_MASS GranDust   ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
+EXPORT_MASS GranProd   ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
+EXPORT_MASS Coarse1    ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
+EXPORT_MASS Fines1     ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
+EXPORT_MASS Coarse2    ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
+EXPORT_MASS Fines2     ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
+EXPORT_MASS Milled     ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
+EXPORT_MASS Mixed      ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res

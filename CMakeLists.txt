@@ -86,3 +86,32 @@ INSTALL(DIRECTORY ${CMAKE_SOURCE_DIR}/Documentation/ DESTINATION ${INSTALL_DOCS_
 ADD_SUBDIRECTORY("${CMAKE_SOURCE_DIR}/Units")
 ADD_SUBDIRECTORY("${CMAKE_SOURCE_DIR}/Solvers")
 ADD_SUBDIRECTORY("${CMAKE_SOURCE_DIR}/DyssolMainWindow")
+
+SET(INSTALL_DOCS_PATH  ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/Dyssol/docs)
+
+#===============================================
+# Testing ======================================
+
+ENABLE_TESTING()
+
+SET(TESTS
+	"01_Unit_Screen_Plit"
+  "02_Crusher_Bond"
+  #"03_Granulation_Process"
+)
+
+FOREACH(test ${TESTS})
+  SET(CURRENT_TEST ${test})
+  CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/tests/${CURRENT_TEST}/script.txt" "${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/script.txt")
+  CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/tests/compare.sh" "${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/compare.sh")
+
+  ADD_TEST(NAME ${CURRENT_TEST}_run
+          WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+          COMMAND ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/DyssolC ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/script.txt
+  )
+
+  ADD_TEST(NAME ${CURRENT_TEST}_diff
+          COMMAND sh ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/compare.sh
+  )
+ENDFOREACH(test ${TESTS})
+

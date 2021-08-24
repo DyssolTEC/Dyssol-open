@@ -43,9 +43,15 @@ struct SHoldupParam
 	std::vector<double> vValues;                        // Grid values.
 };
 
+struct SExportStreamDataMass
+{
+	std::string streamName;
+	std::string filePath;
+};
+
 class CConfigFileParser
 {
-	enum class EArgType { argDOUBLE, argUNSIGNED, argSTRING, argSTRINGS, argGRIDS, argUNITS, argHLDP_DISTRS, argHLDP_COMPS, argHLDP_SOLIDS };
+	enum class EArgType { argDOUBLE, argUNSIGNED, argSTRING, argSTRINGS, argGRIDS, argUNITS, argHLDP_DISTRS, argHLDP_COMPS, argHLDP_SOLIDS, argEXPORT_STREAM_DATA };
 	struct SArgument
 	{
 		EArguments name;     // Argument (SOURCE_FILE | SIMULATION_TIME | UNIT_PARAMETER |...).
@@ -86,6 +92,7 @@ private:
 	SHoldupParam CreateDistrFromSS(std::stringstream& _ss) const;
 	SHoldupParam CreateCompoundDistrFromSS(std::stringstream& _ss) const;
 	SHoldupParam CreateSolidDistrFromSS(std::stringstream& _ss) const;
+	SExportStreamDataMass ExportStreamDataFromSS(std::stringstream& _ss) const;
 	void ClearArguments();
 
 	static void AllocateMemory(SArgument* _arg);
