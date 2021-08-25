@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        name: [linux-gcc]
+        name: [linux]
         include:
           - name: linux-gcc
             os: linux
@@ -35,21 +35,21 @@ jobs:
             os: linux
             cc: clang
             cflags: ""
-            linker_flage: ""
+            linker_flags: ""
             doc_generate: no
             build_type: Release
           - name: linux-clang-asan
             os: linux
             cc: clang
             cflags: "-fno-omit-frame-pointer -fsanitize=address"
-            linker_flage: "-fno-omit-frame-pointer -fsanitize=address"
+            linker_flags: "-fno-omit-frame-pointer -fsanitize=address"
             doc_generate: no
             build_type: Debug
           - name: linux-clang-ubsan
             os: linux
             cc: clang
             cflags: "-fsanitize=undefined"
-            linker_flage: ""
+            linker_flags: ""
             doc_generate: no
             build_type: Debug
 
@@ -72,7 +72,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: ${{github.workspace}}/build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_C_COMPILER=${{ matrix.cc }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_C_FLAGS="${{ matrix.cflags }}" -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.linker_flage }}"  -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/inst
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_C_COMPILER=${{ matrix.cc }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_C_FLAGS="${{ matrix.cflags }}" -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.linker_flags }}"  -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/inst
 
     - name: Build
       working-directory: ${{github.workspace}}/build
@@ -96,7 +96,7 @@ jobs:
       run: make doc
 
     - name: Deploy
-      if: ${{ contains(matrix.doc_generate, 'yes') &&  github.ref == 'refs/heads/test-new-ci3' }}
+      if: ${{ contains(matrix.doc_generate, 'yes') &&  github.ref == 'refs/heads/master' }}
       uses: JamesIves/github-pages-deploy-action@4.1.4
       with:
         branch: gh-pages # The branch the action should deploy to.
