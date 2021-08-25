@@ -412,7 +412,13 @@ SExportStreamDataMass CConfigFileParser::ExportStreamDataFromSS(std::stringstrea
 {
 	SExportStreamDataMass res;
 	res.streamName = GetValueFromStream<std::string>(&_ss);
-	res.filePath   = TrimFromSymbols(GetRestOfLine(&_ss), StrConst::COMMENT_SYMBOL);
+	const auto times = TrimFromSymbols(GetRestOfLine(&_ss), StrConst::COMMENT_SYMBOL);
+	if (!times.empty())
+	{
+		std::stringstream ss2(times);
+		while (!ss2.eof() && ss2.good())
+			res.timePoints.push_back(GetValueFromStream<double>(&ss2));
+	}
 	return res;
 }
 

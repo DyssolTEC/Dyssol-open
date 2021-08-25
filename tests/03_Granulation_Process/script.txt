@@ -1,16 +1,31 @@
-SOURCE_FILE			${CMAKE_SOURCE_DIR}/DyssolInstallers/Data/Example Flowsheets/Processes/Granulation Process.dflw
-RESULT_FILE			${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/Res.dlfw
-MODELS_PATH		   	${INSTALL_UNITS_LIB_PATH}
-MATERIALS_DATABASE	   ${CMAKE_SOURCE_DIR}/Materials.dmdb
-EXPORT_MASS InSusp     ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
-EXPORT_MASS InNucl     ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
-EXPORT_MASS InGas      ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
-EXPORT_MASS MixNucl    ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
-EXPORT_MASS GranDust   ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
-EXPORT_MASS GranProd   ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
-EXPORT_MASS Coarse1    ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
-EXPORT_MASS Fines1     ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
-EXPORT_MASS Coarse2    ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
-EXPORT_MASS Fines2     ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
-EXPORT_MASS Milled     ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
-EXPORT_MASS Mixed      ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
+SOURCE_FILE            ${CMAKE_SOURCE_DIR}/DyssolInstallers/Data/Example Flowsheets/Processes/Granulation Process.dflw
+RESULT_FILE            ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/Res.dlfw
+MODELS_PATH            ${INSTALL_UNITS_LIB_PATH}
+MATERIALS_DATABASE     ${CMAKE_SOURCE_DIR}/Materials.dmdb
+SIMULATION_TIME        2000
+TEXT_EXPORT_FILE       ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
+TEXT_EXPORT_SIGNIFICANCE_LIMIT  1e-7
+EXPORT_MASS InSusp     0 2000
+EXPORT_MASS InNucl     0 2000
+EXPORT_MASS InGas      0 2000
+EXPORT_MASS MixNucl    0 2000
+EXPORT_MASS GranDust   0 2000
+EXPORT_MASS GranProd   0 2000
+EXPORT_MASS Coarse1    0 2000
+EXPORT_MASS Fines1     0 2000
+EXPORT_MASS Coarse2    0 2000
+EXPORT_MASS Fines2     0 2000
+EXPORT_MASS Milled     0 2000
+EXPORT_MASS Mixed      0 2000
+EXPORT_PSD  InSusp     0 2000
+EXPORT_PSD  InNucl     0 2000
+EXPORT_PSD  InGas      0 2000
+EXPORT_PSD  MixNucl    0 2000
+EXPORT_PSD  GranDust   0 2000
+EXPORT_PSD  GranProd   0 2000
+EXPORT_PSD  Coarse1    0 2000
+EXPORT_PSD  Fines1     0 2000
+EXPORT_PSD  Coarse2    0 2000
+EXPORT_PSD  Fines2     0 2000
+EXPORT_PSD  Milled     0 2000
+EXPORT_PSD  Mixed      0 2000

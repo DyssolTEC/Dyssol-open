@@ -95,23 +95,25 @@ SET(INSTALL_DOCS_PATH  ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/Dyssol/d
 ENABLE_TESTING()
 
 SET(TESTS
-	"01_Unit_Screen_Plit"
+  "01_Unit_Screen_Plit"
   "02_Crusher_Bond"
-  #"03_Granulation_Process"
+  "03_Granulation_Process"
+  "04_Agglomerator"
 )
 
 FOREACH(test ${TESTS})
   SET(CURRENT_TEST ${test})
   CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/tests/${CURRENT_TEST}/script.txt" "${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/script.txt")
-  CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/tests/compare.sh" "${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/compare.sh")
 
   ADD_TEST(NAME ${CURRENT_TEST}_run
           WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
           COMMAND ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/DyssolC ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/script.txt
   )
 
+  FILE(READ ${CMAKE_SOURCE_DIR}/tests/${CURRENT_TEST}/tolerance TOLERANCE)
+
   ADD_TEST(NAME ${CURRENT_TEST}_diff
-          COMMAND sh ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/compare.sh
+          COMMAND python3 ${CMAKE_SOURCE_DIR}/tests/compare.py "${CMAKE_SOURCE_DIR}/tests/${CURRENT_TEST}/ideal.res" "${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res" -t ${TOLERANCE}
   )
 ENDFOREACH(test ${TESTS})
 
