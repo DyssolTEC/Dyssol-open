@@ -33,7 +33,7 @@ And distinctive features including:
 This documentation helps you to get familiar with simulating solid processes using Dyssol. You can also find the introduction of the Dyssol system structure. 
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: The structure of this help documentation includes:
 
    first

@@ -21,7 +21,7 @@
 
 project = 'Dyssol Help'
 copyright = '2019-2020, Xiye Zhou'
-author = 'Xiye Zhou'
+author = 'Dyssol Development Team'
 
 # The short X.Y version
 version = ''
@@ -178,6 +178,8 @@ epub_title = project
 
 # A list of files that should not be packed into the epub file.
 epub_exclude_files = ['search.html']
+
+html_logo = './pics/logo.png'
 
 
 # -- Extension configuration -------------------------------------------------
