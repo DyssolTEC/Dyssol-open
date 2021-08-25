@@ -12,42 +12,42 @@ jobs:
         include:
           - name: linux-gcc
             os: linux
-            cc: gcc
+            cxx: g++
             cflags: ""
             linker_flage: ""
             doc_generate: yes
             build_type: Release
           - name: linux-gcc-asan
             os: linux
-            cc: gcc
+            cxx: g++
             cflags: "-fno-omit-frame-pointer -fsanitize=address"
             linker_flage: "-fno-omit-frame-pointer -fsanitize=address"
             doc_generate: no
             build_type: Debug
           - name: linux-gcc-ubsan
             os: linux
-            cc: gcc
+            cxx: g++
             cflags: "-fsanitize=undefined"
             linker_flage: ""
             doc_generate: no
             build_type: Debug
           - name: linux-clang
             os: linux
-            cc: clang
+            cxx: clang++
             cflags: ""
             linker_flage: ""
             doc_generate: no
             build_type: Release
           - name: linux-clang-asan
             os: linux
-            cc: clang
+            cxx: clang++
             cflags: "-fno-omit-frame-pointer -fsanitize=address"
             linker_flage: "-fno-omit-frame-pointer -fsanitize=address"
             doc_generate: no
             build_type: Debug
           - name: linux-clang-ubsan
             os: linux
-            cc: clang
+            cxx: clang++
             cflags: "-fsanitize=undefined"
             linker_flage: ""
             doc_generate: no
@@ -55,7 +55,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-
+    
     - name: Install build-dependencies
       run: sudo add-apt-repository ppa:gladky-anton/sundials && sudo apt-get install build-essential libsundials-dev libhdf5-serial-dev libqt5opengl5-dev
 
@@ -72,7 +72,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: ${{github.workspace}}/build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_C_COMPILER=${{ matrix.cc }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_C_FLAGS="${{ matrix.cflags }}" -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.linker_flage }}"  -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/inst
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.linker_flage }}" -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/inst
 
     - name: Build
       working-directory: ${{github.workspace}}/build
