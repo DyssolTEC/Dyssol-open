@@ -30,7 +30,20 @@ void ExportResults(const CConfigFileParser& _parser, const CFlowsheet& _flowshee
 
 	// open export text file
 	std::ofstream file(StringFunctions::UnicodePath(_parser.GetValue<std::wstring>(EArguments::TEXT_EXPORT_FILE)));
-	file.precision(6);
+	// set precision
+	if (_parser.IsValueDefined(EArguments::TEXT_EXPORT_PRECISION))
+		file.precision(_parser.GetValue<unsigned>(EArguments::TEXT_EXPORT_PRECISION));
+	if (_parser.IsValueDefined(EArguments::TEXT_EXPORT_FIXED_POINT))
+		file.setf(std::ios::fixed);
+
+	double limit = 0.0;
+	if (_parser.IsValueDefined(EArguments::TEXT_EXPORT_SIGNIFICANCE_LIMIT))
+		limit = std::abs(_parser.GetValue<double>(EArguments::TEXT_EXPORT_SIGNIFICANCE_LIMIT));
+
+	const auto Limit = [&](double _v)
+	{
+		return limit == 0.0 ? _v : std::abs(_v) >= limit ? _v : 0.0;
+	};
 
 	// export mass flows
 	for (const auto& e : _parser.GetValue<std::vector<SExportStreamDataMass>>(EArguments::EXPORT_MASS))
@@ -38,7 +51,7 @@ void ExportResults(const CConfigFileParser& _parser, const CFlowsheet& _flowshee
 		const CStream* stream = FindStreamByName(e.streamName);
 		file << "MASS " << stream->GetName();
 		for (const double t : !e.timePoints.empty() ? e.timePoints : stream->GetAllTimePoints())
-			file << " " << t << " " << stream->GetMass(t);
+			file << " " << t << " " << Limit(stream->GetMass(t));
 		file << std::endl;
 	}
 
@@ -51,7 +64,7 @@ void ExportResults(const CConfigFileParser& _parser, const CFlowsheet& _flowshee
 		{
 			file << " " << t;
 			for (const double v : stream->GetPSD(t, PSD_MassFrac))
-				file << " " << v;
+				file << " " << Limit(v);
 		}
 		file << std::endl;
 	}
