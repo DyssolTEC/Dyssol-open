@@ -4,7 +4,8 @@
 
 #include "DAEModel.h"
 #include <string>
-#include <nvector/nvector_serial.h>
+#include <sundials/sundials_matrix.h>
+#include <sundials/sundials_linearsolver.h>
 
 #define ZERO RCONST(0.0)
 
@@ -12,8 +13,8 @@
 class CDAESolver
 {
 private:
-	CDAEModel * m_pModel;		///< Pointer to a DAE model
-	void *m_pIDAmem;			///< IDA memory
+	CDAEModel * m_pModel{};		///< Pointer to a DAE model
+	void *m_pIDAmem{};			///< IDA memory
 
 	N_Vector m_vectorVars;		///< Vector of variables
 	N_Vector m_vectorDers;		///< Vector of derivatives
@@ -26,9 +27,12 @@ private:
 	std::string m_sErrorDescription;	///< Text description of the last occurred error
 
 	// Variables for storing
-	void *m_pStoreIDAmem;		///< Memory for storing of IDA memory
+	void *m_pStoreIDAmem{};		///< Memory for storing of IDA memory
 	N_Vector m_StoreVectorVars;	///< Memory for storing of vector of variables
 	N_Vector m_StoreVectorDers;	///< Memory for storing of vector of derivatives
+
+	SUNMatrix m_A, m_A_store;
+	SUNLinearSolver m_LS, m_LS_store;
 
 	// Solver settings
 	size_t m_nMaxIter;		///< Integer with maximum number of solver iterations

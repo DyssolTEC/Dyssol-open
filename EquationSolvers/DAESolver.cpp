@@ -3,8 +3,8 @@
 #include "DAESolver.h"
 #include <ida/ida.h>
 #include <ida/ida_ls_impl.h>
-#include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
+#include <nvector/nvector_serial.h>
 #include <cstring>
 
 #ifdef _MSC_VER
@@ -125,16 +125,13 @@ bool CDAESolver::SetModel( CDAEModel* _pModel )
 		return false;
 
 	// Set linear solver
-	SUNMatrix A;
-	SUNLinearSolver LS;
 	/* Create dense SUNMatrix for use in linear solves */
-	A = SUNDenseMatrix(nVarsCnt, nVarsCnt);
+	m_A = SUNDenseMatrix(nVarsCnt, nVarsCnt);
 	/* Create dense SUNMatrix for use in linear solves */
-	LS = SUNDenseLinearSolver(m_vectorVars, A);
+	m_LS = SUNLinSol_Dense(m_vectorVars, m_A);
 	/* Attach the matrix and linear solver */
-	if (IDASetLinearSolver(m_pIDAmem, LS, A) != IDALS_SUCCESS)
+	if (IDASetLinearSolver(m_pIDAmem, m_LS, m_A) != IDALS_SUCCESS)
 		return false;
-
 
 	if( !InitStoringMemory() )
 		return false;
@@ -282,22 +279,18 @@ bool CDAESolver::InitStoringMemory()
 		return false;
 
 	// Set linear solver
-	SUNMatrix A;
-	SUNLinearSolver LS;
 	/* Create dense SUNMatrix for use in linear solves */
-	A = SUNDenseMatrix(nVarsCnt, nVarsCnt);
+	m_A_store = SUNDenseMatrix(nVarsCnt, nVarsCnt);
 	/* Create dense SUNMatrix for use in linear solves */
-	LS = SUNDenseLinearSolver(m_vectorVars, A);
+	m_LS_store = SUNDenseLinearSolver(m_vectorVars, m_A_store);
 	/* Attach the matrix and linear solver */
-	if (IDASetLinearSolver(m_pStoreIDAmem, LS, A) != IDALS_SUCCESS)
+	if (IDASetLinearSolver(m_pStoreIDAmem, m_LS_store, m_A_store) != IDALS_SUCCESS)
 		return false;
 
 	auto* originMem = static_cast<IDAMemRec*>( m_pIDAmem );
 	auto* storeMem = static_cast<IDAMemRec*>( m_pStoreIDAmem );
 
 	// Allocate memory in m_pStoreIDAmem
-	for (size_t i = 0; i < MXORDP1; ++i)
-		storeMem->ida_phi[i] = N_VNew_Serial(NV_LENGTH_S(originMem->ida_phi[i]));
 	if (!storeMem->ida_ewt)		storeMem->ida_ewt   = N_VNew_Serial(nVarsCnt);
 	if (!storeMem->ida_yy)		storeMem->ida_yy    = N_VNew_Serial(nVarsCnt);
 	if (!storeMem->ida_yp)		storeMem->ida_yp    = N_VNew_Serial(nVarsCnt);
@@ -317,6 +310,8 @@ void CDAESolver::ClearMemory()
 	if (m_StoreVectorDers)	{ N_VDestroy_Serial(m_StoreVectorDers);	m_StoreVectorDers = nullptr; }
 	if (m_vectorATols)		{ N_VDestroy_Serial(m_vectorATols);		m_vectorATols = nullptr; }
 	if (m_vectorId)			{ N_VDestroy_Serial(m_vectorId);		m_vectorId = nullptr; }
+	SUNMatDestroy(m_A);
+	SUNLinSolFree(m_LS);
 	// free IDA memory
 	if (m_pIDAmem)			{ IDAFree(&m_pIDAmem);					m_pIDAmem = nullptr; }
 	// free store IDA memory
@@ -327,6 +322,8 @@ void CDAESolver::ClearMemory()
 		if (storeMem->ida_yy)		{ N_VDestroy_Serial(storeMem->ida_yy);		storeMem->ida_yy = nullptr; }
 		if (storeMem->ida_yp)		{ N_VDestroy_Serial(storeMem->ida_yp);		storeMem->ida_yp = nullptr; }
 		if (storeMem->ida_delta)	{ N_VDestroy_Serial(storeMem->ida_delta);	storeMem->ida_delta = nullptr; }
+		SUNMatDestroy(m_A_store);
+		SUNLinSolFree(m_LS_store);
 		IDAFree(&m_pStoreIDAmem);	m_pStoreIDAmem = nullptr;
 	}
 }

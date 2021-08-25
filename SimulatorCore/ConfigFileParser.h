@@ -46,7 +46,7 @@ struct SHoldupParam
 struct SExportStreamDataMass
 {
 	std::string streamName;
-	std::string filePath;
+	std::vector<double> timePoints;
 };
 
 class CConfigFileParser
