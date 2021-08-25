@@ -96,7 +96,7 @@ jobs:
       run: make doc
 
     - name: Deploy
-      if: contains(matrix.doc_generate, 'yes') && ${{ github.ref == 'refs/heads/master' }}
+      if: contains(matrix.doc_generate, 'yes')
       uses: JamesIves/github-pages-deploy-action@4.1.4
       with:
         branch: gh-pages # The branch the action should deploy to.
