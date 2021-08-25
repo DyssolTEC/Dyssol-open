@@ -5,10 +5,12 @@
 #include "BaseSolver.h"
 #include <map>
 #include <vector>
+#include <filesystem>
 
 #ifdef _MSC_VER
 #define NOMINMAX
 #include <Windows.h>
+
 typedef HINSTANCE DYSSOL_LIBRARY_INSTANCE;
 typedef FARPROC DYSSOL_CREATE_FUNCTION_TYPE;
 #else
@@ -21,13 +23,13 @@ class CBaseUnit;
 /// Structure to load, instantiate, free and unload models (units or solvers) from DLL (SO) files.
 struct SModelDescriptor
 {
-	std::wstring fileLocation; // Location where the model is stored.
-	std::string uniqueID;	   // Unique ID of this model.
-	std::string name;		   // Model's name.
-	std::string author;        // Name of model's author.
-	std::string dirKey;        // Unique key of the dir, where it stored.
-	size_t version{};		   // Model's version.
-	size_t position{};         // Needed to sort models according to the list of dirs.
+	std::filesystem::path fileLocation; // Location where the model is stored.
+	std::string uniqueID;				// Unique ID of this model.
+	std::string name;					// Model's name.
+	std::string author;					// Name of model's author.
+	std::string dirKey;					// Unique key of the dir, where it stored.
+	size_t version{};					// Model's version.
+	size_t position{};					// Needed to sort models according to the list of dirs.
 
 	bool operator<(const SModelDescriptor& _other) const
 	{
@@ -124,12 +126,12 @@ private:
 	static std::pair<std::vector<SUnitDescriptor>, std::vector<SSolverDescriptor>> GetAllModelsInDir(const std::wstring& _dir);
 
 	// Tries to load unit from _library. If the model cannot be loaded, returns a structure with empty strings.
-	static SUnitDescriptor TryGetUnitDescriptor(const std::wstring& _pathToUnit, DYSSOL_LIBRARY_INSTANCE _library);
+	static SUnitDescriptor TryGetUnitDescriptor(const std::filesystem::path& _pathToUnit, DYSSOL_LIBRARY_INSTANCE _library);
 	// Tries to load solver from _library. If the solver cannot be loaded, returns a structure with empty strings.
-	static SSolverDescriptor TryGetSolverDescriptor(const std::wstring& _pathToSolver, DYSSOL_LIBRARY_INSTANCE _library);
+	static SSolverDescriptor TryGetSolverDescriptor(const std::filesystem::path& _pathToSolver, DYSSOL_LIBRARY_INSTANCE _library);
 
 	// Loads library from a file with the specified path.
-	static DYSSOL_LIBRARY_INSTANCE LoadDyssolLibrary(const std::wstring& _libPath);
+	static DYSSOL_LIBRARY_INSTANCE LoadDyssolLibrary(const std::filesystem::path& _libPath);
 	// Returns address of the specified function from provided library.
 	static DYSSOL_CREATE_FUNCTION_TYPE LoadDyssolLibraryConstructor(DYSSOL_LIBRARY_INSTANCE _lib, const std::string& _funName);
 	// Closes specified library.

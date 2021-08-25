@@ -549,9 +549,9 @@ namespace StrConst
 	const char* const MM_ConfigModelsParamName	     = "modelsFolders";
 	const char* const MM_ConfigModelsFlagsParamName  = "modelsFoldersActivity";
 #ifdef _MSC_VER
-	const wchar_t* const MM_LibraryFileExtension     = L"*.dll";
+	const wchar_t* const MM_LibraryFileExtension     = L".dll";
 #else
-	const wchar_t* const MM_LibraryFileExtension     = L"*.so";
+	const wchar_t* const MM_LibraryFileExtension     = L".so";
 #endif
 
 

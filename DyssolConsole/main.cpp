@@ -14,6 +14,7 @@
 #include "DyssolSystemDefines.h"
 #include "FileSystem.h"
 #include <chrono>
+#include <filesystem>
 #include <fstream>
 
 void ExportResults(const CConfigFileParser& _parser, const CFlowsheet& _flowsheet)
@@ -35,8 +36,8 @@ void ExportResults(const CConfigFileParser& _parser, const CFlowsheet& _flowshee
 	allFiles.insert(allFiles.end(), v1.begin(), v1.end());
 	allFiles.insert(allFiles.end(), v2.begin(), v2.end());
 	for (const auto& e : allFiles)
-		if (FileSystem::FileExists(e.filePath))
-			FileSystem::RemoveFile(e.filePath);
+		if (std::filesystem::exists(e.filePath))
+			std::filesystem::remove(e.filePath);
 
 	// export mass flows
 	for (const auto& e : _parser.GetValue<std::vector<SExportStreamDataMass>>(EArguments::EXPORT_MASS))
