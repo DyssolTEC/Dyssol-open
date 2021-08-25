@@ -2,73 +2,56 @@ name: CMake
 
 on: [push]
 
-env:
-  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
-  BUILD_TYPE: Release
-
 jobs:
-  build-gcc:
-    runs-on: ubuntu-20.04
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Install build-dependencies
-      run: sudo add-apt-repository ppa:gladky-anton/sundials && sudo apt-get install build-essential libsundials-dev libhdf5-serial-dev libqt5opengl5-dev sphinx-common texlive-xetex
-
-    - name: Create Build Environment
-      # Some projects don't allow in-source building, so create a separate build directory
-      # We'll use this as our working directory for all subsequent commands
-      run: cmake -E make_directory ${{github.workspace}}/build
-
-    - name: Create Install Environment
-      run: cmake -E make_directory ${{github.workspace}}/inst
-
-    - name: Configure CMake
-      # Use a bash shell so we can use the same syntax for environment variable
-      # access regardless of the host operating system
-      shell: bash
-      working-directory: ${{github.workspace}}/build
-      # Note the current convention is to use the -S and -B options here to specify source
-      # and build directories, but this is only available with CMake 3.13 and higher.
-      # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/inst
-
-    - name: Build
-      working-directory: ${{github.workspace}}/build
-      shell: bash
-      # Execute the build.  You can specify a specific target with "--target <NAME>"
-      run: cmake --build . --parallel
-
-    - name: Install
-      working-directory: ${{github.workspace}}/build
-      shell: bash
-      # install
-      run: make install
-
-    - name: Test
-      working-directory: ${{github.workspace}}/build
-      shell: bash
-      # Execute the build.  You can specify a specific target with "--target <NAME>"
-      run: CTEST_OUTPUT_ON_FAILURE=1 make test
-
-    - name: Docs
-      working-directory: ${{github.workspace}}/build
-      shell: bash
-      run: make doc
-
-    - name: Deploy
-      uses: JamesIves/github-pages-deploy-action@4.1.4
-      with:
-        branch: gh-pages # The branch the action should deploy to.
-        folder: ${{github.workspace}}/inst/share/Dyssol/docs/sphinx/html # The folder the action should deploy.
-
-  build-gcc-asan:
-    # The CMake configure and build commands are platform agnostic and should work equally
-    # well on Windows or Mac.  You can convert this to a matrix build if you need
-    # cross-platform coverage.
-    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-    runs-on: ubuntu-20.04
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        name: [linux-gcc]
+        include:
+          - name: linux-gcc
+            os: linux
+            cc: gcc
+            cflags: ""
+            linker_flage: ""
+            doc_generate: yes
+            build_type: Release
+          - name: linux-gcc-asan
+            os: linux
+            cc: gcc
+            cflags: "-fno-omit-frame-pointer -fsanitize=address"
+            linker_flage: "-fno-omit-frame-pointer -fsanitize=address"
+            doc_generate: no
+            build_type: Debug
+          - name: linux-gcc-ubsan
+            os: linux
+            cc: gcc
+            cflags: "-fsanitize=undefined"
+            linker_flage: ""
+            doc_generate: no
+            build_type: Debug
+          - name: linux-clang
+            os: linux
+            cc: clang
+            cflags: ""
+            linker_flage: ""
+            doc_generate: no
+            build_type: Release
+          - name: linux-clang-asan
+            os: linux
+            cc: clang
+            cflags: "-fno-omit-frame-pointer -fsanitize=address"
+            linker_flage: "-fno-omit-frame-pointer -fsanitize=address"
+            doc_generate: no
+            build_type: Debug
+          - name: linux-clang-ubsan
+            os: linux
+            cc: clang
+            cflags: "-fsanitize=undefined"
+            linker_flage: ""
+            doc_generate: no
+            build_type: Debug
 
     steps:
     - uses: actions/checkout@v2
@@ -76,136 +59,45 @@ jobs:
     - name: Install build-dependencies
       run: sudo add-apt-repository ppa:gladky-anton/sundials && sudo apt-get install build-essential libsundials-dev libhdf5-serial-dev libqt5opengl5-dev
 
+    - name: Install doc-build-dependencies
+      if: contains(matrix.doc_generate, 'yes')
+      run: sudo apt-get install sphinx-common texlive-xetex
+
     - name: Create Build Environment
-      # Some projects don't allow in-source building, so create a separate build directory
-      # We'll use this as our working directory for all subsequent commands
       run: cmake -E make_directory ${{github.workspace}}/build
 
     - name: Create Install Environment
       run: cmake -E make_directory ${{github.workspace}}/inst
 
     - name: Configure CMake
-      # Use a bash shell so we can use the same syntax for environment variable
-      # access regardless of the host operating system
       shell: bash
       working-directory: ${{github.workspace}}/build
-      # Note the current convention is to use the -S and -B options here to specify source
-      # and build directories, but this is only available with CMake 3.13 and higher.
-      # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/inst -DCMAKE_CXX_FLAGS="-fno-omit-frame-pointer -fsanitize=address"
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_C_COMPILER=${{ matrix.cc }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_C_FLAGS="${{ matrix.cflags }}" -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.linker_flage }}"  -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/inst
 
     - name: Build
       working-directory: ${{github.workspace}}/build
       shell: bash
-      # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build . --parallel
 
     - name: Install
       working-directory: ${{github.workspace}}/build
       shell: bash
-      # install
       run: make install
 
     - name: Test
       working-directory: ${{github.workspace}}/build
       shell: bash
-      # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: CTEST_OUTPUT_ON_FAILURE=1 make test
 
-  build-clang:
-    # The CMake configure and build commands are platform agnostic and should work equally
-    # well on Windows or Mac.  You can convert this to a matrix build if you need
-    # cross-platform coverage.
-    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-    runs-on: ubuntu-20.04
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Install build-dependencies
-      run: sudo add-apt-repository ppa:gladky-anton/sundials && sudo apt-get install build-essential clang libsundials-dev libhdf5-serial-dev libqt5opengl5-dev
-
-    - name: Create Build Environment
-      # Some projects don't allow in-source building, so create a separate build directory
-      # We'll use this as our working directory for all subsequent commands
-      run: cmake -E make_directory ${{github.workspace}}/build
-
-    - name: Create Install Environment
-      run: cmake -E make_directory ${{github.workspace}}/inst
-
-    - name: Configure CMake
-      # Use a bash shell so we can use the same syntax for environment variable
-      # access regardless of the host operating system
-      shell: bash
-      working-directory: ${{github.workspace}}/build
-      # Note the current convention is to use the -S and -B options here to specify source
-      # and build directories, but this is only available with CMake 3.13 and higher.
-      # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: CC=/usr/bin/clang-10 CXX=/usr/bin/clang++-10 cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/inst
-
-    - name: Build
+    - name: Docs
+      if: contains(matrix.doc_generate, 'yes')
       working-directory: ${{github.workspace}}/build
       shell: bash
-      # Execute the build.  You can specify a specific target with "--target <NAME>"
-      run: cmake --build . --parallel
+      run: make doc
 
-    - name: Install
-      working-directory: ${{github.workspace}}/build
-      shell: bash
-      # install
-      run: make install
-
-    - name: Test
-      working-directory: ${{github.workspace}}/build
-      shell: bash
-      # Execute the build.  You can specify a specific target with "--target <NAME>"
-      run: CTEST_OUTPUT_ON_FAILURE=1 make test
-
-  build-clang-asan:
-    # The CMake configure and build commands are platform agnostic and should work equally
-    # well on Windows or Mac.  You can convert this to a matrix build if you need
-    # cross-platform coverage.
-    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-    runs-on: ubuntu-20.04
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Install build-dependencies
-      run: sudo add-apt-repository ppa:gladky-anton/sundials && sudo apt-get install build-essential clang libsundials-dev libhdf5-serial-dev libqt5opengl5-dev
-
-    - name: Create Build Environment
-      # Some projects don't allow in-source building, so create a separate build directory
-      # We'll use this as our working directory for all subsequent commands
-      run: cmake -E make_directory ${{github.workspace}}/build
-
-    - name: Create Install Environment
-      run: cmake -E make_directory ${{github.workspace}}/inst
-
-    - name: Configure CMake
-      # Use a bash shell so we can use the same syntax for environment variable
-      # access regardless of the host operating system
-      shell: bash
-      working-directory: ${{github.workspace}}/build
-      # Note the current convention is to use the -S and -B options here to specify source
-      # and build directories, but this is only available with CMake 3.13 and higher.
-      # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: CC=/usr/bin/clang-10 CXX=/usr/bin/clang++-10  cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/inst -DCMAKE_CXX_FLAGS="-fno-omit-frame-pointer -fsanitize=address"
-
-    - name: Build
-      working-directory: ${{github.workspace}}/build
-      shell: bash
-      # Execute the build.  You can specify a specific target with "--target <NAME>"
-      run: cmake --build . --parallel
-
-    - name: Install
-      working-directory: ${{github.workspace}}/build
-      shell: bash
-      # install
-      run: make install
-
-    - name: Test
-      working-directory: ${{github.workspace}}/build
-      shell: bash
-      # Execute the build.  You can specify a specific target with "--target <NAME>"
-      run: ASAN_OPTIONS=detect_odr_violation=0 CTEST_OUTPUT_ON_FAILURE=1 make test
+    - name: Deploy
+      if: contains(matrix.doc_generate, 'yes') && ${{ github.ref == 'refs/heads/master' }}
+      uses: JamesIves/github-pages-deploy-action@4.1.4
+      with:
+        branch: gh-pages # The branch the action should deploy to.
+        folder: ${{github.workspace}}/inst/share/Dyssol/docs/sphinx/html # The folder the action should deploy.
