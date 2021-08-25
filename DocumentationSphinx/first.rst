@@ -584,13 +584,13 @@ General
 	| Identifier                                                                    | Parameter                             |
 	+===============================================================================+=======================================+
 	| ``SOURCE_FILE``:                                                              | ``C:\Path\to\source\file.dflw``       |
-	| Full path to the *.dflw file with initial flowsheet                           |                                       |
+	| Full path to the \*.dflw file with initial flowsheet                          |                                       |
 	+-------------------------------------------------------------------------------+---------------------------------------+
 	| ``RESULT_FILE``:                                                              | ``C:\Path\to\result\file.dflw``       |
 	| Full path to the file where simulation results will be written                |                                       |
 	+-------------------------------------------------------------------------------+---------------------------------------+
 	| ``MODELS_PATH``:                                                              + ``C:\Path\to\dir\with\models\``       |
-	| Path to the directory where *.dll libraries of units and solvers can be found |                                       |
+	| Path to the directory where \*.dll libraries of units and solvers can be found|                                       |
 	+-------------------------------------------------------------------------------+---------------------------------------+
 	| ``MATERIALS_DATABASE``:                                                       + ``C:\Path\to\database.dmdb``          |
 	| Full path to the file with materials database                                 |                                       |
