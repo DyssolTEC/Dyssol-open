@@ -115,3 +115,14 @@ FOREACH(test ${TESTS})
   )
 ENDFOREACH(test ${TESTS})
 
+#===============================================
+# Documentation ================================
+ADD_CUSTOM_TARGET(doc)
+ADD_CUSTOM_COMMAND(
+                  TARGET doc PRE_BUILD
+                  COMMAND rm -rf ${CMAKE_BINARY_DIR}/doc/sphinx/_build
+                  COMMAND sphinx-build -b html ${CMAKE_SOURCE_DIR}/DocumentationSphinx/ ${CMAKE_BINARY_DIR}/doc/sphinx/_build/html
+                  COMMAND sphinx-build -b latex ${CMAKE_SOURCE_DIR}/DocumentationSphinx/ ${CMAKE_BINARY_DIR}/doc/sphinx/_build/latex
+                  COMMAND mkdir -p ${INSTALL_DOCS_PATH}/sphinx/
+                  COMMAND cp -r ${CMAKE_BINARY_DIR}/doc/sphinx/_build/html ${INSTALL_DOCS_PATH}/sphinx/
+                  )
