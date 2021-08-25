@@ -14,11 +14,12 @@
 #include "DyssolSystemDefines.h"
 #include "FileSystem.h"
 #include <chrono>
-#include <filesystem>
 #include <fstream>
 
 void ExportResults(const CConfigFileParser& _parser, const CFlowsheet& _flowsheet)
 {
+	if (!_parser.IsValueDefined(EArguments::TEXT_EXPORT_FILE)) return;
+
 	const auto FindStreamByName = [&](const std::string& _name) -> const CStream*
 	{
 		const auto streams = _flowsheet.GetAllStreams();
@@ -27,42 +28,43 @@ void ExportResults(const CConfigFileParser& _parser, const CFlowsheet& _flowshee
 		return *it;
 	};
 
-	if (!_parser.IsValueDefined(EArguments::EXPORT_MASS)) return;
+	// open export text file
+	std::ofstream file(StringFunctions::UnicodePath(_parser.GetValue<std::wstring>(EArguments::TEXT_EXPORT_FILE)));
+	// set precision
+	if (_parser.IsValueDefined(EArguments::TEXT_EXPORT_PRECISION))
+		file.precision(_parser.GetValue<unsigned>(EArguments::TEXT_EXPORT_PRECISION));
+	if (_parser.IsValueDefined(EArguments::TEXT_EXPORT_FIXED_POINT))
+		file.setf(std::ios::fixed);
 
-	// remove specified files
-	std::vector<SExportStreamDataMass> allFiles;
-	const auto v1 = _parser.GetValue<std::vector<SExportStreamDataMass>>(EArguments::EXPORT_MASS);
-	const auto v2 = _parser.GetValue<std::vector<SExportStreamDataMass>>(EArguments::EXPORT_PSD);
-	allFiles.insert(allFiles.end(), v1.begin(), v1.end());
-	allFiles.insert(allFiles.end(), v2.begin(), v2.end());
-	for (const auto& e : allFiles)
-		if (std::filesystem::exists(e.filePath))
-			std::filesystem::remove(e.filePath);
+	double limit = 0.0;
+	if (_parser.IsValueDefined(EArguments::TEXT_EXPORT_SIGNIFICANCE_LIMIT))
+		limit = std::abs(_parser.GetValue<double>(EArguments::TEXT_EXPORT_SIGNIFICANCE_LIMIT));
+
+	const auto Limit = [&](double _v)
+	{
+		return limit == 0.0 ? _v : std::abs(_v) >= limit ? _v : 0.0;
+	};
 
 	// export mass flows
 	for (const auto& e : _parser.GetValue<std::vector<SExportStreamDataMass>>(EArguments::EXPORT_MASS))
 	{
-		std::ofstream file(StringFunctions::UnicodePath(e.filePath), std::ios_base::app);
-		file.precision(6);
 		const CStream* stream = FindStreamByName(e.streamName);
 		file << "MASS " << stream->GetName();
-		for (const double t : stream->GetAllTimePoints())
-			file << " " << t << " " << stream->GetMass(t);
+		for (const double t : !e.timePoints.empty() ? e.timePoints : stream->GetAllTimePoints())
+			file << " " << t << " " << Limit(stream->GetMass(t));
 		file << std::endl;
 	}
 
 	// export PSDs
 	for (const auto& e : _parser.GetValue<std::vector<SExportStreamDataMass>>(EArguments::EXPORT_PSD))
 	{
-		std::ofstream file(StringFunctions::UnicodePath(e.filePath), std::ios_base::app);
-		file.precision(6);
 		const CStream* stream = FindStreamByName(e.streamName);
 		file << "PSD " << stream->GetName();
-		for (const double t : stream->GetAllTimePoints())
+		for (const double t : !e.timePoints.empty() ? e.timePoints : stream->GetAllTimePoints())
 		{
 			file << " " << t;
-			for (double v : stream->GetPSD(t, PSD_MassFrac))
-				file << " " << v;
+			for (const double v : stream->GetPSD(t, PSD_MassFrac))
+				file << " " << Limit(v);
 		}
 		file << std::endl;
 	}
