@@ -60,6 +60,7 @@ enum class EArguments
 	TEXT_EXPORT_SIGNIFICANCE_LIMIT,
 	EXPORT_MASS,
 	EXPORT_PSD,
+	EXPORT_GRAPH,
 };
 
 struct SCacheSettings

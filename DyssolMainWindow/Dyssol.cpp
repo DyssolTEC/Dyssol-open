@@ -14,6 +14,7 @@
 #include <QFileDialog>
 #include <QDesktopServices>
 #include <filesystem>
+#include <fstream>
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -147,6 +148,7 @@ void Dyssol::InitializeConnections() const
 	connect(ui.actionSaveFlowsheet,   &QAction::triggered, this, &Dyssol::SaveFlowsheet);
 	connect(ui.actionSaveFlowsheetAs, &QAction::triggered, this, &Dyssol::SaveFlowsheetAs);
 	connect(ui.actionSaveConfig,      &QAction::triggered, this, &Dyssol::SaveConfigFile);
+	connect(ui.actionSaveGraph,       &QAction::triggered, this, &Dyssol::SaveGraphFile);
 	connect(ui.actionAbout,           &QAction::triggered, this, &Dyssol::ShowAboutDialog);
 
 	// signals from threads
@@ -583,6 +585,18 @@ void Dyssol::SaveConfigFile()
 	const QString sFileName = QFileDialog::getSaveFileName(this, StrConst::Dyssol_DialogSaveConfigName, txtFileName, StrConst::Dyssol_DialogTxtFilter);
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	CConfigFileParser::SaveConfigFile(sFileName.toStdWString(), m_sCurrFlowsheetFile.toStdWString(), m_Flowsheet, m_ModelsManager, m_MaterialsDatabase);
+	QApplication::restoreOverrideCursor();
+}
+
+void Dyssol::SaveGraphFile()
+{
+	const QString filePath = QString::fromStdWString(CH5Handler::DisplayFileName(m_sCurrFlowsheetFile.toStdWString()));
+	const QString outFileName = QFileInfo(filePath).absolutePath() + "/" + QFileInfo(filePath).baseName() + ".gv";
+	const QString outFile = QFileDialog::getSaveFileName(this, StrConst::Dyssol_DialogSaveGraphName, outFileName, StrConst::Dyssol_DialogGraphFilter);
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	std::ofstream file(outFile.toStdString());
+	file << m_Flowsheet.GenerateDOTFile();
+	file.close();
 	QApplication::restoreOverrideCursor();
 }
 
