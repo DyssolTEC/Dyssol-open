@@ -296,13 +296,13 @@ std::string CFlowsheet::GenerateDOTFile()
 	res << "digraph Flowsheet {" << std::endl;
 	// list units
 	for (const auto& u : GetAllUnits())
-		res << u->GetName() << " [shape=box];" << std::endl;
+		res << StringFunctions::Quote(u->GetName()) << " [shape=box];" << std::endl;
 	// list streams
 	for (const auto& c : con)
 	{
 		if (c.unitI.empty() || c.unitO.empty()) continue;
-		res << GetUnit(c.unitO)->GetName() << " -> " << GetUnit(c.unitI)->GetName()
-			<< " [label=\"" << GetStream(c.stream)->GetName() << "\"];" << std::endl;
+		res << StringFunctions::Quote(GetUnit(c.unitO)->GetName()) << " -> " << StringFunctions::Quote(GetUnit(c.unitI)->GetName())
+			<< " [label=" << StringFunctions::Quote(GetStream(c.stream)->GetName()) << "];" << std::endl;
 	}
 	res << "}" << std::endl;
 
