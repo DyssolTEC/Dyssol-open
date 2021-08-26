@@ -287,7 +287,7 @@ std::string CFlowsheet::GenerateDOTFile()
 			const auto streamKey = p->GetStreamKey();
 			const size_t i = VectorFind(con, [&](const SConnection& c) { return c.unitO.empty() && c.stream == streamKey; });
 			if (i != static_cast<size_t>(-1))
-				con[i].unitI = u->GetKey();
+				con[i].unitO = u->GetKey();
 			con.emplace_back(SConnection{ streamKey, u->GetKey(), "" });
 		}
 	}
