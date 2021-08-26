@@ -7,6 +7,7 @@
 #include "ContainerFunctions.h"
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
+#include <sstream>
 
 CFlowsheet::CFlowsheet(CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB) :
 	m_materialsDB{ _materialsDB },
@@ -262,6 +263,50 @@ const CCalculationSequence* CFlowsheet::GetCalculationSequence() const
 CCalculationSequence* CFlowsheet::GetCalculationSequence()
 {
 	return &m_calculationSequence;
+}
+
+std::string CFlowsheet::GenerateDOTFile()
+{
+	struct SConnection { std::string stream{}, unitO{}, unitI{}; };
+	std::vector<SConnection> con;
+
+	for (const auto& u : GetAllUnits())
+	{
+		if (!u->GetModel()) continue;
+		for (const auto& p : u->GetModel()->GetPortsManager().GetAllInputPorts())
+		{
+			const auto streamKey = p->GetStreamKey();
+			const size_t i = VectorFind(con, [&](const SConnection& c) { return c.unitI.empty() && c.stream == streamKey; });
+			if (i != static_cast<size_t>(-1))
+				con[i].unitI = u->GetKey();
+			else
+				con.emplace_back(SConnection{ streamKey, "", u->GetKey() });
+		}
+		for (const auto& p : u->GetModel()->GetPortsManager().GetAllOutputPorts())
+		{
+			const auto streamKey = p->GetStreamKey();
+			const size_t i = VectorFind(con, [&](const SConnection& c) { return c.unitO.empty() && c.stream == streamKey; });
+			if (i != static_cast<size_t>(-1))
+				con[i].unitI = u->GetKey();
+			con.emplace_back(SConnection{ streamKey, u->GetKey(), "" });
+		}
+	}
+
+	std::stringstream res;
+	res << "digraph Flowsheet {" << std::endl;
+	// list units
+	for (const auto& u : GetAllUnits())
+		res << u->GetName() << " [shape=box];" << std::endl;
+	// list streams
+	for (const auto& c : con)
+	{
+		if (c.unitI.empty() || c.unitO.empty()) continue;
+		res << GetUnit(c.unitO)->GetName() << " -> " << GetUnit(c.unitI)->GetName()
+			<< " [label=\"" << GetStream(c.stream)->GetName() << "\"];" << std::endl;
+	}
+	res << "}" << std::endl;
+
+	return res.str();
 }
 
 size_t CFlowsheet::GetCompoundsNumber() const

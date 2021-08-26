@@ -52,7 +52,8 @@ CConfigFileParser::CConfigFileParser()
 		MAKE_ARGUMENT(EArguments::TEXT_EXPORT_FIXED_POINT,        EArgType::argUNSIGNED),
 		MAKE_ARGUMENT(EArguments::TEXT_EXPORT_SIGNIFICANCE_LIMIT, EArgType::argDOUBLE),
 		MAKE_ARGUMENT(EArguments::EXPORT_MASS,	                  EArgType::argEXPORT_STREAM_DATA),
-		MAKE_ARGUMENT(EArguments::EXPORT_PSD,	                  EArgType::argEXPORT_STREAM_DATA)
+		MAKE_ARGUMENT(EArguments::EXPORT_PSD,	                  EArgType::argEXPORT_STREAM_DATA),
+		MAKE_ARGUMENT(EArguments::EXPORT_GRAPH,	                  EArgType::argSTRING)
 	};
 }
 

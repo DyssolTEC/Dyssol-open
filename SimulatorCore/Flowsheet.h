@@ -127,6 +127,9 @@ public:
 	// Returns a pointer to calculation sequence.
 	CCalculationSequence* GetCalculationSequence();
 
+	// Generates a flowsheet representation in DOT format.
+	std::string GenerateDOTFile();
+
 	////////////////////////////////////////////////////////////////////////////////
 	// Compounds
 	//

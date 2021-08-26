@@ -595,7 +595,7 @@ void Dyssol::SaveGraphFile()
 	const QString outFile = QFileDialog::getSaveFileName(this, StrConst::Dyssol_DialogSaveGraphName, outFileName, StrConst::Dyssol_DialogGraphFilter);
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	std::ofstream file(outFile.toStdString());
-	file << m_pFlowsheetEditor->GenerateDOTFile();
+	file << m_Flowsheet.GenerateDOTFile();
 	file.close();
 	QApplication::restoreOverrideCursor();
 }

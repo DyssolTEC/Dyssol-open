@@ -318,6 +318,14 @@ void RunSimulation(const CConfigFileParser& _parser)
 
 	// export results to text files if necessary
 	ExportResults(_parser, flowsheet);
+
+	// export to graph file
+	if (_parser.IsValueDefined(EArguments::EXPORT_GRAPH))
+	{
+		std::ofstream file(StringFunctions::UnicodePath(_parser.GetValue<std::wstring>(EArguments::EXPORT_GRAPH)));
+		file << flowsheet.GenerateDOTFile();
+		file.close();
+	}
 }
 
 int main(int argc, const char *argv[])

@@ -28,9 +28,6 @@ public:
 
 	void InitializeConnections();
 
-	// Generates a flowsheet representation in DOT format.
-	std::string GenerateDOTFile();
-
 public slots:
 	void setVisible(bool _bVisible) override;
 
