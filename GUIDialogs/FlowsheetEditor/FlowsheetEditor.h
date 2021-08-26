@@ -28,6 +28,9 @@ public:
 
 	void InitializeConnections();
 
+	// Generates a flowsheet representation in DOT format.
+	std::string GenerateDOTFile();
+
 public slots:
 	void setVisible(bool _bVisible) override;
 
@@ -60,6 +63,7 @@ private slots:
 	void DeleteUnitParamListItem();								// Remove time point from selected unit parameter.
 	void ListValueChanged();											// User changed value or time of selected unit parameter.
 	void UnitParamValueChanged(int _row, int _col);				// Value of unit parameter has been changed.
+
 
 private:
 	void UpdateModelsView();		   // Update list of models in the flowsheet.
