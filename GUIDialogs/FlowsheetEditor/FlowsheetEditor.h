@@ -61,6 +61,7 @@ private slots:
 	void ListValueChanged();											// User changed value or time of selected unit parameter.
 	void UnitParamValueChanged(int _row, int _col);				// Value of unit parameter has been changed.
 
+
 private:
 	void UpdateModelsView();		   // Update list of models in the flowsheet.
 	void UpdateStreamsView();		   // Update list of material streams in the flowsheet.
