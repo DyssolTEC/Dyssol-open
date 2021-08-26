@@ -4,6 +4,7 @@
 #include "BaseCacheHandler.h"
 #include "FileSystem.h"
 #include <fstream>
+#include <filesystem>
 
 CBaseCacheHandler::CBaseCacheHandler() :
 	m_dirPath(L"cache"),
@@ -18,8 +19,8 @@ CBaseCacheHandler::~CBaseCacheHandler()
 	for (size_t i = 0; ; ++i)
 	{
 		const std::wstring sBufName = m_fileName + std::to_wstring(i) + m_fileExt;
-		if (FileSystem::FileExists(StringFunctions::UnicodePath(sBufName)))
-			FileSystem::RemoveFile(StringFunctions::UnicodePath(sBufName));
+		if (std::filesystem::exists(StringFunctions::UnicodePath(sBufName)))
+			std::filesystem::remove(StringFunctions::UnicodePath(sBufName));
 		else
 			break;
 	}
@@ -34,7 +35,7 @@ void CBaseCacheHandler::ClearData() const
 	for (size_t i = 1; ; ++i)
 	{
 		sBufName = m_fileName + std::to_wstring(i) + m_fileExt;
-		if (FileSystem::FileExists(StringFunctions::UnicodePath(sBufName)))
+		if (std::filesystem::exists(StringFunctions::UnicodePath(sBufName)))
 		{
 			std::ofstream file(StringFunctions::UnicodePath(sBufName), std::ios::out | std::ios::trunc | std::ios::binary);
 			file.close();
@@ -157,12 +158,12 @@ void CBaseCacheHandler::GetIndexToWrite(const std::vector<double>& _tp, size_t _
 
 void CBaseCacheHandler::CreateFile()
 {
-	if (!FileSystem::DirExists(StringFunctions::UnicodePath(m_dirPath)))
-		FileSystem::CreateDir(StringFunctions::UnicodePath(m_dirPath));
+	if (!std::filesystem::exists(StringFunctions::UnicodePath(m_dirPath)))
+		std::filesystem::create_directory(StringFunctions::UnicodePath(m_dirPath));
 
 	m_fileName = m_dirPath + L"/" + m_fileNamePrefix + StringFunctions::String2WString(StringFunctions::GenerateRandomKey());
 	std::wstring sBufName = m_fileName + L"0" + m_fileExt;
-	while (FileSystem::FileExists(StringFunctions::UnicodePath(sBufName)))
+	while (std::filesystem::exists(StringFunctions::UnicodePath(sBufName)))
 	{
 		m_fileName = m_dirPath + L"/" + m_fileNamePrefix + StringFunctions::String2WString(StringFunctions::GenerateRandomKey());
 		sBufName = m_fileName + L"0" + m_fileExt;
@@ -195,8 +196,8 @@ std::fstream* CBaseCacheHandler::OpenFileToWrite(SDescriptor& _currDescriptor, b
 		for (size_t iFile = 0; ; ++iFile)
 		{
 			const std::wstring bufName = m_fileName + std::to_wstring(iFile) + m_fileExt;
-			const uint64_t currFileSize = FileSystem::FileSize(StringFunctions::UnicodePath(bufName));
-			if (currFileSize == static_cast<uint64_t>(-1)) // file not exists
+			const std::uintmax_t currFileSize = std::filesystem::file_size(StringFunctions::UnicodePath(bufName));
+			if (currFileSize == static_cast<std::uintmax_t>(-1)) // file not exists
 			{
 				pFile = new std::fstream(StringFunctions::UnicodePath(bufName), std::ios::in | std::ios::out | std::ios::trunc | std::ios::binary);
 				_currDescriptor.fileNumber = iFile;
@@ -220,7 +221,7 @@ void CBaseCacheHandler::RemoveUnusedBlocks() const
 	for (size_t iFile = 0; ; ++iFile)
 	{
 		std::wstring bufName = m_fileName + std::to_wstring(iFile) + m_fileExt;
-		if (FileSystem::FileExists(StringFunctions::UnicodePath(bufName)))
+		if (std::filesystem::exists(StringFunctions::UnicodePath(bufName)))
 		{
 			std::streamoff minInvalidOffset = -1;
 			for (auto& descriptor : m_descriptors)
@@ -251,7 +252,7 @@ void CBaseCacheHandler::RemoveUnusedBlocks() const
 			}
 
 			if (maxValidOffset < minInvalidOffset)
-				FileSystem::ChangeFileSize(StringFunctions::UnicodePath(bufName), minInvalidOffset);
+				std::filesystem::resize_file(StringFunctions::UnicodePath(bufName), minInvalidOffset);
 		}
 		else
 			break;

@@ -245,8 +245,7 @@ bool CTDArray::SetDataForLoad(const std::vector<double>& _vTP, const std::vector
 
 void CTDArray::Clear()
 {
-	if( &m_data != NULL )
-		m_data.clear();
+	m_data.clear();
 }
 
 bool CTDArray::IsEmpty() const

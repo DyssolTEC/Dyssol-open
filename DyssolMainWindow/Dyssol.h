@@ -79,7 +79,7 @@ private:
 
 public:
 	Dyssol(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
-	~Dyssol();
+	~Dyssol() override;
 
 	void InitializeConnections() const;	// initialize all qt connections
 	void UpdateWholeView() const;			// update all window
@@ -89,7 +89,7 @@ public:
 	void OpenDyssol() const;
 
 protected:
-	void closeEvent( QCloseEvent* );	// closing of the main window event
+	void closeEvent( QCloseEvent* ) override;	// closing of the main window event
 
 private:
 	Ui::DyssolClass ui;

@@ -90,11 +90,11 @@ void CModulesManagerTab::UpdateModelsView() const
 
 void CModulesManagerTab::SetModelInfoToTable(const SModelDescriptor& _model, const QString& _type) const
 {
-	const QDateTime date = QFileInfo(QString::fromStdWString(_model.fileLocation)).lastModified();
+	const QDateTime date = QFileInfo(QString::fromStdWString(_model.fileLocation.wstring())).lastModified();
 	const int row = ui.tableModels->rowCount();
 	ui.tableModels->insertRow(ui.tableModels->rowCount());
 	ui.tableModels->SetItemNotEditable(row, 0, _model.name, QString::fromStdString(_model.name));		          // set name
-	ui.tableModels->SetItemNotEditable(row, 1, _model.fileLocation, QString::fromStdWString(_model.fileLocation)); // set path
+	ui.tableModels->SetItemNotEditable(row, 1, _model.fileLocation, QString::fromStdWString(_model.fileLocation.wstring())); // set path
 	ui.tableModels->SetItemNotEditable(row, 2, _type, _type);                                                     // set type
 	ui.tableModels->SetItemNotEditable(row, 3, _model.version, static_cast<uint>(_model.version));	                                  // set interface version
 	ui.tableModels->SetItemNotEditable(row, 4, _model.author, QString::fromStdString(_model.author));		      // set author name
