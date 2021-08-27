@@ -16,8 +16,64 @@
 #include "StringFunctions.h"
 #include "ThreadPool.h"
 #include "DyssolSystemDefines.h"
+#include "FileSystem.h"
 #include <chrono>
 #include <filesystem>
+#include <fstream>
+
+void ExportResults(const CConfigFileParser& _parser, const CFlowsheet& _flowsheet)
+{
+	if (!_parser.IsValueDefined(EArguments::TEXT_EXPORT_FILE)) return;
+
+	const auto FindStreamByName = [&](const std::string& _name) -> const CStream*
+	{
+		const auto streams = _flowsheet.GetAllStreams();
+		const auto it = std::find_if(streams.begin(), streams.end(), [&](const CStream* _s) { return _s->GetName() == _name; });
+		if (it == streams.end()) return {};
+		return *it;
+	};
+
+	// open export text file
+	std::ofstream file(StringFunctions::UnicodePath(_parser.GetValue<std::wstring>(EArguments::TEXT_EXPORT_FILE)));
+	// set precision
+	if (_parser.IsValueDefined(EArguments::TEXT_EXPORT_PRECISION))
+		file.precision(_parser.GetValue<unsigned>(EArguments::TEXT_EXPORT_PRECISION));
+	if (_parser.IsValueDefined(EArguments::TEXT_EXPORT_FIXED_POINT))
+		file.setf(std::ios::fixed);
+
+	double limit = 0.0;
+	if (_parser.IsValueDefined(EArguments::TEXT_EXPORT_SIGNIFICANCE_LIMIT))
+		limit = std::abs(_parser.GetValue<double>(EArguments::TEXT_EXPORT_SIGNIFICANCE_LIMIT));
+
+	const auto Limit = [&](double _v)
+	{
+		return limit == 0.0 ? _v : std::abs(_v) >= limit ? _v : 0.0;
+	};
+
+	// export mass flows
+	for (const auto& e : _parser.GetValue<std::vector<SExportStreamDataMass>>(EArguments::EXPORT_MASS))
+	{
+		const CStream* stream = FindStreamByName(e.streamName);
+		file << "MASS " << stream->GetName();
+		for (const double t : !e.timePoints.empty() ? e.timePoints : stream->GetAllTimePoints())
+			file << " " << t << " " << Limit(stream->GetMass(t));
+		file << std::endl;
+	}
+
+	// export PSDs
+	for (const auto& e : _parser.GetValue<std::vector<SExportStreamDataMass>>(EArguments::EXPORT_PSD))
+	{
+		const CStream* stream = FindStreamByName(e.streamName);
+		file << "PSD " << stream->GetName();
+		for (const double t : !e.timePoints.empty() ? e.timePoints : stream->GetAllTimePoints())
+		{
+			file << " " << t;
+			for (const double v : stream->GetPSD(t, PSD_MassFrac))
+				file << " " << Limit(v);
+		}
+		file << std::endl;
+	}
+}
 
 // Prints information about command line arguments.
 void PrintArgumentsInfo()
@@ -326,6 +382,17 @@ void RunSimulation(const CConfigFileParser& _parser)
 	flowsheet.SaveToFile(fileHandler, sDstFile);
 
 	std::cout << "Simulation finished in " << std::chrono::duration_cast<std::chrono::seconds>(tEnd - tStart).count() << " [s]" << std::endl;
+
+	// export results to text files if necessary
+	ExportResults(_parser, flowsheet);
+
+	// export to graph file
+	if (_parser.IsValueDefined(EArguments::EXPORT_GRAPH))
+	{
+		std::ofstream file(StringFunctions::UnicodePath(_parser.GetValue<std::wstring>(EArguments::EXPORT_GRAPH)));
+		file << flowsheet.GenerateDOTFile();
+		file.close();
+	}
 }
 
 void RunDyssol(const std::filesystem::path& _script)
@@ -356,7 +423,7 @@ int main(int argc, const char *argv[])
 	if (parser.TokensCount() == 0)
 	{
 		PrintArgumentsInfo();
-		return 0;
+			return 1;
 	}
 
 	if (parser.HasKey("v"))

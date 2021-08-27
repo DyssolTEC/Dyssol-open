@@ -7,6 +7,7 @@
 #include "ContainerFunctions.h"
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
+#include <sstream>
 
 CFlowsheet::CFlowsheet(CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB) :
 	m_materialsDB{ _materialsDB },
@@ -288,6 +289,50 @@ CCalculationSequence* CFlowsheet::GetCalculationSequence()
 	return &m_calculationSequence;
 }
 
+std::string CFlowsheet::GenerateDOTFile()
+{
+	struct SConnection { std::string stream{}, unitO{}, unitI{}; };
+	std::vector<SConnection> con;
+
+	for (const auto& u : GetAllUnits())
+	{
+		if (!u->GetModel()) continue;
+		for (const auto& p : u->GetModel()->GetPortsManager().GetAllInputPorts())
+		{
+			const auto streamKey = p->GetStreamKey();
+			const size_t i = VectorFind(con, [&](const SConnection& c) { return c.unitI.empty() && c.stream == streamKey; });
+			if (i != static_cast<size_t>(-1))
+				con[i].unitI = u->GetKey();
+			else
+				con.emplace_back(SConnection{ streamKey, "", u->GetKey() });
+		}
+		for (const auto& p : u->GetModel()->GetPortsManager().GetAllOutputPorts())
+		{
+			const auto streamKey = p->GetStreamKey();
+			const size_t i = VectorFind(con, [&](const SConnection& c) { return c.unitO.empty() && c.stream == streamKey; });
+			if (i != static_cast<size_t>(-1))
+				con[i].unitO = u->GetKey();
+			con.emplace_back(SConnection{ streamKey, u->GetKey(), "" });
+		}
+	}
+
+	std::stringstream res;
+	res << "digraph Flowsheet {" << std::endl;
+	// list units
+	for (const auto& u : GetAllUnits())
+		res << StringFunctions::Quote(u->GetName()) << " [shape=box];" << std::endl;
+	// list streams
+	for (const auto& c : con)
+	{
+		if (c.unitI.empty() || c.unitO.empty()) continue;
+		res << StringFunctions::Quote(GetUnit(c.unitO)->GetName()) << " -> " << StringFunctions::Quote(GetUnit(c.unitI)->GetName())
+			<< " [label=" << StringFunctions::Quote(GetStream(c.stream)->GetName()) << "];" << std::endl;
+	}
+	res << "}" << std::endl;
+
+	return res.str();
+}
+
 size_t CFlowsheet::GetCompoundsNumber() const
 {
 	if (!m_mainGrid.HasDimension(DISTR_COMPOUNDS)) return 0;
@@ -562,31 +607,32 @@ std::string CFlowsheet::Initialize()
 void CFlowsheet::SetStreamsToPorts()
 {
 	// setup output streams with proper grids
-	for (auto& unit : m_units)
-		for (auto& port : unit->GetModel()->GetPortsManager().GetAllOutputPorts())
-			DoGetStream(port->GetStreamKey(), m_streams)->SetGrid(unit->GetModel()->GetGrid());
+	for (const auto& unit : m_units)
+		for (const auto* port : unit->GetModel()->GetPortsManager().GetAllOutputPorts())
+			if (const auto str = DoGetStream(port->GetStreamKey(), m_streams))
+				str->SetGrid(unit->GetModel()->GetGrid());
 
 	// create input streams with proper grids
 	m_streamsI = m_streams; // copy pointers to main (output) streams
-	for (auto& unit : m_units)
-		for (auto& port : unit->GetModel()->GetPortsManager().GetAllInputPorts())
+	for (const auto& unit : m_units)
+		for (const auto* port : unit->GetModel()->GetPortsManager().GetAllInputPorts())
 		{
 			// find the corresponding stream in the list
 			const size_t index = VectorFind(m_streamsI, [&](auto& s) { return s->GetKey() == port->GetStreamKey(); });
 			if (unit->GetModel()->GetGrid() != m_streamsI[index]->GetGrid()) // separate input stream is needed
-			{
 				// create new with proper grid
 				m_streamsI[index] = std::make_shared<CStream>(m_streamsI[index]->GetKey(), &m_materialsDB, unit->GetModel()->GetGrid(), &m_overall, &m_phases, &m_cacheStreams, &m_tolerance, &m_thermodynamics);
-			}
 		}
 
 	// set stream pointers to ports
-	for (auto& unit : m_units)
+	for (const auto& unit : m_units)
 	{
-		for (auto& port : unit->GetModel()->GetPortsManager().GetAllInputPorts())
-			port->SetStream(DoGetStream(port->GetStreamKey(), m_streamsI).get());
-		for (auto& port : unit->GetModel()->GetPortsManager().GetAllOutputPorts())
-			port->SetStream(DoGetStream(port->GetStreamKey(), m_streams).get());
+		for (auto* port : unit->GetModel()->GetPortsManager().GetAllInputPorts())
+			if (const auto str = DoGetStream(port->GetStreamKey(), m_streamsI))
+				port->SetStream(str.get());
+		for (auto* port : unit->GetModel()->GetPortsManager().GetAllOutputPorts())
+			if (const auto str = DoGetStream(port->GetStreamKey(), m_streams))
+				port->SetStream(str.get());
 	}
 }
 

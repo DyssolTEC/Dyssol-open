@@ -7,7 +7,7 @@
 #include "MaterialsDatabase.h"
 #include "DyssolStringConstants.h"
 #include "ReactionsEditor.h"
-#include <sstream>
+#include "ContainerFunctions.h"
 #include <QMessageBox>
 #include <cmath>
 

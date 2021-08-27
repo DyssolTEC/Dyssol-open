@@ -181,7 +181,7 @@ private:
 
 public:
 	CQtPlot(QWidget* parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
-	~CQtPlot();
+	~CQtPlot() override;
 
 	unsigned AddCurve();														// add new empty curve to the plot
 	unsigned AddCurve(SCurve* _curve);											// add new curve to the plot
@@ -266,14 +266,14 @@ private:
 
 
 protected:
-	virtual void resizeEvent(QResizeEvent* _resizeEvent);
-	virtual void paintEvent(QPaintEvent* _paintEvent);
-	virtual void wheelEvent(QWheelEvent* _wheelEvent);
-	virtual void mousePressEvent(QMouseEvent* _mouseEvent);
-	virtual void mouseReleaseEvent(QMouseEvent* _mouseEvent);
-	virtual void mouseMoveEvent(QMouseEvent* _mouseEvent);
-	virtual void mouseDoubleClickEvent(QMouseEvent* _mouseEvent);
-	virtual void contextMenuEvent(QContextMenuEvent* _contextMenuEvent);
+	void resizeEvent(QResizeEvent* _resizeEvent) override;
+	void paintEvent(QPaintEvent* _paintEvent) override;
+	void wheelEvent(QWheelEvent* _wheelEvent) override;
+	void mousePressEvent(QMouseEvent* _mouseEvent) override;
+	void mouseReleaseEvent(QMouseEvent* _mouseEvent) override;
+	void mouseMoveEvent(QMouseEvent* _mouseEvent) override;
+	void mouseDoubleClickEvent(QMouseEvent* _mouseEvent) override;
+	void contextMenuEvent(QContextMenuEvent* _contextMenuEvent) override;
 
 
 public slots:

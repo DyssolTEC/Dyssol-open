@@ -86,7 +86,7 @@ std::vector<SSolverDescriptor> CModelsManager::GetAvailableSolvers() const
 SSolverDescriptor CModelsManager::GetSolverDescriptor(const std::wstring& _fileName) const
 {
 	const std::wstring sLibName = FileSystem::FileName(_fileName);
-	const auto res = std::find_if(m_availableSolvers.begin(), m_availableSolvers.end(), [&](const SSolverDescriptor& s) { return FileSystem::FileName(s.fileLocation) == sLibName; });
+	const auto res = std::find_if(m_availableSolvers.begin(), m_availableSolvers.end(), [&](const SSolverDescriptor& s) { return s.fileLocation.filename() == sLibName; });
 	if (res == m_availableSolvers.end()) return {};
 	return *res;
 }
@@ -95,7 +95,7 @@ std::wstring CModelsManager::GetSolverLibName(const std::string& _key) const
 {
 	const auto res = std::find_if(m_availableSolvers.begin(), m_availableSolvers.end(), [&](const SSolverDescriptor& s) { return s.uniqueID == _key; });
 	if (res == m_availableSolvers.end()) return {};
-	return FileSystem::FileName(res->fileLocation);
+	return res->fileLocation.filename().wstring();
 }
 
 CBaseUnit* CModelsManager::InstantiateUnit(const std::string& _key)
@@ -275,7 +275,7 @@ std::pair<std::vector<SUnitDescriptor>, std::vector<SSolverDescriptor>> CModelsM
 	return std::make_pair(resUnits, resSolvers);
 }
 
-SUnitDescriptor CModelsManager::TryGetUnitDescriptor(const std::wstring& _pathToUnit, DYSSOL_LIBRARY_INSTANCE _library)
+SUnitDescriptor CModelsManager::TryGetUnitDescriptor(const std::filesystem::path& _pathToUnit, DYSSOL_LIBRARY_INSTANCE _library)
 {
 	// try to get constructor
 	const CreateUnit2 createUnitFunc = reinterpret_cast<CreateUnit2>(LoadDyssolLibraryConstructor(_library, DYSSOL_CREATE_MODEL_FUN_NAME));
@@ -323,7 +323,7 @@ SUnitDescriptor CModelsManager::TryGetUnitDescriptor(const std::wstring& _pathTo
 	return unitDescriptor;
 }
 
-SSolverDescriptor CModelsManager::TryGetSolverDescriptor(const std::wstring& _pathToSolver, DYSSOL_LIBRARY_INSTANCE _library)
+SSolverDescriptor CModelsManager::TryGetSolverDescriptor(const std::filesystem::path& _pathToSolver, DYSSOL_LIBRARY_INSTANCE _library)
 {
 	SSolverDescriptor solverDescriptor;
 	CBaseSolver* pSolver = nullptr;
@@ -379,12 +379,12 @@ SSolverDescriptor CModelsManager::TryGetSolverDescriptor(const std::wstring& _pa
 	return solverDescriptor;
 }
 
-DYSSOL_LIBRARY_INSTANCE CModelsManager::LoadDyssolLibrary(const std::wstring& _libPath)
+DYSSOL_LIBRARY_INSTANCE CModelsManager::LoadDyssolLibrary(const std::filesystem::path& _libPath)
 {
 #ifdef _MSC_VER
 	return LoadLibrary(_libPath.c_str());
 #else
-	return dlopen(StringFunctions::WString2String(_libPath).c_str(), RTLD_LAZY);
+	return dlopen(_libPath.c_str(), RTLD_LAZY);
 #endif
 }
 

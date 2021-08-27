@@ -2,7 +2,7 @@
 
 #include "FileSystem.h"
 #include <fcntl.h>
-#include <iostream>
+#include <filesystem>
 #ifdef _MSC_VER
 #include <corecrt_io.h>
 #include <direct.h>
@@ -20,203 +20,6 @@
 
 namespace FileSystem
 {
-	bool FileExists(const std::string& _filePath)
-	{
-		struct stat info {};
-		return stat(_filePath.c_str(), &info) == 0;
-	}
-
-	bool DirExists(const std::string& _dirPath)
-	{
-		struct stat info {};
-		if (stat(_dirPath.c_str(), &info) != 0)	return false;
-		return (info.st_mode & S_IFDIR) != 0;
-	}
-
-	bool CreateDir(const std::string& _dirPath)
-	{
-#ifdef _MSC_VER
-		return _mkdir(_dirPath.c_str()) == 0;
-#else
-		return mkdir(_dirPath.c_str(), 0777) == 0;
-#endif
-	}
-
-	bool RemoveFile(const std::string& _filePath)
-	{
-		return remove(_filePath.c_str()) == 0;
-	}
-
-	bool RemoveDir(const std::string& _dirPath)
-	{
-#ifdef _MSC_VER
-		std::string filePath;				// filepath
-		WIN32_FIND_DATAA fileInformation;	// file information
-
-		const std::string pattern = _dirPath + "\\*.*";						// pattern
-		HANDLE hFile = FindFirstFileA(pattern.c_str(), &fileInformation);	// handle to directory
-		if (hFile != INVALID_HANDLE_VALUE)
-		{
-			do
-			{
-				if (fileInformation.cFileName[0] != '.')
-				{
-					filePath.erase();
-					filePath = _dirPath + "\\" + fileInformation.cFileName;
-
-					if (fileInformation.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)                            // directory found
-					{
-						if (!RemoveDir(filePath)) return false;                                                 // recursively delete sub-directory
-					}
-					else
-					{
-						if (SetFileAttributesA(filePath.c_str(), FILE_ATTRIBUTE_NORMAL) == FALSE) return false; // change file attributes to be able to delete it
-						if (DeleteFileA(filePath.c_str()) == FALSE) return false;                               // delete file
-					}
-				}
-			} while (FindNextFileA(hFile, &fileInformation) == TRUE);                                           // for all files in current directory
-
-			FindClose(hFile); // close file handle
-
-			if (GetLastError() != ERROR_NO_MORE_FILES) return false;                                // check for errors
-			if (SetFileAttributesA(_dirPath.c_str(), FILE_ATTRIBUTE_NORMAL) == FALSE) return false; // change directory attributes to be able to delete it
-			if (RemoveDirectoryA(_dirPath.c_str()) == FALSE) return false;                          // delete directory itself
-		}
-#else
-		DIR* dir = opendir(_dirPath.c_str());
-		struct dirent* entry = nullptr;
-		while (entry = readdir(dir))
-		{
-			if (strcmp(entry->d_name, ".") && strcmp(entry->d_name, ".."))
-			{
-				const std::string absPath = _dirPath + "/" + entry->d_name;
-				DIR* subDir = nullptr;
-				if (subDir = opendir(absPath.c_str()))
-				{
-					closedir(subDir);
-					RemoveDir(absPath);
-				}
-				else
-				{
-					FILE *file = nullptr;
-					if (file = fopen(absPath.c_str(), "r"))
-					{
-						fclose(file);
-						remove(absPath.c_str());
-					}
-				}
-			}
-		}
-		remove(_dirPath.c_str());
-#endif
-		return true;
-	}
-
-	uint64_t FileSize(const std::string& _filePath)
-	{
-		struct stat info {};
-		const int err = stat(_filePath.c_str(), &info);
-		return err == 0 ? info.st_size : -1;
-	}
-
-	void ChangeFileSize(const std::string& _filePath, uint64_t _newSize)
-	{
-#ifdef _MSC_VER
-		int fileHandler;
-		if (_sopen_s(&fileHandler, _filePath.c_str(), _O_RDWR | _O_CREAT, _SH_DENYNO, _S_IREAD | _S_IWRITE) == 0)
-		{
-			_chsize_s(fileHandler, _newSize);
-			_close(fileHandler);
-		}
-#else
-		int fileHandler = open(_filePath.c_str(), O_RDWR | O_CREAT, S_IREAD | S_IWRITE);
-		if (fileHandler != -1)
-		{
-			int res = ftruncate(fileHandler, _newSize);
-			close(fileHandler);
-		}
-#endif
-	}
-
-#ifdef _MSC_VER
-	bool FileExists(const std::wstring& _filePath)
-	{
-		struct _stat64 info {};
-		return _wstat64(_filePath.c_str(), &info) == 0;
-	}
-
-	bool DirExists(const std::wstring& _dirPath)
-	{
-		struct _stat64 info {};
-		if (_wstat64(_dirPath.c_str(), &info) != 0)	return false;
-		return (info.st_mode & S_IFDIR) != 0;
-	}
-
-	bool CreateDir(const std::wstring& _dirPath)
-	{
-		return _wmkdir(_dirPath.c_str()) == 0;
-	}
-
-	bool RemoveFile(const std::wstring& _filePath)
-	{
-		return _wremove(_filePath.c_str()) == 0;
-	}
-
-	bool RemoveDir(const std::wstring& _dirPath)
-	{
-		std::wstring filePath;				// filepath
-		WIN32_FIND_DATA fileInformation;	// file information
-
-		const std::wstring pattern = _dirPath + L"\\*.*";					// pattern
-		HANDLE hFile = FindFirstFile(pattern.c_str(), &fileInformation);	// handle to directory
-		if (hFile != INVALID_HANDLE_VALUE)
-		{
-			do
-			{
-				if (fileInformation.cFileName[0] != '.')
-				{
-					filePath.erase();
-					filePath = _dirPath + L"\\" + fileInformation.cFileName;
-
-					if (fileInformation.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)                           // directory found
-					{
-						if (!RemoveDir(filePath)) return false;                                                // recursively delete sub-directory
-					}
-					else
-					{
-						if (SetFileAttributes(filePath.c_str(), FILE_ATTRIBUTE_NORMAL) == FALSE) return false; // change file attributes to be able to delete it
-						if (DeleteFile(filePath.c_str()) == FALSE) return false;                               // delete file
-					}
-				}
-			} while (FindNextFile(hFile, &fileInformation) == TRUE);                                           // for all files in current directory
-
-			FindClose(hFile); // close file handle
-
-			if (GetLastError() != ERROR_NO_MORE_FILES) return false;                               // check for errors
-			if (SetFileAttributes(_dirPath.c_str(), FILE_ATTRIBUTE_NORMAL) == FALSE) return false; // change directory attributes to be able to delete it
-			if (RemoveDirectory(_dirPath.c_str()) == FALSE) return false;                          // delete directory itself
-		}
-		return true;
-	}
-
-	uint64_t FileSize(const std::wstring& _filePath)
-	{
-		struct _stat64 info {};
-		const int err = _wstat64(_filePath.c_str(), &info);
-		return err == 0 ? info.st_size : -1;
-	}
-
-	void ChangeFileSize(const std::wstring& _filePath, uint64_t _newSize)
-	{
-		int fileHandler;
-		if (_wsopen_s(&fileHandler, _filePath.c_str(), _O_RDWR | _O_CREAT, _SH_DENYNO, _S_IREAD | _S_IWRITE) == 0)
-		{
-			_chsize_s(fileHandler, _newSize);
-			_close(fileHandler);
-		}
-	}
-#endif
-
 	std::wstring FileExtension(const std::wstring& _filePath)
 	{
 		const size_t slashPos = _filePath.find_last_of(L"/\\");
@@ -284,38 +87,13 @@ namespace FileSystem
 #endif
 	}
 
-	std::vector<std::wstring> FilesList(const std::wstring& _dirPath, const std::wstring& _filter)
+	std::vector<std::filesystem::path> FilesList(const std::wstring& _dirPath, const std::wstring& _filter)
 	{
-		std::vector<std::wstring> files;
-#ifdef _MSC_VER
-		const std::wstring searchPath = _dirPath + L"/" + _filter;
-		WIN32_FIND_DATA fileData;
-		HANDLE hFile = ::FindFirstFile(searchPath.c_str(), &fileData);
-		if (hFile != INVALID_HANDLE_VALUE)
-		{
-			do
-			{
-				if (!(fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-					files.push_back(_dirPath + L"/" + fileData.cFileName);
-			} while (::FindNextFile(hFile, &fileData));
-			::FindClose(hFile);
-		}
-#else
-		std::vector<std::string> filesTemp;
-		const std::wstring ext = FileExtension(_filter);
-		DIR* dir = nullptr;
-		if (dir = opendir(Convert(_dirPath).c_str()))
-		{
-			struct dirent* entry = nullptr;
-			while (entry = readdir(dir))
-			{
-				if (!strcmp(entry->d_name, ".") || !strcmp(entry->d_name, "..")) continue;
-				if (FileExtension(Convert(entry->d_name)) == ext)
-					files.push_back(_dirPath + L"/" + Convert(entry->d_name));
-			}
-			closedir(dir);
-		}
-#endif
+		std::vector<std::filesystem::path> files;
+		if (!std::filesystem::exists(_dirPath)) return files;
+		for (const auto& entry : std::filesystem::directory_iterator(_dirPath))
+			if (entry.path().extension() == _filter)
+				files.push_back(entry.path());
 		return files;
 	}
 
@@ -326,11 +104,11 @@ namespace FileSystem
 #else
 		const std::string testDirName = Convert(_dirPath) + "/WriteProtectionTest";
 #endif
-		const bool bCreated = CreateDir(testDirName);
+		const bool bCreated = std::filesystem::create_directory(testDirName);
 		if (!bCreated) return true;
-		const bool bExists = DirExists(testDirName);
+		const bool bExists = std::filesystem::exists(testDirName);
 		if (!bExists) return true;
-		RemoveDir(testDirName);
+		std::filesystem::remove_all(testDirName);
 		return false;
 	}
 

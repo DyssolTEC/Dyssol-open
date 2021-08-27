@@ -4,6 +4,7 @@
 
 #include <string>
 #include <vector>
+#include <filesystem>
 
 #ifdef AddPort
 #undef AddPort
@@ -25,29 +26,11 @@ namespace FileSystem
 	/*////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// 1. OS independent versions, working with std::string. */
 
-	bool FileExists(const std::string& _filePath);	// Returns true if the specified file exists.
-	bool DirExists(const std::string& _dirPath);	// Returns true if the specified directory exists.
-	bool CreateDir(const std::string& _dirPath);	// Creates a directory with the specified name and returns true on success.
-	bool RemoveFile(const std::string& _filePath);	// Removes the specified file and returns true on success.
-	bool RemoveDir(const std::string& _dirPath);	// Removes the specified directory and returns true on success.
-
-	uint64_t FileSize(const std::string& _filePath);						// Return size of the specified file.
-	void ChangeFileSize(const std::string& _filePath, uint64_t _newSize);	// Changes size of the specified file.
 
 
 	/*////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// 2. Windows-specific versions, working with std::wstring and using Windows API. */
 
-#ifdef _MSC_VER
-	bool FileExists(const std::wstring& _filePath);	// Returns true if the specified file exists.
-	bool DirExists(const std::wstring& _dirPath);	// Returns true if the specified directory exists.
-	bool CreateDir(const std::wstring& _dirPath);	// Creates a directory with the specified name and returns true on success.
-	bool RemoveFile(const std::wstring& _filePath);	// Removes the specified file and returns true on success.
-	bool RemoveDir(const std::wstring& _dirPath);	// Removes the specified directory and returns true on success.
-
-	uint64_t FileSize(const std::wstring& _filePath);						// Return size of the specified file.
-	void ChangeFileSize(const std::wstring& _filePath, uint64_t _newSize);	// Changes size of the specified file.
-#endif
 
 	/*////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// 3. OS independent versions, working with std::wstring. */
@@ -59,7 +42,7 @@ namespace FileSystem
 	std::wstring ExecutableDirPath();						// Returns the directory that contains the application executable.
 	std::wstring AbsolutePath(const std::wstring& _path);	// Converts provided path to canonical absolute path.
 
-	std::vector<std::wstring> FilesList(const std::wstring& _dirPath, const std::wstring& _filter); // Returns the list of files with selected filter (extension), located in the specified directory.
+	std::vector<std::filesystem::path> FilesList(const std::wstring& _dirPath, const std::wstring& _filter); // Returns the list of files with selected filter (extension), located in the specified directory.
 
 	bool IsWriteProtected(const std::wstring& _dirPath); // Checks whether the specified path is write-protected.
 

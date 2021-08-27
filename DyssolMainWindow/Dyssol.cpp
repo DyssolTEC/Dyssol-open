@@ -13,6 +13,8 @@
 #include <QCloseEvent>
 #include <QFileDialog>
 #include <QDesktopServices>
+#include <filesystem>
+#include <fstream>
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -33,8 +35,8 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	// setup config file
 	m_sSettingsPath = QFileInfo(QSettings(QSettings::IniFormat, QSettings::UserScope, StrConst::Dyssol_ApplicationName, StrConst::Dyssol_ConfigApp).fileName()).absolutePath();
 	// create directory for temporary data if it doesn't exist
-	if (!FileSystem::DirExists(m_sSettingsPath.toStdString()))
-		FileSystem::CreateDir(m_sSettingsPath.toStdString());
+	if (!std::filesystem::exists(m_sSettingsPath.toStdString()))
+		std::filesystem::create_directory(m_sSettingsPath.toStdString());
 
 	const QString mainConfigFile = m_sSettingsPath + "/" + StrConst::Dyssol_ConfigFileName;
 	const QString tempConfigFile = QString{ "./" } + StrConst::Dyssol_ConfigFileName;
@@ -146,6 +148,7 @@ void Dyssol::InitializeConnections() const
 	connect(ui.actionSaveFlowsheet,   &QAction::triggered, this, &Dyssol::SaveFlowsheet);
 	connect(ui.actionSaveFlowsheetAs, &QAction::triggered, this, &Dyssol::SaveFlowsheetAs);
 	connect(ui.actionSaveConfig,      &QAction::triggered, this, &Dyssol::SaveConfigFile);
+	connect(ui.actionSaveGraph,       &QAction::triggered, this, &Dyssol::SaveGraphFile);
 	connect(ui.actionAbout,           &QAction::triggered, this, &Dyssol::ShowAboutDialog);
 
 	// signals from threads
@@ -275,7 +278,7 @@ void Dyssol::SetupCache()
 
 	// set the default cache path to config.ini if it has not been set or does not exist
 	const QVariant cachePathVar = m_pSettings->value(StrConst::Dyssol_ConfigCachePath);
-	if (!cachePathVar.isValid() || cachePathVar.toString().isEmpty() || !FileSystem::DirExists(cachePathVar.toString().toStdString()))
+	if (!cachePathVar.isValid() || cachePathVar.toString().isEmpty() || !std::filesystem::exists(cachePathVar.toString().toStdString()))
 		m_pSettings->setValue(StrConst::Dyssol_ConfigCachePath, m_sSettingsPath);
 
 	// setup cache path
@@ -304,8 +307,8 @@ void Dyssol::ClearCache()
 	// close flowsheet
 	m_Flowsheet.Clear();
 	// clear cache
-	FileSystem::RemoveDir((m_pSettings->value(StrConst::Dyssol_ConfigCachePath).toString() + StrConst::Dyssol_CacheDirDebug).toStdString());
-	FileSystem::RemoveDir((m_pSettings->value(StrConst::Dyssol_ConfigCachePath).toString() + StrConst::Dyssol_CacheDirRelease).toStdString());
+	std::filesystem::remove_all((m_pSettings->value(StrConst::Dyssol_ConfigCachePath).toString() + StrConst::Dyssol_CacheDirDebug).toStdString());
+	std::filesystem::remove_all((m_pSettings->value(StrConst::Dyssol_ConfigCachePath).toString() + StrConst::Dyssol_CacheDirRelease).toStdString());
 }
 
 void Dyssol::CreateMenu()
@@ -585,6 +588,18 @@ void Dyssol::SaveConfigFile()
 	QApplication::restoreOverrideCursor();
 }
 
+void Dyssol::SaveGraphFile()
+{
+	const QString filePath = QString::fromStdWString(CH5Handler::DisplayFileName(m_sCurrFlowsheetFile.toStdWString()));
+	const QString outFileName = QFileInfo(filePath).absolutePath() + "/" + QFileInfo(filePath).baseName() + ".gv";
+	const QString outFile = QFileDialog::getSaveFileName(this, StrConst::Dyssol_DialogSaveGraphName, outFileName, StrConst::Dyssol_DialogGraphFilter);
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	std::ofstream file(outFile.toStdString());
+	file << m_Flowsheet.GenerateDOTFile();
+	file.close();
+	QApplication::restoreOverrideCursor();
+}
+
 void Dyssol::SavingFinished()
 {
 	if(m_pSavingThread->IsSuccess())
@@ -630,7 +645,7 @@ void Dyssol::OpenHelp(const QString& _sFile) const
 	QString sFileToOpen =  QString(INSTALL_DOCS_PATH) + "/" + _sFile + StrConst::Dyssol_HelpFileExt;
 #endif
 
-	if (!FileSystem::FileExists(sFileToOpen.toStdString())) // cannot find requested file in the running folder -> access through the link
+	if (!std::filesystem::exists(sFileToOpen.toStdString())) // cannot find requested file in the running folder -> access through the link
 		sFileToOpen = QFile::symLinkTarget(m_sSettingsPath + "/" + StrConst::Dyssol_AppFolderPathLink) + "/" + StrConst::Dyssol_HelpDir + "/" + _sFile + StrConst::Dyssol_HelpFileExt;
 	QDesktopServices::openUrl(QUrl::fromLocalFile(sFileToOpen));
 }

@@ -17,38 +17,45 @@
 
 using namespace StringFunctions;
 
-#define TO_ARG_STR(X) std::string(MACRO_TOSTRING(X)).substr(12, std::string(MACRO_TOSTRING(X)).length()).append(12 + 20 - std::string(MACRO_TOSTRING(X)).length(), ' ')
+#define TO_ARG_STR(X) std::string(MACRO_TOSTRING(X)).substr(12, std::string(MACRO_TOSTRING(X)).length()).append(12 + 30 - std::string(MACRO_TOSTRING(X)).length(), ' ')
 #define MAKE_ARGUMENT(ARGUM_NAME, ARGUM_TYPE) { ARGUM_NAME, StringFunctions::TrimWhitespaces(std::string(TO_ARG_STR(ARGUM_NAME))), ARGUM_TYPE, nullptr }
 
 CConfigFileParser::CConfigFileParser()
 {
 	m_arguments = {
-		MAKE_ARGUMENT(EArguments::SOURCE_FILE,			EArgType::argSTRING),
-		MAKE_ARGUMENT(EArguments::RESULT_FILE,			EArgType::argSTRING),
-		MAKE_ARGUMENT(EArguments::MATERIALS_DATABASE,	EArgType::argSTRING),
-		MAKE_ARGUMENT(EArguments::MODELS_PATH,			EArgType::argSTRINGS),
-		MAKE_ARGUMENT(EArguments::SIMULATION_TIME,		EArgType::argDOUBLE),
-		MAKE_ARGUMENT(EArguments::RELATIVE_TOLERANCE,	EArgType::argDOUBLE),
-		MAKE_ARGUMENT(EArguments::ABSOLUTE_TOLERANCE,	EArgType::argDOUBLE),
-		MAKE_ARGUMENT(EArguments::MINIMAL_FRACTION,		EArgType::argDOUBLE),
-		MAKE_ARGUMENT(EArguments::INIT_TIME_WINDOW,		EArgType::argDOUBLE),
-		MAKE_ARGUMENT(EArguments::MIN_TIME_WINDOW,		EArgType::argDOUBLE),
-		MAKE_ARGUMENT(EArguments::MAX_TIME_WINDOW,		EArgType::argDOUBLE),
-		MAKE_ARGUMENT(EArguments::MAX_ITERATIONS_NUM,	EArgType::argUNSIGNED),
-		MAKE_ARGUMENT(EArguments::WINDOW_CHANGE_RATE,	EArgType::argDOUBLE),
-		MAKE_ARGUMENT(EArguments::ITER_UPPER_LIMIT,		EArgType::argUNSIGNED),
-		MAKE_ARGUMENT(EArguments::ITER_LOWER_LIMIT,		EArgType::argUNSIGNED),
-		MAKE_ARGUMENT(EArguments::ITER_UPPER_LIMIT_1,	EArgType::argUNSIGNED),
-		MAKE_ARGUMENT(EArguments::CONVERGENCE_METHOD,	EArgType::argUNSIGNED),
-		MAKE_ARGUMENT(EArguments::ACCEL_PARAMETER,		EArgType::argDOUBLE),
-		MAKE_ARGUMENT(EArguments::RELAX_PARAMETER,		EArgType::argDOUBLE),
-		MAKE_ARGUMENT(EArguments::EXTRAPOL_METHOD,		EArgType::argUNSIGNED),
-		MAKE_ARGUMENT(EArguments::DISTRIBUTION_GRID,	EArgType::argGRIDS),
-		MAKE_ARGUMENT(EArguments::UNIT_PARAMETER,		EArgType::argUNITS),
-		MAKE_ARGUMENT(EArguments::UNIT_HOLDUP_MTP,		EArgType::argHLDP_DISTRS),
-		MAKE_ARGUMENT(EArguments::UNIT_HOLDUP_PHASES,	EArgType::argHLDP_DISTRS),
-		MAKE_ARGUMENT(EArguments::UNIT_HOLDUP_COMP,		EArgType::argHLDP_COMPS),
-		MAKE_ARGUMENT(EArguments::UNIT_HOLDUP_SOLID,	EArgType::argHLDP_SOLIDS)
+		MAKE_ARGUMENT(EArguments::SOURCE_FILE,			          EArgType::argSTRING),
+		MAKE_ARGUMENT(EArguments::RESULT_FILE,			          EArgType::argSTRING),
+		MAKE_ARGUMENT(EArguments::MATERIALS_DATABASE,	          EArgType::argSTRING),
+		MAKE_ARGUMENT(EArguments::MODELS_PATH,			          EArgType::argSTRINGS),
+		MAKE_ARGUMENT(EArguments::SIMULATION_TIME,		          EArgType::argDOUBLE),
+		MAKE_ARGUMENT(EArguments::RELATIVE_TOLERANCE,	          EArgType::argDOUBLE),
+		MAKE_ARGUMENT(EArguments::ABSOLUTE_TOLERANCE,	          EArgType::argDOUBLE),
+		MAKE_ARGUMENT(EArguments::MINIMAL_FRACTION,		          EArgType::argDOUBLE),
+		MAKE_ARGUMENT(EArguments::INIT_TIME_WINDOW,		          EArgType::argDOUBLE),
+		MAKE_ARGUMENT(EArguments::MIN_TIME_WINDOW,		          EArgType::argDOUBLE),
+		MAKE_ARGUMENT(EArguments::MAX_TIME_WINDOW,		          EArgType::argDOUBLE),
+		MAKE_ARGUMENT(EArguments::MAX_ITERATIONS_NUM,	          EArgType::argUNSIGNED),
+		MAKE_ARGUMENT(EArguments::WINDOW_CHANGE_RATE,	          EArgType::argDOUBLE),
+		MAKE_ARGUMENT(EArguments::ITER_UPPER_LIMIT,		          EArgType::argUNSIGNED),
+		MAKE_ARGUMENT(EArguments::ITER_LOWER_LIMIT,		          EArgType::argUNSIGNED),
+		MAKE_ARGUMENT(EArguments::ITER_UPPER_LIMIT_1,	          EArgType::argUNSIGNED),
+		MAKE_ARGUMENT(EArguments::CONVERGENCE_METHOD,	          EArgType::argUNSIGNED),
+		MAKE_ARGUMENT(EArguments::ACCEL_PARAMETER,		          EArgType::argDOUBLE),
+		MAKE_ARGUMENT(EArguments::RELAX_PARAMETER,		          EArgType::argDOUBLE),
+		MAKE_ARGUMENT(EArguments::EXTRAPOL_METHOD,		          EArgType::argUNSIGNED),
+		MAKE_ARGUMENT(EArguments::DISTRIBUTION_GRID,	          EArgType::argGRIDS),
+		MAKE_ARGUMENT(EArguments::UNIT_PARAMETER,		          EArgType::argUNITS),
+		MAKE_ARGUMENT(EArguments::UNIT_HOLDUP_MTP,		          EArgType::argHLDP_DISTRS),
+		MAKE_ARGUMENT(EArguments::UNIT_HOLDUP_PHASES,	          EArgType::argHLDP_DISTRS),
+		MAKE_ARGUMENT(EArguments::UNIT_HOLDUP_COMP,		          EArgType::argHLDP_COMPS),
+		MAKE_ARGUMENT(EArguments::UNIT_HOLDUP_SOLID,	          EArgType::argHLDP_SOLIDS),
+		MAKE_ARGUMENT(EArguments::TEXT_EXPORT_FILE,	              EArgType::argSTRING),
+		MAKE_ARGUMENT(EArguments::TEXT_EXPORT_PRECISION,          EArgType::argUNSIGNED),
+		MAKE_ARGUMENT(EArguments::TEXT_EXPORT_FIXED_POINT,        EArgType::argUNSIGNED),
+		MAKE_ARGUMENT(EArguments::TEXT_EXPORT_SIGNIFICANCE_LIMIT, EArgType::argDOUBLE),
+		MAKE_ARGUMENT(EArguments::EXPORT_MASS,	                  EArgType::argEXPORT_STREAM_DATA),
+		MAKE_ARGUMENT(EArguments::EXPORT_PSD,	                  EArgType::argEXPORT_STREAM_DATA),
+		MAKE_ARGUMENT(EArguments::EXPORT_GRAPH,	                  EArgType::argSTRING)
 	};
 }
 
@@ -297,6 +304,9 @@ bool CConfigFileParser::Parse(const std::string& _sFile)
 		case EArgType::argHLDP_SOLIDS:
 			static_cast<std::vector<SHoldupParam>*>(arg->value)->push_back(CreateSolidDistrFromSS(ss));
 			break;
+		case EArgType::argEXPORT_STREAM_DATA:
+			static_cast<std::vector<SExportStreamDataMass>*>(arg->value)->push_back(ExportStreamDataFromSS(ss));
+			break;
 		}
 	}
 	configFile.close();
@@ -401,6 +411,20 @@ SHoldupParam CConfigFileParser::CreateSolidDistrFromSS(std::stringstream& _ss) c
 	return holdup;
 }
 
+SExportStreamDataMass CConfigFileParser::ExportStreamDataFromSS(std::stringstream& _ss) const
+{
+	SExportStreamDataMass res;
+	res.streamName = GetValueFromStream<std::string>(_ss);
+	const auto times = TrimFromSymbols(GetRestOfLine(_ss), StrConst::COMMENT_SYMBOL);
+	if (!times.empty())
+	{
+		std::stringstream ss2(times);
+		while (!ss2.eof() && ss2.good())
+			res.timePoints.push_back(GetValueFromStream<double>(ss2));
+	}
+	return res;
+}
+
 void CConfigFileParser::ClearArguments()
 {
 	for (SArgument& arg : m_arguments)
@@ -422,6 +446,7 @@ void CConfigFileParser::AllocateMemory(SArgument* _arg)
 	case EArgType::argHLDP_DISTRS:	_arg->value = new std::vector<SHoldupParam>();		break;
 	case EArgType::argHLDP_COMPS:	_arg->value = new std::vector<SHoldupParam>();		break;
 	case EArgType::argHLDP_SOLIDS:	_arg->value = new std::vector<SHoldupParam>();		break;
+	case EArgType::argEXPORT_STREAM_DATA:	_arg->value = new std::vector<SExportStreamDataMass>();		break;
 	}
 }
 
@@ -438,6 +463,7 @@ void CConfigFileParser::DeallocateMemory(SArgument* _arg)
 	case EArgType::argHLDP_DISTRS:	delete static_cast<std::vector<SHoldupParam>*>(_arg->value);		break;
 	case EArgType::argHLDP_COMPS:	delete static_cast<std::vector<SHoldupParam>*>(_arg->value);		break;
 	case EArgType::argHLDP_SOLIDS:	delete static_cast<std::vector<SHoldupParam>*>(_arg->value);		break;
+	case EArgType::argEXPORT_STREAM_DATA:	delete static_cast<std::vector<SExportStreamDataMass>*>(_arg->value);			break;
 	}
 	_arg->value = nullptr;
 }

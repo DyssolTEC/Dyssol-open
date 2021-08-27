@@ -14,6 +14,7 @@
 #include <cctype>
 #include <iomanip>
 #include <random>
+#include <iterator>
 
 namespace StringFunctions
 {

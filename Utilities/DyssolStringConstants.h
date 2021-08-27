@@ -43,9 +43,11 @@ namespace StrConst
 	const char* const Dyssol_AbortMessage          = "This will abort the current simulation and close Dyssol. Proceed?";
 	const char* const Dyssol_DialogDflwFilter      = "DYSSOL files (*.dflw);;All files (*.*);;";
 	const char* const Dyssol_DialogTxtFilter       = "Text files (*.txt);;All files (*.*);;";
+	const char* const Dyssol_DialogGraphFilter     = "DOT files (*.gv);;All files (*.*);;";
 	const char* const Dyssol_DialogSaveName        = "Save flowsheet";
 	const char* const Dyssol_DialogOpenName        = "Open flowsheet";
 	const char* const Dyssol_DialogSaveConfigName  = "Save configuration file";
+	const char* const Dyssol_DialogSaveGraphName   = "Save graph file";
 	const char* const Dyssol_StatusLoadingTitle    = "Loading";
 	const char* const Dyssol_StatusLoadingText     = "Flowsheet is loading. <br/>Please wait";
 	const char* const Dyssol_StatusLoadingQuestion = "Terminate loading of the flowsheet?";
@@ -608,9 +610,9 @@ namespace StrConst
 	const char* const MM_ConfigModelsParamName	     = "modelsFolders";
 	const char* const MM_ConfigModelsFlagsParamName  = "modelsFoldersActivity";
 #ifdef _MSC_VER
-	const wchar_t* const MM_LibraryFileExtension     = L"*.dll";
+	const wchar_t* const MM_LibraryFileExtension     = L".dll";
 #else
-	const wchar_t* const MM_LibraryFileExtension     = L"*.so";
+	const wchar_t* const MM_LibraryFileExtension     = L".so";
 #endif
 
 
