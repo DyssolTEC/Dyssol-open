@@ -43,7 +43,7 @@ set(libdyssolnames
 
 foreach(foldername ${libdyssolnames})
     file(GLOB_RECURSE src   ${CMAKE_SOURCE_DIR}/${foldername}/*.cpp)
-    file(GLOB_RECURSE hdr   ${CMAKE_SOURCE_DIR}/${foldername}/*.cpp)
+    file(GLOB_RECURSE hdr   ${CMAKE_SOURCE_DIR}/${foldername}/*.h)
     set(libdyssolsrc ${libdyssolsrc} ${src})
     INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/${foldername}/")
     INSTALL(FILES ${hdr} DESTINATION ${INSTALL_HEADERS_PATH}/Dyssol/${foldername}/)
