@@ -128,6 +128,9 @@ FOREACH(test ${TESTS})
   ADD_TEST(NAME ${CURRENT_TEST}_diff
           COMMAND python3 ${CMAKE_SOURCE_DIR}/tests/compare.py "${CMAKE_SOURCE_DIR}/tests/${CURRENT_TEST}/ideal.res" "${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res" -t ${TOLERANCE}
   )
+  # _diff tetst can only be run when the _run test is done
+  SET_TESTS_PROPERTIES(${CURRENT_TEST}_diff PROPERTIES DEPENDS ${CURRENT_TEST}_run)
+
 ENDFOREACH(test ${TESTS})
 
 #===============================================
