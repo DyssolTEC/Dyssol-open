@@ -1,6 +1,7 @@
 SOURCE_FILE         ${CMAKE_SOURCE_DIR}/DyssolInstallers/Data/Example Flowsheets/Units/Screen Plitt.dflw
 RESULT_FILE         ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/Res.dlfw
-MODELS_PATH         ${INSTALL_UNITS_LIB_PATH}
+MODELS_PATH         ${CMAKE_BINARY_DIR}/Units
+MODELS_PATH         ${CMAKE_BINARY_DIR}/Solvers
 MATERIALS_DATABASE  ${CMAKE_SOURCE_DIR}/Materials.dmdb
 TEXT_EXPORT_FILE    ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
 EXPORT_PSD  Coarse  
