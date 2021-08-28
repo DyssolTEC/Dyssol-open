@@ -389,7 +389,8 @@ std::ostream& CStringUnitParameter::ValueToStream(std::ostream& _s)
 
 std::istream& CStringUnitParameter::ValueFromStream(std::istream& _s)
 {
-	return _s >> m_value;
+	m_value = StringFunctions::GetValueFromStream<std::string>(_s);
+	return _s;
 }
 
 void CStringUnitParameter::SaveToFile(CH5Handler& _h5Saver, const std::string& _path) const
@@ -541,7 +542,8 @@ std::ostream& CSolverUnitParameter::ValueToStream(std::ostream& _s)
 
 std::istream& CSolverUnitParameter::ValueFromStream(std::istream& _s)
 {
-	return _s >> m_key;
+	m_key = StringFunctions::GetValueFromStream<std::string>(_s);
+	return _s;
 }
 
 void CSolverUnitParameter::SaveToFile(CH5Handler& _h5Saver, const std::string& _path) const
@@ -716,7 +718,8 @@ std::ostream& CCompoundUnitParameter::ValueToStream(std::ostream& _s)
 
 std::istream& CCompoundUnitParameter::ValueFromStream(std::istream& _s)
 {
-	return _s >> m_key;
+	m_key = StringFunctions::GetValueFromStream<std::string>(_s);
+	return _s;
 }
 
 void CCompoundUnitParameter::SaveToFile(CH5Handler& _h5Saver, const std::string& _path) const
@@ -834,9 +837,9 @@ std::ostream& CReactionUnitParameter::ValueToStream(std::ostream& _s)
 {
 	for (const auto& r : m_reactions)
 	{
-		_s << " " << r.GetSubstancesNumber() << " " << r.GetBaseSubstanceIndex();
+		_s << " " << r.GetSubstancesNumber() << " " << r.GetBaseSubstanceIndex() + 1;
 		for (const auto& s : r.GetSubstances())
-			_s << " " << s->key << " " << s->nu << " " << E2I(s->phase);
+			_s << " " << s->key << " " << s->nu << " " << s->order << " " << E2I(s->phase);
 	}
 	return _s;
 }
@@ -848,12 +851,13 @@ std::istream& CReactionUnitParameter::ValueFromStream(std::istream& _s)
 	{
 		auto& r = m_reactions.emplace_back();
 		const auto numberSubstances = StringFunctions::GetValueFromStream<size_t>(_s);
-		const auto baseSubstance    = StringFunctions::GetValueFromStream<size_t>(_s);
+		const auto baseSubstance    = StringFunctions::GetValueFromStream<size_t>(_s) - 1;
 		for (size_t j = 0; j < numberSubstances; ++j)
 		{
 			auto* s  = r.AddSubstance();
 			s->key   = StringFunctions::GetValueFromStream<std::string>(_s);
 			s->nu    = StringFunctions::GetValueFromStream<double>(_s);
+			s->order = StringFunctions::GetValueFromStream<double>(_s);
 			s->phase = StringFunctions::GetEnumFromStream<EPhase>(_s);
 		}
 		r.SetBaseSubstance(baseSubstance);

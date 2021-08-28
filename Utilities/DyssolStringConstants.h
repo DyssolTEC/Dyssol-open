@@ -90,13 +90,13 @@ namespace StrConst
 	inline std::string DyssolC_ErrorLoad() {
 		return "Error: The flowsheet file can not be loaded"; }
 	inline std::string DyssolC_ErrorParseUnit(const std::string& p, const std::string& n, int64_t i) {
-		return "Error while applying " + p + ": \n\t" + "Cannot load a unit neither by its name " + StringFunctions::Quote(n) + " nor by its index " + std::to_string(i + 1); }
+		return "Error while applying " + p + ": \n\tCannot load a unit neither by its name " + StringFunctions::Quote(n) + " nor by its index " + std::to_string(i + 1); }
 	inline std::string DyssolC_ErrorParseModel(const std::string& p, const std::string& s) {
-		return "Error while applying " + p + ": \n\t" + "Cannot load a model for unit " + StringFunctions::Quote(s); }
+		return "Error while applying " + p + ": \n\tCannot load a model for unit " + StringFunctions::Quote(s); }
 	inline std::string DyssolC_ErrorParseUP(const std::string& p, const std::string& u, const std::string& n, int64_t i) {
-		return "Error while applying " + p + ": \n\t" + "Cannot load a parameter of unit " + StringFunctions::Quote(u) + " neither by its name " + StringFunctions::Quote(n) + " nor by its index " + std::to_string(i + 1); }
+		return "Error while applying " + p + ": \n\tCannot load a parameter of unit " + StringFunctions::Quote(u) + " neither by its name " + StringFunctions::Quote(n) + " nor by its index " + std::to_string(i + 1); }
 	inline std::string DyssolC_ErrorParseHO(const std::string& p, const std::string& u, const std::string& n, int64_t i) {
-		return "Error while applying " + p + ": \n\t" + "Cannot load a holdup of unit " + StringFunctions::Quote(u) + " neither by its name " + StringFunctions::Quote(n) + " nor by its index " + std::to_string(i + 1); }
+		return "Error while applying " + p + ": \n\tCannot load a holdup of unit " + StringFunctions::Quote(u) + " neither by its name " + StringFunctions::Quote(n) + " nor by its index " + std::to_string(i + 1); }
 	inline std::string DyssolC_ErrorArgumentsNumber(const std::string& p, const std::string& u, const std::string& n, int64_t i) {
 		return "Error while applying " + p + ", unit " + StringFunctions::Quote(u) + ", holdup " + (!n.empty() ? StringFunctions::Quote(n) : std::to_string(i + 1)) + ":\n\tWrong number of arguments"; }
 	inline std::string DyssolC_ErrorArgumentsNumber(const std::string& p, const std::string& u, const std::string& n, int64_t i, const std::string& ph, int64_t iph) {
@@ -109,8 +109,14 @@ namespace StrConst
 		return "Error while applying " + p + ", unit " + StringFunctions::Quote(u) + ", holdup " + (!n.empty() ? StringFunctions::Quote(n) : std::to_string(i + 1)) + ":\n\tDistribution " + (!d.empty() ? d : std::to_string(id)) + " is not defined in the flowsheet"; }
 	inline std::string DyssolC_ErrorArgumentsNumberGrid(const std::string& p, const std::string& u, const std::string& n, int64_t i) {
 		return "Error while applying " + p + ", unit " + StringFunctions::Quote(u) + ", distribution " + (!n.empty() ? StringFunctions::Quote(n) : std::to_string(i + 1)) + ":\n\tWrong number of arguments"; }
+	inline std::string DyssolC_ErrorArgumentsNumberUnit(const std::string& p) {
+		return "Error while applying " + p + ": \n\tWrong number of arguments"; }
 	inline std::string DyssolC_ErrorParseCompounds(const std::string& p, const std::string& c) {
-		return "Error while applying " + p + ": \n\t" + "Cannot find a compound " + StringFunctions::Quote(c) + " neither by its name nor by its key"; }
+		return "Error while applying " + p + ": \n\tCannot find a compound " + StringFunctions::Quote(c) + " neither by its name nor by its key"; }
+	inline std::string DyssolC_ErrorNoModel(const std::string& p, const std::string& v) {
+		return "Error while applying " + p + ": \n\tCannot find a model " + StringFunctions::Quote(v) + " neither by its unique ID, name nor by its path"; }
+	inline std::string DyssolC_ErrorNoPort(const std::string& p, const std::string& u, const std::string& n, int64_t i) {
+		return "Error while applying " + p + ": \n\tCannot find a port neither by its name " + StringFunctions::Quote(n) + " nor by its index " + std::to_string(i + 1) + " in unit " + StringFunctions::Quote(u); }
 	inline std::string DyssolC_ErrorInit(const std::string& s) {
 		return "Error during initialization: " + s; }
 	inline std::string DyssolC_ErrorFinish() {

@@ -61,4 +61,8 @@ private:
 	CBaseStream* GetHoldupPtr(CBaseUnit& _model, const ScriptInterface::SNameOrIndex& _nameOrIndex);
 	// Returns a pointer to a compound by its name or key. Returns nullptr if the search fails.
 	CCompound* GetCompoundPtr(const std::string& _nameOrKey);
+	// Returns a pointer to a unit port by its name or index. Returns nullptr if the search fails.
+	CUnitPort* GetPortPtr(CBaseUnit& _model, const ScriptInterface::SNameOrIndex& _nameOrIndex);
+	// Returns a unique key of a model, trying to find it by its ID, name and file path. Returns empty string if the search fails.
+	std::string GetModelKey(const std::string& _value) const;
 };

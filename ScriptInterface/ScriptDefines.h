@@ -7,7 +7,7 @@
  * Each script line is read into SScriptEntry - it can hold any type defined in EEntryType.
  * How to read each type from EEntryType is given in ParseScriptEntry().
  * To make this function work, each type must define operator>>(std::istream&, T&), as it is given in ScriptTypes.h
- * The correspondence between EScriptKeys and EEntryType is set in AllScriptArguments().
+ * The correspondence between EScriptKeys and EEntryType is set in allScriptArguments.
  * To add a new type:
  *   1. Define the new type in ScriptTypes.h.
  *   2. Implement operator>>(std::istream&, T&) for this type in ScriptTypes.cpp.
@@ -16,7 +16,7 @@
  *   5. Define the parsing rule for this name in ParseScriptEntry().
  * To add a new script key of existing type:
  *   1. Add it to EScriptKeys.
- *   2. Set the correspondence in AllScriptArguments().
+ *   2. Set the correspondence in allScriptArguments.
  *   3. Use in ScriptRunner.cpp, e.g. as job.GetValue<double>(EScriptKeys::SIMULATION_TIME).
  */
 
@@ -33,42 +33,45 @@ namespace ScriptInterface
 	// All possible script keys, as they appear in script files.
 	enum class EScriptKeys
 	{
-		JOB,
-		SOURCE_FILE,
-		RESULT_FILE,
-		MATERIALS_DATABASE,
-		MODELS_PATH,
-		SIMULATION_TIME,
-		RELATIVE_TOLERANCE,
-		ABSOLUTE_TOLERANCE,
-		MINIMAL_FRACTION,
-		SAVE_TIME_STEP_HINT,
-		SAVE_FLAG_FOR_HOLDUPS,
-		THERMO_TEMPERATURE_MIN,
-		THERMO_TEMPERATURE_MAX,
+		JOB                         ,
+		SOURCE_FILE                 ,
+		RESULT_FILE                 ,
+		MATERIALS_DATABASE          ,
+		MODELS_PATH                 ,
+		SIMULATION_TIME             ,
+		RELATIVE_TOLERANCE          ,
+		ABSOLUTE_TOLERANCE          ,
+		MINIMAL_FRACTION            ,
+		SAVE_TIME_STEP_HINT         ,
+		SAVE_FLAG_FOR_HOLDUPS       ,
+		THERMO_TEMPERATURE_MIN      ,
+		THERMO_TEMPERATURE_MAX      ,
 		THERMO_TEMPERATURE_INTERVALS,
-		INIT_TIME_WINDOW,
-		MIN_TIME_WINDOW,
-		MAX_TIME_WINDOW,
-		MAX_ITERATIONS_NUMBER,
-		WINDOW_CHANGE_RATE,
-		ITERATIONS_UPPER_LIMIT,
-		ITERATIONS_LOWER_LIMIT,
-		ITERATIONS_UPPER_LIMIT_1ST,
-		CONVERGENCE_METHOD,
-		RELAXATION_PARAMETER,
-		ACCELERATION_LIMIT,
-		EXTRAPOLATION_METHOD,
-		UNIT_PARAMETER,
-		HOLDUPS_KEEP_EXISTING_VALUES,
-		HOLDUP_OVERALL,
-		HOLDUP_PHASES,
-		HOLDUP_COMPOUNDS,
-		HOLDUP_DISTRIBUTION,
-		GRIDS_KEEP_EXISTING_VALUES,
-		DISTRIBUTION_GRID,
-		COMPOUNDS,
-		PHASES,
+		INIT_TIME_WINDOW            ,
+		MIN_TIME_WINDOW             ,
+		MAX_TIME_WINDOW             ,
+		MAX_ITERATIONS_NUMBER       ,
+		WINDOW_CHANGE_RATE          ,
+		ITERATIONS_UPPER_LIMIT      ,
+		ITERATIONS_LOWER_LIMIT      ,
+		ITERATIONS_UPPER_LIMIT_1ST  ,
+		CONVERGENCE_METHOD          ,
+		RELAXATION_PARAMETER        ,
+		ACCELERATION_LIMIT          ,
+		EXTRAPOLATION_METHOD        ,
+		KEEP_EXISTING_UNITS         ,
+		UNIT                        ,
+		STREAM                      ,
+		UNIT_PARAMETER              ,
+		KEEP_EXISTING_HOLDUPS_VALUES,
+		HOLDUP_OVERALL              ,
+		HOLDUP_PHASES               ,
+		HOLDUP_COMPOUNDS            ,
+		HOLDUP_DISTRIBUTION         ,
+		KEEP_EXISTING_GRIDS_VALUES  ,
+		DISTRIBUTION_GRID           ,
+		COMPOUNDS                   ,
+		PHASES                      ,
 	};
 
 	// All possible types of script entries.
@@ -89,6 +92,7 @@ namespace ScriptInterface
 		HOLDUP_DISTRIBUTION, // SHoldupDistributionSE
 		GRID_DIMENSION     , // SGridDimensionSE
 		PHASES             , // SPhasesSE
+		STREAM             , // SStreamSE
 	};
 
 	// Descriptor for an entry of the script file.
@@ -105,7 +109,7 @@ namespace ScriptInterface
 		// Value of the entry of different types.
 		std::variant<bool, int64_t, uint64_t, double, std::string, std::vector<std::string>, std::filesystem::path,
 			SNameOrKey, SUnitParameterSE, SHoldupDependentSE, SHoldupCompoundsSE, SHoldupDistributionSE,
-			SGridDimensionSE, SPhasesSE> value{};
+			SGridDimensionSE, SPhasesSE, SStreamSE> value{};
 
 		SScriptEntry() = default;
 		SScriptEntry(const SScriptEntryDescriptor& _descr) : SScriptEntryDescriptor{ _descr } {}
@@ -131,6 +135,7 @@ namespace ScriptInterface
 		case EEntryType::HOLDUP_DISTRIBUTION:	_entry.value = StringFunctions::GetValueFromStream<SHoldupDistributionSE>(is);		break;
 		case EEntryType::GRID_DIMENSION:	    _entry.value = StringFunctions::GetValueFromStream<SGridDimensionSE>(is);			break;
 		case EEntryType::PHASES:				_entry.value = StringFunctions::GetValueFromStream<SPhasesSE>(is);					break;
+		case EEntryType::STREAM:				_entry.value = StringFunctions::GetValueFromStream<SStreamSE>(is);					break;
 		}
 	}
 
@@ -145,58 +150,58 @@ namespace ScriptInterface
 	 * Name of the key from EScriptKeys is converted to a string and used as a key for script file.
 	 * To add a new key of existing type, extend EScriptKeys and add it with MAKE_ARG macro.
 	 * To add a new key of a new type, additionally extend EEntryType and extend SScriptEntry::value with the real value type. */
-	inline std::vector<SScriptEntryDescriptor> AllScriptArguments()
+	static std::vector<SScriptEntryDescriptor> allScriptArguments
 	{
-		return {
-			// paths
-			MAKE_ARG(EScriptKeys::JOB                         , EEntryType::EMPTY),
-			MAKE_ARG(EScriptKeys::SOURCE_FILE                 , EEntryType::PATH),
-			MAKE_ARG(EScriptKeys::RESULT_FILE                 , EEntryType::PATH),
-			MAKE_ARG(EScriptKeys::MATERIALS_DATABASE          , EEntryType::PATH),
-			MAKE_ARG(EScriptKeys::MODELS_PATH                 , EEntryType::PATH),
-			// flowsheet parameters
-			MAKE_ARG(EScriptKeys::SIMULATION_TIME             , EEntryType::DOUBLE),
-			MAKE_ARG(EScriptKeys::RELATIVE_TOLERANCE          , EEntryType::DOUBLE),
-			MAKE_ARG(EScriptKeys::ABSOLUTE_TOLERANCE          , EEntryType::DOUBLE),
-			MAKE_ARG(EScriptKeys::MINIMAL_FRACTION            , EEntryType::DOUBLE),
-			MAKE_ARG(EScriptKeys::SAVE_TIME_STEP_HINT         , EEntryType::DOUBLE),
-			MAKE_ARG(EScriptKeys::SAVE_FLAG_FOR_HOLDUPS       , EEntryType::BOOL),
-			MAKE_ARG(EScriptKeys::THERMO_TEMPERATURE_MIN      , EEntryType::DOUBLE),
-			MAKE_ARG(EScriptKeys::THERMO_TEMPERATURE_MAX      , EEntryType::DOUBLE),
-			MAKE_ARG(EScriptKeys::THERMO_TEMPERATURE_INTERVALS, EEntryType::UINT),
-			MAKE_ARG(EScriptKeys::INIT_TIME_WINDOW            , EEntryType::DOUBLE),
-			MAKE_ARG(EScriptKeys::MIN_TIME_WINDOW             , EEntryType::DOUBLE),
-			MAKE_ARG(EScriptKeys::MAX_TIME_WINDOW             , EEntryType::DOUBLE),
-			MAKE_ARG(EScriptKeys::MAX_ITERATIONS_NUMBER       , EEntryType::UINT),
-			MAKE_ARG(EScriptKeys::WINDOW_CHANGE_RATE          , EEntryType::DOUBLE),
-			MAKE_ARG(EScriptKeys::ITERATIONS_UPPER_LIMIT      , EEntryType::UINT),
-			MAKE_ARG(EScriptKeys::ITERATIONS_LOWER_LIMIT      , EEntryType::UINT),
-			MAKE_ARG(EScriptKeys::ITERATIONS_UPPER_LIMIT_1ST  , EEntryType::UINT),
-			MAKE_ARG(EScriptKeys::CONVERGENCE_METHOD          , EEntryType::NAME_OR_KEY),
-			MAKE_ARG(EScriptKeys::RELAXATION_PARAMETER        , EEntryType::DOUBLE),
-			MAKE_ARG(EScriptKeys::ACCELERATION_LIMIT          , EEntryType::DOUBLE),
-			MAKE_ARG(EScriptKeys::EXTRAPOLATION_METHOD        , EEntryType::NAME_OR_KEY),
-			// unit settings
-			MAKE_ARG(EScriptKeys::UNIT_PARAMETER              , EEntryType::UNIT_PARAMETER),
-			// holdup and input streams parameters
-			MAKE_ARG(EScriptKeys::HOLDUPS_KEEP_EXISTING_VALUES, EEntryType::BOOL),
-			MAKE_ARG(EScriptKeys::HOLDUP_OVERALL			  , EEntryType::HOLDUP_DEPENDENT),
-			MAKE_ARG(EScriptKeys::HOLDUP_PHASES				  , EEntryType::HOLDUP_DEPENDENT),
-			MAKE_ARG(EScriptKeys::HOLDUP_COMPOUNDS            , EEntryType::HOLDUP_COMPOUNDS),
-			MAKE_ARG(EScriptKeys::HOLDUP_DISTRIBUTION         , EEntryType::HOLDUP_DISTRIBUTION),
-			// flowsheet settings
-			MAKE_ARG(EScriptKeys::GRIDS_KEEP_EXISTING_VALUES  , EEntryType::BOOL),
-			MAKE_ARG(EScriptKeys::DISTRIBUTION_GRID           , EEntryType::GRID_DIMENSION),
-			MAKE_ARG(EScriptKeys::COMPOUNDS                   , EEntryType::STRINGS),
-			MAKE_ARG(EScriptKeys::PHASES                      , EEntryType::PHASES),
-		};
-	}
+		// paths
+		MAKE_ARG(EScriptKeys::JOB                         , EEntryType::EMPTY)				,
+		MAKE_ARG(EScriptKeys::SOURCE_FILE                 , EEntryType::PATH)				,
+		MAKE_ARG(EScriptKeys::RESULT_FILE                 , EEntryType::PATH)				,
+		MAKE_ARG(EScriptKeys::MATERIALS_DATABASE          , EEntryType::PATH)				,
+		MAKE_ARG(EScriptKeys::MODELS_PATH                 , EEntryType::PATH)				,
+		// flowsheet parameters
+		MAKE_ARG(EScriptKeys::SIMULATION_TIME             , EEntryType::DOUBLE)				,
+		MAKE_ARG(EScriptKeys::RELATIVE_TOLERANCE          , EEntryType::DOUBLE)				,
+		MAKE_ARG(EScriptKeys::ABSOLUTE_TOLERANCE          , EEntryType::DOUBLE)				,
+		MAKE_ARG(EScriptKeys::MINIMAL_FRACTION            , EEntryType::DOUBLE)				,
+		MAKE_ARG(EScriptKeys::SAVE_TIME_STEP_HINT         , EEntryType::DOUBLE)				,
+		MAKE_ARG(EScriptKeys::SAVE_FLAG_FOR_HOLDUPS       , EEntryType::BOOL)				,
+		MAKE_ARG(EScriptKeys::THERMO_TEMPERATURE_MIN      , EEntryType::DOUBLE)				,
+		MAKE_ARG(EScriptKeys::THERMO_TEMPERATURE_MAX      , EEntryType::DOUBLE)				,
+		MAKE_ARG(EScriptKeys::THERMO_TEMPERATURE_INTERVALS, EEntryType::UINT)				,
+		MAKE_ARG(EScriptKeys::INIT_TIME_WINDOW            , EEntryType::DOUBLE)				,
+		MAKE_ARG(EScriptKeys::MIN_TIME_WINDOW             , EEntryType::DOUBLE)				,
+		MAKE_ARG(EScriptKeys::MAX_TIME_WINDOW             , EEntryType::DOUBLE)				,
+		MAKE_ARG(EScriptKeys::MAX_ITERATIONS_NUMBER       , EEntryType::UINT)				,
+		MAKE_ARG(EScriptKeys::WINDOW_CHANGE_RATE          , EEntryType::DOUBLE)				,
+		MAKE_ARG(EScriptKeys::ITERATIONS_UPPER_LIMIT      , EEntryType::UINT)				,
+		MAKE_ARG(EScriptKeys::ITERATIONS_LOWER_LIMIT      , EEntryType::UINT)				,
+		MAKE_ARG(EScriptKeys::ITERATIONS_UPPER_LIMIT_1ST  , EEntryType::UINT)				,
+		MAKE_ARG(EScriptKeys::CONVERGENCE_METHOD          , EEntryType::NAME_OR_KEY)		,
+		MAKE_ARG(EScriptKeys::RELAXATION_PARAMETER        , EEntryType::DOUBLE)				,
+		MAKE_ARG(EScriptKeys::ACCELERATION_LIMIT          , EEntryType::DOUBLE)				,
+		MAKE_ARG(EScriptKeys::EXTRAPOLATION_METHOD        , EEntryType::NAME_OR_KEY)		,
+		// flowsheet settings
+		MAKE_ARG(EScriptKeys::KEEP_EXISTING_UNITS         , EEntryType::BOOL)               ,
+		MAKE_ARG(EScriptKeys::UNIT                        , EEntryType::STRINGS)            ,
+		MAKE_ARG(EScriptKeys::STREAM                      , EEntryType::STREAM)		        ,
+		MAKE_ARG(EScriptKeys::UNIT_PARAMETER              , EEntryType::UNIT_PARAMETER)		,
+		MAKE_ARG(EScriptKeys::KEEP_EXISTING_GRIDS_VALUES  , EEntryType::BOOL)				,
+		MAKE_ARG(EScriptKeys::DISTRIBUTION_GRID           , EEntryType::GRID_DIMENSION)		,
+		MAKE_ARG(EScriptKeys::COMPOUNDS                   , EEntryType::STRINGS)			,
+		MAKE_ARG(EScriptKeys::PHASES                      , EEntryType::PHASES)             ,
+		// holdup and input streams parameters
+		MAKE_ARG(EScriptKeys::KEEP_EXISTING_HOLDUPS_VALUES, EEntryType::BOOL)				,
+		MAKE_ARG(EScriptKeys::HOLDUP_OVERALL			  , EEntryType::HOLDUP_DEPENDENT)	,
+		MAKE_ARG(EScriptKeys::HOLDUP_PHASES				  , EEntryType::HOLDUP_DEPENDENT)	,
+		MAKE_ARG(EScriptKeys::HOLDUP_COMPOUNDS            , EEntryType::HOLDUP_COMPOUNDS)	,
+		MAKE_ARG(EScriptKeys::HOLDUP_DISTRIBUTION         , EEntryType::HOLDUP_DISTRIBUTION),
+	};
 
 	// Returns a vector of all possible script keys.
 	inline std::vector<std::string> AllScriptKeys()
 	{
-		std::vector<std::string> res;
-		for (const auto& a : AllScriptArguments())
+		auto res = ReservedVector<std::string>(allScriptArguments.size());
+		for (const auto& a : allScriptArguments)
 			res.push_back(a.keyStr);
 		return res;
 	}
@@ -204,18 +209,16 @@ namespace ScriptInterface
 	// Returns a script entry descriptor for the given key. If a descriptor for such key was not defined, returns a default descriptor with empty key.
 	inline SScriptEntryDescriptor Key2Descriptor(const std::string& _key)
 	{
-		const auto allArgs = AllScriptArguments();
-		const size_t index = VectorFind(allArgs, [&](const SScriptEntryDescriptor& _d) { return _d.keyStr == _key; });
+		const size_t index = VectorFind(allScriptArguments, [&](const SScriptEntryDescriptor& _d) { return _d.keyStr == _key; });
 		if (index == static_cast<size_t>(-1)) return {};
-		return allArgs[index];
+		return allScriptArguments[index];
 	}
 
 	// Converts a script key to its string representation.
 	inline std::string StrKey(const EScriptKeys& _key)
 	{
-		const auto allArgs = AllScriptArguments();
-		const size_t index = VectorFind(allArgs, [&](const SScriptEntryDescriptor& _d) { return _d.key == _key; });
+		const size_t index = VectorFind(allScriptArguments, [&](const SScriptEntryDescriptor& _d) { return _d.key == _key; });
 		if (index == static_cast<size_t>(-1)) return {};
-		return allArgs[index].keyStr;
+		return allScriptArguments[index].keyStr;
 	}
 }

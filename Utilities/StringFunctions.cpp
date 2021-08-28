@@ -244,7 +244,7 @@ namespace StringFunctions
 	std::string GetValueFromStream<std::string>(std::istream& _is)
 	{
 		std::string res{};
-		_is >> std::quoted(res);
+		_is >> std::quoted(res, '"', '$');	// use $ instead of default '\' to allow reading of windows-style paths
 		return res;
 	}
 

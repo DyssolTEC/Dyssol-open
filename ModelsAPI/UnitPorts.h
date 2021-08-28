@@ -58,9 +58,13 @@ public:
 	// Adds a port and returns a pointer to it. If a port with this name already exist, does nothing and return nullptr.
 	CUnitPort* AddPort(const std::string& _name, EUnitPort _type);
 	// Returns a port with the specified name.
-	const CUnitPort* GetPort(const std::string& _name) const;
+	[[nodiscard]] const CUnitPort* GetPort(const std::string& _name) const;
 	// Returns a port with the specified name.
 	CUnitPort* GetPort(const std::string& _name);
+	// Returns a port with the specified index.
+	[[nodiscard]] const CUnitPort* GetPort(size_t _index) const;
+	// Returns a port with the specified index.
+	CUnitPort* GetPort(size_t _index);
 	// Returns pointers to all defined ports.
 	std::vector<CUnitPort*> GetAllPorts();
 	// Returns const pointers to all defined ports.

@@ -94,3 +94,13 @@ std::istream& ScriptInterface::operator>>(std::istream& _s, SPhasesSE& _obj)
 	}
 	return _s;
 }
+
+std::istream& ScriptInterface::operator>>(std::istream& _s, SStreamSE& _obj)
+{
+	_obj.name  = GetValueFromStream<std::string>(_s);
+	_obj.unitO = GetValueFromStream<SNameOrIndex>(_s);
+	_obj.portO = GetValueFromStream<SNameOrIndex>(_s);
+	_obj.unitI = GetValueFromStream<SNameOrIndex>(_s);
+	_obj.portI = GetValueFromStream<SNameOrIndex>(_s);
+	return _s;
+}

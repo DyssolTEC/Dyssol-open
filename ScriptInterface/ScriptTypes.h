@@ -94,4 +94,15 @@ namespace ScriptInterface
 		std::vector<SNameOrKey> types;	// Types of phases.
 		friend std::istream& operator>>(std::istream& _s, SPhasesSE& _obj);
 	};
+
+	// Struct to parse script entries (SE) with streams.
+	struct SStreamSE
+	{
+		std::string name{};		// Name of the stream.
+		SNameOrIndex unitO{};	// Name or index of the unit container, from which the stream starts.
+		SNameOrIndex portO{};	// Name or index of the model's port, from which the stream starts.
+		SNameOrIndex unitI{};	// Name or index of the unit container, where the stream ends.
+		SNameOrIndex portI{};	// Name or index of the model's port, where the stream ends.
+		friend std::istream& operator>>(std::istream& _s, SStreamSE& _obj);
+	};
 }

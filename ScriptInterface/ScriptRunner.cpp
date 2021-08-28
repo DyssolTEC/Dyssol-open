@@ -10,20 +10,20 @@
 
 using namespace ScriptInterface;
 using namespace StrConst;
-using namespace std::filesystem;
-using namespace std::chrono;
+namespace fs = std::filesystem;
+namespace ch = std::chrono;
 
 void CScriptRunner::RunJob(const CScriptJob& _job)
 {
-	const auto tStart = steady_clock::now();
+	const auto tStart = ch::steady_clock::now();
 
 	Clear();
 	bool success = true;
 	if (success) success &= ConfigureFlowsheet(_job);
 	if (success) success &= RunSimulation(_job);
 
-	const auto tEnd = steady_clock::now();
-	std::cout << DyssolC_ScriptFinished(duration_cast<seconds>(tEnd - tStart).count()) << std::endl;
+	const auto tEnd = ch::steady_clock::now();
+	std::cout << DyssolC_ScriptFinished(ch::duration_cast<ch::seconds>(tEnd - tStart).count()) << std::endl;
 	if (!success)
 		std::cout << DyssolC_ErrorFinish() << std::endl;
 }
@@ -57,15 +57,15 @@ bool CScriptRunner::LoadFiles(const CScriptJob& _job)
 		std::cout << DyssolC_WriteSrc(StrKey(EScriptKeys::SOURCE_FILE), StrKey(EScriptKeys::RESULT_FILE)) << std::endl;
 
 	// load materials database
-	const auto MDBfile = _job.GetValue<path>(EScriptKeys::MATERIALS_DATABASE);
+	const auto MDBfile = _job.GetValue<fs::path>(EScriptKeys::MATERIALS_DATABASE);
 	std::cout << DyssolC_LoadMDB(MDBfile.string()) << std::endl;
 	if (!m_materialsDatabase.LoadFromFile(MDBfile))
 		return PrintAndReturn(DyssolC_ErrorMDB());
 
 	// set paths to models
-	std::cout << DyssolC_LoadModels(current_path().string()) << std::endl;
-	m_modelsManager.AddDir(L".");		// add current directory as path to units/solvers
-	for (const auto& dir : _job.GetValues<path>(EScriptKeys::MODELS_PATH))
+	auto paths = _job.GetValues<fs::path>(EScriptKeys::MODELS_PATH);
+	paths.insert(paths.begin(), fs::current_path()); // current path
+	for (const auto& dir : paths)
 	{
 		std::cout << DyssolC_LoadModels(dir.string()) << std::endl;
 		m_modelsManager.AddDir(dir);
@@ -74,7 +74,7 @@ bool CScriptRunner::LoadFiles(const CScriptJob& _job)
 	// load flowsheet
 	if (hasSrc)
 	{
-		const auto srcFile = _job.GetValue<path>(EScriptKeys::SOURCE_FILE);
+		const auto srcFile = _job.GetValue<fs::path>(EScriptKeys::SOURCE_FILE);
 		std::cout << DyssolC_LoadFlowsheet(srcFile.string()) << std::endl;
 		CH5Handler fileHandler;
 		if (!m_flowsheet.LoadFromFile(fileHandler, srcFile))
@@ -86,6 +86,63 @@ bool CScriptRunner::LoadFiles(const CScriptJob& _job)
 
 bool CScriptRunner::SetupFlowsheet(const CScriptJob& _job)
 {
+	// setup units
+	// remove existing units
+	if (_job.HasKey(EScriptKeys::KEEP_EXISTING_UNITS) && !_job.GetValue<bool>(EScriptKeys::KEEP_EXISTING_UNITS))
+		for (const auto& u : m_flowsheet.GetAllUnits())
+			m_flowsheet.DeleteUnit(u->GetKey());
+	// add or set new units
+	for (const auto& entry : _job.GetValues<std::vector<std::string>>(EScriptKeys::UNIT))
+	{
+		// check input
+		if (entry.size() != 2)
+			// TODO: output line numbers
+			return PrintAndReturn(DyssolC_ErrorArgumentsNumberUnit(StrKey(EScriptKeys::UNIT)));
+		// find model key
+		const auto key = GetModelKey(entry[1]);
+		if (key.empty())
+			return PrintAndReturn(DyssolC_ErrorNoModel(StrKey(EScriptKeys::UNIT), entry[1]));
+		// whether a unit already exists
+		const bool exists = m_flowsheet.GetUnitByName(entry[0]);
+		// pointer to unit to work with: existing or a new one
+		CUnitContainer* unit = exists ? m_flowsheet.GetUnitByName(entry[0]) : m_flowsheet.AddUnit();
+		// set data
+		unit->SetName(entry[0]);
+		unit->SetModel(key);
+	}
+
+	// setup streams
+	for (const auto& entry : _job.GetValues<SStreamSE>(EScriptKeys::STREAM))
+	{
+		// get pointers to units and models
+		auto [modelO, unitO, messageO] = TryGetModelPtr(entry.unitO, EScriptKeys::STREAM);
+		if (!modelO)
+			return PrintAndReturn(messageO);
+		auto [modelI, unitI, messageI] = TryGetModelPtr(entry.unitI, EScriptKeys::STREAM);
+		if (!modelI)
+			return PrintAndReturn(messageI);
+		auto* portO = GetPortPtr(*modelO, entry.portO);
+		if (!portO)
+			return PrintAndReturn(DyssolC_ErrorNoPort(StrKey(EScriptKeys::STREAM), unitO->GetName(), entry.portO.name, entry.portO.index));
+		auto* portI = GetPortPtr(*modelI, entry.portI);
+		if (!portI)
+			return PrintAndReturn(DyssolC_ErrorNoPort(StrKey(EScriptKeys::STREAM), unitI->GetName(), entry.portI.name, entry.portI.index));
+		// whether a stream between these ports already exists
+		const bool exists = portO->GetStreamKey() == portI->GetStreamKey() && m_flowsheet.GetStream(portO->GetStreamKey());
+		// pointer to stream to work with: existing or a new one
+		auto* stream = exists ? m_flowsheet.GetStream(portO->GetStreamKey()) : m_flowsheet.AddStream();
+		// remove old connected streams if necessary
+		if (!exists)
+		{
+			m_flowsheet.DeleteStream(portO->GetStreamKey());
+			m_flowsheet.DeleteStream(portI->GetStreamKey());
+		}
+		// set data
+		stream->SetName(entry.name);
+		portO->SetStreamKey(stream->GetKey());
+		portI->SetStreamKey(stream->GetKey());
+	}
+
 	// setup compounds
 	std::vector<std::string> compoundKeys;
 	for (const auto& list : _job.GetValues<std::vector<std::string>>(EScriptKeys::COMPOUNDS))
@@ -110,7 +167,7 @@ bool CScriptRunner::SetupFlowsheet(const CScriptJob& _job)
 	// The grids may be cleaned before setting new values. Those grids, which are not mentioned in the script file, are not changed.
 	// If cleaning is requested, on the first access to the grid's holder, clean it, store the key of the holder in this vector and do not clean any further.
 	std::vector<std::string> processed;	// already processed grid's holders
-	const bool keepG = !_job.HasKey(EScriptKeys::GRIDS_KEEP_EXISTING_VALUES) || _job.GetValue<bool>(EScriptKeys::GRIDS_KEEP_EXISTING_VALUES);	// keep or remove values in grids before setting new ones
+	const bool keepG = !_job.HasKey(EScriptKeys::KEEP_EXISTING_GRIDS_VALUES) || _job.GetValue<bool>(EScriptKeys::KEEP_EXISTING_GRIDS_VALUES);	// keep or remove values in grids before setting new ones
 
 	// setup distribution grids
 	for (const auto& entry : _job.GetValues<SGridDimensionSE>(EScriptKeys::DISTRIBUTION_GRID))
@@ -211,6 +268,7 @@ bool CScriptRunner::SetupUnitParameters(const CScriptJob& _job)
 {
 	for (const auto& entry : _job.GetValues<SUnitParameterSE>(EScriptKeys::UNIT_PARAMETER))
 	{
+		// TODO: write error message in TryGetModelPtr
 		// get pointer to unit and model
 		auto [model, unit, message] = TryGetModelPtr(entry.unit, EScriptKeys::UNIT_PARAMETER);
 		if (!model)
@@ -232,7 +290,7 @@ bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 	// The holdup may be cleaned before setting time-dependent values. Those holdups, which are not mentioned in the script file, are not changed.
 	// If cleaning is requested, on the first access to the holdup, clean it, store in this vector and do not clean any further.
 	std::vector<CBaseStream*> processed;	// already processed holdups
-	const bool keepTP = !_job.HasKey(EScriptKeys::HOLDUPS_KEEP_EXISTING_VALUES) || _job.GetValue<bool>(EScriptKeys::HOLDUPS_KEEP_EXISTING_VALUES);	// keep or remove time points
+	const bool keepTP = !_job.HasKey(EScriptKeys::KEEP_EXISTING_HOLDUPS_VALUES) || _job.GetValue<bool>(EScriptKeys::KEEP_EXISTING_HOLDUPS_VALUES);	// keep or remove time points
 
 	// Obtains the required holdup, cleans it if required and returns a pointer to it.
 	const auto TryGetHoldupPtr = [&](const SNameOrIndex& _unit, const SNameOrIndex& _holdup, EScriptKeys _scriptKey) -> std::tuple<CBaseStream*, CUnitContainer*, std::string>
@@ -381,17 +439,17 @@ bool CScriptRunner::RunSimulation(const CScriptJob& _job)
 	// run simulation
 	m_simulator.SetFlowsheet(&m_flowsheet);
 	std::cout << DyssolC_Start() << std::endl;
-	const auto tStart = steady_clock::now();
+	const auto tStart = ch::steady_clock::now();
 	m_simulator.Simulate();
-	const auto tEnd = steady_clock::now();
+	const auto tEnd = ch::steady_clock::now();
 
 	// save simulation results
-	const auto dstFile = _job.HasKey(EScriptKeys::RESULT_FILE) ? _job.GetValue<path>(EScriptKeys::RESULT_FILE) : _job.GetValue<path>(EScriptKeys::SOURCE_FILE);
+	const auto dstFile = _job.HasKey(EScriptKeys::RESULT_FILE) ? _job.GetValue<fs::path>(EScriptKeys::RESULT_FILE) : _job.GetValue<fs::path>(EScriptKeys::SOURCE_FILE);
 	std::cout << DyssolC_SaveFlowsheet(dstFile.string()) << std::endl;
 	CH5Handler fileHandler;
 	m_flowsheet.SaveToFile(fileHandler, dstFile);
 
-	std::cout << DyssolC_SimFinished(duration_cast<seconds>(tEnd - tStart).count()) << std::endl;
+	std::cout << DyssolC_SimFinished(ch::duration_cast<ch::seconds>(tEnd - tStart).count()) << std::endl;
 
 	return true;
 }
@@ -444,4 +502,25 @@ CCompound* CScriptRunner::GetCompoundPtr(const std::string& _nameOrKey)
 	if (!compound)
 		compound = m_materialsDatabase.GetCompoundByName(_nameOrKey);	// try to access by name
 	return compound;
+}
+
+CUnitPort* CScriptRunner::GetPortPtr(CBaseUnit& _model, const SNameOrIndex& _nameOrIndex)
+{
+	auto& manager = _model.GetPortsManager();				// get unit ports manager
+	auto* port = manager.GetPort(_nameOrIndex.name);		// try to access by name
+	if (!port) port = manager.GetPort(_nameOrIndex.index);	// try to access by index
+	return port;											// return pointer
+}
+
+std::string CScriptRunner::GetModelKey(const std::string& _value) const
+{
+	std::error_code ec;	// to use non-throwing version of fs::equivalent
+	for (const auto& m : m_modelsManager.GetAvailableUnits())
+	{
+		if (m.uniqueID == _value ||									// try to access by ID
+			m.name == _value ||										// try to access by name
+			fs::equivalent(fs::path{ _value }, m.fileLocation, ec))	// try to access by file bath
+			return m.uniqueID;
+	}
+	return {};
 }

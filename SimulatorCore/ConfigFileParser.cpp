@@ -11,7 +11,6 @@
 #include "DyssolUtilities.h"
 #include "DyssolHelperDefines.h"
 #include "DyssolStringConstants.h"
-#include "DyssolHelperDefines.h"
 #include <fstream>
 #include <sstream>
 
