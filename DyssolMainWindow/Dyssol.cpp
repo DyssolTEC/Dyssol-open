@@ -38,13 +38,11 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	if (!std::filesystem::exists(m_sSettingsPath.toStdString()))
 		std::filesystem::create_directory(m_sSettingsPath.toStdString());
 
-#ifdef _MSC_VER
-	const QString mainConfigFile = m_sSettingsPath + "/" + StrConst::Dyssol_ConfigFileName;
-#else
-	const QString mainConfigFile = QString{"/etc/Dyssol/"} + StrConst::Dyssol_ConfigFileName;
-#endif
-	const QString tempConfigFile = QString{ "./" } + StrConst::Dyssol_ConfigFileName;
+	const QString mainConfigFile = QString{ "./" } + StrConst::Dyssol_ConfigFileName;
+	const QString tempConfigFile = m_sSettingsPath + "/" + StrConst::Dyssol_ConfigFileName;
 	const QString currConfigFile = QFile::exists(mainConfigFile) ? mainConfigFile : tempConfigFile;
+
+	std::cout << "Use config file: " << currConfigFile.toStdString()<< std::endl;
 
 	// create config file
 	m_pSettings = new QSettings(currConfigFile, QSettings::IniFormat, this);
