@@ -40,6 +40,7 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 
 	const QString globalConfigFile = m_sSettingsPath + "/" + StrConst::Dyssol_ConfigFileName;
 	const QString localConfigFile  = QString{ "./" } + StrConst::Dyssol_ConfigFileName;
+
 #ifdef _MSC_VER
 	const QString currConfigFile = QFile::exists(globalConfigFile) ? globalConfigFile : localConfigFile;
 #else
@@ -52,7 +53,7 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	if ((currConfigFile == globalConfigFile) && (not (QFile::exists(currConfigFile))))
 	{
 		std::cout << "Config file: " << currConfigFile.toStdString()<< "does not exist. It will be copied from "<< INSTALL_CONFIG_PATH << StrConst::Dyssol_ConfigFileName << std::endl;
-		std::filesystem::copy_file(INSTALL_CONFIG_PATH / StrConst::Dyssol_ConfigFileName, currConfigFile.toStdString());
+		std::filesystem::copy_file(std::filesystem::path{ INSTALL_CONFIG_PATH } / StrConst::Dyssol_ConfigFileName, currConfigFile.toStdString());
 	}
 #endif
 
