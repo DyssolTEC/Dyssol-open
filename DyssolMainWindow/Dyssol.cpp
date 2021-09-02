@@ -38,18 +38,21 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	if (!std::filesystem::exists(m_sSettingsPath.toStdString()))
 		std::filesystem::create_directory(m_sSettingsPath.toStdString());
 
-	const QString mainConfigFile = QString{ "./" } + StrConst::Dyssol_ConfigFileName;
-	const QString tempConfigFile = m_sSettingsPath + "/" + StrConst::Dyssol_ConfigFileName;
-	const QString currConfigFile = QFile::exists(mainConfigFile) ? mainConfigFile : tempConfigFile;
+	const QString globalConfigFile = m_sSettingsPath + "/" + StrConst::Dyssol_ConfigFileName;
+	const QString localConfigFile  = QString{ "./" } + StrConst::Dyssol_ConfigFileName;
+#ifdef _MSC_VER
+	const QString currConfigFile = QFile::exists(globalConfigFile) ? globalConfigFile : localConfigFile;
+#else
+	const QString currConfigFile = QFile::exists(localConfigFile) ? localConfigFile : globalConfigFile;
 
 	std::cout << "Use config file: " << currConfigFile.toStdString()<< std::endl;
-#ifndef _MSC_VER
+
 	// If the config file not exist at all, we will copy the template of config file into the currConfigFile
 	// It is needed mostly for packages
-	if ((currConfigFile == tempConfigFile) && (not (QFile::exists(currConfigFile))))
+	if ((currConfigFile == globalConfigFile) && (not (QFile::exists(currConfigFile))))
 	{
-		std::cout << "Config file: " << currConfigFile.toStdString()<< "does not exist. It will be copied from "<< INSTALL_CONFIG_PATH << "config.ini" << std::endl;
-		std::filesystem::copy_file(INSTALL_CONFIG_PATH"/config.ini", currConfigFile.toStdString());
+		std::cout << "Config file: " << currConfigFile.toStdString()<< "does not exist. It will be copied from "<< INSTALL_CONFIG_PATH << StrConst::Dyssol_ConfigFileName << std::endl;
+		std::filesystem::copy_file(INSTALL_CONFIG_PATH / StrConst::Dyssol_ConfigFileName, currConfigFile.toStdString());
 	}
 #endif
 
