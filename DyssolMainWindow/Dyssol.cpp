@@ -43,6 +43,15 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	const QString currConfigFile = QFile::exists(mainConfigFile) ? mainConfigFile : tempConfigFile;
 
 	std::cout << "Use config file: " << currConfigFile.toStdString()<< std::endl;
+#ifndef _MSC_VER
+	// If the config file not exist at all, we will copy the template of config file into the currConfigFile
+	// It is needed mostly for packages
+	if ((currConfigFile == tempConfigFile) && (not (QFile::exists(currConfigFile))))
+	{
+		std::cout << "Config file: " << currConfigFile.toStdString()<< "does not exist. It will be copied from "<< INSTALL_CONFIG_PATH << "config.ini" << std::endl;
+		std::filesystem::copy_file(INSTALL_CONFIG_PATH"/config.ini", currConfigFile.toStdString());
+	}
+#endif
 
 	// create config file
 	m_pSettings = new QSettings(currConfigFile, QSettings::IniFormat, this);
