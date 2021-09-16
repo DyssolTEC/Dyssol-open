@@ -112,6 +112,7 @@ SET(TESTS
   "02_Crusher_Bond"
   "03_Granulation_Process"
   "04_Agglomerator"
+  "05_ScreenMulti"
 )
 
 FOREACH(test ${TESTS})

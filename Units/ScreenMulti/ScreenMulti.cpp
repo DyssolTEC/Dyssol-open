@@ -30,13 +30,13 @@ void CScreenPlitt::CreateStructure()
 	AddTDParameter("Xcut_D1" , 0.002, "m", "Cut size of the classification model, deck 1", 0     );
 	AddTDParameter("Alpha_D1", 8,     "-", "Sharpness of separation, deck 1"             , 0, 100);
 	AddTDParameter("Xcut_D2" , 0.0,   "m", "Cut size of the classification model, deck 2", 0     );
-	AddTDParameter("Alpha_D2", 8,     "-", "Sharpness of separation, deck 1"             , 0, 100);
+	AddTDParameter("Alpha_D2", 8,     "-", "Sharpness of separation, deck 2"             , 0, 100);
 	AddTDParameter("Xcut_D3" , 0.0,   "m", "Cut size of the classification model, deck 3", 0     );
-	AddTDParameter("Alpha_D3", 8,     "-", "Sharpness of separation, deck 1"             , 0, 100);
+	AddTDParameter("Alpha_D3", 8,     "-", "Sharpness of separation, deck 3"             , 0, 100);
 	AddTDParameter("Xcut_D4" , 0.0,   "m", "Cut size of the classification model, deck 4", 0     );
-	AddTDParameter("Alpha_D4", 8,     "-", "Sharpness of separation, deck 1"             , 0, 100);
+	AddTDParameter("Alpha_D4", 8,     "-", "Sharpness of separation, deck 4"             , 0, 100);
 	AddTDParameter("Xcut_D5" , 0.0,   "m", "Cut size of the classification model, deck 5", 0     );
-	AddTDParameter("Alpha_D5", 8,     "-", "Sharpness of separation, deck 1"             , 0, 100);
+	AddTDParameter("Alpha_D5", 8,     "-", "Sharpness of separation, deck 5"             , 0, 100);
 }
 
 void CScreenPlitt::Initialize(double _time)
@@ -81,7 +81,7 @@ void CScreenPlitt::Initialize(double _time)
 
 void CScreenPlitt::Simulate(double _time)
 {
-	
+
 	{
 		// Deck 1
 		m_outStreamC_D1->CopyFromStream(_time, m_inStream);
@@ -89,11 +89,11 @@ void CScreenPlitt::Simulate(double _time)
 
 
 
-	
+
 		// Get parameters
 		const double d50   = GetTDParameterValue("Xcut_D1", _time);
 		const double alpha = GetTDParameterValue("Alpha_D1", _time);
-	
+
 		if (d50 > 0)
 		{
 
@@ -103,7 +103,7 @@ void CScreenPlitt::Simulate(double _time)
 			double factor = 0;
 			const auto PSD = m_inStream->GetDistribution(_time, DISTR_SIZE);
 			for (unsigned i = 0; i < m_classesNum; ++i)
-			{			
+			{
 				const double val = 1 - std::exp(-0.693 * std::pow(m_meanDiams[i] / d50, alpha));
 				factor += val * PSD[i];
 				m_transformCoarse.SetValue(i, i, val);
@@ -123,7 +123,7 @@ void CScreenPlitt::Simulate(double _time)
 		{
 			m_outStreamC_D1->SetMassFlow(_time, 0.0);
 		}
-		
+
 	}
 	{
 		// Deck 2
@@ -134,7 +134,7 @@ void CScreenPlitt::Simulate(double _time)
 		// Get parameters
 		const double d50   = GetTDParameterValue("Xcut_D2", _time);
 		const double alpha = GetTDParameterValue("Alpha_D2", _time);
-	
+
 		if (d50 > 0)
 		{
 
@@ -144,7 +144,7 @@ void CScreenPlitt::Simulate(double _time)
 			double factor = 0;
 			const auto PSD = m_outStreamC_D1_D2->GetDistribution(_time, DISTR_SIZE);
 			for (unsigned i = 0; i < m_classesNum; ++i)
-			{			
+			{
 				const double val = 1 - std::exp(-0.693 * std::pow(m_meanDiams[i] / d50, alpha));
 				factor += val * PSD[i];
 				m_transformCoarse.SetValue(i, i, val);
@@ -176,7 +176,7 @@ void CScreenPlitt::Simulate(double _time)
 		// Get parameters
 		const double d50   = GetTDParameterValue("Xcut_D3", _time);
 		const double alpha = GetTDParameterValue("Alpha_D3", _time);
-	
+
 		if (d50 > 0)
 		{
 
@@ -186,7 +186,7 @@ void CScreenPlitt::Simulate(double _time)
 			double factor = 0;
 			const auto PSD = m_outStreamC_D2_D3->GetDistribution(_time, DISTR_SIZE);
 			for (unsigned i = 0; i < m_classesNum; ++i)
-			{			
+			{
 				const double val = 1 - std::exp(-0.693 * std::pow(m_meanDiams[i] / d50, alpha));
 				factor += val * PSD[i];
 				m_transformCoarse.SetValue(i, i, val);
@@ -218,7 +218,7 @@ void CScreenPlitt::Simulate(double _time)
 		// Get parameters
 		const double d50   = GetTDParameterValue("Xcut_D4", _time);
 		const double alpha = GetTDParameterValue("Alpha_D4", _time);
-	
+
 		if (d50 > 0)
 		{
 
@@ -228,7 +228,7 @@ void CScreenPlitt::Simulate(double _time)
 			double factor = 0;
 			const auto PSD = m_outStreamC_D3_D4->GetDistribution(_time, DISTR_SIZE);
 			for (unsigned i = 0; i < m_classesNum; ++i)
-			{			
+			{
 				const double val = 1 - std::exp(-0.693 * std::pow(m_meanDiams[i] / d50, alpha));
 				factor += val * PSD[i];
 				m_transformCoarse.SetValue(i, i, val);
@@ -250,7 +250,7 @@ void CScreenPlitt::Simulate(double _time)
 			m_outStreamC_D4->SetMassFlow(_time, 0.0);
 		}
 	}
-		
+
 	{
 		// Deck 5
 		m_outStreamC_D5->CopyFromStream(_time, m_outStreamC_D4_D5);
@@ -260,7 +260,7 @@ void CScreenPlitt::Simulate(double _time)
 		// Get parameters
 		const double d50   = GetTDParameterValue("Xcut_D4", _time);
 		const double alpha = GetTDParameterValue("Alpha_D4", _time);
-	
+
 		if (d50 > 0)
 		{
 
@@ -270,7 +270,7 @@ void CScreenPlitt::Simulate(double _time)
 			double factor = 0;
 			const auto PSD = m_outStreamC_D4_D5->GetDistribution(_time, DISTR_SIZE);
 			for (unsigned i = 0; i < m_classesNum; ++i)
-			{			
+			{
 				const double val = 1 - std::exp(-0.693 * std::pow(m_meanDiams[i] / d50, alpha));
 				factor += val * PSD[i];
 				m_transformCoarse.SetValue(i, i, val);
@@ -292,6 +292,6 @@ void CScreenPlitt::Simulate(double _time)
 			m_outStreamC_D5->SetMassFlow(_time, 0.0);
 		}
 	}
-		
+
 
 }
