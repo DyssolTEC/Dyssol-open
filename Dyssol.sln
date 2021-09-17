@@ -1,4 +1,5 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30406.217
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -137,6 +138,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unit_Mixer3", "Units\Mixer3\Mixer3.vcxproj", "{F1493DF2-5A3C-43A2-A2C2-B6F923128877}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unit_Splitter3", "Units\Splitter3\Splitter3.vcxproj", "{DF851AF8-F359-437D-A875-C31F6158F513}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unit_ScreenMulti", "Units\ScreenMulti\ScreenMulti.vcxproj", "{1C6761A3-DD4E-4978-A4C6-24D3A50C502D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -590,6 +593,14 @@ Global
 		{DF851AF8-F359-437D-A875-C31F6158F513}.Release|Win32.Build.0 = Release|Win32
 		{DF851AF8-F359-437D-A875-C31F6158F513}.Release|x64.ActiveCfg = Release|x64
 		{DF851AF8-F359-437D-A875-C31F6158F513}.Release|x64.Build.0 = Release|x64
+		{1C6761A3-DD4E-4978-A4C6-24D3A50C502D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1C6761A3-DD4E-4978-A4C6-24D3A50C502D}.Debug|Win32.Build.0 = Debug|Win32
+		{1C6761A3-DD4E-4978-A4C6-24D3A50C502D}.Debug|x64.ActiveCfg = Debug|x64
+		{1C6761A3-DD4E-4978-A4C6-24D3A50C502D}.Debug|x64.Build.0 = Debug|x64
+		{1C6761A3-DD4E-4978-A4C6-24D3A50C502D}.Release|Win32.ActiveCfg = Release|Win32
+		{1C6761A3-DD4E-4978-A4C6-24D3A50C502D}.Release|Win32.Build.0 = Release|Win32
+		{1C6761A3-DD4E-4978-A4C6-24D3A50C502D}.Release|x64.ActiveCfg = Release|x64
+		{1C6761A3-DD4E-4978-A4C6-24D3A50C502D}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -655,9 +666,10 @@ Global
 		{4882842D-566D-456A-A267-A5F9C8FDB16D} = {A0D725D5-C2B1-436E-94CE-E56F2DDF24AE}
 		{F1493DF2-5A3C-43A2-A2C2-B6F923128877} = {DA539701-563C-4DCF-883B-941DE792BC4A}
 		{DF851AF8-F359-437D-A875-C31F6158F513} = {DA539701-563C-4DCF-883B-941DE792BC4A}
+		{1C6761A3-DD4E-4978-A4C6-24D3A50C502D} = {8DB3F988-5C33-4D8A-BF19-040D5CDCD99C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {CAC327DA-BA65-4990-BEC0-618347D67688}
 		Qt5Version = msvc2019_64
+		SolutionGuid = {CAC327DA-BA65-4990-BEC0-618347D67688}
 	EndGlobalSection
 EndGlobal
