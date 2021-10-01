@@ -18,7 +18,7 @@ std::istream& ScriptInterface::operator>>(std::istream& _s, SNameOrKey& _obj)
 {
 	const auto str = GetValueFromStream<std::string>(_s);
 	_obj.name = IsSimpleUInt(str) ? "" : str;
-	_obj.key  = IsSimpleUInt(str) ? std::stoull(str) : -1;
+	_obj.key  = IsSimpleUInt(str) ? std::stoll(str) : -1;
 	return _s;
 }
 
@@ -102,5 +102,35 @@ std::istream& ScriptInterface::operator>>(std::istream& _s, SStreamSE& _obj)
 	_obj.portO = GetValueFromStream<SNameOrIndex>(_s);
 	_obj.unitI = GetValueFromStream<SNameOrIndex>(_s);
 	_obj.portI = GetValueFromStream<SNameOrIndex>(_s);
+	return _s;
+}
+
+std::istream& ScriptInterface::operator>>(std::istream& _s, SExportStreamSE& _obj)
+{
+	_obj.stream = GetValueFromStream<SNameOrIndex>(_s);
+	_obj.times  = GetValueFromStream<std::vector<double>>(_s);
+	return _s;
+}
+
+std::istream& ScriptInterface::operator>>(std::istream& _s, SExportHoldupSE& _obj)
+{
+	_obj.unit   = GetValueFromStream<SNameOrIndex>(_s);
+	_obj.holdup = GetValueFromStream<SNameOrIndex>(_s);
+	_obj.times  = GetValueFromStream<std::vector<double>>(_s);
+	return _s;
+}
+
+std::istream& ScriptInterface::operator>>(std::istream& _s, SExportStateVarSE& _obj)
+{
+	_obj.unit     = GetValueFromStream<SNameOrIndex>(_s);
+	_obj.variable = GetValueFromStream<SNameOrIndex>(_s);
+	return _s;
+}
+
+std::istream& ScriptInterface::operator>>(std::istream& _s, SExportPlotSE& _obj)
+{
+	_obj.unit  = GetValueFromStream<SNameOrIndex>(_s);
+	_obj.plot  = GetValueFromStream<SNameOrIndex>(_s);
+	_obj.curve = GetValueFromStream<SNameOrIndex>(_s);
 	return _s;
 }

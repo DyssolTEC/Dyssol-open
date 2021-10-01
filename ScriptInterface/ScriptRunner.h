@@ -46,6 +46,8 @@ private:
 
 	// Performs the simulation. Returns success flag.
 	bool RunSimulation(const CScriptJob& _job);
+	// Exports results from file.
+	bool ExportResults(const CScriptJob& _job);
 
 	// Clears current state of the runner.
 	void Clear();
@@ -55,6 +57,8 @@ private:
 
 	// Returns a pointer to a unit by its name or index. Returns nullptr if the search fails.
 	CUnitContainer* GetUnitPtr(const ScriptInterface::SNameOrIndex& _nameOrIndex);
+	// Returns a pointer to a stream by its name or index. Returns nullptr if the search fails.
+	CStream* GetStreamPtr(const ScriptInterface::SNameOrIndex& _nameOrIndex);
 	// Returns a pointer to a unit parameter by its name or index. Returns nullptr if the search fails.
 	CBaseUnitParameter* GetUnitParamPtr(CBaseUnit& _model, const ScriptInterface::SNameOrIndex& _nameOrIndex);
 	// Returns a pointer to a holdup by its name or index. Returns nullptr if the search fails.
@@ -63,6 +67,12 @@ private:
 	CCompound* GetCompoundPtr(const std::string& _nameOrKey);
 	// Returns a pointer to a unit port by its name or index. Returns nullptr if the search fails.
 	CUnitPort* GetPortPtr(CBaseUnit& _model, const ScriptInterface::SNameOrIndex& _nameOrIndex);
+	// Returns a pointer to a state variable by its name or index. Returns nullptr if the search fails.
+	CStateVariable* GetStateVarPtr(CBaseUnit& _model, const ScriptInterface::SNameOrIndex& _nameOrIndex);
+	// Returns a pointer to a plot by its name or index. Returns nullptr if the search fails.
+	const CPlot* GetPlotPtr(const CBaseUnit& _model, const ScriptInterface::SNameOrIndex& _nameOrIndex);
+	// Returns a pointer to a curve by its name or index. Returns nullptr if the search fails.
+	const CCurve* GetCurvePtr(const CPlot& _plot, const ScriptInterface::SNameOrIndex& _nameOrIndex);
 	// Returns a unique key of a model, trying to find it by its ID, name and file path. Returns empty string if the search fails.
 	std::string GetModelKey(const std::string& _value) const;
 };

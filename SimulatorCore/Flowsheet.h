@@ -113,10 +113,19 @@ public:
 	// Moves a stream with the specified unique key upwards/downwards in the list of streams.
 	void ShiftStream(const std::string& _key, EDirection _direction);
 
+	// Returns a stream by its index. If no such stream has been defined, returns nullptr.
+	[[nodiscard]] const CStream* GetStream(size_t _index) const;
+	// Returns a stream by its index. If no such stream has been defined, returns nullptr.
+	CStream* GetStream(size_t _index);
 	// Returns a stream with the specified unique key. If no such stream has been defined, returns nullptr.
 	const CStream* GetStream(const std::string& _key) const;
 	// Returns a stream with the specified unique key. If no such stream has been defined, returns nullptr.
 	CStream* GetStream(const std::string& _key);
+	// Returns a stream with the specified name. If no such stream has been defined, returns nullptr. If several streams have the same name, returns an arbitrary one.
+	[[nodiscard]] const CStream* GetStreamByName(const std::string& _name) const;
+	// Returns a stream with the specified name. If no such stream has been defined, returns nullptr. If several streams have the same name, returns an arbitrary one.
+	CStream* GetStreamByName(const std::string& _name);
+
 	// Returns const pointers to all defined streams.
 	std::vector<const CStream*> GetAllStreams() const;
 	// Returns pointers to all defined streams.
@@ -235,7 +244,7 @@ public:
 
 private:
 	// Returns a pointer to a stream with the specified unique key from the given vector. If no such stream defined, returns nullptr.
-	static std::shared_ptr<CStream> DoGetStream(const std::string& _key, const std::vector<std::shared_ptr<CStream>>& _streams);
+	static CStream* DoGetStream(const std::string& _key, const std::vector<std::shared_ptr<CStream>>& _streams);
 
 	// Returns unique keys of all defined units.
 	std::vector<std::string> GetAllUnitsKeys() const;

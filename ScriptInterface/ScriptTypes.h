@@ -105,4 +105,38 @@ namespace ScriptInterface
 		SNameOrIndex portI{};	// Name or index of the model's port, where the stream ends.
 		friend std::istream& operator>>(std::istream& _s, SStreamSE& _obj);
 	};
+
+	// Struct to parse script entries (SE) with streams export.
+	struct SExportStreamSE
+	{
+		SNameOrIndex stream{};			// Name or index of the stream.
+		std::vector<double> times{};	// Time points to export.
+		friend std::istream& operator>>(std::istream& _s, SExportStreamSE& _obj);
+	};
+
+	// Struct to parse script entries (SE) with holdups export.
+	struct SExportHoldupSE
+	{
+		SNameOrIndex unit{};			// Name or index of the unit container.
+		SNameOrIndex holdup{};			// Name or index of the holdup within the unit.
+		std::vector<double> times{};	// Time points to export.
+		friend std::istream& operator>>(std::istream& _s, SExportHoldupSE& _obj);
+	};
+
+	// Struct to parse script entries (SE) with state variables export.
+	struct SExportStateVarSE
+	{
+		SNameOrIndex unit{};			// Name or index of the unit container.
+		SNameOrIndex variable{};		// Name or index of the state variable within the unit.
+		friend std::istream& operator>>(std::istream& _s, SExportStateVarSE& _obj);
+	};
+
+	// Struct to parse script entries (SE) with state variables export.
+	struct SExportPlotSE
+	{
+		SNameOrIndex unit{};			// Name or index of the unit container.
+		SNameOrIndex plot{};			// Name or index of the plot within the unit.
+		SNameOrIndex curve{};			// Name or index of the curve within the plot.
+		friend std::istream& operator>>(std::istream& _s, SExportPlotSE& _obj);
+	};
 }

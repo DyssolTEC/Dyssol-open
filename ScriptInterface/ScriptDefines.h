@@ -20,6 +20,9 @@
  *   3. Use in ScriptRunner.cpp, e.g. as job.GetValue<double>(EScriptKeys::SIMULATION_TIME).
  */
 
+
+// TODO: rename to ScriptKeys.h
+
 #pragma once
 #include "DyssolHelperDefines.h"
 #include "ContainerFunctions.h"
@@ -33,45 +36,69 @@ namespace ScriptInterface
 	// All possible script keys, as they appear in script files.
 	enum class EScriptKeys
 	{
-		JOB                         ,
-		SOURCE_FILE                 ,
-		RESULT_FILE                 ,
-		MATERIALS_DATABASE          ,
-		MODELS_PATH                 ,
-		SIMULATION_TIME             ,
-		RELATIVE_TOLERANCE          ,
-		ABSOLUTE_TOLERANCE          ,
-		MINIMAL_FRACTION            ,
-		SAVE_TIME_STEP_HINT         ,
-		SAVE_FLAG_FOR_HOLDUPS       ,
-		THERMO_TEMPERATURE_MIN      ,
-		THERMO_TEMPERATURE_MAX      ,
-		THERMO_TEMPERATURE_INTERVALS,
-		INIT_TIME_WINDOW            ,
-		MIN_TIME_WINDOW             ,
-		MAX_TIME_WINDOW             ,
-		MAX_ITERATIONS_NUMBER       ,
-		WINDOW_CHANGE_RATE          ,
-		ITERATIONS_UPPER_LIMIT      ,
-		ITERATIONS_LOWER_LIMIT      ,
-		ITERATIONS_UPPER_LIMIT_1ST  ,
-		CONVERGENCE_METHOD          ,
-		RELAXATION_PARAMETER        ,
-		ACCELERATION_LIMIT          ,
-		EXTRAPOLATION_METHOD        ,
-		KEEP_EXISTING_UNITS         ,
-		UNIT                        ,
-		STREAM                      ,
-		UNIT_PARAMETER              ,
-		KEEP_EXISTING_HOLDUPS_VALUES,
-		HOLDUP_OVERALL              ,
-		HOLDUP_PHASES               ,
-		HOLDUP_COMPOUNDS            ,
-		HOLDUP_DISTRIBUTION         ,
-		KEEP_EXISTING_GRIDS_VALUES  ,
-		DISTRIBUTION_GRID           ,
-		COMPOUNDS                   ,
-		PHASES                      ,
+		JOB                              ,
+		SOURCE_FILE                      ,
+		RESULT_FILE                      ,
+		MATERIALS_DATABASE               ,
+		MODELS_PATH                      ,
+		SIMULATION_TIME                  ,
+		RELATIVE_TOLERANCE               ,
+		ABSOLUTE_TOLERANCE               ,
+		MINIMAL_FRACTION                 ,
+		SAVE_TIME_STEP_HINT              ,
+		SAVE_FLAG_FOR_HOLDUPS            ,
+		THERMO_TEMPERATURE_MIN           ,
+		THERMO_TEMPERATURE_MAX           ,
+		THERMO_TEMPERATURE_INTERVALS     ,
+		INIT_TIME_WINDOW                 ,
+		MIN_TIME_WINDOW                  ,
+		MAX_TIME_WINDOW                  ,
+		MAX_ITERATIONS_NUMBER            ,
+		WINDOW_CHANGE_RATE               ,
+		ITERATIONS_UPPER_LIMIT           ,
+		ITERATIONS_LOWER_LIMIT           ,
+		ITERATIONS_UPPER_LIMIT_1ST       ,
+		CONVERGENCE_METHOD               ,
+		RELAXATION_PARAMETER             ,
+		ACCELERATION_LIMIT               ,
+		EXTRAPOLATION_METHOD             ,
+		KEEP_EXISTING_UNITS              ,
+		UNIT                             ,
+		STREAM                           ,
+		UNIT_PARAMETER                   ,
+		KEEP_EXISTING_HOLDUPS_VALUES     ,
+		HOLDUP_OVERALL                   ,
+		HOLDUP_PHASES                    ,
+		HOLDUP_COMPOUNDS                 ,
+		HOLDUP_DISTRIBUTION              ,
+		KEEP_EXISTING_GRIDS_VALUES       ,
+		DISTRIBUTION_GRID                ,
+		COMPOUNDS                        ,
+		PHASES                           ,
+		EXPORT_FILE                      ,
+		EXPORT_PRECISION                 ,
+		EXPORT_FIXED_POINT               ,
+		EXPORT_SIGNIFICANCE_LIMIT        ,
+		EXPORT_ONLY                      ,
+		EXPORT_STREAM_MASS               ,
+		EXPORT_STREAM_TEMPERATURE        ,
+		EXPORT_STREAM_PRESSURE           ,
+		EXPORT_STREAM_OVERALLS           ,
+		EXPORT_STREAM_PHASES_FRACTIONS   ,
+		EXPORT_STREAM_COMPOUNDS_FRACTIONS,
+		EXPORT_STREAM_PSD                ,
+		EXPORT_STREAM_DISTRIBUTIONS      ,
+		EXPORT_HOLDUP_MASS               ,
+		EXPORT_HOLDUP_TEMPERATURE        ,
+		EXPORT_HOLDUP_PRESSURE           ,
+		EXPORT_HOLDUP_OVERALLS           ,
+		EXPORT_HOLDUP_PHASES_FRACTIONS   ,
+		EXPORT_HOLDUP_COMPOUNDS_FRACTIONS,
+		EXPORT_HOLDUP_PSD                ,
+		EXPORT_HOLDUP_DISTRIBUTIONS      ,
+		EXPORT_UNIT_STATE_VARIABLE       ,
+		EXPORT_UNIT_PLOT                 ,
+		EXPORT_FLOWSHEET_GRAPH           ,
 	};
 
 	// All possible types of script entries.
@@ -93,6 +120,10 @@ namespace ScriptInterface
 		GRID_DIMENSION     , // SGridDimensionSE
 		PHASES             , // SPhasesSE
 		STREAM             , // SStreamSE
+		EXPORT_STREAM      , // SExportStreamSE
+		EXPORT_HOLDUP      , // SExportHoldupSE
+		EXPORT_STATE_VAR   , // SExportStateVarSE
+		EXPORT_PLOT        , // SExportPlotSE
 	};
 
 	// Descriptor for an entry of the script file.
@@ -109,7 +140,8 @@ namespace ScriptInterface
 		// Value of the entry of different types.
 		std::variant<bool, int64_t, uint64_t, double, std::string, std::vector<std::string>, std::filesystem::path,
 			SNameOrKey, SUnitParameterSE, SHoldupDependentSE, SHoldupCompoundsSE, SHoldupDistributionSE,
-			SGridDimensionSE, SPhasesSE, SStreamSE> value{};
+			SGridDimensionSE, SPhasesSE, SStreamSE,
+			SExportStreamSE, SExportHoldupSE, SExportStateVarSE, SExportPlotSE> value{};
 
 		SScriptEntry() = default;
 		SScriptEntry(const SScriptEntryDescriptor& _descr) : SScriptEntryDescriptor{ _descr } {}
@@ -120,22 +152,26 @@ namespace ScriptInterface
 	{
 		switch (_entry.type)
 		{
-		case EEntryType::EMPTY:																										break;
-		case EEntryType::BOOL:					_entry.value = StringFunctions::GetValueFromStream<bool>(is);						break;
-		case EEntryType::INT:					_entry.value = StringFunctions::GetValueFromStream<int64_t>(is);					break;
-		case EEntryType::UINT:					_entry.value = StringFunctions::GetValueFromStream<uint64_t>(is);					break;
-		case EEntryType::DOUBLE:				_entry.value = StringFunctions::GetValueFromStream<double>(is);						break;
-		case EEntryType::STRING:				_entry.value = StringFunctions::GetRestOfLine(is);									break;
-		case EEntryType::STRINGS:				_entry.value = StringFunctions::GetValueFromStream<std::vector<std::string>>(is);	break;
-		case EEntryType::PATH:					_entry.value = std::filesystem::path{ StringFunctions::GetRestOfLine(is) };			break;
-		case EEntryType::NAME_OR_KEY:			_entry.value = StringFunctions::GetValueFromStream<SNameOrKey>(is);					break;
-		case EEntryType::UNIT_PARAMETER:		_entry.value = StringFunctions::GetValueFromStream<SUnitParameterSE>(is);			break;
-		case EEntryType::HOLDUP_DEPENDENT:		_entry.value = StringFunctions::GetValueFromStream<SHoldupDependentSE>(is);			break;
-		case EEntryType::HOLDUP_COMPOUNDS:		_entry.value = StringFunctions::GetValueFromStream<SHoldupCompoundsSE>(is);			break;
-		case EEntryType::HOLDUP_DISTRIBUTION:	_entry.value = StringFunctions::GetValueFromStream<SHoldupDistributionSE>(is);		break;
-		case EEntryType::GRID_DIMENSION:	    _entry.value = StringFunctions::GetValueFromStream<SGridDimensionSE>(is);			break;
-		case EEntryType::PHASES:				_entry.value = StringFunctions::GetValueFromStream<SPhasesSE>(is);					break;
-		case EEntryType::STREAM:				_entry.value = StringFunctions::GetValueFromStream<SStreamSE>(is);					break;
+		case EEntryType::EMPTY:																																break;
+		case EEntryType::BOOL:					_entry.value = StringFunctions::GetValueFromStream<bool>(is);												break;
+		case EEntryType::INT:					_entry.value = StringFunctions::GetValueFromStream<int64_t>(is);											break;
+		case EEntryType::UINT:					_entry.value = StringFunctions::GetValueFromStream<uint64_t>(is);											break;
+		case EEntryType::DOUBLE:				_entry.value = StringFunctions::GetValueFromStream<double>(is);												break;
+		case EEntryType::STRING:				_entry.value = StringFunctions::RemoveQuotes(StringFunctions::GetRestOfLine(is));							break;
+		case EEntryType::STRINGS:				_entry.value = StringFunctions::GetValueFromStream<std::vector<std::string>>(is);							break;
+		case EEntryType::PATH:					_entry.value = std::filesystem::path{ StringFunctions::RemoveQuotes(StringFunctions::GetRestOfLine(is)) };	break;
+		case EEntryType::NAME_OR_KEY:			_entry.value = StringFunctions::GetValueFromStream<SNameOrKey>(is);											break;
+		case EEntryType::UNIT_PARAMETER:		_entry.value = StringFunctions::GetValueFromStream<SUnitParameterSE>(is);									break;
+		case EEntryType::HOLDUP_DEPENDENT:		_entry.value = StringFunctions::GetValueFromStream<SHoldupDependentSE>(is);									break;
+		case EEntryType::HOLDUP_COMPOUNDS:		_entry.value = StringFunctions::GetValueFromStream<SHoldupCompoundsSE>(is);									break;
+		case EEntryType::HOLDUP_DISTRIBUTION:	_entry.value = StringFunctions::GetValueFromStream<SHoldupDistributionSE>(is);								break;
+		case EEntryType::GRID_DIMENSION:	    _entry.value = StringFunctions::GetValueFromStream<SGridDimensionSE>(is);									break;
+		case EEntryType::PHASES:				_entry.value = StringFunctions::GetValueFromStream<SPhasesSE>(is);											break;
+		case EEntryType::STREAM:				_entry.value = StringFunctions::GetValueFromStream<SStreamSE>(is);											break;
+		case EEntryType::EXPORT_STREAM:			_entry.value = StringFunctions::GetValueFromStream<SExportStreamSE>(is);									break;
+		case EEntryType::EXPORT_HOLDUP:			_entry.value = StringFunctions::GetValueFromStream<SExportHoldupSE>(is);									break;
+		case EEntryType::EXPORT_STATE_VAR:		_entry.value = StringFunctions::GetValueFromStream<SExportStateVarSE>(is);									break;
+		case EEntryType::EXPORT_PLOT:			_entry.value = StringFunctions::GetValueFromStream<SExportPlotSE>(is);										break;
 		}
 	}
 
@@ -153,48 +189,73 @@ namespace ScriptInterface
 	static std::vector<SScriptEntryDescriptor> allScriptArguments
 	{
 		// paths
-		MAKE_ARG(EScriptKeys::JOB                         , EEntryType::EMPTY)				,
-		MAKE_ARG(EScriptKeys::SOURCE_FILE                 , EEntryType::PATH)				,
-		MAKE_ARG(EScriptKeys::RESULT_FILE                 , EEntryType::PATH)				,
-		MAKE_ARG(EScriptKeys::MATERIALS_DATABASE          , EEntryType::PATH)				,
-		MAKE_ARG(EScriptKeys::MODELS_PATH                 , EEntryType::PATH)				,
+		MAKE_ARG(EScriptKeys::JOB                              , EEntryType::EMPTY)              ,
+		MAKE_ARG(EScriptKeys::SOURCE_FILE                      , EEntryType::PATH)               ,
+		MAKE_ARG(EScriptKeys::RESULT_FILE                      , EEntryType::PATH)               ,
+		MAKE_ARG(EScriptKeys::MATERIALS_DATABASE               , EEntryType::PATH)               ,
+		MAKE_ARG(EScriptKeys::MODELS_PATH                      , EEntryType::PATH)               ,
 		// flowsheet parameters
-		MAKE_ARG(EScriptKeys::SIMULATION_TIME             , EEntryType::DOUBLE)				,
-		MAKE_ARG(EScriptKeys::RELATIVE_TOLERANCE          , EEntryType::DOUBLE)				,
-		MAKE_ARG(EScriptKeys::ABSOLUTE_TOLERANCE          , EEntryType::DOUBLE)				,
-		MAKE_ARG(EScriptKeys::MINIMAL_FRACTION            , EEntryType::DOUBLE)				,
-		MAKE_ARG(EScriptKeys::SAVE_TIME_STEP_HINT         , EEntryType::DOUBLE)				,
-		MAKE_ARG(EScriptKeys::SAVE_FLAG_FOR_HOLDUPS       , EEntryType::BOOL)				,
-		MAKE_ARG(EScriptKeys::THERMO_TEMPERATURE_MIN      , EEntryType::DOUBLE)				,
-		MAKE_ARG(EScriptKeys::THERMO_TEMPERATURE_MAX      , EEntryType::DOUBLE)				,
-		MAKE_ARG(EScriptKeys::THERMO_TEMPERATURE_INTERVALS, EEntryType::UINT)				,
-		MAKE_ARG(EScriptKeys::INIT_TIME_WINDOW            , EEntryType::DOUBLE)				,
-		MAKE_ARG(EScriptKeys::MIN_TIME_WINDOW             , EEntryType::DOUBLE)				,
-		MAKE_ARG(EScriptKeys::MAX_TIME_WINDOW             , EEntryType::DOUBLE)				,
-		MAKE_ARG(EScriptKeys::MAX_ITERATIONS_NUMBER       , EEntryType::UINT)				,
-		MAKE_ARG(EScriptKeys::WINDOW_CHANGE_RATE          , EEntryType::DOUBLE)				,
-		MAKE_ARG(EScriptKeys::ITERATIONS_UPPER_LIMIT      , EEntryType::UINT)				,
-		MAKE_ARG(EScriptKeys::ITERATIONS_LOWER_LIMIT      , EEntryType::UINT)				,
-		MAKE_ARG(EScriptKeys::ITERATIONS_UPPER_LIMIT_1ST  , EEntryType::UINT)				,
-		MAKE_ARG(EScriptKeys::CONVERGENCE_METHOD          , EEntryType::NAME_OR_KEY)		,
-		MAKE_ARG(EScriptKeys::RELAXATION_PARAMETER        , EEntryType::DOUBLE)				,
-		MAKE_ARG(EScriptKeys::ACCELERATION_LIMIT          , EEntryType::DOUBLE)				,
-		MAKE_ARG(EScriptKeys::EXTRAPOLATION_METHOD        , EEntryType::NAME_OR_KEY)		,
+		MAKE_ARG(EScriptKeys::SIMULATION_TIME                  , EEntryType::DOUBLE)             ,
+		MAKE_ARG(EScriptKeys::RELATIVE_TOLERANCE               , EEntryType::DOUBLE)             ,
+		MAKE_ARG(EScriptKeys::ABSOLUTE_TOLERANCE               , EEntryType::DOUBLE)             ,
+		MAKE_ARG(EScriptKeys::MINIMAL_FRACTION                 , EEntryType::DOUBLE)             ,
+		MAKE_ARG(EScriptKeys::SAVE_TIME_STEP_HINT              , EEntryType::DOUBLE)             ,
+		MAKE_ARG(EScriptKeys::SAVE_FLAG_FOR_HOLDUPS            , EEntryType::BOOL)               ,
+		MAKE_ARG(EScriptKeys::THERMO_TEMPERATURE_MIN           , EEntryType::DOUBLE)             ,
+		MAKE_ARG(EScriptKeys::THERMO_TEMPERATURE_MAX           , EEntryType::DOUBLE)             ,
+		MAKE_ARG(EScriptKeys::THERMO_TEMPERATURE_INTERVALS     , EEntryType::UINT)               ,
+		MAKE_ARG(EScriptKeys::INIT_TIME_WINDOW                 , EEntryType::DOUBLE)             ,
+		MAKE_ARG(EScriptKeys::MIN_TIME_WINDOW                  , EEntryType::DOUBLE)             ,
+		MAKE_ARG(EScriptKeys::MAX_TIME_WINDOW                  , EEntryType::DOUBLE)             ,
+		MAKE_ARG(EScriptKeys::MAX_ITERATIONS_NUMBER            , EEntryType::UINT)               ,
+		MAKE_ARG(EScriptKeys::WINDOW_CHANGE_RATE               , EEntryType::DOUBLE)             ,
+		MAKE_ARG(EScriptKeys::ITERATIONS_UPPER_LIMIT           , EEntryType::UINT)               ,
+		MAKE_ARG(EScriptKeys::ITERATIONS_LOWER_LIMIT           , EEntryType::UINT)               ,
+		MAKE_ARG(EScriptKeys::ITERATIONS_UPPER_LIMIT_1ST       , EEntryType::UINT)               ,
+		MAKE_ARG(EScriptKeys::CONVERGENCE_METHOD               , EEntryType::NAME_OR_KEY)        ,
+		MAKE_ARG(EScriptKeys::RELAXATION_PARAMETER             , EEntryType::DOUBLE)             ,
+		MAKE_ARG(EScriptKeys::ACCELERATION_LIMIT               , EEntryType::DOUBLE)             ,
+		MAKE_ARG(EScriptKeys::EXTRAPOLATION_METHOD             , EEntryType::NAME_OR_KEY)        ,
 		// flowsheet settings
-		MAKE_ARG(EScriptKeys::KEEP_EXISTING_UNITS         , EEntryType::BOOL)               ,
-		MAKE_ARG(EScriptKeys::UNIT                        , EEntryType::STRINGS)            ,
-		MAKE_ARG(EScriptKeys::STREAM                      , EEntryType::STREAM)		        ,
-		MAKE_ARG(EScriptKeys::UNIT_PARAMETER              , EEntryType::UNIT_PARAMETER)		,
-		MAKE_ARG(EScriptKeys::KEEP_EXISTING_GRIDS_VALUES  , EEntryType::BOOL)				,
-		MAKE_ARG(EScriptKeys::DISTRIBUTION_GRID           , EEntryType::GRID_DIMENSION)		,
-		MAKE_ARG(EScriptKeys::COMPOUNDS                   , EEntryType::STRINGS)			,
-		MAKE_ARG(EScriptKeys::PHASES                      , EEntryType::PHASES)             ,
+		MAKE_ARG(EScriptKeys::KEEP_EXISTING_UNITS              , EEntryType::BOOL)               ,
+		MAKE_ARG(EScriptKeys::UNIT                             , EEntryType::STRINGS)            ,
+		MAKE_ARG(EScriptKeys::STREAM                           , EEntryType::STREAM)             ,
+		MAKE_ARG(EScriptKeys::UNIT_PARAMETER                   , EEntryType::UNIT_PARAMETER)     ,
+		MAKE_ARG(EScriptKeys::KEEP_EXISTING_GRIDS_VALUES       , EEntryType::BOOL)               ,
+		MAKE_ARG(EScriptKeys::DISTRIBUTION_GRID                , EEntryType::GRID_DIMENSION)     ,
+		MAKE_ARG(EScriptKeys::COMPOUNDS                        , EEntryType::STRINGS)            ,
+		MAKE_ARG(EScriptKeys::PHASES                           , EEntryType::PHASES)             ,
 		// holdup and input streams parameters
-		MAKE_ARG(EScriptKeys::KEEP_EXISTING_HOLDUPS_VALUES, EEntryType::BOOL)				,
-		MAKE_ARG(EScriptKeys::HOLDUP_OVERALL			  , EEntryType::HOLDUP_DEPENDENT)	,
-		MAKE_ARG(EScriptKeys::HOLDUP_PHASES				  , EEntryType::HOLDUP_DEPENDENT)	,
-		MAKE_ARG(EScriptKeys::HOLDUP_COMPOUNDS            , EEntryType::HOLDUP_COMPOUNDS)	,
-		MAKE_ARG(EScriptKeys::HOLDUP_DISTRIBUTION         , EEntryType::HOLDUP_DISTRIBUTION),
+		MAKE_ARG(EScriptKeys::KEEP_EXISTING_HOLDUPS_VALUES     , EEntryType::BOOL)               ,
+		MAKE_ARG(EScriptKeys::HOLDUP_OVERALL                   , EEntryType::HOLDUP_DEPENDENT)   ,
+		MAKE_ARG(EScriptKeys::HOLDUP_PHASES                    , EEntryType::HOLDUP_DEPENDENT)   ,
+		MAKE_ARG(EScriptKeys::HOLDUP_COMPOUNDS                 , EEntryType::HOLDUP_COMPOUNDS)   ,
+		MAKE_ARG(EScriptKeys::HOLDUP_DISTRIBUTION              , EEntryType::HOLDUP_DISTRIBUTION),
+		// export
+		MAKE_ARG(EScriptKeys::EXPORT_FILE                      , EEntryType::PATH)               ,
+		MAKE_ARG(EScriptKeys::EXPORT_PRECISION                 , EEntryType::INT)                ,
+		MAKE_ARG(EScriptKeys::EXPORT_FIXED_POINT               , EEntryType::BOOL)               ,
+		MAKE_ARG(EScriptKeys::EXPORT_SIGNIFICANCE_LIMIT        , EEntryType::DOUBLE)             ,
+		MAKE_ARG(EScriptKeys::EXPORT_ONLY                      , EEntryType::BOOL)               ,
+		MAKE_ARG(EScriptKeys::EXPORT_STREAM_MASS               , EEntryType::EXPORT_STREAM)      ,
+		MAKE_ARG(EScriptKeys::EXPORT_STREAM_TEMPERATURE        , EEntryType::EXPORT_STREAM)      ,
+		MAKE_ARG(EScriptKeys::EXPORT_STREAM_PRESSURE           , EEntryType::EXPORT_STREAM)      ,
+		MAKE_ARG(EScriptKeys::EXPORT_STREAM_OVERALLS           , EEntryType::EXPORT_STREAM)      ,
+		MAKE_ARG(EScriptKeys::EXPORT_STREAM_PHASES_FRACTIONS   , EEntryType::EXPORT_STREAM)      ,
+		MAKE_ARG(EScriptKeys::EXPORT_STREAM_COMPOUNDS_FRACTIONS, EEntryType::EXPORT_STREAM)      ,
+		MAKE_ARG(EScriptKeys::EXPORT_STREAM_PSD                , EEntryType::EXPORT_STREAM)      ,
+		MAKE_ARG(EScriptKeys::EXPORT_STREAM_DISTRIBUTIONS      , EEntryType::EXPORT_STREAM)      ,
+		MAKE_ARG(EScriptKeys::EXPORT_HOLDUP_MASS               , EEntryType::EXPORT_HOLDUP)      ,
+		MAKE_ARG(EScriptKeys::EXPORT_HOLDUP_TEMPERATURE        , EEntryType::EXPORT_HOLDUP)      ,
+		MAKE_ARG(EScriptKeys::EXPORT_HOLDUP_PRESSURE           , EEntryType::EXPORT_HOLDUP)      ,
+		MAKE_ARG(EScriptKeys::EXPORT_HOLDUP_OVERALLS           , EEntryType::EXPORT_HOLDUP)      ,
+		MAKE_ARG(EScriptKeys::EXPORT_HOLDUP_PHASES_FRACTIONS   , EEntryType::EXPORT_HOLDUP)      ,
+		MAKE_ARG(EScriptKeys::EXPORT_HOLDUP_COMPOUNDS_FRACTIONS, EEntryType::EXPORT_HOLDUP)      ,
+		MAKE_ARG(EScriptKeys::EXPORT_HOLDUP_PSD                , EEntryType::EXPORT_HOLDUP)      ,
+		MAKE_ARG(EScriptKeys::EXPORT_HOLDUP_DISTRIBUTIONS      , EEntryType::EXPORT_HOLDUP)      ,
+		MAKE_ARG(EScriptKeys::EXPORT_UNIT_STATE_VARIABLE       , EEntryType::EXPORT_STATE_VAR)   ,
+		MAKE_ARG(EScriptKeys::EXPORT_UNIT_PLOT                 , EEntryType::EXPORT_PLOT)        ,
+		MAKE_ARG(EScriptKeys::EXPORT_FLOWSHEET_GRAPH           , EEntryType::PATH)               ,
 	};
 
 	// Returns a vector of all possible script keys.

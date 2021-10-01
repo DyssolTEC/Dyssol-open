@@ -65,6 +65,10 @@ class CStateVariablesManager
 public:
 	// Adds a new time-dependent state variable and returns a pointer to it. If a state variable with this name already exists, does nothing and returns nullptr.
 	CStateVariable* AddStateVariable(const std::string& _name, double _initValue);
+	// Returns a state variable with the specified index.
+	const CStateVariable* GetStateVariable(size_t _index) const;
+	// Returns a state variable with the specified index.
+	CStateVariable* GetStateVariable(size_t _index);
 	// Returns a state variable with the specified name.
 	const CStateVariable* GetStateVariable(const std::string& _name) const;
 	// Returns a state variable with the specified name.

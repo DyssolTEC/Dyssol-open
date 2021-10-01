@@ -29,7 +29,7 @@ std::vector<const CScriptJob*> CScriptParser::Jobs() const
 void CScriptParser::Parse(const std::filesystem::path& _script)
 {
 	std::ifstream scriptFile{ _script };
-	if (!scriptFile.good())
+	if (!scriptFile)
 	{
 		std::cout << StrConst::DyssolC_ErrorNoScript() << std::endl;
 		return;

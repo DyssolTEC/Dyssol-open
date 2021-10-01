@@ -6,6 +6,7 @@
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
 #include <sstream>
+#include <fstream>
 #include <functional>
 
 using namespace ScriptInterface;
@@ -21,6 +22,7 @@ void CScriptRunner::RunJob(const CScriptJob& _job)
 	bool success = true;
 	if (success) success &= ConfigureFlowsheet(_job);
 	if (success) success &= RunSimulation(_job);
+	if (success) success &= ExportResults(_job);
 
 	const auto tEnd = ch::steady_clock::now();
 	std::cout << DyssolC_ScriptFinished(ch::duration_cast<ch::seconds>(tEnd - tStart).count()) << std::endl;
@@ -40,6 +42,7 @@ bool CScriptRunner::ConfigureFlowsheet(const CScriptJob& _job)
 	return success;
 }
 
+// TODO: rename to PrintError, add PrintInfo for consistency
 // Outputs the message into console and return false.
 bool PrintAndReturn(const std::string& _message)
 {
@@ -47,13 +50,19 @@ bool PrintAndReturn(const std::string& _message)
 	return false;
 }
 
+void PrintWarning(const std::string& _message)
+{
+	std::cout << _message << std::endl;
+}
+
 bool CScriptRunner::LoadFiles(const CScriptJob& _job)
 {
-	const bool hasSrc = _job.HasKey(EScriptKeys::SOURCE_FILE);
-	const bool hasDst = _job.HasKey(EScriptKeys::RESULT_FILE);
+	const bool hasSrc     = _job.HasKey(EScriptKeys::SOURCE_FILE);
+	const bool hasDst     = _job.HasKey(EScriptKeys::RESULT_FILE);
+	const bool onlyExport = _job.HasKey(EScriptKeys::EXPORT_ONLY) && _job.GetValue<bool>(EScriptKeys::EXPORT_ONLY);
 	if (!hasSrc && !hasDst)
 		return PrintAndReturn(DyssolC_ErrorSrcDst(StrKey(EScriptKeys::SOURCE_FILE), StrKey(EScriptKeys::RESULT_FILE)));
-	if (hasSrc && !hasDst)
+	if (hasSrc && !hasDst && !onlyExport)
 		std::cout << DyssolC_WriteSrc(StrKey(EScriptKeys::SOURCE_FILE), StrKey(EScriptKeys::RESULT_FILE)) << std::endl;
 
 	// load materials database
@@ -86,6 +95,9 @@ bool CScriptRunner::LoadFiles(const CScriptJob& _job)
 
 bool CScriptRunner::SetupFlowsheet(const CScriptJob& _job)
 {
+	// TODO: put into calling function
+	if (_job.HasKey(EScriptKeys::EXPORT_ONLY) && _job.GetValue<bool>(EScriptKeys::EXPORT_ONLY)) return true;
+
 	// setup units
 	// remove existing units
 	if (_job.HasKey(EScriptKeys::KEEP_EXISTING_UNITS) && !_job.GetValue<bool>(EScriptKeys::KEEP_EXISTING_UNITS))
@@ -144,25 +156,31 @@ bool CScriptRunner::SetupFlowsheet(const CScriptJob& _job)
 	}
 
 	// setup compounds
-	std::vector<std::string> compoundKeys;
-	for (const auto& list : _job.GetValues<std::vector<std::string>>(EScriptKeys::COMPOUNDS))
+	if (_job.HasKey(EScriptKeys::COMPOUNDS))
 	{
-		for (const auto& val : list)
+		std::vector<std::string> compoundKeys;
+		for (const auto& list : _job.GetValues<std::vector<std::string>>(EScriptKeys::COMPOUNDS))
 		{
-			const auto* cmp = GetCompoundPtr(val);
-			if (!cmp)
-				return PrintAndReturn(DyssolC_ErrorParseCompounds(StrKey(EScriptKeys::COMPOUNDS), val));
-			compoundKeys.push_back(cmp->GetKey());
+			for (const auto& val : list)
+			{
+				const auto* cmp = GetCompoundPtr(val);
+				if (!cmp)
+					return PrintAndReturn(DyssolC_ErrorNoCompounds(StrKey(EScriptKeys::COMPOUNDS), val));
+				compoundKeys.push_back(cmp->GetKey());
+			}
 		}
+		m_flowsheet.SetCompounds(compoundKeys);
 	}
-	m_flowsheet.SetCompounds(compoundKeys);
 
 	// setup phases
-	std::vector<SPhaseDescriptor> phases;
-	for (const auto& entry : _job.GetValues<SPhasesSE>(EScriptKeys::PHASES))
-		for (size_t i = 0; i < entry.types.size(); ++i)
-			phases.push_back(SPhaseDescriptor{ static_cast<EPhase>(entry.types[i].key), entry.names[i] });
-	m_flowsheet.SetPhases(phases);
+	if (_job.HasKey(EScriptKeys::PHASES))
+	{
+		std::vector<SPhaseDescriptor> phases;
+		for (const auto& entry : _job.GetValues<SPhasesSE>(EScriptKeys::PHASES))
+			for (size_t i = 0; i < entry.types.size(); ++i)
+				phases.push_back(SPhaseDescriptor{ static_cast<EPhase>(entry.types[i].key), entry.names[i] });
+		m_flowsheet.SetPhases(phases);
+	}
 
 	// The grids may be cleaned before setting new values. Those grids, which are not mentioned in the script file, are not changed.
 	// If cleaning is requested, on the first access to the grid's holder, clean it, store the key of the holder in this vector and do not clean any further.
@@ -238,6 +256,9 @@ bool CScriptRunner::SetupFlowsheet(const CScriptJob& _job)
 
 bool CScriptRunner::SetupFlowsheetParameters(const CScriptJob& _job)
 {
+	// TODO: put into calling function
+	if (_job.HasKey(EScriptKeys::EXPORT_ONLY) && _job.GetValue<bool>(EScriptKeys::EXPORT_ONLY)) return true;
+
 	auto* params = m_flowsheet.GetParameters();
 
 	SET_PARAM(EScriptKeys::SIMULATION_TIME             , double    , EndSimulationTime                          );
@@ -266,6 +287,9 @@ bool CScriptRunner::SetupFlowsheetParameters(const CScriptJob& _job)
 
 bool CScriptRunner::SetupUnitParameters(const CScriptJob& _job)
 {
+	// TODO: put into calling function
+	if (_job.HasKey(EScriptKeys::EXPORT_ONLY) && _job.GetValue<bool>(EScriptKeys::EXPORT_ONLY)) return true;
+
 	for (const auto& entry : _job.GetValues<SUnitParameterSE>(EScriptKeys::UNIT_PARAMETER))
 	{
 		// TODO: write error message in TryGetModelPtr
@@ -276,7 +300,7 @@ bool CScriptRunner::SetupUnitParameters(const CScriptJob& _job)
 		// get pointer to unit parameter
 		auto* param = GetUnitParamPtr(*model, entry.param);
 		if (!param)
-			return PrintAndReturn(DyssolC_ErrorParseUP(StrKey(EScriptKeys::UNIT_PARAMETER), unit->GetName(), entry.param.name, entry.param.index));
+			return PrintAndReturn(DyssolC_ErrorNoUP(StrKey(EScriptKeys::UNIT_PARAMETER), unit->GetName(), entry.param.name, entry.param.index));
 		std::stringstream ss{ entry.values };	// create a stream with parameter values
 		param->ValueFromStream(ss);				// read unit parameter values
 	}
@@ -287,6 +311,9 @@ bool CScriptRunner::SetupUnitParameters(const CScriptJob& _job)
 // TODO: split
 bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 {
+	// TODO: put into calling function
+	if (_job.HasKey(EScriptKeys::EXPORT_ONLY) && _job.GetValue<bool>(EScriptKeys::EXPORT_ONLY)) return true;
+
 	// The holdup may be cleaned before setting time-dependent values. Those holdups, which are not mentioned in the script file, are not changed.
 	// If cleaning is requested, on the first access to the holdup, clean it, store in this vector and do not clean any further.
 	std::vector<CBaseStream*> processed;	// already processed holdups
@@ -300,7 +327,7 @@ bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 		if (!model)		return std::make_tuple(nullptr, nullptr, message);
 		// get pointer to holdup
 		auto* holdup = GetHoldupPtr(*model, _holdup);
-		if (!holdup)	return std::make_tuple(nullptr, nullptr, DyssolC_ErrorParseHO(StrKey(_scriptKey), unit->GetName(), _holdup.name, _holdup.index));
+		if (!holdup)	return std::make_tuple(nullptr, nullptr, DyssolC_ErrorNoHoldup(StrKey(_scriptKey), unit->GetName(), _holdup.name, _holdup.index));
 		// remove all time points if requested and if it is the first access to this stream
 		if (!keepTP && !VectorContains(processed, holdup))
 		{
@@ -430,6 +457,9 @@ bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 
 bool CScriptRunner::RunSimulation(const CScriptJob& _job)
 {
+	// TODO: put into calling function
+	if (_job.HasKey(EScriptKeys::EXPORT_ONLY) && _job.GetValue<bool>(EScriptKeys::EXPORT_ONLY)) return true;
+
 	// initialize flowsheet
 	std::cout << DyssolC_Initialize() << std::endl;
 	const std::string error = m_flowsheet.Initialize();
@@ -454,6 +484,225 @@ bool CScriptRunner::RunSimulation(const CScriptJob& _job)
 	return true;
 }
 
+// TODO: split
+bool CScriptRunner::ExportResults(const CScriptJob& _job)
+{
+	if (!_job.HasKey(EScriptKeys::EXPORT_FILE)) return true;
+
+	const auto exportFile = _job.GetValue<fs::path>(EScriptKeys::EXPORT_FILE);
+	std::cout << DyssolC_ExportResults(exportFile.string()) << std::endl;
+
+	// open text file for export
+	std::ofstream file(exportFile);
+	if (!file)
+		return PrintAndReturn(DyssolC_ErrorExportFile());
+
+	// setup export
+	if (_job.HasKey(EScriptKeys::EXPORT_PRECISION))
+		file.precision(_job.GetValue<int64_t>(EScriptKeys::EXPORT_PRECISION));
+	if (_job.HasKey(EScriptKeys::EXPORT_FIXED_POINT))
+		file.setf(_job.GetValue<bool>(EScriptKeys::EXPORT_FIXED_POINT) ? std::ios::fixed : std::ios::scientific);
+	const double limit = _job.HasKey(EScriptKeys::EXPORT_SIGNIFICANCE_LIMIT) ? std::abs(_job.GetValue<double>(EScriptKeys::EXPORT_SIGNIFICANCE_LIMIT)) : 0.0;
+	// replaces all values less than the limit with zeros
+	const auto Filter = [&](double v) { return limit == 0.0 ? v : std::abs(v) >= limit ? v : 0.0; };
+
+	// helper function to export values
+	const auto ExportValues = [&](const std::vector<double>& tp, const CBaseStream* s, const std::function<void(const CBaseStream*, double)>& fun)
+	{
+		for (const double t : !tp.empty() ? tp : s->GetAllTimePoints())
+		{
+			file << " " << t;
+			fun(s, t);
+		}
+		file << std::endl;
+	};
+
+	// flag to return
+	bool success{ true };
+
+	// helper function to export streams data
+	const auto ExportStreams = [&](const EScriptKeys& key, const std::string& tag, const std::function<void(const CBaseStream*, double)>& fun)
+	{
+		for (const auto& e : _job.GetValues<SExportStreamSE>(key))
+		{
+			// get pointer to stream
+			const CStream* stream = GetStreamPtr(e.stream);
+			if (!stream)
+			{
+				success = PrintAndReturn(DyssolC_ErrorNoStream(StrKey(key), e.stream.name, e.stream.index));
+				continue;
+			}
+			// export
+			file << tag << " " << StringFunctions::Quote(stream->GetName());
+			ExportValues(e.times, stream, fun);
+		}
+	};
+
+	// helper function to export holdups data
+	const auto ExportHoldups = [&](const EScriptKeys& key, const std::string& tag, const std::function<void(const CBaseStream*, double)>& fun)
+	{
+		for (const auto& e : _job.GetValues<SExportHoldupSE>(key))
+		{
+			// get pointer to unit and model
+			auto [model, unit, message] = TryGetModelPtr(e.unit, key);
+			if (!model)
+			{
+				success = PrintAndReturn(DyssolC_ErrorNoUnit(StrKey(key), e.unit.name, e.unit.index));
+				continue;
+			}
+			// get pointer to holdup
+			const auto* holdup = GetHoldupPtr(*model, e.holdup);
+			if (!holdup)
+			{
+				success = PrintAndReturn(DyssolC_ErrorNoHoldup(StrKey(key), unit->GetName(), e.holdup.name, e.holdup.index));
+				continue;
+			}
+			// export
+			file << tag << " " << StringFunctions::Quote(unit->GetName()) << " " << StringFunctions::Quote(holdup->GetName());
+			ExportValues(e.times, holdup, fun);
+		}
+	};
+
+	// helper functions to export specific data
+	const auto ExportMass = [&](const CBaseStream* s, double t)
+	{
+		file << " " << Filter(s->GetMass(t));
+	};
+	const auto ExportTemperature = [&](const CBaseStream* s, double t)
+	{
+		file << " " << Filter(s->GetTemperature(t));
+	};
+	const auto ExportPressure = [&](const CBaseStream* s, double t)
+	{
+		file << " " << Filter(s->GetPressure(t));
+	};
+	const auto ExportOveralls = [&](const CBaseStream* s, double t)
+	{
+		for (const auto& o : m_flowsheet.GetOveralProperties())
+			file << " " << Filter(s->GetOverallProperty(t, o.type));
+	};
+	const auto ExportPhases = [&](const CBaseStream* s, double t)
+	{
+		for (const auto& p : m_flowsheet.GetPhases())
+			file << " " << Filter(s->GetPhaseFraction(t, p.state));
+	};
+	const auto ExportCompounds = [&](const CBaseStream* s, double t)
+	{
+		for (const auto& c : m_flowsheet.GetCompounds())
+			file << " " << Filter(s->GetCompoundFraction(t, c));
+	};
+	const auto ExportPSD = [&](const CBaseStream* s, double t)
+	{
+		for (const double v : s->GetPSD(t, PSD_MassFrac))
+			file << " " << Filter(v);
+	};
+	const auto ExportDistributions = [&](const CBaseStream* s, double t)
+	{
+		for (const auto& d : s->GetGrid().GetDimensionsTypes())
+			for (const double v : s->GetDistribution(t, d))
+				file << " " << Filter(v);
+	};
+
+	// export streams' data
+	ExportStreams(EScriptKeys::EXPORT_STREAM_MASS               , "STREAM_MASS"         , ExportMass);
+	ExportStreams(EScriptKeys::EXPORT_STREAM_TEMPERATURE        , "STREAM_TEMPERATURE"  , ExportTemperature);
+	ExportStreams(EScriptKeys::EXPORT_STREAM_PRESSURE           , "STREAM_PRESSURE"     , ExportPressure);
+	ExportStreams(EScriptKeys::EXPORT_STREAM_OVERALLS           , "STREAM_OVERALLS"     , ExportOveralls);
+	ExportStreams(EScriptKeys::EXPORT_STREAM_PHASES_FRACTIONS   , "STREAM_PHASES"       , ExportPhases);
+	ExportStreams(EScriptKeys::EXPORT_STREAM_COMPOUNDS_FRACTIONS, "STREAM_COMPOUNDS"    , ExportCompounds);
+	ExportStreams(EScriptKeys::EXPORT_STREAM_PSD                , "STREAM_PSD"          , ExportPSD);
+	ExportStreams(EScriptKeys::EXPORT_STREAM_DISTRIBUTIONS      , "STREAM_DISTRIBUTIONS", ExportDistributions);
+
+	// export holdups' data
+	ExportHoldups(EScriptKeys::EXPORT_HOLDUP_MASS               , "HOLDUP_MASS"         , ExportMass);
+	ExportHoldups(EScriptKeys::EXPORT_HOLDUP_TEMPERATURE        , "HOLDUP_TEMPERATURE"  , ExportTemperature);
+	ExportHoldups(EScriptKeys::EXPORT_HOLDUP_PRESSURE           , "HOLDUP_PRESSURE"     , ExportPressure);
+	ExportHoldups(EScriptKeys::EXPORT_HOLDUP_OVERALLS           , "HOLDUP_OVERALLS"     , ExportOveralls);
+	ExportHoldups(EScriptKeys::EXPORT_HOLDUP_PHASES_FRACTIONS   , "HOLDUP_PHASES"       , ExportPhases);
+	ExportHoldups(EScriptKeys::EXPORT_HOLDUP_COMPOUNDS_FRACTIONS, "HOLDUP_COMPOUNDS"    , ExportCompounds);
+	ExportHoldups(EScriptKeys::EXPORT_HOLDUP_PSD                , "HOLDUP_PSD"          , ExportPSD);
+	ExportHoldups(EScriptKeys::EXPORT_HOLDUP_DISTRIBUTIONS      , "HOLDUP_DISTRIBUTIONS", ExportDistributions);
+
+	// export state variables
+	for (const auto& e : _job.GetValues<SExportStateVarSE>(EScriptKeys::EXPORT_UNIT_STATE_VARIABLE))
+	{
+		// get pointer to unit and model
+		auto [model, unit, message] = TryGetModelPtr(e.unit, EScriptKeys::EXPORT_UNIT_STATE_VARIABLE);
+		if (!model)
+		{
+			success = PrintAndReturn(DyssolC_ErrorNoUnit(StrKey(EScriptKeys::EXPORT_UNIT_STATE_VARIABLE), e.unit.name, e.unit.index));
+			continue;
+		}
+		// get pointer to holdup
+		const auto* variable = GetStateVarPtr(*model, e.variable);
+		if (!variable)
+		{
+			success = PrintAndReturn(DyssolC_ErrorNoStateVar(StrKey(EScriptKeys::EXPORT_UNIT_STATE_VARIABLE), unit->GetName(), e.variable.name, e.variable.index));
+			continue;
+		}
+		// export
+		file << "UNIT_STATE_VAR" << " " << StringFunctions::Quote(variable->GetName());
+		if (!variable->HasHistory())
+			file << " " << variable->GetValue();
+		else
+			for (const auto& v : variable->GetHistory())
+				file << " " << v.time << " " << v.value;
+		file << std::endl;
+	}
+
+	// export plots
+	for (const auto& e : _job.GetValues<SExportPlotSE>(EScriptKeys::EXPORT_UNIT_PLOT))
+	{
+		// get pointer to unit and model
+		auto [model, unit, message] = TryGetModelPtr(e.unit, EScriptKeys::EXPORT_UNIT_PLOT);
+		if (!model)
+		{
+			success = PrintAndReturn(DyssolC_ErrorNoUnit(StrKey(EScriptKeys::EXPORT_UNIT_PLOT), e.unit.name, e.unit.index));
+			continue;
+		}
+		// get pointer to plot
+		const auto* plot = GetPlotPtr(*model, e.plot);
+		if (!plot)
+		{
+			success = PrintAndReturn(DyssolC_ErrorNoPlot(StrKey(EScriptKeys::EXPORT_UNIT_PLOT), unit->GetName(), e.plot.name, e.plot.index));
+			continue;
+		}
+		// get pointer to curve
+		const auto* curve = GetCurvePtr(*plot, e.curve);
+		if (!curve)
+		{
+			success = PrintAndReturn(DyssolC_ErrorNoCurve(StrKey(EScriptKeys::EXPORT_UNIT_PLOT), unit->GetName(), plot->GetName(), e.plot.name, e.plot.index));
+			continue;
+		}
+		// export
+		file << "UNIT_PLOT" << " " << StringFunctions::Quote(plot->GetName()) << " " << StringFunctions::Quote(curve->GetName());
+		for (const auto& p : curve->GetPoints())
+			file << " " << p.x << " " << p.y;
+		file << std::endl;
+	}
+
+	// close file before exit
+	file.close();
+
+	// export to graph file
+	if (_job.HasKey(EScriptKeys::EXPORT_FLOWSHEET_GRAPH))
+	{
+		const auto graphFile = _job.GetValue<fs::path>(EScriptKeys::EXPORT_FLOWSHEET_GRAPH);
+		std::cout << DyssolC_ExportGraph(graphFile.string()) << std::endl;
+
+		// open text file for export
+		std::ofstream graph(graphFile);
+		if (!graph)
+			return PrintAndReturn(DyssolC_ErrorGraphFile());
+
+		// export graph
+		graph << m_flowsheet.GenerateDOTFile();
+		graph.close();
+	}
+
+	return success;
+}
+
 void CScriptRunner::Clear()
 {
 	m_flowsheet.Clear();
@@ -465,10 +714,10 @@ std::tuple<CBaseUnit*, CUnitContainer*, std::string> CScriptRunner::TryGetModelP
 {
 	// get pointer to unit
 	auto* unit = GetUnitPtr(_unit);
-	if (!unit)		return std::make_tuple(nullptr, nullptr, DyssolC_ErrorParseUnit(StrKey(_scriptKey), _unit.name, _unit.index));
+	if (!unit)		return std::make_tuple(nullptr, nullptr, DyssolC_ErrorNoUnit(StrKey(_scriptKey), _unit.name, _unit.index));
 	// get pointer to unit's model
 	auto* model = unit->GetModel();
-	if (!model)		return std::make_tuple(nullptr, unit   , DyssolC_ErrorParseModel(StrKey(_scriptKey), unit->GetName()));
+	if (!model)		return std::make_tuple(nullptr, unit   , DyssolC_ErrorLoadModel(StrKey(_scriptKey), unit->GetName()));
 	// return pointer to model and empty error message
 	return std::make_tuple(model, unit, "");
 }
@@ -480,9 +729,16 @@ CUnitContainer* CScriptRunner::GetUnitPtr(const SNameOrIndex& _nameOrIndex)
 	return unit;												// return pointer
 }
 
+CStream* CScriptRunner::GetStreamPtr(const SNameOrIndex& _nameOrIndex)
+{
+	auto* stream = m_flowsheet.GetStreamByName(_nameOrIndex.name);		// try to access by name
+	if (!stream) stream = m_flowsheet.GetStream(_nameOrIndex.index);	// try to access by index
+	return stream;														// return pointer
+}
+
 CBaseUnitParameter* CScriptRunner::GetUnitParamPtr(CBaseUnit& _model, const SNameOrIndex& _nameOrIndex)
 {
-	auto& manager = _model.GetUnitParametersManager();				// get unit parameters manager
+	auto& manager = _model.GetUnitParametersManager();				// get manager
 	auto* param = manager.GetParameter(_nameOrIndex.name);			// try to access by name
 	if (!param) param = manager.GetParameter(_nameOrIndex.index);	// try to access by index
 	return param;													// return pointer
@@ -490,7 +746,7 @@ CBaseUnitParameter* CScriptRunner::GetUnitParamPtr(CBaseUnit& _model, const SNam
 
 CBaseStream* CScriptRunner::GetHoldupPtr(CBaseUnit& _model, const SNameOrIndex& _nameOrIndex)
 {
-	auto& manager = _model.GetStreamsManager();							// get streams manager
+	auto& manager = _model.GetStreamsManager();							// get manager
 	auto* holdup = manager.GetObjectInit(_nameOrIndex.name);			// try to access by name
 	if (!holdup) holdup = manager.GetObjectInit(_nameOrIndex.index);	// try to access by index
 	return holdup;														// return pointer
@@ -506,10 +762,33 @@ CCompound* CScriptRunner::GetCompoundPtr(const std::string& _nameOrKey)
 
 CUnitPort* CScriptRunner::GetPortPtr(CBaseUnit& _model, const SNameOrIndex& _nameOrIndex)
 {
-	auto& manager = _model.GetPortsManager();				// get unit ports manager
+	auto& manager = _model.GetPortsManager();				// get manager
 	auto* port = manager.GetPort(_nameOrIndex.name);		// try to access by name
 	if (!port) port = manager.GetPort(_nameOrIndex.index);	// try to access by index
 	return port;											// return pointer
+}
+
+CStateVariable* CScriptRunner::GetStateVarPtr(CBaseUnit& _model, const ScriptInterface::SNameOrIndex& _nameOrIndex)
+{
+	auto& manager = _model.GetStateVariablesManager();						// get manager
+	auto* variable = manager.GetStateVariable(_nameOrIndex.name);			// try to access by name
+	if (!variable) variable = manager.GetStateVariable(_nameOrIndex.index);	// try to access by index
+	return variable;														// return pointer
+}
+
+const CPlot* CScriptRunner::GetPlotPtr(const CBaseUnit& _model, const ScriptInterface::SNameOrIndex& _nameOrIndex)
+{
+	const auto& manager = _model.GetPlotsManager();			// get manager
+	const auto* plot = manager.GetPlot(_nameOrIndex.name);	// try to access by name
+	if (!plot) plot = manager.GetPlot(_nameOrIndex.index);	// try to access by index
+	return plot;											// return pointer
+}
+
+const CCurve* CScriptRunner::GetCurvePtr(const CPlot& _plot, const ScriptInterface::SNameOrIndex& _nameOrIndex)
+{
+	const auto* curve = _plot.GetCurve(_nameOrIndex.name);		// try to access by name
+	if (!curve) curve = _plot.GetCurve(_nameOrIndex.index);		// try to access by index
+	return curve;												// return pointer
 }
 
 std::string CScriptRunner::GetModelKey(const std::string& _value) const

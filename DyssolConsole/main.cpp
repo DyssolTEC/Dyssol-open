@@ -78,6 +78,7 @@ void ExportResults(const CConfigFileParser& _parser, const CFlowsheet& _flowshee
 // Prints information about command line arguments.
 void PrintArgumentsInfo()
 {
+	// TODO: build in into ArgumentsParser
 	std::cout << "Usage: DyssolC -key[=value] [-key[=value]]..." << std::endl;
 	std::cout << std::endl;
 	std::cout << "Mandatory arguments to start simulation:" << std::endl;
@@ -411,6 +412,7 @@ void RunDyssol(const std::filesystem::path& _script)
 
 int main(int argc, const char *argv[])
 {
+	// TODO: just run the simulation
 	// possible keys with aliases
 	std::vector<std::vector<std::string>> keys;
 	keys.push_back({ "v" , "version"     });
@@ -423,7 +425,7 @@ int main(int argc, const char *argv[])
 	if (parser.TokensCount() == 0)
 	{
 		PrintArgumentsInfo();
-			return 1;
+		return 1;
 	}
 
 	if (parser.HasKey("v"))

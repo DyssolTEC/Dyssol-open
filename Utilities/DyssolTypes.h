@@ -26,6 +26,7 @@ struct SInterval
 	[[nodiscard]] bool Includes(double _d) const { return _d >= min && _d <= max; }
 };
 
+// TODO: remove
 enum class EArguments
 {
 	SOURCE_FILE,

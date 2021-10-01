@@ -44,8 +44,8 @@ namespace StringFunctions
 	std::wstring ReplaceAll(const std::wstring& _s, const std::wstring& _old, const std::wstring& _new); // Returns a copy of string _s, where all occurrences of _old are replaced with _new.
 	std::vector<std::string> SplitString(const std::string& _s, char _delim);							 // Splits the string according to delimiter.
 
-	void TrimWhitespaces(std::string& _s);												// Removes whitespaces at the end of the string.
-	std::string TrimWhitespaces(const std::string& _s);									// Returns a copy of string _s without whitespaces at the end.
+	void TrimWhitespaces(std::string& _s);												// Removes whitespaces from both sides of the string.
+	std::string TrimWhitespaces(const std::string& _s);									// Returns a copy of string _s without whitespaces from both sides.
 	void TrimFromSymbols(std::string& _s, const std::string& _symbols);					// Removes the end of the string starting with _symbols.
 	std::string TrimFromSymbols(const std::string& _s, const std::string& _symbols);	// Returns a copy of string _s removing its end starting with _symbols.
 	std::string RemoveQuotes(const std::string& _s);									// Returns a copy of string _s removing leading and trailing single or double quotes, if any.

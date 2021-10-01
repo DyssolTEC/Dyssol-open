@@ -157,10 +157,10 @@ void CFlowsheet::PrepareInputStreams(const CUnitContainer* _unit, double _timeBe
 {
 	for (const auto& port : _unit->GetModel()->GetPortsManager().GetAllInputPorts())
 	{
-		auto streamI = DoGetStream(port->GetStreamKey(), m_streamsI);
-		auto streamO = DoGetStream(port->GetStreamKey(), m_streams);
+		auto* streamI = DoGetStream(port->GetStreamKey(), m_streamsI);
+		auto* streamO = DoGetStream(port->GetStreamKey(), m_streams);
 		if (streamI != streamO)
-			streamI->CopyFromStream(_timeBeg, _timeEnd, streamO.get());
+			streamI->CopyFromStream(_timeBeg, _timeEnd, streamO);
 	}
 }
 
@@ -197,14 +197,38 @@ void CFlowsheet::ShiftStream(const std::string& _key, EDirection _direction)
 	SetTopologyModified(true);
 }
 
+const CStream* CFlowsheet::GetStream(size_t _index) const
+{
+	if (_index >= m_streams.size()) return nullptr;
+	return m_streams[_index].get();
+}
+
+CStream* CFlowsheet::GetStream(size_t _index)
+{
+	return const_cast<CStream*>(static_cast<const CFlowsheet&>(*this).GetStream(_index));
+}
+
 const CStream* CFlowsheet::GetStream(const std::string& _key) const
 {
-	return DoGetStream(_key, m_streams).get();
+	return DoGetStream(_key, m_streams);
 }
 
 CStream* CFlowsheet::GetStream(const std::string& _key)
 {
 	return const_cast<CStream*>(static_cast<const CFlowsheet&>(*this).GetStream(_key));
+}
+
+const CStream* CFlowsheet::GetStreamByName(const std::string& _name) const
+{
+	for (const auto& stream : m_streams)
+		if (stream->GetName() == _name)
+			return stream.get();
+	return nullptr;
+}
+
+CStream* CFlowsheet::GetStreamByName(const std::string& _name)
+{
+	return const_cast<CStream*>(static_cast<const CFlowsheet&>(*this).GetStreamByName(_name));
 }
 
 std::vector<const CStream*> CFlowsheet::GetAllStreams() const
@@ -609,7 +633,7 @@ void CFlowsheet::SetStreamsToPorts()
 	// setup output streams with proper grids
 	for (const auto& unit : m_units)
 		for (const auto* port : unit->GetModel()->GetPortsManager().GetAllOutputPorts())
-			if (const auto str = DoGetStream(port->GetStreamKey(), m_streams))
+			if (auto* str = DoGetStream(port->GetStreamKey(), m_streams))
 				str->SetGrid(unit->GetModel()->GetGrid());
 
 	// create input streams with proper grids
@@ -628,11 +652,11 @@ void CFlowsheet::SetStreamsToPorts()
 	for (const auto& unit : m_units)
 	{
 		for (auto* port : unit->GetModel()->GetPortsManager().GetAllInputPorts())
-			if (const auto str = DoGetStream(port->GetStreamKey(), m_streamsI))
-				port->SetStream(str.get());
+			if (auto* str = DoGetStream(port->GetStreamKey(), m_streamsI))
+				port->SetStream(str);
 		for (auto* port : unit->GetModel()->GetPortsManager().GetAllOutputPorts())
-			if (const auto str = DoGetStream(port->GetStreamKey(), m_streams))
-				port->SetStream(str.get());
+			if (auto* str = DoGetStream(port->GetStreamKey(), m_streams))
+				port->SetStream(str);
 	}
 }
 
@@ -692,8 +716,8 @@ void CFlowsheet::UpdateGrids()
 	// update in connected streams
 	for (auto& unit : m_units)
 		if (unit->GetModel())
-			for (auto& port : unit->GetModel()->GetPortsManager().GetAllOutputPorts())
-				if (auto stream = DoGetStream(port->GetStreamKey(), m_streams))
+			for (const auto& port : unit->GetModel()->GetPortsManager().GetAllOutputPorts())
+				if (auto* stream = DoGetStream(port->GetStreamKey(), m_streams))
 				{
 					stream->SetGrid(unit->GetModel()->GetGrid());
 					updated.push_back(stream->GetKey());
@@ -962,11 +986,11 @@ bool CFlowsheet::LoadFromFile_v3(CH5Handler& _h5File, const std::string& _path)
 	return true;
 }
 
-std::shared_ptr<CStream> CFlowsheet::DoGetStream(const std::string& _key, const std::vector<std::shared_ptr<CStream>>& _streams)
+CStream* CFlowsheet::DoGetStream(const std::string& _key, const std::vector<std::shared_ptr<CStream>>& _streams)
 {
 	for (auto& stream : _streams)
 		if (stream->GetKey() == _key)
-			return stream;
+			return stream.get();
 	return nullptr;
 }
 
