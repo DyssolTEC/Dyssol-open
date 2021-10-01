@@ -75,10 +75,10 @@ void CConfigFileParser::SaveConfigFile(const std::wstring& _fileName, const std:
 	// models manager
 	for (size_t i = 0; i < _modelsManager.DirsNumber(); ++i)
 		if (_modelsManager.GetDirActivity(i))
-			file << TO_ARG_STR(EArguments::MODELS_PATH) << " " << WString2String(_modelsManager.GetDirPath(i)) << std::endl;
+			file << TO_ARG_STR(EArguments::MODELS_PATH) << " " << _modelsManager.GetDirPath(i) << std::endl;
 
 	// materials database
-	file << TO_ARG_STR(EArguments::MATERIALS_DATABASE) << " " << WString2String(_materialsDB.GetFileName()) << std::endl;
+	file << TO_ARG_STR(EArguments::MATERIALS_DATABASE) << " " << _materialsDB.GetFileName() << std::endl;
 	file << std::endl;
 
 	// simulation options

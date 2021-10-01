@@ -42,7 +42,7 @@ namespace FileSystem
 	std::wstring ExecutableDirPath();						// Returns the directory that contains the application executable.
 	std::wstring AbsolutePath(const std::wstring& _path);	// Converts provided path to canonical absolute path.
 
-	std::vector<std::filesystem::path> FilesList(const std::wstring& _dirPath, const std::wstring& _filter); // Returns the list of files with selected filter (extension), located in the specified directory.
+	std::vector<std::filesystem::path> FilesList(const std::filesystem::path& _dirPath, const std::string& _filter); // Returns the list of files with selected filter (extension), located in the specified directory.
 
 	bool IsWriteProtected(const std::wstring& _dirPath); // Checks whether the specified path is write-protected.
 

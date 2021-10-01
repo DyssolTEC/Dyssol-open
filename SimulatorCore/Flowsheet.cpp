@@ -781,7 +781,7 @@ CParametersHolder* CFlowsheet::GetParameters()
 	return &m_parameters;
 }
 
-bool CFlowsheet::SaveToFile(CH5Handler& _h5File, const std::wstring& _fileName)
+bool CFlowsheet::SaveToFile(CH5Handler& _h5File, const std::filesystem::path& _fileName)
 {
 	if (_fileName.empty()) return false;
 
@@ -841,7 +841,7 @@ bool CFlowsheet::SaveToFile(CH5Handler& _h5File, const std::wstring& _fileName)
 	return true;
 }
 
-bool CFlowsheet::LoadFromFile(CH5Handler& _h5File, const std::wstring& _fileName)
+bool CFlowsheet::LoadFromFile(CH5Handler& _h5File, const std::filesystem::path& _fileName)
 {
 	if (_fileName.empty()) return false;
 

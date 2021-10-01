@@ -120,7 +120,7 @@ bool CMaterialsDatabase::IsPropertyDefined(unsigned _key) const
 	return false;
 }
 
-std::wstring CMaterialsDatabase::GetFileName() const
+std::filesystem::path CMaterialsDatabase::GetFileName() const
 {
 	return m_sFileName;
 }
@@ -136,7 +136,7 @@ void CMaterialsDatabase::Clear()
 	activeInterProperties = MDBDescriptors::defaultInteractionProperties;
 }
 
-bool CMaterialsDatabase::SaveToFile(const std::wstring& _fileName /*= ""*/)
+bool CMaterialsDatabase::SaveToFile(const std::filesystem::path& _fileName /*= ""*/)
 {
 	// Writes information about user-defined types into file
 	const auto WritePropInfo = [](std::ofstream& _outFile, MDBDescriptors::EPropertyType _type, unsigned _key, const MDBDescriptors::SCompoundPropertyDescriptor& _descr)
@@ -164,8 +164,8 @@ bool CMaterialsDatabase::SaveToFile(const std::wstring& _fileName /*= ""*/)
 		_outFile << E2I(ETXTFileKeys::PROPERTY_DESCRIPTION) << " " << ReplaceAll(_descr.description, "\n", MDBDescriptors::NEW_LINE_REPLACER) << Comment("Description") << std::endl << std::endl;
 	};
 
-	const std::wstring fileName = _fileName.empty() ? m_sFileName : _fileName;
-	std::ofstream outFile(UnicodePath(fileName));
+	const std::filesystem::path fileName = _fileName.empty() ? m_sFileName : _fileName;
+	std::ofstream outFile(fileName);
 	if (outFile.fail()) return false;
 
 	// write signature and version number
@@ -265,12 +265,12 @@ bool CMaterialsDatabase::SaveToFile(const std::wstring& _fileName /*= ""*/)
 	return true;
 }
 
-bool CMaterialsDatabase::LoadFromFile(const std::wstring& _fileName /*= ""*/)
+bool CMaterialsDatabase::LoadFromFile(const std::filesystem::path& _fileName /*= ""*/)
 {
 	Clear();
-	const std::wstring fileName = _fileName.empty() ? MDBDescriptors::DEFAULT_MDB_FILE_NAME : _fileName;
+	const std::filesystem::path fileName = _fileName.empty() ? std::filesystem::path{ MDBDescriptors::DEFAULT_MDB_FILE_NAME } : _fileName;
 
-	std::ifstream inFile(UnicodePath(fileName));
+	std::ifstream inFile(fileName);
 	if (inFile.fail()) return false;
 
 	// read signature and version number

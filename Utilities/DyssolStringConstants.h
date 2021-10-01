@@ -582,13 +582,13 @@ namespace StrConst
 //////////////////////////////////////////////////////////////////////////
 /// CH5Handler
 //////////////////////////////////////////////////////////////////////////
-	const std::wstring HDF5H_FileExt		   = L"dflw";
-	const std::wstring HDF5H_DotFileExt		   = L"." + HDF5H_FileExt;
-	const std::wstring HDF5H_FileExtSpec	   = L"%d";
-	const std::wstring HDF5H_FileExtInitRegex  = LR"(\[\[([0-9]+)\]\])";
-	const std::wstring HDF5H_FileExtFinalRegex = LR"(\[\[(%d)\]\])";
-	const std::wstring HDF5H_FileExtMult	   = L"[[" + HDF5H_FileExtSpec + L"]]";
-	const std::wstring HDF5H_DotFileExtMult	   = L"." + HDF5H_FileExtMult;
+	const std::string HDF5H_FileExt		       = "dflw";
+	const std::string HDF5H_DotFileExt		   = "." + HDF5H_FileExt;
+	const std::string HDF5H_FileExtSpec	       = "%d";
+	const std::string HDF5H_FileExtInitRegex   = R"(\[\[([0-9]+)\]\])";
+	const std::string HDF5H_FileExtFinalRegex  = R"(\[\[(%d)\]\])";
+	const std::string HDF5H_FileExtMult	       = "[[" + HDF5H_FileExtSpec + "]]";
+	const std::string HDF5H_DotFileExtMult	   = "." + HDF5H_FileExtMult;
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -632,9 +632,9 @@ namespace StrConst
 	const char* const MM_ConfigModelsParamName	     = "modelsFolders";
 	const char* const MM_ConfigModelsFlagsParamName  = "modelsFoldersActivity";
 #ifdef _MSC_VER
-	const wchar_t* const MM_LibraryFileExtension     = L".dll";
+	const char* const MM_LibraryFileExtension     = ".dll";
 #else
-	const wchar_t* const MM_LibraryFileExtension     = L".so";
+	const char* const MM_LibraryFileExtension     = ".so";
 #endif
 
 

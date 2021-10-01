@@ -4,6 +4,7 @@
 
 #include "Compound.h"
 #include "Interaction.h"
+#include <filesystem>
 
 // Description of parameters of all compounds.
 class CMaterialsDatabase
@@ -43,7 +44,7 @@ class CMaterialsDatabase
 	MDBDescriptors::tpdepDescr activeTPDepProperties;
 	MDBDescriptors::interDescr activeInterProperties;
 
-	std::wstring m_sFileName;							// Current file where the database is stored.
+	std::filesystem::path m_sFileName;			// Current file where the database is stored.
 	std::vector<CCompound> m_vCompounds;				// List of defined compounds.
 	std::vector<CInteraction> m_vInteractions;	// List of defined interactions between each pair of defined compounds.
 
@@ -72,15 +73,15 @@ public:
 	/// Functions to work with file
 
 	// Returns the name of the current database file.
-	std::wstring GetFileName() const;
+	std::filesystem::path GetFileName() const;
 
 	// Creates new database by removing information about compounds and file name.
 	void Clear();
 
 	// Saves database to a text file with specified name. If the name is not specified, data will be written to the default file. Returns true on success.
-	bool SaveToFile(const std::wstring& _fileName = L"");
+	bool SaveToFile(const std::filesystem::path& _fileName = "");
 	// Loads database from a text file with specified name. If the name is not specified, data will be loaded from the default file. Returns true on success.
-	bool LoadFromFile(const std::wstring& _fileName = L"");
+	bool LoadFromFile(const std::filesystem::path& _fileName = "");
 	// Loads database from the file. Loads file with old syntax for versions before v0.7. Returns true on success.
 	bool LoadFromFileV0(std::ifstream& _file);
 	// Loads database from the file. Loads file with old syntax for versions before v0.9.1. Returns true on success.

@@ -236,9 +236,9 @@ public:
 	//
 
 	// Saves the flowsheet into the HDF5 file.
-	bool SaveToFile(CH5Handler& _h5File, const std::wstring& _fileName);
+	bool SaveToFile(CH5Handler& _h5File, const std::filesystem::path& _fileName);
 	// Loads the flowsheet from the HDF5 file.
-	bool LoadFromFile(CH5Handler& _h5File, const std::wstring& _fileName);
+	bool LoadFromFile(CH5Handler& _h5File, const std::filesystem::path& _fileName);
 	// Loads the flowsheet from the HDF5 file. A compatibility version.
 	bool LoadFromFile_v3(CH5Handler& _h5File, const std::string& _path);
 
