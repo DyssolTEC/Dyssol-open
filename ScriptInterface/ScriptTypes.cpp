@@ -8,19 +8,30 @@ using namespace StringFunctions;
 
 namespace ScriptInterface
 {
-	std::istream& operator>>(std::istream& _s, SNameOrIndex& _obj) // Input stream operator.
+	std::istream& operator>>(std::istream& _s, SNameOrIndex& _obj)
 	{
 		const auto str = GetValueFromStream<std::string>(_s);
 		_obj.name = IsSimpleUInt(str) ? "" : str;
 		_obj.index = IsSimpleUInt(str) ? std::stoull(str) - 1 : -1;
 		return _s;
 	}
+	std::ostream& operator<<(std::ostream& _s, const SNameOrIndex& _obj)
+	{
+		_s << Quote(_obj.name);
+		return _s;
+	}
 
-	std::istream& operator>>(std::istream& _s, SNameOrKey& _obj)
+
+	std::istream& operator>>(std::istream& _s, SNamedEnum& _obj)
 	{
 		const auto str = GetValueFromStream<std::string>(_s);
 		_obj.name = IsSimpleUInt(str) ? "" : str;
 		_obj.key = IsSimpleUInt(str) ? std::stoll(str) : -1;
+		return _s;
+	}
+	std::ostream& operator<<(std::ostream& _s, const SNamedEnum& _obj)
+	{
+		_s << _obj.name;
 		return _s;
 	}
 
@@ -31,6 +42,11 @@ namespace ScriptInterface
 		_obj.values = GetRestOfLine(_s); // format depends on parameter type, so postpone final parsing until the flowsheet is loaded
 		return _s;
 	}
+	std::ostream& operator<<(std::ostream& _s, const SUnitParameterSE& _obj)
+	{
+		_s << _obj.unit << " " << _obj.param << " " << _obj.values;
+		return _s;
+	}
 
 	std::istream& operator>>(std::istream& _s, SHoldupDependentSE& _obj)
 	{
@@ -39,13 +55,27 @@ namespace ScriptInterface
 		_obj.values = GetValueFromStream<std::vector<double>>(_s); // format depends on the flowsheet settings, so postpone final parsing until the flowsheet is loaded
 		return _s;
 	}
+	std::ostream& operator<<(std::ostream& _s, const SHoldupDependentSE& _obj)
+	{
+		_s << _obj.unit << " " << _obj.holdup;
+		for (const auto& v : _obj.values)
+			_s << " " << v;
+		return _s;
+	}
 
 	std::istream& operator>>(std::istream& _s, SHoldupCompoundsSE& _obj)
 	{
 		_obj.unit = GetValueFromStream<SNameOrIndex>(_s);
 		_obj.holdup = GetValueFromStream<SNameOrIndex>(_s);
-		_obj.phase = Convert<EPhase>(GetValueFromStream<SNameOrKey>(_s), &PhaseName2Enum);
+		_obj.phase = FillAndCheck<EPhase>(GetValueFromStream<SNamedEnum>(_s));
 		_obj.values = GetValueFromStream<std::vector<double>>(_s); // format depends on the flowsheet settings, so postpone final parsing until the flowsheet is loaded
+		return _s;
+	}
+	std::ostream& operator<<(std::ostream& _s, const SHoldupCompoundsSE& _obj)
+	{
+		_s << _obj.unit << " " << _obj.holdup << " " << _obj.phase;
+		for (const auto& v : _obj.values)
+			_s << " " << v;
 		return _s;
 	}
 
@@ -53,35 +83,63 @@ namespace ScriptInterface
 	{
 		_obj.unit = GetValueFromStream<SNameOrIndex>(_s);
 		_obj.holdup = GetValueFromStream<SNameOrIndex>(_s);
-		_obj.distrType = Convert<EDistrTypes>(GetValueFromStream<SNameOrKey>(_s), &DistributionName2Enum);
+		_obj.distrType = FillAndCheck<EDistrTypes>(GetValueFromStream<SNamedEnum>(_s));
 		_obj.compound = GetValueFromStream<std::string>(_s);
 		// special treatment for PSD
 		if (_obj.distrType.key == DISTR_SIZE)
 		{
-			_obj.psdType = Convert<EPSDTypes>(GetValueFromStream<SNameOrKey>(_s), &PSDTypeName2Enum);
-			_obj.psdMeans = Convert<EPSDGridType>(GetValueFromStream<SNameOrKey>(_s), &PSDMeanName2Enum);
+			_obj.psdType = FillAndCheck<EPSDTypes>(GetValueFromStream<SNamedEnum>(_s));
+			_obj.psdMeans = FillAndCheck<EPSDGridType>(GetValueFromStream<SNamedEnum>(_s));
 		}
-		_obj.function = Convert<EDistrFunction>(GetValueFromStream<SNameOrKey>(_s), &DistributionFunctionName2Enum);
+		_obj.function = FillAndCheck<EDistrFunction>(GetValueFromStream<SNamedEnum>(_s));
 		_obj.values = GetValueFromStream<std::vector<double>>(_s);
+		return _s;
+	}
+	std::ostream& operator<<(std::ostream& _s, const SHoldupDistributionSE& _obj)
+	{
+		_s << _obj.unit << " " << _obj.holdup << " " << _obj.distrType << " " << Quote(_obj.compound);
+		if (_obj.distrType.key == DISTR_SIZE)
+			_s << " " << _obj.psdType << " " << _obj.psdMeans;
+		_s << " " << _obj.function;
+		for (const auto& v : _obj.values)
+			_s << " " << v;
 		return _s;
 	}
 
 	std::istream& operator>>(std::istream& _s, SGridDimensionSE& _obj)
 	{
 		_obj.unit = GetValueFromStream<SNameOrIndex>(_s);
-		_obj.distrType = Convert<EDistrTypes>(GetValueFromStream<SNameOrKey>(_s), &DistributionName2Enum);
-		_obj.entryType = Convert<EGridEntry>(GetValueFromStream<SNameOrKey>(_s), &GridEntryName2Enum);
+		_obj.distrType = FillAndCheck<EDistrTypes>(GetValueFromStream<SNamedEnum>(_s));
+		_obj.entryType = FillAndCheck<EGridEntry>(GetValueFromStream<SNamedEnum>(_s));
 		if (static_cast<EGridEntry>(_obj.entryType.key) == EGridEntry::GRID_NUMERIC)
 		{
-			_obj.function = Convert<EGridFunction>(GetValueFromStream<SNameOrKey>(_s), &GridFunctionName2Enum);
+			_obj.function = FillAndCheck<EGridFunction>(GetValueFromStream<SNamedEnum>(_s));
 			if (static_cast<EDistrTypes>(_obj.distrType.key) == DISTR_SIZE)
-				_obj.psdMeans = Convert<EPSDGridType>(GetValueFromStream<SNameOrKey>(_s), &PSDMeanName2Enum);
+				_obj.psdMeans = FillAndCheck<EPSDGridType>(GetValueFromStream<SNamedEnum>(_s));
 		}
 		_obj.classes = GetValueFromStream<size_t>(_s);
 		if (static_cast<EGridEntry>(_obj.entryType.key) == EGridEntry::GRID_NUMERIC)
 			_obj.valuesNum = GetValueFromStream<std::vector<double>>(_s);
 		else if (static_cast<EGridEntry>(_obj.entryType.key) == EGridEntry::GRID_SYMBOLIC)
 			_obj.valuesSym = GetValueFromStream<std::vector<std::string>>(_s);
+		return _s;
+	}
+	std::ostream& operator<<(std::ostream& _s, const SGridDimensionSE& _obj)
+	{
+		_s << _obj.unit << " " << _obj.distrType << " " << _obj.entryType;
+		if (static_cast<EGridEntry>(_obj.entryType.key) == EGridEntry::GRID_NUMERIC)
+		{
+			_s << " " << _obj.function;
+			if (static_cast<EDistrTypes>(_obj.distrType.key) == DISTR_SIZE)
+				_s << " " << _obj.psdMeans;
+		}
+		_s << " " << _obj.classes;
+		if (static_cast<EGridEntry>(_obj.entryType.key) == EGridEntry::GRID_NUMERIC)
+			for (const auto& v : _obj.valuesNum)
+				_s << " " << v;
+		else if (static_cast<EGridEntry>(_obj.entryType.key) == EGridEntry::GRID_SYMBOLIC)
+			for (const auto& v : _obj.valuesSym)
+				_s << " " << Quote(v);
 		return _s;
 	}
 
@@ -92,8 +150,14 @@ namespace ScriptInterface
 		while (!_s.eof())
 		{
 			_obj.names.push_back(GetValueFromStream<std::string>(_s));
-			_obj.types.push_back(Convert<EPhase>(GetValueFromStream<SNameOrKey>(_s), &PhaseName2Enum));
+			_obj.types.push_back(FillAndCheck<EPhase>(GetValueFromStream<SNamedEnum>(_s)));
 		}
+		return _s;
+	}
+	std::ostream& operator<<(std::ostream& _s, const SPhasesSE& _obj)
+	{
+		for (size_t i = 0; i < _obj.names.size() && i < _obj.types.size(); ++i)
+			_s << Quote(_obj.names[i]) << " " << _obj.types[i] << " ";
 		return _s;
 	}
 
@@ -106,11 +170,23 @@ namespace ScriptInterface
 		_obj.portI = GetValueFromStream<SNameOrIndex>(_s);
 		return _s;
 	}
+	std::ostream& operator<<(std::ostream& _s, const SStreamSE& _obj)
+	{
+		_s << Quote(_obj.name) << " " << _obj.unitO << " " << _obj.portO << " " << _obj.unitI << " " << _obj.portI;
+		return _s;
+	}
 
 	std::istream& operator>>(std::istream& _s, SExportStreamSE& _obj)
 	{
 		_obj.stream = GetValueFromStream<SNameOrIndex>(_s);
 		_obj.times = GetValueFromStream<std::vector<double>>(_s);
+		return _s;
+	}
+	std::ostream& operator<<(std::ostream& _s, const SExportStreamSE& _obj)
+	{
+		_s << _obj.stream;
+		for (const auto& v : _obj.times)
+			_s << " " << v;
 		return _s;
 	}
 
@@ -121,11 +197,23 @@ namespace ScriptInterface
 		_obj.times = GetValueFromStream<std::vector<double>>(_s);
 		return _s;
 	}
+	std::ostream& operator<<(std::ostream& _s, const SExportHoldupSE& _obj)
+	{
+		_s << _obj.unit << " " << _obj.holdup;
+		for (const auto& v : _obj.times)
+			_s << " " << v;
+		return _s;
+	}
 
 	std::istream& operator>>(std::istream& _s, SExportStateVarSE& _obj)
 	{
 		_obj.unit = GetValueFromStream<SNameOrIndex>(_s);
 		_obj.variable = GetValueFromStream<SNameOrIndex>(_s);
+		return _s;
+	}
+	std::ostream& operator<<(std::ostream& _s, const SExportStateVarSE& _obj)
+	{
+		_s << _obj.unit << " " << _obj.variable;
 		return _s;
 	}
 
@@ -134,6 +222,11 @@ namespace ScriptInterface
 		_obj.unit = GetValueFromStream<SNameOrIndex>(_s);
 		_obj.plot = GetValueFromStream<SNameOrIndex>(_s);
 		_obj.curve = GetValueFromStream<SNameOrIndex>(_s);
+		return _s;
+	}
+	std::ostream& operator<<(std::ostream& _s, const SExportPlotSE& _obj)
+	{
+		_s << _obj.unit << " " << _obj.plot << " " << _obj.curve;
 		return _s;
 	}
 }

@@ -8,7 +8,7 @@ class CScriptJob
 {
 	using entry_t = std::unique_ptr<ScriptInterface::SScriptEntry>;
 
-	std::vector<entry_t> m_entries{}; // List of all parsed script arguments.
+	std::vector<entry_t> m_entries{}; // List of all script arguments.
 
 public:
 	// Adds new entry with the given key to the list and returns a pointer to it. If such key was not defined, does nothing and returns nullptr.
@@ -16,6 +16,9 @@ public:
 
 	// Determines if the argument with the given key exists in the job.
 	[[nodiscard]] bool HasKey(ScriptInterface::EScriptKeys _key) const;
+
+	// Returns all defined script entries.
+	std::vector<ScriptInterface::SScriptEntry*> GetAllEntries() const;
 
 	// Returns value of the argument by its key. If there are several arguments with the same key, any of them may be returned.
 	// Returns T{} if such key does not exist or a wrong type is requested for this key.

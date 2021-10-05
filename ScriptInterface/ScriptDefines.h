@@ -62,6 +62,10 @@ namespace ScriptInterface
 		RELAXATION_PARAMETER             ,
 		ACCELERATION_LIMIT               ,
 		EXTRAPOLATION_METHOD             ,
+		COMPOUNDS                        ,
+		PHASES                           ,
+		KEEP_EXISTING_GRIDS_VALUES       ,
+		DISTRIBUTION_GRID                ,
 		KEEP_EXISTING_UNITS              ,
 		UNIT                             ,
 		STREAM                           ,
@@ -71,10 +75,6 @@ namespace ScriptInterface
 		HOLDUP_PHASES                    ,
 		HOLDUP_COMPOUNDS                 ,
 		HOLDUP_DISTRIBUTION              ,
-		KEEP_EXISTING_GRIDS_VALUES       ,
-		DISTRIBUTION_GRID                ,
-		COMPOUNDS                        ,
-		PHASES                           ,
 		EXPORT_FILE                      ,
 		EXPORT_PRECISION                 ,
 		EXPORT_FIXED_POINT               ,
@@ -112,7 +112,7 @@ namespace ScriptInterface
 		STRING             , // std::string
 		STRINGS            , // std::vector<std::string>
 		PATH               , // std::filesystem::path
-		NAME_OR_KEY        , // SNameOrKey
+		NAME_OR_KEY        , // SNamedEnum
 		UNIT_PARAMETER     , // SUnitParameterSE
 		HOLDUP_DEPENDENT   , // SHoldupDependentSE
 		HOLDUP_COMPOUNDS   , // SHoldupCompoundSE
@@ -139,7 +139,7 @@ namespace ScriptInterface
 	{
 		// Value of the entry of different types.
 		std::variant<bool, int64_t, uint64_t, double, std::string, std::vector<std::string>, std::filesystem::path,
-			SNameOrKey, SUnitParameterSE, SHoldupDependentSE, SHoldupCompoundsSE, SHoldupDistributionSE,
+			SNamedEnum, SUnitParameterSE, SHoldupDependentSE, SHoldupCompoundsSE, SHoldupDistributionSE,
 			SGridDimensionSE, SPhasesSE, SStreamSE,
 			SExportStreamSE, SExportHoldupSE, SExportStateVarSE, SExportPlotSE> value{};
 
@@ -148,7 +148,7 @@ namespace ScriptInterface
 	};
 
 	// Reads the string line from the input stream into SScriptEntry depending on the entry type.
-	inline void ParseScriptEntry(SScriptEntry& _entry, std::istream& is)
+	inline void ReadScriptEntry(SScriptEntry& _entry, std::istream& is)
 	{
 		switch (_entry.type)
 		{
@@ -160,7 +160,7 @@ namespace ScriptInterface
 		case EEntryType::STRING:				_entry.value = StringFunctions::RemoveQuotes(StringFunctions::GetRestOfLine(is));							break;
 		case EEntryType::STRINGS:				_entry.value = StringFunctions::GetValueFromStream<std::vector<std::string>>(is);							break;
 		case EEntryType::PATH:					_entry.value = std::filesystem::path{ StringFunctions::RemoveQuotes(StringFunctions::GetRestOfLine(is)) };	break;
-		case EEntryType::NAME_OR_KEY:			_entry.value = StringFunctions::GetValueFromStream<SNameOrKey>(is);											break;
+		case EEntryType::NAME_OR_KEY:			_entry.value = StringFunctions::GetValueFromStream<SNamedEnum>(is);											break;
 		case EEntryType::UNIT_PARAMETER:		_entry.value = StringFunctions::GetValueFromStream<SUnitParameterSE>(is);									break;
 		case EEntryType::HOLDUP_DEPENDENT:		_entry.value = StringFunctions::GetValueFromStream<SHoldupDependentSE>(is);									break;
 		case EEntryType::HOLDUP_COMPOUNDS:		_entry.value = StringFunctions::GetValueFromStream<SHoldupCompoundsSE>(is);									break;
@@ -173,6 +173,36 @@ namespace ScriptInterface
 		case EEntryType::EXPORT_STATE_VAR:		_entry.value = StringFunctions::GetValueFromStream<SExportStateVarSE>(is);									break;
 		case EEntryType::EXPORT_PLOT:			_entry.value = StringFunctions::GetValueFromStream<SExportPlotSE>(is);										break;
 		}
+	}
+
+	// Writes SScriptEntry to the output stream depending on the entry type.
+	inline void WriteScriptEntry(const SScriptEntry& _entry, std::ostream& os)
+	{
+		os << _entry.keyStr << " ";
+		switch (_entry.type)
+		{
+		case EEntryType::EMPTY:					{ 																													break; }
+		case EEntryType::BOOL:					{ os << (std::get<bool>(_entry.value) ? "YES" : "NO");																break; }
+		case EEntryType::INT:					{ os << std::get<int64_t>(_entry.value);																			break; }
+		case EEntryType::UINT:					{ os << std::get<uint64_t>(_entry.value);																			break; }
+		case EEntryType::DOUBLE:				{ os << std::get<double>(_entry.value);																				break; }
+		case EEntryType::STRING:				{ os << StringFunctions::Quote(std::get<std::string>(_entry.value));												break; }
+		case EEntryType::STRINGS:				{ for (const auto& s : std::get<std::vector<std::string>>(_entry.value)) os << StringFunctions::Quote(s) << " ";	break; }
+		case EEntryType::PATH:					{ os << std::get<std::filesystem::path>(_entry.value);																break; }
+		case EEntryType::NAME_OR_KEY:			{ os << std::get<SNamedEnum>(_entry.value);																			break; }
+		case EEntryType::UNIT_PARAMETER:		{ os << std::get<SUnitParameterSE>(_entry.value);																	break; }
+		case EEntryType::HOLDUP_DEPENDENT:		{ os << std::get<SHoldupDependentSE>(_entry.value);																	break; }
+		case EEntryType::HOLDUP_COMPOUNDS:		{ os << std::get<SHoldupCompoundsSE>(_entry.value);																	break; }
+		case EEntryType::HOLDUP_DISTRIBUTION:	{ os << std::get<SHoldupDistributionSE>(_entry.value);																break; }
+		case EEntryType::GRID_DIMENSION:	    { os << std::get<SGridDimensionSE>(_entry.value);																	break; }
+		case EEntryType::PHASES:				{ os << std::get<SPhasesSE>(_entry.value);																			break; }
+		case EEntryType::STREAM:				{ os << std::get<SStreamSE>(_entry.value);																			break; }
+		case EEntryType::EXPORT_STREAM:			{ os << std::get<SExportStreamSE>(_entry.value);																	break; }
+		case EEntryType::EXPORT_HOLDUP:			{ os << std::get<SExportHoldupSE>(_entry.value);																	break; }
+		case EEntryType::EXPORT_STATE_VAR:		{ os << std::get<SExportStateVarSE>(_entry.value);																	break; }
+		case EEntryType::EXPORT_PLOT:			{ os << std::get<SExportPlotSE>(_entry.value);																		break; }
+		}
+		os << std::endl;
 	}
 
 	// Number of symbols to discard: length of 'EScriptKeys::'.
@@ -217,14 +247,14 @@ namespace ScriptInterface
 		MAKE_ARG(EScriptKeys::ACCELERATION_LIMIT               , EEntryType::DOUBLE)             ,
 		MAKE_ARG(EScriptKeys::EXTRAPOLATION_METHOD             , EEntryType::NAME_OR_KEY)        ,
 		// flowsheet settings
+		MAKE_ARG(EScriptKeys::COMPOUNDS                        , EEntryType::STRINGS)            ,
+		MAKE_ARG(EScriptKeys::PHASES                           , EEntryType::PHASES)             ,
+		MAKE_ARG(EScriptKeys::KEEP_EXISTING_GRIDS_VALUES       , EEntryType::BOOL)               ,
+		MAKE_ARG(EScriptKeys::DISTRIBUTION_GRID                , EEntryType::GRID_DIMENSION)     ,
 		MAKE_ARG(EScriptKeys::KEEP_EXISTING_UNITS              , EEntryType::BOOL)               ,
 		MAKE_ARG(EScriptKeys::UNIT                             , EEntryType::STRINGS)            ,
 		MAKE_ARG(EScriptKeys::STREAM                           , EEntryType::STREAM)             ,
 		MAKE_ARG(EScriptKeys::UNIT_PARAMETER                   , EEntryType::UNIT_PARAMETER)     ,
-		MAKE_ARG(EScriptKeys::KEEP_EXISTING_GRIDS_VALUES       , EEntryType::BOOL)               ,
-		MAKE_ARG(EScriptKeys::DISTRIBUTION_GRID                , EEntryType::GRID_DIMENSION)     ,
-		MAKE_ARG(EScriptKeys::COMPOUNDS                        , EEntryType::STRINGS)            ,
-		MAKE_ARG(EScriptKeys::PHASES                           , EEntryType::PHASES)             ,
 		// holdup and input streams parameters
 		MAKE_ARG(EScriptKeys::KEEP_EXISTING_HOLDUPS_VALUES     , EEntryType::BOOL)               ,
 		MAKE_ARG(EScriptKeys::HOLDUP_OVERALL                   , EEntryType::HOLDUP_DEPENDENT)   ,
@@ -258,12 +288,21 @@ namespace ScriptInterface
 		MAKE_ARG(EScriptKeys::EXPORT_FLOWSHEET_GRAPH           , EEntryType::PATH)               ,
 	};
 
-	// Returns a vector of all possible script keys.
-	inline std::vector<std::string> AllScriptKeys()
+	// Returns a vector of string representations all possible script keys.
+	inline std::vector<std::string> AllScriptKeysStr()
 	{
 		auto res = ReservedVector<std::string>(allScriptArguments.size());
 		for (const auto& a : allScriptArguments)
 			res.push_back(a.keyStr);
+		return res;
+	}
+
+	// Returns a vector of all possible script keys.
+	inline std::vector<EScriptKeys> AllScriptKeys()
+	{
+		auto res = ReservedVector<EScriptKeys>(allScriptArguments.size());
+		for (const auto& a : allScriptArguments)
+			res.push_back(a.key);
 		return res;
 	}
 

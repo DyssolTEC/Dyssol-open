@@ -7,123 +7,132 @@
 #pragma once
 #include "DyssolUtilities.h"
 #include "DyssolStringConstants.h"
+#include "ContainerFunctions.h"
 #include <functional>
 #include <iostream>
+#include <map>
 
 namespace ScriptInterface
 {
-	// Converts the name of a convergence method to its enumeration key.
-	inline EConvergenceMethod ConvergenceName2Enum(const std::string& _s)
+	/*
+	 * Utility type.
+	 * Every enum declares its own specialization of this template.
+	 * Every enum value can have several string representations.
+	 */
+	template<typename T> struct SEnumStrings
 	{
-		if (_s == "DIRECT_SUBSTITUTION")	return EConvergenceMethod::DIRECT_SUBSTITUTION;
-		if (_s == "WEGSTEIN")				return EConvergenceMethod::WEGSTEIN;
-		if (_s == "STEFFENSEN")				return EConvergenceMethod::STEFFENSEN;
-		return static_cast<EConvergenceMethod>(-1);
+		static std::map<T, std::vector<std::string>> data;
 	};
 
-	// Converts the name of an extrapolation method to its enumeration key.
-	inline EExtrapolationMethod ExtrapolationName2Enum(const std::string& _s)
+	template<> std::map<EConvergenceMethod, std::vector<std::string>>SEnumStrings<EConvergenceMethod>::data
 	{
-		if (_s == "LINEAR")				return EExtrapolationMethod::LINEAR;
-		if (_s == "CUBIC_SPLINE")		return EExtrapolationMethod::SPLINE;
-		if (_s == "NEAREST_NEIGHBOR")	return EExtrapolationMethod::NEAREST;
-		return static_cast<EExtrapolationMethod>(-1);
+		{ EConvergenceMethod::DIRECT_SUBSTITUTION , { "DIRECT_SUBSTITUTION" } },
+		{ EConvergenceMethod::WEGSTEIN            , { "WEGSTEIN"            } },
+		{ EConvergenceMethod::STEFFENSEN          , { "STEFFENSEN"          } },
 	};
 
-	// Converts the name of a phase to its enumeration key.
-	inline EPhase PhaseName2Enum(const std::string& _s)
+	template<> std::map<EExtrapolationMethod, std::vector<std::string>>SEnumStrings<EExtrapolationMethod>::data
 	{
-		if (_s == "SOLID")					return EPhase::SOLID;
-		if (_s == "LIQUID")					return EPhase::LIQUID;
-		if (_s == "GAS" || _s == "VAPOR")	return EPhase::VAPOR;
-		return static_cast<EPhase>(-1);
+		{ EExtrapolationMethod::LINEAR , { "LINEAR"           } },
+		{ EExtrapolationMethod::SPLINE , { "CUBIC_SPLINE"	  } },
+		{ EExtrapolationMethod::NEAREST, { "NEAREST_NEIGHBOR" } },
+	};
+
+	template<> std::map<EPhase, std::vector<std::string>>SEnumStrings<EPhase>::data
+	{
+		{ EPhase::SOLID , { "SOLID"        } },
+		{ EPhase::LIQUID, { "LIQUID"       } },
+		{ EPhase::VAPOR , { "GAS", "VAPOR" } },
+	};
+
+	template<> std::map<EDistrTypes, std::vector<std::string>>SEnumStrings<EDistrTypes>::data
+	{
+		{ EDistrTypes::DISTR_COMPOUNDS      , { "COMPOUNDS"	        } },
+		{ EDistrTypes::DISTR_SIZE           , { "SIZE"	            } },
+		{ EDistrTypes::DISTR_PART_POROSITY  , { "PARTICLE_POROSITY" } },
+		{ EDistrTypes::DISTR_FORM_FACTOR    , { "FORM_FACTOR"	    } },
+		{ EDistrTypes::DISTR_COLOR          , { "COLOR"	            } },
+		{ EDistrTypes::DISTR_USER_DEFINED_01, { "USER_DEFINED_01"	} },
+		{ EDistrTypes::DISTR_USER_DEFINED_02, { "USER_DEFINED_02"	} },
+		{ EDistrTypes::DISTR_USER_DEFINED_03, { "USER_DEFINED_03"	} },
+		{ EDistrTypes::DISTR_USER_DEFINED_04, { "USER_DEFINED_04"	} },
+		{ EDistrTypes::DISTR_USER_DEFINED_05, { "USER_DEFINED_05"	} },
+		{ EDistrTypes::DISTR_USER_DEFINED_06, { "USER_DEFINED_06"	} },
+		{ EDistrTypes::DISTR_USER_DEFINED_07, { "USER_DEFINED_07"	} },
+		{ EDistrTypes::DISTR_USER_DEFINED_08, { "USER_DEFINED_08"	} },
+		{ EDistrTypes::DISTR_USER_DEFINED_09, { "USER_DEFINED_09"	} },
+		{ EDistrTypes::DISTR_USER_DEFINED_10, { "USER_DEFINED_10"	} },
+	};
+
+	template<> std::map<EPSDTypes, std::vector<std::string>>SEnumStrings<EPSDTypes>::data
+	{
+		{ EPSDTypes::PSD_MassFrac, { "MASS_FRACTION" } },
+		{ EPSDTypes::PSD_Number  , { "NUMBER"        } },
+		{ EPSDTypes::PSD_q0      , { "Q0_DENSITY"    } },
+		{ EPSDTypes::PSD_Q0      , { "Q0_CUMULATIVE" } },
+		{ EPSDTypes::PSD_q2      , { "Q2_DENSITY"    } },
+		{ EPSDTypes::PSD_Q2      , { "Q2_CUMULATIVE" } },
+		{ EPSDTypes::PSD_q3      , { "Q3_DENSITY"    } },
+		{ EPSDTypes::PSD_Q3      , { "Q3_CUMULATIVE" } },
+	};
+
+	template<> std::map<EPSDGridType, std::vector<std::string>>SEnumStrings<EPSDGridType>::data
+	{
+		{ EPSDGridType::DIAMETER, { "DIAMETER" } },
+		{ EPSDGridType::VOLUME  , { "VOLUME"   } },
+	};
+
+	template<> std::map<EDistrFunction, std::vector<std::string>>SEnumStrings<EDistrFunction>::data
+	{
+		{ EDistrFunction::Normal   , { "NORMAL"     } },
+		{ EDistrFunction::Manual   , { "MANUAL"     } },
+		{ EDistrFunction::LogNormal, { "LOG_NORMAL" } },
+		{ EDistrFunction::RRSB     , { "RRSB"       } },
+		{ EDistrFunction::GGS      , { "GGS"        } },
+	};
+
+	template<> std::map<EGridEntry, std::vector<std::string>>SEnumStrings<EGridEntry>::data
+	{
+		{ EGridEntry::GRID_NUMERIC , { "NUMERIC"  } },
+		{ EGridEntry::GRID_SYMBOLIC, { "SYMBOLIC" } },
+	};
+
+	template<> std::map<EGridFunction, std::vector<std::string>>SEnumStrings<EGridFunction>::data
+	{
+		{ EGridFunction::GRID_FUN_MANUAL         , { "MANUAL"          } },
+		{ EGridFunction::GRID_FUN_EQUIDISTANT    , { "EQUIDISTANT"     } },
+		{ EGridFunction::GRID_FUN_GEOMETRIC_S2L  , { "GEOMETRIC_INC"   } },
+		{ EGridFunction::GRID_FUN_GEOMETRIC_L2S  , { "GEOMETRIC_DEC"   } },
+		{ EGridFunction::GRID_FUN_LOGARITHMIC_S2L, { "LOGARITHMIC_INC" } },
+		{ EGridFunction::GRID_FUN_LOGARITHMIC_L2S, { "LOGARITHMIC_DEC" } },
+	};
+
+	// Converts string to enum.
+	template<typename T> T Name2Enum(const std::string& _s)
+	{
+		for (const auto& p : SEnumStrings<T>().data)
+			if (VectorContains(p.second, _s))
+				return p.first;
+		return static_cast<T>(-1);
 	}
 
-	// Converts the name of a distribution type to its enumeration key.
-	inline EDistrTypes DistributionName2Enum(const std::string& _s)
+	// Converts enum to string.
+	template<typename T> std::string Enum2Name(T _e)
 	{
-		if (_s == "COMPOUNDS")			return EDistrTypes::DISTR_COMPOUNDS;
-		if (_s == "SIZE")				return EDistrTypes::DISTR_SIZE;
-		if (_s == "PARTICLE_POROSITY")	return EDistrTypes::DISTR_PART_POROSITY;
-		if (_s == "FORM_FACTOR")		return EDistrTypes::DISTR_FORM_FACTOR;
-		if (_s == "COLOR")				return EDistrTypes::DISTR_COLOR;
-		if (_s == "USER_DEFINED_01")	return EDistrTypes::DISTR_USER_DEFINED_01;
-		if (_s == "USER_DEFINED_02")	return EDistrTypes::DISTR_USER_DEFINED_02;
-		if (_s == "USER_DEFINED_03")	return EDistrTypes::DISTR_USER_DEFINED_03;
-		if (_s == "USER_DEFINED_04")	return EDistrTypes::DISTR_USER_DEFINED_04;
-		if (_s == "USER_DEFINED_05")	return EDistrTypes::DISTR_USER_DEFINED_05;
-		if (_s == "USER_DEFINED_06")	return EDistrTypes::DISTR_USER_DEFINED_06;
-		if (_s == "USER_DEFINED_07")	return EDistrTypes::DISTR_USER_DEFINED_07;
-		if (_s == "USER_DEFINED_08")	return EDistrTypes::DISTR_USER_DEFINED_08;
-		if (_s == "USER_DEFINED_09")	return EDistrTypes::DISTR_USER_DEFINED_09;
-		if (_s == "USER_DEFINED_10")	return EDistrTypes::DISTR_USER_DEFINED_10;
-		return static_cast<EDistrTypes>(-1);
+		if (!MapContainsKey(SEnumStrings<T>().data, _e)) return {};
+		return SEnumStrings<T>().data[_e].front();
 	}
 
-	// Converts the name of a PSD type to its enumeration key.
-	inline EPSDTypes PSDTypeName2Enum(const std::string& _s)
-	{
-		if (_s == "MASS_FRACTION")	return EPSDTypes::PSD_MassFrac;
-		if (_s == "NUMBER")			return EPSDTypes::PSD_Number;
-		if (_s == "Q0_DENSITY")		return EPSDTypes::PSD_q0;
-		if (_s == "Q0_CUMULATIVE")	return EPSDTypes::PSD_Q0;
-		if (_s == "Q2_DENSITY")		return EPSDTypes::PSD_q2;
-		if (_s == "Q2_CUMULATIVE")	return EPSDTypes::PSD_Q2;
-		if (_s == "Q3_DENSITY")		return EPSDTypes::PSD_q3;
-		if (_s == "Q3_CUMULATIVE")	return EPSDTypes::PSD_Q3;
-		return static_cast<EPSDTypes>(-1);
-	}
-
-	// Converts the name of a type of the PSD mean values to its enumeration key.
-	inline EPSDGridType PSDMeanName2Enum(const std::string& _s)
-	{
-		if (_s == "DIAMETER")	return EPSDGridType::DIAMETER;
-		if (_s == "VOLUME")		return EPSDGridType::VOLUME;
-		return static_cast<EPSDGridType>(-1);
-	}
-
-	// Converts the name of a PSD distribution function to its enumeration key.
-	inline EDistrFunction DistributionFunctionName2Enum(const std::string& _s)
-	{
-		if (_s == "MANUAL")		return EDistrFunction::Manual;
-		if (_s == "NORMAL")		return EDistrFunction::Normal;
-		if (_s == "LOG_NORMAL")	return EDistrFunction::LogNormal;
-		if (_s == "RRSB")		return EDistrFunction::RRSB;
-		if (_s == "GGS")		return EDistrFunction::GGS;
-		return static_cast<EDistrFunction>(-1);
-	}
-
-	// Converts the name of a grid entry type to its enumeration key.
-	inline EGridEntry GridEntryName2Enum(const std::string& _s)
-	{
-		if (_s == "NUMERIC")	return EGridEntry::GRID_NUMERIC;
-		if (_s == "SYMBOLIC")	return EGridEntry::GRID_SYMBOLIC;
-		return static_cast<EGridEntry>(-1);
-	}
-
-	// Converts the name of a grid function to its enumeration key.
-	inline EGridFunction GridFunctionName2Enum(const std::string& _s)
-	{
-		if (_s == "MANUAL")				return EGridFunction::GRID_FUN_MANUAL;
-		if (_s == "EQUIDISTANT")		return EGridFunction::GRID_FUN_EQUIDISTANT;
-		if (_s == "GEOMETRIC_INC")		return EGridFunction::GRID_FUN_GEOMETRIC_S2L;
-		if (_s == "GEOMETRIC_DEC")		return EGridFunction::GRID_FUN_GEOMETRIC_L2S;
-		if (_s == "LOGARITHMIC_INC")	return EGridFunction::GRID_FUN_LOGARITHMIC_S2L;
-		if (_s == "LOGARITHMIC_DEC")	return EGridFunction::GRID_FUN_LOGARITHMIC_L2S;
-		return static_cast<EGridFunction>(-1);
-	}
-
-	// Applies one of the above functions to convert the name to the enumeration key.
+	// Ensures that both name and key are filled, converting one to another.
 	template<typename T>
-	SNameOrKey Convert(const SNameOrKey& _entry, const std::function<T(const std::string&)>& _func)
+	SNamedEnum FillAndCheck(SNamedEnum _entry)
 	{
-		SNameOrKey res = _entry;
-		if (!res.HasKey())
-		{
-			res.key = E2I<T>(_func(StringFunctions::ToUpperCase(_entry.name)));
-			if (static_cast<T>(res.key) == static_cast<T>(-1))
-				std::cout << StrConst::DyssolC_WarningUnknown(_entry.name) << std::endl;
-		}
-		return res;
+		if (!_entry.HasKey())
+			_entry.key = E2I<T>(Name2Enum<T>(StringFunctions::ToUpperCase(_entry.name)));
+		else
+			_entry.name = Enum2Name<T>(static_cast<T>(_entry.key));
+		if (static_cast<T>(_entry.key) == static_cast<T>(-1))
+			std::cout << StrConst::DyssolC_WarningUnknown(_entry.name) << std::endl;
+		return _entry;
 	}
 }

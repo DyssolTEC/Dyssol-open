@@ -12,7 +12,7 @@ namespace ScriptInterface
 {
 	enum class EScriptKeys;
 	struct SNameOrIndex;
-	struct SNameOrKey;
+	struct SNamedEnum;
 }
 
 class CScriptJob;

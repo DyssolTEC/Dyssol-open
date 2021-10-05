@@ -72,16 +72,16 @@ void CScriptParser::ProcessLine(const std::string& _line)
 	SScriptEntry* entry = m_jobs.back()->AddEntry(key);
 
 	// parse the line and write the value to this entry
-	ParseScriptEntry(*entry, ss);
+	ReadScriptEntry(*entry, ss);
 }
 
 void CScriptParser::NamesToKeys()
 {
 	for (auto& job : m_jobs)
 	{
-		for (auto& param : job->GetValuesPtr<SNameOrKey>(EScriptKeys::CONVERGENCE_METHOD))
-			*param = Convert<EConvergenceMethod>(*param, &ConvergenceName2Enum);
-		for (auto& param : job->GetValuesPtr<SNameOrKey>(EScriptKeys::EXTRAPOLATION_METHOD))
-			*param = Convert<EExtrapolationMethod>(*param, &ExtrapolationName2Enum);
+		for (auto& param : job->GetValuesPtr<SNamedEnum>(EScriptKeys::CONVERGENCE_METHOD))
+			*param = FillAndCheck<EConvergenceMethod>(*param);
+		for (auto& param : job->GetValuesPtr<SNamedEnum>(EScriptKeys::EXTRAPOLATION_METHOD))
+			*param = FillAndCheck<EExtrapolationMethod>(*param);
 	}
 }

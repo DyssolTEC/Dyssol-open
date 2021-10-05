@@ -139,12 +139,14 @@ bool CScriptRunner::SetupFlowsheet(const CScriptJob& _job)
 		auto* portI = GetPortPtr(*modelI, entry.portI);
 		if (!portI)
 			return PrintAndReturn(DyssolC_ErrorNoPort(StrKey(EScriptKeys::STREAM), unitI->GetName(), entry.portI.name, entry.portI.index));
-		// whether a stream between these ports already exists
-		const bool exists = portO->GetStreamKey() == portI->GetStreamKey() && m_flowsheet.GetStream(portO->GetStreamKey());
+		// whether a stream between these ports already exists and connects these ports
+		const bool connected = portO->GetStreamKey() == portI->GetStreamKey() && m_flowsheet.GetStream(portO->GetStreamKey());
+		// whether a stream with the same name already exists
+		const bool exists = m_flowsheet.GetStreamByName(entry.name);
 		// pointer to stream to work with: existing or a new one
-		auto* stream = exists ? m_flowsheet.GetStream(portO->GetStreamKey()) : m_flowsheet.AddStream();
+		auto* stream = connected ? m_flowsheet.GetStream(portO->GetStreamKey()) : exists ? m_flowsheet.GetStreamByName(entry.name) : m_flowsheet.AddStream();
 		// remove old connected streams if necessary
-		if (!exists)
+		if (!connected)
 		{
 			m_flowsheet.DeleteStream(portO->GetStreamKey());
 			m_flowsheet.DeleteStream(portI->GetStreamKey());
@@ -261,6 +263,7 @@ bool CScriptRunner::SetupFlowsheetParameters(const CScriptJob& _job)
 
 	auto* params = m_flowsheet.GetParameters();
 
+	// TODO: replace with code
 	SET_PARAM(EScriptKeys::SIMULATION_TIME             , double    , EndSimulationTime                          );
 	SET_PARAM(EScriptKeys::RELATIVE_TOLERANCE          , double    , RelTol                                     );
 	SET_PARAM(EScriptKeys::ABSOLUTE_TOLERANCE          , double    , AbsTol                                     );
@@ -280,8 +283,8 @@ bool CScriptRunner::SetupFlowsheetParameters(const CScriptJob& _job)
 	SET_PARAM(EScriptKeys::ITERATIONS_UPPER_LIMIT_1ST  , uint64_t  , Iters1stUpperLimit     , uint32_t          );
 	SET_PARAM(EScriptKeys::RELAXATION_PARAMETER        , double    , RelaxationParam                            );
 	SET_PARAM(EScriptKeys::ACCELERATION_LIMIT          , double    , WegsteinAccelParam                         );
-	SET_PARAM(EScriptKeys::CONVERGENCE_METHOD          , SNameOrKey, ConvergenceMethod      , EConvergenceMethod  , key);
-	SET_PARAM(EScriptKeys::EXTRAPOLATION_METHOD        , SNameOrKey, ExtrapolationMethod    , EExtrapolationMethod, key);
+	SET_PARAM(EScriptKeys::CONVERGENCE_METHOD          , SNamedEnum, ConvergenceMethod      , EConvergenceMethod  , key);
+	SET_PARAM(EScriptKeys::EXTRAPOLATION_METHOD        , SNamedEnum, ExtrapolationMethod    , EExtrapolationMethod, key);
 	return true;
 }
 
@@ -415,17 +418,17 @@ bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 		const auto mean = static_cast<EPSDGridType>(entry.psdMeans.key);					// mean values type for PSD
 		const auto psd = static_cast<EPSDTypes>(entry.psdType.key);							// PSD type
 		const bool manual = fun == EDistrFunction::Manual;									// whether manual distribution defined
-		const size_t& len = entry.values.size();											// length of the values vector
-		const auto& grid = holdup->GetGrid();												// distributions grid
-		const size_t& classes = grid.GetGridDimension(distr)->ClassesNumber();				// number of classes in the distribution
+		const size_t len = entry.values.size();												// length of the values vector
+		const auto grid = holdup->GetGrid();												// distributions grid
+		if (!grid.HasDimension(distr))
+			return PrintAndReturn(DyssolC_ErrorNoDistribution(StrKey(EScriptKeys::HOLDUP_DISTRIBUTION), unit->GetName(), entry.holdup.name, entry.holdup.index, entry.distrType.name, entry.distrType.key));
+		const size_t classes = grid.GetGridDimension(distr)->ClassesNumber();				// number of classes in the distribution
 		const auto means = distr != DISTR_SIZE ? grid.GetGridDimensionNumeric(distr)->GetClassesMeans() : grid.GetPSDMeans(mean); // mean valued for the PSD grid
 		const bool hasTime = manual && len % (classes + 1) == 0 || !manual && len % 3 == 0;	// whether time is defined
 		const bool mix = entry.compound == "MIXTURE";										// whether the distribution is defined for the total mixture of for a single compound
 		// check the number of passed arguments
 		if (manual && len != classes && len % (classes + 1) != 0 || !manual && len != 2 && len % 3 != 0)
 			return PrintAndReturn(DyssolC_ErrorArgumentsNumber(StrKey(EScriptKeys::HOLDUP_DISTRIBUTION), unit->GetName(), entry.holdup.name, entry.holdup.index));
-		if (!grid.HasDimension(distr))
-			return PrintAndReturn(DyssolC_ErrorNoDistribution(StrKey(EScriptKeys::HOLDUP_DISTRIBUTION), unit->GetName(), entry.holdup.name, entry.holdup.index, entry.distrType.name, entry.distrType.key));
 		// get and check compound key
 		const auto* compound = m_materialsDatabase.GetCompound(entry.compound) ? m_materialsDatabase.GetCompound(entry.compound) : m_materialsDatabase.GetCompoundByName(entry.compound);
 		const std::string key = compound ? compound->GetKey() : "";

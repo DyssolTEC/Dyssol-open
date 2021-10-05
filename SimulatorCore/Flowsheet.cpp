@@ -313,40 +313,61 @@ CCalculationSequence* CFlowsheet::GetCalculationSequence()
 	return &m_calculationSequence;
 }
 
-std::string CFlowsheet::GenerateDOTFile()
+std::vector<SFlowsheetConnection> CFlowsheet::GenerateConnectionsDescription() const
 {
-	struct SConnection { std::string stream{}, unitO{}, unitI{}; };
-	std::vector<SConnection> con;
+	std::vector<SFlowsheetConnection> res;
 
+	// iterate all units
 	for (const auto& u : GetAllUnits())
 	{
 		if (!u->GetModel()) continue;
-		for (const auto& p : u->GetModel()->GetPortsManager().GetAllInputPorts())
+		const auto& ports = u->GetModel()->GetPortsManager();
+		// iterate all input ports of the unit
+		for (const auto& p : ports.GetAllInputPorts())
 		{
-			const auto streamKey = p->GetStreamKey();
-			const size_t i = VectorFind(con, [&](const SConnection& c) { return c.unitI.empty() && c.stream == streamKey; });
-			if (i != static_cast<size_t>(-1))
-				con[i].unitI = u->GetKey();
+			// find connected stream in the results
+			const auto stream = p->GetStreamKey();
+			const size_t i = VectorFind(res, [&](const SFlowsheetConnection& c) { return c.unitI.empty() && c.stream == stream; });
+			// a new stream - add it and fill its inlet port and unit
+			if (i == static_cast<size_t>(-1))
+				res.emplace_back(stream, "", "", u->GetKey(), p->GetName());
+			// the stream is already added - fill its inlet port and unit
 			else
-				con.emplace_back(SConnection{ streamKey, "", u->GetKey() });
+			{
+				res[i].unitI = u->GetKey();
+				res[i].portI = p->GetName();
+			}
 		}
-		for (const auto& p : u->GetModel()->GetPortsManager().GetAllOutputPorts())
+		// iterate all output ports of the unit
+		for (const auto& p : ports.GetAllOutputPorts())
 		{
-			const auto streamKey = p->GetStreamKey();
-			const size_t i = VectorFind(con, [&](const SConnection& c) { return c.unitO.empty() && c.stream == streamKey; });
-			if (i != static_cast<size_t>(-1))
-				con[i].unitO = u->GetKey();
-			con.emplace_back(SConnection{ streamKey, u->GetKey(), "" });
+			// find connected stream in the results
+			const auto stream = p->GetStreamKey();
+			const size_t i = VectorFind(res, [&](const SFlowsheetConnection& c) { return c.unitO.empty() && c.stream == stream; });
+			// a new stream - add it and fill its outlet port and unit
+			if (i == static_cast<size_t>(-1))
+				res.emplace_back(stream, u->GetKey(), p->GetName(), "", "");
+			// the stream is already added - fill its outlet port and unit
+			else
+			{
+				res[i].unitO = u->GetKey();
+				res[i].portO = p->GetName();
+			}
 		}
 	}
 
+	return res;
+}
+
+std::string CFlowsheet::GenerateDOTFile()
+{
 	std::stringstream res;
 	res << "digraph Flowsheet {" << std::endl;
 	// list units
 	for (const auto& u : GetAllUnits())
 		res << StringFunctions::Quote(u->GetName()) << " [shape=box];" << std::endl;
 	// list streams
-	for (const auto& c : con)
+	for (const auto& c : GenerateConnectionsDescription())
 	{
 		if (c.unitI.empty() || c.unitO.empty()) continue;
 		res << StringFunctions::Quote(GetUnit(c.unitO)->GetName()) << " -> " << StringFunctions::Quote(GetUnit(c.unitI)->GetName())

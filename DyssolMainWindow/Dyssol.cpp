@@ -5,6 +5,7 @@
 #include "AboutWindow.h"
 #include "Stream.h"
 #include "ConfigFileParser.h"
+#include "ScriptExporter.h"
 #include "FileSystem.h"
 #include "DyssolStringConstants.h"
 #include "DyssolSystemFunctions.h"
@@ -584,7 +585,9 @@ void Dyssol::SaveConfigFile()
 	const QString txtFileName = QFileInfo(filePath).absolutePath() + "/" + QFileInfo(filePath).baseName() + ".txt";
 	const QString sFileName = QFileDialog::getSaveFileName(this, StrConst::Dyssol_DialogSaveConfigName, txtFileName, StrConst::Dyssol_DialogTxtFilter);
 	QApplication::setOverrideCursor(Qt::WaitCursor);
-	CConfigFileParser::SaveConfigFile(sFileName.toStdWString(), m_sCurrFlowsheetFile.toStdWString(), m_Flowsheet, m_ModelsManager, m_MaterialsDatabase);
+	CScriptExporter exporter(m_Flowsheet, m_ModelsManager, m_MaterialsDatabase);
+	exporter.Export(sFileName.toStdString(), m_sCurrFlowsheetFile.toStdString());
+	//CConfigFileParser::SaveConfigFile(sFileName.toStdWString(), m_sCurrFlowsheetFile.toStdWString(), m_Flowsheet, m_ModelsManager, m_MaterialsDatabase);
 	QApplication::restoreOverrideCursor();
 }
 

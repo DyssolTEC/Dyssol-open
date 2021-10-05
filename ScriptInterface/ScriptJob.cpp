@@ -15,3 +15,11 @@ bool CScriptJob::HasKey(EScriptKeys _key) const
 {
 	return std::any_of(m_entries.begin(), m_entries.end(), [&](const std::unique_ptr<SScriptEntry>& _e) { return _e->key == _key; });
 }
+
+std::vector<SScriptEntry*> CScriptJob::GetAllEntries() const
+{
+	std::vector<SScriptEntry*> res;
+	for (const auto& e : m_entries)
+		res.push_back(e.get());
+	return res;
+}
