@@ -4,33 +4,37 @@
 #include "ContainerFunctions.h"
 #include "StringFunctions.h"
 
-using namespace StringFunctions;
+namespace SF = StringFunctions;
 
 CArgumentsParser::CArgumentsParser(int _argc, const char** _argv)
 	: CArgumentsParser{ _argc, _argv, {} }
 {
 }
 
-CArgumentsParser::CArgumentsParser(int _argc, const char** _argv, std::vector<std::vector<std::string>> _allowedKeys)
+CArgumentsParser::CArgumentsParser(int _argc, const char** _argv, std::vector<SKey> _allowedKeys)
 	: m_allowedKeys{ std::move(_allowedKeys) }
 {
 	// parse all keys
 	for (int i = 1; i < _argc; ++i)
-		m_tokens.insert(ParseArgument(std::string{ _argv[i] }));
-	// filter parsed keys
+		m_tokens.push_back(ParseArgument(std::string{ _argv[i] }));
+
+	// handle allowed keys
 	if (!m_allowedKeys.empty())
 	{
-		// gather all allowed keys
-		std::vector<std::string> allAllowedKeys;
-		for (const auto& v : m_allowedKeys)
-			allAllowedKeys.insert(allAllowedKeys.end(), v.begin(), v.end());
-		// remove tokens with not allowed keys
-		for (auto i = m_tokens.begin(), last = m_tokens.end(); i != last; )
-			if (!VectorContains(allAllowedKeys, i->first))
-				i = m_tokens.erase(i);
-			else
-				++i;
+		// remove possible signs in allowed keys
+		for (auto& allowed : m_allowedKeys)
+		{
+			for (auto& k : allowed.keysL) k = RemoveSignL(k);
+			for (auto& k : allowed.keysS) k = RemoveSignS(k);
+		}
+		// remove not allowed tokens
+		FilterTokens();
 	}
+}
+
+std::vector<CArgumentsParser::SKey> CArgumentsParser::AllAllowedKeys() const
+{
+	return m_allowedKeys;
 }
 
 size_t CArgumentsParser::TokensCount() const
@@ -40,56 +44,115 @@ size_t CArgumentsParser::TokensCount() const
 
 bool CArgumentsParser::HasKey(const std::string& _key) const
 {
-	for (const auto& alias : KeyAliases(_key))
-		if (MapContainsKey(m_tokens, alias))
-			return true;
-	return false;
+	const auto aliases = KeyAliases(_key);
+	return std::any_of(aliases.begin(), aliases.end(), [&](const std::string& a)
+		{ return VectorContains(m_tokens, [&](const SToken& t) { return RemoveSigns(t.key) == a; }); });
 }
 
 std::string CArgumentsParser::GetValue(const std::string& _key) const
 {
 	for (const auto& alias : KeyAliases(_key))
-		if (MapContainsKey(m_tokens, alias))
-			return m_tokens.find(alias)->second;
+	{
+		const size_t i = VectorFind(m_tokens, [&](const SToken& t) { return RemoveSigns(t.key) == alias; });
+		if (i != static_cast<size_t>(-1))
+			return m_tokens[i].value;
+	}
 	return {};
 }
 
 std::vector<std::string> CArgumentsParser::GetValues(const std::string& _key) const
 {
 	std::vector<std::string> res;
-	const auto [beg, end] = m_tokens.equal_range(_key);
-	for (auto it = beg; it != end; ++it)
-		res.push_back(it->second);
+	for (const auto& alias : KeyAliases(_key))
+		for (const auto& token : m_tokens)
+			if (RemoveSigns(token.key) == alias)
+				res.push_back(token.value);
 	return res;
 }
 
-std::pair<std::string, std::string> CArgumentsParser::ParseArgument(const std::string& _argument) const
+CArgumentsParser::SToken CArgumentsParser::ParseArgument(const std::string& _argument) const
 {
-	const auto parts = SplitString(_argument, m_separator);
-	if (parts.empty())
-		return {};
+	const auto parts = SF::SplitString(_argument, m_separator);
+	if (parts.empty()) return {};
+	// only a key or only a value
 	if (parts.size() == 1)
 	{
-		if (Contains(m_keySign, parts[0].front()))		// a key without value
-			return { ToLowerCase(RemoveSign(parts[0])), "" };
+		// a key without value
+		if (IsKey(parts[0]))
+			return { parts[0], {} };
+		// a value without key
 		else
-			return { "", RemoveQuotes(parts.front()) }; // a value without key
+			return { {}, SF::RemoveQuotes(parts.front()) };
 	}
-	return { ToLowerCase(RemoveSign(parts[0])), RemoveQuotes(parts[1]) };
+	// key=value
+	if (IsKey(parts[0]))
+		return { parts[0], SF::RemoveQuotes(parts[1]) };
+	// wrong format
+	return {};
 }
 
-std::string CArgumentsParser::RemoveSign(const std::string& _str) const
+void CArgumentsParser::FilterTokens()
 {
-	std::string res{ _str };
-	while (!res.empty() && Contains(m_keySign, res.front()))
-		res.erase(0, 1);
-	return res;
+	// gather all allowed long keys
+	std::vector<std::string> keysL;
+	for (const auto& v : m_allowedKeys)
+		keysL.insert(keysL.end(), v.keysL.begin(), v.keysL.end());
+	// gather all allowed short keys
+	std::vector<std::string> keysS;
+	for (const auto& v : m_allowedKeys)
+		keysS.insert(keysS.end(), v.keysS.begin(), v.keysS.end());
+
+	// remove tokens with not allowed keys
+	m_tokens.erase(std::remove_if(m_tokens.begin(), m_tokens.end(), [&](const SToken& t)
+		{ return !VectorContains(keysL, RemoveSignL(t.key)) && !VectorContains(keysS, RemoveSignS(t.key)); }), m_tokens.end());
+}
+
+bool CArgumentsParser::IsKeyL(const std::string& _str) const
+{
+	return _str.rfind(m_keySignL, 0) == 0;
+}
+
+bool CArgumentsParser::IsKeyS(const std::string& _str) const
+{
+	return _str.rfind(m_keySignS, 0) == 0;
+}
+
+bool CArgumentsParser::IsKey(const std::string& _str) const
+{
+	return IsKeyL(_str) || IsKeyS(_str);
+}
+
+std::string CArgumentsParser::RemoveSignL(std::string _str) const
+{
+	if (IsKeyL(_str))
+		_str.erase(0, m_keySignL.size());
+	return _str;
+}
+
+std::string CArgumentsParser::RemoveSignS(std::string _str) const
+{
+	if (IsKeyS(_str))
+		_str.erase(0, m_keySignS.size());
+	return _str;
+}
+
+std::string CArgumentsParser::RemoveSigns(const std::string& _str) const
+{
+	return RemoveSignS(RemoveSignL(_str));
 }
 
 std::vector<std::string> CArgumentsParser::KeyAliases(const std::string& _key) const
 {
-	for (const auto& v : m_allowedKeys)
-		if (VectorContains(v, _key))
-			return v;
+	for (const auto& allowed : m_allowedKeys)
+	{
+		const auto cleanKey = RemoveSigns(_key);
+		if (VectorContains(allowed.keysL, cleanKey) || VectorContains(allowed.keysS, cleanKey))
+		{
+			std::vector<std::string> res;
+			res.insert(res.end(), allowed.keysL.begin(), allowed.keysL.end());
+			res.insert(res.end(), allowed.keysS.begin(), allowed.keysS.end());
+			return res;
+		}
+	}
 	return{ _key }; // no aliases defined
 }

@@ -76,18 +76,18 @@ void ExportResults(const CConfigFileParser& _parser, const CFlowsheet& _flowshee
 }
 
 // Prints information about command line arguments.
-void PrintArgumentsInfo()
+void PrintArgumentsInfo(const CArgumentsParser& _parser)
 {
-	// TODO: build in into ArgumentsParser
-	std::cout << "Usage: DyssolC -key[=value] [-key[=value]]..." << std::endl;
-	std::cout << std::endl;
-	std::cout << "Mandatory arguments to start simulation:" << std::endl;
-	std::cout << "-s, --script          path to script file" << std::endl;
-	std::cout << std::endl;
-	std::cout << "Information:" << std::endl;
-	std::cout << "-v,  --version        print information about current version" << std::endl;
-	std::cout << "-m,  --models         print information about available models" << std::endl;
-	std::cout << "-mp, --models_path    additional path to look for available models" << std::endl;
+	std::cout << "Usage: DyssolC --key[=value] [--key[=value]] [...]" << std::endl;
+	for (const auto& k : _parser.AllAllowedKeys())
+	{
+		for (const auto& s : k.keysS)
+			std::cout << "-" << s << " ";
+		std::cout << '\t';
+		for (const auto& l : k.keysL)
+			std::cout << "--" << l << " ";
+		std::cout << k.description << std::endl;
+	}
 }
 
 // Prints information about the current version.
@@ -412,33 +412,44 @@ void RunDyssol(const std::filesystem::path& _script)
 
 int main(int argc, const char *argv[])
 {
-	// TODO: just run the simulation
-	// possible keys with aliases
-	std::vector<std::vector<std::string>> keys;
-	keys.push_back({ "v" , "version"     });
-	keys.push_back({ "m" , "models"      });
-	keys.push_back({ "mp", "models_path" });
-	keys.push_back({ "s" , "script"      });
-
-	const CArgumentsParser parser(argc, argv, keys);
-
-	if (parser.TokensCount() == 0)
+	try
 	{
-		PrintArgumentsInfo();
-		return 1;
-	}
+		// possible keys with aliases and descriptions
+		const std::vector<CArgumentsParser::SKey> keys{
+			{ { "script"      }, { "s"  }, { "path to script file"                          } },
+			{ { "version"     }, { "v"  }, { "print information about current version"      } },
+			{ { "models"      }, { "m"  }, { "print information about available models"     } },
+			{ { "models_path" }, { "mp" }, { "additional path to look for available models" } },
+			{ { "help"        }, { "h"  }, { "give this help list"                          } },
+		};
 
-	if (parser.HasKey("v"))
-		PrintVersionInfo();
-	if (parser.HasKey("m"))
+		const CArgumentsParser parser(argc, argv, keys);
+
+		if (parser.TokensCount() == 0 || parser.HasKey("h"))
+		{
+			PrintArgumentsInfo(parser);
+			return 1;
+		}
+
+		if (parser.HasKey("v"))
+			PrintVersionInfo();
+		if (parser.HasKey("m"))
+		{
+			std::vector<std::filesystem::path> fsPaths;
+			for (const auto& p : parser.GetValues("mp"))
+				fsPaths.emplace_back(p);
+			PrintModelsInfo(fsPaths);
+		}
+		if (parser.HasKey("s"))
+			RunDyssol(parser.GetValue("s"));
+	}
+	catch (const std::exception& e)
 	{
-		std::vector<std::filesystem::path> fsPaths;
-		for (const auto& p : parser.GetValues("mp"))
-			fsPaths.emplace_back(p);
-		PrintModelsInfo(fsPaths);
+		std::cout << "Unhandled exception caught: " << e.what() << std::endl;
 	}
-	if (parser.HasKey("s"))
-		RunDyssol(parser.GetValue("s"));
-
+	catch (...)
+	{
+		std::cout << "Unknown unhandled exception caught" << std::endl;
+	}
 	return 0;
 }
