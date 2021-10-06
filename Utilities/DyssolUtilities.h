@@ -4,6 +4,7 @@
 
 #include "DyssolDefines.h"
 #include "DistributionsFunctions.h"
+#include <vector>
 #include <numeric>
 #include <algorithm>
 #include <cmath>

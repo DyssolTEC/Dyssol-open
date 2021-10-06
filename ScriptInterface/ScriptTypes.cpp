@@ -2,7 +2,6 @@
 
 #include "ScriptTypes.h"
 #include "StringFunctions.h"
-#include "NameConverters.h"
 
 using namespace StringFunctions;
 
@@ -20,7 +19,6 @@ namespace ScriptInterface
 		_s << Quote(_obj.name);
 		return _s;
 	}
-
 
 	std::istream& operator>>(std::istream& _s, SNamedEnum& _obj)
 	{
@@ -67,7 +65,7 @@ namespace ScriptInterface
 	{
 		_obj.unit = GetValueFromStream<SNameOrIndex>(_s);
 		_obj.holdup = GetValueFromStream<SNameOrIndex>(_s);
-		_obj.phase = FillAndCheck<EPhase>(GetValueFromStream<SNamedEnum>(_s));
+		_obj.phase = GetValueFromStream<SNamedEnum>(_s).FilledAndChecked<EPhase>();
 		_obj.values = GetValueFromStream<std::vector<double>>(_s); // format depends on the flowsheet settings, so postpone final parsing until the flowsheet is loaded
 		return _s;
 	}
@@ -83,15 +81,15 @@ namespace ScriptInterface
 	{
 		_obj.unit = GetValueFromStream<SNameOrIndex>(_s);
 		_obj.holdup = GetValueFromStream<SNameOrIndex>(_s);
-		_obj.distrType = FillAndCheck<EDistrTypes>(GetValueFromStream<SNamedEnum>(_s));
+		_obj.distrType = GetValueFromStream<SNamedEnum>(_s).FilledAndChecked<EDistrTypes>();
 		_obj.compound = GetValueFromStream<std::string>(_s);
 		// special treatment for PSD
 		if (_obj.distrType.key == DISTR_SIZE)
 		{
-			_obj.psdType = FillAndCheck<EPSDTypes>(GetValueFromStream<SNamedEnum>(_s));
-			_obj.psdMeans = FillAndCheck<EPSDGridType>(GetValueFromStream<SNamedEnum>(_s));
+			_obj.psdType = GetValueFromStream<SNamedEnum>(_s).FilledAndChecked<EPSDTypes>();
+			_obj.psdMeans = GetValueFromStream<SNamedEnum>(_s).FilledAndChecked<EPSDGridType>();
 		}
-		_obj.function = FillAndCheck<EDistrFunction>(GetValueFromStream<SNamedEnum>(_s));
+		_obj.function = GetValueFromStream<SNamedEnum>(_s).FilledAndChecked<EDistrFunction>();
 		_obj.values = GetValueFromStream<std::vector<double>>(_s);
 		return _s;
 	}
@@ -109,13 +107,13 @@ namespace ScriptInterface
 	std::istream& operator>>(std::istream& _s, SGridDimensionSE& _obj)
 	{
 		_obj.unit = GetValueFromStream<SNameOrIndex>(_s);
-		_obj.distrType = FillAndCheck<EDistrTypes>(GetValueFromStream<SNamedEnum>(_s));
-		_obj.entryType = FillAndCheck<EGridEntry>(GetValueFromStream<SNamedEnum>(_s));
+		_obj.distrType = GetValueFromStream<SNamedEnum>(_s).FilledAndChecked<EDistrTypes>();
+		_obj.entryType = GetValueFromStream<SNamedEnum>(_s).FilledAndChecked<EGridEntry>();
 		if (static_cast<EGridEntry>(_obj.entryType.key) == EGridEntry::GRID_NUMERIC)
 		{
-			_obj.function = FillAndCheck<EGridFunction>(GetValueFromStream<SNamedEnum>(_s));
+			_obj.function = GetValueFromStream<SNamedEnum>(_s).FilledAndChecked<EGridFunction>();
 			if (static_cast<EDistrTypes>(_obj.distrType.key) == DISTR_SIZE)
-				_obj.psdMeans = FillAndCheck<EPSDGridType>(GetValueFromStream<SNamedEnum>(_s));
+				_obj.psdMeans = GetValueFromStream<SNamedEnum>(_s).FilledAndChecked<EPSDGridType>();
 		}
 		_obj.classes = GetValueFromStream<size_t>(_s);
 		if (static_cast<EGridEntry>(_obj.entryType.key) == EGridEntry::GRID_NUMERIC)
@@ -150,7 +148,7 @@ namespace ScriptInterface
 		while (!_s.eof())
 		{
 			_obj.names.push_back(GetValueFromStream<std::string>(_s));
-			_obj.types.push_back(FillAndCheck<EPhase>(GetValueFromStream<SNamedEnum>(_s)));
+			_obj.types.push_back(GetValueFromStream<SNamedEnum>(_s).FilledAndChecked<EPhase>());
 		}
 		return _s;
 	}
@@ -229,4 +227,4 @@ namespace ScriptInterface
 		_s << _obj.unit << " " << _obj.plot << " " << _obj.curve;
 		return _s;
 	}
-}
+};

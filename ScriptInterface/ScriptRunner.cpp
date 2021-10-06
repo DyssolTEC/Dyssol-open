@@ -1,7 +1,6 @@
 /* Copyright (c) 2021, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "ScriptRunner.h"
-#include "BaseUnit.h"
 #include "ScriptJob.h"
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
@@ -771,7 +770,7 @@ CUnitPort* CScriptRunner::GetPortPtr(CBaseUnit& _model, const SNameOrIndex& _nam
 	return port;											// return pointer
 }
 
-CStateVariable* CScriptRunner::GetStateVarPtr(CBaseUnit& _model, const ScriptInterface::SNameOrIndex& _nameOrIndex)
+CStateVariable* CScriptRunner::GetStateVarPtr(CBaseUnit& _model, const SNameOrIndex& _nameOrIndex)
 {
 	auto& manager = _model.GetStateVariablesManager();						// get manager
 	auto* variable = manager.GetStateVariable(_nameOrIndex.name);			// try to access by name
@@ -779,7 +778,7 @@ CStateVariable* CScriptRunner::GetStateVarPtr(CBaseUnit& _model, const ScriptInt
 	return variable;														// return pointer
 }
 
-const CPlot* CScriptRunner::GetPlotPtr(const CBaseUnit& _model, const ScriptInterface::SNameOrIndex& _nameOrIndex)
+const CPlot* CScriptRunner::GetPlotPtr(const CBaseUnit& _model, const SNameOrIndex& _nameOrIndex)
 {
 	const auto& manager = _model.GetPlotsManager();			// get manager
 	const auto* plot = manager.GetPlot(_nameOrIndex.name);	// try to access by name
@@ -787,7 +786,7 @@ const CPlot* CScriptRunner::GetPlotPtr(const CBaseUnit& _model, const ScriptInte
 	return plot;											// return pointer
 }
 
-const CCurve* CScriptRunner::GetCurvePtr(const CPlot& _plot, const ScriptInterface::SNameOrIndex& _nameOrIndex)
+const CCurve* CScriptRunner::GetCurvePtr(const CPlot& _plot, const SNameOrIndex& _nameOrIndex)
 {
 	const auto* curve = _plot.GetCurve(_nameOrIndex.name);		// try to access by name
 	if (!curve) curve = _plot.GetCurve(_nameOrIndex.index);		// try to access by index

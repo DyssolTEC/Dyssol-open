@@ -1,19 +1,18 @@
 /* Copyright (c) 2021, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 /*
- * All parsed types are described here.
+ * All parsing types are described here.
  * It is required to define
  * friend std::istream& operator>>(std::istream&, T&)
+ * friend std::ostream& operator<<(std::ostream&, const T&)
  * for each defined type.
  */
 
 #pragma once
-#include <iostream>
+#include "NameConverters.h"
+#include "DyssolStringConstants.h"
 #include <istream>
 #include <vector>
-
-#include "DyssolStringConstants.h"
-#include "StringFunctions.h"
 
 namespace ScriptInterface
 {
@@ -33,9 +32,25 @@ namespace ScriptInterface
 		int64_t key{ -1 };	// Key of the entry. Either this or name must be set.
 		SNamedEnum() = default;
 		// Creates entry from enumerator value, converting it to the name.
-		template<typename E, typename = std::enable_if_t<std::is_enum_v<E>>> explicit SNamedEnum(E _key) : name{ Enum2Name<E>(_key) }, key{ E2I(_key) } {}
+		template<typename E, typename = std::enable_if_t<std::is_enum_v<E>>> explicit SNamedEnum(E _key)
+			: name{ Enum2Name<E>(_key) }, key{ static_cast<int64_t>(_key) } {}
 		// Checks if the struct contains parsed key.
 		[[nodiscard]] bool HasKey() const { return key != -1; }
+		// Ensures that both name and key are filled, converting one to another.
+		template<typename E, typename = std::enable_if_t<std::is_enum_v<E>>> void FillAndCheck()
+		{
+			if (!HasKey())	key = static_cast<int64_t>(Name2Enum<E>(StringFunctions::ToUpperCase(name)));
+			else			name = Enum2Name<E>(static_cast<E>(key));
+			if (static_cast<E>(key) == static_cast<E>(-1))
+				std::cout << StrConst::DyssolC_WarningUnknown(name) << std::endl;
+		}
+		// Ensures that both name and key are filled, converting one to another and returns a converted copy.
+		template<typename E, typename = std::enable_if_t<std::is_enum_v<E>>> SNamedEnum FilledAndChecked() const
+		{
+			SNamedEnum res = *this;
+			res.FillAndCheck<E>();
+			return res;
+		}
 		friend std::istream& operator>>(std::istream& _s, SNamedEnum& _obj);
 		friend std::ostream& operator<<(std::ostream& _s, const SNamedEnum& _obj);
 	};

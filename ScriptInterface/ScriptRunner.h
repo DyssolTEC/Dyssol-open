@@ -8,14 +8,12 @@
 
 class CBaseStream;
 class CBaseUnitParameter;
+class CScriptJob;
 namespace ScriptInterface
 {
 	enum class EScriptKeys;
 	struct SNameOrIndex;
-	struct SNamedEnum;
 }
-
-class CScriptJob;
 
 /* Executes a script job. */
 class CScriptRunner

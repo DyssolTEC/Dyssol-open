@@ -1,11 +1,10 @@
 /* Copyright (c) 2021, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "ScriptParser.h"
-#include "NameConverters.h"
+#include "DyssolStringConstants.h"
 #include <fstream>
 #include <sstream>
 
-using namespace StringFunctions;
 using namespace ScriptInterface;
 
 CScriptParser::CScriptParser(const std::filesystem::path& _script)
@@ -38,8 +37,8 @@ void CScriptParser::Parse(const std::filesystem::path& _script)
 	std::string line;
 	while (std::getline(scriptFile, line))
 	{
-		TrimFromSymbols(line, StrConst::COMMENT_SYMBOL);	// remove comments
-		ProcessLine(line);									// process
+		StringFunctions::TrimFromSymbols(line, StrConst::COMMENT_SYMBOL);	// remove comments
+		ProcessLine(line);													// process
 	}
 	scriptFile.close();
 
@@ -53,7 +52,7 @@ void CScriptParser::ProcessLine(const std::string& _line)
 	std::stringstream ss{ _line };
 
 	// current script key
-	const auto key = ToUpperCase(GetValueFromStream<std::string>(ss));
+	const auto key = StringFunctions::ToUpperCase(StringFunctions::GetValueFromStream<std::string>(ss));
 
 	// check that this key is allowed
 	if (!VectorContains(m_allKeys, key))
@@ -79,9 +78,9 @@ void CScriptParser::NamesToKeys()
 {
 	for (auto& job : m_jobs)
 	{
-		for (auto& param : job->GetValuesPtr<SNamedEnum>(EScriptKeys::CONVERGENCE_METHOD))
-			*param = FillAndCheck<EConvergenceMethod>(*param);
-		for (auto& param : job->GetValuesPtr<SNamedEnum>(EScriptKeys::EXTRAPOLATION_METHOD))
-			*param = FillAndCheck<EExtrapolationMethod>(*param);
+		for (auto* param : job->GetValuesPtr<SNamedEnum>(EScriptKeys::CONVERGENCE_METHOD))
+			param->FillAndCheck<EConvergenceMethod>();
+		for (auto* param : job->GetValuesPtr<SNamedEnum>(EScriptKeys::EXTRAPOLATION_METHOD))
+			param->FillAndCheck<EExtrapolationMethod>();
 	}
 }

@@ -2,11 +2,9 @@
 
 #include "ScriptExporter.h"
 #include "ScriptJob.h"
-#include "NameConverters.h"
 #include "Flowsheet.h"
 #include "BaseUnit.h"
 #include "MaterialsDatabase.h"
-#include "DyssolUtilities.h"
 #include <fstream>
 #include <sstream>
 
@@ -39,26 +37,26 @@ bool CScriptExporter::Export(const fs::path& _scriptFile, const fs::path& _flows
 		}
 		case EScriptKeys::SOURCE_FILE:
 		{
-			auto path = _flowsheetFile;
-			job.AddEntry(e.keyStr)->value = fs::absolute(path.make_preferred());
+			auto entry = _flowsheetFile;
+			job.AddEntry(e.keyStr)->value = fs::absolute(entry.make_preferred());
 			break;
 		}
 		case EScriptKeys::RESULT_FILE:
 		{
-			auto path = _flowsheetFile.parent_path() /= _flowsheetFile.stem() += fs::path{ "_res" } += _flowsheetFile.extension();
-			job.AddEntry(e.keyStr)->value = fs::absolute(path.make_preferred());
+			auto entry = _flowsheetFile.parent_path() /= _flowsheetFile.stem() += fs::path{ "_res" } += _flowsheetFile.extension();
+			job.AddEntry(e.keyStr)->value = fs::absolute(entry.make_preferred());
 			break;
 		}
 		case EScriptKeys::MATERIALS_DATABASE:
 		{
-			auto path = m_materialsDB.GetFileName();
-			job.AddEntry(e.keyStr)->value = fs::absolute(path.make_preferred());
+			auto entry = m_materialsDB.GetFileName();
+			job.AddEntry(e.keyStr)->value = fs::absolute(entry.make_preferred());
 			break;
 		}
 		case EScriptKeys::MODELS_PATH:
 		{
-			for (const auto& path : m_modelsManager.GetAllActiveDirPaths())
-				job.AddEntry(e.keyStr)->value = fs::absolute(path);
+			for (const auto& entry : m_modelsManager.GetAllActiveDirPaths())
+				job.AddEntry(e.keyStr)->value = fs::absolute(entry);
 			break;
 		}
 		case EScriptKeys::SIMULATION_TIME:
@@ -88,7 +86,7 @@ bool CScriptExporter::Export(const fs::path& _scriptFile, const fs::path& _flows
 		}
 		case EScriptKeys::SAVE_FLAG_FOR_HOLDUPS:
 		{
-			job.AddEntry(e.keyStr)->value = m_flowsheet.GetParameters()->saveTimeStepFlagHoldups;
+			job.AddEntry(e.keyStr)->value = (bool)m_flowsheet.GetParameters()->saveTimeStepFlagHoldups;
 			break;
 		}
 		case EScriptKeys::THERMO_TEMPERATURE_MIN:

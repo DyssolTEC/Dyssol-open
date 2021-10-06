@@ -1,23 +1,18 @@
 /* Copyright (c) 2021, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
+#pragma once
+#include "ContainerFunctions.h"
+#include <map>
+
 /*
  * Helper functions to convert named values to their enumerations/keys.
  */
-
-#pragma once
-#include "DyssolUtilities.h"
-#include "DyssolStringConstants.h"
-#include "ContainerFunctions.h"
-#include <functional>
-#include <iostream>
-#include <map>
-
-namespace ScriptInterface
+namespace
 {
 	/*
 	 * Utility type.
 	 * Every enum declares its own specialization of this template.
-	 * Every enum value can have several string representations.
+	 * Every enum value can have several string representations, the first one is used for export.
 	 */
 	template<typename T> struct SEnumStrings
 	{
@@ -121,18 +116,5 @@ namespace ScriptInterface
 	{
 		if (!MapContainsKey(SEnumStrings<T>().data, _e)) return {};
 		return SEnumStrings<T>().data[_e].front();
-	}
-
-	// Ensures that both name and key are filled, converting one to another.
-	template<typename T>
-	SNamedEnum FillAndCheck(SNamedEnum _entry)
-	{
-		if (!_entry.HasKey())
-			_entry.key = E2I<T>(Name2Enum<T>(StringFunctions::ToUpperCase(_entry.name)));
-		else
-			_entry.name = Enum2Name<T>(static_cast<T>(_entry.key));
-		if (static_cast<T>(_entry.key) == static_cast<T>(-1))
-			std::cout << StrConst::DyssolC_WarningUnknown(_entry.name) << std::endl;
-		return _entry;
 	}
 }

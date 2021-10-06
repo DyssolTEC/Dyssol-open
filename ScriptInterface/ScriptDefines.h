@@ -3,31 +3,33 @@
 /*
  * Main defines of the script interface.
  * All script keywords as they appear in the script are described in EScriptKeys.
+ * Each value of EScriptKeys enum automatically obtains its string representation to work with.
  * EEntryType describes all possible types each line of the script can represent.
  * Each script line is read into SScriptEntry - it can hold any type defined in EEntryType.
- * How to read each type from EEntryType is given in ParseScriptEntry().
- * To make this function work, each type must define operator>>(std::istream&, T&), as it is given in ScriptTypes.h
+ * How to read each type of EEntryType from a stream is given in ReadScriptEntry().
+ * How to write each type of EEntryType to a stream is given in WriteScriptEntry().
+ * To make these functions work, each type must define operator>>(std::istream&, T&) and operator<<(std::ostream&, const T&),
+ * as it is given in ScriptTypes.h
  * The correspondence between EScriptKeys and EEntryType is set in allScriptArguments.
  * To add a new type:
  *   1. Define the new type in ScriptTypes.h.
- *   2. Implement operator>>(std::istream&, T&) for this type in ScriptTypes.cpp.
+ *   2. Implement operator>>(std::istream&, T&) and operator<<(std::ostream&, const T&) for this type in ScriptTypes.cpp.
  *   3. Add the type to std::variant of the SScriptEntry struct.
  *   4. Add the name of this type to EEntryType.
- *   5. Define the parsing rule for this name in ParseScriptEntry().
+ *   5. Define the reading/writing rules for this name in ReadScriptEntry()/WriteScriptEntry().
  * To add a new script key of existing type:
  *   1. Add it to EScriptKeys.
  *   2. Set the correspondence in allScriptArguments.
- *   3. Use in ScriptRunner.cpp, e.g. as job.GetValue<double>(EScriptKeys::SIMULATION_TIME).
+ *   3. Use it in ScriptRunner.cpp, e.g. as job.GetValue<double>(EScriptKeys::SIMULATION_TIME).
+ *	 4. Implement export of this key in ScriptExporter.cpp.
  */
 
 
 // TODO: rename to ScriptKeys.h
 
 #pragma once
-#include "DyssolHelperDefines.h"
-#include "ContainerFunctions.h"
-#include "StringFunctions.h"
 #include "ScriptTypes.h"
+#include "DyssolHelperDefines.h"
 #include <filesystem>
 #include <variant>
 
