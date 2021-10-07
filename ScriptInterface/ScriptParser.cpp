@@ -42,7 +42,7 @@ void CScriptParser::Parse(const std::filesystem::path& _script)
 	}
 	scriptFile.close();
 
-	// Convert names to keys/indices
+	// convert names to keys
 	NamesToKeys();
 }
 
@@ -76,7 +76,7 @@ void CScriptParser::ProcessLine(const std::string& _line)
 
 void CScriptParser::NamesToKeys()
 {
-	for (auto& job : m_jobs)
+	for (const auto& job : m_jobs)
 	{
 		for (auto* param : job->GetValuesPtr<SNamedEnum>(EScriptKeys::CONVERGENCE_METHOD))
 			param->FillAndCheck<EConvergenceMethod>();

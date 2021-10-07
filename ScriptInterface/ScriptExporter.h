@@ -7,16 +7,10 @@ class CModelsManager;
 class CMaterialsDatabase;
 class CFlowsheet;
 
-class CScriptExporter
+namespace ScriptInterface
 {
-	const CFlowsheet& m_flowsheet;				// Reference to a flowsheet.
-	const CModelsManager& m_modelsManager;		// Reference to a global models manager.
-	const CMaterialsDatabase& m_materialsDB;	// Reference to a global database of materials.
-
-public:
-	CScriptExporter(const CFlowsheet& _flowsheet, const CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB);
-
 	// Exports script to the specified file. Returns true on success.
-	bool Export(const std::filesystem::path& _scriptFile, const std::filesystem::path& _flowsheetFile);
+	bool ExportScript(const std::filesystem::path& _scriptFile, const std::filesystem::path& _flowsheetFile, const CFlowsheet& _flowsheet,
+		const CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB);
 };
 

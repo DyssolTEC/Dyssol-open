@@ -32,7 +32,7 @@ private:
 		std::string value;	// Parsed value without quotes.
 	};
 
-	const char m_separator = '=';
+	const char m_separator = '=';        // Separator between key and value.
 	const std::string m_keySignS = "-";	 // Sign of a short key.
 	const std::string m_keySignL = "--"; // Sign of a long key.
 

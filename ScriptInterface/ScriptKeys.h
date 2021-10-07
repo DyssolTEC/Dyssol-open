@@ -24,11 +24,9 @@
  *	 4. Implement export of this key in ScriptExporter.cpp.
  */
 
-
-// TODO: rename to ScriptKeys.h
-
 #pragma once
 #include "ScriptTypes.h"
+#include "ContainerFunctions.h"
 #include "DyssolHelperDefines.h"
 #include <filesystem>
 #include <variant>
@@ -70,6 +68,7 @@ namespace ScriptInterface
 		DISTRIBUTION_GRID                ,
 		KEEP_EXISTING_UNITS              ,
 		UNIT                             ,
+		KEEP_EXISTING_STREAMS            ,
 		STREAM                           ,
 		UNIT_PARAMETER                   ,
 		KEEP_EXISTING_HOLDUPS_VALUES     ,
@@ -106,7 +105,7 @@ namespace ScriptInterface
 	// All possible types of script entries.
 	enum class EEntryType
 	{
-		EMPTY              , // Key without value
+		EMPTY              , // key without value
 		BOOL               , // bool
 		INT                , // int64_t
 		UINT               , // uint64_t
@@ -209,85 +208,86 @@ namespace ScriptInterface
 
 	// Number of symbols to discard: length of 'EScriptKeys::'.
 	constexpr size_t DISCARD = 13;
-	// Converts a fully resolved name EScriptKeys::SOURCE_FILE to string "SOURCE_FILE".
+	// Converts a fully resolved name (e.g. EScriptKeys::SOURCE_FILE to a string (e.g. "SOURCE_FILE").
 	#define ARG2STR(X) std::string(MACRO_TOSTRING(X)).substr(DISCARD, std::string(MACRO_TOSTRING(X)).length())
-	// Creates an empty new argument.
-	#define MAKE_ARG(ARG_NAME, ARG_TYPE) { ARG_NAME, std::string{ARG2STR(ARG_NAME)}, ARG_TYPE }
+	// Creates a new SScriptEntryDescriptor.
+	#define MAKE_SED(ARG_NAME, ARG_TYPE) { ARG_NAME, std::string{ARG2STR(ARG_NAME)}, ARG_TYPE }
 
 	/* Creates a vector of all possible script arguments and initializes them.
 	 * Name of the key from EScriptKeys is converted to a string and used as a key for script file.
-	 * To add a new key of existing type, extend EScriptKeys and add it with MAKE_ARG macro.
+	 * To add a new key of existing type, extend EScriptKeys and add it with MAKE_SED macro.
 	 * To add a new key of a new type, additionally extend EEntryType and extend SScriptEntry::value with the real value type. */
 	static std::vector<SScriptEntryDescriptor> allScriptArguments
 	{
 		// paths
-		MAKE_ARG(EScriptKeys::JOB                              , EEntryType::EMPTY)              ,
-		MAKE_ARG(EScriptKeys::SOURCE_FILE                      , EEntryType::PATH)               ,
-		MAKE_ARG(EScriptKeys::RESULT_FILE                      , EEntryType::PATH)               ,
-		MAKE_ARG(EScriptKeys::MATERIALS_DATABASE               , EEntryType::PATH)               ,
-		MAKE_ARG(EScriptKeys::MODELS_PATH                      , EEntryType::PATH)               ,
+		MAKE_SED(EScriptKeys::JOB                              , EEntryType::EMPTY)              ,
+		MAKE_SED(EScriptKeys::SOURCE_FILE                      , EEntryType::PATH)               ,
+		MAKE_SED(EScriptKeys::RESULT_FILE                      , EEntryType::PATH)               ,
+		MAKE_SED(EScriptKeys::MATERIALS_DATABASE               , EEntryType::PATH)               ,
+		MAKE_SED(EScriptKeys::MODELS_PATH                      , EEntryType::PATH)               ,
 		// flowsheet parameters
-		MAKE_ARG(EScriptKeys::SIMULATION_TIME                  , EEntryType::DOUBLE)             ,
-		MAKE_ARG(EScriptKeys::RELATIVE_TOLERANCE               , EEntryType::DOUBLE)             ,
-		MAKE_ARG(EScriptKeys::ABSOLUTE_TOLERANCE               , EEntryType::DOUBLE)             ,
-		MAKE_ARG(EScriptKeys::MINIMAL_FRACTION                 , EEntryType::DOUBLE)             ,
-		MAKE_ARG(EScriptKeys::SAVE_TIME_STEP_HINT              , EEntryType::DOUBLE)             ,
-		MAKE_ARG(EScriptKeys::SAVE_FLAG_FOR_HOLDUPS            , EEntryType::BOOL)               ,
-		MAKE_ARG(EScriptKeys::THERMO_TEMPERATURE_MIN           , EEntryType::DOUBLE)             ,
-		MAKE_ARG(EScriptKeys::THERMO_TEMPERATURE_MAX           , EEntryType::DOUBLE)             ,
-		MAKE_ARG(EScriptKeys::THERMO_TEMPERATURE_INTERVALS     , EEntryType::UINT)               ,
-		MAKE_ARG(EScriptKeys::INIT_TIME_WINDOW                 , EEntryType::DOUBLE)             ,
-		MAKE_ARG(EScriptKeys::MIN_TIME_WINDOW                  , EEntryType::DOUBLE)             ,
-		MAKE_ARG(EScriptKeys::MAX_TIME_WINDOW                  , EEntryType::DOUBLE)             ,
-		MAKE_ARG(EScriptKeys::MAX_ITERATIONS_NUMBER            , EEntryType::UINT)               ,
-		MAKE_ARG(EScriptKeys::WINDOW_CHANGE_RATE               , EEntryType::DOUBLE)             ,
-		MAKE_ARG(EScriptKeys::ITERATIONS_UPPER_LIMIT           , EEntryType::UINT)               ,
-		MAKE_ARG(EScriptKeys::ITERATIONS_LOWER_LIMIT           , EEntryType::UINT)               ,
-		MAKE_ARG(EScriptKeys::ITERATIONS_UPPER_LIMIT_1ST       , EEntryType::UINT)               ,
-		MAKE_ARG(EScriptKeys::CONVERGENCE_METHOD               , EEntryType::NAME_OR_KEY)        ,
-		MAKE_ARG(EScriptKeys::RELAXATION_PARAMETER             , EEntryType::DOUBLE)             ,
-		MAKE_ARG(EScriptKeys::ACCELERATION_LIMIT               , EEntryType::DOUBLE)             ,
-		MAKE_ARG(EScriptKeys::EXTRAPOLATION_METHOD             , EEntryType::NAME_OR_KEY)        ,
+		MAKE_SED(EScriptKeys::SIMULATION_TIME                  , EEntryType::DOUBLE)             ,
+		MAKE_SED(EScriptKeys::RELATIVE_TOLERANCE               , EEntryType::DOUBLE)             ,
+		MAKE_SED(EScriptKeys::ABSOLUTE_TOLERANCE               , EEntryType::DOUBLE)             ,
+		MAKE_SED(EScriptKeys::MINIMAL_FRACTION                 , EEntryType::DOUBLE)             ,
+		MAKE_SED(EScriptKeys::SAVE_TIME_STEP_HINT              , EEntryType::DOUBLE)             ,
+		MAKE_SED(EScriptKeys::SAVE_FLAG_FOR_HOLDUPS            , EEntryType::BOOL)               ,
+		MAKE_SED(EScriptKeys::THERMO_TEMPERATURE_MIN           , EEntryType::DOUBLE)             ,
+		MAKE_SED(EScriptKeys::THERMO_TEMPERATURE_MAX           , EEntryType::DOUBLE)             ,
+		MAKE_SED(EScriptKeys::THERMO_TEMPERATURE_INTERVALS     , EEntryType::UINT)               ,
+		MAKE_SED(EScriptKeys::INIT_TIME_WINDOW                 , EEntryType::DOUBLE)             ,
+		MAKE_SED(EScriptKeys::MIN_TIME_WINDOW                  , EEntryType::DOUBLE)             ,
+		MAKE_SED(EScriptKeys::MAX_TIME_WINDOW                  , EEntryType::DOUBLE)             ,
+		MAKE_SED(EScriptKeys::MAX_ITERATIONS_NUMBER            , EEntryType::UINT)               ,
+		MAKE_SED(EScriptKeys::WINDOW_CHANGE_RATE               , EEntryType::DOUBLE)             ,
+		MAKE_SED(EScriptKeys::ITERATIONS_UPPER_LIMIT           , EEntryType::UINT)               ,
+		MAKE_SED(EScriptKeys::ITERATIONS_LOWER_LIMIT           , EEntryType::UINT)               ,
+		MAKE_SED(EScriptKeys::ITERATIONS_UPPER_LIMIT_1ST       , EEntryType::UINT)               ,
+		MAKE_SED(EScriptKeys::CONVERGENCE_METHOD               , EEntryType::NAME_OR_KEY)        ,
+		MAKE_SED(EScriptKeys::RELAXATION_PARAMETER             , EEntryType::DOUBLE)             ,
+		MAKE_SED(EScriptKeys::ACCELERATION_LIMIT               , EEntryType::DOUBLE)             ,
+		MAKE_SED(EScriptKeys::EXTRAPOLATION_METHOD             , EEntryType::NAME_OR_KEY)        ,
 		// flowsheet settings
-		MAKE_ARG(EScriptKeys::COMPOUNDS                        , EEntryType::STRINGS)            ,
-		MAKE_ARG(EScriptKeys::PHASES                           , EEntryType::PHASES)             ,
-		MAKE_ARG(EScriptKeys::KEEP_EXISTING_GRIDS_VALUES       , EEntryType::BOOL)               ,
-		MAKE_ARG(EScriptKeys::DISTRIBUTION_GRID                , EEntryType::GRID_DIMENSION)     ,
-		MAKE_ARG(EScriptKeys::KEEP_EXISTING_UNITS              , EEntryType::BOOL)               ,
-		MAKE_ARG(EScriptKeys::UNIT                             , EEntryType::STRINGS)            ,
-		MAKE_ARG(EScriptKeys::STREAM                           , EEntryType::STREAM)             ,
-		MAKE_ARG(EScriptKeys::UNIT_PARAMETER                   , EEntryType::UNIT_PARAMETER)     ,
+		MAKE_SED(EScriptKeys::COMPOUNDS                        , EEntryType::STRINGS)            ,
+		MAKE_SED(EScriptKeys::PHASES                           , EEntryType::PHASES)             ,
+		MAKE_SED(EScriptKeys::KEEP_EXISTING_GRIDS_VALUES       , EEntryType::BOOL)               ,
+		MAKE_SED(EScriptKeys::DISTRIBUTION_GRID                , EEntryType::GRID_DIMENSION)     ,
+		MAKE_SED(EScriptKeys::KEEP_EXISTING_UNITS              , EEntryType::BOOL)               ,
+		MAKE_SED(EScriptKeys::UNIT                             , EEntryType::STRINGS)            ,
+		MAKE_SED(EScriptKeys::KEEP_EXISTING_STREAMS            , EEntryType::BOOL)               ,
+		MAKE_SED(EScriptKeys::STREAM                           , EEntryType::STREAM)             ,
+		MAKE_SED(EScriptKeys::UNIT_PARAMETER                   , EEntryType::UNIT_PARAMETER)     ,
 		// holdup and input streams parameters
-		MAKE_ARG(EScriptKeys::KEEP_EXISTING_HOLDUPS_VALUES     , EEntryType::BOOL)               ,
-		MAKE_ARG(EScriptKeys::HOLDUP_OVERALL                   , EEntryType::HOLDUP_DEPENDENT)   ,
-		MAKE_ARG(EScriptKeys::HOLDUP_PHASES                    , EEntryType::HOLDUP_DEPENDENT)   ,
-		MAKE_ARG(EScriptKeys::HOLDUP_COMPOUNDS                 , EEntryType::HOLDUP_COMPOUNDS)   ,
-		MAKE_ARG(EScriptKeys::HOLDUP_DISTRIBUTION              , EEntryType::HOLDUP_DISTRIBUTION),
+		MAKE_SED(EScriptKeys::KEEP_EXISTING_HOLDUPS_VALUES     , EEntryType::BOOL)               ,
+		MAKE_SED(EScriptKeys::HOLDUP_OVERALL                   , EEntryType::HOLDUP_DEPENDENT)   ,
+		MAKE_SED(EScriptKeys::HOLDUP_PHASES                    , EEntryType::HOLDUP_DEPENDENT)   ,
+		MAKE_SED(EScriptKeys::HOLDUP_COMPOUNDS                 , EEntryType::HOLDUP_COMPOUNDS)   ,
+		MAKE_SED(EScriptKeys::HOLDUP_DISTRIBUTION              , EEntryType::HOLDUP_DISTRIBUTION),
 		// export
-		MAKE_ARG(EScriptKeys::EXPORT_FILE                      , EEntryType::PATH)               ,
-		MAKE_ARG(EScriptKeys::EXPORT_PRECISION                 , EEntryType::INT)                ,
-		MAKE_ARG(EScriptKeys::EXPORT_FIXED_POINT               , EEntryType::BOOL)               ,
-		MAKE_ARG(EScriptKeys::EXPORT_SIGNIFICANCE_LIMIT        , EEntryType::DOUBLE)             ,
-		MAKE_ARG(EScriptKeys::EXPORT_ONLY                      , EEntryType::BOOL)               ,
-		MAKE_ARG(EScriptKeys::EXPORT_STREAM_MASS               , EEntryType::EXPORT_STREAM)      ,
-		MAKE_ARG(EScriptKeys::EXPORT_STREAM_TEMPERATURE        , EEntryType::EXPORT_STREAM)      ,
-		MAKE_ARG(EScriptKeys::EXPORT_STREAM_PRESSURE           , EEntryType::EXPORT_STREAM)      ,
-		MAKE_ARG(EScriptKeys::EXPORT_STREAM_OVERALLS           , EEntryType::EXPORT_STREAM)      ,
-		MAKE_ARG(EScriptKeys::EXPORT_STREAM_PHASES_FRACTIONS   , EEntryType::EXPORT_STREAM)      ,
-		MAKE_ARG(EScriptKeys::EXPORT_STREAM_COMPOUNDS_FRACTIONS, EEntryType::EXPORT_STREAM)      ,
-		MAKE_ARG(EScriptKeys::EXPORT_STREAM_PSD                , EEntryType::EXPORT_STREAM)      ,
-		MAKE_ARG(EScriptKeys::EXPORT_STREAM_DISTRIBUTIONS      , EEntryType::EXPORT_STREAM)      ,
-		MAKE_ARG(EScriptKeys::EXPORT_HOLDUP_MASS               , EEntryType::EXPORT_HOLDUP)      ,
-		MAKE_ARG(EScriptKeys::EXPORT_HOLDUP_TEMPERATURE        , EEntryType::EXPORT_HOLDUP)      ,
-		MAKE_ARG(EScriptKeys::EXPORT_HOLDUP_PRESSURE           , EEntryType::EXPORT_HOLDUP)      ,
-		MAKE_ARG(EScriptKeys::EXPORT_HOLDUP_OVERALLS           , EEntryType::EXPORT_HOLDUP)      ,
-		MAKE_ARG(EScriptKeys::EXPORT_HOLDUP_PHASES_FRACTIONS   , EEntryType::EXPORT_HOLDUP)      ,
-		MAKE_ARG(EScriptKeys::EXPORT_HOLDUP_COMPOUNDS_FRACTIONS, EEntryType::EXPORT_HOLDUP)      ,
-		MAKE_ARG(EScriptKeys::EXPORT_HOLDUP_PSD                , EEntryType::EXPORT_HOLDUP)      ,
-		MAKE_ARG(EScriptKeys::EXPORT_HOLDUP_DISTRIBUTIONS      , EEntryType::EXPORT_HOLDUP)      ,
-		MAKE_ARG(EScriptKeys::EXPORT_UNIT_STATE_VARIABLE       , EEntryType::EXPORT_STATE_VAR)   ,
-		MAKE_ARG(EScriptKeys::EXPORT_UNIT_PLOT                 , EEntryType::EXPORT_PLOT)        ,
-		MAKE_ARG(EScriptKeys::EXPORT_FLOWSHEET_GRAPH           , EEntryType::PATH)               ,
+		MAKE_SED(EScriptKeys::EXPORT_FILE                      , EEntryType::PATH)               ,
+		MAKE_SED(EScriptKeys::EXPORT_PRECISION                 , EEntryType::INT)                ,
+		MAKE_SED(EScriptKeys::EXPORT_FIXED_POINT               , EEntryType::BOOL)               ,
+		MAKE_SED(EScriptKeys::EXPORT_SIGNIFICANCE_LIMIT        , EEntryType::DOUBLE)             ,
+		MAKE_SED(EScriptKeys::EXPORT_ONLY                      , EEntryType::BOOL)               ,
+		MAKE_SED(EScriptKeys::EXPORT_STREAM_MASS               , EEntryType::EXPORT_STREAM)      ,
+		MAKE_SED(EScriptKeys::EXPORT_STREAM_TEMPERATURE        , EEntryType::EXPORT_STREAM)      ,
+		MAKE_SED(EScriptKeys::EXPORT_STREAM_PRESSURE           , EEntryType::EXPORT_STREAM)      ,
+		MAKE_SED(EScriptKeys::EXPORT_STREAM_OVERALLS           , EEntryType::EXPORT_STREAM)      ,
+		MAKE_SED(EScriptKeys::EXPORT_STREAM_PHASES_FRACTIONS   , EEntryType::EXPORT_STREAM)      ,
+		MAKE_SED(EScriptKeys::EXPORT_STREAM_COMPOUNDS_FRACTIONS, EEntryType::EXPORT_STREAM)      ,
+		MAKE_SED(EScriptKeys::EXPORT_STREAM_PSD                , EEntryType::EXPORT_STREAM)      ,
+		MAKE_SED(EScriptKeys::EXPORT_STREAM_DISTRIBUTIONS      , EEntryType::EXPORT_STREAM)      ,
+		MAKE_SED(EScriptKeys::EXPORT_HOLDUP_MASS               , EEntryType::EXPORT_HOLDUP)      ,
+		MAKE_SED(EScriptKeys::EXPORT_HOLDUP_TEMPERATURE        , EEntryType::EXPORT_HOLDUP)      ,
+		MAKE_SED(EScriptKeys::EXPORT_HOLDUP_PRESSURE           , EEntryType::EXPORT_HOLDUP)      ,
+		MAKE_SED(EScriptKeys::EXPORT_HOLDUP_OVERALLS           , EEntryType::EXPORT_HOLDUP)      ,
+		MAKE_SED(EScriptKeys::EXPORT_HOLDUP_PHASES_FRACTIONS   , EEntryType::EXPORT_HOLDUP)      ,
+		MAKE_SED(EScriptKeys::EXPORT_HOLDUP_COMPOUNDS_FRACTIONS, EEntryType::EXPORT_HOLDUP)      ,
+		MAKE_SED(EScriptKeys::EXPORT_HOLDUP_PSD                , EEntryType::EXPORT_HOLDUP)      ,
+		MAKE_SED(EScriptKeys::EXPORT_HOLDUP_DISTRIBUTIONS      , EEntryType::EXPORT_HOLDUP)      ,
+		MAKE_SED(EScriptKeys::EXPORT_UNIT_STATE_VARIABLE       , EEntryType::EXPORT_STATE_VAR)   ,
+		MAKE_SED(EScriptKeys::EXPORT_UNIT_PLOT                 , EEntryType::EXPORT_PLOT)        ,
+		MAKE_SED(EScriptKeys::EXPORT_FLOWSHEET_GRAPH           , EEntryType::PATH)               ,
 	};
 
 	// Returns a vector of string representations all possible script keys.

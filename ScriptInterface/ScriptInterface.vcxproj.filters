@@ -44,7 +44,7 @@
     <ClInclude Include="ScriptParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ScriptDefines.h">
+    <ClInclude Include="ScriptKeys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ScriptRunner.h">

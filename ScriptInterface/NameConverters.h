@@ -1,11 +1,14 @@
 /* Copyright (c) 2021, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
-#include "ContainerFunctions.h"
+#include "DyssolDefines.h"
+#include <vector>
+#include <string>
 #include <map>
+#include <algorithm>
 
 /*
- * Helper functions to convert named values to their enumerations/keys.
+ * Helper functions for mapping enum values and their string representations.
  */
 namespace
 {
@@ -106,7 +109,7 @@ namespace
 	template<typename T> T Name2Enum(const std::string& _s)
 	{
 		for (const auto& p : SEnumStrings<T>().data)
-			if (VectorContains(p.second, _s))
+			if (std::find(p.second.begin(), p.second.end(), _s) != p.second.end())
 				return p.first;
 		return static_cast<T>(-1);
 	}
@@ -114,7 +117,7 @@ namespace
 	// Converts enum to string.
 	template<typename T> std::string Enum2Name(T _e)
 	{
-		if (!MapContainsKey(SEnumStrings<T>().data, _e)) return {};
+		if (SEnumStrings<T>().data.find(_e) == SEnumStrings<T>().data.end()) return {};
 		return SEnumStrings<T>().data[_e].front();
 	}
 }

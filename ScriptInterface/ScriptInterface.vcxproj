@@ -134,7 +134,7 @@
   <ItemGroup>
     <ClInclude Include="ArgumentsParser.h" />
     <ClInclude Include="NameConverters.h" />
-    <ClInclude Include="ScriptDefines.h" />
+    <ClInclude Include="ScriptKeys.h" />
     <ClInclude Include="ScriptExporter.h" />
     <ClInclude Include="ScriptJob.h" />
     <ClInclude Include="ScriptParser.h" />

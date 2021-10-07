@@ -3,8 +3,6 @@
 #include "Dyssol.h"
 #include "StatusWindow.h"
 #include "AboutWindow.h"
-#include "Stream.h"
-#include "ConfigFileParser.h"
 #include "ScriptExporter.h"
 #include "FileSystem.h"
 #include "DyssolStringConstants.h"
@@ -148,7 +146,7 @@ void Dyssol::InitializeConnections() const
 	connect(ui.actionOpenFlowsheet,   &QAction::triggered, this, &Dyssol::OpenFlowsheet);
 	connect(ui.actionSaveFlowsheet,   &QAction::triggered, this, &Dyssol::SaveFlowsheet);
 	connect(ui.actionSaveFlowsheetAs, &QAction::triggered, this, &Dyssol::SaveFlowsheetAs);
-	connect(ui.actionSaveConfig,      &QAction::triggered, this, &Dyssol::SaveConfigFile);
+	connect(ui.actionSaveScript,      &QAction::triggered, this, &Dyssol::SaveScriptFile);
 	connect(ui.actionSaveGraph,       &QAction::triggered, this, &Dyssol::SaveGraphFile);
 	connect(ui.actionAbout,           &QAction::triggered, this, &Dyssol::ShowAboutDialog);
 
@@ -579,22 +577,20 @@ void Dyssol::SaveFlowsheetAs()
 	SaveToFile(sFileName);
 }
 
-void Dyssol::SaveConfigFile()
+void Dyssol::SaveScriptFile()
 {
 	const QString filePath = QString::fromStdWString(CH5Handler::DisplayFileName(std::filesystem::path{ m_sCurrFlowsheetFile.toStdWString() }).wstring());
 	const QString txtFileName = QFileInfo(filePath).absolutePath() + "/" + QFileInfo(filePath).baseName() + ".txt";
 	const QString sFileName = QFileDialog::getSaveFileName(this, StrConst::Dyssol_DialogSaveConfigName, txtFileName, StrConst::Dyssol_DialogTxtFilter);
 	QApplication::setOverrideCursor(Qt::WaitCursor);
-	CScriptExporter exporter(m_Flowsheet, m_ModelsManager, m_MaterialsDatabase);
-	exporter.Export(sFileName.toStdString(), m_sCurrFlowsheetFile.toStdString());
-	//CConfigFileParser::SaveConfigFile(sFileName.toStdWString(), m_sCurrFlowsheetFile.toStdWString(), m_Flowsheet, m_ModelsManager, m_MaterialsDatabase);
+	ScriptInterface::ExportScript(sFileName.toStdWString(), m_sCurrFlowsheetFile.toStdWString(), m_Flowsheet, m_ModelsManager, m_MaterialsDatabase);
 	QApplication::restoreOverrideCursor();
 }
 
 void Dyssol::SaveGraphFile()
 {
 	const QString filePath = QString::fromStdWString(CH5Handler::DisplayFileName(std::filesystem::path{ m_sCurrFlowsheetFile.toStdWString() }).wstring());
-	const QString outFileName = QFileInfo(filePath).absolutePath() + "/" + QFileInfo(filePath).baseName() + ".gv";
+	const QString outFileName = QFileInfo(filePath).absolutePath() + "/" + QFileInfo(filePath).baseName() + ".dot";
 	const QString outFile = QFileDialog::getSaveFileName(this, StrConst::Dyssol_DialogSaveGraphName, outFileName, StrConst::Dyssol_DialogGraphFilter);
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	std::ofstream file(outFile.toStdString());
