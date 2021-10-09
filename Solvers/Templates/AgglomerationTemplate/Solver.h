@@ -7,9 +7,8 @@
 class CSolver : public CAgglomerationSolver
 {
 public:
-	~CSolver();
 	void CreateBasicInfo() override;
-	void Initialize(const std::vector<double>& _vGrid, double _beta0, EKernels _kernel, size_t _rank, const std::vector<double>& vParams) override;
-	bool Calculate(const std::vector<double>& _vN, std::vector<double>& _vBRate, std::vector<double>& _vDRate) override;
+	void Initialize() override;
+	void Calculate(const d_vect_t& _n, d_vect_t& _rateB, d_vect_t& _rateD) override;
 	void Finalize() override;
 };

@@ -3,21 +3,19 @@
 #pragma once
 
 #include "AgglomerationSolver.h"
-#include "DyssolDefines.h"
 #include "ThreadPool.h"
-#include <cmath>
 
 class CAgglomerationCellAverage : public CAgglomerationSolver
 {
-	size_t n;	// number of intervals
-	std::vector<std::vector<double>> kern;
+	size_t n{};								// Number of size-intervals.
+	std::vector<std::vector<double>> beta;	// Precalculated kernel.
 
 public:
 	void CreateBasicInfo() override;
-	void Initialize(const std::vector<double>& _vGrid, double _beta0, EKernels _kernel, size_t _rank, const std::vector<double>& vParams) override;
-	bool Calculate(const std::vector<double>& _vN, std::vector<double>& _vBRate, std::vector<double>& _vDRate) override;
+	void Initialize() override;
+	void Calculate(const d_vect_t& _n, d_vect_t& _rateB, d_vect_t& _rateD) override;
 
 private:
-	void ApplyCellAverage(const std::vector<double>& _f, std::vector<double>& _BRate, std::vector<double>& _DRate);
-	static double Heavyside(double v);
+	void ApplyCellAverage(const d_vect_t& _f, d_vect_t& _rateB, d_vect_t& _rateD);
+	static double Heavyside(double _v);
 };

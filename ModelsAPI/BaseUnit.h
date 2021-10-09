@@ -116,13 +116,13 @@ public:
 	std::string GetUniqueID() const;
 
 	// TODO: rename to SetModelName() and add an alias to SetUnitName().
-	// Returns the name of the unit.
+	// Sets the name of the unit.
 	void SetUnitName(const std::string& _name);
-	// Returns the name of unit's author.
+	// Sets the name of unit's author.
 	void SetAuthorName(const std::string& _author);
-	// Returns the version of the unit.
+	// Sets the version of the unit.
 	void SetVersion(size_t _version);
-	// Returns the unique identifier of the unit.
+	// Sets the unique identifier of the unit.
 	void SetUniqueID(const std::string& _id);
 
 	////////////////////////////////////////////////////////////////////////////////

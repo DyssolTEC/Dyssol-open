@@ -3,25 +3,20 @@
 #pragma once
 
 #include "AgglomerationSolver.h"
-#include "DyssolDefines.h"
 #include "ThreadPool.h"
-
-#include <cmath>
-#include <iostream>
-#include <fstream>
 
 class CAgglomerationFixedPivot : public CAgglomerationSolver
 {
-	size_t n{};	// number of intervals
-	std::vector<std::vector<double>> m_kern;
-	std::vector<std::vector<size_t>> m_target;
-	std::vector<double> m_pivotPoints;
+	size_t n{};				// Number of size-intervals.
+	d_matr_t beta;			// Precalculated kernel.
+	u_matr_t target;
+	d_vect_t pivotPoints;
 
 public:
 	void CreateBasicInfo() override;
-	void Initialize(const std::vector<double>& _vGrid, double _beta0, EKernels _kernel, size_t _rank, const std::vector<double>& vParams) override;
-	bool Calculate(const std::vector<double>& _vN, std::vector<double>& _vBRate, std::vector<double>& _vDRate) override;
+	void Initialize() override;
+	void Calculate(const d_vect_t& _n, d_vect_t& _rateB, d_vect_t& _rateD) override;
 
 private:
-	void ApplyFixedPivot(const std::vector<double>& _f, std::vector<double>& _BRate, std::vector<double>& _DRate);
+	void ApplyFixedPivot(const d_vect_t& _f, d_vect_t& _rateB, d_vect_t& _rateD);
 };

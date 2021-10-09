@@ -1283,8 +1283,6 @@ void CBaseUnit::DoInitializeUnit()
 	for (auto& param : m_unitParameters.GetAllReactionParameters())
 		for (auto& reaction : param->GetReactionsPtr())
 			reaction->Initialize(*m_materialsDB);
-	for (auto& param : m_unitParameters.GetAllSolverParameters())
-		param->GetSolver()->Initialize();
 	Initialize(0.0);
 	m_streams.PostInitialize();
 	DoSaveStateUnit(0.0, std::numeric_limits<double>::max());
