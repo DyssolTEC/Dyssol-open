@@ -3,6 +3,7 @@
 #define DLL_EXPORT
 #include "AgglomerationCellAverage.h"
 #include "DyssolDefines.h"
+#include <cmath>
 
 extern "C" DECLDIR CAgglomerationSolver* CREATE_SOLVER_FUN_AGG1()
 {
