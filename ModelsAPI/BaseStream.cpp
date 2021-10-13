@@ -1685,6 +1685,14 @@ CBaseStream::mix_type CBaseStream::CalculateMix(double _time1, const CBaseStream
 		mixDistr[key] = CalculateMixDistribution(_time1, _stream1, _mass1, _time2, _stream2, _mass2, key);
 	}
 
+	// normalize fractions
+	double sum = 0.0;
+	for (const auto& [key, param] : _stream1.m_phases)
+		sum += mixPhaseFrac[key];
+	if (sum != 0.0 && sum != 1.0)
+		for (const auto& [key, param] : _stream1.m_phases)
+			mixPhaseFrac[key] /= sum;
+
 	return { mixOverall, mixPhaseFrac, mixDistr };
 }
 
