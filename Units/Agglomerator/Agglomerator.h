@@ -12,8 +12,6 @@ public:
 	/// Indexes of state variables for solver ///
 	size_t m_iq0{};		// PSD
 
-	std::vector<double> m_BRate, m_DRate; // Variables to store current birth- and death-rate
-
 public:
 	void CalculateResiduals(double _time, double* _vars, double* _ders, double* _res, void* _unit) override;
 	void ResultsHandler(double _time, double* _vars, double* _ders, void* _unit) override;
