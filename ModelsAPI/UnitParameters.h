@@ -99,9 +99,6 @@ public:
 
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
 	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
-
-private:
-	EUnitParameter DeduceType() const;				///< Deduces type of the unit parameter depending on the template argument.
 };
 
 using CConstRealUnitParameter = CConstUnitParameter<double>;
@@ -155,10 +152,6 @@ public:
 
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
 	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
-
-private:
-	// Deduces type of the unit parameter depending on the template argument.
-	[[nodiscard]] EUnitParameter DeduceType() const;
 };
 
 using CListRealUnitParameter = CListUnitParameter<double>;
