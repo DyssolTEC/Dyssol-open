@@ -605,11 +605,12 @@ void CQtTable::Paste()
 		if (nColumnMax > columnCount() - nFirstColumn)
 			nColumnMax = columnCount() - nFirstColumn;
 		for (int j = 0; j < nColumnMax; ++j)
-			if (item(i, j) && item(i, j)->flags().testFlag(Qt::ItemIsEditable))
+			if (item(i, j + nFirstColumn) && item(i, j + nFirstColumn)->flags().testFlag(Qt::ItemIsEditable))
 				item(i + nFirstRow, j + nFirstColumn)->setText(QString::number(columns[j].toDouble()));
 	}
 
 	blockSignals(bOldBlock);
 
+	emit DataPasted();
 	emit cellChanged(nRowMax - 1 + nFirstRow, rows[nRowMax - 1].split(QRegExp("[\t ]")).count() - 1 + nFirstColumn);
 }

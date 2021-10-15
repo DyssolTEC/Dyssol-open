@@ -61,6 +61,7 @@ private:
 	void RemoveTimePoint();
 	void RemoveAllTimePoints();
 	void ChangeTimePoint();
+	void TimePointsPasted();
 
 	void TableTimeChanged(int _nRow, int _nCol, int _nPrevRow, int _nPrevCol);
 
