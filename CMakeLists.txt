@@ -123,13 +123,15 @@ FOREACH(test ${TESTS})
           COMMAND ${CMAKE_BINDIR}/DyssolC ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/script.txt
   )
 
-  FILE(READ ${CMAKE_SOURCE_DIR}/tests/${CURRENT_TEST}/tolerance TOLERANCE)
-
-  ADD_TEST(NAME ${CURRENT_TEST}_diff
-          COMMAND python3 ${CMAKE_SOURCE_DIR}/tests/compare.py "${CMAKE_SOURCE_DIR}/tests/${CURRENT_TEST}/ideal.res" "${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res" -t ${TOLERANCE}
-  )
-  # _diff tetst can only be run when the _run test is done
-  SET_TESTS_PROPERTIES(${CURRENT_TEST}_diff PROPERTIES DEPENDS ${CURRENT_TEST}_run)
+  IF(NOT CMAKE_BUILD_TYPE MATCHES Debug)
+    FILE(READ ${CMAKE_SOURCE_DIR}/tests/${CURRENT_TEST}/tolerance TOLERANCE)
+    
+    ADD_TEST(NAME ${CURRENT_TEST}_diff
+            COMMAND python3 ${CMAKE_SOURCE_DIR}/tests/compare.py "${CMAKE_SOURCE_DIR}/tests/${CURRENT_TEST}/ideal.res" "${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res" -t ${TOLERANCE}
+    )
+    # _diff tests can only be run when the _run test is done
+    SET_TESTS_PROPERTIES(${CURRENT_TEST}_diff PROPERTIES DEPENDS ${CURRENT_TEST}_run)
+  ENDIF(NOT CMAKE_BUILD_TYPE MATCHES Debug)
 
 ENDFOREACH(test ${TESTS})
 
