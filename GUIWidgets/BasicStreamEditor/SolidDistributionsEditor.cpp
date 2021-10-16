@@ -28,7 +28,9 @@ CSolidDistributionsEditor::CSolidDistributionsEditor(QWidget* parent) : QWidget(
 	connect(ui.pushButtonApply,					&QPushButton::clicked,	this, &CSolidDistributionsEditor::ApplyPressed);
 	connect(ui.pushButtonFunctional,			&QPushButton::clicked,	this, &CSolidDistributionsEditor::FunctionalCalled);
 	connect(ui.tableWidgetCompoundsFractions,	&CQtTable::itemChanged, this, &CSolidDistributionsEditor::CompoundFractionChanged);
+	connect(ui.tableWidgetCompoundsFractions,	&CQtTable::DataPasted,  this, &CSolidDistributionsEditor::CompoundFractionsPasted);
 	connect(ui.tableWidget,						&CQtTable::itemChanged, this, &CSolidDistributionsEditor::TableItemChanged);
+	connect(ui.tableWidget,						&CQtTable::DataPasted,  this, &CSolidDistributionsEditor::TableItemChanged);
 
 	ui.listWidget->setVisible(false);
 	ui.frameAllElements->setEnabled(false);
@@ -563,6 +565,19 @@ void CSolidDistributionsEditor::CompoundFractionChanged(QTableWidgetItem* _pItem
 
 	UpdateWholeView();
 
+	emit DataChanged();
+}
+
+void CSolidDistributionsEditor::CompoundFractionsPasted()
+{
+	for (int i = 0; i < ui.tableWidgetCompoundsFractions->columnCount(); ++i)
+	{
+		double dVal = ui.tableWidgetCompoundsFractions->item(0, i)->text().toDouble();
+		if (dVal < 0) dVal = 0;
+		m_pDistribution->SetValue(static_cast<unsigned>(m_iCurrTime), DISTR_COMPOUNDS, static_cast<unsigned>(i), dVal);
+	}
+
+	UpdateWholeView();
 	emit DataChanged();
 }
 

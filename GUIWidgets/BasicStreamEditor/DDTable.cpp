@@ -16,6 +16,7 @@ CDDTable::CDDTable( QWidget *parent, Qt::WindowFlags flags ) : QWidget(parent, f
 	m_pTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
 	QObject::connect( m_pTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(ItemWasChanged(QTableWidgetItem*)) );
+	connect(m_pTable, &CQtTable::DataPasted, this, &CDDTable::DataPasted);
 }
 
 CDDTable::~CDDTable()
@@ -101,10 +102,9 @@ void CDDTable::UpdateWholeView()
 		std::vector<double> vTemp;
 		for (size_t j = 0; j < m_pData.size(); ++j)
 			vTemp.push_back(data[j][1][iRow]);
-		m_pTable->setItem(iRow, 0, new QTableWidgetItem(QString::number(data.front()[0][iRow])));
-		m_pTable->item( iRow, 0 )->setFlags( m_pTable->item( iRow, 0 )->flags() & ~Qt::ItemIsEditable );
-		for( unsigned i=0; i<vTemp.size(); ++i )
-			m_pTable->setItem( iRow, i+1, new QTableWidgetItem( QString::number( vTemp[i] ) ));
+		m_pTable->SetItemNotEditable(iRow, 0, data.front()[0][iRow]);
+		for (unsigned i = 0; i < vTemp.size(); ++i)
+			m_pTable->SetItemEditable(iRow, i + 1, vTemp[i]);
 	}
 	while( m_pTable->rowCount() > (int)m_pData.front()->GetTimePointsNumber())
 		m_pTable->removeRow( m_pTable->rowCount()-1 );
@@ -135,5 +135,22 @@ void CDDTable::ItemWasChanged( QTableWidgetItem* _pItem )
 
 	UpdateWholeView();
 
+	emit DataChanged();
+}
+
+void CDDTable::DataPasted()
+{
+	if (m_bAvoidSignal) return;
+
+	for (int i = 0; i < m_pTable->rowCount(); ++i)
+		for (int j = 1; j < m_pTable->columnCount(); ++j)
+		{
+			const double time = m_pTable->item(i, 0)->text().toDouble();
+			const int iDim = j - 1;
+			const double val = m_pTable->item(i, j)->text().toDouble();
+			m_pData[iDim]->SetValue(time, val);
+		}
+
+	UpdateWholeView();
 	emit DataChanged();
 }
