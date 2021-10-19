@@ -6,6 +6,7 @@
 #include <sunmatrix/sunmatrix_dense.h>
 #include <nvector/nvector_serial.h>
 #include "DyssolUtilities.h"
+#include <cstring>
 
 #ifdef _MSC_VER
 #else
