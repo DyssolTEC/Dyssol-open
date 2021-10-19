@@ -2,10 +2,10 @@
 
 #include "NLSolver.h"
 #include <kinsol/kinsol.h>
-#include <kinsol/kinsol_ls_impl.h>
-#include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
-#include <cstring>
+#include <sunmatrix/sunmatrix_dense.h>
+#include <nvector/nvector_serial.h>
+#include "DyssolUtilities.h"
 
 #ifdef _MSC_VER
 #else
@@ -185,11 +185,11 @@ bool CNLSolver::SetModel(CNLModel* _pModel)
 		return false;
 
 	/* Create dense SUNMatrix for use in linear solves */
-	SUNMatrix A = SUNDenseMatrix(nVarsCnt, nVarsCnt);
+	m_A = SUNDenseMatrix(nVarsCnt, nVarsCnt);
 	/* Create dense SUNMatrix for use in linear solves */
-	SUNLinearSolver LS = SUNDenseLinearSolver(m_vectorVars, A);
+	m_LS = SUNDenseLinearSolver(m_vectorVars, m_A);
 	/* Attach the matrix and linear solver */
-	if (KINSetLinearSolver(m_pKINmem, LS, A) != KINLS_SUCCESS)
+	if (KINSetLinearSolver(m_pKINmem, m_LS, m_A) != KINLS_SUCCESS)
 		return false;
 
 	SaveState();
@@ -238,9 +238,8 @@ void CNLSolver::ClearMemory()
 {
 	m_sErrorDescription.clear();
 	// free memory associates with the KINDls system solver interface.
-	auto* originMem = static_cast<KINMemRec*>(m_pKINmem);
-	if (originMem)
-		SUNLinSolFree(((KINLsMemRec*)originMem->kin_lmem)->LS);
+	SUNMatDestroy(m_A);
+	SUNLinSolFree(m_LS);
 
 	// free KIN memory
 	if (m_pKINmem)			{ KINFree(&m_pKINmem);					m_pKINmem = nullptr; }
