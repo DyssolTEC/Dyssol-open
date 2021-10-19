@@ -102,6 +102,17 @@ CUnitPort* CPortsManager::GetPort(const std::string& _name)
 	return const_cast<CUnitPort*>(const_cast<const CPortsManager&>(*this).GetPort(_name));
 }
 
+const CUnitPort* CPortsManager::GetPort(size_t _index) const
+{
+	if (_index >= m_ports.size()) return {};
+	return m_ports[_index].get();
+}
+
+CUnitPort* CPortsManager::GetPort(size_t _index)
+{
+	return const_cast<CUnitPort*>(const_cast<const CPortsManager&>(*this).GetPort(_index));
+}
+
 std::vector<CUnitPort*> CPortsManager::GetAllPorts()
 {
 	std::vector<CUnitPort*> res;

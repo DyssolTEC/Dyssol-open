@@ -65,5 +65,3 @@
 #define MACRO_CONCAT_L2(X,Y) X ## Y
 #define MACRO_TOSTRING(X) MACRO_TOSTRING_L2(X)
 #define MACRO_TOSTRING_L2(X) #X
-
-#define TO_ARG_STR(X) std::string(MACRO_TOSTRING(X)).substr(12, std::string(MACRO_TOSTRING(X)).length()).append(12 + 30 - std::string(MACRO_TOSTRING(X)).length(), ' ')

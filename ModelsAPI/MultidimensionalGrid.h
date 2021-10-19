@@ -192,6 +192,9 @@ public:
 	// Returns symbolic grid dimension by its type. Returns nullptr if such dimension does not exist.
 	[[nodiscard]] CGridDimensionSymbolic* GetGridDimensionSymbolic(EDistrTypes _type);
 
+	// Removes the specified dimension form the grid.
+	void RemoveDimension(EDistrTypes _type);
+
 	// Returns all defined grid dimensions.
 	[[nodiscard]] std::vector<const CGridDimension*> GetGridDimensions() const;
 	// Returns all defined grid dimensions.

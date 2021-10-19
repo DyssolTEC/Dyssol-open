@@ -129,6 +129,10 @@ public:
 	// Adds several curves with the specified Z values to the plot. If any curve with the given Z value already exists, does nothing, and returns empty vector.
 	std::vector<CCurve*> AddCurves(const std::vector<double>& _z);
 
+	// Returns a curve with the specified index.
+	const CCurve* GetCurve(size_t _index) const;
+	// Returns a curve with the specified index.
+	CCurve* GetCurve(size_t _index);
 	// Returns a curve with the specified name.
 	const CCurve* GetCurve(const std::string& _name) const;
 	// Returns a curve with the specified name.
@@ -186,6 +190,10 @@ public:
 	CPlot* AddPlot(const std::string& _name, const std::string& _labelX, const std::string& _labelY);
 	// Adds a new 3D plot with the specified name and axes labels. If a plot with the given name already exists, does nothing, and returns nullptr.
 	CPlot* AddPlot(const std::string& _name, const std::string& _labelX, const std::string& _labelY, const std::string& _labelZ);
+	// Returns a 2D plot with the specified index.
+	const CPlot* GetPlot(size_t _index) const;
+	// Returns a 2D plot with the specified index.
+	CPlot* GetPlot(size_t _index);
 	// Returns a 2D plot with the specified name.
 	const CPlot* GetPlot(const std::string& _name) const;
 	// Returns a 2D plot with the specified name.

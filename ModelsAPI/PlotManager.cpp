@@ -297,6 +297,17 @@ std::vector<CCurve*> CPlot::AddCurves(const std::vector<double>& _z)
 	return res;
 }
 
+const CCurve* CPlot::GetCurve(size_t _index) const
+{
+	if (_index >= m_curves.size()) return {};
+	return m_curves[_index].get();
+}
+
+CCurve* CPlot::GetCurve(size_t _index)
+{
+	return const_cast<CCurve*>(static_cast<const CPlot&>(*this).GetCurve(_index));
+}
+
 const CCurve* CPlot::GetCurve(const std::string& _name) const
 {
 	for (const auto& curve : m_curves)
@@ -455,6 +466,17 @@ CPlot* CPlotManager::AddPlot(const std::string& _name, const std::string& _label
 	if (GetPlot(_name)) return nullptr;
 	m_plots.emplace_back(new CPlot{ _name, _labelX, _labelY, _labelZ });
 	return m_plots.back().get();
+}
+
+const CPlot* CPlotManager::GetPlot(size_t _index) const
+{
+	if (_index >= m_plots.size()) return {};
+	return m_plots[_index].get();
+}
+
+CPlot* CPlotManager::GetPlot(size_t _index)
+{
+	return const_cast<CPlot*>(static_cast<const CPlotManager&>(*this).GetPlot(_index));
 }
 
 const CPlot* CPlotManager::GetPlot(const std::string& _name) const

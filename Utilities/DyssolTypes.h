@@ -26,6 +26,7 @@ struct SInterval
 	[[nodiscard]] bool Includes(double _d) const { return _d >= min && _d <= max; }
 };
 
+// TODO: remove
 enum class EArguments
 {
 	SOURCE_FILE,
@@ -87,6 +88,7 @@ struct SPhaseDescriptor
 {
 	EPhase state;		// Phase state.
 	std::string name;	// Phase name.
+	bool operator==(const SPhaseDescriptor& _other) const { return state == _other.state && name == _other.name; }
 };
 
 struct SOverallDescriptor

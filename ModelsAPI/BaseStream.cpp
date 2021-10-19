@@ -439,6 +439,7 @@ void CBaseStream::SetCompoundFraction(double _time, const std::string& _compound
 
 void CBaseStream::SetCompoundsFractions(double _time, const std::vector<double>& _value)
 {
+	AddTimePoint(_time);
 	for (const auto& [state, phase] : m_phases)
 		phase->SetCompoundsDistribution(_time, _value);
 }
@@ -447,6 +448,7 @@ void CBaseStream::SetCompoundsFractions(double _time, EPhase _phase, const std::
 {
 	if (!HasPhase(_phase)) return;
 
+	AddTimePoint(_time);
 	m_phases[_phase]->SetCompoundsDistribution(_time, _value);
 }
 

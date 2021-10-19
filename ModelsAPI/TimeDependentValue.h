@@ -11,6 +11,7 @@ class CTimeDependentValue
 
 	static const uint16_t m_saveVersion{ 0 }; // Version of the saving procedure.
 
+	// TODO: use CDependentValues instead
 	std::vector<STDValue> m_data; // Time-dependent data.
 
 	std::string m_name;

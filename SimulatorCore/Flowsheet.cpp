@@ -100,6 +100,17 @@ void CFlowsheet::ShiftUnit(const std::string& _key, EDirection _direction)
 	SetTopologyModified(true);
 }
 
+const CUnitContainer* CFlowsheet::GetUnit(size_t _index) const
+{
+	if (_index >= m_units.size()) return nullptr;
+	return m_units[_index].get();
+}
+
+CUnitContainer* CFlowsheet::GetUnit(size_t _index)
+{
+	return const_cast<CUnitContainer*>(static_cast<const CFlowsheet&>(*this).GetUnit(_index));
+}
+
 const CUnitContainer* CFlowsheet::GetUnit(const std::string& _key) const
 {
 	for (const auto& unit : m_units)
@@ -111,6 +122,19 @@ const CUnitContainer* CFlowsheet::GetUnit(const std::string& _key) const
 CUnitContainer* CFlowsheet::GetUnit(const std::string& _key)
 {
 	return const_cast<CUnitContainer*>(static_cast<const CFlowsheet&>(*this).GetUnit(_key));
+}
+
+const CUnitContainer* CFlowsheet::GetUnitByName(const std::string& _name) const
+{
+	for (const auto& unit : m_units)
+		if (unit->GetName() == _name)
+			return unit.get();
+	return nullptr;
+}
+
+CUnitContainer* CFlowsheet::GetUnitByName(const std::string& _name)
+{
+	return const_cast<CUnitContainer*>(static_cast<const CFlowsheet&>(*this).GetUnitByName(_name));
 }
 
 std::vector<const CUnitContainer*> CFlowsheet::GetAllUnits() const
@@ -133,10 +157,10 @@ void CFlowsheet::PrepareInputStreams(const CUnitContainer* _unit, double _timeBe
 {
 	for (const auto& port : _unit->GetModel()->GetPortsManager().GetAllInputPorts())
 	{
-		auto streamI = DoGetStream(port->GetStreamKey(), m_streamsI);
-		auto streamO = DoGetStream(port->GetStreamKey(), m_streams);
+		auto* streamI = DoGetStream(port->GetStreamKey(), m_streamsI);
+		auto* streamO = DoGetStream(port->GetStreamKey(), m_streams);
 		if (streamI != streamO)
-			streamI->CopyFromStream(_timeBeg, _timeEnd, streamO.get());
+			streamI->CopyFromStream(_timeBeg, _timeEnd, streamO);
 	}
 }
 
@@ -173,14 +197,38 @@ void CFlowsheet::ShiftStream(const std::string& _key, EDirection _direction)
 	SetTopologyModified(true);
 }
 
+const CStream* CFlowsheet::GetStream(size_t _index) const
+{
+	if (_index >= m_streams.size()) return nullptr;
+	return m_streams[_index].get();
+}
+
+CStream* CFlowsheet::GetStream(size_t _index)
+{
+	return const_cast<CStream*>(static_cast<const CFlowsheet&>(*this).GetStream(_index));
+}
+
 const CStream* CFlowsheet::GetStream(const std::string& _key) const
 {
-	return DoGetStream(_key, m_streams).get();
+	return DoGetStream(_key, m_streams);
 }
 
 CStream* CFlowsheet::GetStream(const std::string& _key)
 {
 	return const_cast<CStream*>(static_cast<const CFlowsheet&>(*this).GetStream(_key));
+}
+
+const CStream* CFlowsheet::GetStreamByName(const std::string& _name) const
+{
+	for (const auto& stream : m_streams)
+		if (stream->GetName() == _name)
+			return stream.get();
+	return nullptr;
+}
+
+CStream* CFlowsheet::GetStreamByName(const std::string& _name)
+{
+	return const_cast<CStream*>(static_cast<const CFlowsheet&>(*this).GetStreamByName(_name));
 }
 
 std::vector<const CStream*> CFlowsheet::GetAllStreams() const
@@ -357,6 +405,18 @@ void CFlowsheet::RemoveCompound(const std::string& _key)
 	m_calculationSequence.UpdateInitialStreams();
 }
 
+void CFlowsheet::SetCompounds(const std::vector<std::string>& _keys)
+{
+	if (GetCompounds() == _keys) return;
+	// TODO: do not clean, just add/remove required and sort properly
+	// remove all current compounds
+	for (const auto& c : GetCompounds())
+		RemoveCompound(c);
+	// add new compounds
+	for (const auto& c : _keys)
+		AddCompound(c);
+}
+
 std::vector<std::string> CFlowsheet::GetCompounds() const
 {
 	return m_mainGrid.GetSymbolicGrid(DISTR_COMPOUNDS);
@@ -370,7 +430,7 @@ size_t CFlowsheet::GetOverallPropertiesNumber() const
 void CFlowsheet::AddOverallProperty(EOverall _property, const std::string& _name, const std::string& _units)
 {
 	// check if already exists
-	if (VectorContains(m_overall, [&](const auto& o) { return o.type == _property; })) return;
+	if (HasOverallProperty(_property)) return;
 
 	// add to the list of overall properties
 	m_overall.push_back({ _property, _name, _units });
@@ -391,7 +451,7 @@ void CFlowsheet::AddOverallProperty(EOverall _property, const std::string& _name
 void CFlowsheet::RemoveOverallProperty(EOverall _property)
 {
 	// check if exists
-	if (!VectorContains(m_overall, [&](const auto& o) { return o.type == _property; })) return;
+	if (!HasOverallProperty(_property)) return;
 
 	// remove from streams
 	for (auto& stream : m_streams)
@@ -412,6 +472,11 @@ void CFlowsheet::RemoveOverallProperty(EOverall _property)
 std::vector<SOverallDescriptor> CFlowsheet::GetOveralProperties() const
 {
 	return m_overall;
+}
+
+bool CFlowsheet::HasOverallProperty(EOverall _property) const
+{
+	return VectorContains(m_overall, [&](const auto& o) { return o.type == _property; });
 }
 
 size_t CFlowsheet::GetPhasesNumber() const
@@ -459,6 +524,18 @@ void CFlowsheet::RemovePhase(EPhase _phase)
 
 	// remove from the list of overall properties
 	VectorDelete(m_phases, [&](const auto& p) { return p.state == _phase; });
+}
+
+void CFlowsheet::SetPhases(const std::vector<SPhaseDescriptor>& _phases)
+{
+	if (GetPhases() == _phases) return;
+	// TODO: do not clean, just add/remove required and sort properly
+	// remove all current phases
+	for (const auto& p : GetPhases())
+		RemovePhase(p.state);
+	// add new phases
+	for (const auto& p : _phases)
+		AddPhase(p.state, p.name);
 }
 
 std::vector<SPhaseDescriptor> CFlowsheet::GetPhases() const
@@ -556,7 +633,7 @@ void CFlowsheet::SetStreamsToPorts()
 	// setup output streams with proper grids
 	for (const auto& unit : m_units)
 		for (const auto* port : unit->GetModel()->GetPortsManager().GetAllOutputPorts())
-			if (const auto str = DoGetStream(port->GetStreamKey(), m_streams))
+			if (auto* str = DoGetStream(port->GetStreamKey(), m_streams))
 				str->SetGrid(unit->GetModel()->GetGrid());
 
 	// create input streams with proper grids
@@ -575,11 +652,11 @@ void CFlowsheet::SetStreamsToPorts()
 	for (const auto& unit : m_units)
 	{
 		for (auto* port : unit->GetModel()->GetPortsManager().GetAllInputPorts())
-			if (const auto str = DoGetStream(port->GetStreamKey(), m_streamsI))
-				port->SetStream(str.get());
+			if (auto* str = DoGetStream(port->GetStreamKey(), m_streamsI))
+				port->SetStream(str);
 		for (auto* port : unit->GetModel()->GetPortsManager().GetAllOutputPorts())
-			if (const auto str = DoGetStream(port->GetStreamKey(), m_streams))
-				port->SetStream(str.get());
+			if (auto* str = DoGetStream(port->GetStreamKey(), m_streams))
+				port->SetStream(str);
 	}
 }
 
@@ -639,8 +716,8 @@ void CFlowsheet::UpdateGrids()
 	// update in connected streams
 	for (auto& unit : m_units)
 		if (unit->GetModel())
-			for (auto& port : unit->GetModel()->GetPortsManager().GetAllOutputPorts())
-				if (auto stream = DoGetStream(port->GetStreamKey(), m_streams))
+			for (const auto& port : unit->GetModel()->GetPortsManager().GetAllOutputPorts())
+				if (auto* stream = DoGetStream(port->GetStreamKey(), m_streams))
 				{
 					stream->SetGrid(unit->GetModel()->GetGrid());
 					updated.push_back(stream->GetKey());
@@ -704,7 +781,7 @@ CParametersHolder* CFlowsheet::GetParameters()
 	return &m_parameters;
 }
 
-bool CFlowsheet::SaveToFile(CH5Handler& _h5File, const std::wstring& _fileName)
+bool CFlowsheet::SaveToFile(CH5Handler& _h5File, const std::filesystem::path& _fileName)
 {
 	if (_fileName.empty()) return false;
 
@@ -764,7 +841,7 @@ bool CFlowsheet::SaveToFile(CH5Handler& _h5File, const std::wstring& _fileName)
 	return true;
 }
 
-bool CFlowsheet::LoadFromFile(CH5Handler& _h5File, const std::wstring& _fileName)
+bool CFlowsheet::LoadFromFile(CH5Handler& _h5File, const std::filesystem::path& _fileName)
 {
 	if (_fileName.empty()) return false;
 
@@ -909,11 +986,11 @@ bool CFlowsheet::LoadFromFile_v3(CH5Handler& _h5File, const std::string& _path)
 	return true;
 }
 
-std::shared_ptr<CStream> CFlowsheet::DoGetStream(const std::string& _key, const std::vector<std::shared_ptr<CStream>>& _streams)
+CStream* CFlowsheet::DoGetStream(const std::string& _key, const std::vector<std::shared_ptr<CStream>>& _streams)
 {
 	for (auto& stream : _streams)
 		if (stream->GetKey() == _key)
-			return stream;
+			return stream.get();
 	return nullptr;
 }
 

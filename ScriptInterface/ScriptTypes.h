@@ -1,0 +1,142 @@
+/* Copyright (c) 2021, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+
+/*
+ * All parsed types are described here.
+ * It is required to define
+ * friend std::istream& operator>>(std::istream&, T&)
+ * for each defined type.
+ */
+
+#pragma once
+#include <istream>
+#include <vector>
+
+namespace ScriptInterface
+{
+	// Help structure to work with entries that can be defined either by their name or by their index.
+	struct SNameOrIndex
+	{
+		std::string name{};	// Name of the entry. Either this or index must be set.
+		size_t index{};		// Index of the entry. Either this or name must be set.
+		friend std::istream& operator>>(std::istream& _s, SNameOrIndex& _obj);
+	};
+
+	// Help structure to work with entries that can be defined either by their name or by their numerical key.
+	struct SNameOrKey
+	{
+		std::string name{};	// Name of the entry. Either this or key must be set.
+		int64_t key{ -1 };	// Key of the entry. Either this or name must be set.
+		// Checks if the struct contains parsed key.
+		[[nodiscard]] bool HasKey() const { return key != -1; }
+		friend std::istream& operator>>(std::istream& _s, SNameOrKey& _obj);
+	};
+
+	// Struct to parse script entries (SE) with unit parameters.
+	struct SUnitParameterSE
+	{
+		SNameOrIndex unit{};	// Name or index of the unit container.
+		SNameOrIndex param{};	// Name or index of the parameter.
+		std::string values{};	// Value(s) of the unit parameter as a string for postponed parsing.
+		friend std::istream& operator>>(std::istream& _s, SUnitParameterSE& _obj);
+	};
+
+	// Struct to parse script entries (SE) with unit holdups' time-dependent parameters (overall, phases).
+	struct SHoldupDependentSE
+	{
+		SNameOrIndex unit{};		// Name or index of the unit container.
+		SNameOrIndex holdup{};		// Name or index of the holdup within the unit.
+		std::vector<double> values;	// Value(s) of the time-dependent parameters for postponed parsing.
+		friend std::istream& operator>>(std::istream& _s, SHoldupDependentSE& _obj);
+	};
+
+	// Struct to parse script entries (SE) with unit holdups' time-dependent compound fractions.
+	struct SHoldupCompoundsSE
+	{
+		SNameOrIndex unit{};			// Name or index of the unit container.
+		SNameOrIndex holdup{};			// Name or index of the holdup within the unit.
+		SNameOrKey phase{};				// Key and/or name of the phase.
+		std::vector<double> values{};	// Value(s) of the time-dependent compound fractions for postponed parsing.
+		friend std::istream& operator>>(std::istream& _s, SHoldupCompoundsSE& _obj);
+	};
+
+	// Struct to parse script entries (SE) with unit holdups' time-dependent distributed parameters of solids.
+	struct SHoldupDistributionSE
+	{
+		SNameOrIndex unit{};			// Name or index of the unit container.
+		SNameOrIndex holdup{};			// Name or index of the holdup within the unit.
+		SNameOrKey distrType{};			// Type of the distributed parameter (SIZE/PART_POROSITY/FORM_FACTOR/...).
+		std::string compound{};			// Name or key of the compound, or MIXTURE keyword.
+		SNameOrKey psdType{};			// Type of the PSD (MASS_FRACTION/NUMBER/Q0_DENSITY/Q0_CUMULATIVE/...).
+		SNameOrKey psdMeans{};			// Type of the mean values for PSD (DIAMETER/VOLUME).
+		SNameOrKey function{};			// Function to define distribution (MANUAL/NORMAL/RRSB/...).
+		std::vector<double> values{};	// Value(s) of the time-dependent distributed parameters for postponed parsing.
+		friend std::istream& operator>>(std::istream& _s, SHoldupDistributionSE& _obj);
+	};
+
+	// Struct to parse script entries (SE) with distribution grids.
+	struct SGridDimensionSE
+	{
+		SNameOrIndex unit{};					// Name or index of the unit container or GLOBAL keyword (index 0).
+		SNameOrKey distrType{};					// Type of the distributed parameter (SIZE/PART_POROSITY/FORM_FACTOR/...).
+		SNameOrKey entryType{};					// Type of grid entries (NUMERIC/SYMBOLIC).
+		SNameOrKey function{};					// Function to define the grid (MANUAL/EQUIDISTANT/GEOMETRIC_INC/...).
+		SNameOrKey psdMeans{};					// Type of the mean values for PSD (DIAMETER/VOLUME).
+		size_t classes{};						// Number of classes.
+		std::vector<double> valuesNum{};		// Values of grid boundaries of function parameters for numeric grid.
+		std::vector<std::string> valuesSym{};	// Value(s) of classes names for symbolic grid.
+		friend std::istream& operator>>(std::istream& _s, SGridDimensionSE& _obj);
+	};
+
+	// Struct to parse script entries (SE) with phase descriptors.
+	struct SPhasesSE
+	{
+		std::vector<std::string> names;	// Names of phases.
+		std::vector<SNameOrKey> types;	// Types of phases.
+		friend std::istream& operator>>(std::istream& _s, SPhasesSE& _obj);
+	};
+
+	// Struct to parse script entries (SE) with streams.
+	struct SStreamSE
+	{
+		std::string name{};		// Name of the stream.
+		SNameOrIndex unitO{};	// Name or index of the unit container, from which the stream starts.
+		SNameOrIndex portO{};	// Name or index of the model's port, from which the stream starts.
+		SNameOrIndex unitI{};	// Name or index of the unit container, where the stream ends.
+		SNameOrIndex portI{};	// Name or index of the model's port, where the stream ends.
+		friend std::istream& operator>>(std::istream& _s, SStreamSE& _obj);
+	};
+
+	// Struct to parse script entries (SE) with streams export.
+	struct SExportStreamSE
+	{
+		SNameOrIndex stream{};			// Name or index of the stream.
+		std::vector<double> times{};	// Time points to export.
+		friend std::istream& operator>>(std::istream& _s, SExportStreamSE& _obj);
+	};
+
+	// Struct to parse script entries (SE) with holdups export.
+	struct SExportHoldupSE
+	{
+		SNameOrIndex unit{};			// Name or index of the unit container.
+		SNameOrIndex holdup{};			// Name or index of the holdup within the unit.
+		std::vector<double> times{};	// Time points to export.
+		friend std::istream& operator>>(std::istream& _s, SExportHoldupSE& _obj);
+	};
+
+	// Struct to parse script entries (SE) with state variables export.
+	struct SExportStateVarSE
+	{
+		SNameOrIndex unit{};			// Name or index of the unit container.
+		SNameOrIndex variable{};		// Name or index of the state variable within the unit.
+		friend std::istream& operator>>(std::istream& _s, SExportStateVarSE& _obj);
+	};
+
+	// Struct to parse script entries (SE) with state variables export.
+	struct SExportPlotSE
+	{
+		SNameOrIndex unit{};			// Name or index of the unit container.
+		SNameOrIndex plot{};			// Name or index of the plot within the unit.
+		SNameOrIndex curve{};			// Name or index of the curve within the plot.
+		friend std::istream& operator>>(std::istream& _s, SExportPlotSE& _obj);
+	};
+}

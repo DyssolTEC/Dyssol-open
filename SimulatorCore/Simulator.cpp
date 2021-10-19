@@ -386,11 +386,11 @@ void CSimulator::ClearLogState()
 void CSimulator::ApplyExtrapolationMethod(const std::vector<CStream*>& _streams, double _t1, double _t2, double _tExtra) const
 {
 	if (_t2 >= m_pParams->endSimulationTime) return;
-	switch (static_cast<EExtrapMethod>(m_pParams->extrapolationMethod))
+	switch (static_cast<EExtrapolationMethod>(m_pParams->extrapolationMethod))
 	{
-	case EExtrapMethod::EM_LINEAR:	for (auto& str : _streams) str->Extrapolate(_tExtra, _t1, _t2);						break;
-	case EExtrapMethod::EM_SPLINE:	for (auto& str : _streams) str->Extrapolate(_tExtra, _t1, (_t2 + _t1) / 2, _t2);	break;
-	case EExtrapMethod::EM_NEAREST:	for (auto& str : _streams) str->Extrapolate(_tExtra, _t2);							break;
+	case EExtrapolationMethod::LINEAR:	for (auto& str : _streams) str->Extrapolate(_tExtra, _t1, _t2);						break;
+	case EExtrapolationMethod::SPLINE:	for (auto& str : _streams) str->Extrapolate(_tExtra, _t1, (_t2 + _t1) / 2, _t2);	break;
+	case EExtrapolationMethod::NEAREST:	for (auto& str : _streams) str->Extrapolate(_tExtra, _t2);							break;
 	}
 }
 
@@ -401,9 +401,9 @@ void CSimulator::SetupConvergenceMethod()
 
 void CSimulator::ApplyConvergenceMethod(const std::vector<CStream*>& _s3, std::vector<CStream*>& _s2, std::vector<CStream*>& _s1, double _t1, double _t2)
 {
-	if ((m_pParams->convergenceMethod == CM_DIRECT_SUBSTITUTION) && (m_pParams->relaxationParam == 1.))
+	if (static_cast<EConvergenceMethod>(m_pParams->convergenceMethod) == EConvergenceMethod::DIRECT_SUBSTITUTION && m_pParams->relaxationParam == 1.)
 		return;
-	if (m_pParams->convergenceMethod == CM_STEFFENSEN)
+	if (static_cast<EConvergenceMethod>(m_pParams->convergenceMethod) == EConvergenceMethod::STEFFENSEN)
 	{
 		m_bSteffensenTrigger = !m_bSteffensenTrigger;
 		if (m_bSteffensenTrigger)
@@ -452,17 +452,17 @@ CDenseMDMatrix CSimulator::PredictValues(const CDenseMDMatrix& _m3, const CDense
 
 void CSimulator::PredictValues(size_t _len, const double* _v3, const double* _v2, const double* _v1, double* _res) const
 {
-	switch (static_cast<EConvMethod>(m_pParams->convergenceMethod))
+	switch (static_cast<EConvergenceMethod>(m_pParams->convergenceMethod))
 	{
-	case CM_DIRECT_SUBSTITUTION:
+	case EConvergenceMethod::DIRECT_SUBSTITUTION:
 		for (size_t i = 0; i < _len; ++i)
 			_res[i] = PredictRelaxation(_v3[i], _v2[i]);
 		break;
-	case CM_WEGSTEIN:
+	case EConvergenceMethod::WEGSTEIN:
 		for (size_t i = 0; i < _len; ++i)
 			_res[i] = PredictWegstein(_v3[i], _v2[i], _v2[i], _v1[i]);
 		break;
-	case CM_STEFFENSEN:
+	case EConvergenceMethod::STEFFENSEN:
 		for (size_t i = 0; i < _len; ++i)
 			_res[i] = PredictSteffensen(_v3[i], _v2[i], _v1[i]);
 		break;

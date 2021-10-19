@@ -36,6 +36,7 @@ set(libdyssolnames
 	"MaterialsDatabase"
 	"ModelsAPI"
 	"Modules"
+	"ScriptInterface"
 	"SimulatorCore"
 	"Utilities"
 	"Modules/DustFormationTester"
@@ -120,7 +121,7 @@ FOREACH(test ${TESTS})
 
   ADD_TEST(NAME ${CURRENT_TEST}_run
           WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-          COMMAND ${CMAKE_BINDIR}/DyssolC ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/script.txt
+          COMMAND ${CMAKE_BINDIR}/DyssolC --script=${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/script.txt
   )
 
   IF(NOT CMAKE_BUILD_TYPE MATCHES Debug)

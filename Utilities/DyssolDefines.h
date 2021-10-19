@@ -39,19 +39,19 @@
 
 
 // ========== Convergence methods
-enum EConvMethod : uint32_t
+enum class EConvergenceMethod : uint32_t
 {
-	CM_DIRECT_SUBSTITUTION	= 0,
-	CM_WEGSTEIN				= 1,
-	CM_STEFFENSEN			= 2
+	DIRECT_SUBSTITUTION	= 0,
+	WEGSTEIN			= 1,
+	STEFFENSEN			= 2
 };
 
 // ========== Extrapolation methods
-enum class EExtrapMethod : uint32_t
+enum class EExtrapolationMethod : uint32_t
 {
-	EM_LINEAR	= 0,
-	EM_SPLINE	= 1,
-	EM_NEAREST	= 2
+	LINEAR	= 0,
+	SPLINE	= 1,
+	NEAREST	= 2
 };
 
 //======== SOLID DISTRIBUTIONS DATABASE [0; 50] ===============
@@ -137,6 +137,7 @@ enum class EDependencyTypes
 {
 	DEPENDENCE_UNKNOWN = 0,
 	DEPENDENCE_TEMP = 1,
+
 	DEPENDENCE_PRES = 2
 };
 

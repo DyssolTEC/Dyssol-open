@@ -404,7 +404,7 @@ void Dyssol::UpdateMenu()
 	const QStringList filesList = m_pSettings->value(StrConst::Dyssol_ConfigRecentParamName).toStringList();
 	for (int i = 0; i < filesList.size(); ++i)
 	{
-		const std::wstring cleanFileName = CH5Handler::DisplayFileName(filesList[i].toStdWString());
+		const std::wstring cleanFileName = CH5Handler::DisplayFileName(std::filesystem::path{ filesList[i].toStdWString() }).wstring();
 		const QString displayFileName = QFileInfo(QString::fromStdWString(cleanFileName)).fileName();
 		QString displayText = tr("&%1 %2").arg(i + 1).arg(displayFileName);
 		m_vRecentFilesActions[i]->setText(displayText);
@@ -434,7 +434,7 @@ void Dyssol::LoadFromFile(const QString& _sFileName) const
 {
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 
-	m_pLoadingWindow->SetFileName(QString::fromStdWString(CH5Handler::DisplayFileName(_sFileName.toStdWString())));
+	m_pLoadingWindow->SetFileName(QString::fromStdWString(CH5Handler::DisplayFileName(std::filesystem::path{ _sFileName.toStdWString() }).wstring()));
 	m_pLoadingWindow->show();
 	m_pLoadingWindow->raise();
 
@@ -451,7 +451,7 @@ void Dyssol::SetCurrFlowsheetFile(const QString& _fileName)
 	AddFileToRecentList(m_sCurrFlowsheetFile);
 	const QString sWinNamePrefix = QString(StrConst::Dyssol_MainWindowName);
 	if (!m_sCurrFlowsheetFile.isEmpty())
-		setWindowTitle(sWinNamePrefix + " - " + QString::fromStdWString(CH5Handler::DisplayFileName(m_sCurrFlowsheetFile.toStdWString())) + "[*]");
+		setWindowTitle(sWinNamePrefix + " - " + QString::fromStdWString(CH5Handler::DisplayFileName(m_sCurrFlowsheetFile.toStdWString()).wstring()) + "[*]");
 	else
 		setWindowTitle(sWinNamePrefix);
 	if (!m_sCurrFlowsheetFile.isEmpty())
@@ -595,7 +595,7 @@ void Dyssol::SaveFlowsheetAs()
 
 void Dyssol::SaveConfigFile()
 {
-	const QString filePath = QString::fromStdWString(CH5Handler::DisplayFileName(m_sCurrFlowsheetFile.toStdWString()));
+	const QString filePath = QString::fromStdWString(CH5Handler::DisplayFileName(std::filesystem::path{ m_sCurrFlowsheetFile.toStdWString() }).wstring());
 	const QString txtFileName = QFileInfo(filePath).absolutePath() + "/" + QFileInfo(filePath).baseName() + ".txt";
 	const QString sFileName = QFileDialog::getSaveFileName(this, StrConst::Dyssol_DialogSaveConfigName, txtFileName, StrConst::Dyssol_DialogTxtFilter);
 	QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -605,7 +605,7 @@ void Dyssol::SaveConfigFile()
 
 void Dyssol::SaveGraphFile()
 {
-	const QString filePath = QString::fromStdWString(CH5Handler::DisplayFileName(m_sCurrFlowsheetFile.toStdWString()));
+	const QString filePath = QString::fromStdWString(CH5Handler::DisplayFileName(std::filesystem::path{ m_sCurrFlowsheetFile.toStdWString() }).wstring());
 	const QString outFileName = QFileInfo(filePath).absolutePath() + "/" + QFileInfo(filePath).baseName() + ".gv";
 	const QString outFile = QFileDialog::getSaveFileName(this, StrConst::Dyssol_DialogSaveGraphName, outFileName, StrConst::Dyssol_DialogGraphFilter);
 	QApplication::setOverrideCursor(Qt::WaitCursor);

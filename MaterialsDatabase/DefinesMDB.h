@@ -16,7 +16,7 @@ namespace MDBDescriptors
 	const std::string SIGNATURE_STRING = "DyssolMaterialsDatabase";
 	const unsigned VERSION = 3;
 
-	const std::wstring DEFAULT_MDB_FILE_NAME = L"Materials.dmdb";
+	const std::string DEFAULT_MDB_FILE_NAME = "Materials.dmdb";
 
 	const double TEMP_MIN = 10;
 	const double TEMP_MAX = 10000;

@@ -33,6 +33,10 @@ namespace StringFunctions
 	bool CompareCaseInsensitive(const std::string& _s1, const std::string& _s2);	// Case insensitive strings comparison. Returns true if the stings are the same.
 	bool CompareCaseInsensitive(const std::wstring& _s1, const std::wstring& _s2);	// Case insensitive wide strings comparison. Returns true if the stings are the same.
 	bool IsDigits(const std::string& _s);											// Returns true if all symbols in the string are digits.
+	bool IsSimpleUInt(const std::string& _s);										// Checks if the string represents an unsigned int value.
+
+	bool Contains(const std::string& _s, char _c);									// Checks if the string contains a symbol.
+	bool Contains(const std::string& _s, const std::string& _subs);					// Checks if the string contains a substring.
 
 	void ReplaceAll(std::string& _s, const std::string& _old, const std::string& _new);					 // Replaces all occurrences of _old with _new in _s.
 	void ReplaceAll(std::wstring& _s, const std::wstring& _old, const std::wstring& _new);				 // Replaces all occurrences of _old with _new in _s.
@@ -40,16 +44,26 @@ namespace StringFunctions
 	std::wstring ReplaceAll(const std::wstring& _s, const std::wstring& _old, const std::wstring& _new); // Returns a copy of string _s, where all occurrences of _old are replaced with _new.
 	std::vector<std::string> SplitString(const std::string& _s, char _delim);							 // Splits the string according to delimiter.
 
-	void TrimWhitespaces(std::string& _s);												// Removes whitespaces at the end of the string.
-	std::string TrimWhitespaces(const std::string& _s);									// Returns a copy of string _s without whitespaces at the end.
+	void TrimWhitespaces(std::string& _s);												// Removes whitespaces from both sides of the string.
+	std::string TrimWhitespaces(const std::string& _s);									// Returns a copy of string _s without whitespaces from both sides.
 	void TrimFromSymbols(std::string& _s, const std::string& _symbols);					// Removes the end of the string starting with _symbols.
 	std::string TrimFromSymbols(const std::string& _s, const std::string& _symbols);	// Returns a copy of string _s removing its end starting with _symbols.
+	std::string RemoveQuotes(const std::string& _s);									// Returns a copy of string _s removing leading and trailing single or double quotes, if any.
 
-	void Quote(std::string& _s);				// Adds double quotes to the string _s.
-	std::string Quote(const std::string& _s);	// Returns a copy of the string _s in double quotes.
+	void Quote(std::string& _s);					// Adds double quotes to the string _s.
+	std::string Quote(const std::string& _s);		// Returns a copy of the string _s in double quotes.
+	std::string ToLowerCase(const std::string& _s);	// Returns a copy of the string _s with all characters in lower case.
+	std::string ToUpperCase(const std::string& _s); // Returns a copy of the string _s with all characters in upper case.
 
-	std::string GetRestOfLine(std::istream* _is);												 // Returns the full string until the end-of-line without trailing whitespaces.
-	template<typename T> T GetValueFromStream(std::istream* _is) { T v{}; *_is >> v; return v; } // Returns the next value from the stream and advances stream's iterator correspondingly.
+	std::string GetRestOfLine(std::istream& _is);												// Returns the full string until the end-of-line without trailing whitespaces.
+	template<typename T> T GetValueFromStream(std::istream& _is) { T v{}; _is >> v; return v; }	// Returns the next value from the stream and advances stream's iterator correspondingly.
+	template<> bool GetValueFromStream(std::istream& _is);										// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for bool type.
+	template<> std::string GetValueFromStream(std::istream& _is);								// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for string type.
+	template<> std::vector<double> GetValueFromStream(std::istream& _is);						// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for vector<double>.
+	template<> std::vector<std::string> GetValueFromStream(std::istream& _is);					// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for vector<string>.
+	template<typename T>
+	std::enable_if_t<std::is_enum_v<T>, T> GetEnumFromStream(std::istream& _is)					// Returns the next value from the stream and advances stream's iterator correspondingly. Version for enum types.
+	{ return static_cast<T>(GetValueFromStream<std::underlying_type_t<T>>(_is)); }
 
 	std::string UnifyPath(const std::string& _path);   // Brings the path to a unified view (slashes, backslashes).
 	std::wstring UnifyPath(const std::wstring& _path); // Brings the path to a unified view (slashes, backslashes).

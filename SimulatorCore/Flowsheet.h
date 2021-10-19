@@ -79,12 +79,20 @@ public:
 	// Moves a unit with the specified unique key upwards/downwards in the list of units.
 	void ShiftUnit(const std::string& _key, EDirection _direction);
 
+	// Returns a unit by its index. If no such unit has been defined, returns nullptr.
+	[[nodiscard]] const CUnitContainer* GetUnit(size_t _index) const;
+	// Returns a unit by its index. If no such unit has been defined, returns nullptr.
+	CUnitContainer* GetUnit(size_t _index);
 	// Returns a unit with the specified unique key. If no such unit has been defined, returns nullptr.
-	const CUnitContainer* GetUnit(const std::string& _key) const;
+	[[nodiscard]] const CUnitContainer* GetUnit(const std::string& _key) const;
 	// Returns a unit with the specified unique key. If no such unit has been defined, returns nullptr.
 	CUnitContainer* GetUnit(const std::string& _key) ;
+	// Returns a unit with the specified name. If no such unit has been defined, returns nullptr. If several units have the same name, returns an arbitrary one.
+	[[nodiscard]] const CUnitContainer* GetUnitByName(const std::string& _name) const;
+	// Returns a unit with the specified name. If no such unit has been defined, returns nullptr. If several units have the same name, returns an arbitrary one.
+	CUnitContainer* GetUnitByName(const std::string& _name);
 	// Returns const pointers to all defined units.
-	std::vector<const CUnitContainer*> GetAllUnits() const;
+	[[nodiscard]] std::vector<const CUnitContainer*> GetAllUnits() const;
 	// Returns pointers to all defined units.
 	std::vector<CUnitContainer*> GetAllUnits();
 
@@ -105,10 +113,19 @@ public:
 	// Moves a stream with the specified unique key upwards/downwards in the list of streams.
 	void ShiftStream(const std::string& _key, EDirection _direction);
 
+	// Returns a stream by its index. If no such stream has been defined, returns nullptr.
+	[[nodiscard]] const CStream* GetStream(size_t _index) const;
+	// Returns a stream by its index. If no such stream has been defined, returns nullptr.
+	CStream* GetStream(size_t _index);
 	// Returns a stream with the specified unique key. If no such stream has been defined, returns nullptr.
 	const CStream* GetStream(const std::string& _key) const;
 	// Returns a stream with the specified unique key. If no such stream has been defined, returns nullptr.
 	CStream* GetStream(const std::string& _key);
+	// Returns a stream with the specified name. If no such stream has been defined, returns nullptr. If several streams have the same name, returns an arbitrary one.
+	[[nodiscard]] const CStream* GetStreamByName(const std::string& _name) const;
+	// Returns a stream with the specified name. If no such stream has been defined, returns nullptr. If several streams have the same name, returns an arbitrary one.
+	CStream* GetStreamByName(const std::string& _name);
+
 	// Returns const pointers to all defined streams.
 	std::vector<const CStream*> GetAllStreams() const;
 	// Returns pointers to all defined streams.
@@ -140,6 +157,8 @@ public:
 	void AddCompound(const std::string& _key);
 	// Remove a compound with the specified unique key from the flowsheet.
 	void RemoveCompound(const std::string& _key);
+	// Sets new set of compounds.
+	void SetCompounds(const std::vector<std::string>& _keys);
 	// Returns unique keys of all defined compounds.
 	std::vector<std::string> GetCompounds() const;
 
@@ -155,6 +174,8 @@ public:
 	void RemoveOverallProperty(EOverall _property);
 	// Returns descriptors of all defined overall properties.
 	std::vector<SOverallDescriptor> GetOveralProperties() const;
+	// Checks whether the specified overall property is defined.
+	bool HasOverallProperty(EOverall _property) const;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Phases
@@ -166,6 +187,8 @@ public:
 	void AddPhase(EPhase _phase, const std::string& _name);
 	// Remove a phase with the specified type from the flowsheet.
 	void RemovePhase(EPhase _phase);
+	// Sets new set of phases.
+	void SetPhases(const std::vector<SPhaseDescriptor>& _phases);
 	// Returns descriptors of all defined phases.
 	std::vector<SPhaseDescriptor> GetPhases() const;
 	// Checks if a phase of the specified type exists in the flowsheet.
@@ -213,15 +236,15 @@ public:
 	//
 
 	// Saves the flowsheet into the HDF5 file.
-	bool SaveToFile(CH5Handler& _h5File, const std::wstring& _fileName);
+	bool SaveToFile(CH5Handler& _h5File, const std::filesystem::path& _fileName);
 	// Loads the flowsheet from the HDF5 file.
-	bool LoadFromFile(CH5Handler& _h5File, const std::wstring& _fileName);
+	bool LoadFromFile(CH5Handler& _h5File, const std::filesystem::path& _fileName);
 	// Loads the flowsheet from the HDF5 file. A compatibility version.
 	bool LoadFromFile_v3(CH5Handler& _h5File, const std::string& _path);
 
 private:
 	// Returns a pointer to a stream with the specified unique key from the given vector. If no such stream defined, returns nullptr.
-	static std::shared_ptr<CStream> DoGetStream(const std::string& _key, const std::vector<std::shared_ptr<CStream>>& _streams);
+	static CStream* DoGetStream(const std::string& _key, const std::vector<std::shared_ptr<CStream>>& _streams);
 
 	// Returns unique keys of all defined units.
 	std::vector<std::string> GetAllUnitsKeys() const;

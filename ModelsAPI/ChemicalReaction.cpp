@@ -44,6 +44,11 @@ std::string CChemicalReaction::GetName() const
 	return m_name;
 }
 
+CChemicalReaction::SChemicalSubstanse* CChemicalReaction::AddSubstance()
+{
+	return m_substances.emplace_back().get();
+}
+
 void CChemicalReaction::AddSubstance(const SChemicalSubstanse& _substance)
 {
 	m_substances.emplace_back(new SChemicalSubstanse{ _substance });

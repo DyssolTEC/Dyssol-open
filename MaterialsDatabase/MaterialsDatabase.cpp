@@ -120,12 +120,12 @@ bool CMaterialsDatabase::IsPropertyDefined(unsigned _key) const
 	return false;
 }
 
-std::wstring CMaterialsDatabase::GetFileName() const
+std::filesystem::path CMaterialsDatabase::GetFileName() const
 {
 	return m_sFileName;
 }
 
-void CMaterialsDatabase::CreateNewDatabase()
+void CMaterialsDatabase::Clear()
 {
 	m_sFileName.clear();
 	m_vCompounds.clear();
@@ -136,7 +136,7 @@ void CMaterialsDatabase::CreateNewDatabase()
 	activeInterProperties = MDBDescriptors::defaultInteractionProperties;
 }
 
-bool CMaterialsDatabase::SaveToFile(const std::wstring& _fileName /*= ""*/)
+bool CMaterialsDatabase::SaveToFile(const std::filesystem::path& _fileName /*= ""*/)
 {
 	// Writes information about user-defined types into file
 	const auto WritePropInfo = [](std::ofstream& _outFile, MDBDescriptors::EPropertyType _type, unsigned _key, const MDBDescriptors::SCompoundPropertyDescriptor& _descr)
@@ -164,8 +164,8 @@ bool CMaterialsDatabase::SaveToFile(const std::wstring& _fileName /*= ""*/)
 		_outFile << E2I(ETXTFileKeys::PROPERTY_DESCRIPTION) << " " << ReplaceAll(_descr.description, "\n", MDBDescriptors::NEW_LINE_REPLACER) << Comment("Description") << std::endl << std::endl;
 	};
 
-	const std::wstring fileName = _fileName.empty() ? m_sFileName : _fileName;
-	std::ofstream outFile(UnicodePath(fileName));
+	const std::filesystem::path fileName = _fileName.empty() ? m_sFileName : _fileName;
+	std::ofstream outFile(fileName);
 	if (outFile.fail()) return false;
 
 	// write signature and version number
@@ -265,17 +265,17 @@ bool CMaterialsDatabase::SaveToFile(const std::wstring& _fileName /*= ""*/)
 	return true;
 }
 
-bool CMaterialsDatabase::LoadFromFile(const std::wstring& _fileName /*= ""*/)
+bool CMaterialsDatabase::LoadFromFile(const std::filesystem::path& _fileName /*= ""*/)
 {
-	CreateNewDatabase();
-	const std::wstring fileName = _fileName.empty() ? MDBDescriptors::DEFAULT_MDB_FILE_NAME : _fileName;
+	Clear();
+	const std::filesystem::path fileName = _fileName.empty() ? std::filesystem::path{ MDBDescriptors::DEFAULT_MDB_FILE_NAME } : _fileName;
 
-	std::ifstream inFile(UnicodePath(fileName));
+	std::ifstream inFile(fileName);
 	if (inFile.fail()) return false;
 
 	// read signature and version number
-	const std::string signature = GetValueFromStream<std::string>(&inFile);
-	const auto version = GetValueFromStream<unsigned>(&inFile);
+	const std::string signature = GetValueFromStream<std::string>(inFile);
+	const auto version = GetValueFromStream<unsigned>(inFile);
 	bool res;
 	if (signature != MDBDescriptors::SIGNATURE_STRING) // old or wrong file
 		res = LoadFromFileV0(inFile);			// try to load old format v0
@@ -300,8 +300,8 @@ bool CMaterialsDatabase::LoadFromFileV0(std::ifstream& _file)
 	{
 		if (sLine.empty()) continue;
 		std::stringstream ss(sLine);
-		const auto mainKey = static_cast<ETXTFileKeysOld>(GetValueFromStream<unsigned>(&ss));
-		const auto subKey = static_cast<ETXTFileKeysOld>(GetValueFromStream<unsigned>(&ss));
+		const auto mainKey = GetEnumFromStream<ETXTFileKeysOld>(ss);
+		const auto subKey = GetEnumFromStream<ETXTFileKeysOld>(ss);
 
 		if (mainKey == ETXTFileKeysOld::MDB_PROPERTY && subKey == ETXTFileKeysOld::MDB_PROPERTY_SOA)
 			ret = true;
@@ -310,21 +310,21 @@ bool CMaterialsDatabase::LoadFromFileV0(std::ifstream& _file)
 			switch (subKey)
 			{
 			case ETXTFileKeysOld::COMPOUND_KEY:
-				pCurrCompound = AddCompound(TrimFromSymbols(GetValueFromStream<std::string>(&ss), StrConst::COMMENT_SYMBOL));
+				pCurrCompound = AddCompound(TrimFromSymbols(GetValueFromStream<std::string>(ss), StrConst::COMMENT_SYMBOL));
 				break;
 			case ETXTFileKeysOld::COMPOUND_NAME:
 				if (!pCurrCompound) continue;
-				pCurrCompound->SetName(TrimFromSymbols(GetRestOfLine(&ss), StrConst::COMMENT_SYMBOL));
+				pCurrCompound->SetName(TrimFromSymbols(GetRestOfLine(ss), StrConst::COMMENT_SYMBOL));
 				break;
 			case ETXTFileKeysOld::COMPOUND_PROPERTY:
 			{
 				if (!pCurrCompound) continue;
-				auto propKey = GetValueFromStream<unsigned>(&ss);
+				auto propKey = GetValueFromStream<unsigned>(ss);
 				if (CConstProperty* pConstProp = pCurrCompound->GetConstProperty(static_cast<ECompoundConstProperties>(propKey)))
-					pConstProp->SetValue(GetValueFromStream<double>(&ss));
+					pConstProp->SetValue(GetValueFromStream<double>(ss));
 				else if (CTPDProperty* pTPDProp = pCurrCompound->GetTPProperty(static_cast<ECompoundTPProperties>(propKey)))
 				{
-					std::stringstream valuesStream(TrimFromSymbols(GetRestOfLine(&ss), StrConst::COMMENT_SYMBOL));
+					std::stringstream valuesStream(TrimFromSymbols(GetRestOfLine(ss), StrConst::COMMENT_SYMBOL));
 					std::vector<double> values;
 					while (!valuesStream.eof())
 					{
@@ -364,67 +364,67 @@ bool CMaterialsDatabase::LoadFromFileV2(std::ifstream& _file)
 		if (sLine.empty()) continue;
 		std::stringstream ss(sLine);
 
-		switch (static_cast<ETXTFileKeys>(GetValueFromStream<unsigned>(&ss)))
+		switch (GetEnumFromStream<ETXTFileKeys>(ss))
 		{
 		case ETXTFileKeys::COMPOUND_KEY:
-			pCurrCompound = AddCompound(TrimFromSymbols(GetValueFromStream<std::string>(&ss), StrConst::COMMENT_SYMBOL));
+			pCurrCompound = AddCompound(TrimFromSymbols(GetValueFromStream<std::string>(ss), StrConst::COMMENT_SYMBOL));
 			for (size_t i = 0; i < pCurrCompound->TPPropertiesNumber(); ++i) // remove all default correlations from temperature/pressure-dependent properties
 				pCurrCompound->GetTPPropertyByIndex(i)->RemoveAllCorrelations();
 			break;
 		case ETXTFileKeys::COMPOUND_NAME:
 			if (!pCurrCompound) continue;
-			pCurrCompound->SetName(TrimFromSymbols(GetRestOfLine(&ss), StrConst::COMMENT_SYMBOL));
+			pCurrCompound->SetName(TrimFromSymbols(GetRestOfLine(ss), StrConst::COMMENT_SYMBOL));
 			break;
 		case ETXTFileKeys::COMPOUND_DESCRIPTION:
 			if (!pCurrCompound) continue;
-			pCurrCompound->SetDescription(TrimFromSymbols(GetRestOfLine(&ss), StrConst::COMMENT_SYMBOL));
+			pCurrCompound->SetDescription(TrimFromSymbols(GetRestOfLine(ss), StrConst::COMMENT_SYMBOL));
 			break;
 		case ETXTFileKeys::COMPOUND_CONST_PROPERTY:
 			if (!pCurrCompound) continue;
-			if (CConstProperty* pProp = pCurrCompound->GetConstProperty(static_cast<ECompoundConstProperties>(GetValueFromStream<unsigned>(&ss))))
-				pProp->SetValue(GetValueFromStream<double>(&ss));
+			if (CConstProperty* pProp = pCurrCompound->GetConstProperty(GetEnumFromStream<ECompoundConstProperties>(ss)))
+				pProp->SetValue(GetValueFromStream<double>(ss));
 			break;
 		case ETXTFileKeys::COMPOUND_TPD_PROPERTY:
 			if (!pCurrCompound) continue;
-			if (CTPDProperty* pProp = pCurrCompound->GetTPProperty(static_cast<ECompoundTPProperties>(GetValueFromStream<unsigned>(&ss))))
-				pProp->AddCorrelation(GetValueFromStream<CCorrelation>(&ss));
+			if (CTPDProperty* pProp = pCurrCompound->GetTPProperty(GetEnumFromStream<ECompoundTPProperties>(ss)))
+				pProp->AddCorrelation(GetValueFromStream<CCorrelation>(ss));
 			break;
 		case ETXTFileKeys::INTERACTION_KEYS:
-			pCurrInteraction = AddInteraction(GetValueFromStream<std::string>(&ss), GetValueFromStream<std::string>(&ss));
+			pCurrInteraction = AddInteraction(GetValueFromStream<std::string>(ss), GetValueFromStream<std::string>(ss));
 			for (size_t i = 0; i < pCurrInteraction->PropertiesNumber(); ++i) // remove all default correlations from temperature/pressure-dependent properties
 				pCurrInteraction->GetPropertyByIndex(i)->RemoveAllCorrelations();
 			break;
 		case ETXTFileKeys::INTERACTION_PROPERTY:
 			if (!pCurrInteraction) continue;
-			if (CTPDProperty* pProp = pCurrInteraction->GetProperty(static_cast<EInteractionProperties>(GetValueFromStream<unsigned>(&ss))))
-				pProp->AddCorrelation(GetValueFromStream<CCorrelation>(&ss));
+			if (CTPDProperty* pProp = pCurrInteraction->GetProperty(GetEnumFromStream<EInteractionProperties>(ss)))
+				pProp->AddCorrelation(GetValueFromStream<CCorrelation>(ss));
 			break;
 		case ETXTFileKeys::CONST_PROPERTY_DESCRIPTION:
 			if (!pCurrCompound) continue;
-			if (CConstProperty* pProp = pCurrCompound->GetConstProperty(static_cast<ECompoundConstProperties>(GetValueFromStream<unsigned>(&ss))))
-				pProp->SetDescription(TrimFromSymbols(GetRestOfLine(&ss), StrConst::COMMENT_SYMBOL));
+			if (CConstProperty* pProp = pCurrCompound->GetConstProperty(GetEnumFromStream<ECompoundConstProperties>(ss)))
+				pProp->SetDescription(TrimFromSymbols(GetRestOfLine(ss), StrConst::COMMENT_SYMBOL));
 			break;
 		case ETXTFileKeys::TPD_PROPERTY_DESCRIPTION:
 			if (!pCurrCompound) continue;
-			if (CTPDProperty* pProp = pCurrCompound->GetTPProperty(static_cast<ECompoundTPProperties>(GetValueFromStream<unsigned>(&ss))))
-				pProp->SetDescription(TrimFromSymbols(GetRestOfLine(&ss), StrConst::COMMENT_SYMBOL));
+			if (CTPDProperty* pProp = pCurrCompound->GetTPProperty(GetEnumFromStream<ECompoundTPProperties>(ss)))
+				pProp->SetDescription(TrimFromSymbols(GetRestOfLine(ss), StrConst::COMMENT_SYMBOL));
 			break;
 		case ETXTFileKeys::CORRELATION_DESCRIPTION:
 			if (!pCurrCompound) continue;
-			if (CTPDProperty* pProp = pCurrCompound->GetTPProperty(static_cast<ECompoundTPProperties>(GetValueFromStream<unsigned>(&ss))))
-				if (CCorrelation* pCorr = pProp->GetCorrelation(GetValueFromStream<unsigned>(&ss)))
-					pCorr->SetDescription(TrimFromSymbols(GetRestOfLine(&ss), StrConst::COMMENT_SYMBOL));
+			if (CTPDProperty* pProp = pCurrCompound->GetTPProperty(GetEnumFromStream<ECompoundTPProperties>(ss)))
+				if (CCorrelation* pCorr = pProp->GetCorrelation(GetValueFromStream<unsigned>(ss)))
+					pCorr->SetDescription(TrimFromSymbols(GetRestOfLine(ss), StrConst::COMMENT_SYMBOL));
 			break;
 		case ETXTFileKeys::INTERACTION_TPD_PROPERTY_DESCRIPTION:
 			if (!pCurrInteraction) continue;
-			if (CTPDProperty* pProp = pCurrInteraction->GetProperty(static_cast<EInteractionProperties>(GetValueFromStream<unsigned>(&ss))))
-				pProp->SetDescription(TrimFromSymbols(GetRestOfLine(&ss), StrConst::COMMENT_SYMBOL));
+			if (CTPDProperty* pProp = pCurrInteraction->GetProperty(GetEnumFromStream<EInteractionProperties>(ss)))
+				pProp->SetDescription(TrimFromSymbols(GetRestOfLine(ss), StrConst::COMMENT_SYMBOL));
 			break;
 		case ETXTFileKeys::INTERACTION_CORRELATION_DESCRIPTION:
 			if (!pCurrInteraction) continue;
-			if (CTPDProperty* pProp = pCurrInteraction->GetProperty(static_cast<EInteractionProperties>(GetValueFromStream<unsigned>(&ss))))
-				if (CCorrelation* pCorr = pProp->GetCorrelation(GetValueFromStream<unsigned>(&ss)))
-					pCorr->SetDescription(TrimFromSymbols(GetRestOfLine(&ss), StrConst::COMMENT_SYMBOL));
+			if (CTPDProperty* pProp = pCurrInteraction->GetProperty((GetEnumFromStream<EInteractionProperties>(ss))))
+				if (CCorrelation* pCorr = pProp->GetCorrelation(GetValueFromStream<unsigned>(ss)))
+					pCorr->SetDescription(TrimFromSymbols(GetRestOfLine(ss), StrConst::COMMENT_SYMBOL));
 			break;
 		default: break;
 		}
@@ -446,115 +446,115 @@ bool CMaterialsDatabase::LoadFromFileV3(std::ifstream& _file)
 		if (line.empty()) continue;
 		std::stringstream ss(line);
 
-		switch (static_cast<ETXTFileKeys>(GetValueFromStream<unsigned>(&ss)))
+		switch (GetEnumFromStream<ETXTFileKeys>(ss))
 		{
 		case ETXTFileKeys::PROPERTY_TYPE:
-			currPropType = static_cast<MDBDescriptors::EPropertyType>(GetValueFromStream<unsigned>(&ss));
+			currPropType = GetEnumFromStream<MDBDescriptors::EPropertyType>(ss);
 			break;
 		case ETXTFileKeys::PROPERTY_KEY:
 			switch (currPropType)
 			{
-			case MDBDescriptors::EPropertyType::CONSTANT:	  currPropDescr = &activeConstProperties[static_cast<ECompoundConstProperties>(GetValueFromStream<unsigned>(&ss))]; break;
-			case MDBDescriptors::EPropertyType::TP_DEPENDENT: currPropDescr = &activeTPDepProperties[static_cast<ECompoundTPProperties>(GetValueFromStream<unsigned>(&ss))];	break;
-			case MDBDescriptors::EPropertyType::INTERACTION:  currPropDescr = &activeInterProperties[static_cast<EInteractionProperties>(GetValueFromStream<unsigned>(&ss))];	break;
+			case MDBDescriptors::EPropertyType::CONSTANT:	  currPropDescr = &activeConstProperties[GetEnumFromStream<ECompoundConstProperties>(ss)]; break;
+			case MDBDescriptors::EPropertyType::TP_DEPENDENT: currPropDescr = &activeTPDepProperties[GetEnumFromStream<ECompoundTPProperties>(ss)];	break;
+			case MDBDescriptors::EPropertyType::INTERACTION:  currPropDescr = &activeInterProperties[GetEnumFromStream<EInteractionProperties>(ss)];	break;
 			}
 			break;
 		case ETXTFileKeys::PROPERTY_NAME:
-			currPropDescr->name = TrimFromSymbols(GetRestOfLine(&ss), StrConst::COMMENT_SYMBOL);
+			currPropDescr->name = TrimFromSymbols(GetRestOfLine(ss), StrConst::COMMENT_SYMBOL);
 			break;
 		case ETXTFileKeys::PROPERTY_UNITS:
-			currPropDescr->units = String2WString(TrimFromSymbols(GetRestOfLine(&ss), StrConst::COMMENT_SYMBOL));
+			currPropDescr->units = String2WString(TrimFromSymbols(GetRestOfLine(ss), StrConst::COMMENT_SYMBOL));
 			break;
 		case ETXTFileKeys::PROPERTY_INIT_VALUE:
 			if (currPropType == MDBDescriptors::EPropertyType::CONSTANT)
-				dynamic_cast<MDBDescriptors::SCompoundConstPropertyDescriptor*>(currPropDescr)->defaultValue = GetValueFromStream<double>(&ss);
+				dynamic_cast<MDBDescriptors::SCompoundConstPropertyDescriptor*>(currPropDescr)->defaultValue = GetValueFromStream<double>(ss);
 			else
 			{
-				const auto defaultType = static_cast<ECorrelationTypes>(GetValueFromStream<unsigned>(&ss));
+				const auto defaultType = GetEnumFromStream<ECorrelationTypes>(ss);
 				std::vector<double> defaultParameters;
 				for (size_t i = 0; i < MDBDescriptors::correlations[defaultType].parametersNumber; ++i)
-					defaultParameters.push_back(GetValueFromStream<double>(&ss));
+					defaultParameters.push_back(GetValueFromStream<double>(ss));
 				dynamic_cast<MDBDescriptors::SCompoundTPDPropertyDescriptor*>(currPropDescr)->defuaultType = defaultType;
 				dynamic_cast<MDBDescriptors::SCompoundTPDPropertyDescriptor*>(currPropDescr)->defaultParameters = defaultParameters;
 				break;
 			}
 			break;
 		case ETXTFileKeys::PROPERTY_DESCRIPTION:
-			currPropDescr->description = ReplaceAll(TrimFromSymbols(GetRestOfLine(&ss), StrConst::COMMENT_SYMBOL), MDBDescriptors::NEW_LINE_REPLACER, "\n");
+			currPropDescr->description = ReplaceAll(TrimFromSymbols(GetRestOfLine(ss), StrConst::COMMENT_SYMBOL), MDBDescriptors::NEW_LINE_REPLACER, "\n");
 			break;
 		case ETXTFileKeys::COMPOUND_KEY:
-			pCurrCompound = AddCompound(TrimFromSymbols(GetValueFromStream<std::string>(&ss), StrConst::COMMENT_SYMBOL));
+			pCurrCompound = AddCompound(TrimFromSymbols(GetValueFromStream<std::string>(ss), StrConst::COMMENT_SYMBOL));
 			lastTPProp = TP_PROP_NO_PROERTY;
 			break;
 		case ETXTFileKeys::COMPOUND_NAME:
 			if (!pCurrCompound) continue;
-			pCurrCompound->SetName(TrimFromSymbols(GetRestOfLine(&ss), StrConst::COMMENT_SYMBOL));
+			pCurrCompound->SetName(TrimFromSymbols(GetRestOfLine(ss), StrConst::COMMENT_SYMBOL));
 			break;
 		case ETXTFileKeys::COMPOUND_DESCRIPTION:
 			if (!pCurrCompound) continue;
-			pCurrCompound->SetDescription(TrimFromSymbols(GetRestOfLine(&ss), StrConst::COMMENT_SYMBOL));
+			pCurrCompound->SetDescription(TrimFromSymbols(GetRestOfLine(ss), StrConst::COMMENT_SYMBOL));
 			break;
 		case ETXTFileKeys::COMPOUND_CONST_PROPERTY:
 			if (!pCurrCompound) continue;
-			if (CConstProperty* pProp = pCurrCompound->GetConstProperty(static_cast<ECompoundConstProperties>(GetValueFromStream<unsigned>(&ss))))
-				pProp->SetValue(GetValueFromStream<double>(&ss));
+			if (CConstProperty* pProp = pCurrCompound->GetConstProperty(GetEnumFromStream<ECompoundConstProperties>(ss)))
+				pProp->SetValue(GetValueFromStream<double>(ss));
 			break;
 		case ETXTFileKeys::COMPOUND_TPD_PROPERTY:
 		{
 			if (!pCurrCompound) continue;
-			const auto TPProp = static_cast<ECompoundTPProperties>(GetValueFromStream<unsigned>(&ss));
+			const auto TPProp = GetEnumFromStream<ECompoundTPProperties>(ss);
 			if (CTPDProperty* pProp = pCurrCompound->GetTPProperty(TPProp))
 			{
 				if (TPProp != lastTPProp) // first met this property for this compound - remove default correlation
 					pProp->RemoveCorrelation(0);
-				pProp->AddCorrelation(GetValueFromStream<CCorrelation>(&ss));
+				pProp->AddCorrelation(GetValueFromStream<CCorrelation>(ss));
 				lastTPProp = TPProp;
 			}
 			break;
 		}
 		case ETXTFileKeys::INTERACTION_KEYS:
-			pCurrInteraction = AddInteraction(GetValueFromStream<std::string>(&ss), GetValueFromStream<std::string>(&ss));
+			pCurrInteraction = AddInteraction(GetValueFromStream<std::string>(ss), GetValueFromStream<std::string>(ss));
 			lastIntProp = INT_PROP_NO_PROERTY;
 			break;
 		case ETXTFileKeys::INTERACTION_PROPERTY:
 		{
 			if (!pCurrInteraction) continue;
-			const auto IntProp = static_cast<EInteractionProperties>(GetValueFromStream<unsigned>(&ss));
+			const auto IntProp = GetEnumFromStream<EInteractionProperties>(ss);
 			if (CTPDProperty* pProp = pCurrInteraction->GetProperty(IntProp))
 			{
 				if (IntProp != lastIntProp) // first met this property for this compound - remove default correlation
 					pProp->RemoveCorrelation(0);
-				pProp->AddCorrelation(GetValueFromStream<CCorrelation>(&ss));
+				pProp->AddCorrelation(GetValueFromStream<CCorrelation>(ss));
 				lastIntProp = IntProp;
 			}
 			break;
 		}
 		case ETXTFileKeys::CONST_PROPERTY_DESCRIPTION:
 			if (!pCurrCompound) continue;
-			if (CConstProperty* pProp = pCurrCompound->GetConstProperty(static_cast<ECompoundConstProperties>(GetValueFromStream<unsigned>(&ss))))
-				pProp->SetDescription(TrimFromSymbols(GetRestOfLine(&ss), StrConst::COMMENT_SYMBOL));
+			if (CConstProperty* pProp = pCurrCompound->GetConstProperty(GetEnumFromStream<ECompoundConstProperties>(ss)))
+				pProp->SetDescription(TrimFromSymbols(GetRestOfLine(ss), StrConst::COMMENT_SYMBOL));
 			break;
 		case ETXTFileKeys::TPD_PROPERTY_DESCRIPTION:
 			if (!pCurrCompound) continue;
-			if (CTPDProperty* pProp = pCurrCompound->GetTPProperty(static_cast<ECompoundTPProperties>(GetValueFromStream<unsigned>(&ss))))
-				pProp->SetDescription(TrimFromSymbols(GetRestOfLine(&ss), StrConst::COMMENT_SYMBOL));
+			if (CTPDProperty* pProp = pCurrCompound->GetTPProperty(GetEnumFromStream<ECompoundTPProperties>(ss)))
+				pProp->SetDescription(TrimFromSymbols(GetRestOfLine(ss), StrConst::COMMENT_SYMBOL));
 			break;
 		case ETXTFileKeys::CORRELATION_DESCRIPTION:
 			if (!pCurrCompound) continue;
-			if (CTPDProperty* pProp = pCurrCompound->GetTPProperty(static_cast<ECompoundTPProperties>(GetValueFromStream<unsigned>(&ss))))
-				if (CCorrelation* pCorr = pProp->GetCorrelation(GetValueFromStream<unsigned>(&ss)))
-					pCorr->SetDescription(TrimFromSymbols(GetRestOfLine(&ss), StrConst::COMMENT_SYMBOL));
+			if (CTPDProperty* pProp = pCurrCompound->GetTPProperty(GetEnumFromStream<ECompoundTPProperties>(ss)))
+				if (CCorrelation* pCorr = pProp->GetCorrelation(GetValueFromStream<unsigned>(ss)))
+					pCorr->SetDescription(TrimFromSymbols(GetRestOfLine(ss), StrConst::COMMENT_SYMBOL));
 			break;
 		case ETXTFileKeys::INTERACTION_TPD_PROPERTY_DESCRIPTION:
 			if (!pCurrInteraction) continue;
-			if (CTPDProperty* pProp = pCurrInteraction->GetProperty(static_cast<EInteractionProperties>(GetValueFromStream<unsigned>(&ss))))
-				pProp->SetDescription(TrimFromSymbols(GetRestOfLine(&ss), StrConst::COMMENT_SYMBOL));
+			if (CTPDProperty* pProp = pCurrInteraction->GetProperty(GetEnumFromStream<EInteractionProperties>(ss)))
+				pProp->SetDescription(TrimFromSymbols(GetRestOfLine(ss), StrConst::COMMENT_SYMBOL));
 			break;
 		case ETXTFileKeys::INTERACTION_CORRELATION_DESCRIPTION:
 			if (!pCurrInteraction) continue;
-			if (CTPDProperty* pProp = pCurrInteraction->GetProperty(static_cast<EInteractionProperties>(GetValueFromStream<unsigned>(&ss))))
-				if (CCorrelation* pCorr = pProp->GetCorrelation(GetValueFromStream<unsigned>(&ss)))
-					pCorr->SetDescription(TrimFromSymbols(GetRestOfLine(&ss), StrConst::COMMENT_SYMBOL));
+			if (CTPDProperty* pProp = pCurrInteraction->GetProperty(GetEnumFromStream<EInteractionProperties>(ss)))
+				if (CCorrelation* pCorr = pProp->GetCorrelation(GetValueFromStream<unsigned>(ss)))
+					pCorr->SetDescription(TrimFromSymbols(GetRestOfLine(ss), StrConst::COMMENT_SYMBOL));
 			break;
 		}
 	}

@@ -8,7 +8,7 @@
 using namespace H5;
 
 CH5Handler::CH5Handler() :
-	m_sFileName(L""),
+	m_sFileName(""),
 	m_bFileValid(false),
 	m_ph5File(nullptr)
 {
@@ -20,14 +20,14 @@ CH5Handler::~CH5Handler()
 	Close();
 }
 
-void CH5Handler::Create(const std::wstring& _sFileName, bool _bSingleFile /*= true*/)
+void CH5Handler::Create(const std::filesystem::path& _sFileName, bool _bSingleFile /*= true*/)
 {
 	Exception::dontPrint();
 
 	OpenH5File(_sFileName, false, _bSingleFile);
 }
 
-void CH5Handler::Open(const std::wstring& _sFileName)
+void CH5Handler::Open(const std::filesystem::path& _sFileName)
 {
 	Exception::dontPrint();
 
@@ -46,7 +46,7 @@ void CH5Handler::Close()
 	m_bFileValid = false;
 }
 
-std::wstring CH5Handler::FileName() const
+std::filesystem::path CH5Handler::FileName() const
 {
 	return m_sFileName;
 }
@@ -469,7 +469,7 @@ bool CH5Handler::ReadValue(const std::string& _sPath, const std::string& _sDatas
 	}
 }
 
-void CH5Handler::OpenH5File(const std::wstring& _sFileName, bool _bOpen, bool _bSingleFile)
+void CH5Handler::OpenH5File(const std::filesystem::path& _sFileName, bool _bOpen, bool _bSingleFile)
 {
 	Close();
 
@@ -479,7 +479,7 @@ void CH5Handler::OpenH5File(const std::wstring& _sFileName, bool _bOpen, bool _b
 	FileAccPropList h5AccPropList = CreateFileAccPropList(_bSingleFile);
 	try
 	{
-		m_ph5File = new H5File(StringFunctions::WString2String(_sFileName), _bOpen ? H5F_ACC_RDONLY : H5F_ACC_TRUNC, H5P_DEFAULT, h5AccPropList);
+		m_ph5File = new H5File(_sFileName.string(), _bOpen ? H5F_ACC_RDONLY : H5F_ACC_TRUNC, H5P_DEFAULT, h5AccPropList);
 	}
 	catch (...)
 	{
@@ -542,64 +542,68 @@ H5::StrType& CH5Handler::h5String_type()
 	return *type;
 }
 
-std::wstring CH5Handler::ConvertFileName(const std::wstring& _sFileName, bool _bOpen, bool _bSingleFile)
+std::filesystem::path CH5Handler::ConvertFileName(const std::filesystem::path& _sFileName, bool _bOpen, bool _bSingleFile)
 {
 	if (_bSingleFile) return _sFileName;
 	else if (_bOpen)  return MultiFileReadName(_sFileName);
 	else			  return MultiFileWriteName(_sFileName);
 }
 
-std::wstring CH5Handler::MultiFileReadName(const std::wstring& _sFileName)
+std::filesystem::path CH5Handler::MultiFileReadName(const std::filesystem::path& _sFileName)
 {
 	if (_sFileName.empty()) return {};
 	if (FindSuffix(_sFileName, StrConst::HDF5H_FileExtFinalRegex).size() == 2)       // already in proper multi-file format, i.e. contains [[%d]]
 		return _sFileName;
-	const std::wsmatch m = FindSuffix(_sFileName, StrConst::HDF5H_FileExtInitRegex); // apply a regex search of a multi-file suffix in form [[N]], where N is any number
+	const std::smatch m = FindSuffix(_sFileName, StrConst::HDF5H_FileExtInitRegex);	 // apply a regex search of a multi-file suffix in form [[N]], where N is any number
 	if (m.size() < 2) return _sFileName;									         // no valid multi-file suffix found
 	return ReplaceMultiFileSuffix(_sFileName, m.position(1), m[1].length());         // replace existing digits with a multi-file suffix %d
 }
 
-std::wstring CH5Handler::MultiFileWriteName(std::wstring _sFileName)
+std::filesystem::path CH5Handler::MultiFileWriteName(std::filesystem::path _sFileName)
 {
 	if (_sFileName.empty()) return {};
-	if (!StringFunctions::CompareCaseInsensitive(FileSystem::FileExtension(_sFileName), StrConst::HDF5H_FileExt)) // no proper extension
-		_sFileName += StrConst::HDF5H_DotFileExt;                                                                 // add proper extension
-	if (FindSuffix(_sFileName, StrConst::HDF5H_FileExtFinalRegex).size() == 2)                                    // already in proper multi-file format, i.e. contains [[%d]]
+	if (!StringFunctions::CompareCaseInsensitive(_sFileName.extension().string(), StrConst::HDF5H_DotFileExt)) // no proper extension
+		_sFileName += StrConst::HDF5H_DotFileExt;                                                              // add proper extension
+	if (FindSuffix(_sFileName, StrConst::HDF5H_FileExtFinalRegex).size() == 2)                                 // already in proper multi-file format, i.e. contains [[%d]]
 		return _sFileName;
-	const std::wsmatch m = FindSuffix(_sFileName, StrConst::HDF5H_FileExtInitRegex);                              // apply a regex search of a multi-file suffix in form [[N]], where N is any number
-	if (m.size() == 2)                                                                                            // found valid multi-file suffix in form [[N]], where N is any number
-		return ReplaceMultiFileSuffix(_sFileName, m.position(1), m[1].length());                                  // replace existing digits with a multi-file suffix %d
-	const std::size_t dotPos = _sFileName.rfind('.');                                                             // find a dot before extension
-	_sFileName.insert(dotPos, StrConst::HDF5H_DotFileExtMult);                                                    // insert a multi-file suffix .[[%d]]
-	return _sFileName;
+	const std::smatch m = FindSuffix(_sFileName, StrConst::HDF5H_FileExtInitRegex);                            // apply a regex search of a multi-file suffix in form [[N]], where N is any number
+	if (m.size() == 2)                                                                                         // found valid multi-file suffix in form [[N]], where N is any number
+		return ReplaceMultiFileSuffix(_sFileName, m.position(1), m[1].length());                               // replace existing digits with a multi-file suffix %d
+	std::string copy = _sFileName.string();
+	const std::size_t dotPos = copy.rfind('.');                                                                // find a dot before extension
+	copy.insert(dotPos, StrConst::HDF5H_DotFileExtMult);                                                       // insert a multi-file suffix .[[%d]]
+	return copy;
 }
 
-std::wsmatch CH5Handler::FindSuffix(const std::wstring& _str, const std::wstring& _regexStr)
+std::smatch CH5Handler::FindSuffix(const std::filesystem::path& _str, const std::string& _regexStr)
 {
-	const std::wregex r(_regexStr);							// regex expression
-	std::wsmatch m;											// results of regex search
-	std::wsregex_iterator it(_str.begin(), _str.end(), r);	// apply regex
-	for (; it != std::wsregex_iterator(); ++it) m = *it;	// find the last occurence
+	const std::regex r(_regexStr);							// regex expression
+	std::smatch m;											// results of regex search
+	std::string copy = _str.string();
+	std::sregex_iterator it(copy.begin(), copy.end(), r);	// apply regex
+	for (; it != std::sregex_iterator(); ++it) m = *it;		// find the last occurrence
 	return m;
 }
 
-std::wstring CH5Handler::ReplaceMultiFileSuffix(std::wstring _str, size_t _pos, size_t _len)
+std::filesystem::path CH5Handler::ReplaceMultiFileSuffix(std::filesystem::path _str, size_t _pos, size_t _len)
 {
-	_str.erase(_pos, _len);				            // remove digits
-	_str.insert(_pos, StrConst::HDF5H_FileExtSpec); // insert multi-file extension
-	return _str;
+	std::string copy = _str.string();
+	copy.erase(_pos, _len);				            // remove digits
+	copy.insert(_pos, StrConst::HDF5H_FileExtSpec); // insert multi-file extension
+	return copy;
 }
 
-std::wstring CH5Handler::DisplayFileName(std::wstring _fileName)
+std::filesystem::path CH5Handler::DisplayFileName(std::filesystem::path _fileName)
 {
 	if (_fileName.empty()) return {};
-	std::wsmatch m = FindSuffix(_fileName, StrConst::HDF5H_FileExtFinalRegex); // apply a regex search of a multi-file suffix in form [[%d]]
+	std::smatch m = FindSuffix(_fileName, StrConst::HDF5H_FileExtFinalRegex);  // apply a regex search of a multi-file suffix in form [[%d]]
 	if (m.size() < 2)                                                          // no such suffix found
 		m = FindSuffix(_fileName, StrConst::HDF5H_FileExtInitRegex);           // apply a regex search of a multi-file suffix in form [[N]], where N is any number
 	if (m.size() < 2) return _fileName;				                           // no valid multi-file suffix found
 	const size_t pos = m.position(0);                                          // position of a multi-file suffix
-	_fileName.erase(m.position(0), m[0].length());                             // remove multi-file suffix
-	if(pos - 1 < _fileName.size() && _fileName[pos - 1] == '.')                // a dot before multi-file suffix
-		_fileName.erase(pos - 1, 1);						                   // remove dot
-	return _fileName;
+	std::string copy = _fileName.string();
+	copy.erase(m.position(0), m[0].length());                                  // remove multi-file suffix
+	if(pos - 1 < copy.size() && copy[pos - 1] == '.')                          // a dot before multi-file suffix
+		copy.erase(pos - 1, 1);						                           // remove dot
+	return copy;
 }

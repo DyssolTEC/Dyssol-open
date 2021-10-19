@@ -6,6 +6,7 @@
 #include <vector>
 #include "H5Cpp.h"
 #include <regex>
+#include <filesystem>
 
 
 /**
@@ -15,7 +16,7 @@
  */
 class CH5Handler
 {
-	std::wstring m_sFileName;
+	std::filesystem::path m_sFileName;
 	bool m_bFileValid;
 	H5::H5File* m_ph5File;
 
@@ -23,10 +24,10 @@ public:
 	CH5Handler();
 	~CH5Handler();
 
-	void Create(const std::wstring& _sFileName, bool _bSingleFile = true);	/// Create new file with truncation.
-	void Open(const std::wstring& _sFileName);								/// Open existing file.
-	void Close();															/// Close current file.
-	std::wstring FileName() const;											/// Returns current file name.
+	void Create(const std::filesystem::path& _sFileName, bool _bSingleFile = true);	/// Create new file with truncation.
+	void Open(const std::filesystem::path& _sFileName);								/// Open existing file.
+	void Close();																	/// Close current file.
+	std::filesystem::path FileName() const;											/// Returns current file name.
 
 	std::string CreateGroup(const std::string& _sPath, const std::string& _sGroupName) const;
 
@@ -68,23 +69,23 @@ public:
 
 	bool IsValid() const;
 
-	static std::wstring DisplayFileName(std::wstring _fileName);	        // Returns displayable file name in form "path/FileName.dflw", removing all [[%d]] and [[N]] from it
+	static std::filesystem::path DisplayFileName(std::filesystem::path _fileName);	        // Returns displayable file name in form "path/FileName.dflw", removing all [[%d]] and [[N]] from it
 
 private:
 	void WriteValue(const std::string& _sPath, const std::string& _sDatasetName, hsize_t _size, const H5::DataType& _type, const void* _pValue) const;
 	size_t ReadSize(const std::string& _sPath, const std::string& _sDatasetName) const;
 	bool ReadValue(const std::string& _sPath, const std::string& _sDatasetName, const H5::DataType& _type, void* _pRes) const;
 
-	void OpenH5File(const std::wstring& _sFileName, bool _bOpen, bool _bSingleFile);
+	void OpenH5File(const std::filesystem::path& _sFileName, bool _bOpen, bool _bSingleFile);
 	static H5::FileAccPropList CreateFileAccPropList(bool _bSingleFile);
 
 	static H5::CompType& h5CPoint_type();	// Lazily initializes HDF5 type for CPoint and returns it.
 	static H5::CompType& h5STDValue_type(); // Lazily initializes HDF5 type for STDValue and returns it.
 	static H5::StrType& h5String_type();	// Lazily initializes HDF5 type for std::string representation and returns it.
 
-	static std::wstring ConvertFileName(const std::wstring& _sFileName, bool _bOpen, bool _bSingleFile);	// Converts the file name to a Dyssol format.
-	static std::wstring MultiFileReadName(const std::wstring& _sFileName);									// Transforms the file name to the form needed to read from multi-file.
-	static std::wstring MultiFileWriteName(std::wstring _sFileName);										// Transforms the file name to the form needed to write to multi-file.
-	static std::wsmatch FindSuffix(const std::wstring& _str, const std::wstring& _regexStr);				// Returns results of the regex search.
-	static std::wstring ReplaceMultiFileSuffix(std::wstring _str, size_t _pos, size_t _len);				// Replaces _len symbols starting from _pos in _str with a multi-file suffix.
+	static std::filesystem::path ConvertFileName(const std::filesystem::path& _sFileName, bool _bOpen, bool _bSingleFile);	// Converts the file name to a Dyssol format.
+	static std::filesystem::path MultiFileReadName(const std::filesystem::path& _sFileName);								// Transforms the file name to the form needed to read from multi-file.
+	static std::filesystem::path MultiFileWriteName(std::filesystem::path _sFileName);										// Transforms the file name to the form needed to write to multi-file.
+	static std::smatch FindSuffix(const std::filesystem::path& _str, const std::string& _regexStr);							// Returns results of the regex search.
+	static std::filesystem::path ReplaceMultiFileSuffix(std::filesystem::path _str, size_t _pos, size_t _len);				// Replaces _len symbols starting from _pos in _str with a multi-file suffix.
 };

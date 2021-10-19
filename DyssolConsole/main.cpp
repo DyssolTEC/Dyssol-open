@@ -1,5 +1,9 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
+#include "ArgumentsParser.h"
+#include "ScriptParser.h"
+#include "ScriptRunner.h"
+#include "DyssolStringConstants.h"
 #include "ConfigFileParser.h"
 #include "ParametersHolder.h"
 #include "Simulator.h"
@@ -14,6 +18,7 @@
 #include "DyssolSystemDefines.h"
 #include "FileSystem.h"
 #include <chrono>
+#include <filesystem>
 #include <fstream>
 
 void ExportResults(const CConfigFileParser& _parser, const CFlowsheet& _flowsheet)
@@ -72,10 +77,72 @@ void ExportResults(const CConfigFileParser& _parser, const CFlowsheet& _flowshee
 	}
 }
 
+// Prints information about command line arguments.
+void PrintArgumentsInfo()
+{
+	// TODO: build in into ArgumentsParser
+	std::cout << "Usage: DyssolC -key[=value] [-key[=value]]..." << std::endl;
+	std::cout << std::endl;
+	std::cout << "Mandatory arguments to start simulation:" << std::endl;
+	std::cout << "-s, --script          path to script file" << std::endl;
+	std::cout << std::endl;
+	std::cout << "Information:" << std::endl;
+	std::cout << "-v,  --version        print information about current version" << std::endl;
+	std::cout << "-m,  --models         print information about available models" << std::endl;
+	std::cout << "-mp, --models_path    additional path to look for available models" << std::endl;
+}
+
+// Prints information about the current version.
+void PrintVersionInfo()
+{
+	std::cout << "Version: " << CURRENT_VERSION_STR << std::endl;
+}
+
+// Helper function to print a formatted entry justified left and filled with spaces until the given length.
+template<typename T> void PrintEntry(const T& _entry, std::streamsize _width)
+{
+	std::cout << std::left << std::setw(_width) << std::setfill(' ') << _entry;
+}
+
+// Prints information about available models.
+void PrintModelsInfo(const std::vector<std::filesystem::path>& _modelPaths)
+{
+	// create models manager
+	CModelsManager manager;
+	manager.AddDir(L".");				// add current directory as a path to units/solvers
+	for (const auto& dir : _modelPaths)	// add other directories as a path to units/solvers
+		manager.AddDir(dir);
+
+	// get available models
+	const auto units   = manager.GetAvailableUnits();
+	const auto solvers = manager.GetAvailableSolvers();
+
+	// print info
+	const size_t nameLen = 50;
+	const size_t typeLen = 30;
+	const size_t authLen = 50;
+	PrintEntry("Name"  , nameLen);
+	PrintEntry("Type"  , typeLen);
+	PrintEntry("Author", authLen);
+	std::cout << std::endl;
+	for (const auto& m : units)
+	{
+		PrintEntry(m.name, nameLen);
+		PrintEntry(m.isDynamic ? StrConst::MMT_Dynamic : StrConst::MMT_SteadyState, typeLen);
+		PrintEntry(m.author, authLen);
+		std::cout << std::endl;
+	}
+	for (const auto& m : solvers)
+	{
+		PrintEntry(m.name, nameLen);
+		PrintEntry(std::vector<std::string>{ SOLVERS_TYPE_NAMES }[static_cast<unsigned>(m.solverType)] + " " + StrConst::MMT_Solver, typeLen);
+		PrintEntry(m.author, authLen);
+		std::cout << std::endl;
+	}
+}
+
 void RunSimulation(const CConfigFileParser& _parser)
 {
-	InitializeThreadPool();
-
 	const std::wstring sSrcFile = _parser.GetValue<std::wstring>(EArguments::SOURCE_FILE);
 	const std::wstring sDstFile = _parser.IsValueDefined(EArguments::RESULT_FILE) ? _parser.GetValue<std::wstring>(EArguments::RESULT_FILE) : sSrcFile;
 	const std::wstring sMDBFile = _parser.GetValue<std::wstring>(EArguments::MATERIALS_DATABASE);
@@ -121,10 +188,10 @@ void RunSimulation(const CConfigFileParser& _parser)
 	if (_parser.IsValueDefined(EArguments::ITER_UPPER_LIMIT))	params->ItersUpperLimit(_parser.GetValue<unsigned>(EArguments::ITER_UPPER_LIMIT));
 	if (_parser.IsValueDefined(EArguments::ITER_LOWER_LIMIT))	params->ItersLowerLimit(_parser.GetValue<unsigned>(EArguments::ITER_LOWER_LIMIT));
 	if (_parser.IsValueDefined(EArguments::ITER_UPPER_LIMIT_1))	params->Iters1stUpperLimit(_parser.GetValue<unsigned>(EArguments::ITER_UPPER_LIMIT_1));
-	if (_parser.IsValueDefined(EArguments::CONVERGENCE_METHOD))	params->ConvergenceMethod(static_cast<EConvMethod>(_parser.GetValue<unsigned>(EArguments::CONVERGENCE_METHOD)));
+	if (_parser.IsValueDefined(EArguments::CONVERGENCE_METHOD))	params->ConvergenceMethod(static_cast<EConvergenceMethod>(_parser.GetValue<unsigned>(EArguments::CONVERGENCE_METHOD)));
 	if (_parser.IsValueDefined(EArguments::ACCEL_PARAMETER))	params->WegsteinAccelParam(_parser.GetValue<double>(EArguments::ACCEL_PARAMETER));
 	if (_parser.IsValueDefined(EArguments::RELAX_PARAMETER))	params->RelaxationParam(_parser.GetValue<double>(EArguments::RELAX_PARAMETER));
-	if (_parser.IsValueDefined(EArguments::EXTRAPOL_METHOD))	params->ExtrapolationMethod(static_cast<EExtrapMethod>(_parser.GetValue<unsigned>(EArguments::EXTRAPOL_METHOD)));
+	if (_parser.IsValueDefined(EArguments::EXTRAPOL_METHOD))	params->ExtrapolationMethod(static_cast<EExtrapolationMethod>(_parser.GetValue<unsigned>(EArguments::EXTRAPOL_METHOD)));
 
 	// setup grid
 	if (_parser.IsValueDefined(EArguments::DISTRIBUTION_GRID))
@@ -267,6 +334,7 @@ void RunSimulation(const CConfigFileParser& _parser)
 		if (h.iTimePoint >= vTPs.size()) continue;
 		const auto distrType = flowsheet.GetGrid().GetDimensionsTypes()[h.iDistribution];
 		const EPSDGridType sizeType = distrType == DISTR_SIZE ? h.psdGridType : EPSDGridType::DIAMETER;
+		// TODO: if symbolic grid - will fail
 		const std::vector<double> vMedians = distrType == DISTR_SIZE ? pGrid.GetPSDMeans(sizeType) : (pGrid.GetGridDimension(distrType)->GridType() == EGridEntry::GRID_NUMERIC ? pGrid.GetGridDimensionNumeric(distrType)->GetClassesMeans() : std::vector<double>{});
 		std::vector<double> values(pGrid.GetGridDimension(distrType)->ClassesNumber());
 		switch (h.distrFun)
@@ -330,34 +398,49 @@ void RunSimulation(const CConfigFileParser& _parser)
 	}
 }
 
+void RunDyssol(const std::filesystem::path& _script)
+{
+	InitializeThreadPool();
+
+	std::cout << "Parsing script file: " << _script << std::endl;
+
+	const CScriptParser parser{ _script };
+	std::cout << "Jobs found: " << parser.JobsCount() << std::endl;
+
+	CScriptRunner runner;
+	for (const auto& job : parser.Jobs())
+		runner.RunJob(*job);
+}
+
 int main(int argc, const char *argv[])
 {
-	if (argc < 2)
+	// TODO: just run the simulation
+	// possible keys with aliases
+	std::vector<std::vector<std::string>> keys;
+	keys.push_back({ "v" , "version"     });
+	keys.push_back({ "m" , "models"      });
+	keys.push_back({ "mp", "models_path" });
+	keys.push_back({ "s" , "script"      });
+
+	const CArgumentsParser parser(argc, argv, keys);
+
+	if (parser.TokensCount() == 0)
 	{
-		std::cout << "Error: Path to a config file is not specified." << std::endl;
+		PrintArgumentsInfo();
 		return 1;
 	}
 
-	const std::string sParam(argv[1]);
-	if (sParam == "-models" || sParam == "-m")
+	if (parser.HasKey("v"))
+		PrintVersionInfo();
+	if (parser.HasKey("m"))
 	{
-		// TODO
+		std::vector<std::filesystem::path> fsPaths;
+		for (const auto& p : parser.GetValues("mp"))
+			fsPaths.emplace_back(p);
+		PrintModelsInfo(fsPaths);
 	}
-	else if (sParam == "-version" || sParam == "-v")
-	{
-		std::cout << "Version: " << CURRENT_VERSION_STR << std::endl;
-		//std::cout << "Build: " << CURRENT_BUILD_VERSION << std::endl;
-	}
-	else
-	{
-		CConfigFileParser parser;
-		const bool bParsed = parser.Parse(sParam);
-		if (!bParsed)
-		{
-			std::cout << "Error: The specified config file can not be parsed or contains errors." << std::endl;
-			return 1;
-		}
+	if (parser.HasKey("s"))
+		RunDyssol(parser.GetValue("s"));
 
-		RunSimulation(parser);
-	}
+	return 0;
 }
