@@ -8,28 +8,23 @@ extern "C" DECLDIR CAgglomerationSolver* CREATE_SOLVER_FUN_AGG1()
 	return new CSolver();
 }
 
-CSolver::~CSolver()
-{
-
-}
-
 void CSolver::CreateBasicInfo()
 {
-	m_solverName = "Dummy Agglomeration Solver";
-	m_authorName = "Author";
-	m_solverUniqueKey = "00000000000000000000000000010000";
+	SetName(" Dummy Agglomeration Solver");
+	SetAuthorName("Author");
+	SetUniqueID("00000000000000000000000000010000");
 }
 
-void CSolver::Initialize(const std::vector<double>& _vGrid, double _beta0, EKernels _kernel, size_t _rank, const std::vector<double>& vParams)
+void CSolver::Initialize()
 {
 
 }
 
-bool CSolver::Calculate(const std::vector<double>& _vN, std::vector<double>& _vBRate, std::vector<double>& _vDRate)
+void CSolver::Calculate(const d_vect_t& _n, d_vect_t& _rateB, d_vect_t& _rateD)
 {
-	_vBRate.assign(_vN.size(), 0);
-	_vDRate.assign(_vN.size(), 0);
-	return true;
+	_rateB.assign(_n.size(), 0.0);
+	_rateD.assign(_n.size(), 0.0);
+
 }
 
 void CSolver::Finalize()

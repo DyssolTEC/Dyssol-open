@@ -9,12 +9,16 @@ class CPBMSolver : public CBaseSolver
 {
 public:
 	CPBMSolver();
-	virtual ~CPBMSolver() = default;
+	~CPBMSolver() override                          = default;
+	CPBMSolver(const CPBMSolver& _other)            = default;
+	CPBMSolver(CPBMSolver&& _other)                 = default;
+	CPBMSolver& operator=(const CPBMSolver& _other) = default;
+	CPBMSolver& operator=(CPBMSolver&& _other)      = default;
 
-	virtual void SetInitialHoldup(const CHoldup* _pHoldup);
-	virtual void SetInputStream(const CStream* _pStream);
-	virtual void SetOutputStream(double _dMassFlow);
-	virtual void Calculate(double _dTStart, double _dTEnd);
+	virtual void SetInitialHoldup(const CHoldup* _holdup);
+	virtual void SetInputStream(const CStream* _stream);
+	virtual void SetOutputStream(double _massFlow);
+	virtual void Calculate(double _timeBeg, double _timeEnd);
 	virtual CHoldup* GetResult();
 };
 

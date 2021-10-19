@@ -16,6 +16,7 @@ CMDMTable::CMDMTable(QWidget *parent)
 	m_pTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
 	QObject::connect( m_pTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(ItemWasChanged(QTableWidgetItem*)) );
+	connect(m_pTable, &CQtTable::DataPasted, this, &CMDMTable::DataPasted);
 }
 
 CMDMTable::~CMDMTable()
@@ -122,5 +123,23 @@ void CMDMTable::ItemWasChanged( QTableWidgetItem* _pItem )
 
 	UpdateWholeView();
 
+	emit DataChanged();
+}
+
+void CMDMTable::DataPasted()
+{
+	if (m_bAvoidSignal) return;
+
+	for (int i = 0; i < m_pTable->rowCount(); ++i)
+		for (int j = 1; j < m_pTable->columnCount(); ++j)
+		{
+			const unsigned iTime = i;
+			const unsigned coord = j - 1;
+			double val = m_pTable->item(i, j)->text().toDouble();
+			if (val < 0) val = 0;
+			m_pData->SetValue(iTime, DISTR_COMPOUNDS, coord, val);
+		}
+
+	UpdateWholeView();
 	emit DataChanged();
 }

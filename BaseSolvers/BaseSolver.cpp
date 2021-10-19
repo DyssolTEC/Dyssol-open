@@ -3,14 +3,49 @@
 #include "BaseSolver.h"
 #include <stdexcept>
 
-CBaseSolver::CBaseSolver():
-	m_nCompilerVer(COMPILER_VERSION),
-	m_solverType(ESolverTypes::SOLVER_NONE),
-	m_solverName(""),
-	m_authorName(""),
-	m_solverUniqueKey(""),
-	m_solverVersion(0)
+ESolverTypes CBaseSolver::GetType() const
 {
+	return m_type;
+}
+
+std::string CBaseSolver::GetName() const
+{
+	return m_name;
+}
+
+std::string CBaseSolver::GetAuthorName() const
+{
+	return m_authorName;
+}
+
+size_t CBaseSolver::GetVersion() const
+{
+	return m_version;
+}
+
+std::string CBaseSolver::GetUniqueID() const
+{
+	return m_uniqueID;
+}
+
+void CBaseSolver::SetName(const std::string& _name)
+{
+	m_name = _name;
+}
+
+void CBaseSolver::SetAuthorName(const std::string& _author)
+{
+	m_authorName = _author;
+}
+
+void CBaseSolver::SetVersion(size_t _version)
+{
+	m_version = _version;
+}
+
+void CBaseSolver::SetUniqueID(const std::string& _id)
+{
+	m_uniqueID = _id;
 }
 
 void CBaseSolver::Initialize()
@@ -29,32 +64,7 @@ void CBaseSolver::LoadState()
 {
 }
 
-ESolverTypes CBaseSolver::GetType() const
+void CBaseSolver::RaiseError(const std::string& _message) const
 {
-	return m_solverType;
-}
-
-std::string CBaseSolver::GetName() const
-{
-	return m_solverName;
-}
-
-std::string CBaseSolver::GetUniqueID() const
-{
-	return m_solverUniqueKey;
-}
-
-std::string CBaseSolver::GetAuthorName() const
-{
-	return m_authorName;
-}
-
-unsigned CBaseSolver::GetVersion() const
-{
-	return m_solverVersion;
-}
-
-void CBaseSolver::RaiseError(const std::string& _sDescription) const
-{
-	throw std::logic_error(m_solverName + ": " + _sDescription);
+	throw std::logic_error(m_name + ": " + _message);
 }

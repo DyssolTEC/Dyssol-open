@@ -85,6 +85,7 @@ private slots:
 	void DimsSliderChanged() const;
 	void CompoundChanged() const;
 	void CompoundFractionChanged( QTableWidgetItem* _pItem );
+	void CompoundFractionsPasted();
 	void ComboPSDTypeChanged() const;
 	void ComboPSDGridTypeChanged() const;
 	void FunctionalCalled() const;

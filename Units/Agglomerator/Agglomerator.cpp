@@ -3,6 +3,7 @@
 #define DLL_EXPORT
 #include "Agglomerator.h"
 #include "DistributionsFunctions.h"
+#include "DyssolUtilities.h"
 
 extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 {
@@ -28,8 +29,8 @@ void CAgglomerator::CreateStructure()
 	AddConstRealParameter("Step", 0, "s", "Max time step in DAE solver", 0);
 	/// Add possibility to choose external agglomeration calculator ///
 	AddSolverAgglomeration("Solver", "Agglomeration solver");
-	AddComboParameter("Kernel", CAgglomerationSolver::EKernels::BROWNIAN,
-		{ CAgglomerationSolver::EKernels::CONSTANT, CAgglomerationSolver::EKernels::SUM, CAgglomerationSolver::EKernels::PRODUCT, CAgglomerationSolver::EKernels::BROWNIAN, CAgglomerationSolver::EKernels::SHEAR, CAgglomerationSolver::EKernels::PEGLOW, CAgglomerationSolver::EKernels::COAGULATION, CAgglomerationSolver::EKernels::GRAVITATIONAL, CAgglomerationSolver::EKernels::EKE, CAgglomerationSolver::EKernels::THOMPSON },
+	AddComboParameter("Kernel", E2I(CAgglomerationSolver::EKernels::BROWNIAN),
+		E2I(std::vector{ CAgglomerationSolver::EKernels::CONSTANT, CAgglomerationSolver::EKernels::SUM, CAgglomerationSolver::EKernels::PRODUCT, CAgglomerationSolver::EKernels::BROWNIAN, CAgglomerationSolver::EKernels::SHEAR, CAgglomerationSolver::EKernels::PEGLOW, CAgglomerationSolver::EKernels::COAGULATION, CAgglomerationSolver::EKernels::GRAVITATIONAL, CAgglomerationSolver::EKernels::EKE, CAgglomerationSolver::EKernels::THOMPSON }),
 		{ "Constant","Sum","Product","Brownian","Shear","Peglow","Coagulation","Gravitational","Kinetic energy","Thompson" },
 		"Agglomeration kernel");
 	AddConstUIntParameter("Rank", 3, "", "Rank of the kernel (for FFT solver)", 1, 10);
@@ -88,8 +89,8 @@ void CAgglomerator::Initialize(double _time)
 	}
 	/// Set parameters ///
 	m_aggSolver->Initialize(m_sizeGrid, GetConstRealParameterValue("Beta0"),
-							static_cast<CAgglomerationSolver::EKernels>(GetComboParameterValue("Kernel")),
-							GetConstUIntParameterValue("Rank"));
+		static_cast<CAgglomerationSolver::EKernels>(GetComboParameterValue("Kernel")),
+		{ static_cast<double>(GetConstUIntParameterValue("Rank")) });
 }
 
 void CAgglomerator::SaveState()
@@ -136,12 +137,12 @@ void CUnitDAEModel::CalculateResiduals(double _time, double* _vars, double* _der
 	std::vector<double> Ninlet = unit->m_inStream->GetPSD(_time, PSD_Number);
 
 	// Call agglomeration function
-	unit->m_aggSolver->Calculate(std::vector<double>(_vars, _vars + unit->m_classesNum), m_BRate, m_DRate);
+	auto [BRate, DRate] = unit->m_aggSolver->Calculate(std::vector<double>(_vars, _vars + unit->m_classesNum));
 
 	// Calculate derivatives
 	for (size_t i = 0; i < unit->m_classesNum; ++i)
 	{
-		const double der = m_BRate[i] - m_DRate[i] + Ninlet[i] - _vars[i] / holdupMass * outMass;
+		const double der = BRate[i] - DRate[i] + Ninlet[i] - _vars[i] / holdupMass * outMass;
 		_res[m_iq0 + i] = _ders[m_iq0 + i] - der;
 	}
 }

@@ -643,7 +643,7 @@ void CFlowsheet::SetStreamsToPorts()
 		{
 			// find the corresponding stream in the list
 			const size_t index = VectorFind(m_streamsI, [&](auto& s) { return s->GetKey() == port->GetStreamKey(); });
-			if (unit->GetModel()->GetGrid() != m_streamsI[index]->GetGrid()) // separate input stream is needed
+			if (index < m_streamsI.size() && unit->GetModel()->GetGrid() != m_streamsI[index]->GetGrid()) // separate input stream is needed
 				// create new with proper grid
 				m_streamsI[index] = std::make_shared<CStream>(m_streamsI[index]->GetKey(), &m_materialsDB, unit->GetModel()->GetGrid(), &m_overall, &m_phases, &m_cacheStreams, &m_tolerance, &m_thermodynamics);
 		}
