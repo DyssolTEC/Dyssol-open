@@ -437,7 +437,9 @@ std::vector<std::string> CBasicStreamsViewer::TableHeaders(EDistrTypes _distr) c
 
 	if (_distr != DISTR_UNDEFINED)
 	{
-		const EGridEntry gridType = ActiveGrid().GetGridDimension(_distr)->GridType();
+		const auto* gridDim = ActiveGrid().GetGridDimension(_distr);
+		if (!gridDim) return vHeaders;
+		const EGridEntry gridType = gridDim->GridType();
 
 		switch (gridType)
 		{
@@ -665,8 +667,11 @@ void CBasicStreamsViewer::SetSolidDistrsToTableHeaders(EDistrCombination _type)
 	{
 		const EDistrTypes dimRow = ChosenDim(EDimType::Row);
 		const EDistrTypes dimCol = ChosenDim(EDimType::Col);
-		const int classesRow = static_cast<int>(ActiveGrid().GetGridDimension(dimRow)->ClassesNumber());
-		const int classesCol = static_cast<int>(ActiveGrid().GetGridDimension(dimCol)->ClassesNumber());
+		const auto* gridDimRow = ActiveGrid().GetGridDimension(dimRow);
+		const auto* gridDimCol = ActiveGrid().GetGridDimension(dimCol);
+		if (!gridDimRow || !gridDimCol) return;
+		const int classesRow = static_cast<int>(gridDimRow->ClassesNumber());
+		const int classesCol = static_cast<int>(gridDimCol->ClassesNumber());
 		ui.tabTable->SetGeometry(classesRow, (classesCol + 1) * (int)m_vSelectedMD.size() - 1);
 		ui.tabTable->SetRowHeaderItems(0, TableHeaders(dimRow));
 		for (int i = 0; i < static_cast<int>(m_vSelectedMD.size()); ++i)
@@ -679,7 +684,9 @@ void CBasicStreamsViewer::SetSolidDistrsToTableHeaders(EDistrCombination _type)
 	case EDistrCombination::OneDimensionalVertical:
 	{
 		const EDistrTypes dim = ChosenDim(EDimType::Row);
-		const int classes = static_cast<int>(ActiveGrid().GetGridDimension(dim)->ClassesNumber());
+		const auto* gridDim = ActiveGrid().GetGridDimension(dim);
+		if (!gridDim) return;
+		const int classes = static_cast<int>(gridDim->ClassesNumber());
 		ui.tabTable->SetGeometry(classes, static_cast<int>(m_vSelectedMD.size()));
 		ui.tabTable->SetRowHeaderItems(0, TableHeaders(dim));
 		for (int i = 0; i < static_cast<int>(m_vSelectedMD.size()); ++i)
@@ -689,7 +696,9 @@ void CBasicStreamsViewer::SetSolidDistrsToTableHeaders(EDistrCombination _type)
 	case EDistrCombination::OneDimensionalHorizontal:
 	{
 		const EDistrTypes dim = ChosenDim(EDimType::Col);
-		const int classes = static_cast<int>(ActiveGrid().GetGridDimension(dim)->ClassesNumber());
+		const auto* gridDim = ActiveGrid().GetGridDimension(dim);
+		if (!gridDim) return;
+		const int classes = static_cast<int>(gridDim->ClassesNumber());
 		ui.tabTable->SetGeometry(static_cast<int>(m_vSelectedMD.size()), classes);
 		ui.tabTable->SetColHeaderItems(0, TableHeaders(dim));
 		for (int i = 0; i < static_cast<int>(m_vSelectedMD.size()); ++i)
@@ -914,7 +923,9 @@ void CBasicStreamsViewer::SetSolidDistrsToPlot()
 				vals = m_vSelectedMD[i]->GetVectorValue(m_dCurrentTime, dim);
 			else					// for only one compound
 				vals = m_vSelectedMD[i]->GetVectorValue(m_dCurrentTime, DISTR_COMPOUNDS, static_cast<unsigned>(VectorFind(m_pFlowsheet->GetCompounds(), comp)), dim);
-			vMedians = m_vSelectedStreams[i]->GetGrid().GetGridDimensionNumeric(dim)->GetClassesMeans();
+			const auto* gridDim = m_vSelectedStreams[i]->GetGrid().GetGridDimensionNumeric(dim);
+			if (gridDim)
+				vMedians = gridDim->GetClassesMeans();
 		}
 
 		ui.tabPlot->AddPoints(i, vMedians, vals);
