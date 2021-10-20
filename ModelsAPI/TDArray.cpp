@@ -202,16 +202,34 @@ void CTDArray::GetDataForSave(const std::vector<double>& _vTP, std::vector<doubl
 	size_t iCnt = GetIndexByTime(_vTP.front());
 	double dFirstValue = -2;
 	bool bAllAreEqual = true;
-	for (size_t i = 0; i < _vTP.size(); ++i)
-	{
-		if ((iCnt < m_data.size()) && (m_data[iCnt].time == _vTP[i]))
+	if (iCnt != -1)
+		for (size_t i = 0; i < _vTP.size(); ++i)
 		{
-			_vOut[i] = m_data[iCnt].value;
-			if (dFirstValue == -2)
-				dFirstValue = m_data[iCnt].value;
-			else if (bAllAreEqual && (dFirstValue != m_data[iCnt].value))
+			if ((iCnt < m_data.size()) && (m_data[iCnt].time == _vTP[i]))
+			{
+				_vOut[i] = m_data[iCnt].value;
+				if (dFirstValue == -2)
+					dFirstValue = m_data[iCnt].value;
+				else if (bAllAreEqual && (dFirstValue != m_data[iCnt].value))
+					bAllAreEqual = false;
+				iCnt++;
+			}
+		}
+	else
+	{
+		size_t iWr = 0;
+		for (double t : _vTP)
+		{
+			const size_t iRd = GetIndexByTime(t);
+			if (iRd < m_data.size() && m_data[iRd].time == _vTP[iWr])
+				_vOut[iWr] = m_data[iRd].value;
+			else
+				_vOut[iWr] = GetValue(t);
+			if (dFirstValue == -2.0)
+				dFirstValue = m_data[iRd].value;
+			else if (bAllAreEqual && dFirstValue != m_data[iRd].value)
 				bAllAreEqual = false;
-			iCnt++;
+			++iWr;
 		}
 	}
 
