@@ -294,6 +294,7 @@ std::vector<double> inline ConvertOnNewGrid(const std::vector<std::string>& _gri
 std::vector<double> inline ConvertOnNewGrid(const std::vector<double>& _grid, const std::vector<double>& _w, const std::vector<double>& _gridNew)
 {
 	if (_grid == _gridNew) return _w;
+	if (_gridNew.empty()) return {};
 	if (std::all_of(_w.begin(), _w.end(), [](double d) { return d == 0.0; })) return std::vector<double>(_gridNew.size() - 1, 0.0);
 	const std::vector<double> QDistr = ConvertMassFractionsToQ3(_w);
 	std::vector<double> res(_gridNew.size() - 1);
