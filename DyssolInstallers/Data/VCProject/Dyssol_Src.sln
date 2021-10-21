@@ -16,6 +16,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MaterialsDatabase", "Materi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Utilities", "Utilities\Utilities.vcxproj", "{B249AF0A-12E6-4099-85F8-928147DE5A68}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{58884680-7481-4F07-BC91-CCC7A7F65A8A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
