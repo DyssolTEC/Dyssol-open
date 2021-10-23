@@ -365,10 +365,6 @@ SSolverDescriptor CModelsManager::TryGetSolverDescriptor(const std::filesystem::
 
 		pSolver->CreateBasicInfo();
 
-		// validate solver
-		if (pSolver->m_nCompilerVer != COMPILER_VERSION)
-			continue;
-
 		// obtain descriptor information
 		try {
 			solverDescriptor.uniqueID = pSolver->GetUniqueID();

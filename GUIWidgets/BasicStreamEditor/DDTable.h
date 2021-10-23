@@ -28,6 +28,7 @@ public:
 private:
 	void SetHeaders();
 	void CheckNormalization();
+	void DataPasted();
 
 public slots:
 	void UpdateWholeView();

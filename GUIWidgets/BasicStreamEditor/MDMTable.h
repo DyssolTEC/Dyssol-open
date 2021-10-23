@@ -36,4 +36,5 @@ public slots:
 
 private slots:
 	void ItemWasChanged( QTableWidgetItem* _pItem );
+	void DataPasted();
 };

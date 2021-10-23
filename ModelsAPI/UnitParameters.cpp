@@ -8,6 +8,27 @@
 #include <utility>
 
 
+template<typename T>
+EUnitParameter DeduceTypeConst()
+{
+	if (std::is_same_v<T, double>)		return EUnitParameter::CONSTANT_DOUBLE;
+	if (std::is_same_v<T, int64_t>)		return EUnitParameter::CONSTANT_INT64;
+	if (std::is_same_v<T, uint64_t>)	return EUnitParameter::CONSTANT_UINT64;
+	return EUnitParameter::UNKNOWN;
+}
+
+///< Deduces type of the unit parameter depending on the template argument.
+template <typename T>
+EUnitParameter DeduceTypeList()
+{
+	if (std::is_same_v<T, double>)		return EUnitParameter::LIST_DOUBLE;
+	if (std::is_same_v<T, int64_t>)		return EUnitParameter::LIST_INT64;
+	if (std::is_same_v<T, uint64_t>)	return EUnitParameter::LIST_UINT64;
+	return EUnitParameter::UNKNOWN;
+}
+
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// CBaseUnitParameter
 
@@ -80,13 +101,13 @@ bool CBaseUnitParameter::IsInBounds() const
 
 template<typename T>
 CConstUnitParameter<T>::CConstUnitParameter() :
-	CBaseUnitParameter(DeduceType())
+	CBaseUnitParameter(DeduceTypeConst<T>())
 {
 }
 
 template<typename T>
 CConstUnitParameter<T>::CConstUnitParameter(std::string _name, std::string _units, std::string _description, T _min, T _max, T _value) :
-	CBaseUnitParameter(DeduceType(), std::move(_name), std::move(_units), std::move(_description)),
+	CBaseUnitParameter(DeduceTypeConst<T>(), std::move(_name), std::move(_units), std::move(_description)),
 	m_value{ _value },
 	m_min{ _min },
 	m_max{ _max }
@@ -141,28 +162,19 @@ void CConstUnitParameter<T>::LoadFromFile(const CH5Handler& _h5File, const std::
 	_h5File.ReadData(_path, StrConst::UParam_H5Values, m_value);
 }
 
-template<typename T>
-EUnitParameter CConstUnitParameter<T>::DeduceType() const
-{
-	if (std::is_same_v<T, double>)		return EUnitParameter::CONSTANT_DOUBLE;
-	if (std::is_same_v<T, int64_t>)		return EUnitParameter::CONSTANT_INT64;
-	if (std::is_same_v<T, uint64_t>)	return EUnitParameter::CONSTANT_UINT64;
-	return EUnitParameter::CONSTANT;
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// CListUnitParameter
 
 template <typename T>
 CListUnitParameter<T>::CListUnitParameter()
-	: CBaseUnitParameter(DeduceType())
+	: CBaseUnitParameter(DeduceTypeList<T>())
 {
 }
 
 template <typename T>
 CListUnitParameter<T>::CListUnitParameter(std::string _name, std::string _units, std::string _description, T _min, T _max, std::vector<T> _values)
-	: CBaseUnitParameter{ DeduceType(), std::move(_name), std::move(_units), std::move(_description) }
+	: CBaseUnitParameter{ DeduceTypeList<T>(), std::move(_name), std::move(_units), std::move(_description) }
 	, m_values{ std::move(_values) }
 	, m_min{ _min }
 	, m_max{ _max }
@@ -210,15 +222,6 @@ void CListUnitParameter<T>::LoadFromFile(const CH5Handler& _h5File, const std::s
 
 	// read data
 	_h5File.ReadData(_path, StrConst::UParam_H5Values, m_values);
-}
-
-template <typename T>
-EUnitParameter CListUnitParameter<T>::DeduceType() const
-{
-	if (std::is_same_v<T, double>)		return EUnitParameter::LIST_DOUBLE;
-	if (std::is_same_v<T, int64_t>)		return EUnitParameter::LIST_INT64;
-	if (std::is_same_v<T, uint64_t>)	return EUnitParameter::LIST_UINT64;
-	return EUnitParameter::UNKNOWN;
 }
 
 

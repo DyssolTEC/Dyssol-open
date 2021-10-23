@@ -13,6 +13,7 @@
 class CQtTable : public QTableWidget
 {
 	Q_OBJECT
+
 public:
 	CQtTable(QWidget* parent = nullptr);
 	CQtTable(int rows, int columns, QWidget* parent = nullptr);
@@ -106,6 +107,7 @@ private:
 	void Paste();
 
 signals:
+	void DataPasted();
 	void CheckBoxStateChanged(int _row, int _col, QCheckBox* _pCheckBox);
 	void RadioButtonStateChanged(int _row, int _col, QRadioButton* _radioButton);
 	void ComboBoxIndexChanged(int _row, int _col, QComboBox* _pComboBox);

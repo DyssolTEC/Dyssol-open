@@ -334,20 +334,20 @@ CListUIntUnitParameter* CBaseUnit::AddListUIntParameter(const std::string& _name
 	return m_unitParameters.GetListUIntParameter(_name);
 }
 
-CAgglomerationSolver* CBaseUnit::AddSolverAgglomeration(const std::string& _name, const std::string& _description)
+CSolverUnitParameter* CBaseUnit::AddSolverAgglomeration(const std::string& _name, const std::string& _description)
 {
 	if (m_unitParameters.IsNameExist(_name))
 		throw std::logic_error(StrConst::BUnit_ErrAddParam(m_unitName, _name, __func__));
 	m_unitParameters.AddSolverParameter(_name, _description, ESolverTypes::SOLVER_AGGLOMERATION_1);
-	return dynamic_cast<CAgglomerationSolver*>(m_unitParameters.GetSolverParameter(_name));
+	return m_unitParameters.GetSolverParameter(_name);
 }
 
-CPBMSolver* CBaseUnit::AddSolverPBM(const std::string& _name, const std::string& _description)
+CSolverUnitParameter* CBaseUnit::AddSolverPBM(const std::string& _name, const std::string& _description)
 {
 	if (m_unitParameters.IsNameExist(_name))
 		throw std::logic_error(StrConst::BUnit_ErrAddParam(m_unitName, _name, __func__));
 	m_unitParameters.AddSolverParameter(_name, _description, ESolverTypes::SOLVER_PBM_1);
-	return dynamic_cast<CPBMSolver*>(m_unitParameters.GetSolverParameter(_name));
+	return m_unitParameters.GetSolverParameter(_name);
 }
 
 void CBaseUnit::AddParametersToGroup(const std::string& _unitParamName, const std::string& _unitParamValueName, const std::vector<std::string>& _groupedParamNames)
@@ -461,11 +461,21 @@ CAgglomerationSolver* CBaseUnit::GetSolverAgglomeration(const std::string& _name
 	throw std::logic_error(StrConst::BUnit_ErrGetParam(m_unitName, _name, __func__));
 }
 
+CAgglomerationSolver* CBaseUnit::GetSolverAgglomeration(const CSolverUnitParameter* _param) const
+{
+	return GetSolverAgglomeration(_param->GetName());
+}
+
 CPBMSolver* CBaseUnit::GetSolverPBM(const std::string& _name) const
 {
 	if (const CSolverUnitParameter* param = m_unitParameters.GetSolverParameter(_name))
 		return dynamic_cast<CPBMSolver*>(param->GetSolver());
 	throw std::logic_error(StrConst::BUnit_ErrGetParam(m_unitName, _name, __func__));
+}
+
+CPBMSolver* CBaseUnit::GetSolverPBM(const CSolverUnitParameter* _param) const
+{
+	return GetSolverPBM(_param->GetName());
 }
 
 const CStateVariablesManager& CBaseUnit::GetStateVariablesManager() const
@@ -1283,8 +1293,6 @@ void CBaseUnit::DoInitializeUnit()
 	for (auto& param : m_unitParameters.GetAllReactionParameters())
 		for (auto& reaction : param->GetReactionsPtr())
 			reaction->Initialize(*m_materialsDB);
-	for (auto& param : m_unitParameters.GetAllSolverParameters())
-		param->GetSolver()->Initialize();
 	Initialize(0.0);
 	m_streams.PostInitialize();
 	DoSaveStateUnit(0.0, std::numeric_limits<double>::max());

@@ -234,7 +234,7 @@ std::string CDAESolver::GetError()
 bool CDAESolver::SetMaxStep( double _dStep )
 {
 	m_dMaxStep = _dStep;
-	if( IDASetMaxStep( m_pIDAmem, RCONST( m_dMaxStep ) ) != IDA_SUCCESS )
+	if (!m_pIDAmem || IDASetMaxStep( m_pIDAmem, RCONST( m_dMaxStep ) ) != IDA_SUCCESS )
 		return false;
 	return true;
 }
