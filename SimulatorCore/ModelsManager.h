@@ -87,6 +87,8 @@ public:
 	bool DownDir(size_t _index);
 	// Returns path.
 	std::filesystem::path GetDirPath(size_t _index) const;
+	// Returns all active paths.
+	std::vector<std::filesystem::path> GetAllActiveDirPaths() const;
 	// Returns activity of the specified path.
 	bool GetDirActivity(size_t _index) const;
 	// Sets activity of the specified path.

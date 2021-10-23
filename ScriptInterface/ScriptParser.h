@@ -1,13 +1,12 @@
 /* Copyright (c) 2021, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
-#include "ScriptDefines.h"
 #include "ScriptJob.h"
 
 /* Parses script files. */
 class CScriptParser
 {
-	const std::vector<std::string> m_allKeys{ ScriptInterface::AllScriptKeys() };	// All possible script keys.
+	const std::vector<std::string> m_allKeys{ ScriptInterface::AllScriptKeysStr() };	// All possible script keys.
 
 	std::vector<std::unique_ptr<CScriptJob>> m_jobs;	// All parsed jobs.
 

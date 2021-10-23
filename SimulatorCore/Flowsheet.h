@@ -144,6 +144,8 @@ public:
 	// Returns a pointer to calculation sequence.
 	CCalculationSequence* GetCalculationSequence();
 
+	// Generates a graph-like representation of the flowsheet.
+	std::vector<SFlowsheetConnection> GenerateConnectionsDescription() const;
 	// Generates a flowsheet representation in DOT format.
 	std::string GenerateDOTFile();
 

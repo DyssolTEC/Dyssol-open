@@ -30,6 +30,9 @@
     <ClCompile Include="ScriptTypes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ScriptExporter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArgumentsParser.h">
@@ -41,7 +44,7 @@
     <ClInclude Include="ScriptParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ScriptDefines.h">
+    <ClInclude Include="ScriptKeys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ScriptRunner.h">
@@ -51,6 +54,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ScriptTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptExporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

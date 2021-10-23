@@ -1,7 +1,6 @@
 /* Copyright (c) 2021, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "ScriptRunner.h"
-#include "BaseUnit.h"
 #include "ScriptJob.h"
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
@@ -20,63 +19,50 @@ void CScriptRunner::RunJob(const CScriptJob& _job)
 
 	Clear();
 	bool success = true;
-	if (success) success &= ConfigureFlowsheet(_job);
+	if (success) success &= CreateFlowsheet(_job);
 	if (success) success &= RunSimulation(_job);
 	if (success) success &= ExportResults(_job);
 
 	const auto tEnd = ch::steady_clock::now();
-	std::cout << DyssolC_ScriptFinished(ch::duration_cast<ch::seconds>(tEnd - tStart).count()) << std::endl;
+
+	PrintMessage(DyssolC_ScriptFinished(ch::duration_cast<ch::seconds>(tEnd - tStart).count()));
 	if (!success)
-		std::cout << DyssolC_ErrorFinish() << std::endl;
+		PrintMessage(DyssolC_ErrorFinish());
 }
 
-bool CScriptRunner::ConfigureFlowsheet(const CScriptJob& _job)
+bool CScriptRunner::CreateFlowsheet(const CScriptJob& _job)
 {
 	bool success = true;
+
 	if (success) success &= LoadFiles(_job);
 	if (success) success &= SetupFlowsheet(_job);
-	// TODO: put inside SetupFlowsheet
-	if (success) success &= SetupFlowsheetParameters(_job);
-	if (success) success &= SetupUnitParameters(_job);
-	if (success) success &= SetupHoldups(_job);
+
 	return success;
-}
-
-// TODO: rename to PrintError, add PrintInfo for consistency
-// Outputs the message into console and return false.
-bool PrintAndReturn(const std::string& _message)
-{
-	std::cout << _message << std::endl;
-	return false;
-}
-
-void PrintWarning(const std::string& _message)
-{
-	std::cout << _message << std::endl;
 }
 
 bool CScriptRunner::LoadFiles(const CScriptJob& _job)
 {
+	// check that source and/or result files are defined
 	const bool hasSrc     = _job.HasKey(EScriptKeys::SOURCE_FILE);
 	const bool hasDst     = _job.HasKey(EScriptKeys::RESULT_FILE);
 	const bool onlyExport = _job.HasKey(EScriptKeys::EXPORT_ONLY) && _job.GetValue<bool>(EScriptKeys::EXPORT_ONLY);
 	if (!hasSrc && !hasDst)
-		return PrintAndReturn(DyssolC_ErrorSrcDst(StrKey(EScriptKeys::SOURCE_FILE), StrKey(EScriptKeys::RESULT_FILE)));
+		return PrintMessage(DyssolC_ErrorSrcDst(StrKey(EScriptKeys::SOURCE_FILE), StrKey(EScriptKeys::RESULT_FILE)));
 	if (hasSrc && !hasDst && !onlyExport)
-		std::cout << DyssolC_WriteSrc(StrKey(EScriptKeys::SOURCE_FILE), StrKey(EScriptKeys::RESULT_FILE)) << std::endl;
+		PrintMessage(DyssolC_WriteSrc(StrKey(EScriptKeys::SOURCE_FILE), StrKey(EScriptKeys::RESULT_FILE)));
 
 	// load materials database
 	const auto MDBfile = _job.GetValue<fs::path>(EScriptKeys::MATERIALS_DATABASE);
-	std::cout << DyssolC_LoadMDB(MDBfile.string()) << std::endl;
+	PrintMessage(DyssolC_LoadMDB(MDBfile.string()));
 	if (!m_materialsDatabase.LoadFromFile(MDBfile))
-		return PrintAndReturn(DyssolC_ErrorMDB());
+		return PrintMessage(DyssolC_ErrorMDB());
 
 	// set paths to models
-	auto paths = _job.GetValues<fs::path>(EScriptKeys::MODELS_PATH);
-	paths.insert(paths.begin(), fs::current_path()); // current path
-	for (const auto& dir : paths)
+	auto modelsPaths = _job.GetValues<fs::path>(EScriptKeys::MODELS_PATH);
+	modelsPaths.insert(modelsPaths.begin(), fs::current_path()); // add current path
+	for (const auto& dir : modelsPaths)
 	{
-		std::cout << DyssolC_LoadModels(dir.string()) << std::endl;
+		PrintMessage(DyssolC_LoadModels(dir.string()));
 		m_modelsManager.AddDir(dir);
 	}
 
@@ -84,10 +70,10 @@ bool CScriptRunner::LoadFiles(const CScriptJob& _job)
 	if (hasSrc)
 	{
 		const auto srcFile = _job.GetValue<fs::path>(EScriptKeys::SOURCE_FILE);
-		std::cout << DyssolC_LoadFlowsheet(srcFile.string()) << std::endl;
+		PrintMessage(DyssolC_LoadFlowsheet(srcFile.string()));
 		CH5Handler fileHandler;
 		if (!m_flowsheet.LoadFromFile(fileHandler, srcFile))
-			return PrintAndReturn(DyssolC_ErrorLoad());
+			return PrintMessage(DyssolC_ErrorLoad());
 	}
 
 	return true;
@@ -95,25 +81,38 @@ bool CScriptRunner::LoadFiles(const CScriptJob& _job)
 
 bool CScriptRunner::SetupFlowsheet(const CScriptJob& _job)
 {
-	// TODO: put into calling function
 	if (_job.HasKey(EScriptKeys::EXPORT_ONLY) && _job.GetValue<bool>(EScriptKeys::EXPORT_ONLY)) return true;
 
-	// setup units
+	bool success = true;
+
+	if (success) success &= SetupUnits(_job);
+	if (success) success &= SetupStreams(_job);
+	if (success) success &= SetupCompounds(_job);
+	if (success) success &= SetupPhases(_job);
+	if (success) success &= SetupGrids(_job);
+	if (success) success &= SetupFlowsheetParameters(_job);
+	if (success) success &= SetupUnitParameters(_job);
+	if (success) success &= SetupHoldups(_job);
+
+	return success;
+}
+
+bool CScriptRunner::SetupUnits(const CScriptJob& _job)
+{
 	// remove existing units
 	if (_job.HasKey(EScriptKeys::KEEP_EXISTING_UNITS) && !_job.GetValue<bool>(EScriptKeys::KEEP_EXISTING_UNITS))
 		for (const auto& u : m_flowsheet.GetAllUnits())
 			m_flowsheet.DeleteUnit(u->GetKey());
+
 	// add or set new units
 	for (const auto& entry : _job.GetValues<std::vector<std::string>>(EScriptKeys::UNIT))
 	{
 		// check input
 		if (entry.size() != 2)
-			// TODO: output line numbers
-			return PrintAndReturn(DyssolC_ErrorArgumentsNumberUnit(StrKey(EScriptKeys::UNIT)));
+			return PrintMessage(DyssolC_ErrorArgumentsNumberUnit(StrKey(EScriptKeys::UNIT)));
 		// find model key
-		const auto key = GetModelKey(entry[1]);
-		if (key.empty())
-			return PrintAndReturn(DyssolC_ErrorNoModel(StrKey(EScriptKeys::UNIT), entry[1]));
+		const auto key = TryGetModelKey(EScriptKeys::UNIT, entry[1]);
+		if (key.empty()) return false;
 		// whether a unit already exists
 		const bool exists = m_flowsheet.GetUnitByName(entry[0]);
 		// pointer to unit to work with: existing or a new one
@@ -123,28 +122,30 @@ bool CScriptRunner::SetupFlowsheet(const CScriptJob& _job)
 		unit->SetModel(key);
 	}
 
-	// setup streams
+	return true;
+}
+
+bool CScriptRunner::SetupStreams(const CScriptJob& _job)
+{
+	// remove existing streams
+	if (_job.HasKey(EScriptKeys::KEEP_EXISTING_STREAMS) && !_job.GetValue<bool>(EScriptKeys::KEEP_EXISTING_STREAMS))
+		for (const auto& s : m_flowsheet.GetAllStreams())
+			m_flowsheet.DeleteStream(s->GetKey());
+
 	for (const auto& entry : _job.GetValues<SStreamSE>(EScriptKeys::STREAM))
 	{
-		// get pointers to units and models
-		auto [modelO, unitO, messageO] = TryGetModelPtr(entry.unitO, EScriptKeys::STREAM);
-		if (!modelO)
-			return PrintAndReturn(messageO);
-		auto [modelI, unitI, messageI] = TryGetModelPtr(entry.unitI, EScriptKeys::STREAM);
-		if (!modelI)
-			return PrintAndReturn(messageI);
-		auto* portO = GetPortPtr(*modelO, entry.portO);
-		if (!portO)
-			return PrintAndReturn(DyssolC_ErrorNoPort(StrKey(EScriptKeys::STREAM), unitO->GetName(), entry.portO.name, entry.portO.index));
-		auto* portI = GetPortPtr(*modelI, entry.portI);
-		if (!portI)
-			return PrintAndReturn(DyssolC_ErrorNoPort(StrKey(EScriptKeys::STREAM), unitI->GetName(), entry.portI.name, entry.portI.index));
-		// whether a stream between these ports already exists
-		const bool exists = portO->GetStreamKey() == portI->GetStreamKey() && m_flowsheet.GetStream(portO->GetStreamKey());
+		auto* portO = TryGetPortPtr(EScriptKeys::STREAM, entry.unitO, entry.portO);
+		if (!portO) return false;
+		auto* portI = TryGetPortPtr(EScriptKeys::STREAM, entry.unitI, entry.portI);
+		if (!portI) return false;
+		// whether a stream between these ports already exists and connects these ports
+		const bool connected = portO->GetStreamKey() == portI->GetStreamKey() && m_flowsheet.GetStream(portO->GetStreamKey());
+		// whether a stream with the same name already exists
+		const bool exists = m_flowsheet.GetStreamByName(entry.name);
 		// pointer to stream to work with: existing or a new one
-		auto* stream = exists ? m_flowsheet.GetStream(portO->GetStreamKey()) : m_flowsheet.AddStream();
+		auto* stream = connected ? m_flowsheet.GetStream(portO->GetStreamKey()) : exists ? m_flowsheet.GetStreamByName(entry.name) : m_flowsheet.AddStream();
 		// remove old connected streams if necessary
-		if (!exists)
+		if (!connected)
 		{
 			m_flowsheet.DeleteStream(portO->GetStreamKey());
 			m_flowsheet.DeleteStream(portI->GetStreamKey());
@@ -155,37 +156,45 @@ bool CScriptRunner::SetupFlowsheet(const CScriptJob& _job)
 		portI->SetStreamKey(stream->GetKey());
 	}
 
-	// setup compounds
-	if (_job.HasKey(EScriptKeys::COMPOUNDS))
-	{
-		std::vector<std::string> compoundKeys;
-		for (const auto& list : _job.GetValues<std::vector<std::string>>(EScriptKeys::COMPOUNDS))
+	return true;
+}
+
+bool CScriptRunner::SetupCompounds(const CScriptJob& _job)
+{
+	if (!_job.HasKey(EScriptKeys::COMPOUNDS)) return true;
+
+	std::vector<std::string> keys;
+	for (const auto& entry : _job.GetValues<std::vector<std::string>>(EScriptKeys::COMPOUNDS))
+		for (const auto& key : entry)
 		{
-			for (const auto& val : list)
-			{
-				const auto* cmp = GetCompoundPtr(val);
-				if (!cmp)
-					return PrintAndReturn(DyssolC_ErrorNoCompounds(StrKey(EScriptKeys::COMPOUNDS), val));
-				compoundKeys.push_back(cmp->GetKey());
-			}
+			const auto* compound = TryGetCompoundPtr(EScriptKeys::COMPOUNDS, key);
+			if (!compound) return false;
+			keys.push_back(compound->GetKey());
 		}
-		m_flowsheet.SetCompounds(compoundKeys);
-	}
+	m_flowsheet.SetCompounds(keys);
 
-	// setup phases
-	if (_job.HasKey(EScriptKeys::PHASES))
-	{
-		std::vector<SPhaseDescriptor> phases;
-		for (const auto& entry : _job.GetValues<SPhasesSE>(EScriptKeys::PHASES))
-			for (size_t i = 0; i < entry.types.size(); ++i)
-				phases.push_back(SPhaseDescriptor{ static_cast<EPhase>(entry.types[i].key), entry.names[i] });
-		m_flowsheet.SetPhases(phases);
-	}
+	return true;
+}
 
+bool CScriptRunner::SetupPhases(const CScriptJob& _job)
+{
+	if (!_job.HasKey(EScriptKeys::PHASES)) return true;
+
+	std::vector<SPhaseDescriptor> phases;
+	for (const auto& entry : _job.GetValues<SPhasesSE>(EScriptKeys::PHASES))
+		for (size_t i = 0; i < entry.types.size(); ++i)
+			phases.push_back(SPhaseDescriptor{ static_cast<EPhase>(entry.types[i].key), entry.names[i] });
+	m_flowsheet.SetPhases(phases);
+
+	return true;
+}
+
+bool CScriptRunner::SetupGrids(const CScriptJob& _job)
+{
 	// The grids may be cleaned before setting new values. Those grids, which are not mentioned in the script file, are not changed.
 	// If cleaning is requested, on the first access to the grid's holder, clean it, store the key of the holder in this vector and do not clean any further.
 	std::vector<std::string> processed;	// already processed grid's holders
-	const bool keepG = !_job.HasKey(EScriptKeys::KEEP_EXISTING_GRIDS_VALUES) || _job.GetValue<bool>(EScriptKeys::KEEP_EXISTING_GRIDS_VALUES);	// keep or remove values in grids before setting new ones
+	const bool keep = !_job.HasKey(EScriptKeys::KEEP_EXISTING_GRIDS_VALUES) || _job.GetValue<bool>(EScriptKeys::KEEP_EXISTING_GRIDS_VALUES);	// keep or remove values in grids before setting new ones
 
 	// setup distribution grids
 	for (const auto& entry : _job.GetValues<SGridDimensionSE>(EScriptKeys::DISTRIBUTION_GRID))
@@ -193,12 +202,11 @@ bool CScriptRunner::SetupFlowsheet(const CScriptJob& _job)
 		// type of the grid
 		const bool mainGrid = entry.unit.name == "GLOBAL";
 		// get all pointers and values
-		const auto [model, unit, message] = !mainGrid ? TryGetModelPtr(entry.unit, EScriptKeys::DISTRIBUTION_GRID) : std::make_tuple(nullptr, nullptr, "");
-		if (!mainGrid && !model)
-			return PrintAndReturn(message);
+		const auto [model, unit] = !mainGrid ? TryGetUnitAndModelPtr(EScriptKeys::DISTRIBUTION_GRID, entry.unit) : std::make_tuple(nullptr, nullptr);
+		if (!mainGrid && !model) return false;
 		CMultidimensionalGrid grid = mainGrid ? m_flowsheet.GetGrid() : model->GetGrid();
 		// clean the grid if requested and if it is the first access to this grid
-		if (const std::string key = mainGrid ? "GLOBAL" : unit->GetKey(); !keepG && !VectorContains(processed, key))
+		if (const std::string key = mainGrid ? "GLOBAL" : unit->GetKey(); !keep && !VectorContains(processed, key))
 		{
 			// remove all except compounds
 			for (const auto& t : grid.GetDimensionsTypes())
@@ -208,9 +216,9 @@ bool CScriptRunner::SetupFlowsheet(const CScriptJob& _job)
 			processed.push_back(key);
 		}
 		// get some values for the ease of use
-		const auto& type = static_cast<EDistrTypes>(entry.distrType.key);
+		const auto& type      = static_cast<EDistrTypes>(entry.distrType.key);
 		const auto& entryType = static_cast<EGridEntry>(entry.entryType.key);
-		const auto& function = static_cast<EGridFunction>(entry.function.key);
+		const auto& function  = static_cast<EGridFunction>(entry.function.key);
 		// remove grid dimension if it already exists
 		if (grid.HasDimension(type))
 			grid.RemoveDimension(type);
@@ -219,8 +227,7 @@ bool CScriptRunner::SetupFlowsheet(const CScriptJob& _job)
 		{
 			// check number of arguments
 			if (function != EGridFunction::GRID_FUN_MANUAL && entry.valuesNum.size() != 2 || function == EGridFunction::GRID_FUN_MANUAL && entry.valuesNum.size() != entry.classes + 1)
-				// TODO: use DyssolC_ErrorArgumentsNumber
-				return PrintAndReturn(DyssolC_ErrorArgumentsNumberGrid(StrKey(EScriptKeys::DISTRIBUTION_GRID), unit->GetName(), entry.distrType.name, entry.distrType.key));
+				return PrintMessage(DyssolC_ErrorArgumentsNumberGrid(StrKey(EScriptKeys::DISTRIBUTION_GRID), unit->GetName(), entry.distrType.name, entry.distrType.key));
 			// create grid
 			std::vector<double> res = function == EGridFunction::GRID_FUN_MANUAL ? entry.valuesNum : CreateGrid(function, entry.classes, entry.valuesNum[0], entry.valuesNum[1]);
 			// convert volumes to diameters if required
@@ -232,7 +239,7 @@ bool CScriptRunner::SetupFlowsheet(const CScriptJob& _job)
 		else if (entryType == EGridEntry::GRID_SYMBOLIC)
 		{
 			if (entry.valuesSym.size() != entry.classes)
-				return PrintAndReturn(DyssolC_ErrorArgumentsNumberGrid(StrKey(EScriptKeys::DISTRIBUTION_GRID), unit->GetName(), entry.distrType.name, entry.distrType.key));
+				return PrintMessage(DyssolC_ErrorArgumentsNumberGrid(StrKey(EScriptKeys::DISTRIBUTION_GRID), unit->GetName(), entry.distrType.name, entry.distrType.key));
 			// add grid dimension
 			grid.AddSymbolicDimension(type, entry.valuesSym);
 		}
@@ -246,61 +253,42 @@ bool CScriptRunner::SetupFlowsheet(const CScriptJob& _job)
 	return true;
 }
 
-// Help macros to simplify setting of flowsheet parameters
-#define EXPAND_MACRO(x) x
-#define RESOLVE_MACRO(_1,_2,_3,_4,_5,NAME,...) NAME
-#define SET_PARAM3(KEY, TYPE, FUN) if (_job.HasKey(KEY)) params->FUN(_job.GetValue<TYPE>(KEY))
-#define SET_PARAM4(KEY, TYPE, FUN, TYPE_CAST) if (_job.HasKey(KEY)) params->FUN(static_cast<TYPE_CAST>(_job.GetValue<TYPE>(KEY)))
-#define SET_PARAM5(KEY, TYPE, FUN, TYPE_CAST, VAR) if (_job.HasKey(KEY)) params->FUN(static_cast<TYPE_CAST>(_job.GetValue<TYPE>(KEY).VAR))
-#define SET_PARAM(...) EXPAND_MACRO(RESOLVE_MACRO(__VA_ARGS__, SET_PARAM5, SET_PARAM4, SET_PARAM3)(__VA_ARGS__))
-
 bool CScriptRunner::SetupFlowsheetParameters(const CScriptJob& _job)
 {
-	// TODO: put into calling function
-	if (_job.HasKey(EScriptKeys::EXPORT_ONLY) && _job.GetValue<bool>(EScriptKeys::EXPORT_ONLY)) return true;
-
 	auto* params = m_flowsheet.GetParameters();
 
-	SET_PARAM(EScriptKeys::SIMULATION_TIME             , double    , EndSimulationTime                          );
-	SET_PARAM(EScriptKeys::RELATIVE_TOLERANCE          , double    , RelTol                                     );
-	SET_PARAM(EScriptKeys::ABSOLUTE_TOLERANCE          , double    , AbsTol                                     );
-	SET_PARAM(EScriptKeys::MINIMAL_FRACTION            , double    , MinFraction                                );
-	SET_PARAM(EScriptKeys::INIT_TIME_WINDOW            , double    , InitTimeWindow                             );
-	SET_PARAM(EScriptKeys::SAVE_TIME_STEP_HINT         , double    , SaveTimeStep                               );
-	SET_PARAM(EScriptKeys::SAVE_FLAG_FOR_HOLDUPS       , bool      , SaveTimeStepFlagHoldups                    );
-	SET_PARAM(EScriptKeys::THERMO_TEMPERATURE_MIN      , double    , EnthalpyMinT                               );
-	SET_PARAM(EScriptKeys::THERMO_TEMPERATURE_MAX      , double    , EnthalpyMaxT                               );
-	SET_PARAM(EScriptKeys::THERMO_TEMPERATURE_INTERVALS, uint64_t  , EnthalpyInt                                );
-	SET_PARAM(EScriptKeys::MIN_TIME_WINDOW             , double    , MinTimeWindow                              );
-	SET_PARAM(EScriptKeys::MAX_TIME_WINDOW             , double    , MaxTimeWindow                              );
-	SET_PARAM(EScriptKeys::MAX_ITERATIONS_NUMBER       , uint64_t  , MaxItersNumber         , uint32_t          );
-	SET_PARAM(EScriptKeys::WINDOW_CHANGE_RATE          , double    , MagnificationRatio                         );
-	SET_PARAM(EScriptKeys::ITERATIONS_UPPER_LIMIT      , uint64_t  , ItersUpperLimit        , uint32_t          );
-	SET_PARAM(EScriptKeys::ITERATIONS_LOWER_LIMIT      , uint64_t  , ItersLowerLimit        , uint32_t          );
-	SET_PARAM(EScriptKeys::ITERATIONS_UPPER_LIMIT_1ST  , uint64_t  , Iters1stUpperLimit     , uint32_t          );
-	SET_PARAM(EScriptKeys::RELAXATION_PARAMETER        , double    , RelaxationParam                            );
-	SET_PARAM(EScriptKeys::ACCELERATION_LIMIT          , double    , WegsteinAccelParam                         );
-	SET_PARAM(EScriptKeys::CONVERGENCE_METHOD          , SNameOrKey, ConvergenceMethod      , EConvergenceMethod  , key);
-	SET_PARAM(EScriptKeys::EXTRAPOLATION_METHOD        , SNameOrKey, ExtrapolationMethod    , EExtrapolationMethod, key);
+	if (_job.HasKey(EScriptKeys::SIMULATION_TIME))              params->EndSimulationTime                                    (_job.GetValue<double  >  (EScriptKeys::SIMULATION_TIME             ));
+	if (_job.HasKey(EScriptKeys::RELATIVE_TOLERANCE))           params->RelTol                                               (_job.GetValue<double  >  (EScriptKeys::RELATIVE_TOLERANCE          ));
+	if (_job.HasKey(EScriptKeys::ABSOLUTE_TOLERANCE))           params->AbsTol                                               (_job.GetValue<double  >  (EScriptKeys::ABSOLUTE_TOLERANCE          ));
+	if (_job.HasKey(EScriptKeys::MINIMAL_FRACTION))             params->MinFraction                                          (_job.GetValue<double  >  (EScriptKeys::MINIMAL_FRACTION            ));
+	if (_job.HasKey(EScriptKeys::INIT_TIME_WINDOW))             params->InitTimeWindow                                       (_job.GetValue<double  >  (EScriptKeys::INIT_TIME_WINDOW            ));
+	if (_job.HasKey(EScriptKeys::SAVE_TIME_STEP_HINT))          params->SaveTimeStep                                         (_job.GetValue<double  >  (EScriptKeys::SAVE_TIME_STEP_HINT         ));
+	if (_job.HasKey(EScriptKeys::SAVE_FLAG_FOR_HOLDUPS))        params->SaveTimeStepFlagHoldups                              (_job.GetValue<bool    >  (EScriptKeys::SAVE_FLAG_FOR_HOLDUPS       ));
+	if (_job.HasKey(EScriptKeys::THERMO_TEMPERATURE_MIN))       params->EnthalpyMinT                                         (_job.GetValue<double  >  (EScriptKeys::THERMO_TEMPERATURE_MIN      ));
+	if (_job.HasKey(EScriptKeys::THERMO_TEMPERATURE_MAX))       params->EnthalpyMaxT                                         (_job.GetValue<double  >  (EScriptKeys::THERMO_TEMPERATURE_MAX      ));
+	if (_job.HasKey(EScriptKeys::THERMO_TEMPERATURE_INTERVALS)) params->EnthalpyInt                                          (_job.GetValue<uint64_t>  (EScriptKeys::THERMO_TEMPERATURE_INTERVALS));
+	if (_job.HasKey(EScriptKeys::MIN_TIME_WINDOW))              params->MinTimeWindow                                        (_job.GetValue<double  >  (EScriptKeys::MIN_TIME_WINDOW             ));
+	if (_job.HasKey(EScriptKeys::MAX_TIME_WINDOW))              params->MaxTimeWindow                                        (_job.GetValue<double  >  (EScriptKeys::MAX_TIME_WINDOW             ));
+	if (_job.HasKey(EScriptKeys::WINDOW_CHANGE_RATE))           params->MagnificationRatio                                   (_job.GetValue<double  >  (EScriptKeys::WINDOW_CHANGE_RATE          ));
+	if (_job.HasKey(EScriptKeys::RELAXATION_PARAMETER))         params->RelaxationParam                                      (_job.GetValue<double  >  (EScriptKeys::RELAXATION_PARAMETER        ));
+	if (_job.HasKey(EScriptKeys::ACCELERATION_LIMIT))           params->WegsteinAccelParam                                   (_job.GetValue<double  >  (EScriptKeys::ACCELERATION_LIMIT          ));
+	if (_job.HasKey(EScriptKeys::MAX_ITERATIONS_NUMBER))        params->MaxItersNumber     (static_cast<uint32_t>            (_job.GetValue<uint64_t>  (EScriptKeys::MAX_ITERATIONS_NUMBER)      ));
+	if (_job.HasKey(EScriptKeys::ITERATIONS_UPPER_LIMIT))       params->ItersUpperLimit    (static_cast<uint32_t>            (_job.GetValue<uint64_t>  (EScriptKeys::ITERATIONS_UPPER_LIMIT)     ));
+	if (_job.HasKey(EScriptKeys::ITERATIONS_LOWER_LIMIT))       params->ItersLowerLimit    (static_cast<uint32_t>            (_job.GetValue<uint64_t>  (EScriptKeys::ITERATIONS_LOWER_LIMIT)     ));
+	if (_job.HasKey(EScriptKeys::ITERATIONS_UPPER_LIMIT_1ST))   params->Iters1stUpperLimit (static_cast<uint32_t>            (_job.GetValue<uint64_t>  (EScriptKeys::ITERATIONS_UPPER_LIMIT_1ST) ));
+	if (_job.HasKey(EScriptKeys::CONVERGENCE_METHOD))           params->ConvergenceMethod  (static_cast<EConvergenceMethod>  (_job.GetValue<SNamedEnum>(EScriptKeys::CONVERGENCE_METHOD).key     ));
+	if (_job.HasKey(EScriptKeys::EXTRAPOLATION_METHOD))         params->ExtrapolationMethod(static_cast<EExtrapolationMethod>(_job.GetValue<SNamedEnum>(EScriptKeys::EXTRAPOLATION_METHOD).key   ));
+
 	return true;
 }
 
 bool CScriptRunner::SetupUnitParameters(const CScriptJob& _job)
 {
-	// TODO: put into calling function
-	if (_job.HasKey(EScriptKeys::EXPORT_ONLY) && _job.GetValue<bool>(EScriptKeys::EXPORT_ONLY)) return true;
-
 	for (const auto& entry : _job.GetValues<SUnitParameterSE>(EScriptKeys::UNIT_PARAMETER))
 	{
-		// TODO: write error message in TryGetModelPtr
-		// get pointer to unit and model
-		auto [model, unit, message] = TryGetModelPtr(entry.unit, EScriptKeys::UNIT_PARAMETER);
-		if (!model)
-			return PrintAndReturn(message);
 		// get pointer to unit parameter
-		auto* param = GetUnitParamPtr(*model, entry.param);
-		if (!param)
-			return PrintAndReturn(DyssolC_ErrorNoUP(StrKey(EScriptKeys::UNIT_PARAMETER), unit->GetName(), entry.param.name, entry.param.index));
+		auto* param = TryGetUnitParamPtr(EScriptKeys::UNIT_PARAMETER, entry.unit, entry.param);
+		if (!param) return false;
 		std::stringstream ss{ entry.values };	// create a stream with parameter values
 		param->ValueFromStream(ss);				// read unit parameter values
 	}
@@ -308,46 +296,53 @@ bool CScriptRunner::SetupUnitParameters(const CScriptJob& _job)
 	return true;
 }
 
-// TODO: split
 bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 {
-	// TODO: put into calling function
-	if (_job.HasKey(EScriptKeys::EXPORT_ONLY) && _job.GetValue<bool>(EScriptKeys::EXPORT_ONLY)) return true;
-
 	// The holdup may be cleaned before setting time-dependent values. Those holdups, which are not mentioned in the script file, are not changed.
 	// If cleaning is requested, on the first access to the holdup, clean it, store in this vector and do not clean any further.
 	std::vector<CBaseStream*> processed;	// already processed holdups
-	const bool keepTP = !_job.HasKey(EScriptKeys::KEEP_EXISTING_HOLDUPS_VALUES) || _job.GetValue<bool>(EScriptKeys::KEEP_EXISTING_HOLDUPS_VALUES);	// keep or remove time points
+	const bool keep = !_job.HasKey(EScriptKeys::KEEP_EXISTING_HOLDUPS_VALUES) || _job.GetValue<bool>(EScriptKeys::KEEP_EXISTING_HOLDUPS_VALUES);	// keep or remove time points
 
-	// Obtains the required holdup, cleans it if required and returns a pointer to it.
-	const auto TryGetHoldupPtr = [&](const SNameOrIndex& _unit, const SNameOrIndex& _holdup, EScriptKeys _scriptKey) -> std::tuple<CBaseStream*, CUnitContainer*, std::string>
+	// Cleans holdup if required.
+	const auto CleanUp = [&](CBaseStream* s)
 	{
-		// get pointer to unit and model
-		auto [model, unit, message] = TryGetModelPtr(_unit, _scriptKey);
-		if (!model)		return std::make_tuple(nullptr, nullptr, message);
-		// get pointer to holdup
-		auto* holdup = GetHoldupPtr(*model, _holdup);
-		if (!holdup)	return std::make_tuple(nullptr, nullptr, DyssolC_ErrorNoHoldup(StrKey(_scriptKey), unit->GetName(), _holdup.name, _holdup.index));
-		// remove all time points if requested and if it is the first access to this stream
-		if (!keepTP && !VectorContains(processed, holdup))
+		if (s && !keep && !VectorContains(processed, s))
 		{
-			holdup->RemoveAllTimePoints();
-			processed.push_back(holdup);
+			s->RemoveAllTimePoints();
+			processed.push_back(s);
 		}
-		// return pointer to holdup
-		return std::make_tuple(holdup, unit, "");
 	};
 
-	// setup holdups overall parameters
+	// remove all time points if requested for required holdups
+	for (const auto& entry : _job.GetValues<SHoldupDependentSE>(EScriptKeys::HOLDUP_OVERALL))
+		CleanUp(GetHoldupPtr(GetModelPtr(GetUnitPtr(entry.unit)), entry.holdup));
+	for (const auto& entry : _job.GetValues<SHoldupDependentSE>(EScriptKeys::HOLDUP_PHASES))
+		CleanUp(GetHoldupPtr(GetModelPtr(GetUnitPtr(entry.unit)), entry.holdup));
+	for (const auto& entry : _job.GetValues<SHoldupCompoundsSE>(EScriptKeys::HOLDUP_COMPOUNDS))
+		CleanUp(GetHoldupPtr(GetModelPtr(GetUnitPtr(entry.unit)), entry.holdup));
+	for (const auto& entry : _job.GetValues<SHoldupDistributionSE>(EScriptKeys::HOLDUP_DISTRIBUTION))
+		CleanUp(GetHoldupPtr(GetModelPtr(GetUnitPtr(entry.unit)), entry.holdup));
+
+	bool success = true;
+
+	if (success) success &= SetupHoldupsOverall(_job);
+	if (success) success &= SetupHoldupsPhases(_job);
+	if (success) success &= SetupHoldupsCompounds(_job);
+	if (success) success &= SetupHoldupsDistributions(_job);
+
+	return success;
+}
+
+bool CScriptRunner::SetupHoldupsOverall(const CScriptJob& _job)
+{
 	for (const auto& entry : _job.GetValues<SHoldupDependentSE>(EScriptKeys::HOLDUP_OVERALL))
 	{
 		// get pointer to holdup
-		auto [holdup, unit, message] = TryGetHoldupPtr(entry.unit, entry.holdup, EScriptKeys::HOLDUP_OVERALL);
-		if (!holdup)
-			return PrintAndReturn(message);
+		auto [holdup, unit] = TryGetHoldupPtr(EScriptKeys::HOLDUP_OVERALL, entry.unit, entry.holdup);
+		if (!holdup) return false;
 		// check the number of passed arguments
 		if (entry.values.size() != m_flowsheet.GetOverallPropertiesNumber() && entry.values.size() % (m_flowsheet.GetOverallPropertiesNumber() + 1) != 0)
-			return PrintAndReturn(DyssolC_ErrorArgumentsNumber(StrKey(EScriptKeys::HOLDUP_OVERALL), unit->GetName(), entry.holdup.name, entry.holdup.index));
+			return PrintMessage(DyssolC_ErrorArgumentsNumber(StrKey(EScriptKeys::HOLDUP_OVERALL), unit->GetName(), entry.holdup.name, entry.holdup.index));
 		// set values: only values for time point 0 without time are given
 		if (entry.values.size() == m_flowsheet.GetOverallPropertiesNumber())
 			for (size_t iOvr = 0; iOvr < m_flowsheet.GetOverallPropertiesNumber(); ++iOvr)
@@ -359,16 +354,19 @@ bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 					holdup->SetOverallProperty(entry.values[iTime], m_flowsheet.GetOveralProperties()[iOvr].type, entry.values[iTime + iOvr + 1]);
 	}
 
-	// setup holdups phase fractions
+	return true;
+}
+
+bool CScriptRunner::SetupHoldupsPhases(const CScriptJob& _job)
+{
 	for (const auto& entry : _job.GetValues<SHoldupDependentSE>(EScriptKeys::HOLDUP_PHASES))
 	{
 		// get pointer to holdup
-		auto [holdup, unit, message] = TryGetHoldupPtr(entry.unit, entry.holdup, EScriptKeys::HOLDUP_PHASES);
-		if (!holdup)
-			return PrintAndReturn(message);
+		auto [holdup, unit] = TryGetHoldupPtr(EScriptKeys::HOLDUP_PHASES, entry.unit, entry.holdup);
+		if (!holdup) return false;
 		// check the number of passed arguments
 		if (entry.values.size() != m_flowsheet.GetPhasesNumber() && entry.values.size() % (m_flowsheet.GetPhasesNumber() + 1) != 0)
-			return PrintAndReturn(DyssolC_ErrorArgumentsNumber(StrKey(EScriptKeys::HOLDUP_PHASES), unit->GetName(), entry.holdup.name, entry.holdup.index));
+			return PrintMessage(DyssolC_ErrorArgumentsNumber(StrKey(EScriptKeys::HOLDUP_PHASES), unit->GetName(), entry.holdup.name, entry.holdup.index));
 		// set values: only values for time point 0 without time are given
 		if (entry.values.size() == m_flowsheet.GetPhasesNumber())
 			for (size_t iPhase = 0; iPhase < m_flowsheet.GetPhasesNumber(); ++iPhase)
@@ -380,19 +378,22 @@ bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 					holdup->SetPhaseFraction(entry.values[iTime], m_flowsheet.GetPhases()[iPhase].state, entry.values[iTime + iPhase + 1]);
 	}
 
-	// setup holdups compound fractions
+	return true;
+}
+
+bool CScriptRunner::SetupHoldupsCompounds(const CScriptJob& _job)
+{
 	for (const auto& entry : _job.GetValues<SHoldupCompoundsSE>(EScriptKeys::HOLDUP_COMPOUNDS))
 	{
 		// get pointer to holdup
-		auto [holdup, unit, message] = TryGetHoldupPtr(entry.unit, entry.holdup, EScriptKeys::HOLDUP_COMPOUNDS);
-		if (!holdup)
-			return PrintAndReturn(message);
+		auto [holdup, unit] = TryGetHoldupPtr(EScriptKeys::HOLDUP_COMPOUNDS, entry.unit, entry.holdup);
+		if (!holdup) return false;
 		// check the number of passed arguments
 		if (entry.values.size() != m_flowsheet.GetCompoundsNumber() && entry.values.size() % (m_flowsheet.GetCompoundsNumber() + 1) != 0)
-			return PrintAndReturn(DyssolC_ErrorArgumentsNumber(StrKey(EScriptKeys::HOLDUP_COMPOUNDS), unit->GetName(), entry.holdup.name, entry.holdup.index, entry.phase.name, entry.phase.key));
+			return PrintMessage(DyssolC_ErrorArgumentsNumber(StrKey(EScriptKeys::HOLDUP_COMPOUNDS), unit->GetName(), entry.holdup.name, entry.holdup.index, entry.phase.name, entry.phase.key));
 		// check that all phases are defined
 		if (!m_flowsheet.HasPhase(static_cast<EPhase>(entry.phase.key)))
-			return PrintAndReturn(DyssolC_ErrorNoPhase(StrKey(EScriptKeys::HOLDUP_COMPOUNDS), unit->GetName(), entry.holdup.name, entry.holdup.index, entry.phase.name, entry.phase.key));
+			return PrintMessage(DyssolC_ErrorNoPhase(StrKey(EScriptKeys::HOLDUP_COMPOUNDS), unit->GetName(), entry.holdup.name, entry.holdup.index, entry.phase.name, entry.phase.key));
 		// set values: only values for time point 0 without time are given
 		if (entry.values.size() == m_flowsheet.GetCompoundsNumber())
 			holdup->SetCompoundsFractions(0.0, static_cast<EPhase>(entry.phase.key), entry.values);
@@ -402,35 +403,38 @@ bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 				holdup->SetCompoundsFractions(entry.values[iTime], static_cast<EPhase>(entry.phase.key), std::vector<double>{ entry.values.begin() + iTime + 1, entry.values.begin() + iTime + 1 + m_flowsheet.GetCompoundsNumber() });
 	}
 
-	// setup solids distributions
+	return true;
+}
+
+bool CScriptRunner::SetupHoldupsDistributions(const CScriptJob& _job)
+{
 	for (const auto& entry : _job.GetValues<SHoldupDistributionSE>(EScriptKeys::HOLDUP_DISTRIBUTION))
 	{
 		// get pointer to holdup
-		auto [holdup, unit, message] = TryGetHoldupPtr(entry.unit, entry.holdup, EScriptKeys::HOLDUP_DISTRIBUTION);
-		if (!holdup)
-			return PrintAndReturn(message);
+		auto [holdup, unit] = TryGetHoldupPtr(EScriptKeys::HOLDUP_DISTRIBUTION, entry.unit, entry.holdup);
+		if (!holdup) return false;
 		// read required values for ease of use
 		const auto distr = static_cast<EDistrTypes>(entry.distrType.key);					// distribution type
 		const auto fun = static_cast<EDistrFunction>(entry.function.key);					// distribution function type
 		const auto mean = static_cast<EPSDGridType>(entry.psdMeans.key);					// mean values type for PSD
 		const auto psd = static_cast<EPSDTypes>(entry.psdType.key);							// PSD type
 		const bool manual = fun == EDistrFunction::Manual;									// whether manual distribution defined
-		const size_t& len = entry.values.size();											// length of the values vector
-		const auto& grid = holdup->GetGrid();												// distributions grid
-		const size_t& classes = grid.GetGridDimension(distr)->ClassesNumber();				// number of classes in the distribution
+		const size_t len = entry.values.size();												// length of the values vector
+		const auto grid = holdup->GetGrid();												// distributions grid
+		if (!grid.HasDimension(distr))
+			return PrintMessage(DyssolC_ErrorNoDistribution(StrKey(EScriptKeys::HOLDUP_DISTRIBUTION), unit->GetName(), entry.holdup.name, entry.holdup.index, entry.distrType.name, entry.distrType.key));
+		const size_t classes = grid.GetGridDimension(distr)->ClassesNumber();				// number of classes in the distribution
 		const auto means = distr != DISTR_SIZE ? grid.GetGridDimensionNumeric(distr)->GetClassesMeans() : grid.GetPSDMeans(mean); // mean valued for the PSD grid
 		const bool hasTime = manual && len % (classes + 1) == 0 || !manual && len % 3 == 0;	// whether time is defined
 		const bool mix = entry.compound == "MIXTURE";										// whether the distribution is defined for the total mixture of for a single compound
 		// check the number of passed arguments
 		if (manual && len != classes && len % (classes + 1) != 0 || !manual && len != 2 && len % 3 != 0)
-			return PrintAndReturn(DyssolC_ErrorArgumentsNumber(StrKey(EScriptKeys::HOLDUP_DISTRIBUTION), unit->GetName(), entry.holdup.name, entry.holdup.index));
-		if (!grid.HasDimension(distr))
-			return PrintAndReturn(DyssolC_ErrorNoDistribution(StrKey(EScriptKeys::HOLDUP_DISTRIBUTION), unit->GetName(), entry.holdup.name, entry.holdup.index, entry.distrType.name, entry.distrType.key));
+			return PrintMessage(DyssolC_ErrorArgumentsNumber(StrKey(EScriptKeys::HOLDUP_DISTRIBUTION), unit->GetName(), entry.holdup.name, entry.holdup.index));
 		// get and check compound key
 		const auto* compound = m_materialsDatabase.GetCompound(entry.compound) ? m_materialsDatabase.GetCompound(entry.compound) : m_materialsDatabase.GetCompoundByName(entry.compound);
 		const std::string key = compound ? compound->GetKey() : "";
 		if (!mix && key.empty())
-			return PrintAndReturn(DyssolC_ErrorNoCompound(StrKey(EScriptKeys::HOLDUP_DISTRIBUTION), unit->GetName(), entry.holdup.name, entry.holdup.index, key));
+			return PrintMessage(DyssolC_ErrorNoCompound(StrKey(EScriptKeys::HOLDUP_DISTRIBUTION), unit->GetName(), entry.holdup.name, entry.holdup.index, key));
 		// split times and values
 		const size_t dT = manual ? classes : 2;		// step between time points
 		const size_t offs = hasTime ? 1 : 0;		// additional offset due to the time point itself
@@ -449,7 +453,7 @@ bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 		for (size_t i = 0; i < times.size(); ++i)
 			if (distr == DISTR_SIZE)	holdup->SetPSD(times[i], psd, key, values[i], mean);
 			else if (mix)				holdup->SetDistribution(times[i], distr, values[i]);
-				else					holdup->SetDistribution(times[i], distr, key, values[i]);
+			else					holdup->SetDistribution(times[i], distr, key, values[i]);
 	}
 
 	return true;
@@ -457,29 +461,28 @@ bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 
 bool CScriptRunner::RunSimulation(const CScriptJob& _job)
 {
-	// TODO: put into calling function
 	if (_job.HasKey(EScriptKeys::EXPORT_ONLY) && _job.GetValue<bool>(EScriptKeys::EXPORT_ONLY)) return true;
 
 	// initialize flowsheet
-	std::cout << DyssolC_Initialize() << std::endl;
+	PrintMessage(DyssolC_Initialize());
 	const std::string error = m_flowsheet.Initialize();
 	if (!error.empty())
-		return PrintAndReturn(DyssolC_ErrorInit(error));
+		return PrintMessage(DyssolC_ErrorInit(error));
 
 	// run simulation
 	m_simulator.SetFlowsheet(&m_flowsheet);
-	std::cout << DyssolC_Start() << std::endl;
+	PrintMessage(DyssolC_Start());
 	const auto tStart = ch::steady_clock::now();
 	m_simulator.Simulate();
 	const auto tEnd = ch::steady_clock::now();
 
 	// save simulation results
 	const auto dstFile = _job.HasKey(EScriptKeys::RESULT_FILE) ? _job.GetValue<fs::path>(EScriptKeys::RESULT_FILE) : _job.GetValue<fs::path>(EScriptKeys::SOURCE_FILE);
-	std::cout << DyssolC_SaveFlowsheet(dstFile.string()) << std::endl;
+	PrintMessage(DyssolC_SaveFlowsheet(dstFile.string()));
 	CH5Handler fileHandler;
 	m_flowsheet.SaveToFile(fileHandler, dstFile);
 
-	std::cout << DyssolC_SimFinished(ch::duration_cast<ch::seconds>(tEnd - tStart).count()) << std::endl;
+	PrintMessage(DyssolC_SimFinished(ch::duration_cast<ch::seconds>(tEnd - tStart).count()));
 
 	return true;
 }
@@ -490,12 +493,12 @@ bool CScriptRunner::ExportResults(const CScriptJob& _job)
 	if (!_job.HasKey(EScriptKeys::EXPORT_FILE)) return true;
 
 	const auto exportFile = _job.GetValue<fs::path>(EScriptKeys::EXPORT_FILE);
-	std::cout << DyssolC_ExportResults(exportFile.string()) << std::endl;
+	PrintMessage(DyssolC_ExportResults(exportFile.string()));
 
 	// open text file for export
 	std::ofstream file(exportFile);
 	if (!file)
-		return PrintAndReturn(DyssolC_ErrorExportFile());
+		return PrintMessage(DyssolC_ErrorExportFile());
 
 	// setup export
 	if (_job.HasKey(EScriptKeys::EXPORT_PRECISION))
@@ -526,12 +529,9 @@ bool CScriptRunner::ExportResults(const CScriptJob& _job)
 		for (const auto& e : _job.GetValues<SExportStreamSE>(key))
 		{
 			// get pointer to stream
-			const CStream* stream = GetStreamPtr(e.stream);
-			if (!stream)
-			{
-				success = PrintAndReturn(DyssolC_ErrorNoStream(StrKey(key), e.stream.name, e.stream.index));
-				continue;
-			}
+			const CBaseStream* stream = TryGetStreamPtr(key, e.stream);
+			success &= stream != nullptr;
+			if (!stream) continue;
 			// export
 			file << tag << " " << StringFunctions::Quote(stream->GetName());
 			ExportValues(e.times, stream, fun);
@@ -543,20 +543,10 @@ bool CScriptRunner::ExportResults(const CScriptJob& _job)
 	{
 		for (const auto& e : _job.GetValues<SExportHoldupSE>(key))
 		{
-			// get pointer to unit and model
-			auto [model, unit, message] = TryGetModelPtr(e.unit, key);
-			if (!model)
-			{
-				success = PrintAndReturn(DyssolC_ErrorNoUnit(StrKey(key), e.unit.name, e.unit.index));
-				continue;
-			}
 			// get pointer to holdup
-			const auto* holdup = GetHoldupPtr(*model, e.holdup);
-			if (!holdup)
-			{
-				success = PrintAndReturn(DyssolC_ErrorNoHoldup(StrKey(key), unit->GetName(), e.holdup.name, e.holdup.index));
-				continue;
-			}
+			auto [holdup, unit] = TryGetHoldupPtr(key , e.unit, e.holdup);
+			success &= holdup != nullptr;
+			if (!holdup) continue;
 			// export
 			file << tag << " " << StringFunctions::Quote(unit->GetName()) << " " << StringFunctions::Quote(holdup->GetName());
 			ExportValues(e.times, holdup, fun);
@@ -626,20 +616,10 @@ bool CScriptRunner::ExportResults(const CScriptJob& _job)
 	// export state variables
 	for (const auto& e : _job.GetValues<SExportStateVarSE>(EScriptKeys::EXPORT_UNIT_STATE_VARIABLE))
 	{
-		// get pointer to unit and model
-		auto [model, unit, message] = TryGetModelPtr(e.unit, EScriptKeys::EXPORT_UNIT_STATE_VARIABLE);
-		if (!model)
-		{
-			success = PrintAndReturn(DyssolC_ErrorNoUnit(StrKey(EScriptKeys::EXPORT_UNIT_STATE_VARIABLE), e.unit.name, e.unit.index));
-			continue;
-		}
 		// get pointer to holdup
-		const auto* variable = GetStateVarPtr(*model, e.variable);
-		if (!variable)
-		{
-			success = PrintAndReturn(DyssolC_ErrorNoStateVar(StrKey(EScriptKeys::EXPORT_UNIT_STATE_VARIABLE), unit->GetName(), e.variable.name, e.variable.index));
-			continue;
-		}
+		const auto* variable = TryGetStateVarPtr(EScriptKeys::EXPORT_UNIT_STATE_VARIABLE , e.unit, e.variable);
+		success &= variable != nullptr;
+		if (!variable) continue;
 		// export
 		file << "UNIT_STATE_VAR" << " " << StringFunctions::Quote(variable->GetName());
 		if (!variable->HasHistory())
@@ -653,27 +633,10 @@ bool CScriptRunner::ExportResults(const CScriptJob& _job)
 	// export plots
 	for (const auto& e : _job.GetValues<SExportPlotSE>(EScriptKeys::EXPORT_UNIT_PLOT))
 	{
-		// get pointer to unit and model
-		auto [model, unit, message] = TryGetModelPtr(e.unit, EScriptKeys::EXPORT_UNIT_PLOT);
-		if (!model)
-		{
-			success = PrintAndReturn(DyssolC_ErrorNoUnit(StrKey(EScriptKeys::EXPORT_UNIT_PLOT), e.unit.name, e.unit.index));
-			continue;
-		}
-		// get pointer to plot
-		const auto* plot = GetPlotPtr(*model, e.plot);
-		if (!plot)
-		{
-			success = PrintAndReturn(DyssolC_ErrorNoPlot(StrKey(EScriptKeys::EXPORT_UNIT_PLOT), unit->GetName(), e.plot.name, e.plot.index));
-			continue;
-		}
 		// get pointer to curve
-		const auto* curve = GetCurvePtr(*plot, e.curve);
-		if (!curve)
-		{
-			success = PrintAndReturn(DyssolC_ErrorNoCurve(StrKey(EScriptKeys::EXPORT_UNIT_PLOT), unit->GetName(), plot->GetName(), e.plot.name, e.plot.index));
-			continue;
-		}
+		auto [plot, curve] = TryGetCurvePtr(EScriptKeys::EXPORT_UNIT_PLOT, e.unit, e.plot, e.curve);
+		success &= curve != nullptr;
+		if (!curve) continue;
 		// export
 		file << "UNIT_PLOT" << " " << StringFunctions::Quote(plot->GetName()) << " " << StringFunctions::Quote(curve->GetName());
 		for (const auto& p : curve->GetPoints())
@@ -688,12 +651,12 @@ bool CScriptRunner::ExportResults(const CScriptJob& _job)
 	if (_job.HasKey(EScriptKeys::EXPORT_FLOWSHEET_GRAPH))
 	{
 		const auto graphFile = _job.GetValue<fs::path>(EScriptKeys::EXPORT_FLOWSHEET_GRAPH);
-		std::cout << DyssolC_ExportGraph(graphFile.string()) << std::endl;
+		PrintMessage(DyssolC_ExportGraph(graphFile.string()));
 
 		// open text file for export
 		std::ofstream graph(graphFile);
 		if (!graph)
-			return PrintAndReturn(DyssolC_ErrorGraphFile());
+			return PrintMessage(DyssolC_ErrorGraphFile());
 
 		// export graph
 		graph << m_flowsheet.GenerateDOTFile();
@@ -710,16 +673,88 @@ void CScriptRunner::Clear()
 	m_materialsDatabase.Clear();
 }
 
-std::tuple<CBaseUnit*, CUnitContainer*, std::string> CScriptRunner::TryGetModelPtr(const SNameOrIndex& _unit, const EScriptKeys& _scriptKey)
+CUnitContainer* CScriptRunner::TryGetUnitPtr(EScriptKeys _sk, const SNameOrIndex& _unit)
 {
-	// get pointer to unit
 	auto* unit = GetUnitPtr(_unit);
-	if (!unit)		return std::make_tuple(nullptr, nullptr, DyssolC_ErrorNoUnit(StrKey(_scriptKey), _unit.name, _unit.index));
-	// get pointer to unit's model
-	auto* model = unit->GetModel();
-	if (!model)		return std::make_tuple(nullptr, unit   , DyssolC_ErrorLoadModel(StrKey(_scriptKey), unit->GetName()));
-	// return pointer to model and empty error message
-	return std::make_tuple(model, unit, "");
+	if (!unit) PrintMessage(DyssolC_ErrorNoUnit(StrKey(_sk), _unit.name, _unit.index));
+	return unit;
+}
+
+CBaseUnit* CScriptRunner::TryGetModelPtr(EScriptKeys _sk, CUnitContainer* _unit)
+{
+	auto* model = GetModelPtr(_unit);
+	if (!model && _unit) PrintMessage(DyssolC_ErrorLoadModel(StrKey(_sk), _unit->GetName()));
+	return model;
+}
+
+std::tuple<CBaseUnit*, CUnitContainer*> CScriptRunner::TryGetUnitAndModelPtr(EScriptKeys _sk, const SNameOrIndex& _unit)
+{
+	auto* unit = TryGetUnitPtr(_sk, _unit);
+	auto* model = TryGetModelPtr(_sk, unit);
+	return std::make_tuple(model, unit);
+}
+
+CBaseStream* CScriptRunner::TryGetStreamPtr(EScriptKeys _sk, const SNameOrIndex& _stream)
+{
+	auto* stream = GetStreamPtr(_stream);
+	if (!stream) PrintMessage(DyssolC_ErrorNoStream(StrKey(_sk), _stream.name, _stream.index));
+	return stream;
+}
+
+CBaseUnitParameter* CScriptRunner::TryGetUnitParamPtr(EScriptKeys _sk, const SNameOrIndex& _unit, const SNameOrIndex& _param)
+{
+	auto [model, unit] = TryGetUnitAndModelPtr(_sk, _unit);
+	auto* param = GetUnitParamPtr(model, _param);
+	if (!param && model && unit) PrintMessage(DyssolC_ErrorNoUP(StrKey(_sk), unit->GetName(), _param.name, _param.index));
+	return param;
+}
+
+std::tuple<CBaseStream*, CUnitContainer*> CScriptRunner::TryGetHoldupPtr(EScriptKeys _sk, const SNameOrIndex& _unit, const SNameOrIndex& _holdup)
+{
+	auto [model, unit] = TryGetUnitAndModelPtr(_sk, _unit);
+	auto* holdup = GetHoldupPtr(model, _holdup);
+	if (!holdup && model && unit) PrintMessage(DyssolC_ErrorNoHoldup(StrKey(_sk), unit->GetName(), _holdup.name, _holdup.index));
+	return std::make_tuple(holdup, unit);
+}
+
+CCompound* CScriptRunner::TryGetCompoundPtr(EScriptKeys _sk, const std::string& _compound)
+{
+	auto* compound = GetCompoundPtr(_compound);
+	if (!compound) PrintMessage(DyssolC_ErrorNoCompounds(StrKey(_sk), _compound));
+	return compound;
+}
+
+CUnitPort* CScriptRunner::TryGetPortPtr(EScriptKeys _sk, const SNameOrIndex& _unit, const SNameOrIndex& _port)
+{
+	auto [model, unit] = TryGetUnitAndModelPtr(_sk, _unit);
+	auto* port = GetPortPtr(model, _port);
+	if (!port && model && unit) PrintMessage(DyssolC_ErrorNoPort(StrKey(_sk), unit->GetName(), _port.name, _port.index));
+	return port;
+}
+
+CStateVariable* CScriptRunner::TryGetStateVarPtr(EScriptKeys _sk, const SNameOrIndex& _unit, const SNameOrIndex& _var)
+{
+	auto [model, unit] = TryGetUnitAndModelPtr(_sk, _unit);
+	auto* var = GetStateVarPtr(model, _var);
+	if (!var && model && unit) PrintMessage(DyssolC_ErrorNoStateVar(StrKey(_sk), unit->GetName(), _var.name, _var.index));
+	return var;
+}
+
+std::tuple<const CPlot*, const CCurve*> CScriptRunner::TryGetCurvePtr(EScriptKeys _sk, const SNameOrIndex& _unit, const SNameOrIndex& _plot, const SNameOrIndex& _curve)
+{
+	auto [model, unit] = TryGetUnitAndModelPtr(_sk, _unit);
+	auto* plot = GetPlotPtr(model, _plot);
+	if (!plot && model && unit) PrintMessage(DyssolC_ErrorNoPlot(StrKey(_sk), unit->GetName(), _plot.name, _plot.index));
+	auto* curve = GetCurvePtr(plot, _curve);
+	if (!curve && plot && model && unit) PrintMessage(DyssolC_ErrorNoCurve(StrKey(_sk), unit->GetName(), plot->GetName(), _plot.name, _plot.index));
+	return std::make_tuple(plot, curve);
+}
+
+std::string CScriptRunner::TryGetModelKey(EScriptKeys _sk, const std::string& _value) const
+{
+	auto key = GetModelKey(_value);
+	if (key.empty()) PrintMessage(DyssolC_ErrorNoModel(StrKey(_sk), _value));
+	return key;
 }
 
 CUnitContainer* CScriptRunner::GetUnitPtr(const SNameOrIndex& _nameOrIndex)
@@ -729,24 +764,32 @@ CUnitContainer* CScriptRunner::GetUnitPtr(const SNameOrIndex& _nameOrIndex)
 	return unit;												// return pointer
 }
 
-CStream* CScriptRunner::GetStreamPtr(const SNameOrIndex& _nameOrIndex)
+CBaseUnit* CScriptRunner::GetModelPtr(CUnitContainer* _unit)
+{
+	if (!_unit) return {};
+	return _unit->GetModel();
+}
+
+CBaseStream* CScriptRunner::GetStreamPtr(const SNameOrIndex& _nameOrIndex)
 {
 	auto* stream = m_flowsheet.GetStreamByName(_nameOrIndex.name);		// try to access by name
 	if (!stream) stream = m_flowsheet.GetStream(_nameOrIndex.index);	// try to access by index
 	return stream;														// return pointer
 }
 
-CBaseUnitParameter* CScriptRunner::GetUnitParamPtr(CBaseUnit& _model, const SNameOrIndex& _nameOrIndex)
+CBaseUnitParameter* CScriptRunner::GetUnitParamPtr(CBaseUnit* _model, const SNameOrIndex& _nameOrIndex)
 {
-	auto& manager = _model.GetUnitParametersManager();				// get manager
+	if (!_model) return {};
+	auto& manager = _model->GetUnitParametersManager();				// get manager
 	auto* param = manager.GetParameter(_nameOrIndex.name);			// try to access by name
 	if (!param) param = manager.GetParameter(_nameOrIndex.index);	// try to access by index
 	return param;													// return pointer
 }
 
-CBaseStream* CScriptRunner::GetHoldupPtr(CBaseUnit& _model, const SNameOrIndex& _nameOrIndex)
+CBaseStream* CScriptRunner::GetHoldupPtr(CBaseUnit* _model, const SNameOrIndex& _nameOrIndex)
 {
-	auto& manager = _model.GetStreamsManager();							// get manager
+	if (!_model) return {};
+	auto& manager = _model->GetStreamsManager();						// get manager
 	auto* holdup = manager.GetObjectInit(_nameOrIndex.name);			// try to access by name
 	if (!holdup) holdup = manager.GetObjectInit(_nameOrIndex.index);	// try to access by index
 	return holdup;														// return pointer
@@ -754,40 +797,43 @@ CBaseStream* CScriptRunner::GetHoldupPtr(CBaseUnit& _model, const SNameOrIndex& 
 
 CCompound* CScriptRunner::GetCompoundPtr(const std::string& _nameOrKey)
 {
-	auto* compound = m_materialsDatabase.GetCompound(_nameOrKey);		// try to access by key
-	if (!compound)
-		compound = m_materialsDatabase.GetCompoundByName(_nameOrKey);	// try to access by name
+	auto* compound = m_materialsDatabase.GetCompound(_nameOrKey);					// try to access by key
+	if (!compound) compound = m_materialsDatabase.GetCompoundByName(_nameOrKey);	// try to access by name
 	return compound;
 }
 
-CUnitPort* CScriptRunner::GetPortPtr(CBaseUnit& _model, const SNameOrIndex& _nameOrIndex)
+CUnitPort* CScriptRunner::GetPortPtr(CBaseUnit* _model, const SNameOrIndex& _nameOrIndex)
 {
-	auto& manager = _model.GetPortsManager();				// get manager
+	if (!_model) return {};
+	auto& manager = _model->GetPortsManager();				// get manager
 	auto* port = manager.GetPort(_nameOrIndex.name);		// try to access by name
 	if (!port) port = manager.GetPort(_nameOrIndex.index);	// try to access by index
 	return port;											// return pointer
 }
 
-CStateVariable* CScriptRunner::GetStateVarPtr(CBaseUnit& _model, const ScriptInterface::SNameOrIndex& _nameOrIndex)
+CStateVariable* CScriptRunner::GetStateVarPtr(CBaseUnit* _model, const SNameOrIndex& _nameOrIndex)
 {
-	auto& manager = _model.GetStateVariablesManager();						// get manager
+	if (!_model) return {};
+	auto& manager = _model->GetStateVariablesManager();						// get manager
 	auto* variable = manager.GetStateVariable(_nameOrIndex.name);			// try to access by name
 	if (!variable) variable = manager.GetStateVariable(_nameOrIndex.index);	// try to access by index
 	return variable;														// return pointer
 }
 
-const CPlot* CScriptRunner::GetPlotPtr(const CBaseUnit& _model, const ScriptInterface::SNameOrIndex& _nameOrIndex)
+const CPlot* CScriptRunner::GetPlotPtr(const CBaseUnit* _model, const SNameOrIndex& _nameOrIndex)
 {
-	const auto& manager = _model.GetPlotsManager();			// get manager
+	if (!_model) return {};
+	const auto& manager = _model->GetPlotsManager();		// get manager
 	const auto* plot = manager.GetPlot(_nameOrIndex.name);	// try to access by name
 	if (!plot) plot = manager.GetPlot(_nameOrIndex.index);	// try to access by index
 	return plot;											// return pointer
 }
 
-const CCurve* CScriptRunner::GetCurvePtr(const CPlot& _plot, const ScriptInterface::SNameOrIndex& _nameOrIndex)
+const CCurve* CScriptRunner::GetCurvePtr(const CPlot* _plot, const SNameOrIndex& _nameOrIndex)
 {
-	const auto* curve = _plot.GetCurve(_nameOrIndex.name);		// try to access by name
-	if (!curve) curve = _plot.GetCurve(_nameOrIndex.index);		// try to access by index
+	if (!_plot) return {};
+	const auto* curve = _plot->GetCurve(_nameOrIndex.name);		// try to access by name
+	if (!curve) curve = _plot->GetCurve(_nameOrIndex.index);	// try to access by index
 	return curve;												// return pointer
 }
 
@@ -802,4 +848,10 @@ std::string CScriptRunner::GetModelKey(const std::string& _value) const
 			return m.uniqueID;
 	}
 	return {};
+}
+
+bool CScriptRunner::PrintMessage(const std::string& _message)
+{
+	std::cout << _message << std::endl;
+	return false;
 }

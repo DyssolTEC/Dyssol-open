@@ -115,3 +115,13 @@ enum class EDirection
 {
 	UP, DOWN
 };
+
+/*
+ * Describes a single connection between two units in the flowsheet.
+ */
+struct SFlowsheetConnection
+{
+	std::string stream{}, unitO{}, portO{}, unitI{}, portI{};
+	SFlowsheetConnection(const std::string& _stream, const std::string& _unitO, const std::string& _portO, const std::string& _unitI, const std::string& _portI)
+		: stream{ _stream }, unitO{ _unitO }, portO{ _portO }, unitI{ _unitI }, portI{ _portI } {}
+};

@@ -53,6 +53,15 @@ std::filesystem::path CModelsManager::GetDirPath(size_t _index) const
 	return _index < m_dirsList.size() ? m_dirsList[_index].path : "";
 }
 
+std::vector<std::filesystem::path> CModelsManager::GetAllActiveDirPaths() const
+{
+	std::vector<std::filesystem::path> res;
+	for (const auto& p : m_dirsList)
+		if (p.active)
+			res.push_back(p.path);
+	return res;
+}
+
 bool CModelsManager::GetDirActivity(size_t _index) const
 {
 	return _index < m_dirsList.size() ? m_dirsList[_index].active : false;

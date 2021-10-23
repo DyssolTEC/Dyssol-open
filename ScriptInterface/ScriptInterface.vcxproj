@@ -125,6 +125,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ArgumentsParser.cpp" />
+    <ClCompile Include="ScriptExporter.cpp" />
     <ClCompile Include="ScriptJob.cpp" />
     <ClCompile Include="ScriptParser.cpp" />
     <ClCompile Include="ScriptRunner.cpp" />
@@ -133,7 +134,8 @@
   <ItemGroup>
     <ClInclude Include="ArgumentsParser.h" />
     <ClInclude Include="NameConverters.h" />
-    <ClInclude Include="ScriptDefines.h" />
+    <ClInclude Include="ScriptKeys.h" />
+    <ClInclude Include="ScriptExporter.h" />
     <ClInclude Include="ScriptJob.h" />
     <ClInclude Include="ScriptParser.h" />
     <ClInclude Include="ScriptRunner.h" />
