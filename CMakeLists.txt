@@ -109,10 +109,24 @@ SET(INSTALL_DOCS_PATH  ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/Dyssol/d
 ENABLE_TESTING()
 
 SET(TESTS
-  "01_Unit_Screen_Plit"
-  "02_Crusher_Bond"
+  "Unit_Agglomerator_CellAverage"
+  "Unit_Agglomerator_FFT"
+  "Unit_Agglomerator_FixedPivot"
+  "Unit_Bunker"
+  "Unit_Crusher_BondBimodal"
+  "Unit_Crusher_BondNormal"
+  "Unit_Crusher_Cone"
+  "Unit_Crusher_Const"
+  "Unit_Crusher_PBMTM"
+  "Unit_Granulator"
+  "Unit_Mixer"
+  "Unit_Screen_Molerus"
+  "Unit_Screen_Plitt"
+  "Unit_Screen_Probability"
+  "Unit_Screen_Teipel"
+  "Unit_Splitter"
+  "Unit_TimeDelay"
   "03_Granulation_Process"
-  "04_Agglomerator"
 )
 
 FOREACH(test ${TESTS})
