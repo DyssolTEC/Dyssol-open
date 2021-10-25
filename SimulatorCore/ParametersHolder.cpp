@@ -362,7 +362,7 @@ void CParametersHolder::EnthalpyMaxT(double val)
 	enthalpyMaxT = val;
 }
 
-void CParametersHolder::EnthalpyInt(size_t val)
+void CParametersHolder::EnthalpyInt(uint32_t val)
 {
 	enthalpyInt = val;
 }

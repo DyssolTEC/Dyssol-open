@@ -115,7 +115,7 @@ public:
 	void EnthalpyMinT(double val);
 	proxy<double> enthalpyMaxT;
 	void EnthalpyMaxT(double val);
-	proxy<size_t> enthalpyInt;
-	void EnthalpyInt(size_t val);
+	proxy<uint32_t> enthalpyInt;
+	void EnthalpyInt(uint32_t val);
 };
 

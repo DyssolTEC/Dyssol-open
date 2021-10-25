@@ -96,7 +96,7 @@ namespace ScriptInterface
 			}
 			case EScriptKeys::THERMO_TEMPERATURE_INTERVALS:
 			{
-				job.AddEntry(e.keyStr)->value = _flowsheet.GetParameters()->enthalpyInt;
+				job.AddEntry(e.keyStr)->value = static_cast<uint64_t>(_flowsheet.GetParameters()->enthalpyInt);
 				break;
 			}
 			case EScriptKeys::INIT_TIME_WINDOW:
