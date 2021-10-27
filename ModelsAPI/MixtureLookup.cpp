@@ -41,6 +41,11 @@ size_t CMixtureLookup::ComponentsNumber() const
 	return m_componets.size();
 }
 
+size_t CMixtureLookup::Size() const
+{
+	return m_table.Size();
+}
+
 void CMixtureLookup::SetWeights(const std::vector<double>& _weights)
 {
 	if (_weights.size() != m_componets.size()) return;
@@ -91,6 +96,11 @@ void CMixtureLookup::Add(const CMixtureLookup& _table, double _weight)
 void CMixtureLookup::Multiply(double _value)
 {
 	m_table.Mult(_value);
+}
+
+bool CMixtureLookup::operator==(const CMixtureLookup& _other) const
+{
+	return m_table == _other.m_table && m_componets == _other.m_componets && m_weights == _other.m_weights;
 }
 
 void CMixtureLookup::Clear()
