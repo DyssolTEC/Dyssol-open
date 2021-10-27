@@ -226,8 +226,8 @@ void CTDArray::GetDataForSave(const std::vector<double>& _vTP, std::vector<doubl
 			else
 				_vOut[iWr] = GetValue(t);
 			if (dFirstValue == -2.0)
-				dFirstValue = m_data[iRd].value;
-			else if (bAllAreEqual && dFirstValue != m_data[iRd].value)
+				dFirstValue = _vOut[iWr];
+			else if (bAllAreEqual && dFirstValue != _vOut[iWr])
 				bAllAreEqual = false;
 			++iWr;
 		}
