@@ -234,9 +234,9 @@ namespace ScriptInterface
 				for (const auto& c : _flowsheet.GenerateConnectionsDescription())
 				{
 					SStreamSE entry;
-					entry.name = _flowsheet.GetStream(c.stream)->GetName();
-					entry.unitO.name = _flowsheet.GetUnit(c.unitO)->GetName();
-					entry.unitI.name = _flowsheet.GetUnit(c.unitI)->GetName();
+					entry.name = _flowsheet.GetStream(c.stream) ? _flowsheet.GetStream(c.stream)->GetName() : "";
+					entry.unitO.name = _flowsheet.GetUnit(c.unitO) ? _flowsheet.GetUnit(c.unitO)->GetName() : "";
+					entry.unitI.name = _flowsheet.GetUnit(c.unitI) ? _flowsheet.GetUnit(c.unitI)->GetName() : "";
 					entry.portO.name = c.portO;
 					entry.portI.name = c.portI;
 					job.AddEntry(e.keyStr)->value = entry;
