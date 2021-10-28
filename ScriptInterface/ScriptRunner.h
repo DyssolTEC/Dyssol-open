@@ -24,8 +24,8 @@ class CScriptRunner
 	CSimulator m_simulator{};										// Simulator.
 
 public:
-	// Executes the job.
-	void RunJob(const CScriptJob& _job);
+	// Executes the job. Returns success flag.
+	bool RunJob(const CScriptJob& _job);
 
 private:
 	// Reads the simulation settings from the job and creates a flowsheet. Returns success flag.
