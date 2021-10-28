@@ -62,6 +62,11 @@ std::vector<double> CMixtureEnthalpyLookup::GetCompoundFractions() const
 	return m_mixtureLookup.GetWeights();
 }
 
+size_t CMixtureEnthalpyLookup::Size() const
+{
+	return m_mixtureLookup.Size();
+}
+
 double CMixtureEnthalpyLookup::GetEnthalpy(double _temperature) const
 {
 	return m_mixtureLookup.GetRight(_temperature);
@@ -147,6 +152,11 @@ CMixtureEnthalpyLookup& CMixtureEnthalpyLookup::operator+=(const CMixtureEnthalp
 {
 	Add(_t);
 	return *this;
+}
+
+bool CMixtureEnthalpyLookup::operator==(const CMixtureEnthalpyLookup& _t) const
+{
+	return m_mixtureLookup == _t.m_mixtureLookup && m_compounds == _t.m_compounds;
 }
 
 void CMixtureEnthalpyLookup::UpdateCompoundsEnthalpies()

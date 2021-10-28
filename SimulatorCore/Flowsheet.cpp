@@ -327,6 +327,7 @@ std::vector<SFlowsheetConnection> CFlowsheet::GenerateConnectionsDescription() c
 		{
 			// find connected stream in the results
 			const auto stream = p->GetStreamKey();
+			if (stream.empty()) continue;
 			const size_t i = VectorFind(res, [&](const SFlowsheetConnection& c) { return c.unitI.empty() && c.stream == stream; });
 			// a new stream - add it and fill its inlet port and unit
 			if (i == static_cast<size_t>(-1))

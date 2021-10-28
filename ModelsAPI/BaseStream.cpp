@@ -1727,20 +1727,28 @@ double CBaseStream::CalculateMixPressure(double _time1, const CBaseStream& _stre
 double CBaseStream::CalculateMixTemperature(double _time1, const CBaseStream& _stream1, double _mass1, double _time2, const CBaseStream& _stream2, double _mass2)
 {
 	// TODO: check that T is in limits of lookup
+	// get and check current temperatures
+	const auto temperature1 = _stream1.GetTemperature(_time1);
+	const auto temperature2 = _stream2.GetTemperature(_time2);
+	if (temperature1 == temperature2)
+		return temperature1;
+	// calculate total mass
+	const double massMix = _mass1 + _mass2;
+	// get and check lookup tables for enthalpies
+	const CMixtureEnthalpyLookup& lookup1 = *_stream1.GetEnthalpyCalculator();
+	const CMixtureEnthalpyLookup& lookup2 = *_stream2.GetEnthalpyCalculator();
+	if (lookup1.Size() == 1 && lookup2.Size() == 1 && lookup1 == lookup2)
+		return (temperature1 * _mass1 + temperature2 * _mass2) / massMix;
 	// get enthalpies
 	const double enthalpy1 = _stream1.CalculateEnthalpyFromTemperature(_time1);
 	const double enthalpy2 = _stream2.CalculateEnthalpyFromTemperature(_time2);
-	// calculate total mass
-	const double massMix = _mass1 + _mass2;
 	// if no material at all, return some arbitrary temperature
 	if (massMix == 0.0)
-		return (_stream1.GetTemperature(_time1) + _stream2.GetTemperature(_time2)) / 2.0;
+		return (temperature1 + temperature2) / 2.0;
 	// calculate (specific) total enthalpy
 	const double enthalpyMix = (enthalpy1 * _mass1 + enthalpy2 * _mass2) / massMix;
 	// combine both enthalpy tables for mixture enthalpy table
-	const CMixtureEnthalpyLookup* lookup1 = _stream1.GetEnthalpyCalculator();
-	const CMixtureEnthalpyLookup* lookup2 = _stream2.GetEnthalpyCalculator();
-	const CMixtureEnthalpyLookup lookupMix = *lookup1 * (_mass1 / massMix) + *lookup2 * (_mass2 / massMix);
+	const CMixtureEnthalpyLookup lookupMix = lookup1 * (_mass1 / massMix) + lookup2 * (_mass2 / massMix);
 	// read out new temperature
 	return lookupMix.GetTemperature(enthalpyMix);
 }

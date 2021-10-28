@@ -90,6 +90,11 @@ void CTwoWayMap::Clear()
 	m_revert.Clear();
 }
 
+bool CTwoWayMap::operator==(const CTwoWayMap& _other) const
+{
+	return m_direct == _other.m_direct && m_revert == _other.m_revert;
+}
+
 CDependentValues CTwoWayMap::Reverted(const CDependentValues& _table)
 {
 	return CDependentValues{ _table.GetValuesList(), _table.GetParamsList() };
