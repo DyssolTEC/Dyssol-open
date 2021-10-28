@@ -78,8 +78,10 @@ private:
 	CBaseStream* TryGetStreamPtr(ScriptInterface::EScriptKeys _sk, const ScriptInterface::SNameOrIndex& _stream);
 	// Tries to obtain a pointer to a required unit parameter. Prints error message and returns nullptr if the search fails.
 	CBaseUnitParameter* TryGetUnitParamPtr(ScriptInterface::EScriptKeys _sk, const ScriptInterface::SNameOrIndex& _unit, const ScriptInterface::SNameOrIndex& _param);
-	// Tries to obtain a pointer to a required holdup. Prints error message and returns nullptr if the search fails.
-	std::tuple<CBaseStream*, CUnitContainer*> TryGetHoldupPtr(ScriptInterface::EScriptKeys _sk, const ScriptInterface::SNameOrIndex& _unit, const ScriptInterface::SNameOrIndex& _holdup);
+	// Tries to obtain a pointer to a required holdup with initial values. Prints error message and returns nullptr if the search fails.
+	std::tuple<CBaseStream*, CUnitContainer*> TryGetHoldupInitPtr(ScriptInterface::EScriptKeys _sk, const ScriptInterface::SNameOrIndex& _unit, const ScriptInterface::SNameOrIndex& _holdup);
+	// Tries to obtain a pointer to a required holdup with final values. Prints error message and returns nullptr if the search fails.
+	std::tuple<CBaseStream*, CUnitContainer*> TryGetHoldupWorkPtr(ScriptInterface::EScriptKeys _sk, const ScriptInterface::SNameOrIndex& _unit, const ScriptInterface::SNameOrIndex& _holdup);
 	// Tries to obtain a pointer to required compound. Prints error message and returns nullptr if the search fails.
 	CCompound* TryGetCompoundPtr(ScriptInterface::EScriptKeys _sk, const std::string& _compound);
 	// Tries to obtain a pointer to required port. Prints error message and returns nullptr if the search fails.
@@ -99,8 +101,10 @@ private:
 	CBaseStream* GetStreamPtr(const ScriptInterface::SNameOrIndex& _nameOrIndex);
 	// Returns a pointer to a unit parameter by its name or index. Returns nullptr if the search fails.
 	static CBaseUnitParameter* GetUnitParamPtr(CBaseUnit* _model, const ScriptInterface::SNameOrIndex& _nameOrIndex);
-	// Returns a pointer to a holdup by its name or index. Returns nullptr if the search fails.
-	static CBaseStream* GetHoldupPtr(CBaseUnit* _model, const ScriptInterface::SNameOrIndex& _nameOrIndex);
+	// Returns a pointer to a holdup with initial values by its name or index. Returns nullptr if the search fails.
+	static CBaseStream* GetHoldupInitPtr(CBaseUnit* _model, const ScriptInterface::SNameOrIndex& _nameOrIndex);
+	// Returns a pointer to a holdup with final values by its name or index. Returns nullptr if the search fails.
+	static CBaseStream* GetHoldupWorkPtr(CBaseUnit* _model, const ScriptInterface::SNameOrIndex& _nameOrIndex);
 	// Returns a pointer to a compound by its name or key. Returns nullptr if the search fails.
 	CCompound* GetCompoundPtr(const std::string& _nameOrKey);
 	// Returns a pointer to a unit port by its name or index. Returns nullptr if the search fails.
