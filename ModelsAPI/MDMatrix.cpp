@@ -2943,7 +2943,7 @@ bool CMDMatrix::CheckNormalizationRecursive( sFraction *_pFraction, unsigned _nN
 sFraction* CMDMatrix::CopyFromRecursive(sFraction *_pDest, sFraction *_pSource, unsigned _nNesting)
 {
 	if( ( _nNesting >= m_vDimensions.size() ) || ( _pSource == NULL ) )
-		return NULL;
+		return _pDest;
 
 	sFraction *pDest;
 	if( _pDest == NULL )
@@ -2954,8 +2954,8 @@ sFraction* CMDMatrix::CopyFromRecursive(sFraction *_pDest, sFraction *_pSource, 
 	{
 		if( _pSource[i].pNext != NULL )
 			pDest[i].pNext = CopyFromRecursive( pDest[i].pNext, _pSource[i].pNext, _nNesting+1 );
-		else
-			pDest[i].pNext = NULL;
+		else if (pDest[i].pNext) // no values in source, but something in destination
+			SetToZero2Recursive(pDest[i].pNext, _nNesting + 1);
 		pDest[i].tdArray.CopyFrom( _pSource[i].tdArray, m_dTempT1, m_dTempT2 );
 	}
 	return pDest;
@@ -2964,7 +2964,7 @@ sFraction* CMDMatrix::CopyFromRecursive(sFraction *_pDest, sFraction *_pSource, 
 sFraction* CMDMatrix::CopyFromTimePointRecursive(sFraction *_pDest, sFraction *_pSource, unsigned _nNesting)
 {
 	if( ( _nNesting >= m_vDimensions.size() ) || ( _pSource == NULL ) )
-		return NULL;
+		return _pDest;
 
 	sFraction *pDest;
 	if( _pDest == NULL )
@@ -2976,8 +2976,8 @@ sFraction* CMDMatrix::CopyFromTimePointRecursive(sFraction *_pDest, sFraction *_
 		if( _pSource[i].pNext != NULL )
 			pDest[i].pNext = CopyFromTimePointRecursive( pDest[i].pNext, _pSource[i].pNext, _nNesting+1 );
 			//pDest[i].pNext = CopyFromRecursive( pDest[i].pNext, _pSource[i].pNext, _nNesting+1 );
-		else
-			pDest[i].pNext = NULL;
+		else if (pDest[i].pNext) // no values in source, but something in destination
+			SetToZero2Recursive(pDest[i].pNext, _nNesting + 1);
 		pDest[i].tdArray.CopyFromTimePoint( _pSource[i].tdArray, m_dTempT1, m_dTempT2 );
 	}
 	return pDest;
@@ -3141,6 +3141,19 @@ sFraction* CMDMatrix::SetToZeroRecursive( sFraction *_pFraction, unsigned _nNest
 	}
 
 	return _pFraction;
+}
+
+void CMDMatrix::SetToZero2Recursive(sFraction* _pFraction, unsigned _nNesting /*= 0*/)
+{
+	if (!_pFraction || _nNesting >= m_vDimensions.size()) return;
+
+	for (unsigned i = 0; i < m_vClasses[_nNesting]; ++i)
+	{
+		SetToZero2Recursive(_pFraction[i].pNext, _nNesting + 1);
+		_pFraction[i].tdArray.RemoveTimePoints(m_dTempT1, m_dTempT2);
+		_pFraction[i].tdArray.SetValue(m_dTempT1, 0.0);
+		_pFraction[i].tdArray.SetValue(m_dTempT2, 0.0);
+	}
 }
 
 sFraction* CMDMatrix::SetToOneRecursive( sFraction *_pFraction, unsigned _nNesting /*= 0*/ )
