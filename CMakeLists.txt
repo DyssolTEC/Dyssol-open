@@ -126,7 +126,10 @@ SET(TESTS
   "Unit_Screen_Teipel"
   "Unit_Splitter"
   "Unit_TimeDelay"
-  "03_Granulation_Process"
+  "Process_Agglomeration"
+  "Process_Comminution"
+  "Process_Granulation"
+  "Process_SieveMill"
 )
 
 FOREACH(test ${TESTS})

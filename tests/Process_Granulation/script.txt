@@ -1,0 +1,137 @@
+JOB 
+RESULT_FILE               ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/res.dflw
+MODELS_PATH               ${CMAKE_BINARY_DIR}/Units
+MODELS_PATH               ${CMAKE_BINARY_DIR}/Solvers
+MATERIALS_DATABASE        ${CMAKE_SOURCE_DIR}/Materials.dmdb
+EXPORT_FILE               ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
+EXPORT_SIGNIFICANCE_LIMIT 1e-07
+
+SIMULATION_TIME            3000
+RELATIVE_TOLERANCE         1e-07
+ABSOLUTE_TOLERANCE         1e-07
+INIT_TIME_WINDOW           1
+MIN_TIME_WINDOW            1e-09
+MAX_TIME_WINDOW            1000
+MAX_ITERATIONS_NUMBER      500
+WINDOW_CHANGE_RATE         1.2
+ITERATIONS_UPPER_LIMIT     7
+ITERATIONS_LOWER_LIMIT     3
+ITERATIONS_UPPER_LIMIT_1ST 20
+CONVERGENCE_METHOD         WEGSTEIN
+RELAXATION_PARAMETER       1
+ACCELERATION_LIMIT         -0.5
+EXTRAPOLATION_METHOD       CUBIC_SPLINE
+
+COMPOUNDS         "H2O" "Air" "Urea" 
+PHASES            "Phase solid" SOLID "Phase liquid" LIQUID "Phase vapor" GAS 
+DISTRIBUTION_GRID "GLOBAL" SIZE NUMERIC EQUIDISTANT DIAMETER 100 0 4e-3
+
+UNIT "FeedSusp" "InletFlow" 
+UNIT "FeedNucl" "InletFlow" 
+UNIT "FeedGas" "InletFlow" 
+UNIT "Mixer1" "Mixer" 
+UNIT "Granulator" "Granulator" 
+UNIT "Screen1" "Screen" 
+UNIT "Screen2" "Screen" 
+UNIT "Crusher" "Crusher" 
+UNIT "Mixer2" "Mixer" 
+UNIT "OutDust" "OutletFlow" 
+UNIT "Product" "OutletFlow" 
+
+STREAM "InSusp" "FeedSusp" "InletMaterial" "Granulator" "Solution"
+STREAM "InNucl" "FeedNucl" "InletMaterial" "Mixer1" "In1"
+STREAM "InGas" "FeedGas" "InletMaterial" "Granulator" "FluidizationGas"
+STREAM "Mixed" "Mixer2" "Out" "Mixer1" "In2"
+STREAM "MixNucl" "Mixer1" "Out" "Granulator" "ExternalNuclei"
+STREAM "GranProd" "Granulator" "Output" "Screen1" "Input"
+STREAM "GranDust" "Granulator" "DustOutput" "OutDust" "In"
+STREAM "Coarse1" "Screen1" "Coarse" "Crusher" "Input"
+STREAM "Fines1" "Screen1" "Fine" "Screen2" "Input"
+STREAM "Coarse2" "Screen2" "Coarse" "Product" "In"
+STREAM "Fines2" "Screen2" "Fine" "Mixer2" "In1"
+STREAM "Milled" "Crusher" "Output" "Mixer2" "In2"
+
+UNIT_PARAMETER "Granulator" "Kos"  0 0
+UNIT_PARAMETER "Granulator" "RTol" 0.0001
+UNIT_PARAMETER "Granulator" "ATol" 1e-06
+UNIT_PARAMETER "Screen1" "Model" 0
+UNIT_PARAMETER "Screen1" "Xcut"  0 0.0025
+UNIT_PARAMETER "Screen1" "Alpha"  0 4
+UNIT_PARAMETER "Screen1" "Beta"  0 0.5
+UNIT_PARAMETER "Screen1" "Offset"  0 0.2
+UNIT_PARAMETER "Screen1" "Mean"  0 0.001
+UNIT_PARAMETER "Screen1" "Deviation"  0 0.0001
+UNIT_PARAMETER "Screen2" "Model" 0
+UNIT_PARAMETER "Screen2" "Xcut"  0 0.001
+UNIT_PARAMETER "Screen2" "Alpha"  0 4
+UNIT_PARAMETER "Screen2" "Beta"  0 0.5
+UNIT_PARAMETER "Screen2" "Offset"  0 0.2
+UNIT_PARAMETER "Screen2" "Mean"  0 0.001
+UNIT_PARAMETER "Screen2" "Deviation"  0 0.0001
+UNIT_PARAMETER "Crusher" "Model" 0
+UNIT_PARAMETER "Crusher" "P"  0 0.8
+UNIT_PARAMETER "Crusher" "Mean"  0 0.001
+UNIT_PARAMETER "Crusher" "Deviation"  0 0.0001
+UNIT_PARAMETER "Crusher" "CSS" 0.04
+UNIT_PARAMETER "Crusher" "alpha1" 0.6
+UNIT_PARAMETER "Crusher" "alpha2" 2
+UNIT_PARAMETER "Crusher" "n" 2
+UNIT_PARAMETER "Crusher" "d'" 0.003
+UNIT_PARAMETER "Crusher" "q" 0.55
+
+HOLDUP_OVERALL      "FeedSusp" "InputMaterial" 0 0.1 300 100000
+HOLDUP_OVERALL      "FeedNucl" "InputMaterial" 0 0.1 300 100000
+HOLDUP_OVERALL      "FeedGas" "InputMaterial" 0 0.01 300 100000
+HOLDUP_OVERALL      "Granulator" "HoldupMaterial" 0 20 300 100000
+HOLDUP_PHASES       "FeedSusp" "InputMaterial" 0 0.5 0.5 0
+HOLDUP_PHASES       "FeedNucl" "InputMaterial" 0 1 0 0
+HOLDUP_PHASES       "FeedGas" "InputMaterial" 0 0 0 1
+HOLDUP_PHASES       "Granulator" "HoldupMaterial" 0 1 0 0
+HOLDUP_COMPOUNDS    "FeedSusp" "InputMaterial" SOLID 0 0 0 1
+HOLDUP_COMPOUNDS    "FeedSusp" "InputMaterial" LIQUID 0 1 0 0
+HOLDUP_COMPOUNDS    "FeedSusp" "InputMaterial" GAS 0 0 1 0
+HOLDUP_COMPOUNDS    "FeedNucl" "InputMaterial" SOLID 0 0 0 1
+HOLDUP_COMPOUNDS    "FeedNucl" "InputMaterial" LIQUID 0 1 0 0
+HOLDUP_COMPOUNDS    "FeedNucl" "InputMaterial" GAS 0 0 1 0
+HOLDUP_COMPOUNDS    "FeedGas" "InputMaterial" SOLID 0 0 0 1
+HOLDUP_COMPOUNDS    "FeedGas" "InputMaterial" LIQUID 0 1 0 0
+HOLDUP_COMPOUNDS    "FeedGas" "InputMaterial" GAS 0 0 1 0
+HOLDUP_COMPOUNDS    "Granulator" "HoldupMaterial" SOLID 0 0 0 1
+HOLDUP_COMPOUNDS    "Granulator" "HoldupMaterial" LIQUID 0 1 0 0
+HOLDUP_COMPOUNDS    "Granulator" "HoldupMaterial" GAS 0 0 1 0
+HOLDUP_DISTRIBUTION "FeedSusp" "InputMaterial" SIZE MIXTURE Q3_DENSITY DIAMETER NORMAL 0 1 1e-10
+HOLDUP_DISTRIBUTION "FeedNucl" "InputMaterial" SIZE MIXTURE Q3_DENSITY DIAMETER NORMAL 0 0.0015 0.0001
+HOLDUP_DISTRIBUTION "FeedGas" "InputMaterial" SIZE MIXTURE Q3_DENSITY DIAMETER NORMAL 0 1 1e-10
+HOLDUP_DISTRIBUTION "Granulator" "HoldupMaterial" SIZE MIXTURE Q3_DENSITY DIAMETER NORMAL 0 0.002 0.0001
+
+EXPORT_STREAM_MASS             MixNucl  0 3000
+EXPORT_STREAM_PSD              MixNucl  0 3000
+EXPORT_STREAM_PHASES_FRACTIONS MixNucl  0 3000
+EXPORT_STREAM_MASS             GranDust 0 3000
+EXPORT_STREAM_PSD              GranDust 0 3000
+EXPORT_STREAM_PHASES_FRACTIONS GranDust 0 3000
+EXPORT_STREAM_MASS             GranProd 0 3000
+EXPORT_STREAM_PSD              GranProd 0 3000
+EXPORT_STREAM_PHASES_FRACTIONS GranProd 0 3000
+EXPORT_STREAM_MASS             Coarse1  0 3000
+EXPORT_STREAM_PSD              Coarse1  0 3000
+EXPORT_STREAM_PHASES_FRACTIONS Coarse1  0 3000
+EXPORT_STREAM_MASS             Fines1   0 3000
+EXPORT_STREAM_PSD              Fines1   0 3000
+EXPORT_STREAM_PHASES_FRACTIONS Fines1   0 3000
+EXPORT_STREAM_MASS             Coarse2  0 3000
+EXPORT_STREAM_PSD              Coarse2  0 3000
+EXPORT_STREAM_PHASES_FRACTIONS Coarse2  0 3000
+EXPORT_STREAM_MASS             Fines2   0 3000
+EXPORT_STREAM_PSD              Fines2   0 3000
+EXPORT_STREAM_PHASES_FRACTIONS Fines2   0 3000
+EXPORT_STREAM_MASS             Milled   0 3000
+EXPORT_STREAM_PSD              Milled   0 3000
+EXPORT_STREAM_PHASES_FRACTIONS Milled   0 3000
+EXPORT_STREAM_MASS             Mixed    0 3000
+EXPORT_STREAM_PSD              Mixed    0 3000
+EXPORT_STREAM_PHASES_FRACTIONS Mixed    0 3000
+
+EXPORT_HOLDUP_MASS              Granulator HoldupMaterial 0 3000
+EXPORT_HOLDUP_PSD               Granulator HoldupMaterial 0 3000
+EXPORT_HOLDUP_PHASES_FRACTIONS  Granulator HoldupMaterial 0 3000

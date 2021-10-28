@@ -1,0 +1,105 @@
+JOB 
+RESULT_FILE               ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/res.dflw
+MODELS_PATH               ${CMAKE_BINARY_DIR}/Units
+MODELS_PATH               ${CMAKE_BINARY_DIR}/Solvers
+MATERIALS_DATABASE        ${CMAKE_SOURCE_DIR}/Materials.dmdb
+EXPORT_FILE               ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
+EXPORT_SIGNIFICANCE_LIMIT 1e-07
+
+SIMULATION_TIME            36000
+RELATIVE_TOLERANCE         1e-07
+ABSOLUTE_TOLERANCE         1e-07
+INIT_TIME_WINDOW           0.001
+MIN_TIME_WINDOW            1e-09
+MAX_TIME_WINDOW            1e+09
+MAX_ITERATIONS_NUMBER      500
+WINDOW_CHANGE_RATE         1.2
+ITERATIONS_UPPER_LIMIT     7
+ITERATIONS_LOWER_LIMIT     3
+ITERATIONS_UPPER_LIMIT_1ST 20
+CONVERGENCE_METHOD         WEGSTEIN
+RELAXATION_PARAMETER       1
+ACCELERATION_LIMIT         -0.5
+EXTRAPOLATION_METHOD       LINEAR
+
+COMPOUNDS         "Urea" 
+PHASES            "Phase solid" SOLID 
+DISTRIBUTION_GRID "GLOBAL" SIZE NUMERIC EQUIDISTANT VOLUME 120 0 2.14466e-06
+
+UNIT "Feed" "InletFlow" 
+UNIT "Agglomerator" "Agglomerator" 
+UNIT "Screen1" "Screen" 
+UNIT "Screen2" "Screen" 
+UNIT "Mill" "Crusher" 
+UNIT "Mixer1" "Mixer" 
+UNIT "Mixer2" "Mixer" 
+UNIT "Outlet" "OutletFlow" 
+
+STREAM "In" "Feed" "InletMaterial" "Mixer2" "In1"
+STREAM "MixIn" "Mixer2" "Out" "Agglomerator" "Input"
+STREAM "AgglomOut" "Agglomerator" "Output" "Screen1" "Input"
+STREAM "Coarse1" "Screen1" "Coarse" "Mill" "Input"
+STREAM "Fines1" "Screen1" "Fine" "Screen2" "Input"
+STREAM "Coarse2" "Screen2" "Coarse" "Outlet" "In"
+STREAM "Fines2" "Screen2" "Fine" "Mixer1" "In1"
+STREAM "Milled" "Mill" "Output" "Mixer1" "In2"
+STREAM "MixOut" "Mixer1" "Out" "Mixer2" "In2"
+
+UNIT_PARAMETER "Agglomerator" "Beta0" 7.5e-10
+UNIT_PARAMETER "Agglomerator" "Step" 0
+UNIT_PARAMETER "Agglomerator" "Solver" 5547D68E93E844F8A55A36CB957A253B
+UNIT_PARAMETER "Agglomerator" "Kernel" 3
+UNIT_PARAMETER "Agglomerator" "Rank" 3
+UNIT_PARAMETER "Screen1" "Model" 0
+UNIT_PARAMETER "Screen1" "Xcut"  0 0.0095
+UNIT_PARAMETER "Screen1" "Alpha"  0 9
+UNIT_PARAMETER "Screen1" "Beta"  0 0.5
+UNIT_PARAMETER "Screen1" "Offset"  0 0.2
+UNIT_PARAMETER "Screen1" "Mean"  0 0.001
+UNIT_PARAMETER "Screen1" "Deviation"  0 0.0001
+UNIT_PARAMETER "Screen2" "Model" 0
+UNIT_PARAMETER "Screen2" "Xcut"  0 0.009
+UNIT_PARAMETER "Screen2" "Alpha"  0 9
+UNIT_PARAMETER "Screen2" "Beta"  0 0.5
+UNIT_PARAMETER "Screen2" "Offset"  0 0.2
+UNIT_PARAMETER "Screen2" "Mean"  0 0.001
+UNIT_PARAMETER "Screen2" "Deviation"  0 0.0001
+UNIT_PARAMETER "Mill" "Model" 2
+UNIT_PARAMETER "Mill" "P"  0 50
+UNIT_PARAMETER "Mill" "Mean"  0 0.001
+UNIT_PARAMETER "Mill" "Deviation"  0 0.0001
+UNIT_PARAMETER "Mill" "CSS" 0.003
+UNIT_PARAMETER "Mill" "alpha1" 0.5
+UNIT_PARAMETER "Mill" "alpha2" 1.7
+UNIT_PARAMETER "Mill" "n" 1.2
+UNIT_PARAMETER "Mill" "d'" 0.0075
+UNIT_PARAMETER "Mill" "q" 0.55
+
+HOLDUP_OVERALL      "Feed" "InputMaterial" 0 0.003 300 100000
+HOLDUP_OVERALL      "Agglomerator" "Holdup" 0 20 300 100000
+HOLDUP_PHASES       "Feed" "InputMaterial" 0 1
+HOLDUP_PHASES       "Agglomerator" "Holdup" 0 1
+HOLDUP_COMPOUNDS    "Feed" "InputMaterial" SOLID 0 1
+HOLDUP_COMPOUNDS    "Agglomerator" "Holdup" SOLID 0 1
+HOLDUP_DISTRIBUTION "Feed" "InputMaterial" SIZE MIXTURE Q3_DENSITY DIAMETER NORMAL 0 0.008 0.0004
+HOLDUP_DISTRIBUTION "Agglomerator" "Holdup" SIZE MIXTURE Q3_DENSITY DIAMETER NORMAL 0 0.008 0.0004
+
+EXPORT_STREAM_MASS MixIn     0 36000
+EXPORT_STREAM_PSD  MixIn     0 36000
+EXPORT_STREAM_MASS AgglomOut 0 36000
+EXPORT_STREAM_PSD  AgglomOut 0 36000
+EXPORT_STREAM_MASS Coarse1   0 36000
+EXPORT_STREAM_PSD  Coarse1   0 36000
+EXPORT_STREAM_MASS Fines1    0 36000
+EXPORT_STREAM_PSD  Fines1    0 36000
+EXPORT_STREAM_MASS Milled    0 36000
+EXPORT_STREAM_PSD  Milled    0 36000
+EXPORT_STREAM_MASS Coarse2   0 36000
+EXPORT_STREAM_PSD  Coarse2   0 36000
+EXPORT_STREAM_MASS Fines2    0 36000
+EXPORT_STREAM_PSD  Fines2    0 36000
+EXPORT_STREAM_MASS MixOut    0 36000
+EXPORT_STREAM_PSD  MixOut    0 36000
+
+EXPORT_HOLDUP_MASS Agglomerator Holdup 0 36000
+EXPORT_HOLDUP_PSD  Agglomerator Holdup 0 36000
