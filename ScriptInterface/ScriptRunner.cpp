@@ -257,27 +257,27 @@ bool CScriptRunner::SetupFlowsheetParameters(const CScriptJob& _job)
 {
 	auto* params = m_flowsheet.GetParameters();
 
-	if (_job.HasKey(EScriptKeys::SIMULATION_TIME))              params->EndSimulationTime                                    (_job.GetValue<double  >  (EScriptKeys::SIMULATION_TIME             ));
-	if (_job.HasKey(EScriptKeys::RELATIVE_TOLERANCE))           params->RelTol                                               (_job.GetValue<double  >  (EScriptKeys::RELATIVE_TOLERANCE          ));
-	if (_job.HasKey(EScriptKeys::ABSOLUTE_TOLERANCE))           params->AbsTol                                               (_job.GetValue<double  >  (EScriptKeys::ABSOLUTE_TOLERANCE          ));
-	if (_job.HasKey(EScriptKeys::MINIMAL_FRACTION))             params->MinFraction                                          (_job.GetValue<double  >  (EScriptKeys::MINIMAL_FRACTION            ));
-	if (_job.HasKey(EScriptKeys::INIT_TIME_WINDOW))             params->InitTimeWindow                                       (_job.GetValue<double  >  (EScriptKeys::INIT_TIME_WINDOW            ));
-	if (_job.HasKey(EScriptKeys::SAVE_TIME_STEP_HINT))          params->SaveTimeStep                                         (_job.GetValue<double  >  (EScriptKeys::SAVE_TIME_STEP_HINT         ));
-	if (_job.HasKey(EScriptKeys::SAVE_FLAG_FOR_HOLDUPS))        params->SaveTimeStepFlagHoldups                              (_job.GetValue<bool    >  (EScriptKeys::SAVE_FLAG_FOR_HOLDUPS       ));
-	if (_job.HasKey(EScriptKeys::THERMO_TEMPERATURE_MIN))       params->EnthalpyMinT                                         (_job.GetValue<double  >  (EScriptKeys::THERMO_TEMPERATURE_MIN      ));
-	if (_job.HasKey(EScriptKeys::THERMO_TEMPERATURE_MAX))       params->EnthalpyMaxT                                         (_job.GetValue<double  >  (EScriptKeys::THERMO_TEMPERATURE_MAX      ));
-	if (_job.HasKey(EScriptKeys::THERMO_TEMPERATURE_INTERVALS)) params->EnthalpyInt                                          (_job.GetValue<uint64_t>  (EScriptKeys::THERMO_TEMPERATURE_INTERVALS));
-	if (_job.HasKey(EScriptKeys::MIN_TIME_WINDOW))              params->MinTimeWindow                                        (_job.GetValue<double  >  (EScriptKeys::MIN_TIME_WINDOW             ));
-	if (_job.HasKey(EScriptKeys::MAX_TIME_WINDOW))              params->MaxTimeWindow                                        (_job.GetValue<double  >  (EScriptKeys::MAX_TIME_WINDOW             ));
-	if (_job.HasKey(EScriptKeys::WINDOW_CHANGE_RATE))           params->MagnificationRatio                                   (_job.GetValue<double  >  (EScriptKeys::WINDOW_CHANGE_RATE          ));
-	if (_job.HasKey(EScriptKeys::RELAXATION_PARAMETER))         params->RelaxationParam                                      (_job.GetValue<double  >  (EScriptKeys::RELAXATION_PARAMETER        ));
-	if (_job.HasKey(EScriptKeys::ACCELERATION_LIMIT))           params->WegsteinAccelParam                                   (_job.GetValue<double  >  (EScriptKeys::ACCELERATION_LIMIT          ));
-	if (_job.HasKey(EScriptKeys::MAX_ITERATIONS_NUMBER))        params->MaxItersNumber     (static_cast<uint32_t>            (_job.GetValue<uint64_t>  (EScriptKeys::MAX_ITERATIONS_NUMBER)      ));
-	if (_job.HasKey(EScriptKeys::ITERATIONS_UPPER_LIMIT))       params->ItersUpperLimit    (static_cast<uint32_t>            (_job.GetValue<uint64_t>  (EScriptKeys::ITERATIONS_UPPER_LIMIT)     ));
-	if (_job.HasKey(EScriptKeys::ITERATIONS_LOWER_LIMIT))       params->ItersLowerLimit    (static_cast<uint32_t>            (_job.GetValue<uint64_t>  (EScriptKeys::ITERATIONS_LOWER_LIMIT)     ));
-	if (_job.HasKey(EScriptKeys::ITERATIONS_UPPER_LIMIT_1ST))   params->Iters1stUpperLimit (static_cast<uint32_t>            (_job.GetValue<uint64_t>  (EScriptKeys::ITERATIONS_UPPER_LIMIT_1ST) ));
-	if (_job.HasKey(EScriptKeys::CONVERGENCE_METHOD))           params->ConvergenceMethod  (static_cast<EConvergenceMethod>  (_job.GetValue<SNamedEnum>(EScriptKeys::CONVERGENCE_METHOD).key     ));
-	if (_job.HasKey(EScriptKeys::EXTRAPOLATION_METHOD))         params->ExtrapolationMethod(static_cast<EExtrapolationMethod>(_job.GetValue<SNamedEnum>(EScriptKeys::EXTRAPOLATION_METHOD).key   ));
+	if (_job.HasKey(EScriptKeys::SIMULATION_TIME))              params->EndSimulationTime                                    (_job.GetValue<double  >  (EScriptKeys::SIMULATION_TIME              ));
+	if (_job.HasKey(EScriptKeys::RELATIVE_TOLERANCE))           params->RelTol                                               (_job.GetValue<double  >  (EScriptKeys::RELATIVE_TOLERANCE           ));
+	if (_job.HasKey(EScriptKeys::ABSOLUTE_TOLERANCE))           params->AbsTol                                               (_job.GetValue<double  >  (EScriptKeys::ABSOLUTE_TOLERANCE           ));
+	if (_job.HasKey(EScriptKeys::MINIMAL_FRACTION))             params->MinFraction                                          (_job.GetValue<double  >  (EScriptKeys::MINIMAL_FRACTION             ));
+	if (_job.HasKey(EScriptKeys::INIT_TIME_WINDOW))             params->InitTimeWindow                                       (_job.GetValue<double  >  (EScriptKeys::INIT_TIME_WINDOW             ));
+	if (_job.HasKey(EScriptKeys::SAVE_TIME_STEP_HINT))          params->SaveTimeStep                                         (_job.GetValue<double  >  (EScriptKeys::SAVE_TIME_STEP_HINT          ));
+	if (_job.HasKey(EScriptKeys::SAVE_FLAG_FOR_HOLDUPS))        params->SaveTimeStepFlagHoldups                              (_job.GetValue<bool    >  (EScriptKeys::SAVE_FLAG_FOR_HOLDUPS        ));
+	if (_job.HasKey(EScriptKeys::THERMO_TEMPERATURE_MIN))       params->EnthalpyMinT                                         (_job.GetValue<double  >  (EScriptKeys::THERMO_TEMPERATURE_MIN       ));
+	if (_job.HasKey(EScriptKeys::THERMO_TEMPERATURE_MAX))       params->EnthalpyMaxT                                         (_job.GetValue<double  >  (EScriptKeys::THERMO_TEMPERATURE_MAX       ));
+	if (_job.HasKey(EScriptKeys::MIN_TIME_WINDOW))              params->MinTimeWindow                                        (_job.GetValue<double  >  (EScriptKeys::MIN_TIME_WINDOW              ));
+	if (_job.HasKey(EScriptKeys::MAX_TIME_WINDOW))              params->MaxTimeWindow                                        (_job.GetValue<double  >  (EScriptKeys::MAX_TIME_WINDOW              ));
+	if (_job.HasKey(EScriptKeys::WINDOW_CHANGE_RATE))           params->MagnificationRatio                                   (_job.GetValue<double  >  (EScriptKeys::WINDOW_CHANGE_RATE           ));
+	if (_job.HasKey(EScriptKeys::RELAXATION_PARAMETER))         params->RelaxationParam                                      (_job.GetValue<double  >  (EScriptKeys::RELAXATION_PARAMETER         ));
+	if (_job.HasKey(EScriptKeys::ACCELERATION_LIMIT))           params->WegsteinAccelParam                                   (_job.GetValue<double  >  (EScriptKeys::ACCELERATION_LIMIT           ));
+	if (_job.HasKey(EScriptKeys::THERMO_TEMPERATURE_INTERVALS)) params->EnthalpyInt        (static_cast<uint32_t>            (_job.GetValue<uint64_t>  (EScriptKeys::THERMO_TEMPERATURE_INTERVALS)));
+	if (_job.HasKey(EScriptKeys::MAX_ITERATIONS_NUMBER))        params->MaxItersNumber     (static_cast<uint32_t>            (_job.GetValue<uint64_t>  (EScriptKeys::MAX_ITERATIONS_NUMBER)       ));
+	if (_job.HasKey(EScriptKeys::ITERATIONS_UPPER_LIMIT))       params->ItersUpperLimit    (static_cast<uint32_t>            (_job.GetValue<uint64_t>  (EScriptKeys::ITERATIONS_UPPER_LIMIT)      ));
+	if (_job.HasKey(EScriptKeys::ITERATIONS_LOWER_LIMIT))       params->ItersLowerLimit    (static_cast<uint32_t>            (_job.GetValue<uint64_t>  (EScriptKeys::ITERATIONS_LOWER_LIMIT)      ));
+	if (_job.HasKey(EScriptKeys::ITERATIONS_UPPER_LIMIT_1ST))   params->Iters1stUpperLimit (static_cast<uint32_t>            (_job.GetValue<uint64_t>  (EScriptKeys::ITERATIONS_UPPER_LIMIT_1ST)  ));
+	if (_job.HasKey(EScriptKeys::CONVERGENCE_METHOD))           params->ConvergenceMethod  (static_cast<EConvergenceMethod>  (_job.GetValue<SNamedEnum>(EScriptKeys::CONVERGENCE_METHOD).key      ));
+	if (_job.HasKey(EScriptKeys::EXTRAPOLATION_METHOD))         params->ExtrapolationMethod(static_cast<EExtrapolationMethod>(_job.GetValue<SNamedEnum>(EScriptKeys::EXTRAPOLATION_METHOD).key    ));
 
 	return true;
 }
@@ -315,13 +315,13 @@ bool CScriptRunner::SetupHoldups(const CScriptJob& _job)
 
 	// remove all time points if requested for required holdups
 	for (const auto& entry : _job.GetValues<SHoldupDependentSE>(EScriptKeys::HOLDUP_OVERALL))
-		CleanUp(GetHoldupPtr(GetModelPtr(GetUnitPtr(entry.unit)), entry.holdup));
+		CleanUp(GetHoldupInitPtr(GetModelPtr(GetUnitPtr(entry.unit)), entry.holdup));
 	for (const auto& entry : _job.GetValues<SHoldupDependentSE>(EScriptKeys::HOLDUP_PHASES))
-		CleanUp(GetHoldupPtr(GetModelPtr(GetUnitPtr(entry.unit)), entry.holdup));
+		CleanUp(GetHoldupInitPtr(GetModelPtr(GetUnitPtr(entry.unit)), entry.holdup));
 	for (const auto& entry : _job.GetValues<SHoldupCompoundsSE>(EScriptKeys::HOLDUP_COMPOUNDS))
-		CleanUp(GetHoldupPtr(GetModelPtr(GetUnitPtr(entry.unit)), entry.holdup));
+		CleanUp(GetHoldupInitPtr(GetModelPtr(GetUnitPtr(entry.unit)), entry.holdup));
 	for (const auto& entry : _job.GetValues<SHoldupDistributionSE>(EScriptKeys::HOLDUP_DISTRIBUTION))
-		CleanUp(GetHoldupPtr(GetModelPtr(GetUnitPtr(entry.unit)), entry.holdup));
+		CleanUp(GetHoldupInitPtr(GetModelPtr(GetUnitPtr(entry.unit)), entry.holdup));
 
 	bool success = true;
 
@@ -338,7 +338,7 @@ bool CScriptRunner::SetupHoldupsOverall(const CScriptJob& _job)
 	for (const auto& entry : _job.GetValues<SHoldupDependentSE>(EScriptKeys::HOLDUP_OVERALL))
 	{
 		// get pointer to holdup
-		auto [holdup, unit] = TryGetHoldupPtr(EScriptKeys::HOLDUP_OVERALL, entry.unit, entry.holdup);
+		auto [holdup, unit] = TryGetHoldupInitPtr(EScriptKeys::HOLDUP_OVERALL, entry.unit, entry.holdup);
 		if (!holdup) return false;
 		// check the number of passed arguments
 		if (entry.values.size() != m_flowsheet.GetOverallPropertiesNumber() && entry.values.size() % (m_flowsheet.GetOverallPropertiesNumber() + 1) != 0)
@@ -362,7 +362,7 @@ bool CScriptRunner::SetupHoldupsPhases(const CScriptJob& _job)
 	for (const auto& entry : _job.GetValues<SHoldupDependentSE>(EScriptKeys::HOLDUP_PHASES))
 	{
 		// get pointer to holdup
-		auto [holdup, unit] = TryGetHoldupPtr(EScriptKeys::HOLDUP_PHASES, entry.unit, entry.holdup);
+		auto [holdup, unit] = TryGetHoldupInitPtr(EScriptKeys::HOLDUP_PHASES, entry.unit, entry.holdup);
 		if (!holdup) return false;
 		// check the number of passed arguments
 		if (entry.values.size() != m_flowsheet.GetPhasesNumber() && entry.values.size() % (m_flowsheet.GetPhasesNumber() + 1) != 0)
@@ -386,7 +386,7 @@ bool CScriptRunner::SetupHoldupsCompounds(const CScriptJob& _job)
 	for (const auto& entry : _job.GetValues<SHoldupCompoundsSE>(EScriptKeys::HOLDUP_COMPOUNDS))
 	{
 		// get pointer to holdup
-		auto [holdup, unit] = TryGetHoldupPtr(EScriptKeys::HOLDUP_COMPOUNDS, entry.unit, entry.holdup);
+		auto [holdup, unit] = TryGetHoldupInitPtr(EScriptKeys::HOLDUP_COMPOUNDS, entry.unit, entry.holdup);
 		if (!holdup) return false;
 		// check the number of passed arguments
 		if (entry.values.size() != m_flowsheet.GetCompoundsNumber() && entry.values.size() % (m_flowsheet.GetCompoundsNumber() + 1) != 0)
@@ -411,7 +411,7 @@ bool CScriptRunner::SetupHoldupsDistributions(const CScriptJob& _job)
 	for (const auto& entry : _job.GetValues<SHoldupDistributionSE>(EScriptKeys::HOLDUP_DISTRIBUTION))
 	{
 		// get pointer to holdup
-		auto [holdup, unit] = TryGetHoldupPtr(EScriptKeys::HOLDUP_DISTRIBUTION, entry.unit, entry.holdup);
+		auto [holdup, unit] = TryGetHoldupInitPtr(EScriptKeys::HOLDUP_DISTRIBUTION, entry.unit, entry.holdup);
 		if (!holdup) return false;
 		// read required values for ease of use
 		const auto distr = static_cast<EDistrTypes>(entry.distrType.key);					// distribution type
@@ -544,7 +544,7 @@ bool CScriptRunner::ExportResults(const CScriptJob& _job)
 		for (const auto& e : _job.GetValues<SExportHoldupSE>(key))
 		{
 			// get pointer to holdup
-			auto [holdup, unit] = TryGetHoldupPtr(key , e.unit, e.holdup);
+			auto [holdup, unit] = TryGetHoldupWorkPtr(key , e.unit, e.holdup);
 			success &= holdup != nullptr;
 			if (!holdup) continue;
 			// export
@@ -709,10 +709,18 @@ CBaseUnitParameter* CScriptRunner::TryGetUnitParamPtr(EScriptKeys _sk, const SNa
 	return param;
 }
 
-std::tuple<CBaseStream*, CUnitContainer*> CScriptRunner::TryGetHoldupPtr(EScriptKeys _sk, const SNameOrIndex& _unit, const SNameOrIndex& _holdup)
+std::tuple<CBaseStream*, CUnitContainer*> CScriptRunner::TryGetHoldupInitPtr(EScriptKeys _sk, const SNameOrIndex& _unit, const SNameOrIndex& _holdup)
 {
 	auto [model, unit] = TryGetUnitAndModelPtr(_sk, _unit);
-	auto* holdup = GetHoldupPtr(model, _holdup);
+	auto* holdup = GetHoldupInitPtr(model, _holdup);
+	if (!holdup && model && unit) PrintMessage(DyssolC_ErrorNoHoldup(StrKey(_sk), unit->GetName(), _holdup.name, _holdup.index));
+	return std::make_tuple(holdup, unit);
+}
+
+std::tuple<CBaseStream*, CUnitContainer*> CScriptRunner::TryGetHoldupWorkPtr(EScriptKeys _sk, const SNameOrIndex& _unit, const SNameOrIndex& _holdup)
+{
+	auto [model, unit] = TryGetUnitAndModelPtr(_sk, _unit);
+	auto* holdup = GetHoldupWorkPtr(model, _holdup);
 	if (!holdup && model && unit) PrintMessage(DyssolC_ErrorNoHoldup(StrKey(_sk), unit->GetName(), _holdup.name, _holdup.index));
 	return std::make_tuple(holdup, unit);
 }
@@ -786,12 +794,21 @@ CBaseUnitParameter* CScriptRunner::GetUnitParamPtr(CBaseUnit* _model, const SNam
 	return param;													// return pointer
 }
 
-CBaseStream* CScriptRunner::GetHoldupPtr(CBaseUnit* _model, const SNameOrIndex& _nameOrIndex)
+CBaseStream* CScriptRunner::GetHoldupInitPtr(CBaseUnit* _model, const SNameOrIndex& _nameOrIndex)
 {
 	if (!_model) return {};
 	auto& manager = _model->GetStreamsManager();						// get manager
 	auto* holdup = manager.GetObjectInit(_nameOrIndex.name);			// try to access by name
 	if (!holdup) holdup = manager.GetObjectInit(_nameOrIndex.index);	// try to access by index
+	return holdup;														// return pointer
+}
+
+CBaseStream* CScriptRunner::GetHoldupWorkPtr(CBaseUnit* _model, const SNameOrIndex& _nameOrIndex)
+{
+	if (!_model) return {};
+	auto& manager = _model->GetStreamsManager();						// get manager
+	auto* holdup = manager.GetObjectWork(_nameOrIndex.name);			// try to access by name
+	if (!holdup) holdup = manager.GetObjectWork(_nameOrIndex.index);	// try to access by index
 	return holdup;														// return pointer
 }
 
