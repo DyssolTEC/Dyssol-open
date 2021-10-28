@@ -13,7 +13,7 @@ using namespace StrConst;
 namespace fs = std::filesystem;
 namespace ch = std::chrono;
 
-void CScriptRunner::RunJob(const CScriptJob& _job)
+bool CScriptRunner::RunJob(const CScriptJob& _job)
 {
 	const auto tStart = ch::steady_clock::now();
 
@@ -28,6 +28,8 @@ void CScriptRunner::RunJob(const CScriptJob& _job)
 	PrintMessage(DyssolC_ScriptFinished(ch::duration_cast<ch::seconds>(tEnd - tStart).count()));
 	if (!success)
 		PrintMessage(DyssolC_ErrorFinish());
+
+	return success;
 }
 
 bool CScriptRunner::CreateFlowsheet(const CScriptJob& _job)

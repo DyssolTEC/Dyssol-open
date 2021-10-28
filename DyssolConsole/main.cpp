@@ -70,7 +70,7 @@ void PrintModelsInfo(const std::vector<std::filesystem::path>& _modelPaths)
 	}
 }
 
-void RunDyssol(const std::filesystem::path& _script)
+bool RunDyssol(const std::filesystem::path& _script)
 {
 	InitializeThreadPool();
 
@@ -81,11 +81,14 @@ void RunDyssol(const std::filesystem::path& _script)
 
 	CScriptRunner runner;
 	size_t counter = 0;
+	bool success = true;
 	for (const auto& job : parser.Jobs())
 	{
 		std::cout << " ===== Starting job: " << counter++ + 1 << " ===== " << std::endl;
-		runner.RunJob(*job);
+		success &= runner.RunJob(*job);
 	}
+
+	return success;
 }
 
 int main(int argc, const char* argv[])
@@ -119,15 +122,18 @@ int main(int argc, const char* argv[])
 			PrintModelsInfo(fsPaths);
 		}
 		if (parser.HasKey("s"))
-			RunDyssol(parser.GetValue("s"));
+			if (!RunDyssol(parser.GetValue("s")))
+				return 1;
 	}
 	catch (const std::exception& e)
 	{
 		std::cout << "Unhandled exception caught: " << e.what() << std::endl;
+		return 1;
 	}
 	catch (...)
 	{
 		std::cout << "Unknown unhandled exception caught" << std::endl;
+		return 1;
 	}
 	return 0;
 }
