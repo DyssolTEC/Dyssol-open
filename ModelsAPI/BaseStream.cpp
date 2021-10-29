@@ -591,7 +591,7 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 			for (const auto& c : GetAllCompounds())
 			{
 				const double visco = m_materialsDB->GetTPPropertyValue(c, _property, T, P);
-				if (visco != 0.0)
+				if (visco > 0.0)
 					res += GetCompoundFraction(_time, c, _phase) * std::log(visco);
 			}
 			if (res != 0.0)
@@ -624,7 +624,8 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 		{
 		case EPhase::LIQUID:
 			for (const auto& c : GetAllCompounds())
-				res += GetCompoundMolFraction(_time, c, _phase) / std::pow(m_materialsDB->GetTPPropertyValue(c, _property, T, P), 2.0);
+				if (const auto conduct = m_materialsDB->GetTPPropertyValue(c, _property, T, P); conduct != 0.0)
+					res += GetCompoundMolFraction(_time, c, _phase) / std::pow(conduct, 2.0);
 			if (res != 0.0)
 				return 1.0 / std::sqrt(res);
 			break;
@@ -639,8 +640,8 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 				{
 					const double conduct2 = m_materialsDB->GetTPPropertyValue(c2, _property, T, P);
 					const double mollMass2 = GetCompoundProperty(c2, MOLAR_MASS);
-					const double f = std::pow((1 + std::sqrt(conduct1 / conduct2) * std::pow(mollMass2 / mollMass1, 1.0 / 4.0)), 2) / std::sqrt(8 * (1 + mollMass1 / mollMass2));
-					denominator += GetCompoundMolFraction(_time, c2, _phase) * f;
+					if (mollMass1 != 0.0 && mollMass2 != 0.0 && conduct2 != 0.0)
+						denominator += GetCompoundMolFraction(_time, c2, _phase) * std::pow(1 + std::sqrt(conduct1 / conduct2) * std::pow(mollMass2 / mollMass1, 1. / 4.), 2) / std::sqrt(8 * (1 + mollMass1 / mollMass2));
 				}
 				if (denominator != 0.0)
 					res += numerator / denominator;
@@ -660,12 +661,12 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 			CMatrix2D distr = m_phases.at(_phase)->MDDistr()->GetDistribution(_time, DISTR_COMPOUNDS, DISTR_PART_POROSITY);
 			const size_t nCompounds = compounds.size();
 			const size_t nPorosities = m_grid.GetGridDimension(DISTR_PART_POROSITY)->ClassesNumber();
-			const std::vector<double> vPorosities = m_grid.GetGridDimensionNumeric(DISTR_PART_POROSITY)->GetClassesMeans();
+			const std::vector<double> porosities = m_grid.GetGridDimensionNumeric(DISTR_PART_POROSITY)->GetClassesMeans();
 			for (size_t iCompound = 0; iCompound < nCompounds; ++iCompound)
 			{
 				const double density = GetCompoundProperty(_time, compounds[iCompound], DENSITY);
 				for (size_t iPoros = 0; iPoros < nPorosities; ++iPoros)
-					res += density * (1 - vPorosities[iPoros]) * distr[iCompound][iPoros];
+					res += density * (1 - porosities[iPoros]) * distr[iCompound][iPoros];
 			}
 			return res;
 		}
