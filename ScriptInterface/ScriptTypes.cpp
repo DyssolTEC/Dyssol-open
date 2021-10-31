@@ -11,7 +11,7 @@ namespace ScriptInterface
 	{
 		const auto str = GetValueFromStream<std::string>(_s);
 		_obj.name  = IsSimpleUInt(str) ? "" : str;
-		_obj.index = IsSimpleUInt(str) ? std::stoull(str) - 1 : -1;
+		_obj.index = IsSimpleUInt(str) ? static_cast<size_t>(std::stoull(str) - 1) : -1;
 		return _s;
 	}
 	std::ostream& operator<<(std::ostream& _s, const SNameOrIndex& _obj)

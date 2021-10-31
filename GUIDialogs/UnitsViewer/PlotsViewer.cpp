@@ -134,7 +134,7 @@ void CPlotsViewer::UpdateSliderPosFromSelectedIndex()
 
 	m_bAvoidSignal = true;
 	const auto plots = m_pModel->GetModel()->GetPlotsManager().GetAllPlots();
-	if( m_pModel && m_pModel->GetModel() && m_iPlot != -1 && m_iPlot < plots.size() && !plots[m_iPlot]->Is2D() && !m_iCurves.empty() )
+	if( m_pModel && m_pModel->GetModel() && m_iPlot != -1 && m_iPlot < static_cast<int>(plots.size()) && !plots[m_iPlot]->Is2D() && !m_iCurves.empty() )
 		ui.horizontalSlider->setSliderPosition(m_iCurves.back());
 	else
 		ui.horizontalSlider->setSliderPosition(0);
