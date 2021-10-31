@@ -1,7 +1,7 @@
 # Dyssol
 Dyssol is a tool for dynamic flowsheet simulation of complex production processes with advanced treatment of granular materials.
 
-For more information, please check the [documentation](https://github.com/FlowsheetSimulation/Dyssol-open/tree/master/Documentation). 
+For more information, please check the [documentation](https://flowsheetsimulation.github.io/Dyssol-open). 
 
 Video intruductions: [Basics](https://youtu.be/IHzr0NVYW6M) and [Simulation of granulation process](https://youtu.be/ni54JwvCVDc)
 

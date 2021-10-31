@@ -130,7 +130,7 @@ private slots:
 	void SavingFinished();	// saving process is finished
 	void LoadingFinished();	// loading process is finished
 
-	void OpenHelp(const QString& _sFile) const;	// open help file
+	void OpenHelp(const QString& _link) const;	// Opens help file.
 	void ShowAboutDialog();				// open about dialog
 
 	void SlotSaveAndReopen();

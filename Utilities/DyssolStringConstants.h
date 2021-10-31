@@ -30,8 +30,7 @@ namespace StrConst
 	const char* const Dyssol_ConfigCachePath       = "cachePath";
 	const char* const Dyssol_CacheDirRelease       = "/cache";
 	const char* const Dyssol_CacheDirDebug         = "/cache_debug";
-	const char* const Dyssol_HelpDir			   = "Help";
-	const char* const Dyssol_HelpFileExt           = ".pdf";
+	const char* const Dyssol_HelpURL               = "https://flowsheetsimulation.github.io/Dyssol-open/";
 	const char* const Dyssol_MainWindowName        = "Dyssol";
 	const char* const Dyssol_MDBWindowName		   = "Materials Database";
 	const char* const Dyssol_FlowsheetTabName      = "Flowsheet";
