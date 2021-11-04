@@ -161,10 +161,8 @@ void CUnitDAEModel::ResultsHandler(double _time, double* _vars, double* _ders, v
 	unit->m_outDustStream->AddStream(_time, unit->m_inGasStream);
 	unit->m_outDustStream->SetMassFlow(_time, dustMass);
 	unit->m_outDustStream->SetPhaseFraction(_time, EPhase::SOLID, 0);
-	const double frL = unit->m_outDustStream->GetPhaseFraction(_time, EPhase::LIQUID);
-	const double frV = unit->m_outDustStream->GetPhaseFraction(_time, EPhase::VAPOR);
-	unit->m_outDustStream->SetPhaseFraction(_time, EPhase::LIQUID, frL / (frL + frV));
-	unit->m_outDustStream->SetPhaseFraction(_time, EPhase::VAPOR, frV / (frL + frV));
+	unit->m_outDustStream->SetPhaseFraction(_time, EPhase::LIQUID, 0);
+	unit->m_outDustStream->SetPhaseFraction(_time, EPhase::VAPOR, 1);
 
 	unit->SetStateVariable("Atot" , _vars[m_iAtot] , _time);
 	unit->SetStateVariable("Mtot" , _vars[m_iMtot] , _time);
