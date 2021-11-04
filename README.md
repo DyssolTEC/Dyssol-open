@@ -1,7 +1,7 @@
 # Dyssol
 Dyssol is a tool for dynamic flowsheet simulation of complex production processes with advanced treatment of granular materials.
 
-For more information, please check the [documentation](https://github.com/FlowsheetSimulation/Dyssol-open/tree/master/Documentation). 
+For more information, please check the [documentation](https://flowsheetsimulation.github.io/Dyssol-open). 
 
 Video intruductions: [Basics](https://youtu.be/IHzr0NVYW6M) and [Simulation of granulation process](https://youtu.be/ni54JwvCVDc)
 
@@ -11,15 +11,15 @@ To cite Dyssol please use the following:
 Skorych, V., Dosta, M., & Heinrich, S. (2020). Dyssol — An open-source flowsheet simulation framework for particulate materials. SoftwareX, 12, 100572. [doi.org/10.1016/j.softx.2020.100572](https://doi.org/10.1016/j.softx.2020.100572).
 
 # Installation requirements 
+## Windows
 Dyssol should install and work on all latest versions of Windows.
 Requires Visual C++ Redistributable for Visual Studio 2019 to run.
 
 # Installation
+## Windows
 Run the provided installer and follow the instructions.
 
 # Compilation
-A fully functional version can be compiled and built with Microsoft Visual Studio 2019. A command-line version can also be built for Linux.
-
 ## Windows
 ### Compilation requirements on Windows
 - [Microsoft Visual Studio 2019](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Community&rel=16), Desktop development with C++ workload.
@@ -43,29 +43,21 @@ Also, other versions of Microsoft Visual Studio can be used, but additional prep
 ## Linux
 ### Compilation requirements on Linux
 - gcc-9, g++-9
-- CMake 3.14 or higher
+- CMake 3.1.0 or higher
 
 ### Compilation procedure on Linux
-- Navigate to `Dyssol/DyssolLinux/`
-- Install the required build tools manually or run
+- Install the required build tools 
 ```sh
-$ sudo ./install_gcc.sh
-$ sudo ./install_cmake.sh
+$ sudo add-apt-repository ppa:gladky-anton/sundials
+$ sudo apt install build-essential libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev
+$ mkdir /path_to_repo/install
+$ mkdir /path_to_repo/build
+$ cd /path_to_repo/build
+$ cmake /path_to_repo -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/path_to_repo/install
+$ cmake --build . --parallel
+$ make install
 ```
-- Build and install all required third-party libraries.
-```sh
-$ ./install_hdf5.sh
-$ ./install_sundials.sh
-```
-- Gather all source files.
-```sh
-$ ./copy_files.sh
-```
-- Build Dyssol.
-```sh
-$ ./make_dyssol.sh
-```
-- The compiled executable file and all the units libraries will appear in `Dyssol/DyssolLinux/compiled/`
+- The compiled executable file and all the units' libraries will appear in `/path_to_repo/install`
 
 # Code organization
 - BaseSolvers - interfaces for equation solvers
@@ -73,7 +65,6 @@ $ ./make_dyssol.sh
 - Documentation - manuals
 - DyssolConsole - main project for command-line version of Dyssol
 - DyssolInstallers - scripts and data needed to build installers for Windows
-- DyssolLinux - scripts for compilation on Linux
 - DyssolMainWindow - main project for GUI version of Dyssol
 - EquationSolvers - built-in equation solvers based on SUNDIALS library
 - ExternalLibraries - all third-party libraries and scripts to build them
@@ -91,7 +82,7 @@ $ ./make_dyssol.sh
 - Dyssol.sln - main file of the Visual Studio solution
 - LICENSE - license agreement
 - Materials.dmdb - exemplary database of materials 
-- README - this file
+- README.md - this file
 
 # Installation directory organization 
 - Example flowsheets – flowsheet examples 

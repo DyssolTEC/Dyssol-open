@@ -30,8 +30,7 @@ namespace StrConst
 	const char* const Dyssol_ConfigCachePath       = "cachePath";
 	const char* const Dyssol_CacheDirRelease       = "/cache";
 	const char* const Dyssol_CacheDirDebug         = "/cache_debug";
-	const char* const Dyssol_HelpDir			   = "Help";
-	const char* const Dyssol_HelpFileExt           = ".pdf";
+	const char* const Dyssol_HelpURL               = "https://flowsheetsimulation.github.io/Dyssol-open/";
 	const char* const Dyssol_MainWindowName        = "Dyssol";
 	const char* const Dyssol_MDBWindowName		   = "Materials Database";
 	const char* const Dyssol_FlowsheetTabName      = "Flowsheet";
@@ -109,15 +108,15 @@ namespace StrConst
 		return "Error while applying " + p + ": \n\tCannot find a holdup in unit " + StringFunctions::Quote(u) + " neither by its name " + StringFunctions::Quote(n) + " nor by its index " + std::to_string(i + 1); }
 	inline std::string DyssolC_ErrorArgumentsNumber(const std::string& p, const std::string& u, const std::string& n, size_t i) {
 		return "Error while applying " + p + ", unit " + StringFunctions::Quote(u) + ", holdup " + (!n.empty() ? StringFunctions::Quote(n) : std::to_string(i + 1)) + ":\n\tWrong number of arguments"; }
-	inline std::string DyssolC_ErrorArgumentsNumber(const std::string& p, const std::string& u, const std::string& n, size_t i, const std::string& ph, size_t iph) {
+	inline std::string DyssolC_ErrorArgumentsNumber(const std::string& p, const std::string& u, const std::string& n, size_t i, const std::string& ph, int64_t iph) {
 		return "Error while applying " + p + ", unit " + StringFunctions::Quote(u) + ", holdup " + (!n.empty() ? StringFunctions::Quote(n) : std::to_string(i + 1)) + ", phase " + (!ph.empty() ? ph : std::to_string(iph)) + ":\n\tWrong number of arguments"; }
-	inline std::string DyssolC_ErrorNoPhase(const std::string& p, const std::string& u, const std::string& n, size_t i, const std::string& ph, size_t iph) {
+	inline std::string DyssolC_ErrorNoPhase(const std::string& p, const std::string& u, const std::string& n, size_t i, const std::string& ph, int64_t iph) {
 		return "Error while applying " + p + ", unit " + StringFunctions::Quote(u) + ", holdup " + (!n.empty() ? StringFunctions::Quote(n) : std::to_string(i + 1)) + ":\n\tPhase " + (!ph.empty() ? ph : std::to_string(iph)) + " is not defined in the flowsheet"; }
 	inline std::string DyssolC_ErrorNoCompound(const std::string& p, const std::string& u, const std::string& n, size_t i, const std::string& c) {
 		return "Error while applying " + p + ", unit " + StringFunctions::Quote(u) + ", holdup " + (!n.empty() ? StringFunctions::Quote(n) : std::to_string(i + 1)) + ":\n\tCannot find compound " + c + " neither by its name nor by its key"; }
-	inline std::string DyssolC_ErrorNoDistribution(const std::string& p, const std::string& u, const std::string& n, size_t i, const std::string& d, size_t id) {
+	inline std::string DyssolC_ErrorNoDistribution(const std::string& p, const std::string& u, const std::string& n, size_t i, const std::string& d, int64_t id) {
 		return "Error while applying " + p + ", unit " + StringFunctions::Quote(u) + ", holdup " + (!n.empty() ? StringFunctions::Quote(n) : std::to_string(i + 1)) + ":\n\tDistribution " + (!d.empty() ? d : std::to_string(id)) + " is not defined in the flowsheet"; }
-	inline std::string DyssolC_ErrorArgumentsNumberGrid(const std::string& p, const std::string& u, const std::string& n, size_t i) {
+	inline std::string DyssolC_ErrorArgumentsNumberGrid(const std::string& p, const std::string& u, const std::string& n, int64_t i) {
 		return "Error while applying " + p + ", unit " + StringFunctions::Quote(u) + ", distribution " + (!n.empty() ? StringFunctions::Quote(n) : std::to_string(i + 1)) + ":\n\tWrong number of arguments"; }
 	inline std::string DyssolC_ErrorArgumentsNumberUnit(const std::string& p) {
 		return "Error while applying " + p + ": \n\tWrong number of arguments"; }

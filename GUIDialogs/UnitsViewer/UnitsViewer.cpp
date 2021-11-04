@@ -224,7 +224,7 @@ void CUnitsViewer::UpdateCurvesView()
 
 	if(( nOldSelected == -1 ) && (ui.listWidgetCurves->count() > 0))
 		ui.listWidgetCurves->setCurrentRow(0);
-	else if ( nOldSelected < plot->GetCurvesNumber() )
+	else if ( nOldSelected < static_cast<int>(plot->GetCurvesNumber()) )
 		ui.listWidgetCurves->setCurrentRow( nOldSelected );
 	else if(ui.listWidgetCurves->count() > 0)
 		ui.listWidgetCurves->setCurrentRow(0);
@@ -232,7 +232,7 @@ void CUnitsViewer::UpdateCurvesView()
 
 void CUnitsViewer::UnitChanged()
 {
-	if (ui.listWidgetUnits->currentRow() >= 0 && ui.listWidgetUnits->currentRow() < m_pFlowsheet->GetUnitsNumber())
+	if (ui.listWidgetUnits->currentRow() >= 0 && ui.listWidgetUnits->currentRow() < static_cast<int>(m_pFlowsheet->GetUnitsNumber()))
 		m_pSelectedModel = m_pFlowsheet->GetAllUnits()[ui.listWidgetUnits->currentRow()];
 	else
 		m_pSelectedModel = nullptr;

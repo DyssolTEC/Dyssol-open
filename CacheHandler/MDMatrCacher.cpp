@@ -81,7 +81,7 @@ void CMDMatrCacher::WriteToCache(const std::vector<double>& _vTP, std::vector<st
 
 	if( _bCoherent && !bInsertNewDescr ) // no changes in cached data -> just set descriptors to 'valid'
 	{
-		int64_t nNumber = _vTP.size();
+		size_t nNumber = _vTP.size();
 		while( nNumber > 0 )
 		{
 			m_descriptors[index].valid = true;
@@ -93,7 +93,7 @@ void CMDMatrCacher::WriteToCache(const std::vector<double>& _vTP, std::vector<st
 
 	if( _vTP.size() != 0 )
 	{
-		int64_t nNumber = _vTP.size();
+		size_t nNumber = _vTP.size();
 		size_t nStartTP = 0;
 		while( nNumber >= m_chunk*2 )
 		{
@@ -119,7 +119,7 @@ void CMDMatrCacher::WriteData(size_t _nIndex, std::vector<std::vector<double>>& 
 {
 	bool bInsert = false;
 	SDescriptor newDescr( true, 0, _nSize, _vTP[_nStartTP], _vTP[_nStartTP+_nSize-1], 0 );
-	if( ( _bInsert ) || ( ( _nIndex < m_descriptors.size() ) && ( m_descriptors[_nIndex].valid ) ) || ( _nIndex >= m_descriptors.size() ) )
+	if (_bInsert || _nIndex < m_descriptors.size() && m_descriptors[_nIndex].valid || _nIndex >= m_descriptors.size() || _nSize > m_descriptors[_nIndex].descriptorNumber)
 		bInsert = true;
 	else
 	{

@@ -343,60 +343,51 @@ void Dyssol::CreateMenu()
 	/// help files
 	// Introduction
 	QMenu* menuIntroduction = ui.menuDocumentation->addMenu("Introduction");
-	menuIntroduction->addAction("Get Started",                 this, [&] { OpenHelp("Introduction/Get Started"); });
-	menuIntroduction->addAction("Architecture and Algorithms", this, [&] { OpenHelp("Introduction/Architecture and Algorithms"); });
-	menuIntroduction->addAction("User Interface",              this, [&] { OpenHelp("Introduction/User Interface"); });
-	menuIntroduction->addAction("Example Flowsheets",          this, [&] { OpenHelp("Introduction/Example Flowsheets"); });
+	menuIntroduction->addAction("Get Started"       , this, [&] { OpenHelp("first.html"                    ); });
+	menuIntroduction->addAction("Architecture"      , this, [&] { OpenHelp("simulation.html"               ); });
+	menuIntroduction->addAction("Algorithms"        , this, [&] { OpenHelp("theory.html"                   ); });
+	menuIntroduction->addAction("User Interface"    , this, [&] { OpenHelp("first.html#introduction-to-gui"); });
 
 	// Units
 	QMenu* menuUnits = ui.menuDocumentation->addMenu("Units");
-	menuUnits->addAction("Agglomerator",               this, [&] { OpenHelp("Units/Agglomerator"); });
-	menuUnits->addAction("Bunker",                     this, [&] { OpenHelp("Units/Bunker"); });
-	menuUnits->addAction("Crusher Bond",               this, [&] { OpenHelp("Units/Crusher Bond"); });
-	menuUnits->addAction("Crusher Cone",               this, [&] { OpenHelp("Units/Crusher Cone"); });
-	menuUnits->addAction("Crusher Const",              this, [&] { OpenHelp("Units/Crusher Const"); });
-	menuUnits->addAction("Crusher BPM TM",             this, [&] { OpenHelp("Units/Crusher PBM TM"); });
-	menuUnits->addAction("Granulator",                 this, [&] { OpenHelp("Units/Granulator"); });
-	menuUnits->addAction("Heat Exchanger",             this, [&] { OpenHelp("Units/Heat Exchanger"); });
-	menuUnits->addAction("Inlet Flow",                 this, [&] { OpenHelp("Units/Inlet Flow"); });
-	menuUnits->addAction("Mixer",                      this, [&] { OpenHelp("Units/Mixer"); });
-	menuUnits->addAction("Outlet Flow",                this, [&] { OpenHelp("Units/Outlet Flow"); });
-	menuUnits->addAction("Screen Molerus-Hoffmann",    this, [&] { OpenHelp("Units/Screen Molerus-Hoffmann"); });
-	menuUnits->addAction("Screen Plitt",               this, [&] { OpenHelp("Units/Screen Plitt"); });
-	menuUnits->addAction("Screen Probability",         this, [&] { OpenHelp("Units/Screen Probability"); });
-	menuUnits->addAction("Screen Teipel-Hennig",       this, [&] { OpenHelp("Units/Screen Teipel-Hennig"); });
-	menuUnits->addAction("Splitter",                   this, [&] { OpenHelp("Units/Splitter"); });
-	menuUnits->addAction("Time Delay",                 this, [&] { OpenHelp("Units/Time Delay"); });
+	menuUnits->addAction("Agglomerator"  , this, [&] { OpenHelp("units.html#agglomerator"); });
+	menuUnits->addAction("Bunker"        , this, [&] { OpenHelp("units.html#bunker"      ); });
+	menuUnits->addAction("Crusher"       , this, [&] { OpenHelp("units.html#crusher"     ); });
+	menuUnits->addAction("Granulator"    , this, [&] { OpenHelp("units.html#granulator"  ); });
+	menuUnits->addAction("Inlet Flow"    , this, [&] { OpenHelp("units.html#inlet-flow"  ); });
+	menuUnits->addAction("Mixer"         , this, [&] { OpenHelp("units.html#mixer"       ); });
+	menuUnits->addAction("Outlet Flow"   , this, [&] { OpenHelp("units.html#outlet-flow" ); });
+	menuUnits->addAction("Screen"        , this, [&] { OpenHelp("units.html#screen"      ); });
+	menuUnits->addAction("Splitter"      , this, [&] { OpenHelp("units.html#splitter"    ); });
+	menuUnits->addAction("Time Delay"    , this, [&] { OpenHelp("units.html#time-delay"  ); });
 
 	// Solvers
 	QMenu* menuSolvers = ui.menuDocumentation->addMenu("Solvers");
-	menuSolvers->addAction("Agglomeration Cell Average", this, [&] { OpenHelp("Solvers/Agglomeration Cell Average"); });
-	menuSolvers->addAction("Agglomeration Fixed Pivot",  this, [&] { OpenHelp("Solvers/Agglomeration Fixed Pivot"); });
-	menuSolvers->addAction("Agglomeration FFT",          this, [&] { OpenHelp("Solvers/Agglomeration FFT"); });
+	menuSolvers->addAction("Agglomeration Cell Average", this, [&] { OpenHelp("solver.html#cell-average-solver"); });
+	menuSolvers->addAction("Agglomeration Fixed Pivot" , this, [&] { OpenHelp("solver.html#fixed-pivot-solver" ); });
+	menuSolvers->addAction("Agglomeration FFT"         , this, [&] { OpenHelp("solver.html#fft-solver"         ); });
 
 	// Development
 	QMenu* menuDevelopment = ui.menuDocumentation->addMenu("Development");
-	menuDevelopment->addAction("Configuration of VCProject", this, [&] { OpenHelp("Development/Configuration of VCProject"); });
-	menuDevelopment->addAction("Units Development",          this, [&] { OpenHelp("Development/Units Development"); });
-	menuDevelopment->addAction("Solvers Development",        this, [&] { OpenHelp("Development/Solvers Development"); });
-	menuDevelopment->addAction("Thermodynamics",             this, [&] { OpenHelp("Development/Thermodynamics"); });
+	menuDevelopment->addAction("Configuration of VCProject", this, [&] { OpenHelp("developer.html#configuration-of-visual-studio-project-template"); });
+	menuDevelopment->addAction("Units Development"         , this, [&] { OpenHelp("developer.html#unit-development"                               ); });
+	menuDevelopment->addAction("Solvers Development"       , this, [&] { OpenHelp("developer.html#solver-development"                             ); });
 
 	// Development - Program Interfaces
 	QMenu* menuInterfaces = menuDevelopment->addMenu("Program Interfaces");
-	menuInterfaces->addAction("BaseUnit",             this, [&] { OpenHelp("Development/Program Interfaces/BaseUnit"); });
-	menuInterfaces->addAction("Stream",               this, [&] { OpenHelp("Development/Program Interfaces/Stream"); });
-	menuInterfaces->addAction("DAESolver",            this, [&] { OpenHelp("Development/Program Interfaces/DAESolver"); });
-	menuInterfaces->addAction("ExternalSolver",       this, [&] { OpenHelp("Development/Program Interfaces/ExternalSolver"); });
-	menuInterfaces->addAction("TransformMatrix",      this, [&] { OpenHelp("Development/Program Interfaces/TransformMatrix"); });
-	menuInterfaces->addAction("MDMatrix",             this, [&] { OpenHelp("Development/Program Interfaces/MDMatrix"); });
-	menuInterfaces->addAction("Matrix2D",             this, [&] { OpenHelp("Development/Program Interfaces/Matrix2D"); });
-	menuInterfaces->addAction("PSD Functions",        this, [&] { OpenHelp("Development/Program Interfaces/PSD Functions"); });
-	menuInterfaces->addAction("Predefined Constants", this, [&] { OpenHelp("Development/Program Interfaces/Defines"); });
+	menuInterfaces->addAction("BaseUnit"            , this, [&] { OpenHelp("class.html#basic-unit"                 ); });
+	menuInterfaces->addAction("Stream"              , this, [&] { OpenHelp("class.html#stream"                     ); });
+	menuInterfaces->addAction("DAESolver"           , this, [&] { OpenHelp("class.html#dae-systems"                ); });
+	menuInterfaces->addAction("ExternalSolver"      , this, [&] { OpenHelp("class.html#external-solver"            ); });
+	menuInterfaces->addAction("TransformMatrix"     , this, [&] { OpenHelp("class.html#transformation-matrix"      ); });
+	menuInterfaces->addAction("MDMatrix"            , this, [&] { OpenHelp("class.html#multidimensional-matrix"    ); });
+	menuInterfaces->addAction("Matrix2D"            , this, [&] { OpenHelp("class.html#two-dimensional-matrix"     ); });
+	menuInterfaces->addAction("PSD Functions"       , this, [&] { OpenHelp("class.html#particle-size-distribution" ); });
+	menuInterfaces->addAction("Predefined Constants", this, [&] { OpenHelp("class.html#list-of-universal-constants"); });
 
 	// Main
-	ui.menuDocumentation->addAction("Command Line Interface", this, [&] { OpenHelp("Command Line"); });
-	ui.menuDocumentation->addAction("Convergence",		      this, [&] { OpenHelp("Convergence"); });
-	ui.menuDocumentation->addAction("Dust Formation Tester",  this, [&] { OpenHelp("Dust Formation Tester"); });
+	ui.menuDocumentation->addAction("Command Line Interface", this, [&] { OpenHelp("first.html#configuration-file"  ); });
+	ui.menuDocumentation->addAction("Convergence"           , this, [&] { OpenHelp("theory.html#convergence-methods"); });
 }
 
 void Dyssol::UpdateMenu()
@@ -661,17 +652,9 @@ void Dyssol::LoadingFinished()
 		QMessageBox::warning(this, StrConst::Dyssol_MainWindowName, "Unable to load the selected file\n" + m_pLoadingThread->GetFileName());
 }
 
-void Dyssol::OpenHelp(const QString& _sFile) const
+void Dyssol::OpenHelp(const QString& _link) const
 {
-#ifdef _MSC_VER
-	QString sFileToOpen = QCoreApplication::applicationDirPath() + "/" + StrConst::Dyssol_HelpDir + "/" + _sFile + StrConst::Dyssol_HelpFileExt;
-#else
-	QString sFileToOpen =  QString(INSTALL_DOCS_PATH) + "/" + _sFile + StrConst::Dyssol_HelpFileExt;
-#endif
-
-	if (!std::filesystem::exists(sFileToOpen.toStdString())) // cannot find requested file in the running folder -> access through the link
-		sFileToOpen = QFile::symLinkTarget(m_sSettingsPath + "/" + StrConst::Dyssol_AppFolderPathLink) + "/" + StrConst::Dyssol_HelpDir + "/" + _sFile + StrConst::Dyssol_HelpFileExt;
-	QDesktopServices::openUrl(QUrl::fromLocalFile(sFileToOpen));
+	QDesktopServices::openUrl(QUrl(StrConst::Dyssol_HelpURL + _link));
 }
 
 void Dyssol::ShowAboutDialog()
