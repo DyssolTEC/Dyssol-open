@@ -386,8 +386,12 @@ std::string CFlowsheet::GenerateDOTFile()
 			"Time delay" == u->GetModel()->GetUnitName()
 			)
 			{
+			#ifdef _MSC_VER
+			res << StringFunctions::Quote(u->GetName()) << " [shape=box];" << std::endl;
+			#elif
 			res << StringFunctions::Quote(u->GetName()) << " [image=\"" << INSTALL_DOCS_PATH  << "/pics/units_dotgraph/" <<
 				u->GetModel()->GetUnitName() << ".png\", shape=box];" << std::endl;
+			#endif
 			}
 		else
 			res << StringFunctions::Quote(u->GetName()) << " [shape=box];" << std::endl;
