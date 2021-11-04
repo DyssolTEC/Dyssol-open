@@ -163,6 +163,7 @@ void Dyssol::InitializeConnections() const
 	connect(ui.actionSaveFlowsheetAs, &QAction::triggered, this, &Dyssol::SaveFlowsheetAs);
 	connect(ui.actionSaveScript,      &QAction::triggered, this, &Dyssol::SaveScriptFile);
 	connect(ui.actionSaveGraph,       &QAction::triggered, this, &Dyssol::SaveGraphFile);
+	connect(ui.actionSavePNG,         &QAction::triggered, this, &Dyssol::SavePNGFile);
 	connect(ui.actionAbout,           &QAction::triggered, this, &Dyssol::ShowAboutDialog);
 
 	// signals from threads
@@ -611,6 +612,15 @@ void Dyssol::SaveGraphFile()
 	std::ofstream file(outFile.toStdString());
 	file << m_Flowsheet.GenerateDOTFile();
 	file.close();
+	QApplication::restoreOverrideCursor();
+}
+void Dyssol::SavePNGFile()
+{
+	const QString filePath = QString::fromStdWString(CH5Handler::DisplayFileName(std::filesystem::path{ m_sCurrFlowsheetFile.toStdWString() }).wstring());
+	const QString outFileName = QFileInfo(filePath).absolutePath() + "/" + QFileInfo(filePath).baseName() + ".png";
+	const QString outFile = QFileDialog::getSaveFileName(this, StrConst::Dyssol_DialogSavePNGhName, outFileName, StrConst::Dyssol_DialogPNGFilter);
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	m_Flowsheet.GeneratePNGFile(outFile.toStdString());
 	QApplication::restoreOverrideCursor();
 }
 

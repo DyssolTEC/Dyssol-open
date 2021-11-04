@@ -8,6 +8,9 @@
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
 #include <sstream>
+#ifdef GRAPHVIZ
+#include <gvc.h>
+#endif
 
 CFlowsheet::CFlowsheet(CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB) :
 	m_materialsDB{ _materialsDB },
@@ -400,6 +403,80 @@ std::string CFlowsheet::GenerateDOTFile()
 	res << "}" << std::endl;
 
 	return res.str();
+}
+
+bool CFlowsheet::GeneratePNGFile(const std::string& fileNamePNG)
+{
+	#ifdef GRAPHVIZ
+	Agraph_t *g;
+
+	std::map<std::string, Agnode_t *> mapGraph;
+
+    /* Create a simple digraph */
+    g = agopen("Flowsheet", Agdirected, 0);
+
+	// list units
+	for (const auto& u : GetAllUnits())
+	{
+		char * nameNode = new char [u->GetName().length()+1];
+		std::strcpy (nameNode, u->GetName().c_str());
+		mapGraph[u->GetName()] =  agnode(g, nameNode, 1);
+
+		// set color
+		// agsafeset(mapGraph[u->GetName()], "color", "red", "");
+
+		// image path
+		/*
+		std::stringstream imagePath;
+		imagePath << INSTALL_DOCS_PATH  << "/pics/units_dotgraph/" << u->GetModel()->GetUnitName() << ".png";
+		const auto imagePathStr = imagePath.str();
+		char * imagePathChar = new char [imagePathStr.length()+1];
+		std::strcpy (imagePathChar, imagePathStr.c_str());
+		agsafeset(mapGraph[u->GetName()], "image", imagePathChar, "");
+		*/
+		if ("Crusher" == u->GetModel()->GetUnitName())
+		{
+			agsafeset(mapGraph[u->GetName()], "shape", "invtrapezium", "");
+		}
+		else if ("Screen" == u->GetModel()->GetUnitName())
+		{
+			agsafeset(mapGraph[u->GetName()], "shape", "parallelogram", "");
+		}
+		else if ("InletFlow" == u->GetModel()->GetUnitName() || "OutletFlow" == u->GetModel()->GetUnitName() )
+		{
+			agsafeset(mapGraph[u->GetName()], "shape", "octagon", "");
+		}
+		else
+		{
+		agsafeset(mapGraph[u->GetName()], "shape", "box", "");
+		}
+		delete[] nameNode;
+	}
+	// list streams
+	for (const auto& c : GenerateConnectionsDescription())
+	{
+		if (c.unitI.empty() || c.unitO.empty()) continue;
+		if (mapGraph[GetUnit(c.unitO)->GetName()] && mapGraph[GetUnit(c.unitI)->GetName()])
+		{
+			const auto e = agedge(g, mapGraph[GetUnit(c.unitO)->GetName()], mapGraph[GetUnit(c.unitI)->GetName()], 0, 1);
+		}
+	}
+
+    GVC_t *gvc;
+    FILE *fo;
+
+    gvc = gvContext();
+
+    /* Use the directed graph layout engine */
+    gvLayout(gvc, g, "dot");
+
+    fo = fopen(fileNamePNG.c_str(), "w");
+    gvRender(gvc, g, "png", fo);
+
+    gvFreeLayout(gvc, g);
+    agclose(g);
+	#endif
+	return true;
 }
 
 size_t CFlowsheet::GetCompoundsNumber() const
