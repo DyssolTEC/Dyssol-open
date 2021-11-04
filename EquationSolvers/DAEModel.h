@@ -3,6 +3,7 @@
 #pragma once
 
 #include <vector>
+#include <cstddef>
 
 #define DEFAULT_ATOL 1.0e-6
 #define DEFAULT_RTOL 1.0e-4

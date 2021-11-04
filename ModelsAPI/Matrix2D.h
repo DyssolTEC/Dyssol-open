@@ -3,6 +3,7 @@
 #pragma once
 
 #include <vector>
+#include <cstddef>
 
 /** This class describes a two-dimensional matrix in dense format. */
 class CMatrix2D

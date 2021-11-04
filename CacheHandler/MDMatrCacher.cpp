@@ -119,7 +119,7 @@ void CMDMatrCacher::WriteData(size_t _nIndex, std::vector<std::vector<double>>& 
 {
 	bool bInsert = false;
 	SDescriptor newDescr( true, 0, _nSize, _vTP[_nStartTP], _vTP[_nStartTP+_nSize-1], 0 );
-	if( ( _bInsert ) || ( ( _nIndex < m_descriptors.size() ) && ( m_descriptors[_nIndex].valid ) ) || ( _nIndex >= m_descriptors.size() ) )
+	if (_bInsert || _nIndex < m_descriptors.size() && m_descriptors[_nIndex].valid || _nIndex >= m_descriptors.size() || _nSize > m_descriptors[_nIndex].descriptorNumber)
 		bInsert = true;
 	else
 	{
