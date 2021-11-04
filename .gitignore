@@ -227,3 +227,4 @@ Dyssol.VC.VC.opendb
 *.wbk
 /DyssolLinux/compiled/
 /inst/
+.vscode
