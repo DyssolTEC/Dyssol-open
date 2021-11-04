@@ -370,19 +370,19 @@ std::string CFlowsheet::GenerateDOTFile()
 	// list units
 	for (const auto& u : GetAllUnits()) {
 		if (
-			"Agglomerator" == u->GetModel()->GetUnitName() or
-			"Bunker" == u->GetModel()->GetUnitName() or
-			"Crusher" == u->GetModel()->GetUnitName() or
-			"Cyclone v2" == u->GetModel()->GetUnitName() or
-			"Granulator" == u->GetModel()->GetUnitName() or
-			"HeatExchanger" == u->GetModel()->GetUnitName() or
-			"InletFlow" == u->GetModel()->GetUnitName() or
-			"Mixer" == u->GetModel()->GetUnitName() or
-			"Mixer3" == u->GetModel()->GetUnitName() or
-			"OutletFlow" == u->GetModel()->GetUnitName() or
-			"Screen" == u->GetModel()->GetUnitName() or
-			"Splitter" == u->GetModel()->GetUnitName() or
-			"Splitter3" == u->GetModel()->GetUnitName() or
+			"Agglomerator" == u->GetModel()->GetUnitName() ||
+			"Bunker" == u->GetModel()->GetUnitName() ||
+			"Crusher" == u->GetModel()->GetUnitName() ||
+			"Cyclone v2" == u->GetModel()->GetUnitName() ||
+			"Granulator" == u->GetModel()->GetUnitName() ||
+			"HeatExchanger" == u->GetModel()->GetUnitName() ||
+			"InletFlow" == u->GetModel()->GetUnitName() ||
+			"Mixer" == u->GetModel()->GetUnitName() ||
+			"Mixer3" == u->GetModel()->GetUnitName() ||
+			"OutletFlow" == u->GetModel()->GetUnitName() ||
+			"Screen" == u->GetModel()->GetUnitName() ||
+			"Splitter" == u->GetModel()->GetUnitName() ||
+			"Splitter3" == u->GetModel()->GetUnitName() ||
 			"Time delay" == u->GetModel()->GetUnitName()
 			)
 			{
