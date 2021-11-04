@@ -388,7 +388,7 @@ std::string CFlowsheet::GenerateDOTFile()
 			{
 			#ifdef _MSC_VER
 			res << StringFunctions::Quote(u->GetName()) << " [shape=box];" << std::endl;
-			#elif
+			#else
 			res << StringFunctions::Quote(u->GetName()) << " [image=\"" << INSTALL_DOCS_PATH  << "/pics/units_dotgraph/" <<
 				u->GetModel()->GetUnitName() << ".png\", shape=box];" << std::endl;
 			#endif
@@ -463,6 +463,10 @@ bool CFlowsheet::GeneratePNGFile(const std::string& fileNamePNG)
 		if (mapGraph[GetUnit(c.unitO)->GetName()] && mapGraph[GetUnit(c.unitI)->GetName()])
 		{
 			const auto e = agedge(g, mapGraph[GetUnit(c.unitO)->GetName()], mapGraph[GetUnit(c.unitI)->GetName()], 0, 1);
+
+			char * nameStream = new char [GetStream(c.stream)->GetName().length()+1];
+			std::strcpy (nameStream, GetStream(c.stream)->GetName().c_str());
+			agsafeset(e, "label", nameStream, "");
 		}
 	}
 
