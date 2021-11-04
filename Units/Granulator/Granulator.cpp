@@ -26,9 +26,9 @@ void CSimpleGranulator::CreateStructure()
 	AddPort("DustOutput", EUnitPort::OUTPUT);
 
 	/// Add unit parameters ///
-	AddTDParameter       ("Kos" , 0.0 , "-", "Overspray part of solution", 0.0, 1.0);
-	AddConstRealParameter("RTol", 1e-6, "-", "Relative tolerance"          , 0.0, 1.0);
-	AddConstRealParameter("ATol", 1e-8, "-", "Absolute tolerance"          , 0.0, 1.0);
+	AddTDParameter       ("Kos"               , 0.0, "-", "Overspray part of solution"                                     , 0.0, 1.0);
+	AddConstRealParameter("Relative tolerance", 0.0, "-", "Solver relative tolerance. Set to 0 to use flowsheet-wide value", 0       );
+	AddConstRealParameter("Absolute tolerance", 0.0, "-", "Solver absolute tolerance. Set to 0 to use flowsheet-wide value", 0       );
 
 	/// Add holdups ///
 	AddHoldup("HoldupMaterial");
@@ -95,7 +95,9 @@ void CSimpleGranulator::Initialize(double _time)
 		AddStateVariable("PSD" + std::to_string(i), vPSD[i]);
 
 	/// Set tolerances to model ///
-	m_model.SetTolerance(GetConstRealParameterValue("RTol"), GetConstRealParameterValue("ATol"));
+	const auto rtol = GetConstRealParameterValue("Relative tolerance");
+	const auto atol = GetConstRealParameterValue("Absolute tolerance");
+	m_model.SetTolerance(rtol != 0.0 ? rtol : GetRelTolerance(), atol != 0.0 ? atol : GetAbsTolerance());
 
 	/// Set model to a solver ///
 	if (!m_solver.SetModel(&m_model))
