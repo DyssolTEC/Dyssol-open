@@ -365,8 +365,31 @@ std::string CFlowsheet::GenerateDOTFile()
 	std::stringstream res;
 	res << "digraph Flowsheet {" << std::endl;
 	// list units
-	for (const auto& u : GetAllUnits())
-		res << StringFunctions::Quote(u->GetName()) << " [shape=box];" << std::endl;
+	for (const auto& u : GetAllUnits()) {
+		if (
+			"Agglomerator" == u->GetModel()->GetUnitName() or
+			"Bunker" == u->GetModel()->GetUnitName() or
+			"Crusher" == u->GetModel()->GetUnitName() or
+			"Cyclone v2" == u->GetModel()->GetUnitName() or
+			"Granulator" == u->GetModel()->GetUnitName() or
+			"HeatExchanger" == u->GetModel()->GetUnitName() or
+			"InletFlow" == u->GetModel()->GetUnitName() or
+			"Mixer" == u->GetModel()->GetUnitName() or
+			"Mixer3" == u->GetModel()->GetUnitName() or
+			"OutletFlow" == u->GetModel()->GetUnitName() or
+			"Screen" == u->GetModel()->GetUnitName() or
+			"Splitter" == u->GetModel()->GetUnitName() or
+			"Splitter3" == u->GetModel()->GetUnitName() or
+			"Time delay" == u->GetModel()->GetUnitName()
+			)
+			{
+			res << StringFunctions::Quote(u->GetName()) << " [image=\"" << INSTALL_DOCS_PATH  << "/pics/units_dotgraph/" <<
+				u->GetModel()->GetUnitName() << ".png\", shape=box];" << std::endl;
+			}
+		else
+			res << StringFunctions::Quote(u->GetName()) << " [shape=box];" << std::endl;
+
+	}
 	// list streams
 	for (const auto& c : GenerateConnectionsDescription())
 	{
