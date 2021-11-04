@@ -28,8 +28,8 @@ STREAM "Product" "Granulator" "Output" "OutProduct" "In"
 STREAM "Dust" "Granulator" "DustOutput" "OutDust" "In"
 
 UNIT_PARAMETER "Granulator" "Kos"  0 0
-UNIT_PARAMETER "Granulator" "RTol" 1e-08
-UNIT_PARAMETER "Granulator" "ATol" 1e-08
+UNIT_PARAMETER "Granulator" "Relative tolerance" 0
+UNIT_PARAMETER "Granulator" "Absolute tolerance" 0
 
 HOLDUP_OVERALL      "InSuspension" "InputMaterial" 0 10 300 100000
 HOLDUP_OVERALL      "InNuclei" "InputMaterial" 0 5 300 100000
