@@ -466,7 +466,7 @@ bool CFlowsheet::GeneratePNGFile(const std::string& _fileName)
 	gvLayout(gvc, g, "dot");
 
 	const auto ext = std::filesystem::path{ _fileName }.extension();
-	gvRenderFile(gvc, g, ext.string().substr(1, ext.string().size() - 1), _fileName.c_str());
+	gvRenderFilename(gvc, g, ext.string().substr(1, ext.string().size() - 1).c_str(), _fileName.c_str());
 
 	gvFreeLayout(gvc, g);
 	agclose(g);
