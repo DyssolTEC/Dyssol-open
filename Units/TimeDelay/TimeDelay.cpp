@@ -140,9 +140,9 @@ void CMyDAEModel::CalculateResiduals(double _time, double* _vars, double* _ders,
 		// Get state of aggregation of current phase
 		const auto phase = unit->GetPhaseType(i);
 		// Get phase fraction at last time point
-		const double tempPhaseFracPrev = inStream->GetPhaseMassFlow(timePrev, phase) / MflowPrev;
+		const double tempPhaseFracPrev = MflowPrev != 0.0 ? inStream->GetPhaseMassFlow(timePrev, phase) / MflowPrev : 0.0;
 		// Get phase fraction at current time point
-		const double tempPhaseFrac = inStream->GetPhaseMassFlow(_time, phase) / Mflow;
+		const double tempPhaseFrac = Mflow != 0.0 ? inStream->GetPhaseMassFlow(_time, phase) / Mflow : 0.0;
 		// Squared difference of phase fractions
 		normPhases_update += std::pow(tempPhaseFracPrev - tempPhaseFrac, 2);
 

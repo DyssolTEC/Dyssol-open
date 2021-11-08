@@ -1735,6 +1735,9 @@ double CBaseStream::CalculateMixTemperature(double _time1, const CBaseStream& _s
 		return temperature1;
 	// calculate total mass
 	const double massMix = _mass1 + _mass2;
+	// if no material at all, return some arbitrary temperature
+	if (massMix == 0.0)
+		return 0.0;
 	// get and check lookup tables for enthalpies
 	const CMixtureEnthalpyLookup& lookup1 = *_stream1.GetEnthalpyCalculator();
 	const CMixtureEnthalpyLookup& lookup2 = *_stream2.GetEnthalpyCalculator();
@@ -1743,9 +1746,6 @@ double CBaseStream::CalculateMixTemperature(double _time1, const CBaseStream& _s
 	// get enthalpies
 	const double enthalpy1 = _stream1.CalculateEnthalpyFromTemperature(_time1);
 	const double enthalpy2 = _stream2.CalculateEnthalpyFromTemperature(_time2);
-	// if no material at all, return some arbitrary temperature
-	if (massMix == 0.0)
-		return (temperature1 + temperature2) / 2.0;
 	// calculate (specific) total enthalpy
 	const double enthalpyMix = (enthalpy1 * _mass1 + enthalpy2 * _mass2) / massMix;
 	// combine both enthalpy tables for mixture enthalpy table

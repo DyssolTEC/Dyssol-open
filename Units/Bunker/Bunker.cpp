@@ -26,7 +26,9 @@ void CBunker::CreateStructure()
 	AddPort("Outflow", EUnitPort::OUTPUT);
 
 	/// Add unit parameters ///
-	AddConstRealParameter("Target mass", 100000, "kg", "Target mass of bunker.", 0.0);
+	AddConstRealParameter("Target mass"       , 100000, "kg", "Target mass of bunker."                                         , 0.0);
+	AddConstRealParameter("Relative tolerance", 0.0   , "-" , "Solver relative tolerance. Set to 0 to use flowsheet-wide value", 0.0);
+	AddConstRealParameter("Absolute tolerance", 0.0   , "-" , "Solver absolute tolerance. Set to 0 to use flowsheet-wide value", 0.0);
 
 	/// Add holdups ///
 	AddHoldup("Holdup");
@@ -94,7 +96,9 @@ void CBunker::Initialize(double _dTime)
 		m_Model.m_vnNormDistr[k] = m_Model.AddDAEVariable(true, 1, 0, 0);
 
 	/// Set tolerances to the model ///
-	m_Model.SetTolerance(1e-3, 1e-5);
+	const auto rtol = GetConstRealParameterValue("Relative tolerance");
+	const auto atol = GetConstRealParameterValue("Absolute tolerance");
+	m_Model.SetTolerance(rtol != 0.0 ? rtol : GetRelTolerance(), atol != 0.0 ? atol : GetAbsTolerance());
 
 	/// Set model to the solver ///
 	if (!m_Solver.SetModel(&m_Model))
@@ -110,8 +114,8 @@ void CBunker::Simulate(double _dStartTime, double _dEndTime)
 	CStream* pInSolid = GetStream("InflowSolid");
 	CStream* pInBypass = GetStream("InflowBypass");
 
-	pInSolid->RemoveTimePointsAfter(0);
-	pInBypass->RemoveTimePointsAfter(0);
+	pInSolid->RemoveTimePointsAfter(_dStartTime);
+	pInBypass->RemoveTimePointsAfter(_dStartTime);
 
 	/// Bypass non solid phases ///
 	std::vector<double> vTimePoints = pInStream->GetTimePointsClosed(_dStartTime, _dEndTime);
