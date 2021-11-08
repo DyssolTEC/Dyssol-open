@@ -148,6 +148,8 @@ public:
 	std::vector<SFlowsheetConnection> GenerateConnectionsDescription() const;
 	// Generates a flowsheet representation in DOT format.
 	std::string GenerateDOTFile();
+	// Generates a flowsheet representation in PNG format.
+	bool GeneratePNGFile(const std::string& _fileName);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Compounds

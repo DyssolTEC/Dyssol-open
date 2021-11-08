@@ -43,10 +43,12 @@ namespace StrConst
 	const char* const Dyssol_DialogDflwFilter      = "DYSSOL files (*.dflw);;All files (*.*);;";
 	const char* const Dyssol_DialogTxtFilter       = "Text files (*.txt);;All files (*.*);;";
 	const char* const Dyssol_DialogGraphFilter     = "DOT files (*.gv);;All files (*.*);;";
+	const char* const Dyssol_DialogPNGFilter       = "PNG files (*.png);;All files (*.*);;";
 	const char* const Dyssol_DialogSaveName        = "Save flowsheet";
 	const char* const Dyssol_DialogOpenName        = "Open flowsheet";
 	const char* const Dyssol_DialogSaveConfigName  = "Save configuration file";
 	const char* const Dyssol_DialogSaveGraphName   = "Save graph file";
+	const char* const Dyssol_DialogSaveImageName   = "Save graph image file";
 	const char* const Dyssol_StatusLoadingTitle    = "Loading";
 	const char* const Dyssol_StatusLoadingText     = "Flowsheet is loading. <br/>Please wait";
 	const char* const Dyssol_StatusLoadingQuestion = "Terminate loading of the flowsheet?";
