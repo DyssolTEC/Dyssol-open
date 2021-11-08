@@ -48,7 +48,7 @@ namespace StrConst
 	const char* const Dyssol_DialogOpenName        = "Open flowsheet";
 	const char* const Dyssol_DialogSaveConfigName  = "Save configuration file";
 	const char* const Dyssol_DialogSaveGraphName   = "Save graph file";
-	const char* const Dyssol_DialogSavePNGhName    = "Save PNG file";
+	const char* const Dyssol_DialogSaveImageName   = "Save graph image file";
 	const char* const Dyssol_StatusLoadingTitle    = "Loading";
 	const char* const Dyssol_StatusLoadingText     = "Flowsheet is loading. <br/>Please wait";
 	const char* const Dyssol_StatusLoadingQuestion = "Terminate loading of the flowsheet?";

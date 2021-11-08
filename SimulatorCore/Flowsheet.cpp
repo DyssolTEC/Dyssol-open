@@ -368,34 +368,33 @@ std::string CFlowsheet::GenerateDOTFile()
 	std::stringstream res;
 	res << "digraph Flowsheet {" << std::endl;
 	// list units
-	for (const auto& u : GetAllUnits()) {
-		if (
-			"Agglomerator" == u->GetModel()->GetUnitName() ||
-			"Bunker" == u->GetModel()->GetUnitName() ||
-			"Crusher" == u->GetModel()->GetUnitName() ||
-			"Cyclone v2" == u->GetModel()->GetUnitName() ||
-			"Granulator" == u->GetModel()->GetUnitName() ||
-			"HeatExchanger" == u->GetModel()->GetUnitName() ||
-			"InletFlow" == u->GetModel()->GetUnitName() ||
-			"Mixer" == u->GetModel()->GetUnitName() ||
-			"Mixer3" == u->GetModel()->GetUnitName() ||
-			"OutletFlow" == u->GetModel()->GetUnitName() ||
-			"Screen" == u->GetModel()->GetUnitName() ||
-			"Splitter" == u->GetModel()->GetUnitName() ||
-			"Splitter3" == u->GetModel()->GetUnitName() ||
-			"Time delay" == u->GetModel()->GetUnitName()
-			)
-			{
-			#ifdef _MSC_VER
-			res << StringFunctions::Quote(u->GetName()) << " [shape=box];" << std::endl;
-			#else
+	for (const auto& u : GetAllUnits())
+	{
+#ifdef _MSC_VER
+		res << StringFunctions::Quote(u->GetName()) << " [shape=box];" << std::endl;
+#else
+		const auto name = u->GetModel() ? u->GetModel()->GetUnitName() : "";
+		if (name == "Agglomerator"  ||
+			name == "Bunker"        ||
+			name == "Crusher"       ||
+			name == "Cyclone v2"    ||
+			name == "Granulator"    ||
+			name == "HeatExchanger" ||
+			name == "InletFlow"     ||
+			name == "Mixer"         ||
+			name == "Mixer3"        ||
+			name == "OutletFlow"    ||
+			name == "Screen"        ||
+			name == "Splitter"      ||
+			name == "Splitter3"     ||
+			name == "Time delay")
+		{
 			res << StringFunctions::Quote(u->GetName()) << " [image=\"" << INSTALL_DOCS_PATH  << "/pics/units_dotgraph/" <<
 				u->GetModel()->GetUnitName() << ".png\", shape=box];" << std::endl;
-			#endif
-			}
+		}
 		else
 			res << StringFunctions::Quote(u->GetName()) << " [shape=box];" << std::endl;
-
+#endif
 	}
 	// list streams
 	for (const auto& c : GenerateConnectionsDescription())
@@ -409,15 +408,15 @@ std::string CFlowsheet::GenerateDOTFile()
 	return res.str();
 }
 
-bool CFlowsheet::GeneratePNGFile(const std::string& fileNamePNG)
+bool CFlowsheet::GeneratePNGFile(const std::string& _fileName)
 {
 	#ifdef GRAPHVIZ
 	Agraph_t *g;
 
 	std::map<std::string, Agnode_t *> mapGraph;
 
-    /* Create a simple digraph */
-    g = agopen("Flowsheet", Agdirected, 0);
+	/* Create a simple digraph */
+	g = agopen("Flowsheet", Agdirected, 0);
 
 	// list units
 	for (const auto& u : GetAllUnits())
@@ -438,51 +437,39 @@ bool CFlowsheet::GeneratePNGFile(const std::string& fileNamePNG)
 		std::strcpy (imagePathChar, imagePathStr.c_str());
 		agsafeset(mapGraph[u->GetName()], "image", imagePathChar, "");
 		*/
-		if ("Crusher" == u->GetModel()->GetUnitName())
-		{
+		if (u->GetModel() && "Crusher" == u->GetModel()->GetUnitName())
 			agsafeset(mapGraph[u->GetName()], "shape", "invtrapezium", "");
-		}
-		else if ("Screen" == u->GetModel()->GetUnitName())
-		{
+		else if (u->GetModel() && "Screen" == u->GetModel()->GetUnitName())
 			agsafeset(mapGraph[u->GetName()], "shape", "parallelogram", "");
-		}
-		else if ("InletFlow" == u->GetModel()->GetUnitName() || "OutletFlow" == u->GetModel()->GetUnitName() )
-		{
+		else if (u->GetModel() && "InletFlow" == u->GetModel()->GetUnitName() || "OutletFlow" == u->GetModel()->GetUnitName() )
 			agsafeset(mapGraph[u->GetName()], "shape", "octagon", "");
-		}
 		else
-		{
-		agsafeset(mapGraph[u->GetName()], "shape", "box", "");
-		}
+			agsafeset(mapGraph[u->GetName()], "shape", "box", "");
 		delete[] nameNode;
 	}
 	// list streams
 	for (const auto& c : GenerateConnectionsDescription())
 	{
-		if (c.unitI.empty() || c.unitO.empty()) continue;
+		if (c.unitI.empty() || c.unitO.empty() || !GetUnit(c.unitI) || !GetUnit(c.unitO)) continue;
 		if (mapGraph[GetUnit(c.unitO)->GetName()] && mapGraph[GetUnit(c.unitI)->GetName()])
 		{
 			const auto e = agedge(g, mapGraph[GetUnit(c.unitO)->GetName()], mapGraph[GetUnit(c.unitI)->GetName()], 0, 1);
-
-			char * nameStream = new char [GetStream(c.stream)->GetName().length()+1];
-			std::strcpy (nameStream, GetStream(c.stream)->GetName().c_str());
+			char* nameStream = new char[GetStream(c.stream)->GetName().length() + 1];
+			std::strcpy(nameStream, GetStream(c.stream)->GetName().c_str());
 			agsafeset(e, "label", nameStream, "");
 		}
 	}
 
-    GVC_t *gvc;
-    FILE *fo;
+	GVC_t *gvc = gvContext();
 
-    gvc = gvContext();
+	/* Use the directed graph layout engine */
+	gvLayout(gvc, g, "dot");
 
-    /* Use the directed graph layout engine */
-    gvLayout(gvc, g, "dot");
+	const auto ext = std::filesystem::path{ _fileName }.extension();
+	gvRenderFile(gvc, g, ext.string().substr(1, ext.string().size() - 1), _fileName.c_str());
 
-    fo = fopen(fileNamePNG.c_str(), "w");
-    gvRender(gvc, g, "png", fo);
-
-    gvFreeLayout(gvc, g);
-    agclose(g);
+	gvFreeLayout(gvc, g);
+	agclose(g);
 	#endif
 	return true;
 }
