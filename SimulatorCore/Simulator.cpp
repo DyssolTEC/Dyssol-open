@@ -275,9 +275,9 @@ void CSimulator::SimulateUnits(const CCalculationSequence::SPartition& _partitio
 		{
 			// get all time points in current window + _dEndTime
 			std::vector<double> vTimePoints = model->GetModel()->GetAllTimePoints(_t1, _t2);
-			if (std::fabs(vTimePoints.back() - _t2) > 16 * std::numeric_limits<double>::epsilon())
+			if (vTimePoints.empty() || std::fabs(vTimePoints.back() - _t2) > 16 * std::numeric_limits<double>::epsilon())
 				vTimePoints.push_back(_t2);
-			if (vTimePoints.front() != 0)
+			if (vTimePoints.size() != 1 && vTimePoints.front() != 0.0)
 				vTimePoints.erase(vTimePoints.begin()); // already calculated on previous time window
 
 			// for each time point
