@@ -22,18 +22,43 @@ public:
 
 class CTimeDelay : public CDynamicUnit
 {
+	enum EModel { NORM_BASED, SIMPLE_SHIFT };
+
 public:
-	double m_timeDelay{};		// Requested time delay
+	double m_timeDelay{};	// Requested time delay
+	EModel m_model{};		// Selected model.
+
+	CStream* m_inlet{};		// Inlet stream.
+	CStream* m_outlet{};	// Outlet stream.
+	CStream* m_stream{};	// Temporal storage of inlet data.
+
+	size_t m_compoundsNum;						// Number of defined compounds.
+	size_t m_phasesNum;							// Number of defined phases.
+	size_t m_distrsNum;							// Number of defined distributions.
+	std::vector<std::string> m_compounds;		// All defined compounds.
+	std::vector<EPhase> m_phases;				// All defined phases.
+	std::vector<EDistrTypes> m_distributions; 	// All defined distributed parameters.
 
 private:
-	CMyDAEModel m_model;		// Model of DAE
-	CDAESolver m_solver;		// Solver of DAE
+	CMyDAEModel m_DAEModel;		// Model of DAE
+	CDAESolver m_DAESolver;		// Solver of DAE
 
 public:
 	void CreateBasicInfo() override;
 	void CreateStructure() override;
+
 	void Initialize(double _time) override;
 	void Simulate(double _timeBeg, double _timeEnd) override;
 	void SaveState() override;
 	void LoadState() override;
+
+	void InitializeSimpleShift(double _time);
+	void SimulateSimpleShift(double _timeBeg, double _timeEnd) const;
+	void SaveStateSimpleShift();
+	void LoadStateSimpleShift();
+
+	void InitializeNormBased(double _time);
+	void SimulateNormBased(double _timeBeg, double _timeEnd);
+	void SaveStateNormBased();
+	void LoadStateNormBased();
 };
