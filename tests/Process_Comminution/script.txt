@@ -51,6 +51,7 @@ UNIT_PARAMETER "Crusher" "n" 2
 UNIT_PARAMETER "Crusher" "d'" 0.003
 UNIT_PARAMETER "Crusher" "q" 0.55
 UNIT_PARAMETER "Splitter" "KSplitt"  0 0.5
+UNIT_PARAMETER "Delay" "Model" 0
 UNIT_PARAMETER "Delay" "Time delay" 1
 UNIT_PARAMETER "Delay" "Relative tolerance" 1e-7
 UNIT_PARAMETER "Delay" "Absolute tolerance" 1e-7
