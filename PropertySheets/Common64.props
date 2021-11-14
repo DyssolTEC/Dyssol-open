@@ -5,7 +5,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalLibraryDirectories>$(MATLAB_PATH)\extern\lib\win64\microsoft;$(SolutionDir)ExternalLibraries\hdf5\lib64;$(SolutionDir)ExternalLibraries\zlib\lib64;$(SolutionDir)ExternalLibraries\sundials\lib64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(MATLAB_PATH)\extern\lib\win64\microsoft;$(SolutionDir)ExternalLibraries\graphviz\lib64;$(SolutionDir)ExternalLibraries\hdf5\lib64;$(SolutionDir)ExternalLibraries\sundials\lib64;$(SolutionDir)ExternalLibraries\zlib\lib64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

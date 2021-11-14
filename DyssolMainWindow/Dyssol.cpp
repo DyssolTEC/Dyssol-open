@@ -328,11 +328,6 @@ void Dyssol::ClearCache()
 
 void Dyssol::CreateMenu()
 {
-	/// remove graphviz on Windows
-#ifndef GRAPHVIZ
-	ui.menuFile->removeAction(ui.actionSaveGraphImage);
-#endif
-
 	/// recent files
 	for (size_t i = 0; i < MAX_RECENT_FILES; ++i)
 	{

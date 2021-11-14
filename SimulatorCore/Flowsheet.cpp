@@ -8,9 +8,8 @@
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
 #include <sstream>
-#ifdef GRAPHVIZ
-#include <gvc.h>
-#endif
+#include <cstring>
+#include <graphviz/gvc.h>
 
 CFlowsheet::CFlowsheet(CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB) :
 	m_materialsDB{ _materialsDB },
@@ -410,7 +409,6 @@ std::string CFlowsheet::GenerateDOTFile()
 
 bool CFlowsheet::GeneratePNGFile(const std::string& _fileName)
 {
-	#ifdef GRAPHVIZ
 	Agraph_t *g;
 
 	std::map<std::string, Agnode_t *> mapGraph;
@@ -422,7 +420,11 @@ bool CFlowsheet::GeneratePNGFile(const std::string& _fileName)
 	for (const auto& u : GetAllUnits())
 	{
 		char * nameNode = new char [u->GetName().length()+1];
-		std::strcpy (nameNode, u->GetName().c_str());
+#ifdef _WIN32
+		strcpy_s(nameNode, u->GetName().length() + 1, u->GetName().c_str());
+#else
+		std::strcpy(nameNode, u->GetName().c_str());
+#endif
 		mapGraph[u->GetName()] =  agnode(g, nameNode, 1);
 
 		// set color
@@ -455,7 +457,11 @@ bool CFlowsheet::GeneratePNGFile(const std::string& _fileName)
 		{
 			const auto e = agedge(g, mapGraph[GetUnit(c.unitO)->GetName()], mapGraph[GetUnit(c.unitI)->GetName()], 0, 1);
 			char* nameStream = new char[GetStream(c.stream)->GetName().length() + 1];
+#ifdef _WIN32
+			strcpy_s(nameStream, GetStream(c.stream)->GetName().length() + 1, GetStream(c.stream)->GetName().c_str());
+#else
 			std::strcpy(nameStream, GetStream(c.stream)->GetName().c_str());
+#endif
 			agsafeset(e, "label", nameStream, "");
 		}
 	}
@@ -470,7 +476,6 @@ bool CFlowsheet::GeneratePNGFile(const std::string& _fileName)
 
 	gvFreeLayout(gvc, g);
 	agclose(g);
-	#endif
 	return true;
 }
 
