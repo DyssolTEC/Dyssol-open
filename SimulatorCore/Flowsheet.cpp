@@ -409,73 +409,111 @@ std::string CFlowsheet::GenerateDOTFile()
 
 bool CFlowsheet::GeneratePNGFile(const std::string& _fileName)
 {
-	Agraph_t *g;
+	const bool simple = false;
 
-	std::map<std::string, Agnode_t *> mapGraph;
+	std::map<std::string, Agnode_t*> nodes;
 
-	/* Create a simple digraph */
-	g = agopen("Flowsheet", Agdirected, 0);
+	// create directed graph
+	char graphName[] = "Flowsheet";
+	Agraph_t* g = agopen(graphName, Agdirected, nullptr);
+	//char attrSplines[] = "splines";
+	//agsafeset(g, attrSplines, "ortho", "");
+	char attrNodesep[] = "nodesep";
+	agsafeset(g, attrNodesep, "0.4", "");
+	char attrRankdir[] = "rankdir";
+	agsafeset(g, attrRankdir, "LR", "");
 
 	// list units
+	size_t index = 0;
 	for (const auto& u : GetAllUnits())
 	{
-		char * nameNode = new char [u->GetName().length()+1];
-#ifdef _WIN32
-		strcpy_s(nameNode, u->GetName().length() + 1, u->GetName().c_str());
-#else
-		std::strcpy(nameNode, u->GetName().c_str());
-#endif
-		mapGraph[u->GetName()] =  agnode(g, nameNode, 1);
+		if (!u->GetModel()) continue;
 
-		// set color
-		// agsafeset(mapGraph[u->GetName()], "color", "red", "");
-
-		// image path
-		/*
-		std::stringstream imagePath;
-		imagePath << INSTALL_DOCS_PATH  << "/pics/units_dotgraph/" << u->GetModel()->GetUnitName() << ".png";
-		const auto imagePathStr = imagePath.str();
-		char * imagePathChar = new char [imagePathStr.length()+1];
-		std::strcpy (imagePathChar, imagePathStr.c_str());
-		agsafeset(mapGraph[u->GetName()], "image", imagePathChar, "");
-		*/
-		if (u->GetModel() && "Crusher" == u->GetModel()->GetUnitName())
-			agsafeset(mapGraph[u->GetName()], "shape", "invtrapezium", "");
-		else if (u->GetModel() && "Screen" == u->GetModel()->GetUnitName())
-			agsafeset(mapGraph[u->GetName()], "shape", "parallelogram", "");
-		else if (u->GetModel() && "InletFlow" == u->GetModel()->GetUnitName() || "OutletFlow" == u->GetModel()->GetUnitName() )
-			agsafeset(mapGraph[u->GetName()], "shape", "octagon", "");
-		else
-			agsafeset(mapGraph[u->GetName()], "shape", "box", "");
-		delete[] nameNode;
-	}
-	// list streams
-	for (const auto& c : GenerateConnectionsDescription())
-	{
-		if (c.unitI.empty() || c.unitO.empty() || !GetUnit(c.unitI) || !GetUnit(c.unitO)) continue;
-		if (mapGraph[GetUnit(c.unitO)->GetName()] && mapGraph[GetUnit(c.unitI)->GetName()])
+		if (simple)
 		{
-			const auto e = agedge(g, mapGraph[GetUnit(c.unitO)->GetName()], mapGraph[GetUnit(c.unitI)->GetName()], 0, 1);
-			char* nameStream = new char[GetStream(c.stream)->GetName().length() + 1];
-#ifdef _WIN32
-			strcpy_s(nameStream, GetStream(c.stream)->GetName().length() + 1, GetStream(c.stream)->GetName().c_str());
-#else
-			std::strcpy(nameStream, GetStream(c.stream)->GetName().c_str());
-#endif
-			agsafeset(e, "label", nameStream, "");
+			char* nodeName = agstrdup(g, u->GetName().c_str());
+			nodes[u->GetKey()] = agnode(g, nodeName, 1);
+			char attrShape[] = "shape";
+			agsafeset(nodes[u->GetKey()], attrShape, "box", "");
+			agstrfree(g, nodeName);
+		}
+		else
+		{
+			char* nodeName = agstrdup(g, u->GetKey().c_str());
+			nodes[u->GetKey()] = agnode(g, nodeName, 1);
+			char attrShape[] = "shape";
+			agsafeset(nodes[u->GetKey()], attrShape, "plaintext", "");
+			const auto& ports = u->GetModel()->GetPortsManager();
+			char attrLabel[] = "label";
+			std::string html = "<TABLE BORDER = '1' CELLBORDER = '0' CELLSPACING = '0' CELLPADDING = '4'><TR>";
+			if (!ports.GetAllInputPorts().empty())
+			{
+				html += "<TD><TABLE BORDER='0' CELLBORDER='1' CELLSPACING='0' CELLPADDING='4'>";
+				for (const auto& port : ports.GetAllInputPorts())
+					html += "<TR><TD PORT='" + port->GetName() + "'>" + port->GetName() + "</TD></TR>";
+				html += "</TABLE></TD>";
+			}
+			html += "<TD>" + u->GetName() + "</TD> ";
+			if (!ports.GetAllOutputPorts().empty())
+			{
+				html += "<TD><TABLE BORDER='0' CELLBORDER='1' CELLSPACING='0' CELLPADDING='4'>";
+				for (const auto& port : ports.GetAllOutputPorts())
+					html += "<TR><TD PORT='" + port->GetName() + "'>" + port->GetName() + "</TD></TR>";
+				html += "</TABLE></TD>";
+			}
+			html += "</TR></TABLE>";
+			const char* nodeHtml = agstrdup_html(g, html.c_str());
+			agsafeset(nodes[u->GetKey()], attrLabel, nodeHtml, "");
+			agstrfree(g, nodeName);
+			agstrfree(g, nodeHtml);
 		}
 	}
 
+	// list streams
+	for (const auto& c : GenerateConnectionsDescription())
+	{
+		const auto* stream = GetStream(c.stream);
+		const auto* unitI = GetUnit(c.unitI);
+		const auto* unitO = GetUnit(c.unitO);
+
+		if (!stream || !unitI || !unitO || !nodes[unitO->GetKey()] || !nodes[unitI->GetKey()]) continue;
+
+		if (simple)
+		{
+			char* edgeName = agstrdup(g, stream->GetName().c_str());
+			const auto e = agedge(g, nodes[unitO->GetKey()], nodes[unitI->GetKey()], edgeName, 1);
+			char attrLabel[] = "label";
+			agsafeset(e, attrLabel, edgeName, "");
+			agstrfree(g, edgeName);
+		}
+		else
+		{
+			char* edgeName = agstrdup(g, stream->GetName().c_str());
+			const auto e = agedge(g, nodes[unitO->GetKey()], nodes[unitI->GetKey()], edgeName, 1);
+			char attrLabel[] = "label";
+			agsafeset(e, attrLabel, edgeName, "");
+			char attrHeadport[] = "headport";
+			agsafeset(e, attrHeadport, c.portI.c_str(), "");
+			char attrTailport[] = "tailport";
+			agsafeset(e, attrTailport, c.portO.c_str(), "");
+			agstrfree(g, edgeName);
+		}
+	}
+
+	// create context
 	GVC_t *gvc = gvContext();
 
-	/* Use the directed graph layout engine */
+	// apply dot layout engine
 	gvLayout(gvc, g, "dot");
 
+	// render file
 	const auto ext = std::filesystem::path{ _fileName }.extension();
 	gvRenderFilename(gvc, g, ext.string().substr(1, ext.string().size() - 1).c_str(), _fileName.c_str());
 
+	// close
 	gvFreeLayout(gvc, g);
 	agclose(g);
+
 	return true;
 }
 
