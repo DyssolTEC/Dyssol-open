@@ -1,4 +1,4 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2021, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -27,6 +27,7 @@ class CScreenPlitt : public CSteadyStateUnit
 	size_t m_classesNum{};												// Number of classes for PSD
 	std::vector<double> m_sizeGrid;										// Size grid for PSD
 	std::vector<double> m_meanDiams;									// Means of size grid - particle diameters
+	void CalculateStream(double _time, CMaterialStream * in, CMaterialStream * outG, CMaterialStream * outF, const char * Xcut, const char * Alpha);
 
 public:
 	void CreateBasicInfo() override;

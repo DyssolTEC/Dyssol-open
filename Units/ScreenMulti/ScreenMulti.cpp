@@ -1,4 +1,4 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2021, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #define DLL_EXPORT
 #include "ScreenMulti.h"
@@ -13,7 +13,7 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 void CScreenPlitt::CreateBasicInfo()
 {
 	SetUnitName("ScreenMulti");
-	SetAuthorName("SPE TUHH");
+	SetAuthorName("SPE TUHH, TU Bergakademit Freiberg IART");
 	SetUniqueID("AAAFADC1877B46629B07A456C7FA22A1");
 }
 
@@ -79,219 +79,51 @@ void CScreenPlitt::Initialize(double _time)
 	m_outStreamC_D4_D5 = AddStream("D4-D5");
 }
 
+void CScreenPlitt::CalculateStream(double _time, CMaterialStream * in, CMaterialStream * outG, CMaterialStream * outF, const char * Xcut, const char * Alpha)
+{
+	outG->CopyFromStream(_time, in);
+	outF->CopyFromStream(_time, in);
+
+	// Get parameters
+	const double d50   = GetTDParameterValue(Xcut, _time);
+	const double alpha = GetTDParameterValue(Alpha, _time);
+
+	if (d50 > 0)
+	{
+
+		CTransformMatrix m_transformCoarse (DISTR_SIZE, (unsigned)m_classesNum);
+		CTransformMatrix m_transformFines (DISTR_SIZE, (unsigned)m_classesNum);
+		// Set values to transformations matrices
+		double factor = 0;
+		const auto PSD = in->GetDistribution(_time, DISTR_SIZE);
+		for (unsigned i = 0; i < m_classesNum; ++i)
+		{
+			const double val = 1 - std::exp(-0.693 * std::pow(m_meanDiams[i] / d50, alpha));
+			factor += val * PSD[i];
+			m_transformCoarse.SetValue(i, i, val);
+			m_transformFines.SetValue(i, i, 1 - val);
+		}
+
+		// transform matrices
+		outG->ApplyTM(_time, m_transformCoarse);
+		outF->ApplyTM(_time, m_transformFines);
+
+		// recalculate masses
+		const double massFlowIn = in->GetMassFlow(_time);
+		outG->SetMassFlow(_time, massFlowIn * factor);
+		outF->SetMassFlow(_time, massFlowIn * (1 - factor));
+	}
+	else
+	{
+		outG->SetMassFlow(_time, 0.0);
+	}
+}
+
 void CScreenPlitt::Simulate(double _time)
 {
-
-	{
-		// Deck 1
-		m_outStreamC_D1->CopyFromStream(_time, m_inStream);
-		m_outStreamC_D1_D2->CopyFromStream(_time, m_inStream);
-
-
-
-
-		// Get parameters
-		const double d50   = GetTDParameterValue("Xcut_D1", _time);
-		const double alpha = GetTDParameterValue("Alpha_D1", _time);
-
-		if (d50 > 0)
-		{
-
-			CTransformMatrix m_transformCoarse (DISTR_SIZE, (unsigned)m_classesNum);
-			CTransformMatrix m_transformFines (DISTR_SIZE, (unsigned)m_classesNum);
-			// Set values to transformations matrices
-			double factor = 0;
-			const auto PSD = m_inStream->GetDistribution(_time, DISTR_SIZE);
-			for (unsigned i = 0; i < m_classesNum; ++i)
-			{
-				const double val = 1 - std::exp(-0.693 * std::pow(m_meanDiams[i] / d50, alpha));
-				factor += val * PSD[i];
-				m_transformCoarse.SetValue(i, i, val);
-				m_transformFines.SetValue(i, i, 1 - val);
-			}
-
-			// transform matrices
-			m_outStreamC_D1->ApplyTM(_time, m_transformCoarse);
-			m_outStreamC_D1_D2->ApplyTM(_time, m_transformFines);
-
-			// recalculate masses
-			const double massFlowIn = m_inStream->GetMassFlow(_time);
-			m_outStreamC_D1->SetMassFlow(_time, massFlowIn * factor);
-			m_outStreamC_D1_D2->SetMassFlow(_time, massFlowIn * (1 - factor));
-		}
-		else
-		{
-			m_outStreamC_D1->SetMassFlow(_time, 0.0);
-		}
-
-	}
-	{
-		// Deck 2
-		m_outStreamC_D2->CopyFromStream(_time, m_outStreamC_D1_D2);
-		m_outStreamC_D2_D3->CopyFromStream(_time, m_outStreamC_D1_D2);
-
-
-		// Get parameters
-		const double d50   = GetTDParameterValue("Xcut_D2", _time);
-		const double alpha = GetTDParameterValue("Alpha_D2", _time);
-
-		if (d50 > 0)
-		{
-
-			CTransformMatrix m_transformCoarse (DISTR_SIZE, (unsigned)m_classesNum);
-			CTransformMatrix m_transformFines (DISTR_SIZE, (unsigned)m_classesNum);
-			// Set values to transformations matrices
-			double factor = 0;
-			const auto PSD = m_outStreamC_D1_D2->GetDistribution(_time, DISTR_SIZE);
-			for (unsigned i = 0; i < m_classesNum; ++i)
-			{
-				const double val = 1 - std::exp(-0.693 * std::pow(m_meanDiams[i] / d50, alpha));
-				factor += val * PSD[i];
-				m_transformCoarse.SetValue(i, i, val);
-				m_transformFines.SetValue(i, i, 1 - val);
-			}
-
-			// transform matrices
-			m_outStreamC_D2->ApplyTM(_time, m_transformCoarse);
-			m_outStreamC_D2_D3->ApplyTM(_time, m_transformFines);
-
-			// recalculate masses
-			const double massFlowIn = m_outStreamC_D1_D2->GetMassFlow(_time);
-			m_outStreamC_D2->SetMassFlow(_time, massFlowIn * factor);
-			m_outStreamC_D2_D3->SetMassFlow(_time, massFlowIn * (1 - factor));
-
-		}
-		else
-		{
-			m_outStreamC_D2->SetMassFlow(_time, 0.0);
-		}
-	}
-
-	{
-		// Deck 3
-		m_outStreamC_D3->CopyFromStream(_time, m_outStreamC_D2_D3);
-		m_outStreamC_D3_D4->CopyFromStream(_time, m_outStreamC_D2_D3);
-
-
-		// Get parameters
-		const double d50   = GetTDParameterValue("Xcut_D3", _time);
-		const double alpha = GetTDParameterValue("Alpha_D3", _time);
-
-		if (d50 > 0)
-		{
-
-			CTransformMatrix m_transformCoarse (DISTR_SIZE, (unsigned)m_classesNum);
-			CTransformMatrix m_transformFines (DISTR_SIZE, (unsigned)m_classesNum);
-			// Set values to transformations matrices
-			double factor = 0;
-			const auto PSD = m_outStreamC_D2_D3->GetDistribution(_time, DISTR_SIZE);
-			for (unsigned i = 0; i < m_classesNum; ++i)
-			{
-				const double val = 1 - std::exp(-0.693 * std::pow(m_meanDiams[i] / d50, alpha));
-				factor += val * PSD[i];
-				m_transformCoarse.SetValue(i, i, val);
-				m_transformFines.SetValue(i, i, 1 - val);
-			}
-
-			// transform matrices
-			m_outStreamC_D3->ApplyTM(_time, m_transformCoarse);
-			m_outStreamC_D3_D4->ApplyTM(_time, m_transformFines);
-
-			// recalculate masses
-			const double massFlowIn = m_outStreamC_D2_D3->GetMassFlow(_time);
-			m_outStreamC_D3->SetMassFlow(_time, massFlowIn * factor);
-			m_outStreamC_D3_D4->SetMassFlow(_time, massFlowIn * (1 - factor));
-
-		}
-		else
-		{
-			m_outStreamC_D3->SetMassFlow(_time, 0.0);
-		}
-	}
-
-	{
-		// Deck 4
-		m_outStreamC_D4->CopyFromStream(_time, m_outStreamC_D3_D4);
-		m_outStreamC_D4_D5->CopyFromStream(_time, m_outStreamC_D3_D4);
-
-
-		// Get parameters
-		const double d50   = GetTDParameterValue("Xcut_D4", _time);
-		const double alpha = GetTDParameterValue("Alpha_D4", _time);
-
-		if (d50 > 0)
-		{
-
-			CTransformMatrix m_transformCoarse (DISTR_SIZE, (unsigned)m_classesNum);
-			CTransformMatrix m_transformFines (DISTR_SIZE, (unsigned)m_classesNum);
-			// Set values to transformations matrices
-			double factor = 0;
-			const auto PSD = m_outStreamC_D3_D4->GetDistribution(_time, DISTR_SIZE);
-			for (unsigned i = 0; i < m_classesNum; ++i)
-			{
-				const double val = 1 - std::exp(-0.693 * std::pow(m_meanDiams[i] / d50, alpha));
-				factor += val * PSD[i];
-				m_transformCoarse.SetValue(i, i, val);
-				m_transformFines.SetValue(i, i, 1 - val);
-			}
-
-			// transform matrices
-			m_outStreamC_D4->ApplyTM(_time, m_transformCoarse);
-			m_outStreamC_D4_D5->ApplyTM(_time, m_transformFines);
-
-			// recalculate masses
-			const double massFlowIn = m_outStreamC_D3_D4->GetMassFlow(_time);
-			m_outStreamC_D4->SetMassFlow(_time, massFlowIn * factor);
-			m_outStreamC_D4_D5->SetMassFlow(_time, massFlowIn * (1 - factor));
-
-		}
-		else
-		{
-			m_outStreamC_D4->SetMassFlow(_time, 0.0);
-		}
-	}
-
-	{
-		// Deck 5
-		m_outStreamC_D5->CopyFromStream(_time, m_outStreamC_D4_D5);
-		m_outStreamF->CopyFromStream(_time, m_outStreamC_D4_D5);
-
-
-		// Get parameters
-		const double d50   = GetTDParameterValue("Xcut_D4", _time);
-		const double alpha = GetTDParameterValue("Alpha_D4", _time);
-
-		if (d50 > 0)
-		{
-
-			CTransformMatrix m_transformCoarse (DISTR_SIZE, (unsigned)m_classesNum);
-			CTransformMatrix m_transformFines (DISTR_SIZE, (unsigned)m_classesNum);
-			// Set values to transformations matrices
-			double factor = 0;
-			const auto PSD = m_outStreamC_D4_D5->GetDistribution(_time, DISTR_SIZE);
-			for (unsigned i = 0; i < m_classesNum; ++i)
-			{
-				const double val = 1 - std::exp(-0.693 * std::pow(m_meanDiams[i] / d50, alpha));
-				factor += val * PSD[i];
-				m_transformCoarse.SetValue(i, i, val);
-				m_transformFines.SetValue(i, i, 1 - val);
-			}
-
-			// transform matrices
-			m_outStreamC_D5->ApplyTM(_time, m_transformCoarse);
-			m_outStreamF->ApplyTM(_time, m_transformFines);
-
-			// recalculate masses
-			const double massFlowIn = m_outStreamC_D4_D5->GetMassFlow(_time);
-			m_outStreamC_D5->SetMassFlow(_time, massFlowIn * factor);
-			m_outStreamF->SetMassFlow(_time, massFlowIn * (1 - factor));
-
-		}
-		else
-		{
-			m_outStreamC_D5->SetMassFlow(_time, 0.0);
-		}
-	}
-
-
+	CalculateStream(_time, m_inStream, m_outStreamC_D1, m_outStreamC_D1_D2, "Xcut_D1", "Alpha_D1");
+	CalculateStream(_time, m_outStreamC_D1_D2, m_outStreamC_D2, m_outStreamC_D2_D3, "Xcut_D2", "Alpha_D2");
+	CalculateStream(_time, m_outStreamC_D2_D3, m_outStreamC_D3, m_outStreamC_D3_D4, "Xcut_D3", "Alpha_D3");
+	CalculateStream(_time, m_outStreamC_D3_D4, m_outStreamC_D4, m_outStreamC_D4_D5, "Xcut_D4", "Alpha_D4");
+	CalculateStream(_time, m_outStreamC_D4_D5, m_outStreamC_D5, m_outStreamF, "Xcut_D5", "Alpha_D5");
 }

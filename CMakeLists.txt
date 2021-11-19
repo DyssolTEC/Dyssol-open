@@ -124,6 +124,7 @@ SET(TESTS
   "Unit_Granulator"
   "Unit_Mixer"
   "Unit_Screen_Molerus"
+  "Unit_Screen_Multi"
   "Unit_Screen_Plitt"
   "Unit_Screen_Probability"
   "Unit_Screen_Teipel"
