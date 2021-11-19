@@ -139,11 +139,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unit_Mixer3", "Units\Mixer3
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unit_Splitter3", "Units\Splitter3\Splitter3.vcxproj", "{DF851AF8-F359-437D-A875-C31F6158F513}"
 EndProject
-<<<<<<< HEAD
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unit_ScreenMulti", "Units\ScreenMulti\ScreenMulti.vcxproj", "{1C6761A3-DD4E-4978-A4C6-24D3A50C502D}"
-=======
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ScriptInterface", "ScriptInterface\ScriptInterface.vcxproj", "{0736DDB9-C29B-4DEA-8E9A-6FEFFED8CFB6}"
->>>>>>> master
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -681,11 +677,7 @@ Global
 		{4882842D-566D-456A-A267-A5F9C8FDB16D} = {A0D725D5-C2B1-436E-94CE-E56F2DDF24AE}
 		{F1493DF2-5A3C-43A2-A2C2-B6F923128877} = {DA539701-563C-4DCF-883B-941DE792BC4A}
 		{DF851AF8-F359-437D-A875-C31F6158F513} = {DA539701-563C-4DCF-883B-941DE792BC4A}
-<<<<<<< HEAD
-		{1C6761A3-DD4E-4978-A4C6-24D3A50C502D} = {8DB3F988-5C33-4D8A-BF19-040D5CDCD99C}
-=======
 		{0736DDB9-C29B-4DEA-8E9A-6FEFFED8CFB6} = {241094B3-C6C5-43FA-B884-DDDEEFF788C8}
->>>>>>> master
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		Qt5Version = msvc2019_64
