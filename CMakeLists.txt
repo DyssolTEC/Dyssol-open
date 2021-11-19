@@ -4,8 +4,8 @@
 
 cmake_minimum_required(VERSION 3.1.0)
 
-set (VERSION 0.10.2.2)
-set (SOVERSION 0.10)
+set (VERSION 1.0.0)
+set (SOVERSION 1.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -63,6 +63,7 @@ SET_TARGET_PROPERTIES(libdyssol_shared PROPERTIES
   VERSION ${VERSION}
   SOVERSION ${SOVERSION}
   PREFIX ""
+  OUTPUT_NAME "libdyssol"
 )
 
 ADD_LIBRARY(libdyssol_static STATIC ${libdyssolsrc})
@@ -70,6 +71,7 @@ SET_TARGET_PROPERTIES(libdyssol_static PROPERTIES
   VERSION ${VERSION}
   SOVERSION ${SOVERSION}
   PREFIX ""
+  OUTPUT_NAME "libdyssol"
 )
 
 target_compile_definitions(libdyssol_shared PRIVATE INSTALL_DOCS_PATH="${INSTALL_DOCS_PATH}")
