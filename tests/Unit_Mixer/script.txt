@@ -1,0 +1,42 @@
+JOB 
+RESULT_FILE               ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/res.dflw
+MODELS_PATH               ${CMAKE_BINARY_DIR}/Units
+MODELS_PATH               ${CMAKE_BINARY_DIR}/Solvers
+MATERIALS_DATABASE        ${CMAKE_SOURCE_DIR}/Materials.dmdb
+EXPORT_FILE               ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
+EXPORT_SIGNIFICANCE_LIMIT 1e-07
+
+SIMULATION_TIME    60
+RELATIVE_TOLERANCE 1e-07
+ABSOLUTE_TOLERANCE 1e-07
+
+COMPOUNDS         "Sand" "Coal" "H2O" 
+PHASES            "Solids" SOLID "Liquid" LIQUID 
+DISTRIBUTION_GRID "GLOBAL" SIZE NUMERIC EQUIDISTANT DIAMETER 300 0 30e-3
+
+UNIT "Input1" "InletFlow" 
+UNIT "Input2" "InletFlow" 
+UNIT "Mixer" "Mixer" 
+UNIT "Output" "OutletFlow" 
+
+STREAM "In1" "Input1" "InletMaterial" "Mixer" "In1"
+STREAM "In2" "Input2" "InletMaterial" "Mixer" "In2"
+STREAM "Out" "Mixer" "Out" "Output" "In"
+
+HOLDUP_OVERALL      "Input1" "InputMaterial" 0 10 300 100000 60 7.5 300 100000
+HOLDUP_OVERALL      "Input2" "InputMaterial" 0 5 400 150000 60 10 400 150000
+HOLDUP_PHASES       "Input1" "InputMaterial" 0 0.9 0.1 60 0.8 0.2
+HOLDUP_PHASES       "Input2" "InputMaterial" 0 0.7 0.3 60 0.6 0.4
+HOLDUP_COMPOUNDS    "Input1" "InputMaterial" SOLID 0 1 0 0 60 1 0 0
+HOLDUP_COMPOUNDS    "Input1" "InputMaterial" LIQUID 0 0 0 1 60 0 0 1
+HOLDUP_COMPOUNDS    "Input2" "InputMaterial" SOLID 0 0 1 0 60 0 1 0
+HOLDUP_COMPOUNDS    "Input2" "InputMaterial" LIQUID 0 0 0 1 60 0 0 1
+HOLDUP_DISTRIBUTION "Input1" "InputMaterial" SIZE MIXTURE Q3_DENSITY DIAMETER NORMAL 0 0.012 0.001 60 0.012 0.001
+HOLDUP_DISTRIBUTION "Input2" "InputMaterial" SIZE MIXTURE Q3_DENSITY DIAMETER NORMAL 0 0.02 0.002 60 0.02 0.002
+
+EXPORT_STREAM_MASS                Out
+EXPORT_STREAM_TEMPERATURE         Out
+EXPORT_STREAM_PRESSURE            Out
+EXPORT_STREAM_PHASES_FRACTIONS    Out
+EXPORT_STREAM_COMPOUNDS_FRACTIONS Out
+EXPORT_STREAM_PSD                 Out

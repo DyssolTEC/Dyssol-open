@@ -61,10 +61,10 @@ class CModelsManager
 {
 	struct SModelDir
 	{
-		std::wstring path; // The path itself.
-		std::string key;   // Unique key of the dir.
-		bool active;       // Whether this path selected to be considered.
-		bool checked;      // Whether libraries from this path are already in the list of available models.
+		std::filesystem::path path; // The path itself.
+		std::string key;			// Unique key of the dir.
+		bool active;				// Whether this path selected to be considered.
+		bool checked;				// Whether libraries from this path are already in the list of available models.
 	};
 
 	std::vector<SModelDir> m_dirsList;                 // Directories to look for libraries with models.
@@ -78,7 +78,7 @@ public:
 	// Returns number of defined paths to look for models.
 	size_t DirsNumber() const;
 	// Add new path to look for models. Returns true on success.
-	bool AddDir(const std::wstring& _path, bool _active = true);
+	bool AddDir(const std::filesystem::path& _path, bool _active = true);
 	// Removes the specified path with models. Returns true on success.
 	bool RemoveDir(size_t _index);
 	// Moves path upwards in the list. Returns true on success.
@@ -86,7 +86,9 @@ public:
 	// Moves path downwards in the list. Returns true on success.
 	bool DownDir(size_t _index);
 	// Returns path.
-	std::wstring GetDirPath(size_t _index) const;
+	std::filesystem::path GetDirPath(size_t _index) const;
+	// Returns all active paths.
+	std::vector<std::filesystem::path> GetAllActiveDirPaths() const;
 	// Returns activity of the specified path.
 	bool GetDirActivity(size_t _index) const;
 	// Sets activity of the specified path.
@@ -121,9 +123,9 @@ private:
 	void UpdateAvailableModels();
 
 	// Returns a list of models available in the specified directory, treating it as relative or absolute path.
-	static std::pair<std::vector<SUnitDescriptor>, std::vector<SSolverDescriptor>> GetModelsList(const std::wstring& _dir);
+	static std::pair<std::vector<SUnitDescriptor>, std::vector<SSolverDescriptor>> GetModelsList(const std::filesystem::path& _dir);
 	// Returns a list of models available in the specified directory.
-	static std::pair<std::vector<SUnitDescriptor>, std::vector<SSolverDescriptor>> GetAllModelsInDir(const std::wstring& _dir);
+	static std::pair<std::vector<SUnitDescriptor>, std::vector<SSolverDescriptor>> GetAllModelsInDir(const std::filesystem::path& _dir);
 
 	// Tries to load unit from _library. If the model cannot be loaded, returns a structure with empty strings.
 	static SUnitDescriptor TryGetUnitDescriptor(const std::filesystem::path& _pathToUnit, DYSSOL_LIBRARY_INSTANCE _library);

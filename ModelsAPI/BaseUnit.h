@@ -116,13 +116,13 @@ public:
 	std::string GetUniqueID() const;
 
 	// TODO: rename to SetModelName() and add an alias to SetUnitName().
-	// Returns the name of the unit.
+	// Sets the name of the unit.
 	void SetUnitName(const std::string& _name);
-	// Returns the name of unit's author.
+	// Sets the name of unit's author.
 	void SetAuthorName(const std::string& _author);
-	// Returns the version of the unit.
+	// Sets the version of the unit.
 	void SetVersion(size_t _version);
-	// Returns the unique identifier of the unit.
+	// Sets the unique identifier of the unit.
 	void SetUniqueID(const std::string& _id);
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -218,9 +218,9 @@ public:
 	// Adds a new unsigned integer list unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
 	CListUIntUnitParameter* AddListUIntParameter(const std::string& _name, uint64_t _initValue, const std::string& _units, const std::string& _description, uint64_t _minValue = std::numeric_limits<uint64_t>::lowest(), uint64_t _maxValue = std::numeric_limits<uint64_t>::max());
 	// Adds a new solver unit parameter with type SOLVER_AGGLOMERATION_1, allowing to choose one of the available solvers of this type, and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
-	CAgglomerationSolver* AddSolverAgglomeration(const std::string& _name, const std::string& _description);
+	CSolverUnitParameter* AddSolverAgglomeration(const std::string& _name, const std::string& _description);
 	// Adds a new solver unit parameter with type SOLVER_PBM_1, allowing to choose one of the available solvers of this type, and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
-	CPBMSolver* AddSolverPBM(const std::string& _name, const std::string& _description);
+	CSolverUnitParameter* AddSolverPBM(const std::string& _name, const std::string& _description);
 
 	// Groups the specified unit parameters and associates them with the given value of the selected unit parameter. The parameter, its value and all the adding parameters must already exist. If something does not exist, logic_error exception is thrown.
 	void AddParametersToGroup(const std::string& _unitParamName, const std::string& _unitParamValueName, const std::vector<std::string>& _groupedParamNames);
@@ -253,8 +253,12 @@ public:
 	uint64_t GetListUIntParameterValue(const std::string& _name, size_t _index) const;
 	// Returns a pointer to an agglomeration solver of a type SOLVER_AGGLOMERATION_1 with the specified name. Throws logic_error exception if a solver unit parameter with the given name does not exist.
 	CAgglomerationSolver* GetSolverAgglomeration(const std::string& _name) const;
+	// Returns a pointer to an agglomeration solver of a type SOLVER_AGGLOMERATION_1 from the specified unit parameter. Throws logic_error exception if a solver unit parameter with the given type does not exist.
+	CAgglomerationSolver* GetSolverAgglomeration(const CSolverUnitParameter* _param) const;
 	// Returns a pointer to a PBM solver of a type SOLVER_PBM_1 with the specified name. Throws logic_error exception if a solver unit parameter with the given name does not exist.
 	CPBMSolver* GetSolverPBM(const std::string& _name) const;
+	// Returns a pointer to a PBM solver of a type SOLVER_PBM_1 from the specified unit parameter. Throws logic_error exception if a solver unit parameter with the given type does not exist.
+	CPBMSolver* GetSolverPBM(const CSolverUnitParameter* _param) const;
 
 	////////////////////////////////////////////////////////////////////////////////
 	// State variables

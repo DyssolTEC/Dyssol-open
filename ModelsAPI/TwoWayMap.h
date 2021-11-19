@@ -50,6 +50,8 @@ public:
 	// Removes all data.
 	void Clear();
 
+	bool operator==(const CTwoWayMap& _other) const;
+
 protected:
 	// Calculates a reverted table [X:Y] -> [Y:X].
 	static CDependentValues Reverted(const CDependentValues& _table);

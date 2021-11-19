@@ -226,3 +226,5 @@ Dyssol.VC.VC.opendb
 /DyssolLinux/external_libs/
 *.wbk
 /DyssolLinux/compiled/
+/inst/
+.vscode

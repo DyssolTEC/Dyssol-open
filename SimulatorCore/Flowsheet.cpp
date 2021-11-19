@@ -8,6 +8,9 @@
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
 #include <sstream>
+#ifdef GRAPHVIZ
+#include <gvc.h>
+#endif
 
 CFlowsheet::CFlowsheet(CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB) :
 	m_materialsDB{ _materialsDB },
@@ -100,6 +103,17 @@ void CFlowsheet::ShiftUnit(const std::string& _key, EDirection _direction)
 	SetTopologyModified(true);
 }
 
+const CUnitContainer* CFlowsheet::GetUnit(size_t _index) const
+{
+	if (_index >= m_units.size()) return nullptr;
+	return m_units[_index].get();
+}
+
+CUnitContainer* CFlowsheet::GetUnit(size_t _index)
+{
+	return const_cast<CUnitContainer*>(static_cast<const CFlowsheet&>(*this).GetUnit(_index));
+}
+
 const CUnitContainer* CFlowsheet::GetUnit(const std::string& _key) const
 {
 	for (const auto& unit : m_units)
@@ -111,6 +125,19 @@ const CUnitContainer* CFlowsheet::GetUnit(const std::string& _key) const
 CUnitContainer* CFlowsheet::GetUnit(const std::string& _key)
 {
 	return const_cast<CUnitContainer*>(static_cast<const CFlowsheet&>(*this).GetUnit(_key));
+}
+
+const CUnitContainer* CFlowsheet::GetUnitByName(const std::string& _name) const
+{
+	for (const auto& unit : m_units)
+		if (unit->GetName() == _name)
+			return unit.get();
+	return nullptr;
+}
+
+CUnitContainer* CFlowsheet::GetUnitByName(const std::string& _name)
+{
+	return const_cast<CUnitContainer*>(static_cast<const CFlowsheet&>(*this).GetUnitByName(_name));
 }
 
 std::vector<const CUnitContainer*> CFlowsheet::GetAllUnits() const
@@ -133,10 +160,10 @@ void CFlowsheet::PrepareInputStreams(const CUnitContainer* _unit, double _timeBe
 {
 	for (const auto& port : _unit->GetModel()->GetPortsManager().GetAllInputPorts())
 	{
-		auto streamI = DoGetStream(port->GetStreamKey(), m_streamsI);
-		auto streamO = DoGetStream(port->GetStreamKey(), m_streams);
+		auto* streamI = DoGetStream(port->GetStreamKey(), m_streamsI);
+		auto* streamO = DoGetStream(port->GetStreamKey(), m_streams);
 		if (streamI != streamO)
-			streamI->CopyFromStream(_timeBeg, _timeEnd, streamO.get());
+			streamI->CopyFromStream(_timeBeg, _timeEnd, streamO);
 	}
 }
 
@@ -173,14 +200,38 @@ void CFlowsheet::ShiftStream(const std::string& _key, EDirection _direction)
 	SetTopologyModified(true);
 }
 
+const CStream* CFlowsheet::GetStream(size_t _index) const
+{
+	if (_index >= m_streams.size()) return nullptr;
+	return m_streams[_index].get();
+}
+
+CStream* CFlowsheet::GetStream(size_t _index)
+{
+	return const_cast<CStream*>(static_cast<const CFlowsheet&>(*this).GetStream(_index));
+}
+
 const CStream* CFlowsheet::GetStream(const std::string& _key) const
 {
-	return DoGetStream(_key, m_streams).get();
+	return DoGetStream(_key, m_streams);
 }
 
 CStream* CFlowsheet::GetStream(const std::string& _key)
 {
 	return const_cast<CStream*>(static_cast<const CFlowsheet&>(*this).GetStream(_key));
+}
+
+const CStream* CFlowsheet::GetStreamByName(const std::string& _name) const
+{
+	for (const auto& stream : m_streams)
+		if (stream->GetName() == _name)
+			return stream.get();
+	return nullptr;
+}
+
+CStream* CFlowsheet::GetStreamByName(const std::string& _name)
+{
+	return const_cast<CStream*>(static_cast<const CFlowsheet&>(*this).GetStreamByName(_name));
 }
 
 std::vector<const CStream*> CFlowsheet::GetAllStreams() const
@@ -265,40 +316,88 @@ CCalculationSequence* CFlowsheet::GetCalculationSequence()
 	return &m_calculationSequence;
 }
 
-std::string CFlowsheet::GenerateDOTFile()
+std::vector<SFlowsheetConnection> CFlowsheet::GenerateConnectionsDescription() const
 {
-	struct SConnection { std::string stream{}, unitO{}, unitI{}; };
-	std::vector<SConnection> con;
+	std::vector<SFlowsheetConnection> res;
 
+	// iterate all units
 	for (const auto& u : GetAllUnits())
 	{
 		if (!u->GetModel()) continue;
-		for (const auto& p : u->GetModel()->GetPortsManager().GetAllInputPorts())
+		const auto& ports = u->GetModel()->GetPortsManager();
+		// iterate all input ports of the unit
+		for (const auto& p : ports.GetAllInputPorts())
 		{
-			const auto streamKey = p->GetStreamKey();
-			const size_t i = VectorFind(con, [&](const SConnection& c) { return c.unitI.empty() && c.stream == streamKey; });
-			if (i != static_cast<size_t>(-1))
-				con[i].unitI = u->GetKey();
+			// find connected stream in the results
+			const auto stream = p->GetStreamKey();
+			if (stream.empty()) continue;
+			const size_t i = VectorFind(res, [&](const SFlowsheetConnection& c) { return c.unitI.empty() && c.stream == stream; });
+			// a new stream - add it and fill its inlet port and unit
+			if (i == static_cast<size_t>(-1))
+				res.emplace_back(stream, "", "", u->GetKey(), p->GetName());
+			// the stream is already added - fill its inlet port and unit
 			else
-				con.emplace_back(SConnection{ streamKey, "", u->GetKey() });
+			{
+				res[i].unitI = u->GetKey();
+				res[i].portI = p->GetName();
+			}
 		}
-		for (const auto& p : u->GetModel()->GetPortsManager().GetAllOutputPorts())
+		// iterate all output ports of the unit
+		for (const auto& p : ports.GetAllOutputPorts())
 		{
-			const auto streamKey = p->GetStreamKey();
-			const size_t i = VectorFind(con, [&](const SConnection& c) { return c.unitO.empty() && c.stream == streamKey; });
-			if (i != static_cast<size_t>(-1))
-				con[i].unitO = u->GetKey();
-			con.emplace_back(SConnection{ streamKey, u->GetKey(), "" });
+			// find connected stream in the results
+			const auto stream = p->GetStreamKey();
+			const size_t i = VectorFind(res, [&](const SFlowsheetConnection& c) { return c.unitO.empty() && c.stream == stream; });
+			// a new stream - add it and fill its outlet port and unit
+			if (i == static_cast<size_t>(-1))
+				res.emplace_back(stream, u->GetKey(), p->GetName(), "", "");
+			// the stream is already added - fill its outlet port and unit
+			else
+			{
+				res[i].unitO = u->GetKey();
+				res[i].portO = p->GetName();
+			}
 		}
 	}
 
+	return res;
+}
+
+std::string CFlowsheet::GenerateDOTFile()
+{
 	std::stringstream res;
 	res << "digraph Flowsheet {" << std::endl;
 	// list units
 	for (const auto& u : GetAllUnits())
+	{
+#ifdef _MSC_VER
 		res << StringFunctions::Quote(u->GetName()) << " [shape=box];" << std::endl;
+#else
+		const auto name = u->GetModel() ? u->GetModel()->GetUnitName() : "";
+		if (name == "Agglomerator"  ||
+			name == "Bunker"        ||
+			name == "Crusher"       ||
+			name == "Cyclone v2"    ||
+			name == "Granulator"    ||
+			name == "HeatExchanger" ||
+			name == "InletFlow"     ||
+			name == "Mixer"         ||
+			name == "Mixer3"        ||
+			name == "OutletFlow"    ||
+			name == "Screen"        ||
+			name == "Splitter"      ||
+			name == "Splitter3"     ||
+			name == "Time delay")
+		{
+			res << StringFunctions::Quote(u->GetName()) << " [image=\"" << INSTALL_DOCS_PATH  << "/pics/units_dotgraph/" <<
+				u->GetModel()->GetUnitName() << ".png\", shape=box];" << std::endl;
+		}
+		else
+			res << StringFunctions::Quote(u->GetName()) << " [shape=box];" << std::endl;
+#endif
+	}
 	// list streams
-	for (const auto& c : con)
+	for (const auto& c : GenerateConnectionsDescription())
 	{
 		if (c.unitI.empty() || c.unitO.empty()) continue;
 		res << StringFunctions::Quote(GetUnit(c.unitO)->GetName()) << " -> " << StringFunctions::Quote(GetUnit(c.unitI)->GetName())
@@ -307,6 +406,72 @@ std::string CFlowsheet::GenerateDOTFile()
 	res << "}" << std::endl;
 
 	return res.str();
+}
+
+bool CFlowsheet::GeneratePNGFile(const std::string& _fileName)
+{
+	#ifdef GRAPHVIZ
+	Agraph_t *g;
+
+	std::map<std::string, Agnode_t *> mapGraph;
+
+	/* Create a simple digraph */
+	g = agopen("Flowsheet", Agdirected, 0);
+
+	// list units
+	for (const auto& u : GetAllUnits())
+	{
+		char * nameNode = new char [u->GetName().length()+1];
+		std::strcpy (nameNode, u->GetName().c_str());
+		mapGraph[u->GetName()] =  agnode(g, nameNode, 1);
+
+		// set color
+		// agsafeset(mapGraph[u->GetName()], "color", "red", "");
+
+		// image path
+		/*
+		std::stringstream imagePath;
+		imagePath << INSTALL_DOCS_PATH  << "/pics/units_dotgraph/" << u->GetModel()->GetUnitName() << ".png";
+		const auto imagePathStr = imagePath.str();
+		char * imagePathChar = new char [imagePathStr.length()+1];
+		std::strcpy (imagePathChar, imagePathStr.c_str());
+		agsafeset(mapGraph[u->GetName()], "image", imagePathChar, "");
+		*/
+		if (u->GetModel() && "Crusher" == u->GetModel()->GetUnitName())
+			agsafeset(mapGraph[u->GetName()], "shape", "invtrapezium", "");
+		else if (u->GetModel() && "Screen" == u->GetModel()->GetUnitName())
+			agsafeset(mapGraph[u->GetName()], "shape", "parallelogram", "");
+		else if (u->GetModel() && "InletFlow" == u->GetModel()->GetUnitName() || "OutletFlow" == u->GetModel()->GetUnitName() )
+			agsafeset(mapGraph[u->GetName()], "shape", "octagon", "");
+		else
+			agsafeset(mapGraph[u->GetName()], "shape", "box", "");
+		delete[] nameNode;
+	}
+	// list streams
+	for (const auto& c : GenerateConnectionsDescription())
+	{
+		if (c.unitI.empty() || c.unitO.empty() || !GetUnit(c.unitI) || !GetUnit(c.unitO)) continue;
+		if (mapGraph[GetUnit(c.unitO)->GetName()] && mapGraph[GetUnit(c.unitI)->GetName()])
+		{
+			const auto e = agedge(g, mapGraph[GetUnit(c.unitO)->GetName()], mapGraph[GetUnit(c.unitI)->GetName()], 0, 1);
+			char* nameStream = new char[GetStream(c.stream)->GetName().length() + 1];
+			std::strcpy(nameStream, GetStream(c.stream)->GetName().c_str());
+			agsafeset(e, "label", nameStream, "");
+		}
+	}
+
+	GVC_t *gvc = gvContext();
+
+	/* Use the directed graph layout engine */
+	gvLayout(gvc, g, "dot");
+
+	const auto ext = std::filesystem::path{ _fileName }.extension();
+	gvRenderFilename(gvc, g, ext.string().substr(1, ext.string().size() - 1).c_str(), _fileName.c_str());
+
+	gvFreeLayout(gvc, g);
+	agclose(g);
+	#endif
+	return true;
 }
 
 size_t CFlowsheet::GetCompoundsNumber() const
@@ -357,6 +522,18 @@ void CFlowsheet::RemoveCompound(const std::string& _key)
 	m_calculationSequence.UpdateInitialStreams();
 }
 
+void CFlowsheet::SetCompounds(const std::vector<std::string>& _keys)
+{
+	if (GetCompounds() == _keys) return;
+	// TODO: do not clean, just add/remove required and sort properly
+	// remove all current compounds
+	for (const auto& c : GetCompounds())
+		RemoveCompound(c);
+	// add new compounds
+	for (const auto& c : _keys)
+		AddCompound(c);
+}
+
 std::vector<std::string> CFlowsheet::GetCompounds() const
 {
 	return m_mainGrid.GetSymbolicGrid(DISTR_COMPOUNDS);
@@ -370,7 +547,7 @@ size_t CFlowsheet::GetOverallPropertiesNumber() const
 void CFlowsheet::AddOverallProperty(EOverall _property, const std::string& _name, const std::string& _units)
 {
 	// check if already exists
-	if (VectorContains(m_overall, [&](const auto& o) { return o.type == _property; })) return;
+	if (HasOverallProperty(_property)) return;
 
 	// add to the list of overall properties
 	m_overall.push_back({ _property, _name, _units });
@@ -391,7 +568,7 @@ void CFlowsheet::AddOverallProperty(EOverall _property, const std::string& _name
 void CFlowsheet::RemoveOverallProperty(EOverall _property)
 {
 	// check if exists
-	if (!VectorContains(m_overall, [&](const auto& o) { return o.type == _property; })) return;
+	if (!HasOverallProperty(_property)) return;
 
 	// remove from streams
 	for (auto& stream : m_streams)
@@ -412,6 +589,11 @@ void CFlowsheet::RemoveOverallProperty(EOverall _property)
 std::vector<SOverallDescriptor> CFlowsheet::GetOveralProperties() const
 {
 	return m_overall;
+}
+
+bool CFlowsheet::HasOverallProperty(EOverall _property) const
+{
+	return VectorContains(m_overall, [&](const auto& o) { return o.type == _property; });
 }
 
 size_t CFlowsheet::GetPhasesNumber() const
@@ -459,6 +641,18 @@ void CFlowsheet::RemovePhase(EPhase _phase)
 
 	// remove from the list of overall properties
 	VectorDelete(m_phases, [&](const auto& p) { return p.state == _phase; });
+}
+
+void CFlowsheet::SetPhases(const std::vector<SPhaseDescriptor>& _phases)
+{
+	if (GetPhases() == _phases) return;
+	// TODO: do not clean, just add/remove required and sort properly
+	// remove all current phases
+	for (const auto& p : GetPhases())
+		RemovePhase(p.state);
+	// add new phases
+	for (const auto& p : _phases)
+		AddPhase(p.state, p.name);
 }
 
 std::vector<SPhaseDescriptor> CFlowsheet::GetPhases() const
@@ -556,7 +750,7 @@ void CFlowsheet::SetStreamsToPorts()
 	// setup output streams with proper grids
 	for (const auto& unit : m_units)
 		for (const auto* port : unit->GetModel()->GetPortsManager().GetAllOutputPorts())
-			if (const auto str = DoGetStream(port->GetStreamKey(), m_streams))
+			if (auto* str = DoGetStream(port->GetStreamKey(), m_streams))
 				str->SetGrid(unit->GetModel()->GetGrid());
 
 	// create input streams with proper grids
@@ -575,11 +769,11 @@ void CFlowsheet::SetStreamsToPorts()
 	for (const auto& unit : m_units)
 	{
 		for (auto* port : unit->GetModel()->GetPortsManager().GetAllInputPorts())
-			if (const auto str = DoGetStream(port->GetStreamKey(), m_streamsI))
-				port->SetStream(str.get());
+			if (auto* str = DoGetStream(port->GetStreamKey(), m_streamsI))
+				port->SetStream(str);
 		for (auto* port : unit->GetModel()->GetPortsManager().GetAllOutputPorts())
-			if (const auto str = DoGetStream(port->GetStreamKey(), m_streams))
-				port->SetStream(str.get());
+			if (auto* str = DoGetStream(port->GetStreamKey(), m_streams))
+				port->SetStream(str);
 	}
 }
 
@@ -639,8 +833,8 @@ void CFlowsheet::UpdateGrids()
 	// update in connected streams
 	for (auto& unit : m_units)
 		if (unit->GetModel())
-			for (auto& port : unit->GetModel()->GetPortsManager().GetAllOutputPorts())
-				if (auto stream = DoGetStream(port->GetStreamKey(), m_streams))
+			for (const auto& port : unit->GetModel()->GetPortsManager().GetAllOutputPorts())
+				if (auto* stream = DoGetStream(port->GetStreamKey(), m_streams))
 				{
 					stream->SetGrid(unit->GetModel()->GetGrid());
 					updated.push_back(stream->GetKey());
@@ -704,7 +898,7 @@ CParametersHolder* CFlowsheet::GetParameters()
 	return &m_parameters;
 }
 
-bool CFlowsheet::SaveToFile(CH5Handler& _h5File, const std::wstring& _fileName)
+bool CFlowsheet::SaveToFile(CH5Handler& _h5File, const std::filesystem::path& _fileName)
 {
 	if (_fileName.empty()) return false;
 
@@ -764,7 +958,7 @@ bool CFlowsheet::SaveToFile(CH5Handler& _h5File, const std::wstring& _fileName)
 	return true;
 }
 
-bool CFlowsheet::LoadFromFile(CH5Handler& _h5File, const std::wstring& _fileName)
+bool CFlowsheet::LoadFromFile(CH5Handler& _h5File, const std::filesystem::path& _fileName)
 {
 	if (_fileName.empty()) return false;
 
@@ -909,11 +1103,11 @@ bool CFlowsheet::LoadFromFile_v3(CH5Handler& _h5File, const std::string& _path)
 	return true;
 }
 
-std::shared_ptr<CStream> CFlowsheet::DoGetStream(const std::string& _key, const std::vector<std::shared_ptr<CStream>>& _streams)
+CStream* CFlowsheet::DoGetStream(const std::string& _key, const std::vector<std::shared_ptr<CStream>>& _streams)
 {
 	for (auto& stream : _streams)
 		if (stream->GetKey() == _key)
-			return stream;
+			return stream.get();
 	return nullptr;
 }
 

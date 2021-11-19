@@ -99,7 +99,7 @@ void CMaterialsDatabaseTab::UpdateWholeView()
 void CMaterialsDatabaseTab::NewDatabase()
 {
 	if (!IsUserConfirm()) return;
-	m_materialsDB->CreateNewDatabase();
+	m_materialsDB->Clear();
 	UpdateWholeView();
 	SetMaterialsDatabaseModified(false);
 	emit MaterialDatabaseWasChanged();
@@ -108,7 +108,7 @@ void CMaterialsDatabaseTab::NewDatabase()
 void CMaterialsDatabaseTab::LoadDatabase()
 {
 	if (!IsUserConfirm()) return;
-	const QString sFileName = QFileDialog::getOpenFileName(this, StrConst::MDT_DialogLoadName, QString::fromStdWString(m_materialsDB->GetFileName()), StrConst::MDT_DialogDMDBFilter);
+	const QString sFileName = QFileDialog::getOpenFileName(this, StrConst::MDT_DialogLoadName, QString::fromStdWString(m_materialsDB->GetFileName().wstring()), StrConst::MDT_DialogDMDBFilter);
 	if (!QFile::exists(sFileName.simplified())) return;
 	m_materialsDB->LoadFromFile(sFileName.toStdWString());
 	m_pSettings->setValue(StrConst::Dyssol_ConfigDMDBPath, sFileName);
@@ -119,15 +119,15 @@ void CMaterialsDatabaseTab::LoadDatabase()
 
 void CMaterialsDatabaseTab::SaveDatabase()
 {
-	if (!QString::fromStdWString(m_materialsDB->GetFileName()).simplified().isEmpty())
-		SaveToFile(QString::fromStdWString(m_materialsDB->GetFileName()));
+	if (!QString::fromStdWString(m_materialsDB->GetFileName().wstring()).simplified().isEmpty())
+		SaveToFile(QString::fromStdWString(m_materialsDB->GetFileName().wstring()));
 	else
 		SaveDatabaseAs();
 }
 
 void CMaterialsDatabaseTab::SaveDatabaseAs()
 {
-	const QString sFileName = QFileDialog::getSaveFileName(this, StrConst::MDT_DialogSaveName, QString::fromStdWString(m_materialsDB->GetFileName()), StrConst::MDT_DialogDMDBFilter);
+	const QString sFileName = QFileDialog::getSaveFileName(this, StrConst::MDT_DialogSaveName, QString::fromStdWString(m_materialsDB->GetFileName().wstring()), StrConst::MDT_DialogDMDBFilter);
 	if (sFileName.simplified().isEmpty()) return;
 	if (!SaveToFile(sFileName)) return;
 	m_pSettings->setValue(StrConst::Dyssol_ConfigDMDBPath, sFileName);
@@ -692,12 +692,12 @@ void CMaterialsDatabaseTab::InteractionInfoClicked(int _iRow)
 void CMaterialsDatabaseTab::UpdateWindowTitle()
 {
 	if (!m_materialsDB) return;
-	setWindowTitle(StrConst::MDT_WindowTitle + QString{ ": " } + QString::fromStdWString(m_materialsDB->GetFileName() + L"[*]"));
+	setWindowTitle(StrConst::MDT_WindowTitle + QString{ ": " } + QString::fromStdWString(m_materialsDB->GetFileName().wstring()) + "[*]");
 }
 
 void CMaterialsDatabaseTab::UpdateFileButtonsActivity() const
 {
-	const QString sLockerFileName = QString::fromStdWString(m_materialsDB->GetFileName()) + ".lock";
+	const QString sLockerFileName = QString::fromStdWString(m_materialsDB->GetFileName().wstring()) + ".lock";
 	QLockFile locker(sLockerFileName);
 	locker.setStaleLockTime(0);
 	const bool bSuccessfullyLocked = locker.tryLock(10);

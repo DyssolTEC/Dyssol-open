@@ -15,7 +15,7 @@ size_t CModelsManager::DirsNumber() const
 	return m_dirsList.size();
 }
 
-bool CModelsManager::AddDir(const std::wstring& _path, bool _active)
+bool CModelsManager::AddDir(const std::filesystem::path& _path, bool _active)
 {
 	const auto& it = std::find_if(m_dirsList.begin(), m_dirsList.end(), [&](const SModelDir& entry) { return entry.path == _path; });
 	if (it != m_dirsList.end()) return false;	// this path has been already added
@@ -48,9 +48,18 @@ bool CModelsManager::DownDir(size_t _index)
 	return true;
 }
 
-std::wstring CModelsManager::GetDirPath(size_t _index) const
+std::filesystem::path CModelsManager::GetDirPath(size_t _index) const
 {
-	return _index < m_dirsList.size() ? m_dirsList[_index].path : L"";
+	return _index < m_dirsList.size() ? m_dirsList[_index].path : "";
+}
+
+std::vector<std::filesystem::path> CModelsManager::GetAllActiveDirPaths() const
+{
+	std::vector<std::filesystem::path> res;
+	for (const auto& p : m_dirsList)
+		if (p.active)
+			res.push_back(p.path);
+	return res;
 }
 
 bool CModelsManager::GetDirActivity(size_t _index) const
@@ -245,21 +254,21 @@ void CModelsManager::UpdateAvailableModels()
 	std::sort(m_availableSolvers.begin(), m_availableSolvers.end());
 }
 
-std::pair<std::vector<SUnitDescriptor>, std::vector<SSolverDescriptor>> CModelsManager::GetModelsList(const std::wstring& _dir)
+std::pair<std::vector<SUnitDescriptor>, std::vector<SSolverDescriptor>> CModelsManager::GetModelsList(const std::filesystem::path& _dir)
 {
 	// try to treat _dir as absolute path
-	const std::wstring absPath = FileSystem::AbsolutePath(_dir);
+	const std::filesystem::path absPath = std::filesystem::absolute(_dir);
 	auto models = GetAllModelsInDir(absPath);
 	if (models.first.empty() && models.second.empty())
 	{
 		// try to treat _dir as relative path
-		const std::wstring relPath = FileSystem::AbsolutePath(FileSystem::ExecutableDirPath() + L"/" + _dir);
+		const std::filesystem::path relPath = std::filesystem::absolute(FileSystem::ExecutableDirPath() + L"/" + _dir.wstring());
 		models = GetAllModelsInDir(relPath);
 	}
 	return models;
 }
 
-std::pair<std::vector<SUnitDescriptor>, std::vector<SSolverDescriptor>> CModelsManager::GetAllModelsInDir(const std::wstring& _dir)
+std::pair<std::vector<SUnitDescriptor>, std::vector<SSolverDescriptor>> CModelsManager::GetAllModelsInDir(const std::filesystem::path& _dir)
 {
 	std::vector<SUnitDescriptor> resUnits;
 	std::vector<SSolverDescriptor> resSolvers;
@@ -355,10 +364,6 @@ SSolverDescriptor CModelsManager::TryGetSolverDescriptor(const std::filesystem::
 		}
 
 		pSolver->CreateBasicInfo();
-
-		// validate solver
-		if (pSolver->m_nCompilerVer != COMPILER_VERSION)
-			continue;
 
 		// obtain descriptor information
 		try {

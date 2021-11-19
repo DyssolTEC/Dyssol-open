@@ -14,6 +14,7 @@
 #include <cctype>
 #include <iomanip>
 #include <random>
+#include <iterator>
 
 namespace StringFunctions
 {
@@ -96,6 +97,21 @@ namespace StringFunctions
 		return true;
 	}
 
+	bool IsSimpleUInt(const std::string& _s)
+	{
+		return !_s.empty() && std::find_if(_s.begin(), _s.end(), [](auto c) { return !std::isdigit(c); }) == _s.end();
+	}
+
+	bool Contains(const std::string& _s, char _c)
+	{
+		return _s.find(_c) != std::string::npos;
+	}
+
+	bool Contains(const std::string& _s, const std::string& _subs)
+	{
+		return _s.find(_subs) != std::string::npos;
+	}
+
 	void ReplaceAll(std::string& _s, const std::string& _old, const std::string& _new)
 	{
 		if (_old.empty() || _s.empty()) return;
@@ -120,14 +136,14 @@ namespace StringFunctions
 
 	std::string ReplaceAll(const std::string& _s, const std::string& _old, const std::string& _new)
 	{
-		std::string res = _s;
+		std::string res{ _s };
 		ReplaceAll(res, _old, _new);
 		return res;
 	}
 
 	std::wstring ReplaceAll(const std::wstring& _s, const std::wstring& _old, const std::wstring& _new)
 	{
-		std::wstring res = _s;
+		std::wstring res{ _s };
 		ReplaceAll(res, _old, _new);
 		return res;
 	}
@@ -150,7 +166,7 @@ namespace StringFunctions
 
 	std::string TrimWhitespaces(const std::string& _s)
 	{
-		std::string res = _s;
+		std::string res{ _s };
 		TrimWhitespaces(res);
 		return res;
 	}
@@ -166,8 +182,16 @@ namespace StringFunctions
 
 	std::string TrimFromSymbols(const std::string& _s, const std::string& _symbols)
 	{
-		std::string res = _s;
+		std::string res{ _s };
 		TrimFromSymbols(res, _symbols);
+		return res;
+	}
+
+	std::string RemoveQuotes(const std::string& _s)
+	{
+		std::string res{ _s };
+		if (!res.empty() && (res.front() == '"' || res.front() == '\''))	res.erase(0, 1);
+		if (!res.empty() && (res.back()  == '"' || res.back()  == '\''))	res.erase(res.size() - 1, 1);
 		return res;
 	}
 
@@ -183,11 +207,62 @@ namespace StringFunctions
 		return ss.str();
 	}
 
-	std::string GetRestOfLine(std::istream* _is)
+	std::string ToLowerCase(const std::string& _s)
+	{
+		std::string res{ _s };
+		std::transform(res.begin(), res.end(), res.begin(), tolower);
+		return res;
+	}
+
+	std::string ToUpperCase(const std::string& _s)
+	{
+		std::string res{ _s };
+		std::transform(res.begin(), res.end(), res.begin(), toupper);
+		return res;
+	}
+
+	std::string GetRestOfLine(std::istream& _is)
 	{
 		const std::istreambuf_iterator<char> eos;
-		std::string res(std::istreambuf_iterator<char>(*_is), eos);
+		std::string res(std::istreambuf_iterator<char>(_is), eos);
 		TrimWhitespaces(res);
+		return res;
+	}
+
+	template <>
+	bool GetValueFromStream<bool>(std::istream& _is)
+	{
+		const auto str = GetValueFromStream<std::string>(_is);
+		if (str == "0" || ToUpperCase(str) == "NO" || ToUpperCase(str) == "FALSE" || ToUpperCase(str) == "OFF")
+			return false;
+		if (str == "1" || ToUpperCase(str) == "YES" || ToUpperCase(str) == "TRUE" || ToUpperCase(str) == "ON")
+			return true;
+		return true;
+	}
+
+	template <>
+	std::string GetValueFromStream<std::string>(std::istream& _is)
+	{
+		std::string res{};
+		_is >> std::quoted(res, '"', '$');	// use $ instead of default '\' to allow reading of windows-style paths
+		return res;
+	}
+
+	template <>
+	std::vector<double> GetValueFromStream<std::vector<double>>(std::istream& _is)
+	{
+		std::vector<double> res;
+		std::copy(std::istream_iterator<double>{ _is }, std::istream_iterator<double>{}, std::back_inserter(res));
+		return res;
+	}
+
+	template <>
+	std::vector<std::string> GetValueFromStream<std::vector<std::string>>(std::istream& _is)
+	{
+		std::vector<std::string> res;
+		while (!_is.eof())
+			if (const auto s = TrimWhitespaces(GetValueFromStream<std::string>(_is)); !s.empty())
+				res.push_back(s);
 		return res;
 	}
 
@@ -210,7 +285,7 @@ namespace StringFunctions
 	// Generates a random key of the given length.
 	std::string GenerateRandomKey(size_t _length /*= 20*/)
 	{
-		static const std::string symbols = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+		const std::string symbols = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 		std::random_device device;
 		std::default_random_engine engine{ device() };
 		std::uniform_int_distribution<size_t> distribution{ 0, symbols.length() - 1 };

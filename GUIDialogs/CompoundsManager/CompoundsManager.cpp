@@ -102,7 +102,7 @@ void CCompoundsManager::ApplyChanges()
 	std::vector<std::string> vOldCompounds = m_pFlowsheet->GetCompounds();
 	std::vector<std::string> vNewCompounds = m_vAddedCompKeys;
 
-	// remove compoundsl
+	// remove compounds
 	for (size_t i = 0; i < nOldNumber; ++i)
 		if (GetAddedCompIndex(vOldCompounds[i]) == -1)
 			m_pFlowsheet->RemoveCompound(vOldCompounds[i]);

@@ -2,7 +2,9 @@
 
 #include "DependentValues.h"
 #include "ContainerFunctions.h"
+#include "StringFunctions.h"
 #include <ostream>
+#include <sstream>
 #include <numeric>
 
 CDependentValues::CDependentValues(const std::vector<double>& _params, const std::vector<double>& _values)
@@ -159,11 +161,30 @@ double CDependentValues::Interpolate(double _param) const
 	return (uval - lval) / (upar - lpar) * (_param - lpar) + lval; // linearly interpolated value
 }
 
-std::ostream& operator<<(std::ostream& _os, const CDependentValues& _obj)
+std::ostream& operator<<(std::ostream& _s, const CDependentValues& _obj)
 {
-	if (!_obj.m_values.empty())
-		_os << _obj.m_params[0] << " " << _obj.m_values[0];
-	for (size_t i = 1; i < _obj.m_values.size(); ++i)
-		_os << " " << _obj.m_params[i] << " " << _obj.m_values[i];
-	return _os;
+	for (size_t i = 0; i < _obj.Size(); ++i)
+		_s << " " << _obj.GetParamAt(i) << " " << _obj.GetValueAt(i);
+	return _s;
+}
+
+std::istream& operator>>(std::istream& _s, CDependentValues& _obj)
+{
+	_obj.Clear();
+
+	const auto timeOrValue = StringFunctions::GetValueFromStream<double>(_s);
+	if (_s.eof())	// special treatment for single constant value
+		_obj.SetValue(0.0, timeOrValue);
+	else			// usual dependent values
+	{
+		_obj.SetValue(timeOrValue, StringFunctions::GetValueFromStream<double>(_s));
+		while (!_s.eof())
+		{
+			// NB: order is important, do not put both calls directly into insert function
+			const auto param = StringFunctions::GetValueFromStream<double>(_s);
+			const auto value = StringFunctions::GetValueFromStream<double>(_s);
+			_obj.SetValue(param, value);
+		}
+	}
+	return _s;
 }

@@ -120,6 +120,24 @@ public:
 	// Removes the specified stream.
 	void RemoveStream(const std::string& _name);
 
+	// Returns initial feed or holdup by its index. If such object does not exist, returns nullptr.
+	[[nodiscard]] const CBaseStream* GetObjectInit(size_t _index) const;
+	// Returns initial feed or holdup by its index. If such object does not exist, returns nullptr.
+	CBaseStream* GetObjectInit(size_t _index);
+	// Returns initial feed or holdup by its name. If such object does not exist, returns nullptr.
+	[[nodiscard]] const CBaseStream* GetObjectInit(const std::string& _name) const;
+	// Returns initial feed or holdup by its name. If such object does not exist, returns nullptr.
+	CBaseStream* GetObjectInit(const std::string& _name);
+
+	// Returns working feed holdup or stream by its index. If such object does not exist, returns nullptr.
+	[[nodiscard]] const CBaseStream* GetObjectWork(size_t _index) const;
+	// Returns working feed holdup or stream by its index. If such object does not exist, returns nullptr.
+	CBaseStream* GetObjectWork(size_t _index);
+	// Returns working feed holdup or stream by its name. If such object does not exist, returns nullptr.
+	[[nodiscard]] const CBaseStream* GetObjectWork(const std::string& _name) const;
+	// Returns working feed holdup or stream by its name. If such object does not exist, returns nullptr.
+	CBaseStream* GetObjectWork(const std::string& _name);
+
 	// Returns all defined initial feeds and holdups.
 	std::vector<const CBaseStream*> GetAllInit() const;
 	// Returns all defined initial feeds and holdups.

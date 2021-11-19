@@ -87,7 +87,7 @@ namespace FileSystem
 #endif
 	}
 
-	std::vector<std::filesystem::path> FilesList(const std::wstring& _dirPath, const std::wstring& _filter)
+	std::vector<std::filesystem::path> FilesList(const std::filesystem::path& _dirPath, const std::string& _filter)
 	{
 		std::vector<std::filesystem::path> files;
 		if (!std::filesystem::exists(_dirPath)) return files;

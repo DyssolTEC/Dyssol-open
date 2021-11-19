@@ -1,0 +1,68 @@
+JOB 
+RESULT_FILE               ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/res.dflw
+MODELS_PATH               ${CMAKE_BINARY_DIR}/Units
+MODELS_PATH               ${CMAKE_BINARY_DIR}/Solvers
+MATERIALS_DATABASE        ${CMAKE_SOURCE_DIR}/Materials.dmdb
+EXPORT_FILE               ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
+EXPORT_SIGNIFICANCE_LIMIT 1e-07
+
+SIMULATION_TIME    30
+RELATIVE_TOLERANCE 1e-07
+ABSOLUTE_TOLERANCE 1e-07
+
+COMPOUNDS         "Air" "Sand" "H2O" 
+PHASES            "PhaseSol" SOLID "PhaseLiq" LIQUID "PhaseVap" GAS 
+DISTRIBUTION_GRID "GLOBAL" SIZE NUMERIC EQUIDISTANT DIAMETER 100 0 3e-6
+
+UNIT "InSuspension" "InletFlow" 
+UNIT "InNuclei" "InletFlow" 
+UNIT "InGas" "InletFlow" 
+UNIT "Granulator" "Granulator" 
+UNIT "OutProduct" "OutletFlow" 
+UNIT "OutDust" "OutletFlow" 
+
+STREAM "Suspension" "InSuspension" "InletMaterial" "Granulator" "Solution"
+STREAM "Nuclei" "InNuclei" "InletMaterial" "Granulator" "ExternalNuclei"
+STREAM "Gas" "InGas" "InletMaterial" "Granulator" "FluidizationGas"
+STREAM "Product" "Granulator" "Output" "OutProduct" "In"
+STREAM "Dust" "Granulator" "DustOutput" "OutDust" "In"
+
+UNIT_PARAMETER "Granulator" "Kos"  0 0
+UNIT_PARAMETER "Granulator" "Relative tolerance" 0
+UNIT_PARAMETER "Granulator" "Absolute tolerance" 0
+
+HOLDUP_OVERALL      "InSuspension" "InputMaterial" 0 10 300 100000
+HOLDUP_OVERALL      "InNuclei" "InputMaterial" 0 5 300 100000
+HOLDUP_OVERALL      "InGas" "InputMaterial" 0 4 300 100000
+HOLDUP_OVERALL      "Granulator" "HoldupMaterial" 0 20 300 100000
+HOLDUP_PHASES       "InSuspension" "InputMaterial" 0 0.5 0.5 0
+HOLDUP_PHASES       "InNuclei" "InputMaterial" 0 1 0 0
+HOLDUP_PHASES       "InGas" "InputMaterial" 0 0 0 1
+HOLDUP_PHASES       "Granulator" "HoldupMaterial" 0 0.4 0.4 0.2
+HOLDUP_COMPOUNDS    "InSuspension" "InputMaterial" SOLID 0 0 1 0
+HOLDUP_COMPOUNDS    "InSuspension" "InputMaterial" LIQUID 0 0 0 1
+HOLDUP_COMPOUNDS    "InSuspension" "InputMaterial" GAS 0 1 0 0
+HOLDUP_COMPOUNDS    "InNuclei" "InputMaterial" SOLID 0 0 1 0
+HOLDUP_COMPOUNDS    "InNuclei" "InputMaterial" LIQUID 0 0 0 1
+HOLDUP_COMPOUNDS    "InNuclei" "InputMaterial" GAS 0 1 0 0
+HOLDUP_COMPOUNDS    "InGas" "InputMaterial" SOLID 0 0 1 0
+HOLDUP_COMPOUNDS    "InGas" "InputMaterial" LIQUID 0 0 0 1
+HOLDUP_COMPOUNDS    "InGas" "InputMaterial" GAS 0 1 0 0
+HOLDUP_COMPOUNDS    "Granulator" "HoldupMaterial" SOLID 0 0 1 0
+HOLDUP_COMPOUNDS    "Granulator" "HoldupMaterial" LIQUID 0 0 0 1
+HOLDUP_COMPOUNDS    "Granulator" "HoldupMaterial" GAS 0 1 0 0
+HOLDUP_DISTRIBUTION "InSuspension" "InputMaterial" SIZE MIXTURE Q3_DENSITY DIAMETER NORMAL 0 1 1e-10
+HOLDUP_DISTRIBUTION "InNuclei" "InputMaterial" SIZE MIXTURE Q3_DENSITY DIAMETER NORMAL 0 1e-06 1.5e-07
+HOLDUP_DISTRIBUTION "InGas" "InputMaterial" SIZE MIXTURE Q3_DENSITY DIAMETER NORMAL 0 1 1e-10
+HOLDUP_DISTRIBUTION "Granulator" "HoldupMaterial" SIZE MIXTURE Q3_DENSITY DIAMETER NORMAL 0 1e-06 1e-07
+
+EXPORT_STREAM_MASS             Product 0 30
+EXPORT_STREAM_PHASES_FRACTIONS Product 0 30
+EXPORT_STREAM_PSD              Product 0 30
+EXPORT_STREAM_MASS             Dust 0 30
+EXPORT_STREAM_PHASES_FRACTIONS Dust 0 30
+EXPORT_STREAM_PSD              Dust 0 30
+
+EXPORT_HOLDUP_MASS             Granulator HoldupMaterial 0 30
+EXPORT_HOLDUP_PHASES_FRACTIONS Granulator HoldupMaterial 0 30
+EXPORT_HOLDUP_PSD              Granulator HoldupMaterial 0 30

@@ -2,10 +2,9 @@
 
 #pragma once
 
-#include <ostream>
 #include <map>
 #include <vector>
-#include <ostream>
+#include <istream>
 #include <limits>
 
 /* Represents a dependent value, described with the list of [param:value].
@@ -63,7 +62,9 @@ public:
 	void Clear();
 
 	// Output stream operator.
-	friend std::ostream& operator<<(std::ostream& _os, const CDependentValues& _obj);
+	friend std::ostream& operator<<(std::ostream& _s, const CDependentValues& _obj);
+	// Input stream operator.
+	friend std::istream& operator>>(std::istream& _s, CDependentValues& _obj);
 
 	// Comparison.
 	bool operator==(const CDependentValues& _v) const;

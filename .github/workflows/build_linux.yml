@@ -1,4 +1,4 @@
-name: CMake
+name: Linux
 
 on: [push]
 
@@ -12,43 +12,29 @@ jobs:
           - name: linux-gcc
             os: linux
             cxx: g++
-            cflags: ""
+            cxxflags: ""
             linker_flags: ""
             doc_generate: yes
             build_type: Release
-          - name: linux-gcc-asan
+          - name: linux-gcc-san
             os: linux
             cxx: g++
-            cflags: "-fno-omit-frame-pointer -fsanitize=address"
+            cxxflags: "-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined"
             linker_flags: "-fno-omit-frame-pointer -fsanitize=address"
-            doc_generate: no
-            build_type: Debug
-          - name: linux-gcc-ubsan
-            os: linux
-            cxx: g++
-            cflags: "-fsanitize=undefined"
-            linker_flags: ""
             doc_generate: no
             build_type: Debug
           - name: linux-clang
             os: linux
             cxx: clang++
-            cflags: ""
+            cxxflags: ""
             linker_flags: ""
             doc_generate: no
             build_type: Release
-          - name: linux-clang-asan
+          - name: linux-clang-san
             os: linux
             cxx: clang++
-            cflags: "-fno-omit-frame-pointer -fsanitize=address"
+            cxxflags: "-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined"
             linker_flags: "-fno-omit-frame-pointer -fsanitize=address"
-            doc_generate: no
-            build_type: Debug
-          - name: linux-clang-ubsan
-            os: linux
-            cxx: clang++
-            cflags: "-fsanitize=undefined"
-            linker_flags: ""
             doc_generate: no
             build_type: Debug
 
@@ -76,7 +62,7 @@ jobs:
     - name: Build
       working-directory: ${{github.workspace}}/build
       shell: bash
-      run: cmake --build . --parallel
+      run: cmake --build . --parallel 4
 
     - name: Install
       working-directory: ${{github.workspace}}/build

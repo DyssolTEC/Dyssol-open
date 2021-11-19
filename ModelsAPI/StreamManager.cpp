@@ -241,6 +241,56 @@ void CStreamManager::RemoveStream(const std::string& _name)
 	RemoveObjects(m_streamsStored, _name);
 }
 
+const CBaseStream* CStreamManager::GetObjectInit(size_t _index) const
+{
+	const auto& objects = GetAllInit();
+	if (_index >= objects.size()) return nullptr;
+	return objects[_index];
+}
+
+CBaseStream* CStreamManager::GetObjectInit(size_t _index)
+{
+	return const_cast<CBaseStream*>(static_cast<const CStreamManager&>(*this).GetObjectInit(_index));
+}
+
+const CBaseStream* CStreamManager::GetObjectInit(const std::string& _name) const
+{
+	for (const auto* object : GetAllInit())
+		if (object->GetName() == _name)
+			return object;
+	return nullptr;
+}
+
+CBaseStream* CStreamManager::GetObjectInit(const std::string& _name)
+{
+	return const_cast<CBaseStream*>(static_cast<const CStreamManager&>(*this).GetObjectInit(_name));
+}
+
+const CBaseStream* CStreamManager::GetObjectWork(size_t _index) const
+{
+	const auto& objects = GetAllWork();
+	if (_index >= objects.size()) return nullptr;
+	return objects[_index];
+}
+
+CBaseStream* CStreamManager::GetObjectWork(size_t _index)
+{
+	return const_cast<CBaseStream*>(static_cast<const CStreamManager&>(*this).GetObjectWork(_index));
+}
+
+const CBaseStream* CStreamManager::GetObjectWork(const std::string& _name) const
+{
+	for (const auto* object : GetAllWork())
+		if (object->GetName() == _name)
+			return object;
+	return nullptr;
+}
+
+CBaseStream* CStreamManager::GetObjectWork(const std::string& _name)
+{
+	return const_cast<CBaseStream*>(static_cast<const CStreamManager&>(*this).GetObjectWork(_name));
+}
+
 std::vector<const CBaseStream*> CStreamManager::GetAllInit() const
 {
 	const auto& feeds   = GetFeedsInit();

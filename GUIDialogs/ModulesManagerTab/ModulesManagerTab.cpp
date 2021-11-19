@@ -107,7 +107,7 @@ void CModulesManagerTab::UpdateConfigFile() const
 	QList<bool> unitDirsFlags;
 	for (size_t i = 0; i < m_pModelsManager->DirsNumber(); ++i)
 	{
-		unitDirs.push_back(QString::fromStdWString(m_pModelsManager->GetDirPath(i)));
+		unitDirs.push_back(QString::fromStdWString(m_pModelsManager->GetDirPath(i).wstring()));
 		unitDirsFlags.push_back(m_pModelsManager->GetDirActivity(i));
 	}
 	m_pSettings->setValue(StrConst::MM_ConfigModelsParamName, unitDirs);

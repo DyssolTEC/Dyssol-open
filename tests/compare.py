@@ -14,8 +14,7 @@
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #
-# This script compares two files with numerical simulation results and returns an error
-# if the difference is higher as a tolerance.
+# This script compares two files with numerical simulation results and returns an error if the difference is greater than tolerance.
 
 import argparse
 import os.path
@@ -24,13 +23,13 @@ import sys
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
-        description='compares two files with numerical simulation results and returns an error if the difference is higher as a tolerance.')
-    parser.add_argument('reference',  action="store",
+        description='compares two files with numerical simulation results and returns an error if the difference is greater than tolerance.')
+    parser.add_argument('reference', action="store",
                         help='reference file')
-    parser.add_argument('compare',  action="store",
+    parser.add_argument('compare', action="store",
                         help='compare file')
-    parser.add_argument('-t', '--tolerance',  action="store", default=1e-3, dest="tolerance",
-                        help='Numerical tolerance')
+    parser.add_argument('-t', '--tolerance', action="store", default=1e-3, dest="tolerance",
+                        help='numerical tolerance')
 
     results = parser.parse_args()
 
@@ -64,7 +63,7 @@ if __name__ == "__main__":
         lc = linesCompare[l].strip().split(" ")
         if (len(lr) != len(lc)):
             sys.exit(
-                f"Number words in the line {l+1} in reference file ({len(lr)}) does not match the number of words in compare file ({len(lc)})!")
+                f"Number of words in the line {l+1} in reference file ({len(lr)}) does not match the number of words in compare file ({len(lc)})!")
 
         for c in range(len(lr)):
             wr = lr[c].strip()
@@ -81,10 +80,10 @@ if __name__ == "__main__":
                     sys.exit(
                         f"Words number {c+1} in line {l+1} differ in reference ({wr}) and in compare ({wc}) files!")
 
-                calculatedTolerance = abs(wrf - wrc)/abs(wrf)
+                calculatedTolerance = abs(wrf - wrc)/min(abs(wrf), abs(wrc))
                 if (calculatedTolerance > tolerance):
                     sys.exit(
-                        f"Calculated tolerance is higher as ({calculatedTolerance}) as required ({tolerance}), word number {c+1} in line {l+1}: reference ({wr}) and compare ({wc})!")
+                        f"Calculated tolerance ({calculatedTolerance}) is higher as required ({tolerance}), word number {c+1} in line {l+1}: reference ({wr}) and compare ({wc})!")
 
     print(f"Files {referencefile} and {comparefile} are identical")
     sys.exit(0)

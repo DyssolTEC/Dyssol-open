@@ -65,16 +65,16 @@ public:
 	void MagnificationRatio(double val);
 
 	// == Convergence methods
-	proxy<EConvMethod> convergenceMethod;	// method for prediction of tear streams' values
-	void ConvergenceMethod(EConvMethod val);
+	proxy<EConvergenceMethod> convergenceMethod;	// method for prediction of tear streams' values
+	void ConvergenceMethod(EConvergenceMethod val);
 	proxy<double> wegsteinAccelParam;		// limit of acceleration parameter of Wegstein's convergence method
 	void WegsteinAccelParam(double val);
 	proxy<double> relaxationParam;			// relaxation parameter of Direct substitution with relaxation convergence method
 	void RelaxationParam(double val);
 
 	// == Extrapolation methods
-	proxy<EExtrapMethod> extrapolationMethod;	// method for data extrapolation on each next time window
-	void ExtrapolationMethod(EExtrapMethod val);
+	proxy<EExtrapolationMethod> extrapolationMethod;	// method for data extrapolation on each next time window
+	void ExtrapolationMethod(EExtrapolationMethod val);
 
 	// == Compression
 	proxy<double> saveTimeStep;				// saving time step hint
@@ -115,7 +115,7 @@ public:
 	void EnthalpyMinT(double val);
 	proxy<double> enthalpyMaxT;
 	void EnthalpyMaxT(double val);
-	proxy<size_t> enthalpyInt;
-	void EnthalpyInt(size_t val);
+	proxy<uint32_t> enthalpyInt;
+	void EnthalpyInt(uint32_t val);
 };
 

@@ -26,6 +26,7 @@ struct SInterval
 	[[nodiscard]] bool Includes(double _d) const { return _d >= min && _d <= max; }
 };
 
+// TODO: remove
 enum class EArguments
 {
 	SOURCE_FILE,
@@ -87,6 +88,7 @@ struct SPhaseDescriptor
 {
 	EPhase state;		// Phase state.
 	std::string name;	// Phase name.
+	bool operator==(const SPhaseDescriptor& _other) const { return state == _other.state && name == _other.name; }
 };
 
 struct SOverallDescriptor
@@ -112,4 +114,14 @@ public:
 enum class EDirection
 {
 	UP, DOWN
+};
+
+/*
+ * Describes a single connection between two units in the flowsheet.
+ */
+struct SFlowsheetConnection
+{
+	std::string stream{}, unitO{}, portO{}, unitI{}, portI{};
+	SFlowsheetConnection(const std::string& _stream, const std::string& _unitO, const std::string& _portO, const std::string& _unitI, const std::string& _portI)
+		: stream{ _stream }, unitO{ _unitO }, portO{ _portO }, unitI{ _unitI }, portI{ _portI } {}
 };

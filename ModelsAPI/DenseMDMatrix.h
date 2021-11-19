@@ -3,6 +3,7 @@
 #pragma once
 
 #include <vector>
+#include <cstddef>
 
 /** Multidimensional matrix in dense format.*/
 class CDenseMDMatrix

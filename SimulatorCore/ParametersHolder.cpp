@@ -29,11 +29,11 @@ void CParametersHolder::SetDefaultValues()
 	iters1stUpperLimit = DEFAULT_ITERS_1ST_UPPER_LIMIT;
 	magnificationRatio = DEFAULT_WINDOW_MAGNIFICATION_RATIO;
 
-	convergenceMethod = CM_WEGSTEIN;
+	convergenceMethod = EConvergenceMethod::WEGSTEIN;
 	wegsteinAccelParam = DEFAULT_WEGSTEIN_ACCEL_PARAM;
 	relaxationParam = DEFAULT_RELAXATION_PARAM;
 
-	extrapolationMethod = EExtrapMethod::EM_SPLINE;
+	extrapolationMethod = EExtrapolationMethod::SPLINE;
 
 	saveTimeStep = 0;
 	saveTimeStepFlagHoldups = true;
@@ -82,10 +82,10 @@ void CParametersHolder::SaveToFile(CH5Handler& _h5File, const std::string& _sPat
 	_h5File.WriteData(_sPath, StrConst::FlPar_H51stUpperLimit, iters1stUpperLimit);
 
 	// save convergence and extrapolation parameters
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5ConvMethod, static_cast<uint32_t>(convergenceMethod));
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5ConvMethod, static_cast<uint32_t>(static_cast<EConvergenceMethod>(convergenceMethod)));
 	_h5File.WriteData(_sPath, StrConst::FlPar_H5WegsteinParam, wegsteinAccelParam);
 	_h5File.WriteData(_sPath, StrConst::FlPar_H5RelaxParam, relaxationParam);
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5ExtrapMethod, static_cast<uint32_t>(static_cast<EExtrapMethod>(extrapolationMethod)));
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5ExtrapMethod, static_cast<uint32_t>(static_cast<EExtrapolationMethod>(extrapolationMethod)));
 
 	// save compression
 	_h5File.WriteData(_sPath, StrConst::FlPar_H5SaveTimeStep, saveTimeStep);
@@ -141,11 +141,11 @@ void CParametersHolder::LoadFromFile(CH5Handler& _h5File, const std::string& _sP
 	// load convergence and extrapolation parameters
 	uint32_t nTemp;
 	_h5File.ReadData(_sPath, StrConst::FlPar_H5ConvMethod, nTemp);
-	convergenceMethod = static_cast<EConvMethod>(nTemp);
+	convergenceMethod = static_cast<EConvergenceMethod>(nTemp);
 	_h5File.ReadData(_sPath, StrConst::FlPar_H5WegsteinParam, wegsteinAccelParam.data);
 	_h5File.ReadData(_sPath, StrConst::FlPar_H5RelaxParam, relaxationParam.data);
 	_h5File.ReadData(_sPath, StrConst::FlPar_H5ExtrapMethod, nTemp);
-	extrapolationMethod = static_cast<EExtrapMethod>(nTemp);
+	extrapolationMethod = static_cast<EExtrapolationMethod>(nTemp);
 
 	// load compression
 	if (nVer < 3)
@@ -260,7 +260,7 @@ void CParametersHolder::MagnificationRatio(double val)
 	magnificationRatio = val > 0. ? val : 1.;
 }
 
-void CParametersHolder::ConvergenceMethod(EConvMethod val)
+void CParametersHolder::ConvergenceMethod(EConvergenceMethod val)
 {
 	convergenceMethod = val;
 }
@@ -280,7 +280,7 @@ void CParametersHolder::RelaxationParam(double val)
 		relaxationParam = val;
 }
 
-void CParametersHolder::ExtrapolationMethod(EExtrapMethod val)
+void CParametersHolder::ExtrapolationMethod(EExtrapolationMethod val)
 {
 	extrapolationMethod = val;
 }
@@ -362,7 +362,7 @@ void CParametersHolder::EnthalpyMaxT(double val)
 	enthalpyMaxT = val;
 }
 
-void CParametersHolder::EnthalpyInt(size_t val)
+void CParametersHolder::EnthalpyInt(uint32_t val)
 {
 	enthalpyInt = val;
 }

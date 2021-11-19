@@ -121,12 +121,24 @@ bool VectorUniqueSorted(const std::vector<T>& _vec)
 template<typename T>
 void AddVectors(const std::vector<T>& _vec1, const std::vector<T>& _vec2, std::vector<T>& _res)
 {
-	std::transform(_vec1.begin(), _vec1.end(), _vec2.begin(), _res.begin(), std::plus<>());
+	if (_vec1.size() == _vec2.size())
+		std::transform(_vec1.begin(), _vec1.end(), _vec2.begin(), _res.begin(), std::plus<>());
+	else if (!_vec1.empty() && _vec2.empty())
+		_res = _vec1;
+	else if (_vec1.empty() && !_vec2.empty())
+		_res = _vec2;
 }
 
 // Checks whether the map contains a specified key.
 template<typename K, typename V>
 bool MapContainsKey(const std::map<K, V>& _map, K _key)
+{
+	return _map.find(_key) != _map.end();
+}
+
+// Checks whether the multimap contains a specified key.
+template<typename K, typename V>
+bool MapContainsKey(const std::multimap<K, V>& _map, K _key)
 {
 	return _map.find(_key) != _map.end();
 }

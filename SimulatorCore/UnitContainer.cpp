@@ -47,6 +47,7 @@ void CUnitContainer::SetKey(const std::string& _id)
 
 void CUnitContainer::SetModel(const std::string& _uniqueID)
 {
+	if (m_model && m_model->GetUniqueID() == _uniqueID) return;
 	m_modelsManager.FreeUnit(m_model);
 	m_model = m_modelsManager.InstantiateUnit(_uniqueID);
 	if (m_model)

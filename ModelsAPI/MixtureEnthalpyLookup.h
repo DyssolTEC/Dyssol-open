@@ -37,6 +37,8 @@ public:
 	void SetCompoundFractions(const std::vector<double>& _fractions);
 	// Returns current fractions of compounds.
 	[[nodiscard]] std::vector<double> GetCompoundFractions() const;
+	// Returns the number of entries in the lookup table.
+	[[nodiscard]] size_t Size() const;
 
 	// Returns enthalpy for the given _temperature.
 	[[nodiscard]] double GetEnthalpy(double _temperature) const;
@@ -66,6 +68,8 @@ public:
 	CMixtureEnthalpyLookup& operator+=(double _d);
 	CMixtureEnthalpyLookup& operator*=(double _d);
 	CMixtureEnthalpyLookup& operator+=(const CMixtureEnthalpyLookup& _t);
+
+	bool operator==(const CMixtureEnthalpyLookup& _t) const;
 
 private:
 	// Set enthalpies to the table according to the defined limits, compounds and their fractions.

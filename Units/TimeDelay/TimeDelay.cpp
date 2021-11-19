@@ -26,7 +26,9 @@ void CTimeDelay::CreateStructure()
 	AddPort("Out", EUnitPort::OUTPUT);
 
 	/// Add unit parameters ///
-	AddConstRealParameter("Time delay", 0, "s", "Unit time delay", 0, 1e+6);
+	AddConstRealParameter("Time delay"        , 0.0, "s", "Unit time delay"                                                , 0, 1e+6);
+	AddConstRealParameter("Relative tolerance", 0.0, "-", "Solver relative tolerance. Set to 0 to use flowsheet-wide value", 0      );
+	AddConstRealParameter("Absolute tolerance", 0.0, "-", "Solver absolute tolerance. Set to 0 to use flowsheet-wide value", 0      );
 
 	/// Set this unit as user data of model ///
 	m_model.SetUserData(this);
@@ -54,7 +56,9 @@ void CTimeDelay::Initialize(double _time)
 	m_model.m_iNormDistr          = m_model.AddDAEVariables(true, std::vector<double>(numDistr, 1), 0, 0);
 
 	/// Set tolerances to the model ///
-	m_model.SetTolerance(1e-3, 1e-5);
+	const auto rtol = GetConstRealParameterValue("Relative tolerance");
+	const auto atol = GetConstRealParameterValue("Absolute tolerance");
+	m_model.SetTolerance(rtol != 0.0 ? rtol : GetRelTolerance(), atol != 0.0 ? atol : GetAbsTolerance());
 
 	/// Set model to the solver ///
 	if (!m_solver.SetModel(&m_model))
@@ -136,9 +140,9 @@ void CMyDAEModel::CalculateResiduals(double _time, double* _vars, double* _ders,
 		// Get state of aggregation of current phase
 		const auto phase = unit->GetPhaseType(i);
 		// Get phase fraction at last time point
-		const double tempPhaseFracPrev = inStream->GetPhaseMassFlow(timePrev, phase) / MflowPrev;
+		const double tempPhaseFracPrev = MflowPrev != 0.0 ? inStream->GetPhaseMassFlow(timePrev, phase) / MflowPrev : 0.0;
 		// Get phase fraction at current time point
-		const double tempPhaseFrac = inStream->GetPhaseMassFlow(_time, phase) / Mflow;
+		const double tempPhaseFrac = Mflow != 0.0 ? inStream->GetPhaseMassFlow(_time, phase) / Mflow : 0.0;
 		// Squared difference of phase fractions
 		normPhases_update += std::pow(tempPhaseFracPrev - tempPhaseFrac, 2);
 

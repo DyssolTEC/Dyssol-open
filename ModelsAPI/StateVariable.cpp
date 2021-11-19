@@ -124,6 +124,17 @@ CStateVariable* CStateVariablesManager::AddStateVariable(const std::string& _nam
 	return m_stateVariables.back().get();
 }
 
+const CStateVariable* CStateVariablesManager::GetStateVariable(size_t _index) const
+{
+	if (_index >= m_stateVariables.size()) return {};
+	return m_stateVariables[_index].get();
+}
+
+CStateVariable* CStateVariablesManager::GetStateVariable(size_t _index)
+{
+	return const_cast<CStateVariable*>(const_cast<const CStateVariablesManager&>(*this).GetStateVariable(_index));
+}
+
 const CStateVariable* CStateVariablesManager::GetStateVariable(const std::string& _name) const
 {
 	for (const auto& v : m_stateVariables)

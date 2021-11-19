@@ -35,7 +35,6 @@ class CMixtureLookup
 		void Mult(double _value);
 	};
 
-protected:
 	CTwoWayMapExt m_table;						// Main lookup table.
 	std::vector<CDependentValues> m_componets;	// All components.
 	std::vector<double> m_weights;				// Weights of all components.
@@ -54,6 +53,8 @@ public:
 	void RemoveComponent(size_t _index);
 	// Returns the number of defined components.
 	[[nodiscard]] size_t ComponentsNumber() const;
+	// Returns the number of entries in the lookup table.
+	[[nodiscard]] size_t Size() const;
 
 	// Sets new _weights for all components. _weights must have the same size as the number of defined components.
 	void SetWeights(const std::vector<double>& _weights);
@@ -75,6 +76,8 @@ public:
 	void Add(const CMixtureLookup& _table, double _weight = 1.);
 	// Multiplies each _right (dependent) entry of the mixture table with a _value.
 	void Multiply(double _value);
+
+	bool operator==(const CMixtureLookup& _other) const;
 
 	// Removes all data.
 	void Clear();

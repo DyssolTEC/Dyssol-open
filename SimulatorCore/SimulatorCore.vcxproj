@@ -20,7 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CalculationSequence.h" />
-    <ClInclude Include="ConfigFileParser.h" />
     <ClInclude Include="Flowsheet.h" />
     <ClInclude Include="LogUpdater.h" />
     <ClInclude Include="ModelsManager.h" />
@@ -32,7 +31,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CalculationSequence.cpp" />
-    <ClCompile Include="ConfigFileParser.cpp" />
     <ClCompile Include="Flowsheet.cpp" />
     <ClCompile Include="ModelsManager.cpp" />
     <ClCompile Include="ParametersHolder.cpp" />

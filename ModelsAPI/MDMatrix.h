@@ -375,6 +375,8 @@ private:
 	//void NormalizeToZeroRecursive( sFraction *_pFraction, unsigned _nNesting = 0 );
 	//sFraction* CreateWithOneRecursive( sFraction *_pFraction, unsigned _nNesting = 0 );
 	sFraction* SetToZeroRecursive( sFraction *_pFraction, unsigned _nNesting = 0 );
+	// Recursively sets all values between selected time points to zero.
+	void SetToZero2Recursive(sFraction* _pFraction, unsigned _nNesting = 0);
 	sFraction* SetToOneRecursive( sFraction *_pFraction, unsigned _nNesting = 0 );
 	void Extrapolate2ToPointRecursive( sFraction *_pFraction, unsigned _nNesting = 0 );
 	void Extrapolate3ToPointRecursive( sFraction *_pFraction, unsigned _nNesting = 0 );

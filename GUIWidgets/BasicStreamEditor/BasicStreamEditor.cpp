@@ -41,6 +41,7 @@ void CBasicStreamEditor::InitializeConnections()
 	connect(ui.removeTimePoint, &QPushButton::clicked, this, &CBasicStreamEditor::RemoveTimePoint);
 	connect(ui.removeAllTimePoints, &QPushButton::clicked, this, &CBasicStreamEditor::RemoveAllTimePoints);
 	connect(ui.timePointsTable, &QTableWidget::itemChanged, this, &CBasicStreamEditor::ChangeTimePoint);
+	connect(ui.timePointsTable, &CQtTable::DataPasted, this, &CBasicStreamEditor::TimePointsPasted);
 	connect(ui.timePointsTable, &QTableWidget::currentCellChanged, this, &CBasicStreamEditor::TableTimeChanged);
 	connect(ui.mainTabWidget, &QTabWidget::currentChanged, this, &CBasicStreamEditor::UpdateTabContent);
 	connect(m_pDDTableMTP, &CDDTable::DataChanged, this, &CBasicStreamEditor::ChangeData);
@@ -363,6 +364,28 @@ void CBasicStreamEditor::ChangeTimePoint()
 		m_pSelectedHoldup->CopyTimePoint(dNewValue, timePoints[iTimePoint]);
 		m_pSelectedHoldup->RemoveTimePoint(timePoints[iTimePoint]);
 	}
+	UpdateTabContent();
+	emit DataChanged();
+}
+
+void CBasicStreamEditor::TimePointsPasted()
+{
+	if (m_bAvoidSignal) return;
+	if (m_pSelectedHoldup == nullptr) return;
+	std::vector<double> newTimePoints;
+	for (int i = 0; i < ui.timePointsTable->rowCount(); ++i)
+		newTimePoints.push_back(ui.timePointsTable->item(i, 0)->text().toDouble());
+	const auto oldTimePoints = m_pSelectedHoldup->GetAllTimePoints();
+	std::vector<double> toDel;
+	for (size_t i = 0; i < oldTimePoints.size() && i < newTimePoints.size(); ++i)
+		if (newTimePoints[i] != oldTimePoints[i])
+		{
+			m_pSelectedHoldup->CopyTimePoint(newTimePoints[i], oldTimePoints[i]);
+			toDel.push_back(oldTimePoints[i]);
+		}
+	for (const double t : toDel)
+		if (!VectorContains(newTimePoints, t))
+			m_pSelectedHoldup->RemoveTimePoint(t);
 	UpdateTabContent();
 	emit DataChanged();
 }

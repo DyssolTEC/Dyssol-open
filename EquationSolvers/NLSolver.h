@@ -3,10 +3,9 @@
 #pragma once
 
 #include "NLModel.h"
-#include "DyssolUtilities.h"
-#include <kinsol/kinsol.h>
+#include <sundials/sundials_matrix.h>
+#include <sundials/sundials_linearsolver.h>
 #include <string>
-#include <nvector/nvector_serial.h>
 
 #define ZERO RCONST(0.0)
 
@@ -16,6 +15,8 @@ class CNLSolver
 private:
 	CNLModel* m_pModel;					///< Pointer to a DAE model
 	void* m_pKINmem;					///< KIN memory
+	SUNMatrix m_A{};					///< Matrix.
+	SUNLinearSolver m_LS{};				///< Linear solver.
 
 	N_Vector m_vectorVars;				///< Vector of variables
 	N_Vector m_vectorUScales;			///< Vector of uscales
@@ -28,7 +29,7 @@ private:
 
 	// Solver settings
 	ENLSolverStrategy m_eStrategy;		///< Solver strategy
-	
+
 	// General setting
 	size_t m_nMaxIter;				///< Max. number of nonlinear iterations
 

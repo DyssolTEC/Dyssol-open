@@ -24,7 +24,7 @@ QString CSaveLoadThread::GetFileName() const
 
 QString CSaveLoadThread::GetFinalFileName() const
 {
-	return QString::fromStdWString(m_fileHandler.FileName());
+	return QString::fromStdWString(m_fileHandler.FileName().wstring());
 }
 
 bool CSaveLoadThread::IsSuccess() const

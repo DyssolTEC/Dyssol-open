@@ -66,6 +66,11 @@ public:
 
 	virtual bool IsInBounds() const;	                     ///< Checks whether all values lay in allowed range.
 
+	// Outputs user-specified values of the parameter to a stream.
+	virtual std::ostream& ValueToStream(std::ostream& _s) = 0;
+	// Reads user-specified values of the parameter from a stream.
+	virtual std::istream& ValueFromStream(std::istream& _s) = 0;
+
 	//virtual void SaveToFile(CH5Handler& _h5Saver, const std::string& _path) = 0;
 	//virtual void LoadFromFile(CH5Handler& _h5Loader, const std::string& _path) = 0;
 };
@@ -97,11 +102,13 @@ public:
 
 	bool IsInBounds() const override;				///< Checks whether m_value lays in range [m_min; m_max].
 
+	// Outputs user-specified values of the parameter to a stream.
+	std::ostream& ValueToStream(std::ostream& _s) override;
+	// Reads user-specified values of the parameter from a stream.
+	std::istream& ValueFromStream(std::istream& _s) override;
+
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
 	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
-
-private:
-	EUnitParameter DeduceType() const;				///< Deduces type of the unit parameter depending on the template argument.
 };
 
 using CConstRealUnitParameter = CConstUnitParameter<double>;
@@ -153,12 +160,13 @@ public:
 	// Checks if all values lay in range [min; max].
 	[[nodiscard]] bool IsInBounds() const override { return std::all_of(m_values.begin(), m_values.end(), [&](const auto val) { return val >= m_min && val <= m_max; }); }
 
+	// Outputs user-specified values of the parameter to a stream.
+	std::ostream& ValueToStream(std::ostream& _s) override;
+	// Reads user-specified values of the parameter from a stream.
+	std::istream& ValueFromStream(std::istream& _s) override;
+
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
 	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
-
-private:
-	// Deduces type of the unit parameter depending on the template argument.
-	[[nodiscard]] EUnitParameter DeduceType() const;
 };
 
 using CListRealUnitParameter = CListUnitParameter<double>;
@@ -198,6 +206,11 @@ public:
 	bool IsEmpty() const;	                    ///< Checks whether any time point is defined.
 	bool IsInBounds() const override;           ///< Checks whether all m_values lay in range [m_min; m_max].
 
+	// Outputs user-specified values of the parameter to a stream.
+	std::ostream& ValueToStream(std::ostream& _s) override;
+	// Reads user-specified values of the parameter from a stream.
+	std::istream& ValueFromStream(std::istream& _s) override;
+
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
 	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
 };
@@ -218,6 +231,11 @@ public:
 	std::string GetValue() const;             ///< Returns string unit parameter value.
 	void SetValue(const std::string& _value); ///< Sets string unit parameter value.
 
+	// Outputs user-specified values of the parameter to a stream.
+	std::ostream& ValueToStream(std::ostream& _s) override;
+	// Reads user-specified values of the parameter from a stream.
+	std::istream& ValueFromStream(std::istream& _s) override;
+
 	void SaveToFile(CH5Handler& _h5Saver, const std::string& _path) const;
 	void LoadFromFile(const CH5Handler& _h5Loader, const std::string& _path);
 };
@@ -237,6 +255,11 @@ public:
 
 	bool IsChecked() const;			///< Returns check box unit parameter value.
 	void SetChecked(bool _checked); ///< Sets check box unit parameter value.
+
+	// Outputs user-specified values of the parameter to a stream.
+	std::ostream& ValueToStream(std::ostream& _s) override;
+	// Reads user-specified values of the parameter from a stream.
+	std::istream& ValueFromStream(std::istream& _s) override;
 
 	void SaveToFile(CH5Handler& _h5Saver, const std::string& _path) const;
 	void LoadFromFile(const CH5Handler& _h5Loader, const std::string& _path);
@@ -264,6 +287,11 @@ public:
 	void SetKey(const std::string& _key);   ///< Sets solver's key.
 	void SetSolverType(ESolverTypes _type); ///< Sets solver's type.
 	void SetSolver(CBaseSolver* _solver);	///< Sets pointer to a solver.
+
+	// Outputs user-specified values of the parameter to a stream.
+	std::ostream& ValueToStream(std::ostream& _s) override;
+	// Reads user-specified values of the parameter from a stream.
+	std::istream& ValueFromStream(std::istream& _s) override;
 
 	void SaveToFile(CH5Handler& _h5Saver, const std::string& _path) const;
 	void LoadFromFile(const CH5Handler& _h5Loader, const std::string& _path);
@@ -295,6 +323,11 @@ public:
 
 	bool IsInBounds() const override;				      ///< Checks whether m_selected is one of the m_items.
 
+	// Outputs user-specified values of the parameter to a stream.
+	std::ostream& ValueToStream(std::ostream& _s) override;
+	// Reads user-specified values of the parameter from a stream.
+	std::istream& ValueFromStream(std::istream& _s) override;
+
 	void SaveToFile(CH5Handler& _h5Saver, const std::string& _path) const;
 	void LoadFromFile(const CH5Handler& _h5Loader, const std::string& _path);
 };
@@ -314,6 +347,11 @@ public:
 
 	std::string GetCompound() const;			///< Returns key of currently selected compound.
 	void SetCompound(const std::string& _key);	///< Sets new compound's key.
+
+	// Outputs user-specified values of the parameter to a stream.
+	std::ostream& ValueToStream(std::ostream& _s) override;
+	// Reads user-specified values of the parameter from a stream.
+	std::istream& ValueFromStream(std::istream& _s) override;
 
 	void SaveToFile(CH5Handler& _h5Saver, const std::string& _path) const;
 	void LoadFromFile(const CH5Handler& _h5Loader, const std::string& _path);
@@ -351,6 +389,11 @@ public:
 	void SetReactions(const std::vector<CChemicalReaction>& _reactions);		// Sets new reactions replacing existing.
 
 	void RemoveReaction(size_t _index);											// Removes the selected reaction.
+
+	// Outputs user-specified values of the parameter to a stream.
+	std::ostream& ValueToStream(std::ostream& _s) override;
+	// Reads user-specified values of the parameter from a stream.
+	std::istream& ValueFromStream(std::istream& _s) override;
 
 	void SaveToFile(CH5Handler& _h5Saver, const std::string& _path) const;
 	void LoadFromFile(const CH5Handler& _h5Loader, const std::string& _path);

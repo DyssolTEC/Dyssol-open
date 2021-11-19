@@ -30,8 +30,7 @@ namespace StrConst
 	const char* const Dyssol_ConfigCachePath       = "cachePath";
 	const char* const Dyssol_CacheDirRelease       = "/cache";
 	const char* const Dyssol_CacheDirDebug         = "/cache_debug";
-	const char* const Dyssol_HelpDir			   = "Help";
-	const char* const Dyssol_HelpFileExt           = ".pdf";
+	const char* const Dyssol_HelpURL               = "https://flowsheetsimulation.github.io/Dyssol-open/";
 	const char* const Dyssol_MainWindowName        = "Dyssol";
 	const char* const Dyssol_MDBWindowName		   = "Materials Database";
 	const char* const Dyssol_FlowsheetTabName      = "Flowsheet";
@@ -44,10 +43,12 @@ namespace StrConst
 	const char* const Dyssol_DialogDflwFilter      = "DYSSOL files (*.dflw);;All files (*.*);;";
 	const char* const Dyssol_DialogTxtFilter       = "Text files (*.txt);;All files (*.*);;";
 	const char* const Dyssol_DialogGraphFilter     = "DOT files (*.gv);;All files (*.*);;";
+	const char* const Dyssol_DialogPNGFilter       = "PNG files (*.png);;All files (*.*);;";
 	const char* const Dyssol_DialogSaveName        = "Save flowsheet";
 	const char* const Dyssol_DialogOpenName        = "Open flowsheet";
 	const char* const Dyssol_DialogSaveConfigName  = "Save configuration file";
 	const char* const Dyssol_DialogSaveGraphName   = "Save graph file";
+	const char* const Dyssol_DialogSaveImageName   = "Save graph image file";
 	const char* const Dyssol_StatusLoadingTitle    = "Loading";
 	const char* const Dyssol_StatusLoadingText     = "Flowsheet is loading. <br/>Please wait";
 	const char* const Dyssol_StatusLoadingQuestion = "Terminate loading of the flowsheet?";
@@ -56,6 +57,87 @@ namespace StrConst
 	const char* const Dyssol_StatusSavingQuestion  = "Terminate saving of the flowsheet?";
 	const char* const Dyssol_AboutDyssolDescr      = "Dyssol: Dynamic Simulation of Solids Processes";
 	const char* const Dyssol_AppFolderPathLink     = "AppFolder.lnk";
+
+
+//////////////////////////////////////////////////////////////////////////
+/// DyssolC
+//////////////////////////////////////////////////////////////////////////
+	inline std::string DyssolC_WriteSrc(const std::string& src, const std::string& dst) {
+		return dst + " is not specified. " + src + " will be used to store simulation results"; }
+	inline std::string DyssolC_LoadMDB(const std::string& s) {
+		return "Loading materials database file: \n\t" + s; }
+	inline std::string DyssolC_LoadModels(const std::string& s) {
+		return "Loading models from: \n\t" + s; }
+	inline std::string DyssolC_LoadFlowsheet(const std::string& s) {
+		return "Loading flowsheet file: \n\t" + s; }
+	inline std::string DyssolC_SaveFlowsheet(const std::string& s) {
+		return "Saving flowsheet to: \n\t" + s; }
+	inline std::string DyssolC_Initialize()	{
+		return "Initializing flowsheet"; }
+	inline std::string DyssolC_Start() {
+		return "Starting simulation"; }
+	inline std::string DyssolC_ExportResults(const std::string& s)	{
+		return "Exporting results to: \n\t" + s; }
+	inline std::string DyssolC_ExportGraph(const std::string& s)	{
+		return "Exporting graph to: \n\t" + s; }
+	inline std::string DyssolC_ScriptFinished(const int64_t& time) {
+		return "Script job finished in " + std::to_string(time) + " [s]"; }
+	inline std::string DyssolC_SimFinished(const int64_t& time) {
+		return "Simulation finished in " + std::to_string(time) + " [s]"; }
+	inline std::string DyssolC_WarningUnknown(const std::string& s) {
+		return "Warning while parsing script file: Unknown keyword " + StringFunctions::Quote(s); }
+	inline std::string DyssolC_ErrorNoScript() {
+		return "Error: Unable to open script file"; }
+	inline std::string DyssolC_ErrorSrcDst(const std::string& src, const std::string& dst) {
+		return "Error: Neither " + src + " nor " + dst + " is specified. Aborting"; }
+	inline std::string DyssolC_ErrorMDB() {
+		return "Error: Unable to load materials database file"; }
+	inline std::string DyssolC_ErrorLoad() {
+		return "Error: Unable to load flowsheet file"; }
+	inline std::string DyssolC_ErrorExportFile() {
+		return "Error: Unable to open text file for export"; }
+	inline std::string DyssolC_ErrorGraphFile() {
+		return "Error: Unable to open graph file for export"; }
+	inline std::string DyssolC_ErrorNoUnit(const std::string& p, const std::string& n, size_t i) {
+		return "Error while applying " + p + ": \n\tCannot find a unit neither by its name " + StringFunctions::Quote(n) + " nor by its index " + std::to_string(i + 1); }
+	inline std::string DyssolC_ErrorLoadModel(const std::string& p, const std::string& s) {
+		return "Error while applying " + p + ": \n\tCannot load a model for unit " + StringFunctions::Quote(s); }
+	inline std::string DyssolC_ErrorNoUP(const std::string& p, const std::string& u, const std::string& n, size_t i) {
+		return "Error while applying " + p + ": \n\tCannot find a parameter in unit " + StringFunctions::Quote(u) + " neither by its name " + StringFunctions::Quote(n) + " nor by its index " + std::to_string(i + 1); }
+	inline std::string DyssolC_ErrorNoHoldup(const std::string& p, const std::string& u, const std::string& n, size_t i) {
+		return "Error while applying " + p + ": \n\tCannot find a holdup in unit " + StringFunctions::Quote(u) + " neither by its name " + StringFunctions::Quote(n) + " nor by its index " + std::to_string(i + 1); }
+	inline std::string DyssolC_ErrorArgumentsNumber(const std::string& p, const std::string& u, const std::string& n, size_t i) {
+		return "Error while applying " + p + ", unit " + StringFunctions::Quote(u) + ", holdup " + (!n.empty() ? StringFunctions::Quote(n) : std::to_string(i + 1)) + ":\n\tWrong number of arguments"; }
+	inline std::string DyssolC_ErrorArgumentsNumber(const std::string& p, const std::string& u, const std::string& n, size_t i, const std::string& ph, int64_t iph) {
+		return "Error while applying " + p + ", unit " + StringFunctions::Quote(u) + ", holdup " + (!n.empty() ? StringFunctions::Quote(n) : std::to_string(i + 1)) + ", phase " + (!ph.empty() ? ph : std::to_string(iph)) + ":\n\tWrong number of arguments"; }
+	inline std::string DyssolC_ErrorNoPhase(const std::string& p, const std::string& u, const std::string& n, size_t i, const std::string& ph, int64_t iph) {
+		return "Error while applying " + p + ", unit " + StringFunctions::Quote(u) + ", holdup " + (!n.empty() ? StringFunctions::Quote(n) : std::to_string(i + 1)) + ":\n\tPhase " + (!ph.empty() ? ph : std::to_string(iph)) + " is not defined in the flowsheet"; }
+	inline std::string DyssolC_ErrorNoCompound(const std::string& p, const std::string& u, const std::string& n, size_t i, const std::string& c) {
+		return "Error while applying " + p + ", unit " + StringFunctions::Quote(u) + ", holdup " + (!n.empty() ? StringFunctions::Quote(n) : std::to_string(i + 1)) + ":\n\tCannot find compound " + c + " neither by its name nor by its key"; }
+	inline std::string DyssolC_ErrorNoDistribution(const std::string& p, const std::string& u, const std::string& n, size_t i, const std::string& d, int64_t id) {
+		return "Error while applying " + p + ", unit " + StringFunctions::Quote(u) + ", holdup " + (!n.empty() ? StringFunctions::Quote(n) : std::to_string(i + 1)) + ":\n\tDistribution " + (!d.empty() ? d : std::to_string(id)) + " is not defined in the flowsheet"; }
+	inline std::string DyssolC_ErrorArgumentsNumberGrid(const std::string& p, const std::string& u, const std::string& n, int64_t i) {
+		return "Error while applying " + p + ", unit " + StringFunctions::Quote(u) + ", distribution " + (!n.empty() ? StringFunctions::Quote(n) : std::to_string(i + 1)) + ":\n\tWrong number of arguments"; }
+	inline std::string DyssolC_ErrorArgumentsNumberUnit(const std::string& p) {
+		return "Error while applying " + p + ": \n\tWrong number of arguments"; }
+	inline std::string DyssolC_ErrorNoCompounds(const std::string& p, const std::string& c) {
+		return "Error while applying " + p + ": \n\tCannot find a compound " + StringFunctions::Quote(c) + " neither by its name nor by its key"; }
+	inline std::string DyssolC_ErrorNoModel(const std::string& p, const std::string& v) {
+		return "Error while applying " + p + ": \n\tCannot find a model " + StringFunctions::Quote(v) + " neither by its unique ID, name nor by its path"; }
+	inline std::string DyssolC_ErrorNoPort(const std::string& p, const std::string& u, const std::string& n, size_t i) {
+		return "Error while applying " + p + ": \n\tCannot find a port neither by its name " + StringFunctions::Quote(n) + " nor by its index " + std::to_string(i + 1) + " in unit " + StringFunctions::Quote(u); }
+	inline std::string DyssolC_ErrorNoStream(const std::string& p, const std::string& n, uint64_t i) {
+		return "Error while applying " + p + ": \n\tCannot find a stream neither by its name " + StringFunctions::Quote(n) + " nor by its index " + std::to_string(i + 1); }
+	inline std::string DyssolC_ErrorNoStateVar(const std::string& p, const std::string& u, const std::string& n, size_t i) {
+		return "Error while applying " + p + ": \n\tCannot find a state variable in unit " + StringFunctions::Quote(u) + " neither by its name " + StringFunctions::Quote(n) + " nor by its index " + std::to_string(i + 1); }
+	inline std::string DyssolC_ErrorNoPlot(const std::string& p, const std::string& u, const std::string& n, size_t i) {
+		return "Error while applying " + p + ": \n\tCannot find a plot in unit " + StringFunctions::Quote(u) + " neither by its name " + StringFunctions::Quote(n) + " nor by its index " + std::to_string(i + 1); }
+	inline std::string DyssolC_ErrorNoCurve(const std::string& p, const std::string& u, const std::string& d, const std::string& n, size_t i) {
+		return "Error while applying " + p + ": \n\tCannot find a curve in plot " + StringFunctions::Quote(d) + " in unit " + StringFunctions::Quote(u) + " neither by its name " + StringFunctions::Quote(n) + " nor by its index " + std::to_string(i + 1); }
+	inline std::string DyssolC_ErrorInit(const std::string& s) {
+		return "Error during initialization: " + s; }
+	inline std::string DyssolC_ErrorFinish() {
+		return "Finished with errors!"; }
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -501,13 +583,13 @@ namespace StrConst
 //////////////////////////////////////////////////////////////////////////
 /// CH5Handler
 //////////////////////////////////////////////////////////////////////////
-	const std::wstring HDF5H_FileExt		   = L"dflw";
-	const std::wstring HDF5H_DotFileExt		   = L"." + HDF5H_FileExt;
-	const std::wstring HDF5H_FileExtSpec	   = L"%d";
-	const std::wstring HDF5H_FileExtInitRegex  = LR"(\[\[([0-9]+)\]\])";
-	const std::wstring HDF5H_FileExtFinalRegex = LR"(\[\[(%d)\]\])";
-	const std::wstring HDF5H_FileExtMult	   = L"[[" + HDF5H_FileExtSpec + L"]]";
-	const std::wstring HDF5H_DotFileExtMult	   = L"." + HDF5H_FileExtMult;
+	const std::string HDF5H_FileExt		       = "dflw";
+	const std::string HDF5H_DotFileExt		   = "." + HDF5H_FileExt;
+	const std::string HDF5H_FileExtSpec	       = "%d";
+	const std::string HDF5H_FileExtInitRegex   = R"(\[\[([0-9]+)\]\])";
+	const std::string HDF5H_FileExtFinalRegex  = R"(\[\[(%d)\]\])";
+	const std::string HDF5H_FileExtMult	       = "[[" + HDF5H_FileExtSpec + "]]";
+	const std::string HDF5H_DotFileExtMult	   = "." + HDF5H_FileExtMult;
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -551,9 +633,9 @@ namespace StrConst
 	const char* const MM_ConfigModelsParamName	     = "modelsFolders";
 	const char* const MM_ConfigModelsFlagsParamName  = "modelsFoldersActivity";
 #ifdef _MSC_VER
-	const wchar_t* const MM_LibraryFileExtension     = L".dll";
+	const char* const MM_LibraryFileExtension     = ".dll";
 #else
-	const wchar_t* const MM_LibraryFileExtension     = L".so";
+	const char* const MM_LibraryFileExtension     = ".so";
 #endif
 
 
@@ -661,9 +743,9 @@ namespace StrConst
 //////////////////////////////////////////////////////////////////////////
 /// CModulesManagerTab
 //////////////////////////////////////////////////////////////////////////
-	const char* const MMT_Dynamic     = " Dynamic Unit";
-	const char* const MMT_SteadyState = " Steady-state Unit";
-	const char* const MMT_Solver      = " Solver";
+	const char* const MMT_Dynamic     = "Dynamic unit";
+	const char* const MMT_SteadyState = "Steady-state unit";
+	const char* const MMT_Solver      = "solver";
 
 //////////////////////////////////////////////////////////////////////////
 /// CCalculationSequenceEditor

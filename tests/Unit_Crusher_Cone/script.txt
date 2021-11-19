@@ -1,0 +1,38 @@
+JOB 
+RESULT_FILE               ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/res.dflw
+MODELS_PATH               ${CMAKE_BINARY_DIR}/Units
+MODELS_PATH               ${CMAKE_BINARY_DIR}/Solvers
+MATERIALS_DATABASE        ${CMAKE_SOURCE_DIR}/Materials.dmdb
+EXPORT_FILE               ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
+EXPORT_SIGNIFICANCE_LIMIT 1e-07
+
+SIMULATION_TIME    60
+RELATIVE_TOLERANCE 1e-07
+ABSOLUTE_TOLERANCE 1e-07
+
+COMPOUNDS         "Sand" "Coal" 
+PHASES            "Solids" SOLID 
+DISTRIBUTION_GRID "GLOBAL" SIZE NUMERIC EQUIDISTANT DIAMETER 300 0 30e-3
+
+UNIT "In" "InletFlow" 
+UNIT "Crusher" "Crusher" 
+UNIT "Out" "OutletFlow" 
+
+STREAM "In" "In" "InletMaterial" "Crusher" "Input"
+STREAM "Out" "Crusher" "Output" "Out" "In"
+
+UNIT_PARAMETER "Crusher" "Model" 2
+UNIT_PARAMETER "Crusher" "CSS" 0.018
+UNIT_PARAMETER "Crusher" "alpha1" 0.83
+UNIT_PARAMETER "Crusher" "alpha2" 1.85
+UNIT_PARAMETER "Crusher" "n" 1.7
+UNIT_PARAMETER "Crusher" "d'" 0.01
+UNIT_PARAMETER "Crusher" "q" 0.05
+
+HOLDUP_OVERALL      "In" "InputMaterial" 0 10 300 100000
+HOLDUP_PHASES       "In" "InputMaterial" 0 1
+HOLDUP_COMPOUNDS    "In" "InputMaterial" SOLID 0 0.5 0.5
+HOLDUP_DISTRIBUTION "In" "InputMaterial" SIZE MIXTURE Q3_DENSITY DIAMETER NORMAL 0 0.02 0.002
+
+EXPORT_STREAM_MASS Out
+EXPORT_STREAM_PSD  Out

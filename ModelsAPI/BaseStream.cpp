@@ -439,6 +439,7 @@ void CBaseStream::SetCompoundFraction(double _time, const std::string& _compound
 
 void CBaseStream::SetCompoundsFractions(double _time, const std::vector<double>& _value)
 {
+	AddTimePoint(_time);
 	for (const auto& [state, phase] : m_phases)
 		phase->SetCompoundsDistribution(_time, _value);
 }
@@ -447,6 +448,7 @@ void CBaseStream::SetCompoundsFractions(double _time, EPhase _phase, const std::
 {
 	if (!HasPhase(_phase)) return;
 
+	AddTimePoint(_time);
 	m_phases[_phase]->SetCompoundsDistribution(_time, _value);
 }
 
@@ -589,7 +591,7 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 			for (const auto& c : GetAllCompounds())
 			{
 				const double visco = m_materialsDB->GetTPPropertyValue(c, _property, T, P);
-				if (visco != 0.0)
+				if (visco > 0.0)
 					res += GetCompoundFraction(_time, c, _phase) * std::log(visco);
 			}
 			if (res != 0.0)
@@ -622,7 +624,8 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 		{
 		case EPhase::LIQUID:
 			for (const auto& c : GetAllCompounds())
-				res += GetCompoundMolFraction(_time, c, _phase) / std::pow(m_materialsDB->GetTPPropertyValue(c, _property, T, P), 2.0);
+				if (const auto conduct = m_materialsDB->GetTPPropertyValue(c, _property, T, P); conduct != 0.0)
+					res += GetCompoundMolFraction(_time, c, _phase) / std::pow(conduct, 2.0);
 			if (res != 0.0)
 				return 1.0 / std::sqrt(res);
 			break;
@@ -637,8 +640,8 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 				{
 					const double conduct2 = m_materialsDB->GetTPPropertyValue(c2, _property, T, P);
 					const double mollMass2 = GetCompoundProperty(c2, MOLAR_MASS);
-					const double f = std::pow((1 + std::sqrt(conduct1 / conduct2) * std::pow(mollMass2 / mollMass1, 1.0 / 4.0)), 2) / std::sqrt(8 * (1 + mollMass1 / mollMass2));
-					denominator += GetCompoundMolFraction(_time, c2, _phase) * f;
+					if (mollMass1 != 0.0 && mollMass2 != 0.0 && conduct2 != 0.0)
+						denominator += GetCompoundMolFraction(_time, c2, _phase) * std::pow(1 + std::sqrt(conduct1 / conduct2) * std::pow(mollMass2 / mollMass1, 1. / 4.), 2) / std::sqrt(8 * (1 + mollMass1 / mollMass2));
 				}
 				if (denominator != 0.0)
 					res += numerator / denominator;
@@ -658,12 +661,12 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 			CMatrix2D distr = m_phases.at(_phase)->MDDistr()->GetDistribution(_time, DISTR_COMPOUNDS, DISTR_PART_POROSITY);
 			const size_t nCompounds = compounds.size();
 			const size_t nPorosities = m_grid.GetGridDimension(DISTR_PART_POROSITY)->ClassesNumber();
-			const std::vector<double> vPorosities = m_grid.GetGridDimensionNumeric(DISTR_PART_POROSITY)->GetClassesMeans();
+			const std::vector<double> porosities = m_grid.GetGridDimensionNumeric(DISTR_PART_POROSITY)->GetClassesMeans();
 			for (size_t iCompound = 0; iCompound < nCompounds; ++iCompound)
 			{
 				const double density = GetCompoundProperty(_time, compounds[iCompound], DENSITY);
 				for (size_t iPoros = 0; iPoros < nPorosities; ++iPoros)
-					res += density * (1 - vPorosities[iPoros]) * distr[iCompound][iPoros];
+					res += density * (1 - porosities[iPoros]) * distr[iCompound][iPoros];
 			}
 			return res;
 		}
@@ -1685,6 +1688,14 @@ CBaseStream::mix_type CBaseStream::CalculateMix(double _time1, const CBaseStream
 		mixDistr[key] = CalculateMixDistribution(_time1, _stream1, _mass1, _time2, _stream2, _mass2, key);
 	}
 
+	// normalize fractions
+	double sum = 0.0;
+	for (const auto& [key, param] : _stream1.m_phases)
+		sum += mixPhaseFrac[key];
+	if (sum != 0.0 && sum != 1.0)
+		for (const auto& [key, param] : _stream1.m_phases)
+			mixPhaseFrac[key] /= sum;
+
 	return { mixOverall, mixPhaseFrac, mixDistr };
 }
 
@@ -1717,20 +1728,28 @@ double CBaseStream::CalculateMixPressure(double _time1, const CBaseStream& _stre
 double CBaseStream::CalculateMixTemperature(double _time1, const CBaseStream& _stream1, double _mass1, double _time2, const CBaseStream& _stream2, double _mass2)
 {
 	// TODO: check that T is in limits of lookup
-	// get enthalpies
-	const double enthalpy1 = _stream1.CalculateEnthalpyFromTemperature(_time1);
-	const double enthalpy2 = _stream2.CalculateEnthalpyFromTemperature(_time2);
+	// get and check current temperatures
+	const auto temperature1 = _stream1.GetTemperature(_time1);
+	const auto temperature2 = _stream2.GetTemperature(_time2);
+	if (temperature1 == temperature2)
+		return temperature1;
 	// calculate total mass
 	const double massMix = _mass1 + _mass2;
 	// if no material at all, return some arbitrary temperature
 	if (massMix == 0.0)
-		return (_stream1.GetTemperature(_time1) + _stream2.GetTemperature(_time2)) / 2.0;
+		return 0.0;
+	// get and check lookup tables for enthalpies
+	const CMixtureEnthalpyLookup& lookup1 = *_stream1.GetEnthalpyCalculator();
+	const CMixtureEnthalpyLookup& lookup2 = *_stream2.GetEnthalpyCalculator();
+	if (lookup1.Size() == 1 && lookup2.Size() == 1 && lookup1 == lookup2)
+		return (temperature1 * _mass1 + temperature2 * _mass2) / massMix;
+	// get enthalpies
+	const double enthalpy1 = _stream1.CalculateEnthalpyFromTemperature(_time1);
+	const double enthalpy2 = _stream2.CalculateEnthalpyFromTemperature(_time2);
 	// calculate (specific) total enthalpy
 	const double enthalpyMix = (enthalpy1 * _mass1 + enthalpy2 * _mass2) / massMix;
 	// combine both enthalpy tables for mixture enthalpy table
-	const CMixtureEnthalpyLookup* lookup1 = _stream1.GetEnthalpyCalculator();
-	const CMixtureEnthalpyLookup* lookup2 = _stream2.GetEnthalpyCalculator();
-	const CMixtureEnthalpyLookup lookupMix = *lookup1 * (_mass1 / massMix) + *lookup2 * (_mass2 / massMix);
+	const CMixtureEnthalpyLookup lookupMix = lookup1 * (_mass1 / massMix) + lookup2 * (_mass2 / massMix);
 	// read out new temperature
 	return lookupMix.GetTemperature(enthalpyMix);
 }

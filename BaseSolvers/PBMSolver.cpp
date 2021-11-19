@@ -2,27 +2,27 @@
 
 #include "PBMSolver.h"
 
-CPBMSolver::CPBMSolver()
+CPBMSolver::CPBMSolver() : CBaseSolver()
 {
-	m_solverType = ESolverTypes::SOLVER_PBM_1;
+	m_type = ESolverTypes::SOLVER_PBM_1;
 }
 
-void CPBMSolver::SetInitialHoldup(const CHoldup* _pHoldup)
-{
-
-}
-
-void CPBMSolver::SetInputStream(const CStream* _pStream)
+void CPBMSolver::SetInitialHoldup(const CHoldup* _holdup)
 {
 
 }
 
-void CPBMSolver::SetOutputStream(double _dMassFlow)
+void CPBMSolver::SetInputStream(const CStream* _stream)
 {
 
 }
 
-void CPBMSolver::Calculate(double _dTStart, double _dTEnd)
+void CPBMSolver::SetOutputStream(double _massFlow)
+{
+
+}
+
+void CPBMSolver::Calculate(double _timeBeg, double _timeEnd)
 {
 
 }
