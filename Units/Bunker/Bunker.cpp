@@ -14,7 +14,7 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 void CBunker::CreateBasicInfo()
 {
 	/// Basic unit's info ///
-	SetUnitName("Bunker");
+	SetUnitName("Solids bunker");
 	SetAuthorName("SPE TUHH");
 	SetUniqueID("A5D7F41322C949EC86C96C583A35501F");
 }
@@ -38,250 +38,207 @@ void CBunker::CreateStructure()
 	AddStream("InflowBypass");
 
 	/// Set this unit as user data of model ///
-	m_Model.SetUserData(this);
+	m_model.SetUserData(this);
 }
 
-void CBunker::Initialize(double _dTime)
+void CBunker::Initialize(double _time)
 {
 	/// Check presence of solid phase ///
 	if (!IsPhaseDefined(EPhase::SOLID))
 		RaiseError("Solid phase has not been defined.");
-	// Pointer to holdup stream
-	CHoldup* pHoldup = GetHoldup("Holdup");
 
-	const size_t nNumDistr = GetDistributionsNumber();
+	// unit parameters
+	m_targetMass = GetConstRealParameterValue("Target mass");
+
+	// Pointers to streams
+	m_holdup   = GetHoldup("Holdup");
+	m_inlet    = GetPortStream("Inflow");
+	m_outlet   = GetPortStream("Outflow");
+	m_inSolid  = GetStream("InflowSolid");
+	m_inBypass = GetStream("InflowBypass");
+
+	// Flowsheet settings
+	m_compoundsNum  = GetCompoundsNumber();
+	m_distrsNum     = GetDistributionsNumber();
+	m_distributions = GetDistributionsTypes();
 
 	/// Prepare holdup ///
-	std::vector<double> vTimePoints = pHoldup->GetAllTimePoints();
-	if (vTimePoints.empty())
+	const std::vector<double> timePoints = m_holdup->GetAllTimePoints();
+	if (timePoints.empty())
 	{
 		RaiseError("No initial state of bunker at time point 't = 0' found.");
 		return;
 	}
-	if (vTimePoints[0] != 0.0)
+	if (timePoints[0] != 0.0)
 	{
 		RaiseError("No initial state of bunker at time point 't = 0' found.");
 		return;
 	}
-	if (vTimePoints.size() > 1)
+	if (timePoints.size() > 1)
 	{
 		RaiseWarning("Neglecting all time points of bunker after 't = 0'.");
-		pHoldup->RemoveTimePointsAfter(_dTime);
+		m_holdup->RemoveTimePointsAfter(_time);
 	}
 
-	const double dMass = pHoldup->GetMass(_dTime);
-	const double dMassSolid = pHoldup->GetPhaseMass(_dTime, EPhase::SOLID);
-	if (dMass != dMassSolid)
+	if (m_holdup->GetPhaseFraction(_time, EPhase::SOLID) != 1.0)
 	{
-		RaiseWarning("The holdup of the bunker model can only contain solids. Removing all other phases from bunker holdup than the solid phase.");
-		pHoldup->SetMass(_dTime, 0);
-		pHoldup->SetPhaseMass(_dTime, EPhase::SOLID, dMassSolid);
+		RaiseWarning("The holdup of the bunker model can only contain solids. Removing all other phases from the bunker holdup.");
+		m_holdup->SetMass(_time, m_holdup->GetPhaseMass(_time, EPhase::SOLID));
+		for (const auto& p : GetAllPhases())
+			m_holdup->SetPhaseFraction(_time, p, p == EPhase::SOLID ? 1.0 : 0.0);
 	}
 
 	/// Clear all state variables in model ///
-	m_Model.ClearVariables();
+	m_model.ClearVariables();
 
 	/// Add state variables to the model ///
-	const double dMassBunker_Init = pHoldup->GetMass(_dTime);
+	const double initMass = m_holdup->GetMass(_time);
 
-	m_Model.m_nMassBunker = m_Model.AddDAEVariable(true, dMassBunker_Init, 0, 0);
-	m_Model.m_nMflow_Out = m_Model.AddDAEVariable(false, 0, 0, 0);
-	m_Model.m_nNormMflow = m_Model.AddDAEVariable(true, 1, 0, 0);
-	m_Model.m_nNormT = m_Model.AddDAEVariable(true, 1, 0, 0);
-	m_Model.m_nNormP = m_Model.AddDAEVariable(true, 1, 0, 0);
-	m_Model.m_nNormCompounds = m_Model.AddDAEVariable(true, 1, 0, 0);
-
-	m_Model.m_vnNormDistr.resize(nNumDistr);
-	for (size_t k = 0; k < nNumDistr; ++k)
-		m_Model.m_vnNormDistr[k] = m_Model.AddDAEVariable(true, 1, 0, 0);
+	m_model.m_iMass          = m_model.AddDAEVariable(true, initMass, 0, 0);
+	m_model.m_iMflowOut      = m_model.AddDAEVariable(false, 0, 0, 0);
+	m_model.m_iNormMflow     = m_model.AddDAEVariable(true, 1, 0, 0);
+	m_model.m_iNormT         = m_model.AddDAEVariable(true, 1, 0, 0);
+	m_model.m_iNormP         = m_model.AddDAEVariable(true, 1, 0, 0);
+	m_model.m_iNormCompounds = m_model.AddDAEVariable(true, 1, 0, 0);
+	m_model.m_iNormDistr     = m_model.AddDAEVariables(true, std::vector(m_distrsNum, 1.0), 0, 0);
 
 	/// Set tolerances to the model ///
 	const auto rtol = GetConstRealParameterValue("Relative tolerance");
 	const auto atol = GetConstRealParameterValue("Absolute tolerance");
-	m_Model.SetTolerance(rtol != 0.0 ? rtol : GetRelTolerance(), atol != 0.0 ? atol : GetAbsTolerance());
+	m_model.SetTolerance(rtol != 0.0 ? rtol : GetRelTolerance(), atol != 0.0 ? atol : GetAbsTolerance());
 
 	/// Set model to the solver ///
-	if (!m_Solver.SetModel(&m_Model))
-		RaiseError(m_Solver.GetError());
+	if (!m_solver.SetModel(&m_model))
+		RaiseError(m_solver.GetError());
 }
 
-void CBunker::Simulate(double _dStartTime, double _dEndTime)
+void CBunker::Simulate(double _timeBeg, double _timeEnd)
 {
-	// Pointer to inlet and outlet stream
-	CStream* pInStream = GetPortStream("Inflow");
-
-	// Pointer to internal stream
-	CStream* pInSolid = GetStream("InflowSolid");
-	CStream* pInBypass = GetStream("InflowBypass");
-
-	pInSolid->RemoveTimePointsAfter(_dStartTime);
-	pInBypass->RemoveTimePointsAfter(_dStartTime);
+	m_inSolid->RemoveTimePointsAfter(_timeBeg);
+	m_inBypass->RemoveTimePointsAfter(_timeBeg);
 
 	/// Bypass non solid phases ///
-	std::vector<double> vTimePoints = pInStream->GetTimePointsClosed(_dStartTime, _dEndTime);
-
-	for (double time : vTimePoints)
+	for (const double time : m_inlet->GetTimePointsClosed(_timeBeg, _timeEnd))
 	{
-		const double dMflow_Solid = pInStream->GetPhaseMassFlow(time, EPhase::SOLID);
+		m_inSolid->CopyFromStream(time, m_inlet);
+		m_inSolid->SetMassFlow(time, m_inlet->GetPhaseMassFlow(time, EPhase::SOLID));
+		for (const auto& p : GetAllPhases())
+			m_inSolid->SetPhaseFraction(time, p, p == EPhase::SOLID ? 1.0 : 0.0);
 
-		pInSolid->CopyFromStream(time, pInStream);
-		pInSolid->SetMassFlow(time, 0.0);
-		pInSolid->SetPhaseMassFlow(time, EPhase::SOLID, dMflow_Solid);
-
-		pInBypass->CopyFromStream(time, pInStream);
-		pInBypass->SetMassFlow(time, 0);
-
-		if (IsPhaseDefined(EPhase::VAPOR))
-			pInBypass->SetPhaseMassFlow(time, EPhase::VAPOR, pInStream->GetPhaseMassFlow(time, EPhase::VAPOR));
-		if (IsPhaseDefined(EPhase::LIQUID))
-			pInBypass->SetPhaseMassFlow(time, EPhase::LIQUID, pInStream->GetPhaseMassFlow(time, EPhase::LIQUID));
+		m_inBypass->CopyFromStream(time, m_inlet);
+		m_inBypass->SetPhaseMassFlow(time, EPhase::SOLID, 0.0);
 	}
 
 	/// Run solver ///
-	if (!m_Solver.Calculate(_dStartTime, _dEndTime))
-		RaiseError(m_Solver.GetError());
+	// iterate over all input time point to properly react on all signal changes
+	const auto allTP = GetAllTimePointsClosed(_timeBeg, _timeEnd);
+	for (size_t i = 0; i < allTP.size() - 1; ++i)
+		if (!m_solver.Calculate(allTP[i], allTP[i + 1]))
+			RaiseError(m_solver.GetError());
 }
 
 void CBunker::SaveState()
 {
 	/// Save solver's state ///
-	m_Solver.SaveState();
+	m_solver.SaveState();
 }
 
 void CBunker::LoadState()
 {
 	/// Load solver's state ///
-	m_Solver.LoadState();
+	m_solver.LoadState();
 }
 
 //////////////////////////////////////////////////////////////////////////
 /// Solver
 
-void CMyDAEModel::ResultsHandler(double _time, double* _pVars, double* _pDerivs, void* _pUserData)
+void CMyDAEModel::ResultsHandler(double _time, double* _vars, double* _ders, void* _unit)
 {
 	/// General information ///
-	auto* unit = static_cast<CBunker*>(_pUserData);
+	const auto* unit = static_cast<CBunker*>(_unit);
 
-	// Pointer to inlet and outlet stream
-	CStream* pOutStream = unit->GetPortStream("Outflow");
+	const double timePrev = unit->m_holdup->GetPreviousTimePoint(_time);
 
-	// Pointer to internal stream
-	CStream* pInSolid = unit->GetStream("InflowSolid");
-	CStream* pInBypass = unit->GetStream("InflowBypass");
+	unit->m_holdup->AddStream(timePrev, _time, unit->m_inSolid);
+	unit->m_holdup->SetMass(_time, _vars[m_iMass]);
 
-	// Pointer to holdup stream
-	CHoldup* pHoldup = unit->GetHoldup("Holdup");
-
-	// Previous time point of inlet stream
-	double dTimePrev = 0;
-	if (_time > 0)
-	{
-		dTimePrev = pHoldup->GetPreviousTimePoint(_time);
-		pHoldup->RemoveTimePointsAfter(dTimePrev);
-		/// Add input to bunker ///
-		pHoldup->AddStream(dTimePrev, _time, pInSolid);
-	}
-
-	std::vector<double> vTimePoints = pHoldup->GetTimePointsClosed(dTimePrev, _time);
-
-	for (size_t i = 1; i < vTimePoints.size() - 1; ++i)
-		pHoldup->RemoveTimePoint(vTimePoints[i]);
-
-	pHoldup->SetMass(_time, _pVars[m_nMassBunker]);
-
-	pOutStream->CopyFromHoldup(_time, pHoldup, _pVars[m_nMflow_Out]);
-	pOutStream->AddStream(_time, pInBypass);
+	unit->m_outlet->CopyFromHoldup(_time, unit->m_holdup, _vars[m_iMflowOut]);
+	unit->m_outlet->AddStream(_time, unit->m_inBypass);
 }
 
-void CMyDAEModel::CalculateResiduals(double _time, double* _pVars, double* _pDers, double* _pRes, void* _pUserData)
+void CMyDAEModel::CalculateResiduals(double _time, double* _vars, double* _ders, double* _res, void* _unit)
 {
-	/// General information ///
 	// Pointer to unit
-	auto* unit = static_cast<CBunker*>(_pUserData);
-	// Parameter for bunker capacity
-	const double dMassBunker_Target = unit->GetConstRealParameterValue("Target mass");
-	// Pointer to internal stream
-	CStream* pInSolid = unit->GetStream("InflowSolid");
+	const auto* unit = static_cast<CBunker*>(_unit);
 
 	// Previous time point of inlet stream
-	const double dTimePrev = pInSolid->GetPreviousTimePoint(_time);
-
-	/// Flowsheet setup ///
-	const size_t nNumCompounds = unit->GetCompoundsNumber();
-	const size_t nNumDistr = unit->GetDistributionsNumber();
-	const std::vector<EDistrTypes> vDistrTypes = unit->GetDistributionsTypes();
+	const double timePrev = unit->m_inSolid->GetPreviousTimePoint(_time);
 
 	/// Inflow ///
-	const double dMflow_In = pInSolid->GetMassFlow(_time);
+	const double MflowIn = unit->m_inSolid->GetMassFlow(_time);
 
 	/// Outflow ///
-	const double dMflow_Out = _pVars[m_nMflow_Out];
+	const double MflowOut = _vars[m_iMflowOut];
 
 	/// MTP values ///
 	// Bunker mass
-	const double dMassBunker = _pVars[m_nMassBunker];
+	const double massBunker = _vars[m_iMass];
 	// Mass flows at last and current time points
-	const double dMflowPrev = pInSolid->GetMassFlow(dTimePrev);
-	const double dMflow = pInSolid->GetMassFlow(_time);
-	const double dNormMflow_update = std::pow(dMflow - dMflowPrev, 2);
+	const double MflowPrev       = unit->m_inSolid->GetMassFlow(timePrev);
+	const double MflowCurr       = unit->m_inSolid->GetMassFlow(_time);
+	const double normMflowUpdate = std::pow(MflowCurr - MflowPrev, 2);
 	// Temperatures at last and current time points
-	const double dTPrev = pInSolid->GetTemperature(dTimePrev);
-	const double dT = pInSolid->GetTemperature(_time);
-	const double dNormT_update = std::pow(dT - dTPrev, 2);
+	const double TPrev       = unit->m_inSolid->GetTemperature(timePrev);
+	const double TCurr       = unit->m_inSolid->GetTemperature(_time);
+	const double normTUpdate = std::pow(TCurr - TPrev, 2);
 	// Pressures at last and current time points
-	const double dPPrev = pInSolid->GetPressure(dTimePrev);
-	const double dP = pInSolid->GetPressure(_time);
-	const double dNormP_update = std::pow(dP - dPPrev, 2);
+	const double PPrev       = unit->m_inSolid->GetPressure(timePrev);
+	const double PCurr       = unit->m_inSolid->GetPressure(_time);
+	const double normPUpdate = std::pow(PCurr - PPrev, 2);
 
 	/// Compound fractions ///
 	// Declare norm vector for phase compound fractions
-	double dNormCompounds_update = 0;
+	double normCompoundsUpdate = 0.0;
 	// Loop for phase compound fractions
-	for (size_t j = 0; j < nNumCompounds; ++j)
 	for (const auto& compound : unit->GetAllCompounds())
 	{
 		// Phase compound fractions at last time point
-		const double dTempCompPhaseFracPrev = pInSolid->GetCompoundFraction(dTimePrev, compound, EPhase::SOLID);
+		const double compPhaseFracPrev = unit->m_inSolid->GetCompoundFraction(timePrev, compound, EPhase::SOLID);
 		// Phase compound fractions at current time point
-		const double dTempCompPhaseFrac = pInSolid->GetCompoundFraction(_time, compound, EPhase::SOLID);
+		const double compPhaseFracCurr = unit->m_inSolid->GetCompoundFraction(_time, compound, EPhase::SOLID);
 		// Squared difference of phase compound fractions
-		dNormCompounds_update += std::pow(dTempCompPhaseFracPrev - dTempCompPhaseFrac, 2);
+		normCompoundsUpdate += std::pow(compPhaseFracCurr - compPhaseFracPrev, 2);
 	}
 	// Root of sum for 2-norm calculation for phase compound fractions
-	dNormCompounds_update = std::sqrt(dNormCompounds_update);
+	normCompoundsUpdate = std::sqrt(normCompoundsUpdate);
 
 	/// Multidimensional distributions ///
 	// Declare norm vector for distributions
-	std::vector<double> vNormDistr_update(nNumDistr);
-	for (size_t k = 0; k < nNumDistr; ++k)
+	std::vector<double> normDistrUpdate(unit->m_distrsNum);
+	for (size_t i = 0; i < unit->m_distrsNum; ++i)
 	{
-		// Number of classes of current distribution
-		const size_t nNumClasses = unit->GetClassesNumber(vDistrTypes[k]);
 		// Distribution vector at previous time point
-		std::vector<double> vDistrPrev = pInSolid->GetDistribution(dTimePrev, vDistrTypes[k]);
+		std::vector<double> distrPrev = unit->m_inSolid->GetDistribution(timePrev, unit->m_distributions[i]);
 		// Distribution vector at current time point
-		std::vector<double> vDistr = pInSolid->GetDistribution(_time, vDistrTypes[k]);
-
+		std::vector<double> distrCurr = unit->m_inSolid->GetDistribution(_time, unit->m_distributions[i]);
 		// Calculate squared sum of differences between distribution vectors
-		for (size_t l = 0; l < nNumClasses; ++l)
-			vNormDistr_update[k] += std::pow(vDistr[l] - vDistrPrev[l], 2);
-
+		for (size_t j = 0; j < distrCurr.size(); ++j)
+			normDistrUpdate[i] += std::pow(distrCurr[j] - distrPrev[j], 2);
 		// Root of sum for 2-norm calculation for distributions
-		vNormDistr_update[k] = std::sqrt(vNormDistr_update[k]);
+		normDistrUpdate[i] = std::sqrt(normDistrUpdate[i]);
 	}
 
 	/// Calculate residuals ///
 	// Bunker mass
-	_pRes[m_nMassBunker] = -_pDers[m_nMassBunker] + dMflow_In - dMflow_Out;
-	_pRes[m_nMflow_Out] = -_pVars[m_nMflow_Out] + std::pow(2 * dMassBunker / (dMassBunker + dMassBunker_Target),2) * dMflow_In;
+	_res[m_iMass]          = _ders[m_iMass]          - (MflowIn - MflowOut);
+	_res[m_iMflowOut]      = _vars[m_iMflowOut]      - std::pow(2 * massBunker / (massBunker + unit->m_targetMass), 2) * MflowIn;
 
 	// Residuals of the derivatives equal the difference in the respective norms from from the last value of the
-	_pRes[m_nNormMflow] = -_pDers[m_nNormMflow] + (dNormMflow_update - _pVars[m_nNormMflow]);
-	_pRes[m_nNormT] = -_pDers[m_nNormT] + (dNormT_update - _pVars[m_nNormT]);
-	_pRes[m_nNormP] = -_pDers[m_nNormP] + (dNormP_update - _pVars[m_nNormP]);
+	_res[m_iNormMflow]     = _ders[m_iNormMflow]     - (normMflowUpdate     - _vars[m_iNormMflow]);
+	_res[m_iNormT]         = _ders[m_iNormT]         - (normTUpdate         - _vars[m_iNormT]);
+	_res[m_iNormP]         = _ders[m_iNormP]         - (normPUpdate         - _vars[m_iNormP]);
+	_res[m_iNormCompounds] = _ders[m_iNormCompounds] - (normCompoundsUpdate - _vars[m_iNormCompounds]);
 
-	_pRes[m_nNormCompounds] = -_pDers[m_nNormCompounds] + (dNormCompounds_update - _pVars[m_nNormCompounds]);
-
-	for (size_t k = 0; k < nNumDistr; ++k)
-		_pRes[m_vnNormDistr[k]] = -_pDers[m_vnNormDistr[k]] + (vNormDistr_update[k] - _pVars[m_vnNormDistr[k]]);
+	for (size_t i = 0; i < unit->m_distrsNum; ++i)
+		_res[m_iNormDistr + i] = _ders[m_iNormDistr + i] - (normDistrUpdate[i] - _vars[m_iNormDistr + i]);
 }

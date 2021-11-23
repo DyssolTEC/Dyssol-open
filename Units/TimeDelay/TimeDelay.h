@@ -32,9 +32,9 @@ public:
 	CStream* m_outlet{};	// Outlet stream.
 	CStream* m_stream{};	// Temporal storage of inlet data.
 
-	size_t m_compoundsNum;						// Number of defined compounds.
-	size_t m_phasesNum;							// Number of defined phases.
-	size_t m_distrsNum;							// Number of defined distributions.
+	size_t m_compoundsNum{};					// Number of defined compounds.
+	size_t m_phasesNum{};						// Number of defined phases.
+	size_t m_distrsNum{};						// Number of defined distributions.
 	std::vector<std::string> m_compounds;		// All defined compounds.
 	std::vector<EPhase> m_phases;				// All defined phases.
 	std::vector<EDistrTypes> m_distributions; 	// All defined distributed parameters.
