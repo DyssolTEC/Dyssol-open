@@ -7,8 +7,8 @@ EXPORT_FILE               ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
 EXPORT_SIGNIFICANCE_LIMIT 1e-07
 
 SIMULATION_TIME            110
-RELATIVE_TOLERANCE         1e-8
-ABSOLUTE_TOLERANCE         1e-8
+RELATIVE_TOLERANCE         1e-7
+ABSOLUTE_TOLERANCE         1e-7
 INIT_TIME_WINDOW           0.1
 MIN_TIME_WINDOW            1e-09
 MAX_TIME_WINDOW            1
@@ -53,8 +53,8 @@ UNIT_PARAMETER "Crusher" "q" 0.55
 UNIT_PARAMETER "Splitter" "KSplitt"  0 0.5
 UNIT_PARAMETER "Delay" "Model" 0
 UNIT_PARAMETER "Delay" "Time delay" 1
-UNIT_PARAMETER "Delay" "Relative tolerance" 1e-7
-UNIT_PARAMETER "Delay" "Absolute tolerance" 1e-7
+UNIT_PARAMETER "Delay" "Relative tolerance" 1e-6
+UNIT_PARAMETER "Delay" "Absolute tolerance" 1e-6
 
 HOLDUP_OVERALL      "Inlet" "InputMaterial" 0 1 300 100000 10 2 300 100000 50 2 300 100000 70 3 300 100000
 HOLDUP_PHASES       "Inlet" "InputMaterial" 0 1 10 1 50 1 70 1

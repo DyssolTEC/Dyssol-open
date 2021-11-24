@@ -87,12 +87,12 @@ bool CScriptRunner::SetupFlowsheet(const CScriptJob& _job)
 
 	bool success = true;
 
-	if (success) success &= SetupUnits(_job);
-	if (success) success &= SetupStreams(_job);
+	if (success) success &= SetupFlowsheetParameters(_job);
+	if (success) success &= SetupGrids(_job);
 	if (success) success &= SetupCompounds(_job);
 	if (success) success &= SetupPhases(_job);
-	if (success) success &= SetupGrids(_job);
-	if (success) success &= SetupFlowsheetParameters(_job);
+	if (success) success &= SetupUnits(_job);
+	if (success) success &= SetupStreams(_job);
 	if (success) success &= SetupUnitParameters(_job);
 	if (success) success &= SetupHoldups(_job);
 
@@ -280,6 +280,9 @@ bool CScriptRunner::SetupFlowsheetParameters(const CScriptJob& _job)
 	if (_job.HasKey(EScriptKeys::ITERATIONS_UPPER_LIMIT_1ST))   params->Iters1stUpperLimit (static_cast<uint32_t>            (_job.GetValue<uint64_t>  (EScriptKeys::ITERATIONS_UPPER_LIMIT_1ST)  ));
 	if (_job.HasKey(EScriptKeys::CONVERGENCE_METHOD))           params->ConvergenceMethod  (static_cast<EConvergenceMethod>  (_job.GetValue<SNamedEnum>(EScriptKeys::CONVERGENCE_METHOD).key      ));
 	if (_job.HasKey(EScriptKeys::EXTRAPOLATION_METHOD))         params->ExtrapolationMethod(static_cast<EExtrapolationMethod>(_job.GetValue<SNamedEnum>(EScriptKeys::EXTRAPOLATION_METHOD).key    ));
+
+	m_flowsheet.UpdateToleranceSettings();
+	m_flowsheet.UpdateThermodynamicsSettings();
 
 	return true;
 }
