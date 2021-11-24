@@ -34,6 +34,8 @@ void CAgglomerator::CreateStructure()
 		{ "Constant","Sum","Product","Brownian","Shear","Peglow","Coagulation","Gravitational","Kinetic energy","Thompson" },
 		"Agglomeration kernel");
 	AddConstUIntParameter("Rank", 3, "", "Rank of the kernel (for FFT solver)", 1, 10);
+	AddConstRealParameter("Relative tolerance", 0.0, "-", "Solver relative tolerance. Set to 0 to use flowsheet-wide value", 0.0);
+	AddConstRealParameter("Absolute tolerance", 0.0, "-", "Solver absolute tolerance. Set to 0 to use flowsheet-wide value", 0.0);
 
 	/// Add holdups ///
 	AddHoldup("Holdup");
@@ -71,7 +73,9 @@ void CAgglomerator::Initialize(double _time)
 	m_model.m_iq0 = 0;
 
 	/// Set tolerances to model ///
-	m_model.SetTolerance(GetRelTolerance(), GetAbsTolerance());
+	const auto rtol = GetConstRealParameterValue("Relative tolerance");
+	const auto atol = GetConstRealParameterValue("Absolute tolerance");
+	m_model.SetTolerance(rtol != 0.0 ? rtol : GetRelTolerance(), atol != 0.0 ? atol : GetAbsTolerance());
 
 	/// Set model to a solver ///
 	const double maxStep = GetConstRealParameterValue("Step");
