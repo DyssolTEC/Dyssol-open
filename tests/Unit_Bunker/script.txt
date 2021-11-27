@@ -4,11 +4,11 @@ MODELS_PATH               ${CMAKE_BINARY_DIR}/Units
 MODELS_PATH               ${CMAKE_BINARY_DIR}/Solvers
 MATERIALS_DATABASE        ${CMAKE_SOURCE_DIR}/Materials.dmdb
 EXPORT_FILE               ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
-EXPORT_SIGNIFICANCE_LIMIT 1e-07
+EXPORT_SIGNIFICANCE_LIMIT 1e-06
 
 SIMULATION_TIME    300
-RELATIVE_TOLERANCE 1e-08
-ABSOLUTE_TOLERANCE 1e-08
+RELATIVE_TOLERANCE 1e-09
+ABSOLUTE_TOLERANCE 1e-09
 
 COMPOUNDS         "Sand" "H2O" "Air" 
 PHASES            "Solid" SOLID "Liquid" LIQUID "Gas" GAS 
@@ -23,6 +23,8 @@ STREAM "In" "Inlet" "InletMaterial" "Bunker" "Inflow"
 STREAM "Out" "Bunker" "Outflow" "Outlet" "In"
 
 UNIT_PARAMETER "Bunker" "Target mass" 500
+UNIT_PARAMETER "Bunker" "Relative tolerance" 1e-09
+UNIT_PARAMETER "Bunker" "Absolute tolerance" 1e-09
 
 HOLDUP_OVERALL      "Inlet" "InputMaterial" 0 10 300 100000 100 100 400 100000 200 50 350 100000
 HOLDUP_OVERALL      "Bunker" "Holdup" 0 10 300 100000
