@@ -103,7 +103,7 @@ void CTimeDelay::SimulateSimpleShift(double _timeBeg, double _timeEnd) const
 	}
 
 	// create additional point close to the first active one for proper interpolation
-	if (!tp_shifted.empty() && m_timeDelay != 0.0)
+	if (!tp_shifted.empty() && m_timeDelay != 0.0 && m_outlet->GetAllTimePoints().size() == 1)
 	{
 		const auto t1 = m_timeDelay - m_timeDelay / 100;
 		m_outlet->CopyFromStream(t1, m_stream, 0.0);
