@@ -14,7 +14,7 @@ set(UnitsNames
     "Mixer3"
     "Outlet"
     "Screen"
-    "ScreenMulti"
+    "ScreenMultideck"
     "Splitter"
     "Splitter3"
     "TimeDelay"

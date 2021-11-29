@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1C6761A3-DD4E-4978-A4C6-24D3A50C502D}</ProjectGuid>
-    <RootNamespace>ScreenMulti</RootNamespace>
-    <ProjectName>Unit_ScreenMulti</ProjectName>
+    <RootNamespace>ScreenMultideck</RootNamespace>
+    <ProjectName>Unit_ScreenMultideck</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -119,10 +119,10 @@
     <ProjectReference />
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ScreenMulti.cpp" />
+    <ClCompile Include="ScreenMultideck.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ScreenMulti.h" />
+    <ClInclude Include="ScreenMultideck.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)ModelsAPI\ModelsAPI.vcxproj">
