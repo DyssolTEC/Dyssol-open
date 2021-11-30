@@ -6,11 +6,21 @@
 
 class CScreenMultideck : public CSteadyStateUnit
 {
+	enum EModel : size_t
+	{
+		None, Plitt, Molerus, Teipel, Probability
+	};
+
 	// Unit parameters for each deck.
 	struct SDeck
 	{
-		CTDUnitParameter* xCut{};		// Cut size.
-		CTDUnitParameter* alpha{};		// Separation sharpness.
+		CComboUnitParameter* model{};	// Unit parameter: Classification model.
+		CTDUnitParameter* xCut{};		// Unit parameter: Cut size.
+		CTDUnitParameter* alpha{};		// Unit parameter: Separation sharpness.
+		CTDUnitParameter* beta{};		// Unit parameter: Separation sharpness.
+		CTDUnitParameter* offset{};		// Unit parameter: Separation offset.
+		CTDUnitParameter* mean{};		// Unit parameter: Mean value.
+		CTDUnitParameter* deviation{};	// Unit parameter: Standard deviation.
 
 		CMaterialStream* streamIn{};	// Deck inlet stream.
 		CMaterialStream* streamOutC{};	// Deck coarse outlet stream.
@@ -27,12 +37,20 @@ class CScreenMultideck : public CSteadyStateUnit
 	std::vector<SDeck> m_decks;				// Parameters for each deck.
 
 	size_t m_classesNum{};					// Number of classes for PSD
-	std::vector<double> m_sizeGrid;			// Size grid for PSD
-	std::vector<double> m_meanDiams;		// Means of size grid - particle diameters
+	std::vector<double> m_grid;			// Size grid for PSD
+	std::vector<double> m_diameters;		// Means of size grid - particle diameters
 
 public:
 	void CreateBasicInfo() override;
 	void CreateStructure() override;
 	void Initialize(double _time) override;
 	void Simulate(double _time) override;
+
+private:
+	double CreateTransformMatrix(double _time, const SDeck& _deck);
+
+	double CreateTransformMatrixPlitt(double _time, const SDeck& _deck);
+	double CreateTransformMatrixMolerus(double _time, const SDeck& _deck);
+	double CreateTransformMatrixTeipel(double _time, const SDeck& _deck);
+	double CreateTransformMatrixProbability(double _time, const SDeck& _deck);
 };
