@@ -229,7 +229,7 @@ bool CScriptRunner::SetupGrids(const CScriptJob& _job)
 		{
 			// check number of arguments
 			if (function != EGridFunction::GRID_FUN_MANUAL && entry.valuesNum.size() != 2 || function == EGridFunction::GRID_FUN_MANUAL && entry.valuesNum.size() != entry.classes + 1)
-				return PrintMessage(DyssolC_ErrorArgumentsNumberGrid(StrKey(EScriptKeys::DISTRIBUTION_GRID), unit->GetName(), entry.distrType.name, entry.distrType.key));
+				return PrintMessage(DyssolC_ErrorArgumentsNumberGrid(StrKey(EScriptKeys::DISTRIBUTION_GRID), unit ? unit->GetName() : "GLOBAL", entry.distrType.name, entry.distrType.key));
 			// create grid
 			std::vector<double> res = function == EGridFunction::GRID_FUN_MANUAL ? entry.valuesNum : CreateGrid(function, entry.classes, entry.valuesNum[0], entry.valuesNum[1]);
 			// convert volumes to diameters if required
@@ -241,7 +241,7 @@ bool CScriptRunner::SetupGrids(const CScriptJob& _job)
 		else if (entryType == EGridEntry::GRID_SYMBOLIC)
 		{
 			if (entry.valuesSym.size() != entry.classes)
-				return PrintMessage(DyssolC_ErrorArgumentsNumberGrid(StrKey(EScriptKeys::DISTRIBUTION_GRID), unit->GetName(), entry.distrType.name, entry.distrType.key));
+				return PrintMessage(DyssolC_ErrorArgumentsNumberGrid(StrKey(EScriptKeys::DISTRIBUTION_GRID), unit ? unit->GetName() : "GLOBAL", entry.distrType.name, entry.distrType.key));
 			// add grid dimension
 			grid.AddSymbolicDimension(type, entry.valuesSym);
 		}
