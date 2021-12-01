@@ -1,0 +1,75 @@
+JOB
+RESULT_FILE               ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/res.dflw
+MODELS_PATH               ${CMAKE_BINARY_DIR}/Units
+MODELS_PATH               ${CMAKE_BINARY_DIR}/Solvers
+MATERIALS_DATABASE        ${CMAKE_SOURCE_DIR}/Materials.dmdb
+EXPORT_FILE               ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
+EXPORT_SIGNIFICANCE_LIMIT 1e-06
+
+SIMULATION_TIME    10
+RELATIVE_TOLERANCE 1e-07
+ABSOLUTE_TOLERANCE 1e-07
+
+COMPOUNDS         "Sand"
+PHASES            "Solid" SOLID
+DISTRIBUTION_GRID "GLOBAL" SIZE NUMERIC EQUIDISTANT DIAMETER 300 0 4e-3
+
+UNIT "Inlet" "InletFlow"
+UNIT "Screen" "Screen Multi-deck"
+UNIT "Coarse 1" "OutletFlow"
+UNIT "Coarse 2" "OutletFlow"
+UNIT "Coarse 3" "OutletFlow"
+UNIT "Coarse 4" "OutletFlow"
+UNIT "Coarse 5" "OutletFlow"
+UNIT "Fines" "OutletFlow"
+
+STREAM "In" "Inlet" "InletMaterial" "Screen" "Input"
+STREAM "Coarse 1" "Screen" "Coarse 1" "Coarse 1" "In"
+STREAM "Coarse 2" "Screen" "Coarse 2" "Coarse 2" "In"
+STREAM "Coarse 3" "Screen" "Coarse 3" "Coarse 3" "In"
+STREAM "Coarse 4" "Screen" "Coarse 4" "Coarse 4" "In"
+STREAM "Coarse 5" "Screen" "Coarse 5" "Coarse 5" "In"
+STREAM "Fines" "Screen" "Fines" "Fines" "In"
+
+UNIT_PARAMETER "Screen" "Model 1" 1
+UNIT_PARAMETER "Screen" "Cut size 1" 0.003
+UNIT_PARAMETER "Screen" "Alpha 1" 8
+UNIT_PARAMETER "Screen" "Model 2" 2
+UNIT_PARAMETER "Screen" "Cut size 2" 0.002
+UNIT_PARAMETER "Screen" "Alpha 2" 8
+UNIT_PARAMETER "Screen" "Model 3" 3
+UNIT_PARAMETER "Screen" "Cut size 3" 0.0015
+UNIT_PARAMETER "Screen" "Alpha 3" 8
+UNIT_PARAMETER "Screen" "Beta 3" 5
+UNIT_PARAMETER "Screen" "Offset 3" 0.0005
+UNIT_PARAMETER "Screen" "Model 4" 4
+UNIT_PARAMETER "Screen" "Mean 4" 0.0018
+UNIT_PARAMETER "Screen" "Deviation 4" 0.0002
+UNIT_PARAMETER "Screen" "Model 5" 0
+
+HOLDUP_OVERALL      "Inlet" "InputMaterial" 0 10 300 100000
+HOLDUP_PHASES       "Inlet" "InputMaterial" 0 1
+HOLDUP_COMPOUNDS    "Inlet" "InputMaterial" SOLID 0 1
+HOLDUP_DISTRIBUTION "Inlet" "InputMaterial" SIZE MIXTURE Q3_DENSITY DIAMETER NORMAL 0 0.002 0.0003
+
+EXPORT_STREAM_MASS "Coarse 1"  
+EXPORT_STREAM_PSD  "Coarse 1"
+EXPORT_STREAM_MASS "Coarse 2"  
+EXPORT_STREAM_PSD  "Coarse 2"
+EXPORT_STREAM_MASS "Coarse 3"  
+EXPORT_STREAM_PSD  "Coarse 3"
+EXPORT_STREAM_MASS "Coarse 4"  
+EXPORT_STREAM_PSD  "Coarse 4"
+EXPORT_STREAM_MASS "Coarse 5"  
+EXPORT_STREAM_PSD  "Coarse 5"  
+EXPORT_STREAM_MASS "Fines"
+EXPORT_STREAM_PSD  "Fines"
+
+EXPORT_HOLDUP_MASS "Screen" "Deck 1 fine"
+EXPORT_HOLDUP_PSD  "Screen" "Deck 1 fine"
+EXPORT_HOLDUP_MASS "Screen" "Deck 2 fine"
+EXPORT_HOLDUP_PSD  "Screen" "Deck 2 fine"
+EXPORT_HOLDUP_MASS "Screen" "Deck 3 fine"
+EXPORT_HOLDUP_PSD  "Screen" "Deck 3 fine"
+EXPORT_HOLDUP_MASS "Screen" "Deck 4 fine"
+EXPORT_HOLDUP_PSD  "Screen" "Deck 4 fine"
