@@ -1,0 +1,77 @@
+stages:
+  - build
+  - test
+
+.compile_template: &compile_definition
+  only:
+    - branches
+    - master
+    - merge_request
+  stage: build
+  script:
+    - apt-get update && apt-get install -y cmake ccache build-essential libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev clang
+    - export PATH="/usr/lib/ccache:$PATH"
+    - export CCACHE_BASEDIR="$PWD"
+    - export CCACHE_DIR="$PWD/ccache"
+    - ccache -s
+    - mkdir build && cd build && cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_VERBOSE_MAKEFILE=ON  -DCMAKE_CXX_FLAGS="$CXXFLAGS" -DCMAKE_INSTALL_PREFIX=../inst .. && make && make install
+    - CTEST_OUTPUT_ON_FAILURE=1 make test
+    - ccache -s
+
+.artifacts_template: &artifacts_definition
+  artifacts:
+    when: always
+    paths:
+      - inst
+      - build
+    expire_in: 2 weeks
+
+.test_template: &test_definition
+  stage: test
+  script:
+    - cd ./build
+    - make test
+  timeout: 30 minutes
+
+deb_12-gcc:
+  <<: *artifacts_definition
+  <<: *compile_definition
+  image: debian:bookworm
+
+deb_12-clang:
+  <<: *artifacts_definition
+  <<: *compile_definition
+  variables:
+    CC: /usr/bin/clang
+    CXX: /usr/bin/clang++
+  image: debian:bookworm
+
+deb_12-gcc-san:
+  <<: *artifacts_definition
+  <<: *compile_definition
+  variables:
+    CXXFLAGS: "-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined"
+  image: debian:bookworm
+
+deb_12-clang-san:
+  <<: *artifacts_definition
+  <<: *compile_definition
+  variables:
+    CC: /usr/bin/clang
+    CXX: /usr/bin/clang++
+    CXXFLAGS: "-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined"
+  image: debian:bookworm
+
+ubu_22.04:
+  <<: *artifacts_definition
+  <<: *compile_definition
+  image: ubuntu:focal
+  before_script:
+    - apt-get update &&  apt-get install -y software-properties-common && add-apt-repository ppa:gladky-anton/sundials
+
+variables:
+  DEBIAN_FRONTEND: "noninteractive"
+
+cache:
+  paths:
+    - ccache
