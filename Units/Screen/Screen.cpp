@@ -137,7 +137,7 @@ double CScreen::CreateTransformMatrixMolerus(double _time)
 
 	// calculate transformations matrices
 	double factor = 0;
-	std::vector<double> psd = m_inlet->GetDistribution(_time, DISTR_SIZE);
+	const std::vector<double> psd = m_inlet->GetDistribution(_time, DISTR_SIZE);
 	for (unsigned i = 0; i < psd.size(); ++i)
 	{
 		const double value = 1 / (1 + std::pow(xcut / m_diameters[i], 2.) * std::exp(alpha * (1 - std::pow(m_diameters[i] / xcut, 2.0))));
@@ -164,7 +164,7 @@ double CScreen::CreateTransformMatrixTeipel(double _time)
 
 	// calculate transformations matrices
 	double factor = 0;
-	std::vector<double> psd = m_inlet->GetDistribution(_time, DISTR_SIZE);
+	const std::vector<double> psd = m_inlet->GetDistribution(_time, DISTR_SIZE);
 	for (unsigned i = 0; i < psd.size(); ++i)
 	{
 		const double value = (1 - std::pow(1 + 3 * std::pow(m_diameters[i] / xcut, (m_diameters[i] / xcut + alpha) * beta), -0.5)) * (1 - offset) + offset;
@@ -184,12 +184,12 @@ double CScreen::CreateTransformMatrixProbability(double _time)
 	// check parameters
 	if (sigma == 0.0)	RaiseError("Parameter 'Deviation' may not be equal to 0");
 
-	// return if any error occured.
+	// return if any error occurred.
 	if (HasError()) return -1;
 
 	// calculate transformations matrices
 	double factor = 0;
-	std::vector<double> psd = m_inlet->GetDistribution(_time, DISTR_SIZE);
+	const std::vector<double> psd = m_inlet->GetDistribution(_time, DISTR_SIZE);
 	double totalSum = 0;
 	for (unsigned i = 0; i < psd.size(); ++i)
 		totalSum += std::exp(-std::pow(m_diameters[i] - mu, 2) / (2 * sigma * sigma));

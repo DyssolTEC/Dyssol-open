@@ -7,14 +7,14 @@
 class CMyDAEModel : public CDAEModel
 {
 public:
-	size_t m_nMassBunker;	// Index for temporary mass of bunker holdup
-	size_t m_nMflow_Out;	// Index for outgoing mass flow
+	size_t m_iMass{};			// Index for temporary mass of bunker holdup
+	size_t m_iMflowOut{};		// Index for outgoing mass flow
 
-	size_t m_nNormMflow;		// Norm for differences in mass flow
-	size_t m_nNormT;			// Norm for differences in temperature
-	size_t m_nNormP;			// Norm for differences in pressure
-	size_t m_nNormCompounds;	// Norm vector for differences in phase compound fractions
-	std::vector<size_t> m_vnNormDistr;			// Norm vector for differences in distributions
+	size_t m_iNormMflow{};		// Norm for differences in mass flow.
+	size_t m_iNormT{};			// Norm for differences in temperature.
+	size_t m_iNormP{};			// Norm for differences in pressure.
+	size_t m_iNormCompounds{};	// Norm vector for differences in phase compound fractions.
+	size_t m_iNormDistr{};		// Norm vector for differences in distributions.
 
 public:
 	void CalculateResiduals(double _time, double* _vars, double* _ders, double* _res, void* _unit) override;
@@ -23,15 +23,27 @@ public:
 
 class CBunker : public CDynamicUnit
 {
-private:
-	CMyDAEModel m_Model;		// Model of DAE
-	CDAESolver m_Solver;		// Solver of DAE
+	CMyDAEModel m_model{};		// Model of DAE
+	CDAESolver m_solver;		// Solver of DAE
+
+public:
+	double m_targetMass{};	// Target mass for bunker.
+
+	CStream* m_inlet{};		// Pointer to inlet stream.
+	CStream* m_outlet{};	// Pointer to outlet stream.
+	CStream* m_inSolid{};	// Pointer to internal solid stream.
+	CStream* m_inBypass{};	// Pointer to internal bypass stream.
+	CHoldup* m_holdup{};	// Pointer to holdup.
+
+	size_t m_compoundsNum{};					// Number of defined compounds.
+	size_t m_distrsNum;							// Number of defined distributions.
+	std::vector<EDistrTypes> m_distributions; 	// All defined distributed parameters.
 
 public:
 	void CreateBasicInfo() override;
 	void CreateStructure() override;
-	void Initialize(double _dTime) override;
-	void Simulate(double _dStartTime, double _dEndTime) override;
+	void Initialize(double _time) override;
+	void Simulate(double _timeBeg, double _timeEnd) override;
 	void SaveState() override;
 	void LoadState() override;
 };

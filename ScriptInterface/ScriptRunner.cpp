@@ -87,12 +87,12 @@ bool CScriptRunner::SetupFlowsheet(const CScriptJob& _job)
 
 	bool success = true;
 
-	if (success) success &= SetupUnits(_job);
-	if (success) success &= SetupStreams(_job);
+	if (success) success &= SetupFlowsheetParameters(_job);
+	if (success) success &= SetupGrids(_job);
 	if (success) success &= SetupCompounds(_job);
 	if (success) success &= SetupPhases(_job);
-	if (success) success &= SetupGrids(_job);
-	if (success) success &= SetupFlowsheetParameters(_job);
+	if (success) success &= SetupUnits(_job);
+	if (success) success &= SetupStreams(_job);
 	if (success) success &= SetupUnitParameters(_job);
 	if (success) success &= SetupHoldups(_job);
 
@@ -229,7 +229,7 @@ bool CScriptRunner::SetupGrids(const CScriptJob& _job)
 		{
 			// check number of arguments
 			if (function != EGridFunction::GRID_FUN_MANUAL && entry.valuesNum.size() != 2 || function == EGridFunction::GRID_FUN_MANUAL && entry.valuesNum.size() != entry.classes + 1)
-				return PrintMessage(DyssolC_ErrorArgumentsNumberGrid(StrKey(EScriptKeys::DISTRIBUTION_GRID), unit->GetName(), entry.distrType.name, entry.distrType.key));
+				return PrintMessage(DyssolC_ErrorArgumentsNumberGrid(StrKey(EScriptKeys::DISTRIBUTION_GRID), unit ? unit->GetName() : "GLOBAL", entry.distrType.name, entry.distrType.key));
 			// create grid
 			std::vector<double> res = function == EGridFunction::GRID_FUN_MANUAL ? entry.valuesNum : CreateGrid(function, entry.classes, entry.valuesNum[0], entry.valuesNum[1]);
 			// convert volumes to diameters if required
@@ -241,7 +241,7 @@ bool CScriptRunner::SetupGrids(const CScriptJob& _job)
 		else if (entryType == EGridEntry::GRID_SYMBOLIC)
 		{
 			if (entry.valuesSym.size() != entry.classes)
-				return PrintMessage(DyssolC_ErrorArgumentsNumberGrid(StrKey(EScriptKeys::DISTRIBUTION_GRID), unit->GetName(), entry.distrType.name, entry.distrType.key));
+				return PrintMessage(DyssolC_ErrorArgumentsNumberGrid(StrKey(EScriptKeys::DISTRIBUTION_GRID), unit ? unit->GetName() : "GLOBAL", entry.distrType.name, entry.distrType.key));
 			// add grid dimension
 			grid.AddSymbolicDimension(type, entry.valuesSym);
 		}
@@ -280,6 +280,9 @@ bool CScriptRunner::SetupFlowsheetParameters(const CScriptJob& _job)
 	if (_job.HasKey(EScriptKeys::ITERATIONS_UPPER_LIMIT_1ST))   params->Iters1stUpperLimit (static_cast<uint32_t>            (_job.GetValue<uint64_t>  (EScriptKeys::ITERATIONS_UPPER_LIMIT_1ST)  ));
 	if (_job.HasKey(EScriptKeys::CONVERGENCE_METHOD))           params->ConvergenceMethod  (static_cast<EConvergenceMethod>  (_job.GetValue<SNamedEnum>(EScriptKeys::CONVERGENCE_METHOD).key      ));
 	if (_job.HasKey(EScriptKeys::EXTRAPOLATION_METHOD))         params->ExtrapolationMethod(static_cast<EExtrapolationMethod>(_job.GetValue<SNamedEnum>(EScriptKeys::EXTRAPOLATION_METHOD).key    ));
+
+	m_flowsheet.UpdateToleranceSettings();
+	m_flowsheet.UpdateThermodynamicsSettings();
 
 	return true;
 }
