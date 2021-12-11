@@ -67,7 +67,6 @@ private:
 	CDustFormationTesterTab* m_pDustTesterTab;
 	CSettingsEditor* m_pSettingsEditor;
 
-	QString m_sCurrFlowsheetFile;			// file corresponding to a current flowsheet
 	QList<QAction*> m_vRecentFilesActions;	// list of actions for recent files
 	bool m_bFlowsheetChanged;				// if the flowsheet has been changed after loading
 
@@ -126,7 +125,6 @@ private slots:
 	void SaveFlowsheetAs();	// save flowsheet to user specified file
 	void SaveScriptFile();	// Saves the flowsheet as a script file for command line mode.
 	void SaveGraphFile();	// Saves the flowsheet as a dot graph file.
-	void SaveGraphImage();	// Saves the flowsheet as an image file.
 
 	void SavingFinished();	// saving process is finished
 	void LoadingFinished();	// loading process is finished

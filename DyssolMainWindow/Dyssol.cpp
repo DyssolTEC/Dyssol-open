@@ -59,12 +59,15 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	// create config file
 	m_pSettings = new QSettings(currConfigFile, QSettings::IniFormat, this);
 
+	// configure cache parameters
+	SetupCache();
+
 	// create dialogs and windows
 	m_pModelsManagerTab     = new CModulesManagerTab(&m_ModelsManager, m_pSettings, this);
 	m_pCalcSequenceEditor   = new CCalculationSequenceEditor(&m_Flowsheet, this);
 	m_pMaterialsDatabaseTab = new CMaterialsDatabaseTab(&m_MaterialsDatabase, m_pSettings, this);
 	m_pCompoundsManager     = new CCompoundsManager(&m_Flowsheet, &m_MaterialsDatabase, this);
-	m_pFlowsheetEditor      = new CFlowsheetEditor(&m_Flowsheet, &m_MaterialsDatabase, &m_ModelsManager, this);
+	m_pFlowsheetEditor      = new CFlowsheetEditor(&m_Flowsheet, &m_MaterialsDatabase, &m_ModelsManager, m_pSettings, this);
 	m_pGridEditor           = new CGridEditor(&m_Flowsheet, m_MaterialsDatabase, this);
 	m_pHoldupsEditor        = new CHoldupsEditor(&m_Flowsheet, &m_MaterialsDatabase, this);
 	m_pOptionsEditor        = new COptionsEditor(&m_Flowsheet, &m_MaterialsDatabase, this);
@@ -83,9 +86,6 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	ui.mainTabWidget->addTab(m_pUnitsViewer, StrConst::Dyssol_UnitsTabName);
 	ui.mainTabWidget->setStyleSheet("QTabBar::tab { min-width: 100px; }");
 
-	// current flowsheet saving file
-	m_sCurrFlowsheetFile = "";
-
 	// status modal windows
 	m_pLoadingWindow = new CStatusWindow(StrConst::Dyssol_StatusLoadingTitle, StrConst::Dyssol_StatusLoadingText, StrConst::Dyssol_StatusLoadingQuestion, false, this);
 	m_pSavingWindow  = new CStatusWindow(StrConst::Dyssol_StatusSavingTitle,  StrConst::Dyssol_StatusSavingText,  StrConst::Dyssol_StatusSavingQuestion,  false);
@@ -97,9 +97,6 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	// create and setup menu
 	CreateMenu();
 	UpdateMenu();
-
-	// configure cache parameters
-	SetupCache();
 
 	// load materials database
 	LoadMaterialsDatabase();
@@ -163,7 +160,6 @@ void Dyssol::InitializeConnections() const
 	connect(ui.actionSaveFlowsheetAs, &QAction::triggered, this, &Dyssol::SaveFlowsheetAs);
 	connect(ui.actionSaveScript,      &QAction::triggered, this, &Dyssol::SaveScriptFile);
 	connect(ui.actionSaveGraph,       &QAction::triggered, this, &Dyssol::SaveGraphFile);
-	connect(ui.actionSaveGraphImage,  &QAction::triggered, this, &Dyssol::SaveGraphImage);
 	connect(ui.actionAbout,           &QAction::triggered, this, &Dyssol::ShowAboutDialog);
 
 	// signals from threads
@@ -298,11 +294,7 @@ void Dyssol::SetupCache()
 
 	// setup cache path
 	const QString cachePath = m_pSettings->value(StrConst::Dyssol_ConfigCachePath).toString();
-#if _DEBUG
-	m_Flowsheet.GetParameters()->CachePath((cachePath + StrConst::Dyssol_CacheDirDebug).toStdWString());
-#else
-	m_Flowsheet.GetParameters()->CachePath((cachePath + StrConst::Dyssol_CacheDirRelease).toStdWString());
-#endif
+	m_Flowsheet.GetParameters()->CachePath((cachePath + StrConst::Dyssol_CacheDir).toStdWString());
 
 	// check whether the cache path is accessible
 	if (FileSystem::IsWriteProtected(cachePath.toStdWString()))
@@ -436,17 +428,16 @@ void Dyssol::LoadFromFile(const QString& _sFileName) const
 void Dyssol::SetCurrFlowsheetFile(const QString& _fileName)
 {
 	const QString newFile = !_fileName.isEmpty() ? QFileInfo(_fileName).absoluteFilePath() : "";
-	if (newFile == m_sCurrFlowsheetFile) return;
+	if (newFile == QFileInfo(QString::fromStdString(m_Flowsheet.GetFileName().string())).absoluteFilePath()) return;
 
-	m_sCurrFlowsheetFile = newFile;
-	AddFileToRecentList(m_sCurrFlowsheetFile);
+	AddFileToRecentList(newFile);
 	const QString sWinNamePrefix = QString(StrConst::Dyssol_MainWindowName);
-	if (!m_sCurrFlowsheetFile.isEmpty())
-		setWindowTitle(sWinNamePrefix + " - " + QString::fromStdWString(CH5Handler::DisplayFileName(m_sCurrFlowsheetFile.toStdWString()).wstring()) + "[*]");
+	if (!newFile.isEmpty())
+		setWindowTitle(sWinNamePrefix + " - " + QString::fromStdWString(CH5Handler::DisplayFileName(newFile.toStdWString()).wstring()) + "[*]");
 	else
 		setWindowTitle(sWinNamePrefix);
-	if (!m_sCurrFlowsheetFile.isEmpty())
-		m_pSettings->setValue(StrConst::Dyssol_ConfigLastParamName, m_sCurrFlowsheetFile);
+	if (!newFile.isEmpty())
+		m_pSettings->setValue(StrConst::Dyssol_ConfigLastParamName, newFile);
 }
 
 void Dyssol::AddFileToRecentList(const QString& _fileToAdd)
@@ -546,7 +537,7 @@ void Dyssol::LoadRecentFile()
 	if (!pAction) return;
 	if (!CheckAndAskUnsaved()) return;
 	const QString newFile = pAction->data().toString();
-	if (newFile == m_sCurrFlowsheetFile) return;
+	if (newFile == QString::fromStdString(m_Flowsheet.GetFileName().string())) return;
 	LoadFromFile(newFile);
 	SetFlowsheetModified(false);
 }
@@ -564,7 +555,7 @@ void Dyssol::NewFlowsheet()
 void Dyssol::OpenFlowsheet()
 {
 	if (!CheckAndAskUnsaved()) return;
-	const QString sFileName = QFileDialog::getOpenFileName(this, StrConst::Dyssol_DialogOpenName, m_sCurrFlowsheetFile, StrConst::Dyssol_DialogDflwFilter);
+	const QString sFileName = QFileDialog::getOpenFileName(this, StrConst::Dyssol_DialogOpenName, QString::fromStdString(m_Flowsheet.GetFileName().string()), StrConst::Dyssol_DialogDflwFilter);
 	if (sFileName.isEmpty()) return;
 	LoadFromFile(sFileName);
 	SetFlowsheetModified(false);
@@ -572,46 +563,37 @@ void Dyssol::OpenFlowsheet()
 
 void Dyssol::SaveFlowsheet()
 {
-	if (!m_sCurrFlowsheetFile.isEmpty())
-		SaveToFile(m_sCurrFlowsheetFile);
+	if (!QString::fromStdString(m_Flowsheet.GetFileName().string()).isEmpty())
+		SaveToFile(QString::fromStdString(m_Flowsheet.GetFileName().string()));
 	else
 		SaveFlowsheetAs();
 }
 
 void Dyssol::SaveFlowsheetAs()
 {
-	const QString sFileName = QFileDialog::getSaveFileName(this, StrConst::Dyssol_DialogSaveName, m_sCurrFlowsheetFile, StrConst::Dyssol_DialogDflwFilter);
+	const QString sFileName = QFileDialog::getSaveFileName(this, StrConst::Dyssol_DialogSaveName, QString::fromStdString(m_Flowsheet.GetFileName().string()), StrConst::Dyssol_DialogDflwFilter);
 	SaveToFile(sFileName);
 }
 
 void Dyssol::SaveScriptFile()
 {
-	const QString filePath = QString::fromStdWString(CH5Handler::DisplayFileName(std::filesystem::path{ m_sCurrFlowsheetFile.toStdWString() }).wstring());
+	const QString filePath = QString::fromStdWString(CH5Handler::DisplayFileName(m_Flowsheet.GetFileName()).wstring());
 	const QString txtFileName = QFileInfo(filePath).absolutePath() + "/" + QFileInfo(filePath).baseName() + ".txt";
 	const QString sFileName = QFileDialog::getSaveFileName(this, StrConst::Dyssol_DialogSaveConfigName, txtFileName, StrConst::Dyssol_DialogTxtFilter);
 	QApplication::setOverrideCursor(Qt::WaitCursor);
-	ScriptInterface::ExportScript(sFileName.toStdWString(), m_sCurrFlowsheetFile.toStdWString(), m_Flowsheet, m_ModelsManager, m_MaterialsDatabase);
+	ScriptInterface::ExportScript(sFileName.toStdWString(), m_Flowsheet, m_ModelsManager, m_MaterialsDatabase);
 	QApplication::restoreOverrideCursor();
 }
 
 void Dyssol::SaveGraphFile()
 {
-	const QString filePath = QString::fromStdWString(CH5Handler::DisplayFileName(std::filesystem::path{ m_sCurrFlowsheetFile.toStdWString() }).wstring());
+	const QString filePath = QString::fromStdWString(CH5Handler::DisplayFileName(m_Flowsheet.GetFileName()).wstring());
 	const QString outFileName = QFileInfo(filePath).absolutePath() + "/" + QFileInfo(filePath).baseName() + ".dot";
 	const QString outFile = QFileDialog::getSaveFileName(this, StrConst::Dyssol_DialogSaveGraphName, outFileName, StrConst::Dyssol_DialogGraphFilter);
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	std::ofstream file(outFile.toStdString());
 	file << m_Flowsheet.GenerateDOTFile();
 	file.close();
-	QApplication::restoreOverrideCursor();
-}
-void Dyssol::SaveGraphImage()
-{
-	const QString filePath = QString::fromStdWString(CH5Handler::DisplayFileName(std::filesystem::path{ m_sCurrFlowsheetFile.toStdWString() }).wstring());
-	const QString outFileName = QFileInfo(filePath).absolutePath() + "/" + QFileInfo(filePath).baseName() + ".png";
-	const QString outFile = QFileDialog::getSaveFileName(this, StrConst::Dyssol_DialogSaveImageName, outFileName, StrConst::Dyssol_DialogPNGFilter);
-	QApplication::setOverrideCursor(Qt::WaitCursor);
-	m_Flowsheet.GeneratePNGFile(outFile.toStdString());
 	QApplication::restoreOverrideCursor();
 }
 
@@ -666,8 +648,9 @@ void Dyssol::ShowAboutDialog()
 void Dyssol::SlotSaveAndReopen()
 {
 	SaveAndWait();
+	const auto oldFile = m_Flowsheet.GetFileName();
 	m_Flowsheet.Clear();
-	LoadFromFile(m_sCurrFlowsheetFile);
+	LoadFromFile(QString::fromStdString(oldFile.string()));
 }
 
 void Dyssol::SlotRestart()

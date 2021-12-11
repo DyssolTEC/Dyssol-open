@@ -8,7 +8,6 @@
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
 #include <sstream>
-#include <cstring>
 #include <graphviz/gvc.h>
 
 CFlowsheet::CFlowsheet(CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB) :
@@ -16,6 +15,11 @@ CFlowsheet::CFlowsheet(CModelsManager& _modelsManager, const CMaterialsDatabase&
 	m_modelsManager{ _modelsManager }
 {
 	Create();
+}
+
+std::filesystem::path CFlowsheet::GetFileName() const
+{
+	return m_fileName;
 }
 
 void CFlowsheet::Create()
@@ -43,6 +47,9 @@ void CFlowsheet::Clear()
 
 	// set the topology is modified
 	SetTopologyModified(true);
+
+	// clear file name
+	m_fileName.clear();
 
 	// initialize flowsheet with default structure
 	Create();
@@ -405,116 +412,6 @@ std::string CFlowsheet::GenerateDOTFile()
 	res << "}" << std::endl;
 
 	return res.str();
-}
-
-bool CFlowsheet::GeneratePNGFile(const std::string& _fileName)
-{
-	const bool simple = false;
-
-	std::map<std::string, Agnode_t*> nodes;
-
-	// create directed graph
-	char graphName[] = "Flowsheet";
-	Agraph_t* g = agopen(graphName, Agdirected, nullptr);
-	//char attrSplines[] = "splines";
-	//agsafeset(g, attrSplines, "ortho", "");
-	char attrNodesep[] = "nodesep";
-	agsafeset(g, attrNodesep, "0.4", "");
-	char attrRankdir[] = "rankdir";
-	agsafeset(g, attrRankdir, "LR", "");
-
-	// list units
-	size_t index = 0;
-	for (const auto& u : GetAllUnits())
-	{
-		if (!u->GetModel()) continue;
-
-		if (simple)
-		{
-			char* nodeName = agstrdup(g, u->GetName().c_str());
-			nodes[u->GetKey()] = agnode(g, nodeName, 1);
-			char attrShape[] = "shape";
-			agsafeset(nodes[u->GetKey()], attrShape, "box", "");
-			agstrfree(g, nodeName);
-		}
-		else
-		{
-			char* nodeName = agstrdup(g, u->GetKey().c_str());
-			nodes[u->GetKey()] = agnode(g, nodeName, 1);
-			char attrShape[] = "shape";
-			agsafeset(nodes[u->GetKey()], attrShape, "plaintext", "");
-			const auto& ports = u->GetModel()->GetPortsManager();
-			char attrLabel[] = "label";
-			std::string html = "<TABLE BORDER = '1' CELLBORDER = '0' CELLSPACING = '0' CELLPADDING = '4'><TR>";
-			if (!ports.GetAllInputPorts().empty())
-			{
-				html += "<TD><TABLE BORDER='0' CELLBORDER='1' CELLSPACING='0' CELLPADDING='4'>";
-				for (const auto& port : ports.GetAllInputPorts())
-					html += "<TR><TD PORT='" + port->GetName() + "'>" + port->GetName() + "</TD></TR>";
-				html += "</TABLE></TD>";
-			}
-			html += "<TD>" + u->GetName() + "</TD> ";
-			if (!ports.GetAllOutputPorts().empty())
-			{
-				html += "<TD><TABLE BORDER='0' CELLBORDER='1' CELLSPACING='0' CELLPADDING='4'>";
-				for (const auto& port : ports.GetAllOutputPorts())
-					html += "<TR><TD PORT='" + port->GetName() + "'>" + port->GetName() + "</TD></TR>";
-				html += "</TABLE></TD>";
-			}
-			html += "</TR></TABLE>";
-			const char* nodeHtml = agstrdup_html(g, html.c_str());
-			agsafeset(nodes[u->GetKey()], attrLabel, nodeHtml, "");
-			agstrfree(g, nodeName);
-			agstrfree(g, nodeHtml);
-		}
-	}
-
-	// list streams
-	for (const auto& c : GenerateConnectionsDescription())
-	{
-		const auto* stream = GetStream(c.stream);
-		const auto* unitI = GetUnit(c.unitI);
-		const auto* unitO = GetUnit(c.unitO);
-
-		if (!stream || !unitI || !unitO || !nodes[unitO->GetKey()] || !nodes[unitI->GetKey()]) continue;
-
-		if (simple)
-		{
-			char* edgeName = agstrdup(g, stream->GetName().c_str());
-			const auto e = agedge(g, nodes[unitO->GetKey()], nodes[unitI->GetKey()], edgeName, 1);
-			char attrLabel[] = "label";
-			agsafeset(e, attrLabel, edgeName, "");
-			agstrfree(g, edgeName);
-		}
-		else
-		{
-			char* edgeName = agstrdup(g, stream->GetName().c_str());
-			const auto e = agedge(g, nodes[unitO->GetKey()], nodes[unitI->GetKey()], edgeName, 1);
-			char attrLabel[] = "label";
-			agsafeset(e, attrLabel, edgeName, "");
-			char attrHeadport[] = "headport";
-			agsafeset(e, attrHeadport, c.portI.c_str(), "");
-			char attrTailport[] = "tailport";
-			agsafeset(e, attrTailport, c.portO.c_str(), "");
-			agstrfree(g, edgeName);
-		}
-	}
-
-	// create context
-	GVC_t *gvc = gvContext();
-
-	// apply dot layout engine
-	gvLayout(gvc, g, "dot");
-
-	// render file
-	const auto ext = std::filesystem::path{ _fileName }.extension();
-	gvRenderFilename(gvc, g, ext.string().substr(1, ext.string().size() - 1).c_str(), _fileName.c_str());
-
-	// close
-	gvFreeLayout(gvc, g);
-	agclose(g);
-
-	return true;
 }
 
 size_t CFlowsheet::GetCompoundsNumber() const
@@ -997,6 +894,7 @@ bool CFlowsheet::SaveToFile(CH5Handler& _h5File, const std::filesystem::path& _f
 	m_parameters.SaveToFile(_h5File, _h5File.CreateGroup(root, StrConst::Flow_H5GroupOptions));
 
 	_h5File.Close();
+	m_fileName = _fileName;
 
 	return true;
 }
@@ -1016,7 +914,10 @@ bool CFlowsheet::LoadFromFile(CH5Handler& _h5File, const std::filesystem::path& 
 	// version of save procedure
 	const int version = _h5File.ReadAttribute(root, StrConst::H5AttrSaveVersion);
 	if (version < 4)
+	{
+		m_fileName = _fileName;
 		return LoadFromFile_v3(_h5File, root);
+	}
 
 	// parameters
 	m_parameters.LoadFromFile(_h5File, root + StrConst::Flow_H5GroupOptions);
@@ -1076,6 +977,7 @@ bool CFlowsheet::LoadFromFile(CH5Handler& _h5File, const std::filesystem::path& 
 
 	_h5File.Close();
 	SetTopologyModified(false);
+	m_fileName = _fileName;
 	return true;
 }
 

@@ -30,6 +30,11 @@ namespace StrConst
 	const char* const Dyssol_ConfigCachePath       = "cachePath";
 	const char* const Dyssol_CacheDirRelease       = "/cache";
 	const char* const Dyssol_CacheDirDebug         = "/cache_debug";
+#if _DEBUG
+	const char* const Dyssol_CacheDir              = Dyssol_CacheDirDebug;
+#else
+	const char* const Dyssol_CacheDir              = Dyssol_CacheDirRelease;
+#endif
 	const char* const Dyssol_HelpURL               = "https://flowsheetsimulation.github.io/Dyssol-open/";
 	const char* const Dyssol_MainWindowName        = "Dyssol";
 	const char* const Dyssol_MDBWindowName		   = "Materials Database";
@@ -604,6 +609,13 @@ namespace StrConst
 	const char* const FE_TDParamMessage    = "Use the table below to set values";
 	const char* const FE_TDRemoveLast      = "At least one time point must remain";
 
+//////////////////////////////////////////////////////////////////////////
+/// CFlowsheetViewer
+//////////////////////////////////////////////////////////////////////////
+	const char* const FV_DialogSaveAs       = "Save as...";
+	const char* const FV_DialogSaveAsFilter = "PNG files (*.png);;JPG files (*.jpg);;BMP files (*.bmp);;DOT files (*.dot);;All files (*.*);;";
+	const char* const FV_ConfigStyle        = "flowsheetViewerStyle";
+	const char* const FV_ConfigLayout       = "flowsheetViewerLayout";
 
 //////////////////////////////////////////////////////////////////////////
 /// CGridEditor

@@ -10,7 +10,6 @@ class CFlowsheet;
 namespace ScriptInterface
 {
 	// Exports script to the specified file. Returns true on success.
-	bool ExportScript(const std::filesystem::path& _scriptFile, const std::filesystem::path& _flowsheetFile, const CFlowsheet& _flowsheet,
-		const CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB);
+	bool ExportScript(const std::filesystem::path& _scriptFile, const CFlowsheet& _flowsheet, const CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB);
 };
 
