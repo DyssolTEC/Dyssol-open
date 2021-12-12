@@ -99,7 +99,6 @@ namespace ScriptInterface
 		EXPORT_HOLDUP_DISTRIBUTIONS      ,
 		EXPORT_UNIT_STATE_VARIABLE       ,
 		EXPORT_UNIT_PLOT                 ,
-		EXPORT_FLOWSHEET_GRAPH           ,
 	};
 
 	// All possible types of script entries.
@@ -287,7 +286,6 @@ namespace ScriptInterface
 		MAKE_SED(EScriptKeys::EXPORT_HOLDUP_DISTRIBUTIONS      , EEntryType::EXPORT_HOLDUP)      ,
 		MAKE_SED(EScriptKeys::EXPORT_UNIT_STATE_VARIABLE       , EEntryType::EXPORT_STATE_VAR)   ,
 		MAKE_SED(EScriptKeys::EXPORT_UNIT_PLOT                 , EEntryType::EXPORT_PLOT)        ,
-		MAKE_SED(EScriptKeys::EXPORT_FLOWSHEET_GRAPH           , EEntryType::PATH)               ,
 	};
 
 	// Returns a vector of string representations all possible script keys.

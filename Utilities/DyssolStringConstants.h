@@ -47,12 +47,10 @@ namespace StrConst
 	const char* const Dyssol_AbortMessage          = "This will abort the current simulation and close Dyssol. Proceed?";
 	const char* const Dyssol_DialogDflwFilter      = "DYSSOL files (*.dflw);;All files (*.*);;";
 	const char* const Dyssol_DialogTxtFilter       = "Text files (*.txt);;All files (*.*);;";
-	const char* const Dyssol_DialogGraphFilter     = "DOT files (*.gv);;All files (*.*);;";
 	const char* const Dyssol_DialogPNGFilter       = "PNG files (*.png);;All files (*.*);;";
 	const char* const Dyssol_DialogSaveName        = "Save flowsheet";
 	const char* const Dyssol_DialogOpenName        = "Open flowsheet";
 	const char* const Dyssol_DialogSaveConfigName  = "Save configuration file";
-	const char* const Dyssol_DialogSaveGraphName   = "Save graph file";
 	const char* const Dyssol_DialogSaveImageName   = "Save graph image file";
 	const char* const Dyssol_StatusLoadingTitle    = "Loading";
 	const char* const Dyssol_StatusLoadingText     = "Flowsheet is loading. <br/>Please wait";
@@ -83,8 +81,6 @@ namespace StrConst
 		return "Starting simulation"; }
 	inline std::string DyssolC_ExportResults(const std::string& s)	{
 		return "Exporting results to: \n\t" + s; }
-	inline std::string DyssolC_ExportGraph(const std::string& s)	{
-		return "Exporting graph to: \n\t" + s; }
 	inline std::string DyssolC_ScriptFinished(const int64_t& time) {
 		return "Script job finished in " + std::to_string(time) + " [s]"; }
 	inline std::string DyssolC_SimFinished(const int64_t& time) {
@@ -101,8 +97,6 @@ namespace StrConst
 		return "Error: Unable to load flowsheet file"; }
 	inline std::string DyssolC_ErrorExportFile() {
 		return "Error: Unable to open text file for export"; }
-	inline std::string DyssolC_ErrorGraphFile() {
-		return "Error: Unable to open graph file for export"; }
 	inline std::string DyssolC_ErrorNoUnit(const std::string& p, const std::string& n, size_t i) {
 		return "Error while applying " + p + ": \n\tCannot find a unit neither by its name " + StringFunctions::Quote(n) + " nor by its index " + std::to_string(i + 1); }
 	inline std::string DyssolC_ErrorLoadModel(const std::string& p, const std::string& s) {

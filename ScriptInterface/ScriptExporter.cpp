@@ -384,7 +384,6 @@ namespace ScriptInterface
 			case EScriptKeys::EXPORT_HOLDUP_DISTRIBUTIONS:
 			case EScriptKeys::EXPORT_UNIT_STATE_VARIABLE:
 			case EScriptKeys::EXPORT_UNIT_PLOT:
-			case EScriptKeys::EXPORT_FLOWSHEET_GRAPH:
 				break;
 			}
 		}

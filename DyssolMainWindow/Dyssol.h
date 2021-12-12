@@ -124,7 +124,6 @@ private slots:
 	void SaveFlowsheet();	// save flowsheet to current file
 	void SaveFlowsheetAs();	// save flowsheet to user specified file
 	void SaveScriptFile();	// Saves the flowsheet as a script file for command line mode.
-	void SaveGraphFile();	// Saves the flowsheet as a dot graph file.
 
 	void SavingFinished();	// saving process is finished
 	void LoadingFinished();	// loading process is finished

@@ -92,7 +92,6 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>cdt.lib;cgraph.lib;gvc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>$(SolutionDir)generate_build_version.bat $(SolutionDir)</Command>
@@ -105,7 +104,6 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>cdt.lib;cgraph.lib;gvc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>$(SolutionDir)generate_build_version.bat $(SolutionDir)</Command>
@@ -119,7 +117,6 @@
     <Link />
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>cdt.lib;cgraph.lib;gvc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>$(SolutionDir)generate_build_version.bat $(SolutionDir)</Command>
@@ -133,7 +130,6 @@
     <Link />
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>cdt.lib;cgraph.lib;gvc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>$(SolutionDir)generate_build_version.bat $(SolutionDir)</Command>

@@ -159,7 +159,6 @@ void Dyssol::InitializeConnections() const
 	connect(ui.actionSaveFlowsheet,   &QAction::triggered, this, &Dyssol::SaveFlowsheet);
 	connect(ui.actionSaveFlowsheetAs, &QAction::triggered, this, &Dyssol::SaveFlowsheetAs);
 	connect(ui.actionSaveScript,      &QAction::triggered, this, &Dyssol::SaveScriptFile);
-	connect(ui.actionSaveGraph,       &QAction::triggered, this, &Dyssol::SaveGraphFile);
 	connect(ui.actionAbout,           &QAction::triggered, this, &Dyssol::ShowAboutDialog);
 
 	// signals from threads
@@ -582,18 +581,6 @@ void Dyssol::SaveScriptFile()
 	const QString sFileName = QFileDialog::getSaveFileName(this, StrConst::Dyssol_DialogSaveConfigName, txtFileName, StrConst::Dyssol_DialogTxtFilter);
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	ScriptInterface::ExportScript(sFileName.toStdWString(), m_Flowsheet, m_ModelsManager, m_MaterialsDatabase);
-	QApplication::restoreOverrideCursor();
-}
-
-void Dyssol::SaveGraphFile()
-{
-	const QString filePath = QString::fromStdWString(CH5Handler::DisplayFileName(m_Flowsheet.GetFileName()).wstring());
-	const QString outFileName = QFileInfo(filePath).absolutePath() + "/" + QFileInfo(filePath).baseName() + ".dot";
-	const QString outFile = QFileDialog::getSaveFileName(this, StrConst::Dyssol_DialogSaveGraphName, outFileName, StrConst::Dyssol_DialogGraphFilter);
-	QApplication::setOverrideCursor(Qt::WaitCursor);
-	std::ofstream file(outFile.toStdString());
-	file << m_Flowsheet.GenerateDOTFile();
-	file.close();
 	QApplication::restoreOverrideCursor();
 }
 

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "ui_FlowsheetEditor.h"
-#include <filesystem>
 
 class CModelsManager;
 class CMaterialsDatabase;

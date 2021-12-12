@@ -65,7 +65,6 @@
     <addaction name="actionSaveFlowsheetAs"/>
     <addaction name="separator"/>
     <addaction name="actionSaveScript"/>
-    <addaction name="actionSaveGraph"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>

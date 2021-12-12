@@ -7,8 +7,6 @@
 #include "ContainerFunctions.h"
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
-#include <sstream>
-#include <graphviz/gvc.h>
 
 CFlowsheet::CFlowsheet(CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB) :
 	m_materialsDB{ _materialsDB },
@@ -367,51 +365,6 @@ std::vector<SFlowsheetConnection> CFlowsheet::GenerateConnectionsDescription() c
 	}
 
 	return res;
-}
-
-std::string CFlowsheet::GenerateDOTFile()
-{
-	std::stringstream res;
-	res << "digraph Flowsheet {" << std::endl;
-	// list units
-	for (const auto& u : GetAllUnits())
-	{
-#ifdef _MSC_VER
-		res << StringFunctions::Quote(u->GetName()) << " [shape=box];" << std::endl;
-#else
-		const auto name = u->GetModel() ? u->GetModel()->GetUnitName() : "";
-		if (name == "Agglomerator"  ||
-			name == "Bunker"        ||
-			name == "Crusher"       ||
-			name == "Cyclone v2"    ||
-			name == "Granulator"    ||
-			name == "HeatExchanger" ||
-			name == "InletFlow"     ||
-			name == "Mixer"         ||
-			name == "Mixer3"        ||
-			name == "OutletFlow"    ||
-			name == "Screen"        ||
-			name == "Splitter"      ||
-			name == "Splitter3"     ||
-			name == "Time delay")
-		{
-			res << StringFunctions::Quote(u->GetName()) << " [image=\"" << INSTALL_DOCS_PATH  << "/pics/units_dotgraph/" <<
-				u->GetModel()->GetUnitName() << ".png\", shape=box];" << std::endl;
-		}
-		else
-			res << StringFunctions::Quote(u->GetName()) << " [shape=box];" << std::endl;
-#endif
-	}
-	// list streams
-	for (const auto& c : GenerateConnectionsDescription())
-	{
-		if (c.unitI.empty() || c.unitO.empty()) continue;
-		res << StringFunctions::Quote(GetUnit(c.unitO)->GetName()) << " -> " << StringFunctions::Quote(GetUnit(c.unitI)->GetName())
-			<< " [label=" << StringFunctions::Quote(GetStream(c.stream)->GetName()) << "];" << std::endl;
-	}
-	res << "}" << std::endl;
-
-	return res.str();
 }
 
 size_t CFlowsheet::GetCompoundsNumber() const

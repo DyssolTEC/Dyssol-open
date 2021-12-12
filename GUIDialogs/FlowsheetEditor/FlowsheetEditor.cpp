@@ -12,7 +12,6 @@
 #include <QMessageBox>
 #include <cmath>
 
-
 CFlowsheetEditor::CFlowsheetEditor(CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, CModelsManager* _modelsManager, QSettings* _settings, QWidget* parent /*= 0 */)
 	: QWidget(parent),
 	m_pFlowsheet(_pFlowsheet),
