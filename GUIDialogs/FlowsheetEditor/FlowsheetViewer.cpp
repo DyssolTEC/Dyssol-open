@@ -2,10 +2,8 @@
 
 #include "FlowsheetViewer.h"
 #include "Flowsheet.h"
-#include "BaseUnit.h"
 #include "DyssolUtilities.h"
 #include "DyssolStringConstants.h"
-#include <graphviz/gvc.h>
 #include <QImageReader>
 #include <QMenuBar>
 #include <QFileDialog>
@@ -21,6 +19,7 @@ CFlowsheetViewer::CFlowsheetViewer(const CFlowsheet* _flowsheet, QSettings* _set
 	, m_flowsheet{ _flowsheet }
 {
 	ui.setupUi(this);
+	ui.scrollArea->viewport()->setStyleSheet("background-color: white;");
 	ui.scrollArea->viewport()->installEventFilter(this);
 	setWindowFlags(windowFlags() | Qt::WindowMaximizeButtonHint | Qt::WindowMinimizeButtonHint);
 
@@ -29,7 +28,7 @@ CFlowsheetViewer::CFlowsheetViewer(const CFlowsheet* _flowsheet, QSettings* _set
 	if (!fs::exists(cachePath))
 		fs::create_directory(cachePath);
 	const fs::path path = fs::exists(cachePath) ? cachePath : fs::current_path();
-	m_imageFullName = path / (StringFunctions::GenerateRandomKey() + ".png");
+	m_imageFullName = QString::fromStdU16String((path / (StringFunctions::GenerateRandomKey() + ".png")).u16string());
 
 	LoadSettings();
 	CreateMenu();
@@ -41,8 +40,8 @@ CFlowsheetViewer::~CFlowsheetViewer()
 	try
 	{
 		// remove image
-		if (fs::exists(m_imageFullName))
-			fs::remove(m_imageFullName);
+		if (fs::exists(m_imageFullName.toStdU16String()))
+			fs::remove(m_imageFullName.toStdU16String());
 	}
 	catch (...)
 	{
@@ -73,9 +72,9 @@ void CFlowsheetViewer::Update()
 	if (!isVisible()) return;
 
 	// generate and save image
-	if (!SaveToFile(m_imageFullName)) return;
+	if (!m_graphBuilder.SaveToFile(m_imageFullName.toStdString())) return;
 	// load image
-	m_image = QImageReader{ QString::fromStdString(m_imageFullName.string()) }.read();
+	m_image = QImageReader{ m_imageFullName }.read();
 	// show image with appropriate size
 	FitToWindow();
 }
@@ -88,14 +87,14 @@ void CFlowsheetViewer::CreateMenu()
 	fileMenu->addAction(ui.actionSaveAs);
 	auto* viewMenu = mainMenu->addMenu("&View");
 	viewMenu->addAction(ui.actionShowPorts);
-	ui.actionShowPorts->setChecked(m_style == EStyle::WITH_PORTS);
+	ui.actionShowPorts->setChecked(m_graphBuilder.Style() == CGraphvizHandler::EStyle::WITH_PORTS);
 	auto* layoutMenu = viewMenu->addMenu("&Layout");
 	layoutMenu->addAction(ui.actionHorizontalLayout);
 	layoutMenu->addAction(ui.actionVerticalLayout);
 	auto* layoutGroup = new QActionGroup{ this };
 	layoutGroup->addAction(ui.actionHorizontalLayout);
 	layoutGroup->addAction(ui.actionVerticalLayout);
-	(m_layout == ELayout::HORIZONTAL ? ui.actionHorizontalLayout : ui.actionVerticalLayout)->setChecked(true);
+	(m_graphBuilder.Layout() == CGraphvizHandler::ELayout::HORIZONTAL ? ui.actionHorizontalLayout : ui.actionVerticalLayout)->setChecked(true);
 	viewMenu->addSeparator();
 	viewMenu->addAction(ui.actionFitToWindow);
 }
@@ -106,7 +105,7 @@ void CFlowsheetViewer::SaveAs()
 	const auto dir = QString::fromStdString(defaultFileName.string() + ".png");
 	const QString file = QFileDialog::getSaveFileName(this, StrConst::FV_DialogSaveAs, dir, StrConst::FV_DialogSaveAsFilter);
 	if (file.isEmpty()) return;
-	SaveToFile(fs::path{ file.toStdString() });
+	[[maybe_unused]] const auto res = m_graphBuilder.SaveToFile(file.toStdString());
 }
 
 void CFlowsheetViewer::FitToWindow()
@@ -142,22 +141,22 @@ bool CFlowsheetViewer::IsImageMovable() const
 
 void CFlowsheetViewer::StyleChanged()
 {
-	m_style  = ui.actionShowPorts->isChecked() ? EStyle::WITH_PORTS : EStyle::SIMPLE;
-	m_layout = ui.actionHorizontalLayout->isChecked() ? ELayout::HORIZONTAL : ELayout::VERTICAL;
+	m_graphBuilder.SetStyle(ui.actionShowPorts->isChecked() ? CGraphvizHandler::EStyle::WITH_PORTS : CGraphvizHandler::EStyle::SIMPLE);
+	m_graphBuilder.SetLayout(ui.actionHorizontalLayout->isChecked() ? CGraphvizHandler::ELayout::HORIZONTAL : CGraphvizHandler::ELayout::VERTICAL);
 	SaveSettings();
 	Update();
 }
 
 void CFlowsheetViewer::LoadSettings()
 {
-	m_style  = static_cast<EStyle >(m_settings->value(StrConst::FV_ConfigStyle ).toUInt());
-	m_layout = static_cast<ELayout>(m_settings->value(StrConst::FV_ConfigLayout).toUInt());
+	m_graphBuilder.SetStyle (static_cast<CGraphvizHandler::EStyle >(m_settings->value(StrConst::FV_ConfigStyle ).toUInt()));
+	m_graphBuilder.SetLayout(static_cast<CGraphvizHandler::ELayout>(m_settings->value(StrConst::FV_ConfigLayout).toUInt()));
 }
 
 void CFlowsheetViewer::SaveSettings() const
 {
-	m_settings->setValue(StrConst::FV_ConfigStyle , E2I(m_style));
-	m_settings->setValue(StrConst::FV_ConfigLayout, E2I(m_layout));
+	m_settings->setValue(StrConst::FV_ConfigStyle , E2I(m_graphBuilder.Style ()));
+	m_settings->setValue(StrConst::FV_ConfigLayout, E2I(m_graphBuilder.Layout()));
 }
 
 void CFlowsheetViewer::mouseMoveEvent(QMouseEvent* _event)
@@ -221,144 +220,4 @@ bool CFlowsheetViewer::eventFilter(QObject* _object, QEvent* _event)
 	if (_object == ui.scrollArea->viewport() && _event->type() == QEvent::Wheel)
 		return true;
 	return false;
-}
-
-bool CFlowsheetViewer::SaveToFile(const fs::path& _fileName) const
-{
-	// whether saving was successful
-	bool success = false;
-	// try to crate and fill graph
-	if (const auto graph = CreateGraph())
-	{
-		// try to create context
-		if (GVC_t* context = gvContext())
-		{
-			// try to apply dot layout engine
-			if (!gvLayout(context, graph, "dot"))
-			{
-				// get and check file extension
-				if (const auto ext = fs::path{ _fileName }.extension().string(); !ext.empty())
-				{
-					// file rendering itself
-					success = !gvRenderFilename(context, graph, ext.substr(1).c_str(), _fileName.string().c_str());
-				}
-				// clear layout
-				gvFreeLayout(context, graph);
-			}
-			// clear context
-			gvFreeContext(context);
-		}
-		// clear graph
-		agclose(graph);
-	}
-	return success;
-}
-
-Agraph_t* CFlowsheetViewer::CreateGraph() const
-{
-	// temporary z-string values, needed because graphviz functions take non-const char* as parameters
-	char empty[] = "";
-	char attrNodesep[] = "nodesep";
-	char attrFontsize[] = "fontsize";
-	char attrRankdir[] = "rankdir";
-	char attrShape[] = "shape";
-	char attrLabel[] = "label";
-	char attrHeadport[] = "headport";
-	char attrTailport[] = "tailport";
-	char valNodesep[] = "0.4";
-	char valFontsize[] = "20";
-	char valRankdirLR[] = "LR";
-	char valRankdirTB[] = "TB";
-	char valShapeBox[] = "box";
-	char valShapePlain[] = "plaintext";
-
-	// create directed graph
-	Agraph_t* graph = agopen(empty, Agdirected, nullptr);
-	agsafeset(graph, attrNodesep, valNodesep, empty);
-	agsafeset(graph, attrFontsize, valFontsize, empty);
-	switch (m_layout)
-	{
-	case ELayout::HORIZONTAL: agsafeset(graph, attrRankdir, valRankdirLR, empty); break;
-	case ELayout::VERTICAL: agsafeset(graph, attrRankdir, valRankdirTB, empty); break;
-	}
-
-	// temporary storage of nodes
-	std::map<std::string, Agnode_t*> nodes;
-
-	// list units
-	for (const auto& u : m_flowsheet->GetAllUnits())
-	{
-		if (!u->GetModel()) continue;
-
-		char* nodeName = agstrdup(graph, u->GetKey().c_str());
-		auto* node = agnode(graph, nodeName, 1);
-		agstrfree(graph, nodeName);
-
-		switch (m_style)
-		{
-		case EStyle::SIMPLE:
-		{
-			char* nodeLabel = agstrdup(graph, u->GetName().c_str());
-			agsafeset(node, attrShape, valShapeBox, empty);
-			agsafeset(node, attrLabel, nodeLabel, empty);
-			agstrfree(graph, nodeLabel);
-			break;
-		}
-		case EStyle::WITH_PORTS:
-		{
-			agsafeset(node, attrShape, valShapePlain, empty);
-			const auto& ports = u->GetModel()->GetPortsManager();
-			std::string html = "<TABLE BORDER = '1' CELLBORDER = '0' CELLSPACING = '0' CELLPADDING = '4'><TR>";
-			if (!ports.GetAllInputPorts().empty())
-			{
-				html += "<TD><TABLE BORDER='0' CELLBORDER='1' CELLSPACING='0' CELLPADDING='4'>";
-				for (const auto& port : ports.GetAllInputPorts())
-					html += "<TR><TD PORT='" + port->GetName() + "'>" + port->GetName() + "</TD></TR>";
-				html += "</TABLE></TD>";
-			}
-			html += "<TD>" + u->GetName() + "</TD>";
-			if (!ports.GetAllOutputPorts().empty())
-			{
-				html += "<TD><TABLE BORDER='0' CELLBORDER='1' CELLSPACING='0' CELLPADDING='4'>";
-				for (const auto& port : ports.GetAllOutputPorts())
-					html += "<TR><TD PORT='" + port->GetName() + "'>" + port->GetName() + "</TD></TR>";
-				html += "</TABLE></TD>";
-			}
-			html += "</TR></TABLE>";
-			const char* nodeHtml = agstrdup_html(graph, html.c_str());
-			agsafeset(node, attrLabel, nodeHtml, empty);
-			agstrfree(graph, nodeHtml);
-			break;
-		}
-		}
-
-		nodes[u->GetKey()] = node;
-	}
-
-	// list streams
-	for (const auto& c : m_flowsheet->GenerateConnectionsDescription())
-	{
-		const auto* stream = m_flowsheet->GetStream(c.stream);
-		const auto* unitI = m_flowsheet->GetUnit(c.unitI);
-		const auto* unitO = m_flowsheet->GetUnit(c.unitO);
-
-		if (!stream || !unitI || !unitO || !nodes[unitO->GetKey()] || !nodes[unitI->GetKey()]) continue;
-
-		char* edgeName = agstrdup(graph, stream->GetName().c_str());
-		auto* edge = agedge(graph, nodes[unitO->GetKey()], nodes[unitI->GetKey()], edgeName, 1);
-		agsafeset(edge, attrLabel, edgeName, empty);
-		agstrfree(graph, edgeName);
-
-		switch (m_style)
-		{
-		case EStyle::SIMPLE: break;
-		case EStyle::WITH_PORTS:
-		{
-			agsafeset(edge, attrHeadport, c.portI.c_str(), empty);
-			agsafeset(edge, attrTailport, c.portO.c_str(), empty);
-		}
-		}
-	}
-
-	return graph;
 }

@@ -3,8 +3,7 @@
 #pragma once
 
 #include "ui_FlowsheetViewer.h"
-#include <graphviz/cgraph.h>
-#include <filesystem>
+#include "GraphvizHandler.h"
 
 class QSettings;
 class CFlowsheet;
@@ -20,25 +19,20 @@ class CFlowsheetViewer : public QDialog
 
 	Ui::CFlowsheetViewer ui{};
 
-	const double MIN_SCALE = 0.2;		// Minimum scale factor for showing image.
-	const double MAX_SCALE = 4.0;		// Maximum scale factor for showing image.
-	const double DEFAULT_SCALE = 1.0;	// Default scale factor for showing image.
-	const double ZOOM_IN_FACTOR = 1.1;	// Scaling factor for each zoom in step.
+	const double MIN_SCALE       = 0.2;	// Minimum scale factor for showing image.
+	const double MAX_SCALE       = 4.0;	// Maximum scale factor for showing image.
+	const double DEFAULT_SCALE   = 1.0;	// Default scale factor for showing image.
+	const double ZOOM_IN_FACTOR  = 1.1;	// Scaling factor for each zoom in step.
 	const double ZOOM_OUT_FACTOR = 0.9;	// Scaling factor for each zoom out step.
-
-	enum class EStyle { SIMPLE, WITH_PORTS };		// Style of rendering.
-	enum class ELayout { HORIZONTAL, VERTICAL };	// Direction to place units.
 
 	QSettings* m_settings{};				// Pointer to global settings.
 	const CFlowsheet* m_flowsheet{};		// Pointer to flowsheet.
-	std::filesystem::path m_imageFullName;	// Path and name to store temporary images.
+	QString m_imageFullName;				// Path and name to store temporary images.
 
-	QImage m_image;							// Current image.
-	double m_scaleFactor{ DEFAULT_SCALE };	// Current image scale factor relative to original size.
-	QPoint m_lastMousePos;					// Last mouse position needed to track mouse movements.
-
-	EStyle m_style{};				// Rendering style.
-	ELayout m_layout{};	// Layout direction.
+	CGraphvizHandler m_graphBuilder{ m_flowsheet };	// Image builder.
+	QImage m_image;									// Current image.
+	double m_scaleFactor{ DEFAULT_SCALE };			// Current image scale factor relative to original size.
+	QPoint m_lastMousePos;							// Last mouse position needed to track mouse movements.
 
 public:
 	CFlowsheetViewer(const CFlowsheet* _flowsheet, QSettings* _settings, QWidget* _parent = nullptr);
@@ -88,9 +82,4 @@ private:
 	void resizeEvent(QResizeEvent* _event) override;
 	void changeEvent(QEvent* _event) override;
 	bool eventFilter(QObject* _object, QEvent* _event) override;
-
-	// Saves current flowsheet as a file of a given type (image or dot). Returns true on success.
-	bool SaveToFile(const std::filesystem::path& _fileName) const;
-	// Creates new graphviz graph and returns a non-owning pointer to it.
-	[[nodiscard]] Agraph_t* CreateGraph() const;
 };
