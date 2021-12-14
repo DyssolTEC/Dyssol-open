@@ -239,29 +239,34 @@ void CMyDAEModel::CalculateResiduals(double _time, double* _vars, double* _ders,
 	_res[m_iMass]          = _ders[m_iMass]          - (MflowIn - MflowOut);
 
 	// Outflow
-	if (static_cast<CBunker::EModel>(unit->model_bunker->GetValue()) == CBunker::EModel::Adaptive)
+	switch(static_cast<CBunker::EModel>(unit->model_bunker->GetValue()))
 	{
-		_res[m_iMflowOut]      = _vars[m_iMflowOut]      - std::pow(2 * massBunker / (massBunker + unit->m_targetMass), 2) * MflowIn;
-	}
-	else
-	{
-		const double mass_flow_requested  = unit->mass_flow->GetValue(_time);
-		double mass_flow_corrected = 0;
-		const auto dT = _time - timePrev;
-		std::cerr << "_vars[m_iMflowOut] " << _vars[m_iMflowOut] << ";  _res[m_iMass]" << _res[m_iMass] << "  dt: " << dT << " Calculated " << _res[m_iMass] / dT << " requested " << mass_flow_requested<< std::endl;
-		if (_res[m_iMass] / dT >= mass_flow_requested) { // We have enough material in the bunker to provide requested mass flow
-			mass_flow_corrected = mass_flow_requested;
-			std::cerr << " We have enough material" << std::endl;
-		} else { // We 	DO NOT have enough material in the bunker to provide requested mass flow, let'correct it
-			std::cerr << " We DO NOT have enough material" << std::endl;
-			mass_flow_corrected = _res[m_iMass] / dT;
-			if (mass_flow_corrected < 0) {
-				mass_flow_corrected = 0;
-			}
+		case CBunker::EModel::Adaptive:
+		{
+			_res[m_iMflowOut]      = _vars[m_iMflowOut]      - std::pow(2 * massBunker / (massBunker + unit->m_targetMass), 2) * MflowIn;
+			break;
 		}
-		std::cerr << "mass_flow_corrected: " << mass_flow_corrected  << std::endl;
+		case CBunker::EModel::Constant:
+		{
+			const double mass_flow_requested  = unit->mass_flow->GetValue(_time);
+			double mass_flow_corrected = 0;
+			const auto dT = _time - timePrev;
+			if (massBunker / dT >= mass_flow_requested) { // We have enough material in the bunker to provide requested mass flow
+				mass_flow_corrected = mass_flow_requested;
+			} else { // We 	DO NOT have enough material in the bunker to provide requested mass flow, let'correct it
+				mass_flow_corrected = massBunker / dT;
+				if (mass_flow_corrected < 0) {
+					mass_flow_corrected = 0;
+				}
+			}
 
-		_res[m_iMflowOut]      = _vars[m_iMflowOut]      - mass_flow_corrected;
+			_res[m_iMflowOut]      = _vars[m_iMflowOut]      - mass_flow_corrected;
+			break;
+		}
+		default:
+		{
+			static_cast<CBunker*>(_unit)->RaiseError("Bunker model is not defined!");
+		}
 	}
 	// Residuals of the derivatives equal the difference in the respective norms from from the last value of the
 	_res[m_iNormMflow]     = _ders[m_iNormMflow]     - (normMflowUpdate     - _vars[m_iNormMflow]);
