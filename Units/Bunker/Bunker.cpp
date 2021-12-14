@@ -26,9 +26,15 @@ void CBunker::CreateStructure()
 	AddPort("Outflow", EUnitPort::OUTPUT);
 
 	/// Add unit parameters ///
+	model_bunker = AddComboParameter("Model", Adaptive, { Adaptive, Constant }, { "Adaptive", "Constant" }, "Outflow model");
+	mass_flow = AddTDParameter("Target mass flow", 1, "kg/s", "Target mass flow", 0);
 	AddConstRealParameter("Target mass"       , 100000, "kg", "Target mass of bunker."                                         , 0.0);
 	AddConstRealParameter("Relative tolerance", 0.0   , "-" , "Solver relative tolerance. Set to 0 to use flowsheet-wide value", 0.0);
 	AddConstRealParameter("Absolute tolerance", 0.0   , "-" , "Solver absolute tolerance. Set to 0 to use flowsheet-wide value", 0.0);
+
+	// group unit parameters
+	AddParametersToGroup("Model", "Adaptive", {});
+	AddParametersToGroup("Model", "Constant", {"Target mass flow"});
 
 	/// Add holdups ///
 	AddHoldup("Holdup");
@@ -231,8 +237,32 @@ void CMyDAEModel::CalculateResiduals(double _time, double* _vars, double* _ders,
 	/// Calculate residuals ///
 	// Bunker mass
 	_res[m_iMass]          = _ders[m_iMass]          - (MflowIn - MflowOut);
-	_res[m_iMflowOut]      = _vars[m_iMflowOut]      - std::pow(2 * massBunker / (massBunker + unit->m_targetMass), 2) * MflowIn;
 
+	// Outflow
+	if (static_cast<CBunker::EModel>(unit->model_bunker->GetValue()) == CBunker::EModel::Adaptive)
+	{
+		_res[m_iMflowOut]      = _vars[m_iMflowOut]      - std::pow(2 * massBunker / (massBunker + unit->m_targetMass), 2) * MflowIn;
+	}
+	else
+	{
+		const double mass_flow_requested  = unit->mass_flow->GetValue(_time);
+		double mass_flow_corrected = 0;
+		const auto dT = _time - timePrev;
+		std::cerr << "_vars[m_iMflowOut] " << _vars[m_iMflowOut] << ";  _res[m_iMass]" << _res[m_iMass] << "  dt: " << dT << " Calculated " << _res[m_iMass] / dT << " requested " << mass_flow_requested<< std::endl;
+		if (_res[m_iMass] / dT >= mass_flow_requested) { // We have enough material in the bunker to provide requested mass flow
+			mass_flow_corrected = mass_flow_requested;
+			std::cerr << " We have enough material" << std::endl;
+		} else { // We 	DO NOT have enough material in the bunker to provide requested mass flow, let'correct it
+			std::cerr << " We DO NOT have enough material" << std::endl;
+			mass_flow_corrected = _res[m_iMass] / dT;
+			if (mass_flow_corrected < 0) {
+				mass_flow_corrected = 0;
+			}
+		}
+		std::cerr << "mass_flow_corrected: " << mass_flow_corrected  << std::endl;
+
+		_res[m_iMflowOut]      = _vars[m_iMflowOut]      - mass_flow_corrected;
+	}
 	// Residuals of the derivatives equal the difference in the respective norms from from the last value of the
 	_res[m_iNormMflow]     = _ders[m_iNormMflow]     - (normMflowUpdate     - _vars[m_iNormMflow]);
 	_res[m_iNormT]         = _ders[m_iNormT]         - (normTUpdate         - _vars[m_iNormT]);
