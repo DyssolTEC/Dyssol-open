@@ -248,6 +248,10 @@ void CMyDAEModel::CalculateResiduals(double _time, double* _vars, double* _ders,
 		}
 		case CBunker::EModel::Constant:
 		{
+			if (massBunker > unit->m_targetMass)
+			{
+				static_cast<CBunker*>(_unit)->RaiseError("Bunker overflow!");
+			}
 			const double mass_flow_requested  = unit->mass_flow->GetValue(_time);
 			double mass_flow_corrected = 0;
 			const auto dT = _time - timePrev;
