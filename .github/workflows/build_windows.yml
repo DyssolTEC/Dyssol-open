@@ -27,17 +27,24 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1
       
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v2
+      with:
+        path: ${{github.workspace}}/ExternalLibraries/qt
+        key: ${{runner.os}}-QtCache
+    
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
       with:
+        # If cached, only install essential build tools and set environmental variables
+        cached: ${{steps.cache-qt.outputs.cache-hit}}
         # Version of Qt to install
         version: ${{env.QT_VERSION}}
-        # Host platform
-        host: 'windows'
-        # Target platform for build
-        target: 'desktop'
         # Architecture for Windows/Android
         arch: win64_${{env.QT_VS_VERSION}}
+        # Directory to install.
+        dir: ${{github.workspace}}/ExternalLibraries/qt
         # Whether or not to automatically run setup-python to find a valid python version.
         setup-python: 'false'
                 
