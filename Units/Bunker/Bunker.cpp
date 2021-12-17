@@ -257,15 +257,9 @@ void CMyDAEModel::CalculateResiduals(double _time, double* _vars, double* _ders,
 			const auto dT = _time - timePrev;
 			std::string materialText = "";
 
-			if (mass_flow_requested <= MflowIn) {
-				mass_flow_corrected = mass_flow_requested;
-				materialText = " Case 1";
-			} else if (mass_flow_requested > MflowIn && massBunker > 0){
-				mass_flow_corrected = mass_flow_requested;
-				materialText = " Case 2";
-			} else {
-				mass_flow_corrected = MflowIn;
-				materialText = " Case 3";
+			mass_flow_corrected = mass_flow_requested;
+			if (massBunker <= 0) {
+				mass_flow_corrected = 0;
 			}
 
 /*
@@ -282,12 +276,20 @@ void CMyDAEModel::CalculateResiduals(double _time, double* _vars, double* _ders,
 */
 
 			_res[m_iMflowOut]      = _vars[m_iMflowOut]      - mass_flow_corrected;
-						std::cout << "CurTime: " << _time <<  "; timePrev: " << timePrev << " ; BunkerMass: " << massBunker <<  " ; MflowPrev=" << MflowPrev << " ; MflowCurr: " << MflowCurr <<
-			             " ; MFlowIn: " << MflowIn << " ; MflowOut: " << MflowOut <<
+						std::cout << "CurTime: " << _time <<
+						 "; timePrev: " << timePrev <<
+						 " ; massBunker: " << massBunker <<
+						 " ; MflowPrev=" << MflowPrev <<
+						 " ; MflowCurr: " << MflowCurr <<
+			             " ; MFlowIn: " << MflowIn <<
+						 " ; MflowOut: " << MflowOut <<
+						 " ; _ders[m_iMass]: " << _ders[m_iMass] <<
 						 " ; _vars[m_iMflowOut]: " << _vars[m_iMflowOut] <<
 						 " ; _res[m_iMflowOut]: "  << _res[m_iMflowOut] <<
-						 " ; mass_flow_requested: " << mass_flow_requested << " ; " <<
-						  ";  mass_flow_corrected: "  << mass_flow_corrected  << materialText << std::endl;
+						 " ; mass_flow_requested: " << mass_flow_requested <<
+						 ";  mass_flow_corrected: "  << mass_flow_corrected  <<
+						 ";  _res[m_iMass]: "  << _res[m_iMass]  <<
+						 materialText << std::endl;
 
 			break;
 		}
