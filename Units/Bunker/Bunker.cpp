@@ -255,16 +255,40 @@ void CMyDAEModel::CalculateResiduals(double _time, double* _vars, double* _ders,
 			const double mass_flow_requested  = unit->mass_flow->GetValue(_time);
 			double mass_flow_corrected = 0;
 			const auto dT = _time - timePrev;
+			std::string materialText = "";
+
+			if (mass_flow_requested <= MflowIn) {
+				mass_flow_corrected = mass_flow_requested;
+				materialText = " Case 1";
+			} else if (mass_flow_requested > MflowIn && massBunker > 0){
+				mass_flow_corrected = mass_flow_requested;
+				materialText = " Case 2";
+			} else {
+				mass_flow_corrected = MflowIn;
+				materialText = " Case 3";
+			}
+
+/*
 			if (massBunker / dT >= mass_flow_requested) { // We have enough material in the bunker to provide requested mass flow
 				mass_flow_corrected = mass_flow_requested;
-			} else { // We 	DO NOT have enough material in the bunker to provide requested mass flow, let'correct it
+				materialText = " Enough";
+			} else {                                      // We 	DO NOT have enough material in the bunker to provide requested mass flow, let'correct it
 				mass_flow_corrected = massBunker / dT;
 				if (mass_flow_corrected < 0) {
 					mass_flow_corrected = 0;
 				}
+				materialText = " Not enough";
 			}
+*/
 
 			_res[m_iMflowOut]      = _vars[m_iMflowOut]      - mass_flow_corrected;
+						std::cout << "CurTime: " << _time <<  "; timePrev: " << timePrev << " ; BunkerMass: " << massBunker <<  " ; MflowPrev=" << MflowPrev << " ; MflowCurr: " << MflowCurr <<
+			             " ; MFlowIn: " << MflowIn << " ; MflowOut: " << MflowOut <<
+						 " ; _vars[m_iMflowOut]: " << _vars[m_iMflowOut] <<
+						 " ; _res[m_iMflowOut]: "  << _res[m_iMflowOut] <<
+						 " ; mass_flow_requested: " << mass_flow_requested << " ; " <<
+						  ";  mass_flow_corrected: "  << mass_flow_corrected  << materialText << std::endl;
+
 			break;
 		}
 		default:
