@@ -57,6 +57,12 @@ jobs:
         Invoke-WebRequest -Uri https://ftp.fau.de/qtproject/archive/vsaddin/${{env.QT_VS_ADDIN_VERSION}}.vsix -MaximumRetryCount 10 -RetryIntervalSec 30 -OutFile vspackage.vsix 
         Expand-Archive vspackage.vsix -DestinationPath ${{github.workspace}}/ExternalLibraries/qtvsaddin
         
+    - name: Build dependencies
+      working-directory: ${{github.workspace}}/ExternalLibraries
+      # Run the script to build all third-party tools
+      shell: cmd
+      run: RunAll.bat
+        
     - name: Build
       working-directory: ${{github.workspace}}
       env:
