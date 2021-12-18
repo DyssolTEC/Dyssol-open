@@ -15,7 +15,7 @@ env:
   # Qt settings
   QT_VERSION: 5.15.2
   QT_VS_VERSION: msvc2019_64
-  QT_VS_ADDIN_VERSION: 2.7.2/qt-vsaddin-msvc2019-2.7.2-rev.02
+  QT_VS_ADDIN_VERSION: 2.7.2
 
 jobs:
   build:
@@ -33,7 +33,14 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ${{github.workspace}}/ExternalLibraries/qt
-        key: ${{runner.os}}-QtCache
+        key: ${{runner.os}}-QtCache-${{env.QT_VERSION}}
+        
+    - name: Cache QtMsBuild tools
+      id: cache-qt-ms-build-tools
+      uses: actions/cache@v2
+      with:
+        path: ${{github.workspace}}/ExternalLibraries/qtvsaddin
+        key: ${{runner.os}}-QtMsBuildCache-${{env.QT_VS_ADDIN_VERSION}}
     
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
@@ -50,11 +57,12 @@ jobs:
         setup-python: 'false'
                 
     - name: Get QtMsBuild tools
+      if: steps.cache-qt-ms-build-tools.outputs.cache-hit != 'true'
       working-directory: ${{github.workspace}}
       # Get additional project files to build Qt solution with MSBuild. This work is usually done in Visual Studio with Qt VS Tools extension.
-      # So, just download this extension and extract requited files.
+      # Download the extension and extract requited files.
       run: |
-        Invoke-WebRequest -Uri https://ftp.fau.de/qtproject/archive/vsaddin/${{env.QT_VS_ADDIN_VERSION}}.vsix -MaximumRetryCount 10 -RetryIntervalSec 30 -OutFile vspackage.vsix 
+        Invoke-WebRequest -Uri https://ftp.fau.de/qtproject/archive/vsaddin/${{env.QT_VS_ADDIN_VERSION}}/qt-vsaddin-msvc2019-${{env.QT_VS_ADDIN_VERSION}}.vsix -MaximumRetryCount 10 -RetryIntervalSec 30 -OutFile vspackage.vsix 
         Expand-Archive vspackage.vsix -DestinationPath ${{github.workspace}}/ExternalLibraries/qtvsaddin
         
     - name: Build dependencies
