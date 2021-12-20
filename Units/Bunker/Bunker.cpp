@@ -253,31 +253,35 @@ void CMyDAEModel::CalculateResiduals(double _time, double* _vars, double* _ders,
 				static_cast<CBunker*>(_unit)->RaiseError("Bunker overflow!");
 			}
 			const double mass_flow_requested  = unit->mass_flow->GetValue(_time);
-			double mass_flow_corrected = 0;
-			const auto dT = _time - timePrev;
+			//double mass_flow_corrected = 0;
+			const double timePrev2 = unit->m_holdup->GetPreviousTimePoint(_time);
+			const auto dT = _time - timePrev2;
 			std::string materialText = "";
 
-			mass_flow_corrected = mass_flow_requested;
-			if (massBunker <= 0) {
-				mass_flow_corrected = 0;
-			}
+			const double smooth = 0.5 + 0.5 * std::tanh(20 * (massBunker - mass_flow_requested * dT));
+			const double MFlowOut = smooth * mass_flow_requested + (1 - smooth) * MflowIn;
 
-/*
-			if (massBunker / dT >= mass_flow_requested) { // We have enough material in the bunker to provide requested mass flow
+			//mass_flow_corrected = mass_flow_requested;
+			//if (massBunker <= 0) {
+			//	mass_flow_corrected = 0;
+			//}
+
+
+/*			if (massBunker >= mass_flow_requested * dT) { // We have enough material in the bunker to provide requested mass flow
 				mass_flow_corrected = mass_flow_requested;
 				materialText = " Enough";
 			} else {                                      // We 	DO NOT have enough material in the bunker to provide requested mass flow, let'correct it
-				mass_flow_corrected = massBunker / dT;
+				mass_flow_corrected = MflowCurr;
 				if (mass_flow_corrected < 0) {
 					mass_flow_corrected = 0;
 				}
 				materialText = " Not enough";
-			}
-*/
+			}*/
 
-			_res[m_iMflowOut]      = _vars[m_iMflowOut]      - mass_flow_corrected;
+
+			_res[m_iMflowOut]      = _vars[m_iMflowOut]      - MFlowOut;
 						std::cout << "CurTime: " << _time <<
-						 "; timePrev: " << timePrev <<
+						 "; timePrev2: " << timePrev2 <<
 						 " ; massBunker: " << massBunker <<
 						 " ; MflowPrev=" << MflowPrev <<
 						 " ; MflowCurr: " << MflowCurr <<
@@ -287,7 +291,7 @@ void CMyDAEModel::CalculateResiduals(double _time, double* _vars, double* _ders,
 						 " ; _vars[m_iMflowOut]: " << _vars[m_iMflowOut] <<
 						 " ; _res[m_iMflowOut]: "  << _res[m_iMflowOut] <<
 						 " ; mass_flow_requested: " << mass_flow_requested <<
-						 ";  mass_flow_corrected: "  << mass_flow_corrected  <<
+						 //";  mass_flow_corrected: "  << mass_flow_corrected  <<
 						 ";  _res[m_iMass]: "  << _res[m_iMass]  <<
 						 materialText << std::endl;
 
