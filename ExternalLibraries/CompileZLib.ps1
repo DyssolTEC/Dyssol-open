@@ -6,7 +6,7 @@
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $CURRENT_PATH = (Get-Item -Path ".\" -Verbose).FullName
 if (-not (Get-Command Expand-7Zip -ErrorAction Ignore)) {
-	Install-Package -Scope CurrentUser -Force 7Zip4PowerShell > $null
+	Install-Package -Scope CurrentUser -Force -ProviderName PowerShellGet 7Zip4Powershell > $null
 }
 
 ################################################################################
