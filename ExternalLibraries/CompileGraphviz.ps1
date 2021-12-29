@@ -11,6 +11,9 @@ catch [System.Management.Automation.CommandNotFoundException] { Throw "Git is no
 # Check cmake is available
 try { $null = cmake --version }
 catch [System.Management.Automation.CommandNotFoundException] { Throw "CMake is not available. Install it and add to PATH." }
+# Check python3 is available
+try { $null = py --version }
+catch [System.Management.Automation.CommandNotFoundException] { Throw "python3 is not available. Install it and add to PATH." }
 
 ################################################################################
 ### Paths
@@ -95,8 +98,8 @@ cmake -G "Visual Studio 16 2019" -A Win32 $GRAPHVIZ_SRC_PATH `
 	-DPangoCairo_LIBRARY="$DEPEND_LIBS32\lib\pangocairo-1.0.lib" `
 	-DPangoCairo_RUNTIME_LIBRARY="$DEPEND_LIBS32\bin\pangocairo-1.dll" `
 	-DZLIB_INCLUDE_DIR="$ZLIB_INSTALL_PATH\include" `
-	-DZLIB_LIBRARY_DEBUG="$ZLIB_INSTALL_PATH\lib64\zlibstaticd.lib" `
-	-DZLIB_LIBRARY_RELEASE="$ZLIB_INSTALL_PATH\lib64\zlibstatic.lib" `
+	-DZLIB_LIBRARY_DEBUG="$ZLIB_INSTALL_PATH\lib32\zlibstaticd.lib" `
+	-DZLIB_LIBRARY_RELEASE="$ZLIB_INSTALL_PATH\lib32\zlibstatic.lib" `
 	-Denable_ltdl=YES `
 	-Duse_coverage=NO `
 	-Duse_sanitizers=NO `
