@@ -255,26 +255,11 @@ void CMyDAEModel::CalculateResiduals(double _time, double* _vars, double* _ders,
 			const double mass_flow_requested  = unit->mass_flow->GetValue(_time);
 			const double timePrev2 = unit->m_holdup->GetPreviousTimePoint(_time);
 			const auto dT = _time - timePrev2;
-			std::string materialText = "";
 
 			const double smooth = 0.5 + 0.5 * std::tanh(50 * (massBunker - mass_flow_requested * dT));
 			const double MFlowOut = smooth * mass_flow_requested + (1 - smooth) * MflowIn;
 
 			_res[m_iMflowOut]      = _vars[m_iMflowOut]      - MFlowOut;
-						std::cout << "CurTime: " << _time <<
-						 " ; timePrev2: " << timePrev2 <<
-						 " ; massBunker: " << massBunker <<
-						 " ; MflowPrev=" << MflowPrev <<
-						 " ; MflowCurr: " << MflowCurr <<
-			             " ; MFlowIn: " << MflowIn <<
-						 " ; MflowOut: " << MflowOut <<
-						 " ; _ders[m_iMass]: " << _ders[m_iMass] <<
-						 " ; _vars[m_iMflowOut]: " << _vars[m_iMflowOut] <<
-						 " ; _res[m_iMflowOut]: "  << _res[m_iMflowOut] <<
-						 " ; mass_flow_requested: " << mass_flow_requested <<
-						 ";  _res[m_iMass]: "  << _res[m_iMass]  <<
-						 materialText << std::endl;
-
 			break;
 		}
 		default:
