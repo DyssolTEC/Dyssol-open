@@ -241,12 +241,12 @@ void CMyDAEModel::CalculateResiduals(double _time, double* _vars, double* _ders,
 	// Outflow
 	switch(static_cast<CBunker::EModel>(unit->model_bunker->GetValue()))
 	{
-		case CBunker::EModel::Adaptive:
+		case CBunker::EModel::Adaptive: // Adaptive model
 		{
 			_res[m_iMflowOut]      = _vars[m_iMflowOut]      - std::pow(2 * massBunker / (massBunker + unit->m_targetMass), 2) * MflowIn;
 			break;
 		}
-		case CBunker::EModel::Constant:
+		case CBunker::EModel::Constant: // Constant model
 		{
 			if (massBunker > unit->m_targetMass)
 			{
@@ -256,6 +256,7 @@ void CMyDAEModel::CalculateResiduals(double _time, double* _vars, double* _ders,
 			const double timePrev2 = unit->m_holdup->GetPreviousTimePoint(_time);
 			const auto dT = _time - timePrev2;
 
+			// Smooth function
 			const double smooth = 0.5 + 0.5 * std::tanh(50 * (massBunker - mass_flow_requested * dT));
 			const double MFlowOut = smooth * mass_flow_requested + (1 - smooth) * MflowIn;
 
