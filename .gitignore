@@ -228,3 +228,6 @@ Dyssol.VC.VC.opendb
 /DyssolLinux/compiled/
 /inst/
 .vscode
+/ExternalLibraries/sundials/
+/ExternalLibraries/hdf5/
+/ExternalLibraries/zlib/
