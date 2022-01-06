@@ -652,22 +652,6 @@ bool CScriptRunner::ExportResults(const CScriptJob& _job)
 	// close file before exit
 	file.close();
 
-	// export to graph file
-	if (_job.HasKey(EScriptKeys::EXPORT_FLOWSHEET_GRAPH))
-	{
-		const auto graphFile = _job.GetValue<fs::path>(EScriptKeys::EXPORT_FLOWSHEET_GRAPH);
-		PrintMessage(DyssolC_ExportGraph(graphFile.string()));
-
-		// open text file for export
-		std::ofstream graph(graphFile);
-		if (!graph)
-			return PrintMessage(DyssolC_ErrorGraphFile());
-
-		// export graph
-		graph << m_flowsheet.GenerateDOTFile();
-		graph.close();
-	}
-
 	return success;
 }
 

@@ -22,7 +22,9 @@
  */
 class CFlowsheet
 {
-	static const unsigned m_saveVersion{ 5 }; // Current version of the saving procedure.
+	static constexpr unsigned m_saveVersion{ 5 };	// Current version of the saving procedure.
+
+	std::filesystem::path m_fileName{};		// Current file where the flowsheet is stored.
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Global structural data and settings
@@ -57,6 +59,9 @@ class CFlowsheet
 public:
 	// Basic constructor
 	CFlowsheet(CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB);
+
+	// Returns the full name of the file, where the flowsheet is stored.
+	[[nodiscard]] std::filesystem::path GetFileName() const;
 
 	// Makes initial preparations of the flowsheet structure.
 	void Create();
@@ -146,10 +151,6 @@ public:
 
 	// Generates a graph-like representation of the flowsheet.
 	std::vector<SFlowsheetConnection> GenerateConnectionsDescription() const;
-	// Generates a flowsheet representation in DOT format.
-	std::string GenerateDOTFile();
-	// Generates a flowsheet representation in PNG format.
-	bool GeneratePNGFile(const std::string& _fileName);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Compounds

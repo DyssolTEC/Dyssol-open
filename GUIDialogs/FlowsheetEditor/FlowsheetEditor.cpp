@@ -8,18 +8,25 @@
 #include "DyssolStringConstants.h"
 #include "ReactionsEditor.h"
 #include "ContainerFunctions.h"
+#include "FlowsheetViewer.h"
 #include <QMessageBox>
 #include <cmath>
 
-CFlowsheetEditor::CFlowsheetEditor(CFlowsheet *_pFlowsheet, const CMaterialsDatabase* _matrialsDB, CModelsManager* _modelsManager, QWidget *parent /*= 0 */)
+CFlowsheetEditor::CFlowsheetEditor(CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, CModelsManager* _modelsManager, QSettings* _settings, QWidget* parent /*= 0 */)
 	: QWidget(parent),
 	m_pFlowsheet(_pFlowsheet),
 	m_materialsDB{ _matrialsDB },
 	m_modelsManager{ _modelsManager },
 	m_pSelectedModel(nullptr),
 	m_pSelectedStream(nullptr)
+	, m_viewer{ new CFlowsheetViewer{ _pFlowsheet, _settings } }
 {
 	ui.setupUi(this);
+}
+
+CFlowsheetEditor::~CFlowsheetEditor()
+{
+	delete m_viewer;
 }
 
 void CFlowsheetEditor::InitializeConnections()
@@ -51,6 +58,9 @@ void CFlowsheetEditor::InitializeConnections()
 	connect(ui.tableUnitParams,		&CQtTable::ComboBoxIndexChanged,		this, &CFlowsheetEditor::UnitParamValueChanged);
 	connect(ui.tableUnitParams,		&CQtTable::CheckBoxStateChanged,		this, &CFlowsheetEditor::UnitParamValueChanged);
 	connect(ui.tableUnitParams,		&CQtTable::PushButtonClicked,		    this, &CFlowsheetEditor::UnitParamValueChanged);
+
+	connect(ui.buttonShowFlowsheet, &QPushButton::clicked         , m_viewer, &QDialog::show);
+	connect(this                  , &CFlowsheetEditor::DataChanged, m_viewer, [&](){ m_viewer->Update(); });
 }
 
 void CFlowsheetEditor::setVisible(bool _bVisible)
@@ -65,6 +75,7 @@ void CFlowsheetEditor::UpdateWholeView()
 	UpdateModelsView();
 	UpdateStreamsView();
 	UpdateAvailableUnits();
+	m_viewer->Update();
 }
 
 void CFlowsheetEditor::UpdateAvailableUnits() const

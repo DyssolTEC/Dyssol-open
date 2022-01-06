@@ -3,3 +3,4 @@
 powershell -executionpolicy bypass -File .\CompileSundials.ps1
 powershell -executionpolicy bypass -File .\CompileZLib.ps1
 powershell -executionpolicy bypass -File .\CompileHDF5.ps1
+powershell -executionpolicy bypass -File .\CompileGraphviz.ps1

@@ -12,8 +12,7 @@ namespace fs = std::filesystem;
 
 namespace ScriptInterface
 {
-	bool ExportScript(const fs::path& _scriptFile, const fs::path& _flowsheetFile, const CFlowsheet& _flowsheet,
-		const CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB)
+	bool ExportScript(const fs::path& _scriptFile, const CFlowsheet& _flowsheet, const CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB)
 	{
 		std::ofstream file(_scriptFile);
 		if (!file) return false;
@@ -32,13 +31,13 @@ namespace ScriptInterface
 			}
 			case EScriptKeys::SOURCE_FILE:
 			{
-				auto entry = _flowsheetFile;
+				auto entry = _flowsheet.GetFileName();
 				job.AddEntry(e.keyStr)->value = fs::absolute(entry.make_preferred());
 				break;
 			}
 			case EScriptKeys::RESULT_FILE:
 			{
-				auto entry = _flowsheetFile.parent_path() /= _flowsheetFile.stem() += fs::path{ "_res" } += _flowsheetFile.extension();
+				auto entry = _flowsheet.GetFileName().parent_path() /= _flowsheet.GetFileName().stem() += fs::path{ "_res" } += _flowsheet.GetFileName().extension();
 				job.AddEntry(e.keyStr)->value = fs::absolute(entry.make_preferred());
 				break;
 			}
@@ -385,7 +384,6 @@ namespace ScriptInterface
 			case EScriptKeys::EXPORT_HOLDUP_DISTRIBUTIONS:
 			case EScriptKeys::EXPORT_UNIT_STATE_VARIABLE:
 			case EScriptKeys::EXPORT_UNIT_PLOT:
-			case EScriptKeys::EXPORT_FLOWSHEET_GRAPH:
 				break;
 			}
 		}

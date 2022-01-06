@@ -383,6 +383,13 @@
        </layout>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="buttonShowFlowsheet">
+       <property name="text">
+        <string>Show flowsheet</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>

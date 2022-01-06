@@ -10,6 +10,8 @@ class CFlowsheet;
 class CStream;
 class CUnitContainer;
 class CUnitParametersManager;
+class CFlowsheetViewer;
+class QSettings;
 
 class CFlowsheetEditor : public QWidget
 {
@@ -22,9 +24,11 @@ class CFlowsheetEditor : public QWidget
 	CUnitContainer* m_pSelectedModel;		    // Currently selected model.
 	CStream *m_pSelectedStream;					// Currently selected stream.
 	CUnitParametersManager *m_pModelParams;		// Unit parameters of currently selected model.
+	CFlowsheetViewer* m_viewer;					// Flowsheet diagram viewer.
 
 public:
-	CFlowsheetEditor(CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, CModelsManager* _modelsManager, QWidget *parent = nullptr);
+	CFlowsheetEditor(CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, CModelsManager* _modelsManager, QSettings* _settings, QWidget *parent = nullptr);
+	~CFlowsheetEditor() override;
 
 	void InitializeConnections();
 
