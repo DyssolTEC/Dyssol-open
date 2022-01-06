@@ -24,6 +24,12 @@
     <ClCompile Include="ReactionsEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FlowsheetViewer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphvizHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="FlowsheetEditor.h">
@@ -33,6 +39,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="ReactionsEditor.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="FlowsheetViewer.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
@@ -46,5 +55,13 @@
     <QtUic Include="ReactionsEditor.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+    <QtUic Include="FlowsheetViewer.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GraphvizHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

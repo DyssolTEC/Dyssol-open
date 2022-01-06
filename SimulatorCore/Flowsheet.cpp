@@ -7,16 +7,17 @@
 #include "ContainerFunctions.h"
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
-#include <sstream>
-#ifdef GRAPHVIZ
-#include <gvc.h>
-#endif
 
 CFlowsheet::CFlowsheet(CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB) :
 	m_materialsDB{ _materialsDB },
 	m_modelsManager{ _modelsManager }
 {
 	Create();
+}
+
+std::filesystem::path CFlowsheet::GetFileName() const
+{
+	return m_fileName;
 }
 
 void CFlowsheet::Create()
@@ -44,6 +45,9 @@ void CFlowsheet::Clear()
 
 	// set the topology is modified
 	SetTopologyModified(true);
+
+	// clear file name
+	m_fileName.clear();
 
 	// initialize flowsheet with default structure
 	Create();
@@ -361,117 +365,6 @@ std::vector<SFlowsheetConnection> CFlowsheet::GenerateConnectionsDescription() c
 	}
 
 	return res;
-}
-
-std::string CFlowsheet::GenerateDOTFile()
-{
-	std::stringstream res;
-	res << "digraph Flowsheet {" << std::endl;
-	// list units
-	for (const auto& u : GetAllUnits())
-	{
-#ifdef _MSC_VER
-		res << StringFunctions::Quote(u->GetName()) << " [shape=box];" << std::endl;
-#else
-		const auto name = u->GetModel() ? u->GetModel()->GetUnitName() : "";
-		if (name == "Agglomerator"  ||
-			name == "Bunker"        ||
-			name == "Crusher"       ||
-			name == "Cyclone v2"    ||
-			name == "Granulator"    ||
-			name == "HeatExchanger" ||
-			name == "InletFlow"     ||
-			name == "Mixer"         ||
-			name == "Mixer3"        ||
-			name == "OutletFlow"    ||
-			name == "Screen"        ||
-			name == "Splitter"      ||
-			name == "Splitter3"     ||
-			name == "Time delay")
-		{
-			res << StringFunctions::Quote(u->GetName()) << " [image=\"" << INSTALL_DOCS_PATH  << "/pics/units_dotgraph/" <<
-				u->GetModel()->GetUnitName() << ".png\", shape=box];" << std::endl;
-		}
-		else
-			res << StringFunctions::Quote(u->GetName()) << " [shape=box];" << std::endl;
-#endif
-	}
-	// list streams
-	for (const auto& c : GenerateConnectionsDescription())
-	{
-		if (c.unitI.empty() || c.unitO.empty()) continue;
-		res << StringFunctions::Quote(GetUnit(c.unitO)->GetName()) << " -> " << StringFunctions::Quote(GetUnit(c.unitI)->GetName())
-			<< " [label=" << StringFunctions::Quote(GetStream(c.stream)->GetName()) << "];" << std::endl;
-	}
-	res << "}" << std::endl;
-
-	return res.str();
-}
-
-bool CFlowsheet::GeneratePNGFile(const std::string& _fileName)
-{
-	#ifdef GRAPHVIZ
-	Agraph_t *g;
-
-	std::map<std::string, Agnode_t *> mapGraph;
-
-	/* Create a simple digraph */
-	g = agopen("Flowsheet", Agdirected, 0);
-
-	// list units
-	for (const auto& u : GetAllUnits())
-	{
-		char * nameNode = new char [u->GetName().length()+1];
-		std::strcpy (nameNode, u->GetName().c_str());
-		mapGraph[u->GetName()] =  agnode(g, nameNode, 1);
-
-		// set color
-		// agsafeset(mapGraph[u->GetName()], "color", "red", "");
-
-		// image path
-		/*
-		std::stringstream imagePath;
-		imagePath << INSTALL_DOCS_PATH  << "/pics/units_dotgraph/" << u->GetModel()->GetUnitName() << ".png";
-		const auto imagePathStr = imagePath.str();
-		char * imagePathChar = new char [imagePathStr.length()+1];
-		std::strcpy (imagePathChar, imagePathStr.c_str());
-		agsafeset(mapGraph[u->GetName()], "image", imagePathChar, "");
-		*/
-		if (u->GetModel() && "Crusher" == u->GetModel()->GetUnitName())
-			agsafeset(mapGraph[u->GetName()], "shape", "invtrapezium", "");
-		else if (u->GetModel() && "Screen" == u->GetModel()->GetUnitName())
-			agsafeset(mapGraph[u->GetName()], "shape", "parallelogram", "");
-		else if (u->GetModel() && "InletFlow" == u->GetModel()->GetUnitName() || "OutletFlow" == u->GetModel()->GetUnitName() )
-			agsafeset(mapGraph[u->GetName()], "shape", "octagon", "");
-		else
-			agsafeset(mapGraph[u->GetName()], "shape", "box", "");
-		delete[] nameNode;
-	}
-	// list streams
-	for (const auto& c : GenerateConnectionsDescription())
-	{
-		if (c.unitI.empty() || c.unitO.empty() || !GetUnit(c.unitI) || !GetUnit(c.unitO)) continue;
-		if (mapGraph[GetUnit(c.unitO)->GetName()] && mapGraph[GetUnit(c.unitI)->GetName()])
-		{
-			const auto e = agedge(g, mapGraph[GetUnit(c.unitO)->GetName()], mapGraph[GetUnit(c.unitI)->GetName()], 0, 1);
-			char* nameStream = new char[GetStream(c.stream)->GetName().length() + 1];
-			std::strcpy(nameStream, GetStream(c.stream)->GetName().c_str());
-			agsafeset(e, "label", nameStream, "");
-		}
-	}
-
-	GVC_t *gvc = gvContext();
-
-	/* Use the directed graph layout engine */
-	gvLayout(gvc, g, "dot");
-
-	const auto ext = std::filesystem::path{ _fileName }.extension();
-	gvRenderFilename(gvc, g, ext.string().substr(1, ext.string().size() - 1).c_str(), _fileName.c_str());
-
-	gvFreeLayout(gvc, g);
-	agclose(g);
-	#endif
-	return true;
 }
 
 size_t CFlowsheet::GetCompoundsNumber() const
@@ -954,6 +847,7 @@ bool CFlowsheet::SaveToFile(CH5Handler& _h5File, const std::filesystem::path& _f
 	m_parameters.SaveToFile(_h5File, _h5File.CreateGroup(root, StrConst::Flow_H5GroupOptions));
 
 	_h5File.Close();
+	m_fileName = _fileName;
 
 	return true;
 }
@@ -973,7 +867,10 @@ bool CFlowsheet::LoadFromFile(CH5Handler& _h5File, const std::filesystem::path& 
 	// version of save procedure
 	const int version = _h5File.ReadAttribute(root, StrConst::H5AttrSaveVersion);
 	if (version < 4)
+	{
+		m_fileName = _fileName;
 		return LoadFromFile_v3(_h5File, root);
+	}
 
 	// parameters
 	m_parameters.LoadFromFile(_h5File, root + StrConst::Flow_H5GroupOptions);
@@ -1033,6 +930,7 @@ bool CFlowsheet::LoadFromFile(CH5Handler& _h5File, const std::filesystem::path& 
 
 	_h5File.Close();
 	SetTopologyModified(false);
+	m_fileName = _fileName;
 	return true;
 }
 

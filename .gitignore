@@ -231,3 +231,4 @@ Dyssol.VC.VC.opendb
 /ExternalLibraries/sundials/
 /ExternalLibraries/hdf5/
 /ExternalLibraries/zlib/
+/ExternalLibraries/graphviz

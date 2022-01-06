@@ -5,6 +5,7 @@
 #include "DyssolDefines.h"
 #include <string>
 #include <iostream>
+#include <utility>
 
 // Time dependent value.
 struct STDValue
@@ -121,7 +122,11 @@ enum class EDirection
  */
 struct SFlowsheetConnection
 {
-	std::string stream{}, unitO{}, portO{}, unitI{}, portI{};
-	SFlowsheetConnection(const std::string& _stream, const std::string& _unitO, const std::string& _portO, const std::string& _unitI, const std::string& _portI)
-		: stream{ _stream }, unitO{ _unitO }, portO{ _portO }, unitI{ _unitI }, portI{ _portI } {}
+	std::string stream{};	// key
+	std::string unitO{};	// key
+	std::string portO{};	// name
+	std::string unitI{};	// key
+	std::string portI{};	// name
+	SFlowsheetConnection(std::string _stream, std::string _unitO, std::string _portO, std::string _unitI, std::string _portI)
+		: stream{ std::move(_stream) }, unitO{ std::move(_unitO) }, portO{ std::move(_portO) }, unitI{ std::move(_unitI) }, portI{ std::move(_portI) } {}
 };

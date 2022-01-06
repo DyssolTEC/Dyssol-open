@@ -105,6 +105,8 @@
   </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="FlowsheetEditor.cpp" />
+    <ClCompile Include="FlowsheetViewer.cpp" />
+    <ClCompile Include="GraphvizHandler.cpp" />
     <ClCompile Include="ReactionWidget.cpp" />
     <ClCompile Include="ReactionsEditor.cpp" />
   </ItemGroup>
@@ -128,6 +130,7 @@
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="FlowsheetEditor.ui" />
+    <QtUic Include="FlowsheetViewer.ui" />
     <QtUic Include="ReactionWidget.ui" />
     <QtUic Include="ReactionsEditor.ui" />
   </ItemGroup>
@@ -136,6 +139,12 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="ReactionWidget.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="FlowsheetViewer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GraphvizHandler.h" />
   </ItemGroup>
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.props')">
     <Import Project="$(QtMsBuild)\qt.props" />

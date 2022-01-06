@@ -92,6 +92,14 @@ Source: "..\..\ModelsAPI\*.vcxproj"; DestDir: "{app}\{code:DirCppTemplate}\{code
 Source: "..\Data\VCProject\Dyssol_NoSrc.sln"; DestDir: "{app}\{code:DirCppTemplate}"; DestName: "{code:FileSolution}"; Flags: ignoreversion
 #endif
 
+; Binaries
+#ifdef IsIncludeX32
+Source: "..\..\ExternalLibraries\graphviz\bin32\*"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirDebugExe}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+#endif
+#ifdef IsIncludeX64
+Source: "..\..\ExternalLibraries\graphviz\bin64\*"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirDebugExe}"; Flags: ignoreversion; Check: Is64BitInstallMode
+#endif
+
 [Dirs]
 Name: "{app}\{code:DirCppTemplate}"; Flags: uninsalwaysuninstall
 Name: "{app}\{code:DirCppTemplate}\{code:DirExternalLibs}"; Flags: uninsalwaysuninstall
