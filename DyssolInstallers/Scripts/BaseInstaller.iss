@@ -52,14 +52,16 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 #ifdef IsIncludeX32
-Source: "..\..\Win32\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "..\..\Win32\Debug\{#MyAppExeName}"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirDebugExe}"; Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "..\..\Win32\Release\DyssolC.exe"; DestDir: "{app}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "..\..\Win32\Release\{#MyAppExeName}"      ; DestDir: "{app}"                                         ; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "..\..\Win32\Debug\{#MyAppExeName}"        ; DestDir: "{app}\{code:DirCppTemplate}\{code:DirDebugExe}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "..\..\Win32\Release\DyssolC.exe"          ; DestDir: "{app}"                                         ; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "..\..\ExternalLibraries\graphviz\bin32\*" ; DestDir: "{app}"                                         ; Flags: ignoreversion; Check: not Is64BitInstallMode
 #endif
 #ifdef IsIncludeX64
-Source: "..\..\x64\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "..\..\x64\Debug\{#MyAppExeName}"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirDebugExe}"; Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "..\..\x64\Release\DyssolC.exe"; DestDir: "{app}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "..\..\x64\Release\{#MyAppExeName}"        ; DestDir: "{app}"                                         ; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "..\..\x64\Debug\{#MyAppExeName}"          ; DestDir: "{app}\{code:DirCppTemplate}\{code:DirDebugExe}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "..\..\x64\Release\DyssolC.exe"            ; DestDir: "{app}"                                         ; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "..\..\ExternalLibraries\graphviz\bin64\*" ; DestDir: "{app}"                                         ; Flags: ignoreversion; Check: Is64BitInstallMode
 #endif
 Source: "..\..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\Data\ExampleConfigFile.txt"; DestDir: "{app}"; Flags: ignoreversion
