@@ -16,15 +16,17 @@ CAboutWindow::CAboutWindow(QWidget* parent)	: QDialog(parent)
 	m_headerUpdatesLink = "https://github.com/FlowsheetSimulation/Dyssol-open/releases";
 
 	m_mainDevelopers = { "Vasyl Skorych", "Maksym Dosta", "Moritz Buchholz" };
-	m_otherDevelopers = { "Robin Ahrens", "Illia Bereza", "Lusine Shahmuradyan" };
+	m_otherDevelopers = { "Anton Gladky", "Illia Bereza", "Lusine Shahmuradyan", "Robin Ahrens", "Xiye Zhou" };
 
 	m_libraries = {
-		{ "Qt 5.15.2",			"http://www.qt.io/",								"Copyright 2020, The Qt Company",															"LGPL v3 license",		"https://doc.qt.io/qt-5/lgpl.html" },
-		{ "zlib 1.2.11",		"http://www.zlib.net/",								"Copyright 2017, Jean-loup Gailly and Mark Adler",											"zlib license",			"https://www.zlib.net/zlib_license.html" },
-		{ "HDF5 v1.12.0",		"https://www.hdfgroup.org/solutions/hdf5/",			"Copyright 2018, The HDF Group",															"BSD-like license",		"https://support.hdfgroup.org/ftp/HDF5/releases/COPYING" },
-		{ "SUNDIALS v5.6.1",	"https://computing.llnl.gov/projects/sundials/",	"Copyright 2019, Lawrence Livermore National Security and Southern Methodist University",	"BSD-3-Clause license", "https://computing.llnl.gov/projects/sundials/license" },
-		{ "KISS FFT v131",		"https://github.com/mborgerding/kissfft",			"Copyright 2010, Mark Borgerding",															"BSD-3-Clause license", "https://github.com/mborgerding/kissfft/blob/master/COPYING" },
-		{ "Inno Setup v6.0.5",	"http://www.jrsoftware.org/isinfo.php",				"Copyright 2020, Jordan Russell",															"Modified BSD license", "https://jrsoftware.org/files/is/license.txt" } };
+		{ "Qt"        , "http://www.qt.io/"                            , "Copyright 2020, The Qt Company"                                                        , "LGPL v3 license"     , "https://doc.qt.io/qt-5/lgpl.html"                           },
+		{ "zlib"      ,	"http://www.zlib.net/"                         , "Copyright 2017, Jean-loup Gailly and Mark Adler"                                       , "zlib license"        , "https://www.zlib.net/zlib_license.html"                     },
+		{ "HDF5"      ,	"https://www.hdfgroup.org/solutions/hdf5/"     , "Copyright 2018, The HDF Group"                                                         , "BSD-like license"    , "https://support.hdfgroup.org/ftp/HDF5/releases/COPYING"     },
+		{ "SUNDIALS"  ,	"https://computing.llnl.gov/projects/sundials/", "Copyright 2019, Lawrence Livermore National Security and Southern Methodist University", "BSD-3-Clause license", "https://computing.llnl.gov/projects/sundials/license"       },
+		{ "KISS FFT"  ,	"https://github.com/mborgerding/kissfft"       , "Copyright 2010, Mark Borgerding"                                                       , "BSD-3-Clause license", "https://github.com/mborgerding/kissfft/blob/master/COPYING" },
+		{ "Inno Setup",	"http://www.jrsoftware.org/isinfo.php"         , "Copyright 2020, Jordan Russell"                                                        , "Modified BSD license", "https://jrsoftware.org/files/is/license.txt"                },
+		{ "Graphviz"  ,	"https://graphviz.org/"                        , "Copyright 2021, Graphviz contributors"                                                 , "CPL v1.0 license"    , "https://graphviz.org/license/"                              },
+	};
 
 	SetHeaderText();
 	SetLicense();

@@ -32,7 +32,7 @@ Run the provided installer and follow the instructions.
 ### Compilation procedure on Windows
 - Make sure all programs and tools from the [list](#Compilation-requirements) are installed.
 - Setup Qt Visual Studio Tools extension to point to the installed Qt libraries. In Visual Studio 2019, go to Extensions → Qt VS Tools → Qt Options → Add → ... → Navigate in the Qt installation directory to `Qt/5.15.0/msvc2019` → OK. Repeat for `Qt/5.15.0/msvc2019_64`.
-- Compile and build external statically linked libraries: zlib, HDF5, SUNDIALS. To do this, navigate to `Dyssol/ExternalLibraries/` and execute file `RunAll.bat`. It will start building all the required libraries by executing files `CompileZLib.ps1`, `CompileHDF5.ps1`, `CompileSundials.ps1`. To use the scripts, the following requirements apply: Visual Studio 16 2019, CMake, PowerShell 5.0.
+- Compile and build external statically linked libraries: zlib, HDF5, SUNDIALS. To do this, navigate to `Dyssol/ExternalLibraries/` and execute file `RunAll.bat`. It will start building all the required libraries by executing files `CompileZLib.ps1`, `CompileHDF5.ps1`, `CompileSundials.ps1`, `CompileGraphviz.ps1`. To use the scripts, the following requirements apply: Visual Studio 16 2019, CMake, PowerShell 5.0.
 - Open `Dyssol/Dyssol.sln` with Visual Studio and build the solution.
 
 Also, other versions of Microsoft Visual Studio can be used, but additional preparations are required:
@@ -86,8 +86,8 @@ $ make install
 
 # Installation directory organization 
 - Example flowsheets – flowsheet examples 
-- Example units – source code of units (C++)
 - Example solvers – source code of solvers (C++)
+- Example units – source code of units (C++)
 - Help – documentation files (pdf)
 - Licenses – information about licenses 
 - platforms - Qt libraries to support GUI
@@ -101,12 +101,14 @@ $ make install
 - LICENSE - license agreement
 - Materials.dmdb – default materials database
 - Qt5*.dll - Qt libraries to support GUI
+- *.dll - Other external libraries
 - unins000.exe – Dyssol uninstaller
 
 # Third-party tools and libraries
-- [Qt 5.15.2](https://www.qt.io/) – The Qt Company - [LGPL v3](https://doc.qt.io/qt-5/lgpl.html)
-- [HDF5 v1.12.0](https://www.hdfgroup.org/downloads/hdf5/) – HDF Group - [HDF license](https://support.hdfgroup.org/ftp/HDF5/releases/COPYING)
-- [zlib v1.2.11](https://www.zlib.net/) – Jean-loup Gailly and Mark Adler - [zlib license](https://www.zlib.net/zlib_license.html)
-- [SUNDIALS v5.6.1](https://computing.llnl.gov/projects/sundials/) – Lawrence Livermore National Security and Southern Methodist University - [BSD-3-Clause license](https://computing.llnl.gov/projects/sundials/license)
-- [Inno Setup v6.0.5](https://jrsoftware.org/isinfo.php) – Jordan Russell - [Inno Setup license](http://www.jrsoftware.org/files/is/license.txt)
-- [KISS FFT v131](https://github.com/mborgerding/kissfft) – Mark Borgerding - [BSD-3-Clause license](https://github.com/mborgerding/kissfft/blob/master/COPYING)
+- [Qt](https://www.qt.io/) – The Qt Company - [LGPL v3](https://doc.qt.io/qt-5/lgpl.html)
+- [HDF5](https://www.hdfgroup.org/downloads/hdf5/) – HDF Group - [HDF license](https://support.hdfgroup.org/ftp/HDF5/releases/COPYING)
+- [zlib](https://www.zlib.net/) – Jean-loup Gailly and Mark Adler - [zlib license](https://www.zlib.net/zlib_license.html)
+- [SUNDIALS](https://computing.llnl.gov/projects/sundials/) – Lawrence Livermore National Security and Southern Methodist University - [BSD-3-Clause license](https://computing.llnl.gov/projects/sundials/license)
+- [Inno Setup](https://jrsoftware.org/isinfo.php) – Jordan Russell - [Inno Setup license](http://www.jrsoftware.org/files/is/license.txt)
+- [KISS FFT](https://github.com/mborgerding/kissfft) – Mark Borgerding - [BSD-3-Clause license](https://github.com/mborgerding/kissfft/blob/master/COPYING)
+- [Graphviz](https://graphviz.org/) – Graphviz contributors - [CPL v1.0 license](https://graphviz.org/license/)
