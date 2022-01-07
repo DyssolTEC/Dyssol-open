@@ -26,16 +26,21 @@ void CBunker::CreateStructure()
 	AddPort("Outflow", EUnitPort::OUTPUT);
 
 	/// Add unit parameters ///
-	AddConstRealParameter("Target mass"       , 100000, "kg", "Target mass of bunker."                                         , 0.0);
-	AddConstRealParameter("Relative tolerance", 0.0   , "-" , "Solver relative tolerance. Set to 0 to use flowsheet-wide value", 0.0);
-	AddConstRealParameter("Absolute tolerance", 0.0   , "-" , "Solver absolute tolerance. Set to 0 to use flowsheet-wide value", 0.0);
+	m_upModel = AddComboParameter("Model", Adaptive, { Adaptive, Constant }, { "Adaptive", "Constant" }, "Outflow model");
+	m_upMassFlow   = AddTDParameter       ("Output mass flow"  , 1     , "kg/s", "Output mass flow"                                               , 0.0);
+	m_upTargetMass = AddConstRealParameter("Target mass"       , 100000, "kg"  , "Target mass of bunker."                                         , 0.0);
+	m_upRTol       = AddConstRealParameter("Relative tolerance", 0.0   , "-"   , "Solver relative tolerance. Set to 0 to use flowsheet-wide value", 0.0);
+	m_upATol       = AddConstRealParameter("Absolute tolerance", 0.0   , "-"   , "Solver absolute tolerance. Set to 0 to use flowsheet-wide value", 0.0);
+
+	// group unit parameters
+	AddParametersToGroup("Model", "Constant", { m_upMassFlow->GetName() });
 
 	/// Add holdups ///
-	AddHoldup("Holdup");
+	m_holdup = AddHoldup("Holdup");
 
-	/// Add Internal streams ///
-	AddStream("InflowSolid");
-	AddStream("InflowBypass");
+	/// Add internal streams ///
+	m_inSolid  = AddStream("InflowSolid");
+	m_inBypass = AddStream("InflowBypass");
 
 	/// Set this unit as user data of model ///
 	m_model.SetUserData(this);
@@ -48,14 +53,12 @@ void CBunker::Initialize(double _time)
 		RaiseError("Solid phase has not been defined.");
 
 	// unit parameters
-	m_targetMass = GetConstRealParameterValue("Target mass");
+	m_outputModel = static_cast<EModel>(m_upModel->GetValue());
+	m_targetMass  = m_upTargetMass->GetValue();
 
 	// Pointers to streams
-	m_holdup   = GetHoldup("Holdup");
-	m_inlet    = GetPortStream("Inflow");
-	m_outlet   = GetPortStream("Outflow");
-	m_inSolid  = GetStream("InflowSolid");
-	m_inBypass = GetStream("InflowBypass");
+	m_inlet  = GetPortStream("Inflow");
+	m_outlet = GetPortStream("Outflow");
 
 	// Flowsheet settings
 	m_compoundsNum  = GetCompoundsNumber();
@@ -94,17 +97,17 @@ void CBunker::Initialize(double _time)
 	/// Add state variables to the model ///
 	const double initMass = m_holdup->GetMass(_time);
 
-	m_model.m_iMass          = m_model.AddDAEVariable(true, initMass, 0, 0);
-	m_model.m_iMflowOut      = m_model.AddDAEVariable(false, 0, 0, 0);
-	m_model.m_iNormMflow     = m_model.AddDAEVariable(true, 1, 0, 0);
-	m_model.m_iNormT         = m_model.AddDAEVariable(true, 1, 0, 0);
-	m_model.m_iNormP         = m_model.AddDAEVariable(true, 1, 0, 0);
-	m_model.m_iNormCompounds = m_model.AddDAEVariable(true, 1, 0, 0);
+	m_model.m_iMass          = m_model.AddDAEVariable(true , initMass, 0, 1.0);
+	m_model.m_iMflowOut      = m_model.AddDAEVariable(false, 0       , 0, 1.0);
+	m_model.m_iNormMflow     = m_model.AddDAEVariable(true , 1       , 0, 0.0);
+	m_model.m_iNormT         = m_model.AddDAEVariable(true , 1       , 0, 0.0);
+	m_model.m_iNormP         = m_model.AddDAEVariable(true , 1       , 0, 0.0);
+	m_model.m_iNormCompounds = m_model.AddDAEVariable(true , 1       , 0, 0.0);
 	m_model.m_iNormDistr     = m_model.AddDAEVariables(true, std::vector(m_distrsNum, 1.0), 0, 0);
 
 	/// Set tolerances to the model ///
-	const auto rtol = GetConstRealParameterValue("Relative tolerance");
-	const auto atol = GetConstRealParameterValue("Absolute tolerance");
+	const auto rtol = m_upRTol->GetValue();
+	const auto atol = m_upATol->GetValue();
 	m_model.SetTolerance(rtol != 0.0 ? rtol : GetRelTolerance(), atol != 0.0 ? atol : GetAbsTolerance());
 
 	/// Set model to the solver ///
@@ -133,8 +136,11 @@ void CBunker::Simulate(double _timeBeg, double _timeEnd)
 	// iterate over all input time point to properly react on all signal changes
 	const auto allTP = GetAllTimePointsClosed(_timeBeg, _timeEnd);
 	for (size_t i = 0; i < allTP.size() - 1; ++i)
+	{
+		m_solver.SetMaxStep(0.25 * (allTP[i + 1] - allTP[i]));
 		if (!m_solver.Calculate(allTP[i], allTP[i + 1]))
 			RaiseError(m_solver.GetError());
+	}
 }
 
 void CBunker::SaveState()
@@ -156,6 +162,9 @@ void CMyDAEModel::ResultsHandler(double _time, double* _vars, double* _ders, voi
 {
 	/// General information ///
 	const auto* unit = static_cast<CBunker*>(_unit);
+
+	if (unit->m_outputModel == CBunker::Constant && _vars[m_iMass] > unit->m_targetMass)
+		static_cast<CBunker*>(_unit)->RaiseError("Bunker overflow at t = " + std::to_string(_time) + "s!");
 
 	const double timePrev = unit->m_holdup->GetPreviousTimePoint(_time);
 
@@ -230,10 +239,32 @@ void CMyDAEModel::CalculateResiduals(double _time, double* _vars, double* _ders,
 
 	/// Calculate residuals ///
 	// Bunker mass
-	_res[m_iMass]          = _ders[m_iMass]          - (MflowIn - MflowOut);
-	_res[m_iMflowOut]      = _vars[m_iMflowOut]      - std::pow(2 * massBunker / (massBunker + unit->m_targetMass), 2) * MflowIn;
+	_res[m_iMass] = _ders[m_iMass] - (MflowIn - MflowOut);
 
-	// Residuals of the derivatives equal the difference in the respective norms from from the last value of the
+	// Outflow
+	switch(unit->m_outputModel)
+	{
+		case CBunker::EModel::Adaptive: // Adaptive model
+		{
+			const double MFlowOut = std::pow(2 * massBunker / (massBunker + unit->m_targetMass), 2) * MflowIn;
+			_res[m_iMflowOut] = _vars[m_iMflowOut] - MFlowOut;
+			break;
+		}
+		case CBunker::EModel::Constant: // Constant model
+		{
+			const double mass_flow_requested = unit->m_upMassFlow->GetValue(_time);
+			const auto dT = _time - unit->m_holdup->GetPreviousTimePoint(_time);
+
+			// smoothing function
+			const double smooth = std::max(std::tanh(2000 * (massBunker - mass_flow_requested * dT)), 0.0);
+			const double MFlowOut = std::max(smooth * mass_flow_requested + (1 - smooth) * MflowIn, 0.0);
+
+			_res[m_iMflowOut] = _vars[m_iMflowOut] - MFlowOut;
+			break;
+		}
+	}
+
+	// Residuals of the derivatives equal the difference in the respective norms
 	_res[m_iNormMflow]     = _ders[m_iNormMflow]     - (normMflowUpdate     - _vars[m_iNormMflow]);
 	_res[m_iNormT]         = _ders[m_iNormT]         - (normTUpdate         - _vars[m_iNormT]);
 	_res[m_iNormP]         = _ders[m_iNormP]         - (normPUpdate         - _vars[m_iNormP]);

@@ -27,6 +27,8 @@ class CBunker : public CDynamicUnit
 	CDAESolver m_solver;		// Solver of DAE
 
 public:
+	enum EModel : size_t { Adaptive, Constant };
+	EModel m_outputModel{}; // Output mass model.
 	double m_targetMass{};	// Target mass for bunker.
 
 	CStream* m_inlet{};		// Pointer to inlet stream.
@@ -36,8 +38,14 @@ public:
 	CHoldup* m_holdup{};	// Pointer to holdup.
 
 	size_t m_compoundsNum{};					// Number of defined compounds.
-	size_t m_distrsNum;							// Number of defined distributions.
+	size_t m_distrsNum{};						// Number of defined distributions.
 	std::vector<EDistrTypes> m_distributions; 	// All defined distributed parameters.
+
+	CComboUnitParameter* m_upModel{};          // Unit parameter: Bunker model.
+	CTDUnitParameter* m_upMassFlow{};          // Unit parameter: Mass flow. Only for constant model.
+	CConstRealUnitParameter* m_upTargetMass{}; // Unit parameter: target mass.
+	CConstRealUnitParameter* m_upRTol{};       // Unit parameter: Relative tolerance.
+	CConstRealUnitParameter* m_upATol{};       // Unit parameter: Absolute tolerance.
 
 public:
 	void CreateBasicInfo() override;

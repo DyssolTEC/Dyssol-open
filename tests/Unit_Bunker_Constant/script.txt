@@ -1,0 +1,59 @@
+JOB 
+RESULT_FILE               ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/res.dflw
+MODELS_PATH               ${CMAKE_BINARY_DIR}/Units
+MODELS_PATH               ${CMAKE_BINARY_DIR}/Solvers
+MATERIALS_DATABASE        ${CMAKE_SOURCE_DIR}/Materials.dmdb
+EXPORT_FILE               ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
+EXPORT_SIGNIFICANCE_LIMIT 1e-06
+
+SIMULATION_TIME    100
+RELATIVE_TOLERANCE 1e-04
+ABSOLUTE_TOLERANCE 1e-07
+
+COMPOUNDS         "Sand" "H2O" "Air" 
+PHASES            "Solid" SOLID "Liquid" LIQUID "Gas" GAS 
+DISTRIBUTION_GRID "GLOBAL" SIZE NUMERIC EQUIDISTANT DIAMETER 100 1e-6 2e-3
+
+UNIT "Inlet" "InletFlow" 
+UNIT "Bunker" "Solids bunker" 
+UNIT "Outlet" "OutletFlow" 
+
+STREAM "In" "Inlet" "InletMaterial" "Bunker" "Inflow"
+STREAM "Out" "Bunker" "Outflow" "Outlet" "In"
+
+UNIT_PARAMETER "Bunker" "Model" 1
+UNIT_PARAMETER "Bunker" "Output mass flow" 0 10 10 10 15 20 25 20 30 40
+UNIT_PARAMETER "Bunker" "Target mass" 1500
+UNIT_PARAMETER "Bunker" "Relative tolerance" 0
+UNIT_PARAMETER "Bunker" "Absolute tolerance" 0
+
+HOLDUP_OVERALL      "Inlet" "InputMaterial" 0 20 300 100000 30 20 300 100000 35 30 300 100000
+HOLDUP_OVERALL      "Bunker" "Holdup" 0 10 300 100000
+HOLDUP_PHASES       "Inlet" "InputMaterial" 0 1 0 0 30 1 0 0 35 1 0 0
+HOLDUP_PHASES       "Bunker" "Holdup" 0 1 0 0
+HOLDUP_COMPOUNDS    "Inlet" "InputMaterial" SOLID 0 1 0 0 30 1 0 0 35 1 0 0
+HOLDUP_COMPOUNDS    "Inlet" "InputMaterial" LIQUID 0 0 1 0 30 0 1 0 35 0 1 0
+HOLDUP_COMPOUNDS    "Inlet" "InputMaterial" GAS 0 0 0 1 30 0 0 1 35 0 0 1
+HOLDUP_COMPOUNDS    "Bunker" "Holdup" SOLID 0 1 0 0
+HOLDUP_COMPOUNDS    "Bunker" "Holdup" LIQUID 0 0 1 0
+HOLDUP_COMPOUNDS    "Bunker" "Holdup" GAS 0 0 0 1
+HOLDUP_DISTRIBUTION "Inlet" "InputMaterial" SIZE MIXTURE Q3_DENSITY DIAMETER NORMAL 0 0.0015 0.0001 30 0.0015 0.0001 35 0.0015 0.0001 
+HOLDUP_DISTRIBUTION "Bunker" "Holdup" SIZE MIXTURE Q3_DENSITY DIAMETER NORMAL 0 0.001 0.0001
+
+EXPORT_STREAM_MASS             Out 0 10 15 25 30 35 100
+EXPORT_STREAM_TEMPERATURE      Out 0 10 15 25 30 35 100
+EXPORT_STREAM_PHASES_FRACTIONS Out 0 10 15 25 30 35 100
+EXPORT_STREAM_PSD              Out 0 10 15 25 30 35 100
+
+EXPORT_HOLDUP_MASS              Bunker Holdup       0 10 15 25 30 35 100
+EXPORT_HOLDUP_TEMPERATURE       Bunker Holdup       0 10 15 25 30 35 100
+EXPORT_HOLDUP_PHASES_FRACTIONS  Bunker Holdup       0 10 15 25 30 35 100
+EXPORT_HOLDUP_PSD               Bunker Holdup       0 10 15 25 30 35 100
+EXPORT_HOLDUP_MASS              Bunker InflowSolid  0 10 15 25 30 35 100
+EXPORT_HOLDUP_TEMPERATURE       Bunker InflowSolid  0 10 15 25 30 35 100
+EXPORT_HOLDUP_PHASES_FRACTIONS  Bunker InflowSolid  0 10 15 25 30 35 100
+EXPORT_HOLDUP_PSD               Bunker InflowSolid  0 10 15 25 30 35 100
+EXPORT_HOLDUP_MASS              Bunker InflowBypass 0 10 15 25 30 35 100
+EXPORT_HOLDUP_TEMPERATURE       Bunker InflowBypass 0 10 15 25 30 35 100
+EXPORT_HOLDUP_PHASES_FRACTIONS  Bunker InflowBypass 0 10 15 25 30 35 100
+EXPORT_HOLDUP_PSD               Bunker InflowBypass 0 10 15 25 30 35 100
