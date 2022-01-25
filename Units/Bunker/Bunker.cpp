@@ -256,10 +256,11 @@ void CMyDAEModel::CalculateResiduals(double _time, double* _vars, double* _ders,
 			const auto dT = _time - unit->m_holdup->GetPreviousTimePoint(_time);
 
 			// smoothing function
-			const double smooth = std::max(std::tanh(2000 * (massBunker - mass_flow_requested * dT)), 0.0);
-			const double MFlowOut = std::max(smooth * mass_flow_requested + (1 - smooth) * MflowIn, 0.0);
+			const double smooth = std::max(std::tanh(50 * (massBunker - mass_flow_requested * dT)), 0.0);
+			const double MFlowOut = std::max(smooth * mass_flow_requested + (1 - smooth) * std::min(MflowIn, mass_flow_requested), 0.0);
 
 			_res[m_iMflowOut] = _vars[m_iMflowOut] - MFlowOut;
+
 			break;
 		}
 	}
