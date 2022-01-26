@@ -699,7 +699,7 @@ Two models for the bunker outflow :math:`m_{out}` are available:
 	f_{smooth} = \frac{1}{2} + \frac{1}{2} \cdot \tanh{\left(50\cdot\left(m - \dot{m}_{requested}\cdot{dt}\right)\right)}
 
 .. math::
-	\dot{m}_{out} = f_{smooth} \cdot \dot{m}_{requested} + \left(1 - f_{smooth} \right) \cdot \dot{m}_{in}
+	\dot{m}_{out} = f_{smooth} \cdot \dot{m}_{requested} + \left(1 - f_{smooth} \right) \cdot \min\left(\dot{m}_{in}, \dot{m}_{requested}\right)
 
 
 To correctly take into account the dynamics of the process, norms of each overall parameter (mass flow, temperature, pressure) are maintained as:
