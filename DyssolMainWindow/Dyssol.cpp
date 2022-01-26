@@ -427,7 +427,6 @@ void Dyssol::LoadFromFile(const QString& _sFileName) const
 void Dyssol::SetCurrFlowsheetFile(const QString& _fileName)
 {
 	const QString newFile = !_fileName.isEmpty() ? QFileInfo(_fileName).absoluteFilePath() : "";
-	if (newFile == QFileInfo(QString::fromStdString(m_Flowsheet.GetFileName().string())).absoluteFilePath()) return;
 
 	AddFileToRecentList(newFile);
 	const QString sWinNamePrefix = QString(StrConst::Dyssol_MainWindowName);
