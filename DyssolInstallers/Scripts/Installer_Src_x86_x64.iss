@@ -4,7 +4,7 @@
 #define IsIncludeX64
 #define IsWithSrc
 
-#define MyAppVersion GetFileVersion('..\..\x64\Release\Dyssol.exe')
+#define MyAppVersion GetStringFileInfo('..\..\x64\Release\Dyssol.exe', 'ProductVersion')
 
 #include "BaseInstaller.iss"
 
