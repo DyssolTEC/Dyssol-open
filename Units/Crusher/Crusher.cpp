@@ -109,7 +109,7 @@ void CCrusher::SimulateBondNormal(double _time)
 
 	const double solidMassFlow = m_inlet->GetPhaseMassFlow(_time, EPhase::SOLID) * 3.6;
 	if (solidMassFlow == 0)
-		RaiseWarning("Solid mass flow in crusher equals to 0.");
+		RaiseWarning("Solid mass flow in crusher equals to 0. Empty input stream is " + m_inlet->GetName());
 
 	const double workInput = solidMassFlow != 0 ? power / solidMassFlow : power;
 
@@ -182,7 +182,7 @@ void CCrusher::SimulateBondBimodal(double _time)
 
 	const double solidMassFlow = m_inlet->GetPhaseMassFlow(_time, EPhase::SOLID) * 3.6;
 	if (solidMassFlow == 0)
-		RaiseWarning("Solid mass flow in crusher equals to 0.");
+		RaiseWarning("Solid mass flow in crusher equals to 0. Empty input stream is " + m_inlet->GetName());
 
 	const double workInput = solidMassFlow != 0 ? power / solidMassFlow : power;
 
