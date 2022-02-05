@@ -80,7 +80,6 @@ Name: "{group}\{cm:ProgramOnTheWeb,{#MyAppName}}"; Filename: "{#MyAppURL}"
 Name: "{group}\{cm:UninstallProgram, {#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{group}\{#MyAppName} Uninstall"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
-Name: "{userappdata}\{#MyAppName}\AppFolder"; Filename: "{app}"
 
 [Registry]
 Root: "HKLM"; Subkey: "Software\Classes\.dflw"; ValueType: string; ValueData: "DyssolFlowsheet"; Flags: uninsdeletevalue
