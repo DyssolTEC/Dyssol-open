@@ -46,7 +46,7 @@ jobs:
 
     - name: Install doc-build-dependencies
       if: contains(matrix.doc_generate, 'yes')
-      run: sudo apt-get install sphinx-common texlive-xetex
+      run: sudo apt-get install sphinx-common texlive-xetex && pip install sphinx-rtd-theme
 
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/build
