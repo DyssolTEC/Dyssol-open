@@ -59,7 +59,6 @@ namespace StrConst
 	const char* const Dyssol_StatusSavingText      = "Flowsheet is saving. <br/>Please wait";
 	const char* const Dyssol_StatusSavingQuestion  = "Terminate saving of the flowsheet?";
 	const char* const Dyssol_AboutDyssolDescr      = "Dyssol: Dynamic Simulation of Solids Processes";
-	const char* const Dyssol_AppFolderPathLink     = "AppFolder.lnk";
 
 
 //////////////////////////////////////////////////////////////////////////
