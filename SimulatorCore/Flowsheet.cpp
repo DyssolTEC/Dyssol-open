@@ -600,10 +600,10 @@ std::string CFlowsheet::Initialize()
 	for (const auto& key : GetCompounds())
 		if (!m_materialsDB.GetCompound(key))
 			return StrConst::Flow_ErrWrongCompound(key);
-	for (auto& unit : m_units)
+	for (const auto& unit : m_units)
 		for (const auto& param : unit->GetModel()->GetUnitParametersManager().GetAllCompoundParameters())
 			if (!m_materialsDB.GetCompound(param->GetCompound()))
-				return StrConst::Flow_ErrWrongCompoundParam(param->GetName(), param->GetCompound());
+				return StrConst::Flow_ErrWrongCompoundParam(unit->GetName(), param->GetName(), param->GetCompound());
 
 	// check phases
 	if (m_phases.empty())
