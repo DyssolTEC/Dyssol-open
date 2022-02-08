@@ -78,7 +78,6 @@ DyssolMaterialsDatabase 3
 26 107 2.21058e+07 	$ Critical pressure [Pa]
 26 115 40660.5 	$ Heat of vaporization  [J/mol]
 26 131 -285820 	$ Formation enthalpy [J/mol]
-26 141 1 	$ State of aggregation [-]
 27 208 0 273 373 1000 1e+09 274.15 4277.4 275.15 8491.8 276.15 12703 277.15 16912 278.15 21118 279.15 25322 280.15 29524 281.15 33723 282.15 37921 283.15 42117 284.15 46312 285.15 50505 286.15 54697 287.15 58888 288.15 63078 289.15 67266 290.15 71454 291.15 75641 292.15 79827 293.15 84012 295.15 92380 297.15 100750 298.15 104930 299.15 109110 301.15 117470 303.15 125830 305.15 134190 307.15 142550 309.15 150910 311.15 159270 313.15 167620 315.15 175980 317.15 184340 319.15 192700 321.15 201050 323.15 209410 328.15 230310 333.15 251220 338.15 272140 343.15 293070 348.15 314020 353.15 334990 358.15 355980 363.15 376990 368.15 398030 372.76 417440  	$ Enthalpy [J/kg]; List of T-values
 27 222 0 273 373 1000 1e+09 274.15 0.55818 275.15 0.56066 276.15 0.56309 277.15 0.56547 278.15 0.56779 279.15 0.57008 280.15 0.57231 281.15 0.57451 282.15 0.57666 283.15 0.57878 284.15 0.58085 285.15 0.58289 286.15 0.58489 287.15 0.58686 288.15 0.5888 289.15 0.5907 290.15 0.59257 291.15 0.59442 292.15 0.59623 293.15 0.59801 295.15 0.60149 297.15 0.60487 298.15 0.60652 299.15 0.60814 301.15 0.61131 303.15 0.61439 305.15 0.61738 307.15 0.62029 309.15 0.6231 311.15 0.62584 313.15 0.62849 315.15 0.63107 317.15 0.63357 319.15 0.636 321.15 0.63835 323.15 0.64064 328.15 0.64604 333.15 0.65102 338.15 0.65559 343.15 0.65978 348.15 0.66358 353.15 0.66701 358.15 0.67008 363.15 0.6728 368.15 0.67517 372.76 0.67707  	$ Thermal conductivity [W/(m·K)]; List of T-values
 27 224 0 273 647 1000 1e+09 273 0 273.15 610.118 293 2317.6 313 7327.5 333 19802 353 47082 373 100720 400 245260 500 2.6347e+06 647.13 3.774e+06  	$ Vapor pressure [Pa]; List of T-values
@@ -195,6 +194,66 @@ DyssolMaterialsDatabase 3
 27 226 2 10 10000 1000 1e+09 0.00178  	$ Dynamic Viscosity [Pa·s]; Constant
 27 234 2 10 10000 1000 1e+09 1320  	$ Density [kg/m<sup>3</sup>]; Constant
 27 235 2 10 10000 1000 1e+09 2.57e-11  	$ Permittivity [F/m]; Constant
+
+21 Rljb5lvLO42JAbNsGIla 	$ Compound's unique key
+22 Milk 	$ Compound's name
+26 107 1e+06 	$ Critical pressure [Pa]
+26 108 3500 	$ Critical temperature [K]
+26 114 910860 	$ Heat of fusion [J/mol]
+26 121 0.06008 	$ Molar mass [kg/mol]
+26 122 2503.15 	$ Normal boiling point [K]
+26 123 1993.15 	$ Normal freezing point [K]
+26 131 -911000 	$ Formation enthalpy [J/mol]
+27 208 8 10 10000 1000 1e+09 -203.606 1523.29 -3196.41 2474.45 3.85533 -256.548 -285.83  	$ Enthalpy [J/kg]; Shomate standard enthalpy
+27 222 2 10 10000 1000 1e+09 0.58  	$ Thermal conductivity [W/(m·K)]; Constant
+27 223 1 273 308 0 1 0 0 0.1 0.0115932 0.2 0.0177257 0.3 0.0230636 0.4 0.0285683 0.5 0.0353197 0.6 0.0447883 0.7 0.0593227 0.8 0.0847699 0.9 0.154882  	$ Equilibrium moisture content [kg/kg]; List of P-values
+27 223 1 308 329 0 1 0 0 0.1 0.0115948 0.2 0.017064 0.3 0.021863 0.4 0.0270436 0.5 0.0335974 0.6 0.0437167 0.7 0.0586069 0.8 0.0851898 0.9 0.154042  	$ Equilibrium moisture content [kg/kg]; List of P-values
+27 223 1 329 373 0 1 0 0 0.1 0.0102015 0.2 0.0151948 0.3 0.0203336 0.4 0.0265107 0.5 0.03491 0.6 0.0465401 0.7 0.0619564 0.8 0.0892608 0.9 0.142666  	$ Equilibrium moisture content [kg/kg]; List of P-values
+27 234 2 10 10000 1000 1e+09 751  	$ Density [kg/m<sup>3</sup>]; Constant
+27 235 2 10 10000 1000 1e+09 4  	$ Permittivity [F/m]; Constant
+
+21 8qvJP3B6Uiu1gJ03OhmW 	$ Compound's unique key
+22 Al2O3 	$ Compound's name
+26 107 1e+06 	$ Critical pressure [Pa]
+26 108 3500 	$ Critical temperature [K]
+26 114 910860 	$ Heat of fusion [J/mol]
+26 121 0.10196 	$ Molar mass [kg/mol]
+26 122 2503.15 	$ Normal boiling point [K]
+26 123 1993.15 	$ Normal freezing point [K]
+26 131 -911000 	$ Formation enthalpy [J/mol]
+27 208 3 10 10000 1000 1e+09 900 0 0  	$ Enthalpy [J/kg]; Linear
+27 222 2 10 10000 1000 1e+09 0.58  	$ Thermal conductivity [W/(m·K)]; Constant
+27 223 1 273 308 1 1 0 0.1 0.1 0.0269558 0.2 0.0362608 0.3 0.0430612 0.4 0.0493275 0.5 0.0568226 0.6 0.0689678 0.7 0.0943971 0.8 0.186885  	$ Equilibrium moisture content [kg/kg]; List of P-values
+27 223 1 308 323 0 1 0 0 0.1 0.0250676 0.2 0.0352048 0.3 0.0426971 0.4 0.0493104 0.5 0.0566844 0.6 0.067479 0.7 0.088029 0.8 0.144441  	$ Equilibrium moisture content [kg/kg]; List of P-values
+27 223 1 323 373 0 1 0 0 0.1 0.0213597 0.2 0.0326904 0.3 0.0414432 0.4 0.0493291 0.5 0.0586483 0.6 0.0718115 0.7 0.0935124 0.8 0.142256  	$ Equilibrium moisture content [kg/kg]; List of P-values
+27 234 2 10 10000 1000 1e+09 1045  	$ Density [kg/m<sup>3</sup>]; Constant
+27 235 2 10 10000 1000 1e+09 4  	$ Permittivity [F/m]; Constant
+
+21 F3SLLny30KKziHtRbOE2 	$ Compound's unique key
+22 Cellets 	$ Compound's name
+26 107 220001 	$ Critical pressure [Pa]
+26 115 40660.5 	$ Heat of vaporization  [J/mol]
+26 122 3730.15 	$ Normal boiling point [K]
+26 123 2730.15 	$ Normal freezing point [K]
+26 131 -241826 	$ Formation enthalpy [J/mol]
+27 208 8 10 10000 1000 1e+09 -203.606 1523.29 -3196.41 2474.45 3.85533 -256.548 -285.83  	$ Enthalpy [J/kg]; Shomate standard enthalpy
+27 222 2 10 10000 1000 1e+09 0.58  	$ Thermal conductivity [W/(m·K)]; Constant
+27 223 2 10 10000 1000 1e+09 0.05  	$ Equilibrium moisture content [kg/kg]; Constant
+27 234 2 10 10000 1000 1e+09 1114  	$ Density [kg/m<sup>3</sup>]; Constant
+27 235 2 10 10000 1000 1e+09 4  	$ Permittivity [F/m]; Constant
+
+21 qvJP3B6Uiu1gJ03OhmWv 	$ Compound's unique key
+22 FCC 	$ Compound's name
+26 107 220001 	$ Critical pressure [Pa]
+26 115 40660.5 	$ Heat of vaporization  [J/mol]
+26 122 3730.15 	$ Normal boiling point [K]
+26 123 2730.15 	$ Normal freezing point [K]
+26 131 -241826 	$ Formation enthalpy [J/mol]
+27 208 8 10 10000 1000 1e+09 -203.606 1523.29 -3196.41 2474.45 3.85533 -256.548 -285.83  	$ Enthalpy [J/kg]; Shomate standard enthalpy
+27 222 2 10 10000 1000 1e+09 0.58  	$ Thermal conductivity [W/(m·K)]; Constant
+27 223 2 10 10000 1000 1e+09 0.012  	$ Equilibrium moisture content [kg/kg]; Constant
+27 234 2 10 10000 1000 1e+09 1632.5  	$ Density [kg/m<sup>3</sup>]; Constant
+27 235 2 10 10000 1000 1e+09 4  	$ Permittivity [F/m]; Constant
 
 31 4b3f8A1A71A315EFB4E5 4e3a9D257E6A9E4F03D1 	$ Unique keys of interacting compounds
 32 303 2 10 10000 1000 1e+09 0.072  	$ Interface tension [N/m]; Constant
