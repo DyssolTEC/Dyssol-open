@@ -184,9 +184,17 @@ std::vector<std::underlying_type_t<T>> E2I(const std::vector<T>& _enums)
 	if (_enums.empty()) return {};
 	using integral_type = std::underlying_type_t<T>;
 	std::vector<integral_type> res;
+	res.reserve(_enums.size());
 	for (const auto& e : _enums)
 		res.push_back(static_cast<integral_type>(e));
 	return res;
+}
+
+// Converts a list of enumerators to the vector of its underlying type.
+template <typename T>
+std::vector<std::underlying_type_t<T>> E2I(const std::initializer_list<T>& _enums)
+{
+	return E2I<T>(std::vector<T>{ _enums });
 }
 
 // Casts the vector of values to a vector of another type.
