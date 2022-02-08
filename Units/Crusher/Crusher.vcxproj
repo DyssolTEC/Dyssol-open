@@ -86,18 +86,14 @@
     <ClCompile />
     <Link />
     <Link />
-    <ClCompile>
-      <SDLCheck>false</SDLCheck>
-    </ClCompile>
+    <ClCompile />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile />
     <Link />
     <Link />
     <ClCompile />
-    <ClCompile>
-      <SDLCheck>false</SDLCheck>
-    </ClCompile>
+    <ClCompile />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile />
