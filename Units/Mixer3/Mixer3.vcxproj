@@ -86,9 +86,7 @@
     <ClCompile />
     <Link />
     <Link />
-    <ClCompile>
-      <SDLCheck>false</SDLCheck>
-    </ClCompile>
+    <ClCompile />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile />
@@ -97,7 +95,6 @@
     <ClCompile>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
-      <SDLCheck>false</SDLCheck>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
