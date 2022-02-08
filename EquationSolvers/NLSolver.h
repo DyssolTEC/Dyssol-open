@@ -31,14 +31,14 @@ private:
 	ENLSolverStrategy m_eStrategy;		///< Solver strategy
 
 	// General setting
-	size_t m_nMaxIter;				///< Max. number of nonlinear iterations
+	long m_nMaxIter;				///< Max. number of nonlinear iterations
 
 	// Newton method settings
-	unsigned m_nMaxSet;					///< Max. iterations without matrix setup
-	unsigned m_nMaxSubSet;				///< Max. iterations without residual check. nMaxSet should be multiple of nMaxSubSet.
+	long m_nMaxSet;					///< Max. iterations without matrix setup
+	long m_nMaxSubSet;				///< Max. iterations without residual check. nMaxSet should be multiple of nMaxSubSet.
 
 	// Fixed point method settings
-	unsigned m_nMAA;					///< Anderson Acceleration subspace size. The value of nMAA should always be less than nMaxIter.
+	long m_nMAA;						///< Anderson Acceleration subspace size. The value of nMAA should always be less than nMaxIter.
 	double m_dDampingAA;				///< Anderson Acceleration damping parameter between 0 and 1
 
 public:
@@ -58,7 +58,7 @@ public:
 
 	/** Set maximum number of nonlinear iterations.
 	 *	\param _nMaxIter Max. number of nonlinear iterations */
-	void SetMaxIter(unsigned _nMaxIter);
+	void SetMaxIter(size_t _nMaxIter);
 
 	/** Set parameters for Newton based solvers.
 	 *	\param _nMaxSet Max. iterations without matrix setup
@@ -70,7 +70,7 @@ public:
 	 *	\param _nMAA Anderson Acceleration subspace size
 	 *  \param _dDampingAA Anderson Acceleration damping parameter between 0 and 1
 	 *  \retval true No errors occurred */
-	bool SetFixedPointSolverParameters(unsigned _nMAA, double _dDampingAA);
+	bool SetFixedPointSolverParameters(size_t _nMAA, double _dDampingAA);
 
 	/** Set model to a solver.
 	 *	\param _pModel Pointer to a model
