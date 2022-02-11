@@ -65,6 +65,7 @@ enum EDistrTypes : uint32_t
 	DISTR_PART_POROSITY	  = 2,
 	DISTR_FORM_FACTOR	  = 3,
 	DISTR_COLOR			  = 4,
+	DISTR_MOISTURE		  = 5,
 	DISTR_USER_DEFINED_01 = 20,
 	DISTR_USER_DEFINED_02 = 21,
 	DISTR_USER_DEFINED_03 = 22,
@@ -78,8 +79,8 @@ enum EDistrTypes : uint32_t
 	DISTR_UNDEFINED		  = 31
 };
 
-#define DISTR_NAMES { "Compounds", "Size", "Particle porosity", "Form factor", "Color", "Distribution 1", "Distribution 2", "Distribution 3", "Distribution 4", "Distribution 5", "Distribution 6", "Distribution 7", "Distribution 8", "Distribution 9", "Distribution 10" }
-#define DISTR_TYPES { DISTR_COMPOUNDS,  DISTR_SIZE, DISTR_PART_POROSITY, DISTR_FORM_FACTOR, DISTR_COLOR, DISTR_USER_DEFINED_01, DISTR_USER_DEFINED_02, DISTR_USER_DEFINED_03, DISTR_USER_DEFINED_04, DISTR_USER_DEFINED_05, DISTR_USER_DEFINED_06, DISTR_USER_DEFINED_07, DISTR_USER_DEFINED_08, DISTR_USER_DEFINED_09, DISTR_USER_DEFINED_10}
+#define DISTR_NAMES { "Compounds", "Size", "Particle porosity", "Form factor", "Color", "Moisture", "Distribution 1", "Distribution 2", "Distribution 3", "Distribution 4", "Distribution 5", "Distribution 6", "Distribution 7", "Distribution 8", "Distribution 9", "Distribution 10" }
+#define DISTR_TYPES { DISTR_COMPOUNDS,  DISTR_SIZE, DISTR_PART_POROSITY, DISTR_FORM_FACTOR, DISTR_COLOR, DISTR_MOISTURE, DISTR_USER_DEFINED_01, DISTR_USER_DEFINED_02, DISTR_USER_DEFINED_03, DISTR_USER_DEFINED_04, DISTR_USER_DEFINED_05, DISTR_USER_DEFINED_06, DISTR_USER_DEFINED_07, DISTR_USER_DEFINED_08, DISTR_USER_DEFINED_09, DISTR_USER_DEFINED_10}
 inline int GetDistributionTypeIndex(EDistrTypes _nType)
 {
 	EDistrTypes vTypes[] = DISTR_TYPES;
@@ -196,10 +197,11 @@ enum class EPSDGridType : unsigned
 // Identifiers of phase types.
 enum class EPhase : uint32_t
 {
-	UNDEFINED,
-	SOLID,
-	LIQUID,
-	VAPOR,
+	UNDEFINED = 0,
+	SOLID     = 1,
+	LIQUID    = 2,
+	VAPOR     = 3,
+	GAS       = 3,
 };
 
 // Identifiers of time-dependent overall parameters.

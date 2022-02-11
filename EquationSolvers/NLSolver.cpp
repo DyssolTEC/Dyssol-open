@@ -64,28 +64,28 @@ ENLSolverStrategy CNLSolver::GetStrategy()
 	return m_eStrategy;
 }
 
-void CNLSolver::SetMaxIter(unsigned _nMaxIter)
+void CNLSolver::SetMaxIter(size_t _nMaxIter)
 {
-	m_nMaxIter = _nMaxIter;
+	m_nMaxIter = static_cast<long>(_nMaxIter);
 }
 
 bool CNLSolver::SetNewtonSolverParameters(unsigned _nMaxSet, unsigned _nMaxSubSet)
 {
 	if (m_eStrategy == ENLSolverStrategy::Newton || m_eStrategy == ENLSolverStrategy::Linesearch)
 	{
-		m_nMaxSet = _nMaxSet;
-		m_nMaxSubSet = _nMaxSubSet;
+		m_nMaxSet = static_cast<long>(_nMaxSet);
+		m_nMaxSubSet = static_cast<long>(_nMaxSubSet);
 		return true;
 	}
 	else
 		return false;
 }
 
-bool CNLSolver::SetFixedPointSolverParameters(unsigned _nMAA, double _dDampingAA)
+bool CNLSolver::SetFixedPointSolverParameters(size_t _nMAA, double _dDampingAA)
 {
 	if (m_eStrategy == ENLSolverStrategy::Fixedpoint || m_eStrategy == ENLSolverStrategy::Picard)
 	{
-		m_nMAA = _nMAA;
+		m_nMAA = static_cast<long>(_nMAA);
 		m_dDampingAA = _dDampingAA;
 		return true;
 	}
@@ -163,17 +163,17 @@ bool CNLSolver::SetModel(CNLModel* _pModel)
 
 	// Set solver parameters
 	// Max. number of nonlinear iterations
-	KINSetNumMaxIters(m_pKINmem, static_cast<long>(m_nMaxIter));
+	KINSetNumMaxIters(m_pKINmem, m_nMaxIter);
 	// Newton method settings
 	if (m_eStrategy == ENLSolverStrategy::Newton || m_eStrategy == ENLSolverStrategy::Linesearch)
 	{
-		KINSetMaxSetupCalls(m_pKINmem, static_cast<long>(m_nMaxSet));
-		KINSetMaxSubSetupCalls(m_pKINmem, static_cast<long>(m_nMaxSubSet));
+		KINSetMaxSetupCalls(m_pKINmem, m_nMaxSet);
+		KINSetMaxSubSetupCalls(m_pKINmem, m_nMaxSubSet);
 	}
 	// Fixed point method settings
 	else
 	{
-		KINSetMAA(m_pKINmem, static_cast<long>(m_nMAA));
+		KINSetMAA(m_pKINmem, m_nMAA);
 		KINSetDampingAA(m_pKINmem, static_cast<realtype>(m_dDampingAA));
 	}
 

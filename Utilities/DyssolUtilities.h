@@ -172,21 +172,29 @@ bool inline IncrementCoords(std::vector<size_t>& _coords, const std::vector<size
 
 // Converts enumerator value to its underlying type.
 template<typename E>
-constexpr auto E2I(E e) -> typename std::underlying_type<E>::type
+constexpr auto E2I(E e) -> std::underlying_type_t<E>
 {
-	return static_cast<typename std::underlying_type<E>::type>(e);
+	return static_cast<std::underlying_type_t<E>>(e);
 }
 
 // Converts vector of enumerators to the vector of its underlying type.
 template <typename T>
-std::vector<typename std::underlying_type<T>::type> E2I(const std::vector<T>& _enums)
+std::vector<std::underlying_type_t<T>> E2I(const std::vector<T>& _enums)
 {
 	if (_enums.empty()) return {};
-	using integral_type = typename std::underlying_type<T>::type;
+	using integral_type = std::underlying_type_t<T>;
 	std::vector<integral_type> res;
+	res.reserve(_enums.size());
 	for (const auto& e : _enums)
 		res.push_back(static_cast<integral_type>(e));
 	return res;
+}
+
+// Converts a list of enumerators to the vector of its underlying type.
+template <typename T>
+std::vector<std::underlying_type_t<T>> E2I(const std::initializer_list<T>& _enums)
+{
+	return E2I<T>(std::vector<T>{ _enums });
 }
 
 // Casts the vector of values to a vector of another type.
@@ -200,11 +208,18 @@ std::vector<TO> vector_cast(const std::vector<TI>& _ints)
 	return res;
 }
 
+// Converts enumerator value to double type.
+template<typename E>
+constexpr double E2D(E e)
+{
+	return static_cast<double>(static_cast<std::underlying_type_t<E>>(e));
+}
+
 // Converts double value to enumerator.
 template<typename E>
 constexpr E D2E(double d)
 {
-	return static_cast<E>(static_cast<typename std::underlying_type<E>::type>(d));
+	return static_cast<E>(static_cast<std::underlying_type_t<E>>(d));
 }
 
 std::vector<double> inline CreateDistributionNormal(const std::vector<double>& _x, double _d50, double _sigma)
