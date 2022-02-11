@@ -109,7 +109,7 @@ int main(int argc, const char* argv[])
 		if (parser.TokensCount() == 0 || parser.HasKey("h"))
 		{
 			PrintArgumentsInfo(parser);
-			return 1;
+			return 0;
 		}
 
 		if (parser.HasKey("v"))
