@@ -14,44 +14,36 @@ jobs:
             cxx: g++
             cxxflags: ""
             linker_flags: ""
-            doc_generate: yes
             build_type: Release
           - name: linux-gcc-san
             os: linux
             cxx: g++
             cxxflags: "-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined"
             linker_flags: "-fno-omit-frame-pointer -fsanitize=address"
-            doc_generate: no
             build_type: Debug
           - name: linux-clang
             os: linux
             cxx: clang++
             cxxflags: ""
             linker_flags: ""
-            doc_generate: no
             build_type: Release
           - name: linux-clang-san
             os: linux
             cxx: clang++
             cxxflags: "-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined"
             linker_flags: "-fno-omit-frame-pointer -fsanitize=address"
-            doc_generate: no
             build_type: Debug
 
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install build-dependencies
+    - name: Install build dependencies
       run: sudo add-apt-repository ppa:gladky-anton/sundials && sudo apt-get install build-essential libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev
 
-    - name: Install doc-build-dependencies
-      if: contains(matrix.doc_generate, 'yes')
-      run: pip install -U sphinx sphinx-rtd-theme
-
-    - name: Create Build Environment
+    - name: Create build environment
       run: cmake -E make_directory ${{github.workspace}}/build
 
-    - name: Create Install Environment
+    - name: Create install environment
       run: cmake -E make_directory ${{github.workspace}}/inst
 
     - name: Configure CMake
@@ -73,17 +65,42 @@ jobs:
       working-directory: ${{github.workspace}}/build
       shell: bash
       run: CTEST_OUTPUT_ON_FAILURE=1 make test
+        
+  docs:
+    name: Docs
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Install build dependencies
+      run: sudo add-apt-repository ppa:gladky-anton/sundials && sudo apt-get install build-essential libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev
+      
+    - name: Install build doc dependencies
+      run: pip install -U sphinx sphinx-rtd-theme
+      
+    - name: Create build environment
+      run: cmake -E make_directory ${{github.workspace}}/build
+    
+    - name: Create install environment
+      run: cmake -E make_directory ${{github.workspace}}/inst
+      
+    - name: Configure CMake
+      shell: bash
+      working-directory: ${{github.workspace}}/build
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/inst
 
-    - name: Docs
-      if: contains(matrix.doc_generate, 'yes')
+    - name: Build docs
       working-directory: ${{github.workspace}}/build
       shell: bash
       run: make doc
-
-    - name: Deploy
-      if: ${{ contains(matrix.doc_generate, 'yes') &&  github.ref == 'refs/heads/master' }}
-      uses: JamesIves/github-pages-deploy-action@4.1.4
+      
+    - name: Deploy docs
+      if: ${{ github.ref == 'refs/heads/master' }}
+      uses: JamesIves/github-pages-deploy-action@v4.3.3
       with:
         branch: gh-pages # The branch the action should deploy to.
         folder: ${{github.workspace}}/inst/share/Dyssol/docs/sphinx/html # The folder the action should deploy.
         single-commit: true
+    
