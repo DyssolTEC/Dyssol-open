@@ -35,7 +35,7 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	m_sSettingsPath = QFileInfo(QSettings(QSettings::IniFormat, QSettings::UserScope, StrConst::Dyssol_ApplicationName, StrConst::Dyssol_ConfigApp).fileName()).absolutePath();
 	// create directory for temporary data if it doesn't exist
 	if (!std::filesystem::exists(m_sSettingsPath.toStdString()))
-		std::filesystem::create_directory(m_sSettingsPath.toStdString());
+		std::filesystem::create_directories(m_sSettingsPath.toStdString());
 
 	const QString globalConfigFile = m_sSettingsPath + "/" + StrConst::Dyssol_ConfigFileName;
 	const QString localConfigFile  = QString{ "./" } + StrConst::Dyssol_ConfigFileName;
@@ -49,9 +49,11 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 
 	// If the config file not exist at all, we will copy the template of config file into the currConfigFile
 	// It is needed mostly for packages
-	if ((currConfigFile == globalConfigFile) && (not (QFile::exists(currConfigFile))))
+	if (currConfigFile == globalConfigFile && !QFile::exists(currConfigFile))
 	{
 		std::cout << "Config file: " << currConfigFile.toStdString()<< "does not exist. It will be copied from "<< INSTALL_CONFIG_PATH << StrConst::Dyssol_ConfigFileName << std::endl;
+		if (!std::filesystem::exists(INSTALL_CONFIG_PATH))
+			std::filesystem::create_directories(INSTALL_CONFIG_PATH);
 		std::filesystem::copy_file(std::filesystem::path{ INSTALL_CONFIG_PATH } / StrConst::Dyssol_ConfigFileName, currConfigFile.toStdString());
 	}
 #endif
