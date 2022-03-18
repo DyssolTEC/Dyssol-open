@@ -50,6 +50,7 @@ namespace
 		{ EDistrTypes::DISTR_PART_POROSITY  , { "PARTICLE_POROSITY" } },
 		{ EDistrTypes::DISTR_FORM_FACTOR    , { "FORM_FACTOR"	    } },
 		{ EDistrTypes::DISTR_COLOR          , { "COLOR"	            } },
+		{ EDistrTypes::DISTR_MOISTURE       , { "MOISTURE"	        } },
 		{ EDistrTypes::DISTR_USER_DEFINED_01, { "USER_DEFINED_01"	} },
 		{ EDistrTypes::DISTR_USER_DEFINED_02, { "USER_DEFINED_02"	} },
 		{ EDistrTypes::DISTR_USER_DEFINED_03, { "USER_DEFINED_03"	} },
