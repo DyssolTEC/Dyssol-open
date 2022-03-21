@@ -11,6 +11,6 @@ public:
 	~CSteadyStateUnit() override = default;
 
 	/**	Calculates unit on a time point (for steady-state units).
-	 *	\param _dTime Time point to calculate*/
-	void Simulate(double _dTime) override = 0;
+	 *	\param _time Time point to calculate*/
+	void Simulate(double _time) override = 0;
 };

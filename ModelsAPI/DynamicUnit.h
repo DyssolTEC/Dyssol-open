@@ -11,7 +11,7 @@ public:
 	~CDynamicUnit() override = default;
 
 	/** Calculates unit on specified time interval (for dynamic units).
-	 *	\param _dStartTime Start of the time interval
-	 *	\param _dEndTime End of the time interval*/
-	void Simulate(double _dStartTime, double _dEndTime) override = 0;
+	 *	\param _timeBeg Start of the time interval
+	 *	\param _timeEnd End of the time interval*/
+	void Simulate(double _timeBeg, double _timeEnd) override = 0;
 };

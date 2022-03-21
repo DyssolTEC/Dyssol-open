@@ -114,9 +114,9 @@ void CSimpleGranulator::LoadState()
 	m_solver.LoadState();
 }
 
-void CSimpleGranulator::Simulate(double _startTime, double _endTime)
+void CSimpleGranulator::Simulate(double _timeBeg, double _timeEnd)
 {
-	if (!m_solver.Calculate(_startTime, _endTime))
+	if (!m_solver.Calculate(_timeBeg, _timeEnd))
 		RaiseError(m_solver.GetError());
 }
 

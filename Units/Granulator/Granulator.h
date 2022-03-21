@@ -47,5 +47,5 @@ public:
 	void Initialize(double _time) override;
 	void SaveState() override;
 	void LoadState() override;
-	void Simulate(double _startTime, double _endTime) override;
+	void Simulate(double _timeBeg, double _timeEnd) override;
 };
