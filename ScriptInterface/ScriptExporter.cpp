@@ -49,8 +49,8 @@ namespace ScriptInterface
 			}
 			case EScriptKeys::MODELS_PATH:
 			{
-				for (const auto& entry : _modelsManager.GetAllActiveDirPaths())
-					job.AddEntry(e.keyStr)->value = fs::absolute(entry);
+				for (const auto& entry : _modelsManager.GetAllActiveDirFullPaths())
+					job.AddEntry(e.keyStr)->value = entry;
 				break;
 			}
 			case EScriptKeys::SIMULATION_TIME:

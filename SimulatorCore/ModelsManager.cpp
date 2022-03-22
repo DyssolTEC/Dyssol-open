@@ -10,6 +10,22 @@
 #include <dlfcn.h>
 #endif
 
+CModelsManager::SModelDir::SModelDir(std::filesystem::path _path, std::string _key, bool _active)
+	: path{ std::move(_path) }
+	, key{ std::move(_key) }
+	, active{ _active }
+{
+	// try to treat _dir as absolute path
+	const std::filesystem::path path1 = std::filesystem::absolute(path);
+	const std::filesystem::path path2 = std::filesystem::absolute(FileSystem::ExecutableDirPath() + L"/" + path.wstring());
+	if (std::filesystem::exists(path1))
+		pathFull = path1;
+	else if (std::filesystem::exists(path2))
+		pathFull = path2;
+	else
+		pathFull = path;
+}
+
 size_t CModelsManager::DirsNumber() const
 {
 	return m_dirsList.size();
@@ -19,7 +35,7 @@ bool CModelsManager::AddDir(const std::filesystem::path& _path, bool _active)
 {
 	const auto& it = std::find_if(m_dirsList.begin(), m_dirsList.end(), [&](const SModelDir& entry) { return entry.path == _path; });
 	if (it != m_dirsList.end()) return false;	// this path has been already added
-	m_dirsList.push_back(SModelDir{ _path , StringFunctions::GenerateUniqueKey("", AllDirsKeys()), _active, false });
+	m_dirsList.emplace_back(_path, StringFunctions::GenerateUniqueKey(AllDirsKeys()), _active);
 	UpdateAvailableModels();
 	return true;
 }
@@ -59,6 +75,15 @@ std::vector<std::filesystem::path> CModelsManager::GetAllActiveDirPaths() const
 	for (const auto& p : m_dirsList)
 		if (p.active)
 			res.push_back(p.path);
+	return res;
+}
+
+std::vector<std::filesystem::path> CModelsManager::GetAllActiveDirFullPaths() const
+{
+	std::vector<std::filesystem::path> res;
+	for (const auto& p : m_dirsList)
+		if (p.active)
+			res.push_back(p.pathFull);
 	return res;
 }
 
@@ -227,7 +252,7 @@ void CModelsManager::UpdateAvailableModels()
 		if (dir.active && !dir.checked)
 		{
 			// get all models from directory
-			auto models = GetModelsList(dir.path);
+			auto models = GetModelsList(dir.pathFull);
 			// set directory key to all found models
 			for (auto& unit : models.first)
 				unit.dirKey = dir.key;

@@ -61,10 +61,12 @@ class CModelsManager
 {
 	struct SModelDir
 	{
-		std::filesystem::path path; // The path itself.
-		std::string key;			// Unique key of the dir.
-		bool active;				// Whether this path selected to be considered.
-		bool checked;				// Whether libraries from this path are already in the list of available models.
+		std::filesystem::path path;		// The path itself. Can be relative or absolute.
+		std::filesystem::path pathFull;	// Absolute version of all paths.
+		std::string key;				// Unique key of the dir.
+		bool active{ false };			// Whether this path selected to be considered.
+		bool checked{ false };			// Whether libraries from this path are already in the list of available models.
+		SModelDir(std::filesystem::path _path, std::string _key, bool _active);
 	};
 
 	std::vector<SModelDir> m_dirsList;                 // Directories to look for libraries with models.
@@ -89,6 +91,8 @@ public:
 	std::filesystem::path GetDirPath(size_t _index) const;
 	// Returns all active paths.
 	std::vector<std::filesystem::path> GetAllActiveDirPaths() const;
+	// Returns all active paths as absolute paths.
+	std::vector<std::filesystem::path> GetAllActiveDirFullPaths() const;
 	// Returns activity of the specified path.
 	bool GetDirActivity(size_t _index) const;
 	// Sets activity of the specified path.
