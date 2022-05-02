@@ -1,9 +1,8 @@
+.. _sec.models_development:
 
-.. _label-develop:
-
-==============
-For developers
-==============
+=====================
+For models developers
+=====================
 
 In Dyssol, you can develop and debug new steady-state or dynamic **units** as well as your own external modules (**solvers**). 
 
@@ -1638,7 +1637,7 @@ After builiding your own new solvers, the functionality of them can be applied i
 
 Basically, all solvers have a set of constant functions and parameters, which are available in each new solver (:ref:`label-externalSolver`). and a set of specific ones, which depend on the solver’s type. New types of solvers can be added upon request and will include a set of parameters and functions that are needed to solve a specific problem.
 
-You can implement several solvers of one type (e.g. with different models) and then choose a specific one to use it in unit by user interface, please refer to section :ref:`label-unitParameters` in :ref:`label-class`.
+You can implement several solvers of one type (e.g. with different models) and then choose a specific one to use it in unit by user interface, please refer to section :ref:`label-unitParameters` in :ref:`sec.classes`.
 
 .. There is also detailed information about :ref:`label-DAE`, with which you can solve systems of differential-algebraic equations automatically.
 

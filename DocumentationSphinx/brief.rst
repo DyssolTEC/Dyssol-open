@@ -38,6 +38,6 @@ You can get an overview of the Dyssol system structure in the figure below.
 
 To maximize the modularity of the simulation environment, models of units and solvers are not directly integrated into the framework, but may be implemented as separate objects and then added to the units library using standardized interfaces and templates.
 
-For a detailed explanation about important elements in the structure, please refer to :ref:`label-solver`, :ref:`label-simulation`, :ref:`label-materialDat`, :ref:`label-dataStor` and :ref:`label-multiDim`.
+For a detailed explanation about important elements in the structure, please refer to :ref:`label-solver`, :ref:`label-simulation`, :ref:`sec.mdb`, :ref:`label-dataStor` and :ref:`label-multiDim`.
 
 |

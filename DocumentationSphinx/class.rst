@@ -1,5 +1,4 @@
-
-.. _label-class:
+.. _sec.classes:
 
 =======
 Classes
@@ -3010,7 +3009,7 @@ For material stream and holdup
 
 	double CalcTemperatureFromProperty(ECompoundTPProperties Property, double Time, double Value)
 
-Returns temperature of the material stream / holdup for a specific value ``Value`` of the property ``Property`` at the time point ``Time``. Possible properties are those defined in :ref:`label-materialDat`.
+Returns temperature of the material stream / holdup for a specific value ``Value`` of the property ``Property`` at the time point ``Time``. Possible properties are those defined in :ref:`sec.mdb`.
 
 |
 
@@ -3018,7 +3017,7 @@ Returns temperature of the material stream / holdup for a specific value ``Value
 
 	double CalcPressureFromProperty(ECompoundTPProperties Property, double Time, double Value)
 
-Returns pressure of the material stream / holdup for a specific value ``Value`` of the property ``Property`` at the time point ``Time``. Possible properties are those defined in :ref:`label-materialDat`.
+Returns pressure of the material stream / holdup for a specific value ``Value`` of the property ``Property`` at the time point ``Time``. Possible properties are those defined in :ref:`sec.mdb`.
 
 |
 
@@ -3029,7 +3028,7 @@ For base unit
 
 	double CalcTemperatureFromProperty(ECompoundTPProperties Property,vector<double>& CompoundFractions, double Value)
 
-Returns temperature of a generic system of composition ``CompoundFractions`` for a specific value ``Value`` of the property ``Property``. Possible properties are those defined in :ref:`label-materialDat`.
+Returns temperature of a generic system of composition ``CompoundFractions`` for a specific value ``Value`` of the property ``Property``. Possible properties are those defined in :ref:`sec.mdb`.
 
 |
 
@@ -3037,7 +3036,7 @@ Returns temperature of a generic system of composition ``CompoundFractions`` for
 
 	double CalcPressureFromProperty(ECompoundTPProperties Property,vector<double>& CompoundFractions, double Value)
 
-Returns pressure of a generic system of composition ``CompoundFractions`` for a specific value ``Value`` of the property ``Property``. Possible properties are those defined in :ref:`label-materialDat`.
+Returns pressure of a generic system of composition ``CompoundFractions`` for a specific value ``Value`` of the property ``Property``. Possible properties are those defined in :ref:`sec.mdb`.
 
 |
 
