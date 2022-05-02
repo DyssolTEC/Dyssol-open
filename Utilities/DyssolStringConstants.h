@@ -134,6 +134,8 @@ namespace StrConst
 		return "Error while applying " + p + ": \n\tCannot find a curve in plot " + StringFunctions::Quote(d) + " in unit " + StringFunctions::Quote(u) + " neither by its name " + StringFunctions::Quote(n) + " nor by its index " + std::to_string(i + 1); }
 	inline std::string DyssolC_ErrorInit(const std::string& s) {
 		return "Error during initialization: " + s; }
+	inline std::string DyssolC_ErrorSave() {
+		return "Error during saving to results file"; }
 	inline std::string DyssolC_ErrorFinish() {
 		return "Finished with errors!"; }
 

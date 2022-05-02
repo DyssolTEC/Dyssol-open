@@ -54,7 +54,7 @@ bool CScriptRunner::LoadFiles(const CScriptJob& _job)
 		PrintMessage(DyssolC_WriteSrc(StrKey(EScriptKeys::SOURCE_FILE), StrKey(EScriptKeys::RESULT_FILE)));
 
 	// load materials database
-	const auto MDBfile = _job.GetValue<fs::path>(EScriptKeys::MATERIALS_DATABASE);
+	const auto MDBfile = fs::absolute(_job.GetValue<fs::path>(EScriptKeys::MATERIALS_DATABASE).make_preferred());
 	PrintMessage(DyssolC_LoadMDB(MDBfile.string()));
 	if (!m_materialsDatabase.LoadFromFile(MDBfile))
 		return PrintMessage(DyssolC_ErrorMDB());
@@ -63,15 +63,14 @@ bool CScriptRunner::LoadFiles(const CScriptJob& _job)
 	auto modelsPaths = _job.GetValues<fs::path>(EScriptKeys::MODELS_PATH);
 	modelsPaths.insert(modelsPaths.begin(), fs::current_path()); // add current path
 	for (const auto& dir : modelsPaths)
-	{
-		PrintMessage(DyssolC_LoadModels(dir.string()));
 		m_modelsManager.AddDir(dir);
-	}
+	for (auto& dir : m_modelsManager.GetAllActiveDirFullPaths())
+		PrintMessage(DyssolC_LoadModels(dir.make_preferred().string()));
 
 	// load flowsheet
 	if (hasSrc)
 	{
-		const auto srcFile = _job.GetValue<fs::path>(EScriptKeys::SOURCE_FILE);
+		const auto srcFile = fs::absolute(_job.GetValue<fs::path>(EScriptKeys::SOURCE_FILE)).make_preferred();
 		PrintMessage(DyssolC_LoadFlowsheet(srcFile.string()));
 		CH5Handler fileHandler;
 		if (!m_flowsheet.LoadFromFile(fileHandler, srcFile))
@@ -480,14 +479,16 @@ bool CScriptRunner::RunSimulation(const CScriptJob& _job)
 	const auto tStart = ch::steady_clock::now();
 	m_simulator.Simulate();
 	const auto tEnd = ch::steady_clock::now();
+	PrintMessage(DyssolC_SimFinished(ch::duration_cast<ch::seconds>(tEnd - tStart).count()));
 
 	// save simulation results
-	const auto dstFile = _job.HasKey(EScriptKeys::RESULT_FILE) ? _job.GetValue<fs::path>(EScriptKeys::RESULT_FILE) : _job.GetValue<fs::path>(EScriptKeys::SOURCE_FILE);
+	const auto dstFile = fs::absolute(_job.HasKey(EScriptKeys::RESULT_FILE) ? _job.GetValue<fs::path>(EScriptKeys::RESULT_FILE) : _job.GetValue<fs::path>(EScriptKeys::SOURCE_FILE)).make_preferred();
+	fs::create_directories(dstFile.parent_path());
 	PrintMessage(DyssolC_SaveFlowsheet(dstFile.string()));
 	CH5Handler fileHandler;
-	m_flowsheet.SaveToFile(fileHandler, dstFile);
-
-	PrintMessage(DyssolC_SimFinished(ch::duration_cast<ch::seconds>(tEnd - tStart).count()));
+	const bool saved = m_flowsheet.SaveToFile(fileHandler, dstFile);
+	if (!saved)
+		return PrintMessage(DyssolC_ErrorSave());
 
 	return true;
 }
@@ -497,7 +498,7 @@ bool CScriptRunner::ExportResults(const CScriptJob& _job)
 {
 	if (!_job.HasKey(EScriptKeys::EXPORT_FILE)) return true;
 
-	const auto exportFile = _job.GetValue<fs::path>(EScriptKeys::EXPORT_FILE);
+	const auto exportFile = fs::absolute(_job.GetValue<fs::path>(EScriptKeys::EXPORT_FILE)).make_preferred();
 	PrintMessage(DyssolC_ExportResults(exportFile.string()));
 
 	// open text file for export
