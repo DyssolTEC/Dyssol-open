@@ -97,8 +97,6 @@ For this flow sheet, the operation units and streams with 3 partitions are shown
    :alt: screen
    :align: center
 
-|
-
 Alternatively, single and multiple schemes can be applied.
 
 For a single scheme, the units and streams are rearranged as below.
@@ -117,8 +115,6 @@ The partitions and corresponding streams are:
 	- Partition 3: U3, U4, U5, U6 as normal streams; S1 and S2 as tear streams
 	
 	- Partition 4: U7, U8 as normal streams; S3 as tear streams
-
-|
 
 Furthermore, the bi-directional connection can be represented in Dyssol as two independent material streams. One of the streams will eventually be selected as a tear stream.
 
@@ -259,5 +255,4 @@ Three convergence methods are available in Dyssol. The direct substitution metho
 
 		:math:`x_{k+3} = x_k - \dfrac{(x_{k+1} - x_k)^2}{x_{k+2} - 2x_{k+1} + x_k}`
 
-
-
+|

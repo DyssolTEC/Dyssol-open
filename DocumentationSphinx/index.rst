@@ -1,3 +1,5 @@
+.. _sec.index:
+
 Dyssol documentation
 ====================
 
@@ -17,6 +19,8 @@ Dyssol, the DYnamic Simulation of SOLids processes, is a dynamic flowsheet model
 
 This documentation will help you to get familiar with the Dyssol flowsheet simulations system. Here you will find an introduction to the structure and algorithms of the program, the principles of its operation, a description of the user interface, as well as the documentation of available units. It also provides information on how to create your own units and solvers.
 
+.. _sec.contents:
+
 Contents
 ========
 
@@ -25,6 +29,15 @@ Contents
    :caption: Get started
 
    first
+
+|
+
+.. toctree::
+   :maxdepth: 2
+   :caption: User interface
+
+   gui
+   cli
 
 |
 
@@ -55,15 +68,18 @@ Contents
    :maxdepth: 2
    :caption: Models development
 
-   developer
+   for_developers
+   models_development
    class
 
 |
 
+.. _sec.acknowledgement:
+
 Acknowledgement
 ===============
 
-Dyssol project is funded by German Research Foundation (DFG) via SPP 1679 ''Dyn-Sim-FP''.
+Dyssol project was funded by German Research Foundation (DFG) via SPP 1679 "Dyn-Sim-FP" and via "Research Software Sustainability" program.
 
 .. seealso::
 	#. Skorych V., Dosta M., Hartge E.-U., Heinrich S.: Novel system for dynamic flowsheet simulation of solids processes. Powder Technology 314 (2017), 665-679. `10.1016/j.powtec.2017.01.061`_
@@ -79,6 +95,8 @@ Dyssol project is funded by German Research Foundation (DFG) via SPP 1679 ''Dyn-
 .. _`10.1016/j.apt.2018.12.007`: https://doi.org/10.1016/j.apt.2018.12.007
 .. _`10.1016/j.softx.2020.100572`: https://doi.org/10.1016/j.softx.2020.100572
 .. _`10.1007/978-3-030-45168-4_17`: https://doi.org/10.1007/978-3-030-45168-4_17
+
+.. _sec.contact:
 
 Contact
 ==================

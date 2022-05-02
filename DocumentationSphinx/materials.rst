@@ -1,5 +1,5 @@
 
-.. _label-materialDat:
+.. _sec.mdb:
 
 =================
 Material database
@@ -153,3 +153,5 @@ The correlation functions :math:`y = f(T,P)` in Dyssol are listed below. The let
 - List of P-values (user defined):
 
 	:math:`y = \{P1:val1, P2:val2, P3:val3, ...\}` 
+
+|
