@@ -90,7 +90,7 @@ Following methods are applied in Dyssol for simulation. Click the corresponding 
 Built-in equation solvers
 """""""""""""""""""""""""
 
-Dyssol uses IDA and KINSOL solvers in `SUNDIALS package <https://computation.llnl.gov/projects/sundials>`_.
+Dyssol uses IDA and KINSOL solvers in `SUNDIALS package <https://computing.llnl.gov/projects/sundials>`_.
 
 .. image:: ./pics/solver.png
    :width: 400px
