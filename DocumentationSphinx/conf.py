@@ -16,7 +16,6 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
-
 # -- Project information -----------------------------------------------------
 
 project = 'Dyssol'
@@ -27,7 +26,6 @@ author = 'Dyssol Development Team'
 version = 'latest'
 # The full version, including alpha/beta/rc tags
 release = 'latest'
-
 
 # -- General configuration ---------------------------------------------------
 
@@ -73,6 +71,8 @@ exclude_patterns = []
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
 
+#  Warn about all references where the target cannot be found.
+nitpicky = True
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -114,7 +114,6 @@ html_static_path = ['pics']
 # 'searchbox.html']``.
 #
 # html_sidebars = {}
-
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
