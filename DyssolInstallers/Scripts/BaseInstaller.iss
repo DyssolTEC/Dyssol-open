@@ -64,7 +64,6 @@ Source: "..\..\x64\Release\DyssolC.exe"            ; DestDir: "{app}"           
 Source: "..\..\ExternalLibraries\graphviz\bin64\*" ; DestDir: "{app}"                                         ; Flags: ignoreversion; Check: Is64BitInstallMode
 #endif
 Source: "..\..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\Data\ExampleConfigFile.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\Materials.dmdb"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\Data\Licenses\*.txt"; DestDir: "{app}\Licenses"; Flags: ignoreversion
 

@@ -7,6 +7,7 @@
 function DirCache(Param: String): String;               begin  Result := 'cache';               end;
 function DirCacheDebug(Param: String): String;          begin  Result := 'cache_debug';         end;
 function DirExampleFlowsheets(Param: String): String;   begin  Result := 'Example Flowsheets';  end;
+function DirExampleScripts(Param: String): String;      begin  Result := 'Example Scripts';     end;
 function DirHelp(Param: String): String;                begin  Result := 'Help';                end;
 function DirQtPlatforms(Param: String): String;         begin  Result := 'platforms';           end;
 function DirQtStyles(Param: String): String;            begin  Result := 'styles';              end;
