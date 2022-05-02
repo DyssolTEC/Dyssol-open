@@ -12,7 +12,7 @@ if (-not (Get-Command Expand-7Zip -ErrorAction Ignore)) {
 ################################################################################
 ### Paths
 
-$ZLIB_VERSION = "1.2.11"
+$ZLIB_VERSION = "1.2.12"
 $ZLIB_DOWNLOAD_ADDRESS = "http://www.zlib.net/zlib-$ZLIB_VERSION.tar.gz"
 $ZLIB_NAME = "zlib-$ZLIB_VERSION"
 $ZLIB_TAR_NAME = "$ZLIB_NAME.tar"
