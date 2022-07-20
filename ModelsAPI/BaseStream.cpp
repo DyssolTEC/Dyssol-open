@@ -466,11 +466,10 @@ double CBaseStream::GetCompoundMol(double _time, const std::string& _compoundKey
 
 void CBaseStream::SetCompoundMolFraction(double _time, const std::string& _compoundKey, EPhase _phase, double _value)
 {
-	const double f = GetCompoundFraction(_time, _compoundKey, _phase);
 	const double m = GetPhaseMass(_time, _phase);
 	const double M = GetCompoundProperty(_compoundKey, MOLAR_MASS);
 	const double n = GetPhaseMol(_time, _phase);
-	SetCompoundFraction(_time, _compoundKey, _phase, f * M * n / m);
+	SetCompoundFraction(_time, _compoundKey, _phase, _value * M * n / m);
 }
 
 CPhase* CBaseStream::AddPhase(EPhase _phase, const std::string& _name)
