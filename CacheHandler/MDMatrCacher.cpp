@@ -81,11 +81,11 @@ void CMDMatrCacher::WriteToCache(const std::vector<double>& _vTP, std::vector<st
 
 	if( _bCoherent && !bInsertNewDescr ) // no changes in cached data -> just set descriptors to 'valid'
 	{
-		size_t nNumber = _vTP.size();
+		auto nNumber = static_cast<int64_t>(_vTP.size());
 		while( nNumber > 0 )
 		{
 			m_descriptors[index].valid = true;
-			nNumber -= m_descriptors[index].descriptorNumber;
+			nNumber -= static_cast<int64_t>(m_descriptors[index].descriptorNumber);
 			index++;
 		}
 		return;
