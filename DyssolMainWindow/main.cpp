@@ -16,6 +16,7 @@ int main(int argc, char* argv[])
 	do
 	{
 		QApplication a(argc, argv);
+		QApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
 		qRegisterMetaTypeStreamOperators<QList<bool>>("QList<bool>");
 		QStringList args = a.arguments();
 
