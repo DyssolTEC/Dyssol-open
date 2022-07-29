@@ -391,7 +391,8 @@ bool CDimensionParameters::IsValid() const
 	m_message.clear();
 	if (m_grid->DimensionType() == DISTR_UNDEFINED)
 		return SetMessageAndReturn(StrConst::GE_ErrorUndefined);
-	const auto distrName = std::vector<std::string>(DISTR_NAMES)[GetDistributionTypeIndex(static_cast<EDistrTypes>(ui.comboDistribution->currentData().toUInt()))];
+	const auto iName = GetDistributionTypeIndex(static_cast<EDistrTypes>(ui.comboDistribution->currentData().toUInt()));
+	const auto distrName = iName != -1 ? std::vector<std::string>(DISTR_NAMES)[iName] : "";
 	if (m_grid->GridType() == EGridEntry::GRID_NUMERIC)
 	{
 		const auto& grid = dynamic_cast<CGridDimensionNumeric*>(m_grid.get())->Grid();
