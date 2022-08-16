@@ -232,3 +232,4 @@ Dyssol.VC.VC.opendb
 /ExternalLibraries/hdf5/
 /ExternalLibraries/zlib/
 /ExternalLibraries/graphviz
+/DocumentationSphinx/_build
