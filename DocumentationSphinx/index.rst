@@ -28,7 +28,7 @@ Contents
    :maxdepth: 2
    :caption: Get started
 
-   first
+   000_get_started/get_started
 
 |
 

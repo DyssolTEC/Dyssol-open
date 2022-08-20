@@ -189,7 +189,7 @@ Application example
 
 Now you want to develop a new steady-state model of splitter with one input stream and three output streams, as the figure shown below. The splitting factors for the first and second outlets are :math:`k_1` and :math:`k_2` respectively.
 
-.. image:: ./pics/tutorials/task5-1.jpg
+.. image:: ./static/images/tutorials/task5-1.jpg
    :width: 300px
    :alt: 
    :align: center 
@@ -769,21 +769,21 @@ Now you need the following steps:
 
 - Use exemplary flowsheet ``...\Tasks8\AirClassifier.dflw`` to test your unit. Compare your results with the expected ones below.
 
-.. image:: ./pics/tutorials/task8-1.jpg
+.. image:: ./static/images/tutorials/task8-1.jpg
    :width: 800px
    :alt: 
    :align: center
 
 |
 
-.. image:: ./pics/tutorials/task8-2.jpg
+.. image:: ./static/images/tutorials/task8-2.jpg
    :width: 800px
    :alt: 
    :align: center
 
 |
 
-.. image:: ./pics/tutorials/task8-3.jpg
+.. image:: ./static/images/tutorials/task8-3.jpg
    :width: 800px
    :alt: 
    :align: center
@@ -1569,21 +1569,21 @@ Now you need the following steps:
 
 - Use exemplary flowsheet ``...\Task7\DynamicScreen.dflw`` to test your unit. Compare your results with the expected ones in the figures below.
 
-.. image:: ./pics/tutorials/task7-1.jpg
+.. image:: ./static/images/tutorials/task7-1.jpg
    :width: 800px
    :alt: 
    :align: center
 
 |
 
-.. image:: ./pics/tutorials/task7-2.jpg
+.. image:: ./static/images/tutorials/task7-2.jpg
    :width: 800px
    :alt: 
    :align: center
 
 |
 
-.. image:: ./pics/tutorials/task7-3.jpg
+.. image:: ./static/images/tutorials/task7-3.jpg
    :width: 800px
    :alt: 
    :align: center

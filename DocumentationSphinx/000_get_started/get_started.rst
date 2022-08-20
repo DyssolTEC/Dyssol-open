@@ -55,10 +55,19 @@ Files
 
 The following files are used and created by Dyssol:
 
-* **\*.dflw**: Dyssol flowsheets.
-* **\*.dmdb**: Dyssol materials databases.
-* **\*.dll/\*.so**: Shared libraries with Dyssol models.
-* **\*.txt**: Script files for command line mode.
+* **\*.dflw**: Dyssol flowsheets
+
+	* Flowsheet structure 
+	* Flowsheet settings
+	* Simulation results
+  
+* **\*.dmdb**: Dyssol materials databases. See also: :ref:`sec.mdb`.
+
+	* Compounds 
+	* Properties of compounds
+  
+* **\*.dll/\*.so**: Shared libraries with Dyssol models
+* **\*.txt**: Script files for command line mode. See also: :ref:`sec.cli`.
 
 | 
 
@@ -73,7 +82,7 @@ Here you can find a detailed guide for creating and running the :ref:`label-scre
 
 A flowsheet of this example is shown below with all stream names.
 
-	.. image:: ./pics/screenExample/flowsheet.png
+	.. image:: ../static/images/screenExample/flowsheet.png
 	   :width: 500px
 	   :alt: 
 	   :align: center
@@ -84,7 +93,7 @@ You need to follow these 12 steps to complete the simulation and analyze the res
 
 1. Add **units** to the flowsheet and name them:
 
-	.. image:: ./pics/screenExample/1.png
+	.. image:: ../static/images/screenExample/1.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -92,7 +101,7 @@ You need to follow these 12 steps to complete the simulation and analyze the res
 
 2. Add **streams** to the flowsheet and name them:
 
-	.. image:: ./pics/screenExample/2.png
+	.. image:: ../static/images/screenExample/2.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -100,24 +109,24 @@ You need to follow these 12 steps to complete the simulation and analyze the res
 
 3. Select a **model** for each unit on the flowsheet:
 	
-	.. image:: ./pics/screenExample/3-1.png
+	.. image:: ../static/images/screenExample/3-1.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
 	   
-	.. image:: ./pics/screenExample/3-2.png
+	.. image:: ../static/images/screenExample/3-2.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
 
-	.. image:: ./pics/screenExample/3-3.png
+	.. image:: ../static/images/screenExample/3-3.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
 
 4. Connect **ports** of each unit to the streams:
 	
-	.. image:: ./pics/screenExample/4.png
+	.. image:: ../static/images/screenExample/4.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -125,7 +134,7 @@ You need to follow these 12 steps to complete the simulation and analyze the res
 
 5. Setup **parameters** of units:
 
-	.. image:: ./pics/screenExample/5.png
+	.. image:: ../static/images/screenExample/5.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -133,7 +142,7 @@ You need to follow these 12 steps to complete the simulation and analyze the res
 
 6. Add **compounds** to the flowsheet:
 
-	.. image:: ./pics/screenExample/6.png
+	.. image:: ../static/images/screenExample/6.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -141,7 +150,7 @@ You need to follow these 12 steps to complete the simulation and analyze the res
 
 7. Add **phases** to the flowsheet:
 
-	.. image:: ./pics/screenExample/7.png
+	.. image:: ../static/images/screenExample/7.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -149,7 +158,7 @@ You need to follow these 12 steps to complete the simulation and analyze the res
 
 8. Specify **grids** for distributed parameters of solids:
 
-	.. image:: ./pics/screenExample/8.png
+	.. image:: ../static/images/screenExample/8.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -157,22 +166,22 @@ You need to follow these 12 steps to complete the simulation and analyze the res
 
 9. Setup **feeds** of inlets and **holdups** of units:
 
-	.. image:: ./pics/screenExample/9-1.png
+	.. image:: ../static/images/screenExample/9-1.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
 	   
-	.. image:: ./pics/screenExample/9-2.png
+	.. image:: ../static/images/screenExample/9-2.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
 
-	.. image:: ./pics/screenExample/9-3.png
+	.. image:: ../static/images/screenExample/9-3.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
 	   
-	.. image:: ./pics/screenExample/9-4.png
+	.. image:: ../static/images/screenExample/9-4.png
 	   :width: 960px
 	   :alt: 
 	   :align: center   
@@ -180,7 +189,7 @@ You need to follow these 12 steps to complete the simulation and analyze the res
 
 10. Specify the simulation **time**:
 
-	.. image:: ./pics/screenExample/10.png
+	.. image:: ../static/images/screenExample/10.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -188,7 +197,7 @@ You need to follow these 12 steps to complete the simulation and analyze the res
 
 11. **Run** the simulation:
 
-	.. image:: ./pics/screenExample/11.png
+	.. image:: ../static/images/screenExample/11.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -196,12 +205,12 @@ You need to follow these 12 steps to complete the simulation and analyze the res
 
 12. **Analyze** the results:
 
-	.. image:: ./pics/screenExample/12-1.png
+	.. image:: ../static/images/screenExample/12-1.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
 	   
-	.. image:: ./pics/screenExample/12-2.png
+	.. image:: ../static/images/screenExample/12-2.png
 	   :width: 960px
 	   :alt: 
 	   :align: center   

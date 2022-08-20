@@ -24,7 +24,7 @@ Inlet flow
 This unit allows defining the parameters of the input material, showing in the figure below.
 
 
-.. image:: ./pics/units/inletflow.png
+.. image:: ./static/images/units/inletflow.png
    :width: 300px
    :alt: mixer example
    :align: center
@@ -36,7 +36,7 @@ Outlet flow
 
 This unit serves to connect the output material flows, as shown in the figure below.
 
-.. image:: ./pics/units/outletflow.png
+.. image:: ./static/images/units/outletflow.png
    :width: 200px
    :alt: mixer example
    :align: center
@@ -48,7 +48,7 @@ Mixer
 
 A mixer mixes two input material streams (:math:`In1`, :math:`In2`) into the one output stream (:math:`Out`), as shown in the scheme below.
 
-.. image:: ./pics/units/mixer.png
+.. image:: ./static/images/units/mixer.png
    :width: 300px
    :alt: mixer
    :align: center
@@ -104,14 +104,14 @@ All secondary attributes of output stream, such as phase fractions, compounds fr
 
 .. Simulation result for mass flows:
 
-.. .. image:: ./pics/units/mixer-egMass.png
+.. .. image:: ./static/images/units/mixer-egMass.png
    :width: 700px
    :alt: mixer example
    :align: center
 
 .. Simulation result for temperatures:
 
-.. .. image:: ./pics/units/mixer-egTemp.png
+.. .. image:: ./static/images/units/mixer-egTemp.png
    :width: 700px
    :alt: mixer example
    :align: center
@@ -123,7 +123,7 @@ Splitter
 
 A splitter divides input stream (:math:`In`) into two output streams (:math:`Out1` and :math:`Out2`), as shown in the figure below.
 
-.. image:: ./pics/units/splitter.png
+.. image:: ./static/images/units/splitter.png
    :width: 300px
    :alt: mixer
    :align: center
@@ -168,7 +168,7 @@ Screen
 
 Screen unit is designed for classification of input material into two fractions according to particle size distribution (PSD), as shown below.
 
-.. image:: ./pics/units/screen.png
+.. image:: ./static/images/units/screen.png
    :width: 300px
    :alt: screen
    :align: center
@@ -185,7 +185,7 @@ In the following figure, several grade efficiency curves for different parameter
 
 .. note:: This figure only applies to the Plitt's model and Molerus & Hoffmann model.
 
-.. image:: ./pics/units/splitter-alpha.png
+.. image:: ./static/images/units/splitter-alpha.png
    :width: 500px
    :alt: splitter
    :align: center
@@ -379,7 +379,7 @@ Crusher
 
 A crusher comminutes the input material stream and reduces the average particle size. The schema is illustrated below.
 
-.. image:: ./pics/units/crusher.png
+.. image:: ./static/images/units/crusher.png
    :width: 200px
    :alt: splitter
    :align: center
@@ -675,7 +675,7 @@ Bunker
 
 Bunker unit performs accumulation of the solid part of the input material with ideal mixing, see figure below.
 
-.. image:: ./pics/units/bunker.png
+.. image:: ./static/images/units/bunker.png
    :width: 200px
    :alt:
    :align: center
@@ -763,7 +763,7 @@ Granulator
 
 This unit represents a simplified model of a fluidized bed granulation reactor, see figure below.
 
-.. image:: ./pics/units/granulator.png
+.. image:: ./static/images/units/granulator.png
    :width: 500px
    :alt:
    :align: center
@@ -882,7 +882,7 @@ Agglomerator
 
 This unit represents a simplified model of agglomeration process, see figure below.
 
-.. image:: ./pics/units/agglomerator.png
+.. image:: ./static/images/units/agglomerator.png
    :width: 400px
    :alt:
    :align: center
@@ -1008,7 +1008,7 @@ Time delay
 
 Constant delay of input signal
 
-.. image:: ./pics/units/timedelay.png
+.. image:: ./static/images/units/timedelay.png
    :width: 300px
    :alt:
    :align: center

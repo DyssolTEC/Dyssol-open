@@ -4,7 +4,7 @@ Time point management
 
 In Dyssol, stream inlets, dynamic units and unit parameters are time-dependent and have unique combination of time points. As simulation process goes, new time points are generated. 
 
-.. image:: ./pics/time/timePoint.png
+.. image:: ./static/images/time/timePoint.png
    :width: 500px
    :alt: 
    :align: center
@@ -18,7 +18,7 @@ Linear interpolation is applied between existing time points. Nearest-neighbor e
 
 As an example, the mass flow at different time points are illustrated in the diagram below.
  
-.. image:: ./pics/time/data.png
+.. image:: ./static/images/time/data.png
    :width: 400px
    :alt: 
    :align: center
@@ -53,14 +53,14 @@ Let's take the particle size distribution :math:`q_3` as an example. Interpolati
 
 The :abbr:`PSD (Particle size distribution)` changes during 10 seconds; the states at :math:`t = 0\,s` and :math:`t = 10\,s` are given. For different cases, the PSD at :math:`t = 5\,s` can be interpolated, as the diagrams shown below.
 
-.. image:: ./pics/time/PSD1.png
+.. image:: ./static/images/time/PSD1.png
    :width: 400px
    :alt: 
    :align: center
   
 |
   
-.. image:: ./pics/time/PSD2.png
+.. image:: ./static/images/time/PSD2.png
    :width: 400px
    :alt: 
    :align: center
@@ -72,7 +72,7 @@ Steady state units
 
 In Dyssol, steady state unit is calculated on a union of time points from all its inlets. This unit does not produce new time points, and data extrapolation is used to obtain values from time points which are not given.
 
-.. image:: ./pics/time/ss.png
+.. image:: ./static/images/time/ss.png
    :width: 500px
    :alt: 
    :align: center
@@ -84,7 +84,7 @@ Dynamic units with recycle
 
 In case of simulation with recycled streams for 5 seconds, the following example is analyzed. This process consists of several material streams and 2 dynamic operation units U1 and U2. The recycle stream is identified and the process is splitted into 3 partitions.
 
-.. image:: ./pics/time/example.png
+.. image:: ./static/images/time/example.png
    :width: 700px
    :alt: 
    :align: center
@@ -95,14 +95,14 @@ First, partition 1 is simulated on the whole time interval (from 0 to 5 s), as s
 
 		Inlet::Simulate(0, 5)
 
-.. image:: ./pics/time/simu1.png
+.. image:: ./static/images/time/simu1.png
    :width: 700px
    :alt: 
    :align: center
 
 Then, for partition 2, the :ref:`label-waveRelax` is applied and an intermediate time point is calculated as 3 s. Therefore, the whole time interval is divided into 0 - 3 s and 3 - 5 s.
 
-.. image:: ./pics/time/simu2.png
+.. image:: ./static/images/time/simu2.png
    :width: 700px
    :alt: 
    :align: center
@@ -125,7 +125,7 @@ This repeats until convergence takes place. Afterwards, partition 2 is simulated
 
 This repeats until convergence takes place.
 
-.. image:: ./pics/time/simu3.png
+.. image:: ./static/images/time/simu3.png
    :width: 700px
    :alt: 
    :align: center
@@ -136,7 +136,7 @@ Finally, partition 3 is simulated on the whole time interval from 0 to 5 s.
 
 		Outlet::Simulate(0, 5)
 
-.. image:: ./pics/time/simu4.png
+.. image:: ./static/images/time/simu4.png
    :width: 700px
    :alt: 
    :align: center

@@ -31,7 +31,7 @@ To implement the Dyssol system, the C++ programming language and the object orie
 
 You can get an overview of the Dyssol system structure in the figure below.
 
-.. image:: ./pics/archi.png
+.. image:: ./static/images/archi.png
    :width: 960px
    :alt: 
    :align: center

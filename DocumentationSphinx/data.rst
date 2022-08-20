@@ -14,7 +14,7 @@ HDF5 data format
 
 HDF5 is a hierarchical data format, library and data model for storing and organizing of large amounts of numerical data. External programs can access saved data via HDF5 interfaces.
 
-.. image:: ./pics/dataStorage/hdf5.png
+.. image:: ./static/images/dataStorage/hdf5.png
    :width: 900px
    :alt: screen
    :align: center
@@ -32,7 +32,7 @@ Data caching
 
 Only several time points of material stream are kept in memory at every moment, the rest are temporary on disk. This reduces memory consumption and slightly increases computation time (at default settings).
 
-.. image:: ./pics/dataStorage/cache.png
+.. image:: ./static/images/dataStorage/cache.png
    :width: 400px
    :alt: screen
    :align: center

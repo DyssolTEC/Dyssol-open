@@ -9,7 +9,7 @@ The material database in Dyssol stores physical properties and compound informat
 
 You can find the database structure in the figure below. The compound properties can be constant or T(temperature), P(pressure)-dependent. The dependent properties can be calculated using correlations.
 
-.. image:: ./pics/material/structure.png
+.. image:: ./static/images/material/structure.png
    :width: 700px
    :alt: screen
    :align: center
@@ -24,7 +24,7 @@ You can find the file ``Materials.dmdb`` in your installation folder, which stor
 
 You can extend this database by defining your own new materials using the *Tools* menu bar → *Materials database*, which opens the *compounds editor* and enables you to set new compounds.
 
-.. image:: ./pics/material/path.png
+.. image:: ./static/images/material/path.png
    :width: 200px
    :alt: screen
    :align: center
@@ -94,7 +94,7 @@ Correlation search
 
 The algorithm for calculating :abbr:`TPD (Temperature- and/or pressure-dependent)` properties is shown as follows.
 
-.. image:: ./pics/material/correlation.png
+.. image:: ./static/images/material/correlation.png
    :width: 600px
    :alt: screen
    :align: center
