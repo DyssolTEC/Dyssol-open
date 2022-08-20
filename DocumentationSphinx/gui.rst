@@ -14,7 +14,7 @@ You can find File, Flowsheet, Modules, Tools and Help in the menu bar.
 File
 """"
 
-	.. image:: ./pics/gui/fileMenu.png
+	.. image:: ./static/images/gui/fileMenu.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -35,7 +35,7 @@ File
 	
 	Please refer to :ref:`run Dyssol in command line mode <sec.cli>` for more information.
 
-	.. image:: ./pics/gui/command.png
+	.. image:: ./static/images/gui/command.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -45,7 +45,7 @@ File
 Flowsheet
 """""""""
 
-	.. image:: ./pics/gui/flowsheets.png
+	.. image:: ./static/images/gui/flowsheets.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -54,7 +54,7 @@ Flowsheet
 
 - Compounds editor:
 
-	.. image:: ./pics/gui/compounds.png
+	.. image:: ./static/images/gui/compounds.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -63,7 +63,7 @@ Flowsheet
 	
 - Phases editor:
 
-	.. image:: ./pics/gui/phases.png
+	.. image:: ./static/images/gui/phases.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -72,14 +72,14 @@ Flowsheet
 
 - Grids specification:
 
-	.. image:: ./pics/gui/grid1.png
+	.. image:: ./static/images/gui/grid1.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
 
 |
 	   
-	.. image:: ./pics/gui/grid2.png
+	.. image:: ./static/images/gui/grid2.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -88,7 +88,7 @@ Flowsheet
 
 - Holdups editor:
 	
-	.. image:: ./pics/gui/holdup1.png
+	.. image:: ./static/images/gui/holdup1.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -97,7 +97,7 @@ Flowsheet
 	
 	- Main control:
 	
-	.. image:: ./pics/gui/holdup2.png
+	.. image:: ./static/images/gui/holdup2.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -106,7 +106,7 @@ Flowsheet
 	
 	- Concentrated parameters:
 	
-	.. image:: ./pics/gui/holdup3.png
+	.. image:: ./static/images/gui/holdup3.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -115,7 +115,7 @@ Flowsheet
 	
 	- Distributed parameters:
 	
-	.. image:: ./pics/gui/holdup4.png
+	.. image:: ./static/images/gui/holdup4.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -124,7 +124,7 @@ Flowsheet
 
 - Options: 
 	
-	.. image:: ./pics/gui/options1.png
+	.. image:: ./static/images/gui/options1.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -135,7 +135,7 @@ Flowsheet
 	
 		For more information, please refer to :ref:`label-convergence` or the help document in directory ``Dyssol\Help\Convergence.pdf``.
 	
-	.. image:: ./pics/gui/options2.png
+	.. image:: ./static/images/gui/options2.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -144,7 +144,7 @@ Flowsheet
 	
 	- Service:
 	
-	.. image:: ./pics/gui/options3.png
+	.. image:: ./static/images/gui/options3.png
 	   :width: 480px
 	   :alt: 
 	   :align: center
@@ -153,7 +153,7 @@ Flowsheet
 
 - Calculation sequence:
 	
-	.. image:: ./pics/gui/sequence.png
+	.. image:: ./static/images/gui/sequence.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -162,7 +162,7 @@ Flowsheet
 
 - Recycle streams:	
 	
-	.. image:: ./pics/gui/recycle.png
+	.. image:: ./static/images/gui/recycle.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -171,7 +171,7 @@ Flowsheet
 
 Modules
 """""""
-	.. image:: ./pics/gui/modules.png
+	.. image:: ./static/images/gui/modules.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -181,7 +181,7 @@ Modules
 Tools
 """""
 
-	.. image:: ./pics/gui/tools.png
+	.. image:: ./static/images/gui/tools.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -190,7 +190,7 @@ Tools
 
 - Models manager:
 
-	.. image:: ./pics/gui/modelsManag.png
+	.. image:: ./static/images/gui/modelsManag.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -199,7 +199,7 @@ Tools
 
 - Materials Database:
 
-	.. image:: ./pics/gui/database.png
+	.. image:: ./static/images/gui/database.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -208,7 +208,7 @@ Tools
 
 	- Tab Compounds - Compounds List:
 	
-	.. image:: ./pics/gui/dat1.png
+	.. image:: ./static/images/gui/dat1.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -217,7 +217,7 @@ Tools
 	
 	- Tab Compounds - Properties:
 	
-	.. image:: ./pics/gui/dat2.png
+	.. image:: ./static/images/gui/dat2.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -226,7 +226,7 @@ Tools
 	
 	- Tab Compounds - Correlations:
 	
-	.. image:: ./pics/gui/dat3.png
+	.. image:: ./static/images/gui/dat3.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -235,7 +235,7 @@ Tools
 	
 	- Tab Compounds - Correlations plot:
 	
-	.. image:: ./pics/gui/dat4.png
+	.. image:: ./static/images/gui/dat4.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -244,7 +244,7 @@ Tools
 	
 	- Tab Interactions:
 
-	.. image:: ./pics/gui/dat5.png
+	.. image:: ./static/images/gui/dat5.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -255,7 +255,7 @@ Tools
 Help
 """"
 	
-	.. image:: ./pics/gui/help.png
+	.. image:: ./static/images/gui/help.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -267,7 +267,7 @@ Tabs
 
 Tabs are needed for the parameter setup. They are named by Flowsheet, Simulator, Streams and Units.
 	
-	.. image:: ./pics/gui/tabs.png
+	.. image:: ./static/images/gui/tabs.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -279,35 +279,35 @@ Flowsheet
 
 - Units:
 	
-	.. image:: ./pics/gui/units.png
+	.. image:: ./static/images/gui/units.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
 
 - Streams:
 
-	.. image:: ./pics/gui/streams.png
+	.. image:: ./static/images/gui/streams.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
 
 - Model selection:
 
-	.. image:: ./pics/gui/modelSelect.png
+	.. image:: ./static/images/gui/modelSelect.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
 
 - Ports connection:
 
-	.. image:: ./pics/gui/ports.png
+	.. image:: ./static/images/gui/ports.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
 
 - Unit parameters:
 
-	.. image:: ./pics/gui/unitParam.png
+	.. image:: ./static/images/gui/unitParam.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -319,7 +319,7 @@ Simulator
 
 Here you can start your simulation based on your time input.
 
-	.. image:: ./pics/gui/simulator.png
+	.. image:: ./static/images/gui/simulator.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -333,14 +333,14 @@ Here you will find the simulation results, including the stream results summariz
 
 - Table view:
 
-	.. image:: ./pics/gui/table.png
+	.. image:: ./static/images/gui/table.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
 
 - Plot view:
 
-	.. image:: ./pics/gui/plot.png
+	.. image:: ./static/images/gui/plot.png
 	   :width: 960px
 	   :alt: 
 	   :align: center
@@ -352,7 +352,7 @@ Units
 
 In Units tab, you can control the operation units.
 
-	.. image:: ./pics/gui/unitsTab.png
+	.. image:: ./static/images/gui/unitsTab.png
 	   :width: 960px
 	   :alt: 
 	   :align: center

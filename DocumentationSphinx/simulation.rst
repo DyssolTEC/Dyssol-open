@@ -7,7 +7,7 @@ Simulation core
 
 In simulation core, all data are processed discretely on the time scale. Different material streams and operation units are combined into the flowsheet, which is then simulated in the simulator.
 
-.. image:: ./pics/simulator.png
+.. image:: ./static/images/simulator.png
    :width: 400px
    :alt: screen
    :align: center
@@ -27,7 +27,7 @@ All variables in material streams are time-dependent.
 
 The structure of material streams is illustrated in the figure below. The information is transferred between operation units.
 
-.. image:: ./pics/timePoint.jpg
+.. image:: ./static/images/timePoint.jpg
    :width: 800px
    :alt: screen
    :align: center
@@ -47,7 +47,7 @@ A basic unit provides interfaces to the simulation system. It contains program i
 
 Moreover, you can develope your own units using the template for creating custom units and then add them to the :ref:`label-unitsLib`. Please refer to :ref:`label-unitDev` for more information.
 
-.. image:: ./pics/units/structure.png
+.. image:: ./static/images/units/structure.png
    :width: 400px
    :alt: 
    :align: center 
@@ -59,7 +59,7 @@ Simulator
 
 In this section, you can find the information about the main calculation algorithm.
 
-.. image:: ./pics/algorithm.png
+.. image:: ./static/images/algorithm.png
    :width: 900px
    :alt: screen
    :align: center
@@ -92,7 +92,7 @@ Built-in equation solvers
 
 Dyssol uses IDA and KINSOL solvers in `SUNDIALS package <https://computing.llnl.gov/projects/sundials>`_.
 
-.. image:: ./pics/solver.png
+.. image:: ./static/images/solver.png
    :width: 400px
    :alt: 
    :align: center 

@@ -11,7 +11,7 @@ Currently in Dyssol, you can develop your own :ref:`agglomeration <label-agg>` s
 
 The solver can also be added to a unit as a parameter.
 
-.. image:: ./pics/solver-structure.png
+.. image:: ./static/images/solver-structure.png
    :width: 600px
    :alt: 
    :align: center 
