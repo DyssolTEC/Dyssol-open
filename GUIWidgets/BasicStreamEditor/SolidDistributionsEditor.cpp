@@ -212,7 +212,8 @@ void CSolidDistributionsEditor::UpdateDistributionsList() const
 	for (unsigned i = 0; i < (unsigned)m_pDistribution->GetDimensionsNumber(); ++i)
 	{
 		const int iType = GetDistributionTypeIndex(EDistrTypes(m_pDistribution->GetDimensionTypeByIndex(i)));
-		ui.tableWidgetDistributions->setItem(static_cast<int>(i), 0, new QTableWidgetItem(std::vector<QString>(DISTR_NAMES)[iType]));
+		const auto name = iType != -1 ? std::vector<QString>(DISTR_NAMES)[iType] : "";
+		ui.tableWidgetDistributions->setItem(static_cast<int>(i), 0, new QTableWidgetItem(name));
 	}
 }
 

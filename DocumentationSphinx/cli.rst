@@ -3,308 +3,256 @@
 Command line interface
 ======================
 
-You may start your simulation by command lines with the help of ``DyssolC.exe``, which can be found in the installation directory. The command ``DyssolC`` can be started from the command prompt. 
+You may start your simulation by command lines with the help of ``DyssolC.exe``, which can be found in the installation directory. The command ``DyssolC`` can be started from the command prompt. Usage: 
 
-As the single input argument, a configuration file (in the following case named ``script.txt``) must be loaded.
+.. code-block:: shell
 
-.. code-block:: RST
+    DyssolC.exe --key[=value] [--key[=value] [...]]
 
-	> DyssolC.exe script.txt
+|
 
-The configuration file is a text file describing all necessary parameters for your simulation file. Details about the parameters are described in the tables below.
++-----------------+-----------+--------------------------------------------+
+| Key             | Short key | Example                                    |
++=================+===========+============================================+
+| \-\-script      | -s        | DyssolC.exe \-\-script="script.txt"        |
++-----------------+-----------+--------------------------------------------+
+| \-\-version     | -v        | DyssolC.exe \-\-version                    |
++-----------------+-----------+--------------------------------------------+
+| \-\-models      | -m        | DyssolC.exe -m                             |
++-----------------+-----------+--------------------------------------------+
+| \-\-models_path | -mp       | DyssolC.exe -m -mp="models1" -mp="models2" |
++-----------------+-----------+--------------------------------------------+
+| \-\-help        | -h        | DyssolC.exe \-\-help                       |
++-----------------+-----------+--------------------------------------------+
 
-You can find an exemplary configuration file ``ExampleConfigFile.txt`` in the installation directory.
+``--script`` defines a script file, and it is a required key needed to start simulation. Script is a text file describing all necessary parameters for your simulation file. Details about the script keys are described below.
 
-Only 3 parameters from the list are mandatory parameters: ``SOURCE_FILE``, ``MODELS_PATH``, ``MATERIALS_DATABASE``. The rest are optional and will override parameters set in initial file, specified as ``SOURCE_FILE``. If ``RESULT_FILE`` parameter is not specified, results of the simulation will be written to a ``SOURCE_FILE``.
+You can find exemplary script files in the installation directory under ``Example Scripts``.
 
-Parameters ``MODELS_PATH``, ``DISTRIBUTION_GRID``, ``UNIT_PARAMETER``, ``UNIT_HOLDUP_*`` can be mentioned several times in the script file, the rest should be places only ones.
+Only 3 script keys from the list are mandatory: ``SOURCE_FILE`` or ``RESULT_FILE``, ``MODELS_PATH``, and ``MATERIALS_DATABASE``. The rest are optional and will override parameters set in initial file, specified as ``SOURCE_FILE``. If ``SOURCE_FILE`` is not defined, the script should describe the entire flowsheet with all parameters, and ``RESULT_FILE`` is required. If ``RESULT_FILE`` parameter is not specified, results of the simulation will be written to a ``SOURCE_FILE``.
 
-You can find the lists of all available parameters in the configuration file.
+script keys ``MODELS_PATH``, ``DISTRIBUTION_GRID``, ``UNIT``, ``STREAM``, ``UNIT_PARAMETER``, ``UNIT_HOLDUP_*``, ``EXPORT_STREAM_*``, ``EXPORT_HOLDUP_*``, and ``EXPORT_UNIT_*`` can be mentioned several times in the script file, the rest should be places only once.
 
 
-General
-"""""""
+Main
+----
 
-	+-------------------------------------------------------------------------------+---------------------------------------+
-	| Identifier                                                                    | Parameter                             |
-	+===============================================================================+=======================================+
-	| ``SOURCE_FILE``:                                                              | ``C:\Path\to\source\file.dflw``       |
-	| Full path to the \*.dflw file with initial flowsheet                          |                                       |
-	+-------------------------------------------------------------------------------+---------------------------------------+
-	| ``RESULT_FILE``:                                                              | ``C:\Path\to\result\file.dflw``       |
-	| Full path to the file where simulation results will be written                |                                       |
-	+-------------------------------------------------------------------------------+---------------------------------------+
-	| ``MODELS_PATH``:                                                              + ``C:\Path\to\dir\with\models\``       |
-	| Path to the directory where \*.dll libraries of units and solvers can be found|                                       |
-	+-------------------------------------------------------------------------------+---------------------------------------+
-	| ``MATERIALS_DATABASE``:                                                       + ``C:\Path\to\database.dmdb``          |
-	| Full path to the file with materials database                                 |                                       |
-	+-------------------------------------------------------------------------------+---------------------------------------+
++--------------------+--------+--------------------------------------------------------------+
+| Script key         | Value  | Description                                                  |
++====================+========+==============================================================+
+| JOB                |        | Delimiter for a sequentially executed job within one script  |
++--------------------+--------+--------------------------------------------------------------+
+| SOURCE_FILE        | <path> | Full path to a \*.dflw file with initial flowsheet           |
++--------------------+--------+--------------------------------------------------------------+
+| RESULT_FILE        | <path> | Full path to a file where simulation results will be written |
++--------------------+--------+--------------------------------------------------------------+
+| MODELS_PATH        | <path> | Path to the directory with libraries of units and solvers    |
++--------------------+--------+--------------------------------------------------------------+
+| MATERIALS_DATABASE | <path> | Full path to the file with materials database                |
++--------------------+--------+--------------------------------------------------------------+
 
 |
 	
-Simulation
-""""""""""
+Simulation options
+------------------
 
-	+----------------------------+---------------+
-	| Identifier                 | Parameter     |
-	+============================+===============+
-	| ``SIMULATION_TIME``:       | ``<value>``   |
-	| End simulation time in [s] |               |
-	+----------------------------+---------------+
++------------------------------+-----------------------------------------+----------------------------------------------------------------------------+
+| Script key                   | Value                                   | Description                                                                |
++==============================+=========================================+============================================================================+
+| SIMULATION_TIME              | <value>                                 | End simulation time [s]                                                    |
++------------------------------+-----------------------------------------+----------------------------------------------------------------------------+
+| RELATIVE_TOLERANCE           | <value>                                 | Global relative tolerance                                                  |
++------------------------------+-----------------------------------------+----------------------------------------------------------------------------+
+| ABSOLUTE_TOLERANCE           | <value>                                 | Global absolute tolerance                                                  |
++------------------------------+-----------------------------------------+----------------------------------------------------------------------------+
+| MINIMAL_FRACTION             | <value>                                 | Minimum significant fraction in MD matrices                                |
++------------------------------+-----------------------------------------+----------------------------------------------------------------------------+
+| SAVE_TIME_STEP_HINT          | <value>                                 | Save time step hint [s] for streams                                        |
++------------------------------+-----------------------------------------+----------------------------------------------------------------------------+
+| SAVE_FLAG_FOR_HOLDUPS        | YES/NO                                  | Apply save time step hint for holdups and internal streams                 |
++------------------------------+-----------------------------------------+----------------------------------------------------------------------------+
+| THERMO_TEMPERATURE_MIN       | <value>                                 | Min of temperature range [K] where mixtures can be calculated              |
++------------------------------+-----------------------------------------+----------------------------------------------------------------------------+
+| THERMO_TEMPERATURE_MAX       | <value>                                 | Max of temperature range [K] where mixtures can be calculated              |
++------------------------------+-----------------------------------------+----------------------------------------------------------------------------+
+| THERMO_TEMPERATURE_INTERVALS | <value>                                 | Number of intervals to calculate temperature of mixtures                   |
++------------------------------+-----------------------------------------+----------------------------------------------------------------------------+
+| INIT_TIME_WINDOW             | <value>                                 | Initial time window [s]                                                    |
++------------------------------+-----------------------------------------+----------------------------------------------------------------------------+
+| MIN_TIME_WINDOW              | <value>                                 | Min size of time window [s]                                                |
++------------------------------+-----------------------------------------+----------------------------------------------------------------------------+
+| MAX_TIME_WINDOW              | <value>                                 | Max size of time window [s]                                                |
++------------------------------+-----------------------------------------+----------------------------------------------------------------------------+
+| MAX_ITERATIONS_NUMBER        | <value>                                 | Max allowed number of iterations                                           |
++------------------------------+-----------------------------------------+----------------------------------------------------------------------------+
+| WINDOW_CHANGE_RATE           | <value>                                 | Rate of change of the time window                                          |
++------------------------------+-----------------------------------------+----------------------------------------------------------------------------+
+| TERATIONS_UPPER_LIMIT        | <value>                                 | Upper limit of iterations for adjusting time window size                   |
++------------------------------+-----------------------------------------+----------------------------------------------------------------------------+
+| ITERATIONS_LOWER_LIMIT       | <value>                                 | Lower limit of iterations for adjusting time window size                   |
++------------------------------+-----------------------------------------+----------------------------------------------------------------------------+
+| ITERATIONS_UPPER_LIMIT_1ST   | <value>                                 | Upper limit of iterations for adjusting time window size of the 1st window |
++------------------------------+-----------------------------------------+----------------------------------------------------------------------------+
+| RELAXATION_PARAMETER         | <value>                                 | Relaxation parameter for DIRECT_SUBSTITUTION (0;1]                         |
++------------------------------+-----------------------------------------+----------------------------------------------------------------------------+
+| ACCELERATION_LIMIT           | <value>                                 | Axxeleration parameter limit for WEGSTEIN (-5;1)                           |
++------------------------------+-----------------------------------------+----------------------------------------------------------------------------+
+| CONVERGENCE_METHOD           | DIRECT_SUBSTITUTION/WEGSTEIN/STEFFENSEN | Convergence method                                                         |
++------------------------------+-----------------------------------------+----------------------------------------------------------------------------+
+| EXTRAPOLATION_METHOD         | NEAREST_NEIGHBOR/LINEAR/CUBIC_SPLINE    | Extrapolation method                                                       |
++------------------------------+-----------------------------------------+----------------------------------------------------------------------------+
 
 |
 
-Options
-"""""""
+Phases
+------
 
-	+-----------------------------------------+----------------------------------------+
-	| Identifier                              | Parameter                              |
-	+=========================================+========================================+
-	| ``RELATIVE_TOLERANCE``                  | ``<value>``                            |
-	+-----------------------------------------+----------------------------------------+
-	| ``ABSOLUTE_TOLERANCE``                  | ``<value>``                            |
-	+-----------------------------------------+----------------------------------------+
-	| ``MINIMAL_FRACTION``                    | ``<value>``                            |
-	+-----------------------------------------+----------------------------------------+
-	| ``INIT_TIME_WINDOW``                    | ``<value>``                            |
-	+-----------------------------------------+----------------------------------------+
-	| ``MIN_TIME_WINDOW``                     | ``<value>``                            |
-	+-----------------------------------------+----------------------------------------+
-	| ``MAX_TIME_WINDOW``                     | ``<value>``                            |
-	+-----------------------------------------+----------------------------------------+
-	| ``MAX_ITERATIONS_NUM``                  | ``<value>``                            |
-	+-----------------------------------------+----------------------------------------+
-	| ``WINDOW_CHANGE_RATE``                  | ``<value>``                            |
-	+-----------------------------------------+----------------------------------------+
-	| ``ITER_UPPER_LIMIT``                    | ``<value>``                            |
-	+-----------------------------------------+----------------------------------------+
-	| ``ITER_LOWER_LIMIT``                    | ``<value>``                            |
-	+-----------------------------------------+----------------------------------------+
-	| ``ITER_UPPER_LIMIT_1``                  | ``<value>``                            |
-	+-----------------------------------------+----------------------------------------+
-	| ``CONVERGENCE_METHOD``                  | ``<method>`` represented by numbers:   |
-	+                                         |                                        |
-	|                                         | ``<method>`` = 0 – Direct substitution |
-	+                                         |                                        |
-	|                                         | ``<method>`` = 1 – Wegstein            |
-	+                                         |                                        |
-	|                                         | ``<method>`` = 2 – Steffensen          |
-	+-----------------------------------------+----------------------------------------+
-	+ ``ACCEL_PARAMETER``:                    + ``<value>``                            +
-	| Parameter of Wegstein's method          |                                        |
-	+-----------------------------------------+----------------------------------------+
-	| ``RELAX_PARAMETER``:                    | ``<value>``                            |
-	| Parameter of Direct Substitution method |                                        |
-	+-----------------------------------------+----------------------------------------+
-	| ``EXTRAPOL_METHOD``:                    | ``<method>`` represented by numbers:   |
-	+ Extrapolation method                    |                                        |
-	|                                         | ``<method>`` = 0 – Linear              |
-	+                                         |                                        |
-	|                                         | ``<method>`` = 1 – Cubic spline        |
-	+                                         |                                        |
-	|                                         | ``<method>`` = 2 – Nearest neighbor    |
-	+-----------------------------------------+----------------------------------------+
++------------+---------------------------------------------------------+----------------+
+| Script key | Value                                                   | Description    |
++============+=========================================================+================+
+| PHASES     | <name> SOLID/LIQUID/GAS [<name> SOLID/LIQUID/GAS [...]] | Defined phases |
++------------+---------------------------------------------------------+----------------+
+
+|
+
+Compounds
+---------
+
++------------+-----------------------------------+-------------------------------------------+
+| Script key | Value                             | Description                               |
++============+===================================+===========================================+
+| COMPOUNDS  | <key>/<name> [<key>/<name> [...]] | Defined compounds from materials database |
++------------+-----------------------------------+-------------------------------------------+
 
 |
 
 Grids
-"""""
+-----
 
-	+--------------------------------------------------------------+------------------------------------------------------------------------------------------------------+
-	| Identifier                                                   | Parameter                                                                                            |
-	+==============================================================+======================================================================================================+
-	| ``DISTRIBUTION_GRID``:                                       | General form:                                                                                        |
-	| Specification of meshes for distributed parameters of solids |                                                                                                      |
-	|                                                              | ``<distribution> <type> <classes> [<grid>] (<min> <max> | <boundaries> | <names>)``                  |
-	+                                                              +------------------------------------------------------------------------------------------------------+
-	|                                                              | For Continuous not Manual:                                                                           |
-	|                                                              |                                                                                                      |
-	|                                                              | ``<distribution> <type> <classes> <grid> <min> <max>``                                               |
-	+                                                              +------------------------------------------------------------------------------------------------------+
-	|                                                              | For Discrete or Continuous Manual:                                                                   |
-	|                                                              |                                                                                                      |
-	|                                                              | ``<distribution> <type> <classes> <boundaries>``                                                     |
-	+                                                              +------------------------------------------------------------------------------------------------------+
-	|                                                              | For Symbolic:                                                                                        |
-	|                                                              |                                                                                                      |
-	|                                                              | ``<distribution> <type> <classes> <names>``                                                          |
-	+                                                              +------------------------------------------------------------------------------------------------------+
-	|                                                              | ``<distribution>`` – index of the distribution as it stated in Grid Specification window             |
-	+                                                              +------------------------------------------------------------------------------------------------------+
-	|                                                              | ``<type>`` – distribution type represented by numbers:                                               |
-	|                                                              |                                                                                                      |
-	|                                                              | ``<type>`` = 0 – Continuous                                                                          |
-	|                                                              |                                                                                                      |
-	|                                                              | ``<type>`` = 1 – Discrete                                                                            |
-	|                                                              |                                                                                                      |
-	|                                                              | ``<type>`` = 2 – Symbolic                                                                            |
-	+                                                              +------------------------------------------------------------------------------------------------------+
-	|                                                              | ``<classes>`` – number of classes                                                                    |
-	+                                                              +------------------------------------------------------------------------------------------------------+
-	|                                                              | ``<grid>`` – type of the grid (if <type> = 0) represented by numbers:                                |
-	|                                                              |                                                                                                      |
-	|                                                              | ``<grid>`` = 0 – Manual                                                                              |
-	|                                                              |                                                                                                      |
-	|                                                              | ``<grid>`` = 1 – Equidistant                                                                         |
-	|                                                              |                                                                                                      |
-	|                                                              | ``<grid>`` = 2 – Geometric increasing                                                                |
-	|                                                              |                                                                                                      |
-	|                                                              | ``<grid>`` = 3 – Logarithmic increasing                                                              |
-	|                                                              |                                                                                                      |
-	|                                                              | ``<grid>`` = 4 – Geometric decreasing                                                                |
-	|                                                              |                                                                                                      |
-	|                                                              | ``<grid>`` = 5 – Logarithmic decreasing                                                              |
-	+                                                              +------------------------------------------------------------------------------------------------------+
-	|                                                              | ``<min>`` – min value, if ``<type>`` = 0 and ``<grid>`` :math:`\neq` 0                               |
-	+                                                              +------------------------------------------------------------------------------------------------------+
-	|                                                              | ``<max>`` – max value, if ``<type>`` = 0 and ``<grid>`` :math:`\neq` 0                               |
-	+                                                              +------------------------------------------------------------------------------------------------------+
-	|                                                              | ``<boundaries>`` – class boundary values, if (``<type>`` = 0 and ``<grid>`` = 0) or (``<type>`` = 1) |
-	+                                                              +------------------------------------------------------------------------------------------------------+
-	|                                                              | ``<names>`` – names of classes boundary values (if ``<type>`` = 2)                                   |
-	+--------------------------------------------------------------+------------------------------------------------------------------------------------------------------+
++----------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
+| Script key                 | Value                                                                                                                                                                                                | Description                                                                                                                            |
++============================+======================================================================================================================================================================================================+========================================================================================================================================+
+| KEEP_EXISTING_GRIDS_VALUES | YES/NO                                                                                                                                                                                               | Whether to keep grids defined in SOURCE_FILE. If set to NO, all grids are removed before applying any DISTRIBUTION_GRID. Default = YES |
++----------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
+| DISTRIBUTION_GRID          | GLOBAL/<unit_name>/<unit_index> SIZE/PARTICLE_POROSITY/FORM_FACTOR/COLOR/USER_DEFINED_** SYMBOLIC <classes_number> <values>                                                                          | Definition of a symbolic grid                                                                                                          |
++----------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
+| DISTRIBUTION_GRID          | GLOBAL/<unit_name>/<unit_index> SIZE NUMERIC MANUAL/EQUIDISTANT/GEOMETRIC_INC/GEOMETRIC_DEC/LOGARITHMIC_INC/LOGARITHMIC_DEC DIAMETER/VOLUME <classes_number> <values>                                | Definition of a numeric size grid                                                                                                      |
++----------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
+| DISTRIBUTION_GRID          | GLOBAL/<unit_name>/<unit_index> PARTICLE_POROSITY/FORM_FACTOR/COLOR/USER_DEFINED_** NUMERIC MANUAL/EQUIDISTANT/GEOMETRIC_INC/GEOMETRIC_DEC/LOGARITHMIC_INC/LOGARITHMIC_DEC <classes_number> <values> | Definition of a numeric non-size grid                                                                                                  |
++----------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
+
+|
+
+Flowsheet structure
+-------------------
+
++---------------------+----------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------+
+| Script key          | Value                                                                                                                      | Description                                                                                                               |
++=====================+============================================================================================================================+===========================================================================================================================+
+| KEEP_EXISTING_UNITS | YES/NO                                                                                                                     | Whether to keep units defined in SOURCE_FILE. If set to NO, all units are removed before applying any UNIT. Default = YES |
++---------------------+----------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------+
+| UNIT                | <name> <model_id>/<model_name>/<lib_path>                                                                                  | Definition of a unit                                                                                                      |
++---------------------+----------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------+
+| STREAM              | <name> <o_unit_name>/<o_unit_index> <o_port_name>/<o_port_index> <i_unit_name>/<i_unit_index> <i_port_name>/<i_port_index> | Definition of a stream                                                                                                    |
++---------------------+----------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------+
 
 |
 
 Unit parameters
-"""""""""""""""
+---------------
 
-	+------------------------------------------------------+----------------------------------------------------------------------------------------------+
-	| Identifier                                           | Parameter                                                                                    |
-	+======================================================+==============================================================================================+
-	| ``UNIT_PARAMETER``: Specification of unit parameters | General form:                                                                                |
-	|                                                      |                                                                                              |
-	|                                                      | ``<unit> <parameter> (<value> | <time> <value> [<time> <value> […]] | <string> | <solver>)`` |
-	+                                                      +----------------------------------------------------------------------------------------------+
-	|                                                      | For constant parameter:                                                                      |
-	|                                                      |                                                                                              |
-	|                                                      | ``<unit> <parameter> <value>``                                                               |
-	+                                                      +----------------------------------------------------------------------------------------------+
-	|                                                      | For time-dependent parameter:                                                                |
-	|                                                      |                                                                                              |
-	|                                                      | ``<unit> <parameter> <time> <value> [<time> <value> […]]``                                   |
-	+                                                      +----------------------------------------------------------------------------------------------+
-	|                                                      | For string parameter:                                                                        |
-	|                                                      |                                                                                              |
-	|                                                      | ``<unit> <parameter> <string>``                                                              |
-	+                                                      +----------------------------------------------------------------------------------------------+
-	|                                                      | For solver parameter:                                                                        |
-	|                                                      |                                                                                              |
-	|                                                      | ``<unit> <parameter> <solver>``                                                              |
-	+                                                      +----------------------------------------------------------------------------------------------+
-	|                                                      | ``<unit>`` – index of the unit                                                               |
-	+                                                      +----------------------------------------------------------------------------------------------+
-	|                                                      | ``<parameter>`` – index of the parameter                                                     |
-	+                                                      +----------------------------------------------------------------------------------------------+
-	|                                                      | ``<value>`` – numerical value of the parameter                                               |
-	+                                                      +----------------------------------------------------------------------------------------------+
-	|                                                      | ``<time>`` – value of the time point (for time-dependent parameters)                         |
-	+                                                      +----------------------------------------------------------------------------------------------+
-	|                                                      | ``<string>`` – numerical value of the parameter (for string parameters)                      |
-	+                                                      +----------------------------------------------------------------------------------------------+
-	|                                                      | ``<solver>`` – name of a ``*.dll`` file with solver (for solver parameter)                   |
-	+------------------------------------------------------+----------------------------------------------------------------------------------------------+
++----------------+---------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------+
+| Script key     | Value                                                                                                                                       | Description                                                         |
++================+=============================================================================================================================================+=====================================================================+
+| UNIT_PARAMETER | <unit_name>/<unit_index> <param_name/param_index> <value> [<value> [...]]                                                                   | Definition of a constant/string/compound/flag/solver unit parameter |
++----------------+---------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------+
+| UNIT_PARAMETER | <unit_name>/<unit_index> <param_name/param_index> <time> <value> [<time> <value> [...]]                                                     | Definition of a time-dependent unit parameter                       |
++----------------+---------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------+
+| UNIT_PARAMETER | <unit_name>/<unit_index> <param_name/param_index> <subs_number> <base_subs> <name> <nu> <order> <phase> [<name> <nu> <order> <phase> [...]] | Definition of a reaction unit parameter                             |
++----------------+---------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------+
 
 |
 
 Holdups
-"""""""
-	
-	+-------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------+
-	| Identifier                                                                    | Parameter                                                                                                                         |
-	+===============================================================================+===================================================================================================================================+
-	| ``UNIT_HOLDUP_MTP``: Specification of holdups: mass, temperature and pressure | ``<unit> <holdup> <timepoint> <mass> <temperature> <pressure>`` with:                                                             |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<unit>`` – index of the unit                                                                                                    |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<holdup>`` – index of the holdup in the unit                                                                                    |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<timepoint>`` – index of the time point                                                                                         |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<mass>`` – mass value                                                                                                           |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<temperature>`` – temperature value                                                                                             |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<pressure>`` – pressure value                                                                                                   |
-	+-------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------+
-	| ``UNIT_HOLDUP_PHASES``: Specification of holdups: phase fractions             | ``<unit> <holdup> <timepoint> <fraction> [fraction […]]`` with:                                                                   |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<unit>`` – index of the unit                                                                                                    |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<holdup>`` – index of the holdup in the unit                                                                                    |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<timepoint>`` – index of the time point                                                                                         |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<fraction>`` – mass fraction of the phase, number of parameters must correspond to the number of phases                         |
-	+-------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------+
-	| ``UNIT_HOLDUP_COMP``: Specification of holdups: compound fractions in phase   | ``<unit> <holdup> <phase> <timepoint> <fraction> [fraction […]]`` with:                                                           |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<unit>`` – index of the unit                                                                                                    |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<holdup>`` – index of the holdup in the unit                                                                                    |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<phase>`` – index of the phase                                                                                                  |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<timepoint>`` – index of the time point                                                                                         |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<fraction>`` – mass fraction of the compound, number of parameters must correspond to the number of compounds                   |
-	+-------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------+
-	| ``UNIT_HOLDUP_SOLID``:                                                        | ``<unit> <holdup> <distribution> <compound> <timepoint> <psdtype> <function> <psdgridtype> (<param1> <param2> | <values>)`` with: |
-	| Specification of holdups: distributed parameters of solids                    |                                                                                                                                   |
-	|                                                                               | ``<unit>`` – index of the unit                                                                                                    |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<holdup>`` – index of the holdup in the unit                                                                                    |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<distribution>`` – index of the distribution as specified in Distributions Sequence                                             |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<compound>`` – index of the compound, ``<compound>`` = 0 for total mixture                                                      |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<timepoint>`` – index of the time point                                                                                         |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<psdtype>`` – PSD type, if <distribution> corresponds to a PSD. Represented with numbers:                                       |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<psdtype>`` = -1 – Not a PSD                                                                                                    |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<psdtype>`` = 0 – q3                                                                                                            |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<psdtype>`` = 1 – Q3                                                                                                            |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<psdtype>`` = 2 – q0                                                                                                            |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<psdtype>`` = 3 – Q0                                                                                                            |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<psdtype>`` = 4 – Mass fraction                                                                                                 |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<psdtype>`` = 5 – Number                                                                                                        |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<psdtype>`` = 6 – q2                                                                                                            |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<psdtype>`` = 7 – Q2                                                                                                            |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<function>`` – index of the distribution function represented by numbers:                                                       |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<function>`` = 0 – Manual                                                                                                       |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<function>`` = 1 – Normal distribution                                                                                          |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<function>`` = 2 – RRSB                                                                                                         |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<function>`` = 3 – GGS                                                                                                          |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<function>`` = 4 – Logarithmic Normal                                                                                           |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<psdgridtype>`` – type of the grid if ``<distribution>`` corresponds to a PSD:                                                  |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<psdgridtype>`` = -1 – Not a PSD                                                                                                |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<psdgridtype>`` = 0 – Diameters                                                                                                 |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<psdgridtype>`` = 1 – Volumes                                                                                                   |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<param1>``, ``<param2>`` – parameters of the distribution function (only if ``<function>`` :math:`\neq` 0)                      |
-	|                                                                               |                                                                                                                                   |
-	|                                                                               | ``<values>`` – list of distribution values (only if ``<function>`` = 0)                                                           |
-	+-------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------+
+-------
+
++------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
+| Script key                   | Value                                                                                                                                                                                                                                   | Description                                                                                                                              |
++==============================+=========================================================================================================================================================================================================================================+==========================================================================================================================================+
+| KEEP_EXISTING_HOLDUPS_VALUES | YES/NO                                                                                                                                                                                                                                  | Whether to keep holdups defined in SOURCE_FILE. If set to NO, all holdups values are removed before applying any HOLDUP_*. Default = YES |
++------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
+| HOLDUP_OVERALL               | <unit_name>/<unit_index> <holdup_name>/<holdup_index> <values>                                                                                                                                                                          | Overall (mass/mass flow, temperature, pressure) stream properties for a single time point 0 [s]                                          |
++------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
+| HOLDUP_OVERALL               | <unit_name>/<unit_index> <holdup_name>/<holdup_index> <time> <values> [<time> <values> [...]]                                                                                                                                           | Overall (mass/mass flow, temperature, pressure) stream properties for several time points [s]                                            |
++------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
+| HOLDUP_PHASES                | <unit_name>/<unit_index> <holdup_name>/<holdup_index> <values>                                                                                                                                                                          | Mass fractions of all defined phases for a single time point 0 [s]                                                                       |
++------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
+| HOLDUP_PHASES                | <unit_name>/<unit_index> <holdup_name>/<holdup_index> <time> <values> [<time> <values> [...]]                                                                                                                                           | Mass fractions of all defined phases for several time points [s]                                                                         |
++------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
+| HOLDUP_COMPOUNDS             | <unit_name>/<unit_index> <holdup_name>/<holdup_index> SOLID/LIQUID/GAS <values>                                                                                                                                                         | Compounds mass fractions of all defined compounds in a selected phase for a single time point 0 [s]                                      |
++------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
+| HOLDUP_COMPOUNDS             | <unit_name>/<unit_index> <holdup_name>/<holdup_index> SOLID/LIQUID/GAS <time> <values> [<time> <values> [...]]                                                                                                                          | Compounds mass fractions of all defined compounds in a selected phase for several time points [s]                                        |
++------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
+| HOLDUP_DISTRIBUTION          | <unit_name>/<unit_index> <holdup_name>/<holdup_index> SIZE MIXTURE/<compound_key>/<compound_name> MASS_FRACTION/NUMBER/Q*_DENSITY/Q*_CUMULATIVE DIAMETER/VOLUME MANUAL/NORMAL/LOG_NORMAL/RRSB/GGS [time] <values> [time <values> [...]] | Particle size distribution                                                                                                               |
++------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
+| HOLDUP_DISTRIBUTION          | <unit_name>/<unit_index> <holdup_name>/<holdup_index> PARTICLE_POROSITY/FORM_FACTOR/COLOR/USER_DEFINED_** MIXTURE/<compound_key>/<compound_name> MANUAL/NORMAL/LOG_NORMAL/RRSB/GGS [time] <values> [time <values> [...]]                | Other distributions aside from particle size distribution                                                                                |
++------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
+
+|
+
+Export
+------
+
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| Script key                        | Value                                                                        | Description                                                                         |
++===================================+==============================================================================+=====================================================================================+
+| EXPORT_FILE                       | <path>                                                                       | Full path to a text file where to export all data                                   |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| EXPORT_PRECISION                  | <value>                                                                      | Precision for floating point output. Default = 6                                    |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| EXPORT_FIXED_POINT                | YES/NO                                                                       | Formatting for floating-point output. Default = NO                                  |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| EXPORT_SIGNIFICANCE_LIMIT         | <value>                                                                      | Values whose absolute value is less than this will be interpreted as 0. Default = 0 |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| EXPORT_ONLY                       | YES/NO                                                                       | Perform only export (no simulation) within this JOB. Default = NO                   |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| EXPORT_STREAM_MASS                | <stream_name>/<stream_index> [<time_points>]                                 | Export mass flows of a stream                                                       |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| EXPORT_STREAM_TEMPERATURE         | <stream_name>/<stream_index> [<time_points>]                                 | Export temperatures of a stream                                                     |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| EXPORT_STREAM_PRESSURE            | <stream_name>/<stream_index> [<time_points>]                                 | Export pressures of a stream                                                        |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| EXPORT_STREAM_OVERALLS            | <stream_name>/<stream_index> [<time_points>]                                 | Export all overall properties (mass flow, temperature, pressure) of a stream        |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| EXPORT_STREAM_PHASES_FRACTIONS    | <stream_name>/<stream_index> [<time_points>]                                 | Export phases mass fractions of a stream                                            |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| EXPORT_STREAM_COMPOUNDS_FRACTIONS | <stream_name>/<stream_index> [<time_points>]                                 | Export compounds mass fractions of a stream                                         |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| EXPORT_STREAM_PSD                 | <stream_name>/<stream_index> [<time_points>]                                 | Export particle size distributions of a stream                                      |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| EXPORT_STREAM_DISTRIBUTIONS       | <stream_name>/<stream_index> [<time_points>]                                 | Export distributed parameters of a stream                                           |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| EXPORT_HOLDUP_MASS                | <unit_name>/<unit_index> <holdup_name>/<holdup_index> [<time_points>]        | Export mass a unit's holdup                                                         |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| EXPORT_HOLDUP_TEMPERATURE         | <unit_name>/<unit_index> <holdup_name>/<holdup_index> [<time_points>]        | Export temperatures of a unit's holdup                                              |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| EXPORT_HOLDUP_PRESSURE            | <unit_name>/<unit_index> <holdup_name>/<holdup_index> [<time_points>]        | Export pressures of a unit's holdup                                                 |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| EXPORT_HOLDUP_OVERALLS            | <unit_name>/<unit_index> <holdup_name>/<holdup_index> [<time_points>]        | Export all overall properties (mass, temperature, pressure) of a unit's holdup      |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| EXPORT_HOLDUP_PHASES_FRACTIONS    | <unit_name>/<unit_index> <holdup_name>/<holdup_index> [<time_points>]        | Export phases mass fractions of a unit's holdup                                     |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| EXPORT_HOLDUP_COMPOUNDS_FRACTIONS | <unit_name>/<unit_index> <holdup_name>/<holdup_index> [<time_points>]        | Export compounds mass fractions of a unit's holdup                                  |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| EXPORT_HOLDUP_PSD                 | <unit_name>/<unit_index> <holdup_name>/<holdup_index> [<time_points>]        | Export particle size distributions of a unit's holdup                               |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| EXPORT_HOLDUP_DISTRIBUTIONS       | <unit_name>/<unit_index> <holdup_name>/<holdup_index> [<time_points>]        | Export distributed parameters of a unit's holdup                                    |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| EXPORT_UNIT_STATE_VARIABLE        | <unit_name>/<unit_index> <var_name>/<var_index>                              | Export state variable of a unit                                                     |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| EXPORT_UNIT_PLOT                  | <unit_name>/<unit_index> <plot_name>/<plot_index> <curve_name>/<curve_index> | Export plot values of a unit                                                        |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
+| EXPORT_FLOWSHEET_GRAPH            | <path>                                                                       | Export flowsheet graph as a \*.png file                                             |
++-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
 
 |
