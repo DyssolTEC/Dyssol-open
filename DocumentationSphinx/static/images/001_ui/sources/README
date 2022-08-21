@@ -1,0 +1,7 @@
+1. Resize Dyssol window
+1.1. Size main window, grid editor, holdups editor, models manager, materials database: 1200x700
+1.2. Size holdups editor: 1400x850
+1.3. Resizer: http://www.brianapps.net/sizer/
+2. Make screenshots and put them into '...\DocumentationSphinx\static\images\001_ui\sources\screenshots' directory, replacing existing ones
+3. Run ...\DocumentationSphinx\static\images\001_ui\sources\export_svg_to_png.bat
+4. Copy obtained png to '...\DocumentationSphinx\static\images\001_ui\', replacing existing ones
