@@ -36,8 +36,8 @@ Contents
    :maxdepth: 2
    :caption: User interface
 
-   gui
-   cli
+   001_ui/gui
+   001_ui/cli
 
 |
 
