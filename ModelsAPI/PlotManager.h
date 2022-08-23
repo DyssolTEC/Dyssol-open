@@ -170,6 +170,10 @@ public:
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
 	// Loads data from file.
 	void LoadFromFile(CH5Handler& _h5File, const std::string& _path);
+
+private:
+	// Tries to add a new curve with the specified Z value to the plot, without setting any data, omitting name clashes. Returns nullptr on failure.
+	CCurve* AddEmptyCurve(double _z);
 };
 
 ////////////////////////////////////////////////////////////////////////////////

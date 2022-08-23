@@ -52,7 +52,6 @@ double CCurve::GetZValue() const
 void CCurve::SetZValue(double _z)
 {
 	m_valueZ = _z;
-	SetName(StringFunctions::Double2String(_z));
 }
 
 void CCurve::AddPoint(double _x, double _y)
@@ -269,22 +268,21 @@ std::vector<CCurve*> CPlot::AddCurves(const std::vector<std::string>& _names)
 
 CCurve* CPlot::AddCurve(double _z)
 {
-	auto* curve = AddCurve(StringFunctions::Double2String(_z));
-	if (curve) curve->SetZValue(_z);
+	auto* curve = AddEmptyCurve(_z);
 	return curve;
 }
 
 CCurve* CPlot::AddCurve(double _z, const std::vector<double>& _x, const std::vector<double>& _y)
 {
-	auto* curve = AddCurve(StringFunctions::Double2String(_z), _x, _y);
-	if (curve) curve->SetZValue(_z);
+	auto* curve = AddEmptyCurve(_z);
+	if (curve) curve->AddPoints(_x, _y);
 	return curve;
 }
 
 CCurve* CPlot::AddCurve(double _z, const std::vector<CPoint>& _points)
 {
-	auto* curve = AddCurve(StringFunctions::Double2String(_z), _points);
-	if (curve) curve->SetZValue(_z);
+	auto* curve = AddEmptyCurve(_z);
+	if (curve) curve->AddPoints(_points);
 	return curve;
 }
 
@@ -441,6 +439,24 @@ void CPlot::LoadFromFile(CH5Handler& _h5File, const std::string& _path)
 		const std::string curvePath = curvesGroup + "/" + StrConst::PlotMngr_H5GroupCurveName + std::to_string(i);
 		AddCurve("")->LoadFromFile(_h5File, curvePath);
 	}
+}
+
+CCurve* CPlot::AddEmptyCurve(double _z)
+{
+	std::string name = StringFunctions::Double2String(_z);
+	auto* curve = AddCurve(name);
+	if (!curve && !GetCurve(_z)) // name clash because of low double-to-string precision
+	{
+		// try to increase precision
+		for (size_t precision = std::cout.precision() + 1; precision < 30 && !curve; ++precision)
+		{
+			name = StringFunctions::Double2String(_z, precision);
+			curve = AddCurve(name);
+		}
+	}
+	if (curve) curve->SetZValue(_z);
+	if (curve) curve->SetName(name);
+	return curve;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
