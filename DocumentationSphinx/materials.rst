@@ -1,4 +1,3 @@
-
 .. _sec.mdb:
 
 =================
@@ -33,6 +32,8 @@ You can extend this database by defining your own new materials using the *Tools
 
 .. _label-materialDataDetailed:
 
+.. _sec.mdb.const:
+
 Constant parameters
 -------------------
 
@@ -66,6 +67,8 @@ For more information, please refer to :ref:`definition of constant properties <l
 
 |
 
+.. _sec.mdb.tpd:
+
 Dependent parameters
 --------------------
 
@@ -89,6 +92,8 @@ For more information, please refer to :ref:`definition of temperature-dependent 
 
 |
 
+.. _sec.mdb.correlations:
+
 Correlation search
 """"""""""""""""""
 
@@ -108,6 +113,8 @@ For each T or P range (given in the literature), it consists of 3 steps:
 	3. Find the nearest correlation, taking only T into account. Perform nearest neighbour extrapolation.
 
 |
+
+.. _sec.mdb.correlation_fun:
 
 Correlation functions
 """""""""""""""""""""
