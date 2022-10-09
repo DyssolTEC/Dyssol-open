@@ -210,7 +210,7 @@ The convergence here is the minimization of residual between calculated and prev
 
 .. math::
 
-	|Y_{calc} - Y_{est}| > |Y_{calc}| \cdot R_{tol} + A_{tol}
+	|Y_{calc} - Y_{est}| < |Y_{calc}| \cdot R_{tol} + A_{tol}
 	
 	
 .. note:: Notations:
