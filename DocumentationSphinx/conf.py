@@ -115,6 +115,11 @@ html_static_path = ['static']
 #
 # html_sidebars = {}
 
+# Use custom CSS style sheet
+html_css_files = [
+    'dyssol_style.css',
+]
+
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
