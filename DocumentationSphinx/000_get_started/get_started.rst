@@ -60,12 +60,12 @@ The following files are used and created by Dyssol:
 	* Flowsheet structure 
 	* Flowsheet settings
 	* Simulation results
-  
+
 * **\*.dmdb**: Dyssol materials databases. See also: :ref:`sec.mdb`.
 
 	* Compounds 
 	* Properties of compounds
-  
+
 * **\*.dll/\*.so**: Shared libraries with Dyssol models
 * **\*.txt**: Script files for command line mode. See also: :ref:`sec.cli`.
 
@@ -82,7 +82,7 @@ A flowsheet of this example is shown below with all stream names.
 
 .. image:: ../static/images/000_get_started/flowsheet.png
    :width: 500px
-   :alt: 
+   :alt: flowsheet.png
    :align: center
 
 |
@@ -91,41 +91,36 @@ Follow these steps to complete the simulation and analyze the result.
 
 1. Add **units** to the flowsheet and give them names:
 
+	1.1. Add 4 units.
+
+	1.2. Rename them by double-clicking or pressing F2. Set names to:
+
+        - Feed
+        - Screen
+        - Out coarse
+        - Out fine
+  
 	.. image:: ../static/images/000_get_started/step01_1.png
 		:width: 960px
-		:alt: 
+		:alt: step01_1.png
 		:align: center
 
-  1.1. Add 4 units.
-
-  1.2. Rename them by double-clicking or pressing F2. Set names to:
-   
-    - Feed
-    - Screen
-    - Out coarse
-    - Out fine
-
 2. Add **streams** to the flowsheet and give them names:
-
-	.. image:: ../static/images/000_get_started/step02_1.png
-	   :width: 960px
-	   :alt: 
-	   :align: center
 
 	2.1. Add 3 **streams** to the flowsheet 
 
 	2.2. Rename them by double-clicking or pressing F2. Set names to:
 
-		- In
-		- Coarse
-		- Fine
+        - In
+        - Coarse
+        - Fine
+
+	.. image:: ../static/images/000_get_started/step02_1.png
+	   :width: 960px
+	   :alt: step02_1.png
+	   :align: center
 
 3. Select a **model** for each unit on the flowsheet:
-	
-	.. image:: ../static/images/000_get_started/step03_1.png
-	   :width: 960px
-	   :alt: 
-	   :align: center
 
 	3.1. Select a unit
 
@@ -136,12 +131,12 @@ Follow these steps to complete the simulation and analyze the result.
         - Out coarse : OutletFlow
         - Out fine : OutletFlow
 
-4. Connect **ports** of each unit to the streams:
-	
-	.. image:: ../static/images/000_get_started/step04_1.png
+	.. image:: ../static/images/000_get_started/step03_1.png
 	   :width: 960px
-	   :alt: 
+	   :alt: step03_1.png
 	   :align: center
+
+4. Connect **ports** of each unit to the streams:
 	
 	4.1. Select a unit
 
@@ -152,12 +147,12 @@ Follow these steps to complete the simulation and analyze the result.
         - Out coarse : In - Coarse
         - Out fine : In - Fine
 
-5. Setup **parameters** of units:
-
-	.. image:: ../static/images/000_get_started/step05_1.png
+	.. image:: ../static/images/000_get_started/step04_1.png
 	   :width: 960px
-	   :alt: 
+	   :alt: step04_1.png
 	   :align: center
+
+5. Setup **parameters** of units:
 
 	5.1. Select the Screen unit
 
@@ -170,14 +165,14 @@ Follow these steps to complete the simulation and analyze the result.
 	5.5. Set time values to 0, 60, 180 s
 
 	5.6. Set Alpha values to 10, 9, 8
+
+	.. image:: ../static/images/000_get_started/step05_1.png
+	   :width: 960px
+	   :alt: step05_1.png
+	   :align: center
 	   
 
 6. Add **compounds** to the flowsheet:
-
-	.. image:: ../static/images/000_get_started/step06_1.png
-	   :width: 960px
-	   :alt: 
-	   :align: center
 
 	6.1. Open Compounds editor
 
@@ -187,12 +182,12 @@ Follow these steps to complete the simulation and analyze the result.
 	
 	6.4. Apply and close Compounds editor
 
-7. Add **phases** to the flowsheet:
-
-	.. image:: ../static/images/000_get_started/step07_1.png
+	.. image:: ../static/images/000_get_started/step06_1.png
 	   :width: 960px
-	   :alt: 
+	   :alt: step06_1.png
 	   :align: center
+
+7. Add **phases** to the flowsheet:
 
 	7.1. Open Phases editor
 
@@ -204,12 +199,12 @@ Follow these steps to complete the simulation and analyze the result.
 	
 	7.5. Apply and close Phases editor
 
-8. Specify **grids** for distributed parameters of solids:
-
-	.. image:: ../static/images/000_get_started/step08_1.png
+	.. image:: ../static/images/000_get_started/step07_1.png
 	   :width: 960px
-	   :alt: 
+	   :alt: step07_1.png
 	   :align: center
+
+8. Specify **grids** for distributed parameters of solids:
 
 	8.1. Open Grid editor
 
@@ -225,23 +220,13 @@ Follow these steps to complete the simulation and analyze the result.
 	
 	8.7. Apply and close Grid editor
 
+	.. image:: ../static/images/000_get_started/step08_1.png
+	   :width: 960px
+	   :alt: step08_1.png
+	   :align: center
+
 9. Setup **feeds** of inlets and **holdups** of units:
 
-	.. image:: ../static/images/000_get_started/step09_1.png
-	   :width: 960px
-	   :alt: 
-	   :align: center
-	   
-	.. image:: ../static/images/000_get_started/step09_2.png
-	   :width: 960px
-	   :alt: 
-	   :align: center
-
-	.. image:: ../static/images/000_get_started/step09_3.png
-	   :width: 960px
-	   :alt: 
-	   :align: center
-	 
 	9.1. Open Holdups editor
 
 	9.2. Select Feed units
@@ -270,39 +255,44 @@ Follow these steps to complete the simulation and analyze the result.
 	
 	9.14. Apply and close Holdups editor
 
-10. Specify simulation **time**:
-
-	.. image:: ../static/images/000_get_started/step10_1.png
+	.. image:: ../static/images/000_get_started/step09_1.png
 	   :width: 960px
-	   :alt: 
+	   :alt: step09_1.png
 	   :align: center
+	   
+	.. image:: ../static/images/000_get_started/step09_2.png
+	   :width: 960px
+	   :alt: step09_2.png
+	   :align: center
+
+	.. image:: ../static/images/000_get_started/step09_3.png
+	   :width: 960px
+	   :alt: step09_3.png
+	   :align: center
+
+10. Specify simulation **time**:
 
 	10.1. Open Simulator tab 
 
 	10.2. Set End simulation time to 240 s
 
+	.. image:: ../static/images/000_get_started/step10_1.png
+	   :width: 960px
+	   :alt: step10_1.png
+	   :align: center
+
 11. **Run** the simulation:
 
-	.. image:: ../static/images/000_get_started/step11_1.png
-	   :width: 960px
-	   :alt: 
-	   :align: center
-	   
 	11.1. Run the simulation by pressing button Start simulation
 
 	11.2. Wait until the simulation is finished
 
-12. **Analyze** the results:
-
-	.. image:: ../static/images/000_get_started/step12_1.png
+	.. image:: ../static/images/000_get_started/step11_1.png
 	   :width: 960px
-	   :alt: 
+	   :alt: step11_1.png
 	   :align: center
-	   
-	.. image:: ../static/images/000_get_started/step12_2.png
-	   :width: 960px
-	   :alt: 
-	   :align: center   
+
+12. **Analyze** the results:
 
 	12.1. Switch to Streams tab
 
@@ -319,5 +309,15 @@ Follow these steps to complete the simulation and analyze the result.
 	12.7. Move the time slider to the right position to show last state
 
 	12.8. Check the results
+
+	.. image:: ../static/images/000_get_started/step12_1.png
+	   :width: 960px
+	   :alt: step12_1.png
+	   :align: center
+	   
+	.. image:: ../static/images/000_get_started/step12_2.png
+	   :width: 960px
+	   :alt: step12_2.png
+	   :align: center 
 
 |

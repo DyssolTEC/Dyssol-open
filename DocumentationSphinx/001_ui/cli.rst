@@ -3,7 +3,7 @@
 Command line interface
 ======================
 
-You may start your simulation by command lines with the help of ``DyssolC.exe``, which can be found in the installation directory. The command ``DyssolC`` can be started from the command prompt. Usage: 
+You can run simulation from the command lines with ``DyssolC.exe``, which can be found in the installation directory. Usage: 
 
 .. code-block:: shell
 
