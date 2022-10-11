@@ -17,6 +17,13 @@ CTransformMatrix::CTransformMatrix( unsigned _nType, unsigned _nClasses )
 	SetDimensions( _nType, _nClasses );
 }
 
+CTransformMatrix::CTransformMatrix(unsigned _nType, size_t _nClasses)
+{
+	m_pData = NULL;
+	m_nSize = 0;
+	SetDimensions(_nType, static_cast<unsigned>(_nClasses));
+}
+
 CTransformMatrix::CTransformMatrix(unsigned _nType1, unsigned _nClasses1, unsigned _nType2, unsigned _nClasses2)
 {
 	m_pData = nullptr;
@@ -290,6 +297,11 @@ bool CTransformMatrix::SetValue( unsigned _nCoordSrc, unsigned _nCoordDst, doubl
 	std::vector<unsigned> vCoordsSrc( 1, _nCoordSrc );
 	std::vector<unsigned> vCoordsDst( 1, _nCoordDst );
 	return SetValue( vCoordsSrc, vCoordsDst, _dValue );
+}
+
+bool CTransformMatrix::SetValue(size_t _nCoordSrc, size_t _nCoordDst, double _dValue)
+{
+	return SetValue(static_cast<unsigned>(_nCoordSrc), static_cast<unsigned>(_nCoordDst), _dValue);
 }
 
 bool CTransformMatrix::SetValue( unsigned _nCoordSrc1, unsigned _nCoordSrc2, unsigned _nCoordDst1, unsigned _nCoordDst2, double _dValue )

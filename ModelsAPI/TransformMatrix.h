@@ -18,6 +18,7 @@ private:
 public:
 	CTransformMatrix( void );
 	CTransformMatrix( unsigned _nType, unsigned _nClasses );
+	CTransformMatrix(unsigned _nType, size_t _nClasses);
 	CTransformMatrix(unsigned _nType1, unsigned _nClasses1, unsigned _nType2, unsigned _nClasses2);
 	CTransformMatrix( const std::vector<unsigned> &_vTypes, const std::vector<unsigned> &_vClasses );
 	~CTransformMatrix( void );
@@ -73,6 +74,8 @@ public:
 
 	/** Sets value by specified coordinates for 1-dimensional transformation matrix. Returns true if success.*/
 	bool SetValue( unsigned _nCoordSrc, unsigned _nCoordDst, double _dValue );
+	/** Sets value by specified coordinates for 1-dimensional transformation matrix. Returns true if success.*/
+	bool SetValue(size_t _nCoordSrc, size_t _nCoordDst, double _dValue);
 	/** Sets value by specified coordinates for 2-dimensional transformation matrix. Returns true if success.*/
 	bool SetValue( unsigned _nCoordSrc1, unsigned _nCoordSrc2, unsigned _nCoordDst1, unsigned _nCoordDst2, double _dValue );
 	/** Sets value according the all defined dimensions. Number of dimensions must be the same as defined in the transformation matrix. Returns true if success.*/
