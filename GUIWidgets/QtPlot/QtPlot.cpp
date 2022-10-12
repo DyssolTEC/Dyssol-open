@@ -476,10 +476,10 @@ void CQtPlot::DrawCurves(QPainter* _painter)
 			for (int j = 0; j < m_vpCurves.at(i)->points.size(); ++j)
 			{
 				double dX = m_vpCurves.at(i)->points.at(j).x() - m_dMinX;
-				double x = m_paintRect.left() + (dX * (m_paintRect.width() - 1) / m_dSpanX());
+				double x = m_paintRect.left() + (dX * (m_paintRect.width() - 1) / (m_dSpanX() != 0.0 ? m_dSpanX() : 0.001));
 
 				double dY = m_vpCurves.at(i)->points.at(j).y() - m_dMinY;
-				double y = m_paintRect.bottom() - (dY * (m_paintRect.height() - 1) / m_dSpanY());
+				double y = m_paintRect.bottom() - (dY * (m_paintRect.height() - 1) / (m_dSpanY() != 0.0 ? m_dSpanY() : 0.001));
 
 				pPoints[nNumPoints] = QPointF(x, y);
 				nNumPoints++;
@@ -616,7 +616,7 @@ void CQtPlot::DrawMarks(QPainter* _painter)
 				double dTemp = (dX - m_vpCurves.at(m_csNearestCurveIndex)->points.at(j).x()) / (m_vpCurves.at(m_csNearestCurveIndex)->points.at(j + 1).x() - dX);
 				double dY = (dTemp * m_vpCurves.at(m_csNearestCurveIndex)->points.at(j + 1).y() + m_vpCurves.at(m_csNearestCurveIndex)->points.at(j).y()) / (dTemp + 1);
 				// get screen y-coordinate
-				double dPixelY = m_paintRect.bottom() - ((dY - m_dMinY) * (m_paintRect.height() - 1) / m_dSpanY());
+				double dPixelY = m_paintRect.bottom() - ((dY - m_dMinY) * (m_paintRect.height() - 1) / (m_dSpanY() != 0.0 ? m_dSpanY() : 0.001));
 				if (dPixelY < m_paintRect.y())
 				{
 					dPixelY = m_paintRect.y();
@@ -1459,12 +1459,12 @@ double CQtPlot::GetYCoord(double _dAbsYCoord)
 
 double CQtPlot::GetAbsXCoord(double _dXCoord)
 {
-	return m_paintRect.left() + ((_dXCoord - m_dMinX) * (m_paintRect.width() - 1) / m_dSpanX());
+	return m_paintRect.left() + ((_dXCoord - m_dMinX) * (m_paintRect.width() - 1) / (m_dSpanX() != 0.0 ? m_dSpanX() : 0.001));
 }
 
 double CQtPlot::GetAbsYCoord(double _dYCoord)
 {
-	return m_paintRect.bottom() - ((_dYCoord - m_dMinY) * (m_paintRect.height() - 1) / m_dSpanY());
+	return m_paintRect.bottom() - ((_dYCoord - m_dMinY) * (m_paintRect.height() - 1) / (m_dSpanY() != 0.0 ? m_dSpanY() : 0.001));
 }
 
 QPointF CQtPlot::GetCoord(QPointF _dAbsCoord)

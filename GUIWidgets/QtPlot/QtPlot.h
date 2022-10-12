@@ -156,10 +156,16 @@ private:
 	QString m_sDialogSavePicturePath;
 	QString m_sDialogSaveCSVFilePath;
 
-	double m_dSpanX() const { return m_dMaxX - m_dMinX; }
-	double m_dSpanY() const { return m_dMaxY - m_dMinY; }
-	double m_dMinX;					// minimal x value
-	double m_dMaxX;					// maximal x value
+	double m_dSpanX() const
+	{
+		return m_dMaxX - m_dMinX;
+	}
+	double m_dSpanY() const
+	{
+		return m_dMaxY - m_dMinY;
+	}
+	double m_dMinX{};					// minimal x value
+	double m_dMaxX{};					// maximal x value
 	double m_dDispMinX;				// minimal x value
 	double m_dDispMaxX;				// maximal x value
 	bool m_bLogX;					// flag variable for plotting x-axis in log-scale
