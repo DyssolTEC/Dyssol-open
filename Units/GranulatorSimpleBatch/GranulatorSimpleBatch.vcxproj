@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{80FB8E0A-CCA8-4AB7-BC79-21E82A141842}</ProjectGuid>
     <RootNamespace>Granulator</RootNamespace>
-    <ProjectName>Unit_testGranulatorWithoutThermo</ProjectName>
+    <ProjectName>Unit_GranulatorSimpleBatch</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -111,10 +111,10 @@
     <ProjectReference />
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="myGranulatorWithoutThermo.cpp" />
+    <ClCompile Include="GranulatorSimpleBatch.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="myGranulatorWithoutThermo.h" />
+    <ClInclude Include="GranulatorSimpleBatch.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)ModelsAPI\ModelsAPI.vcxproj">
