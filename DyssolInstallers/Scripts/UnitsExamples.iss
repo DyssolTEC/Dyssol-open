@@ -2,7 +2,7 @@
 
 #include "CommonConstants.iss"
 
-#dim UnitsEx[15]            ; units to include in version with sources (full)
+#dim UnitsEx[16]            ; units to include in version with sources (full)
 #define UnitsEx[ 0] "Agglomerator"
 #define UnitsEx[ 1] "Bunker"
 #define UnitsEx[ 2] "Crusher"
@@ -18,8 +18,9 @@
 #define UnitsEx[12] "Splitter"
 #define UnitsEx[13] "Splitter3"
 #define UnitsEx[14] "TimeDelay"
+#define UnitsEx[15] "GranulatorSimpleBatch"
 
-#dim UnitsExNoSrc[15]       ; units to include in version without sources
+#dim UnitsExNoSrc[16]       ; units to include in version without sources
 #define UnitsExNoSrc[ 0] "Agglomerator"
 #define UnitsExNoSrc[ 1] "Bunker"
 #define UnitsExNoSrc[ 2] "Crusher"
@@ -35,6 +36,7 @@
 #define UnitsExNoSrc[12] "Splitter"
 #define UnitsExNoSrc[13] "Splitter3"
 #define UnitsExNoSrc[14] "TimeDelay"
+#define UnitsExNoSrc[15] "GranulatorSimpleBatch"
 
 #define I
 

@@ -2,7 +2,7 @@
 
 #include "CommonConstants.iss"
 
-#dim UnitsDll[16]
+#dim UnitsDll[17]
 #define UnitsDll[ 0] "Agglomerator"
 #define UnitsDll[ 1] "Bunker"
 #define UnitsDll[ 2] "Crusher"
@@ -19,6 +19,7 @@
 #define UnitsDll[13] "Splitter"
 #define UnitsDll[14] "Splitter3"
 #define UnitsDll[15] "TimeDelay"
+#define UnitsDll[16] "GranulatorSimpleBatch"
 #define I
 
 [Files]

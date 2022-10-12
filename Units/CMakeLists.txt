@@ -8,6 +8,7 @@ set(UnitsNames
     "CrusherPBMTM"
     "Cyclone2"
     "Granulator"
+    "GranulatorSimpleBatch"
     "HeatExchanger"
     "Inlet"
     "Mixer"
