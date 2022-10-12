@@ -142,7 +142,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ScriptInterface", "ScriptIn
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unit_ScreenMultideck", "Units\ScreenMultideck\ScreenMultideck.vcxproj", "{1C6761A3-DD4E-4978-A4C6-24D3A50C502D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unit_testGranulatorWithoutThermo", "Units\xyz-testGranulatorWithoutThermo\Granulator.vcxproj", "{80FB8E0A-CCA8-4AB7-BC79-21E82A141842}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unit_GranulatorSimpleBatch", "Units\GranulatorSimpleBatch\GranulatorSimpleBatch.vcxproj", "{80FB8E0A-CCA8-4AB7-BC79-21E82A141842}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -687,6 +687,7 @@ Global
 		{DF851AF8-F359-437D-A875-C31F6158F513} = {DA539701-563C-4DCF-883B-941DE792BC4A}
 		{0736DDB9-C29B-4DEA-8E9A-6FEFFED8CFB6} = {241094B3-C6C5-43FA-B884-DDDEEFF788C8}
 		{1C6761A3-DD4E-4978-A4C6-24D3A50C502D} = {DA539701-563C-4DCF-883B-941DE792BC4A}
+		{80FB8E0A-CCA8-4AB7-BC79-21E82A141842} = {DA539701-563C-4DCF-883B-941DE792BC4A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		Qt5Version = msvc2019_64
