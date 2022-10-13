@@ -27,20 +27,20 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
         
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1
       
     - name: Cache Qt
       id: cache-qt
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{github.workspace}}/ExternalLibraries/qt
         key: ${{runner.os}}-QtCache-${{env.QT_VERSION}}
     
     - name: Install Qt
-      uses: jurplel/install-qt-action@v2
+      uses: jurplel/install-qt-action@v3
       with:
         # If cached, only install essential build tools and set environmental variables
         cached: ${{steps.cache-qt.outputs.cache-hit}}
@@ -55,7 +55,7 @@ jobs:
                 
     - name: Cache QtMsBuild tools
       id: cache-qt-ms-build-tools
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{github.workspace}}/ExternalLibraries/qtvsaddin
         key: ${{runner.os}}-QtMsBuildCache-${{env.QT_VS_ADDIN_VERSION}}
@@ -71,7 +71,7 @@ jobs:
         
     - name: Cache ZLib
       id: cache-zlib
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{github.workspace}}/ExternalLibraries/zlib
         key: ${{runner.os}}-ZLibCache-${{env.ZLIB_VERSION}}
@@ -85,7 +85,7 @@ jobs:
       
     - name: Cache SUNDIALS
       id: cache-sundials
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{github.workspace}}/ExternalLibraries/sundials
         key: ${{runner.os}}-SundialsCache-${{env.SUNDIALS_VERSION}}
@@ -99,7 +99,7 @@ jobs:
       
     - name: Cache HDF5
       id: cache-hdf5
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{github.workspace}}/ExternalLibraries/hdf5
         key: ${{runner.os}}-Hdf5Cache-${{env.SUNDIALS_VERSION}}
@@ -113,7 +113,7 @@ jobs:
       
     - name: Cache Graphviz
       id: cache-graphviz
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{github.workspace}}/ExternalLibraries/graphviz
         key: ${{runner.os}}-GraphvizCache-${{env.GRAPHVIZ_VERSION}}
