@@ -152,6 +152,7 @@ namespace ScriptInterface
 	{
 		SNameOrIndex unit{};			// Name or index of the unit container.
 		SNameOrIndex variable{};		// Name or index of the state variable within the unit.
+		std::vector<double> times{};	// Time points to export.
 		friend std::istream& operator>>(std::istream& _s, SExportStateVarSE& _obj);
 		friend std::ostream& operator<<(std::ostream& _s, const SExportStateVarSE& _obj);
 	};

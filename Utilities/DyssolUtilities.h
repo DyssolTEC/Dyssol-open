@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "DyssolDefines.h"
 #include "DistributionsFunctions.h"
+#include "DyssolTypes.h"
 #include <vector>
 #include <numeric>
 #include <algorithm>
@@ -13,6 +13,30 @@
 double inline Interpolate(double Y1, double Y2, double X1, double X2, double X)
 {
 	return (Y2 - Y1) / (X2 - X1) * (X - X1) + Y1;
+}
+
+// Returns a (linearly interpolated) value for the given time.
+double inline Interpolate(const std::vector<STDValue>& _vals, double _time)
+{
+	if (_vals.empty()) return 0; // no values
+
+	const auto upper = std::upper_bound(_vals.begin(), _vals.end(), _time, [](double p, const STDValue& v) { return p < v.time; });
+	if (upper == _vals.end())	return _vals.back().value;	// nearest-neighbor extrapolation to the right
+	if (upper == _vals.begin())	return _vals.front().value;	// nearest-neighbor extrapolation to the left
+
+	auto lower = upper;
+	--lower;
+
+	const STDValue upar = *upper;
+	const STDValue lpar = *lower;
+	const STDValue uval = _vals[std::distance(_vals.begin(), upper)];
+	const STDValue lval = _vals[std::distance(_vals.begin(), lower)];
+
+	constexpr double eps{ 16 * std::numeric_limits<double>::epsilon() };
+	if (std::abs(upar.time - _time) <= eps)	return uval.value;	// exact value found
+	if (std::abs(lpar.time - _time) <= eps)	return lval.value;	// exact value found
+
+	return Interpolate(lval.value, uval.value, lpar.time, upar.time, _time);
 }
 
 // Performs spline extrapolation using three points.

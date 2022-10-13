@@ -3,6 +3,7 @@
 #include "StateVariable.h"
 #include "H5Handler.h"
 #include "DyssolStringConstants.h"
+#include "DyssolUtilities.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // CStateVariable
@@ -66,6 +67,12 @@ bool CStateVariable::HasHistory() const
 std::vector<STDValue> CStateVariable::GetHistory() const
 {
 	return m_history;
+}
+
+double CStateVariable::GetHistoryValue(double _time) const
+{
+	if (!HasHistory()) return {};
+	return Interpolate(m_history, _time);
 }
 
 void CStateVariable::SetHistory(const std::vector<STDValue>& _history)

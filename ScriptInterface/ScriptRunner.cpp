@@ -630,9 +630,12 @@ bool CScriptRunner::ExportResults(const CScriptJob& _job)
 		file << "UNIT_STATE_VAR" << " " << StringFunctions::Quote(variable->GetName());
 		if (!variable->HasHistory())
 			file << " " << variable->GetValue();
-		else
+		else if (e.times.empty())
 			for (const auto& v : variable->GetHistory())
-				file << " " << v.time << " " << v.value;
+				file << " " << v.time << " " << Filter(v.value);
+		else
+			for (const double t : e.times)
+				file << " " << t << " " << Filter(variable->GetHistoryValue(t));
 		file << std::endl;
 	}
 
