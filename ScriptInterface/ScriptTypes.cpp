@@ -207,11 +207,14 @@ namespace ScriptInterface
 	{
 		_obj.unit     = GetValueFromStream<SNameOrIndex>(_s);
 		_obj.variable = GetValueFromStream<SNameOrIndex>(_s);
+		_obj.times    = GetValueFromStream<std::vector<double>>(_s);
 		return _s;
 	}
 	std::ostream& operator<<(std::ostream& _s, const SExportStateVarSE& _obj)
 	{
 		_s << _obj.unit << " " << _obj.variable;
+		for (const auto& v : _obj.times)
+			_s << " " << v;
 		return _s;
 	}
 

@@ -44,6 +44,7 @@ public:
 
 	bool HasHistory() const;								// Checks whether the state variable contains a stored history of time-dependent changes.
 	std::vector<STDValue> GetHistory() const;				// Returns the stored history of time-dependent changes.
+	double GetHistoryValue(double _time) const;				// Returns an (interpolated) value for a given time point from the stored history.
 	void SetHistory(const std::vector<STDValue>& _history);	// Sets the history of time-dependent changes.
 
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;	// Saves data to file.
