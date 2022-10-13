@@ -124,6 +124,7 @@ SET(TESTS
   "Unit_Crusher_Const"
   "Unit_Crusher_PBMTM"
   "Unit_Granulator"
+  "Unit_GranulatorSimpleBatch"
   "Unit_Mixer"
   "Unit_Screen_Molerus"
   "Unit_Screen_Multideck"
