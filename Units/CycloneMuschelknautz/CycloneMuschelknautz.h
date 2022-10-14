@@ -4,7 +4,7 @@
 
 #include "UnitDevelopmentDefines.h"
 
-class CCyclone2 : public CSteadyStateUnit
+class CCycloneMuschelknautz : public CSteadyStateUnit
 {
 	// Cyclone parameters
 

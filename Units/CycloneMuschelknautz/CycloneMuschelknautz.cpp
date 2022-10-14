@@ -1,11 +1,11 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #define DLL_EXPORT
-#include "Cyclone2.h"
+#include "CycloneMuschelknautz.h"
 
 extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 {
-	return new CCyclone2();
+	return new CCycloneMuschelknautz();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -13,15 +13,15 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 
 using namespace std;
 
-void CCyclone2::CreateBasicInfo()
+void CCycloneMuschelknautz::CreateBasicInfo()
 {
 	/// Basic unit's info ///
-	SetUnitName("Cyclone v2");
-	SetAuthorName("Buchholz (SPE TUHH)");
+	SetUnitName("Cyclone (Muschelknautz)");
+	SetAuthorName("Moritz Buchholz & Vasyl Skorych (TUHH SPE)");
 	SetUniqueID("170BEB3E368548BDBF8B3DB1C66DB179");
 }
 
-void CCyclone2::CreateStructure()
+void CCycloneMuschelknautz::CreateStructure()
 {
 	/// Add ports ///
 	AddPort("Inflow", EUnitPort::INPUT);
@@ -45,7 +45,7 @@ void CCyclone2::CreateStructure()
 	AddCheckBoxParameter("Plot", true, "If set, plots will be generated and state variables will be written. Turn off to increase performance.");
 }
 
-void CCyclone2::Initialize(double _time)
+void CCycloneMuschelknautz::Initialize(double _time)
 {
 	// Check for gas and solid phases
 	if (!IsPhaseDefined(EPhase::VAPOR))
@@ -105,7 +105,7 @@ void CCyclone2::Initialize(double _time)
 	AddPlot("Separation", "Diameter [m]", "Separation efficiency [%]", "Time [s]");
 }
 
-bool CCyclone2::CheckCycloneParameters() const
+bool CCycloneMuschelknautz::CheckCycloneParameters() const
 {
 	// Check diameters
 	if (r_a <= r_i || r_a <= r_3 || r_a <= b)
@@ -129,7 +129,7 @@ bool CCyclone2::CheckCycloneParameters() const
 	return true;
 }
 
-void CCyclone2::Simulate(double _time)
+void CCycloneMuschelknautz::Simulate(double _time)
 {
 	// Get pointers to inflow streams
 	CStream* inlet = GetPortStream("Inflow");
@@ -146,7 +146,7 @@ void CCyclone2::Simulate(double _time)
 	CalculateSeparationMuschelknauz(_time, inlet, outletC, outletF);
 }
 
-void CCyclone2::CalculateSeparationMuschelknauz(double _time, CStream* _inlet, CStream* _outletC, CStream* _outletF)
+void CCycloneMuschelknautz::CalculateSeparationMuschelknauz(double _time, CStream* _inlet, CStream* _outletC, CStream* _outletF)
 {
 	// Get inflow parameters
 	const double mflow_in_g = _inlet->GetPhaseMassFlow(_time, EPhase::VAPOR); // Gas mass flow at inlet [kg/s]
@@ -266,7 +266,7 @@ void CCyclone2::CalculateSeparationMuschelknauz(double _time, CStream* _inlet, C
 	}
 }
 
-double CCyclone2::CalculateDeff(double d_star, double D_init) const
+double CCycloneMuschelknautz::CalculateDeff(double d_star, double D_init) const
 {
 	CDependentValues dep; // Dependency of d_ref on eta_f
 	for (const double d : averDiam)
@@ -281,7 +281,7 @@ double CCyclone2::CalculateDeff(double d_star, double D_init) const
 	return d_ref_05 != 0.0 ? d_ref_10 / d_ref_05 : 3;	// D_eff [-]
 }
 
-double CCyclone2::CalculateSeparationFun(double d_star, double D, double d) const
+double CCycloneMuschelknautz::CalculateSeparationFun(double d_star, double D, double d) const
 {
 	const double d_ref = d / d_star;	// Reference diameter [m]
 	if (d_ref < 1 / D)
