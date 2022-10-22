@@ -107,8 +107,8 @@ ADD_SUBDIRECTORY("${CMAKE_SOURCE_DIR}/DyssolMainWindow")
 
 SET(INSTALL_DOCS_PATH  ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/Dyssol/docs)
 
-#===============================================
-# Testing ======================================
+##################################################
+### Testing 
 
 ENABLE_TESTING()
 
@@ -161,14 +161,78 @@ FOREACH(test ${TESTS})
 
 ENDFOREACH(test ${TESTS})
 
-#===============================================
-# Documentation ================================
-ADD_CUSTOM_TARGET(doc)
-ADD_CUSTOM_COMMAND(
-                  TARGET doc PRE_BUILD
-                  COMMAND rm -rf ${CMAKE_BINARY_DIR}/doc/sphinx/_build
-                  COMMAND sphinx-build -b linkcheck ${CMAKE_SOURCE_DIR}/DocumentationSphinx/ ${CMAKE_BINARY_DIR}/doc/sphinx/_build/html
-                  COMMAND sphinx-build -b html ${CMAKE_SOURCE_DIR}/DocumentationSphinx/ ${CMAKE_BINARY_DIR}/doc/sphinx/_build/html
-                  COMMAND mkdir -p ${INSTALL_DOCS_PATH}/sphinx/
-                  COMMAND cp -r ${CMAKE_BINARY_DIR}/doc/sphinx/_build/html ${INSTALL_DOCS_PATH}/sphinx/
-                  )
+##################################################
+### Documentation 
+
+#=================================================
+#== Doxygen
+
+FIND_PACKAGE(Doxygen)
+
+# List of all API headers
+SET(API_FILE_NAMES
+	"BaseUnit"
+  "BaseStream"
+  "Holdup"
+  "Stream"
+)
+
+# Gather all API headers
+FOREACH(FILENAME ${API_FILE_NAMES})
+  FILE(GLOB_RECURSE HEADER ${CMAKE_SOURCE_DIR}/ModelsAPI/${FILENAME}.h)
+  LIST(APPEND API_HEADERS ${HEADER})
+ENDFOREACH(FILENAME ${API_FILE_NAMES})
+# Format the list for Doxygen file
+STRING(REPLACE ";" "\" \"" API_HEADERS_LIST "${API_HEADERS}")
+
+# Setup Doxygen variables
+SET(DOXYGEN_INPUT_LIST ${API_HEADERS_LIST})
+SET(DOXYGEN_OUTPUT_DIR ${CMAKE_BINARY_DIR}/doc/doxygen)
+SET(DOXYGEN_INDEX_FILE ${DOXYGEN_OUTPUT_DIR}/xml/index.xml)
+SET(DOXYFILE_IN ${CMAKE_SOURCE_DIR}/DocumentationSphinx/Doxyfile.in)
+SET(DOXYFILE_OUT ${CMAKE_BINARY_DIR}/Doxyfile)
+
+# Replace variables inside @@ with the current values
+CONFIGURE_FILE(${DOXYFILE_IN} ${DOXYFILE_OUT} @ONLY)
+
+# Create Doxygen output directory
+FILE(MAKE_DIRECTORY ${DOXYGEN_OUTPUT_DIR})
+
+# Build with Doxygen
+ADD_CUSTOM_COMMAND(OUTPUT ${DOXYGEN_INDEX_FILE}
+                   DEPENDS ${API_HEADERS}
+                   COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE_OUT}
+                   MAIN_DEPENDENCY ${DOXYFILE_OUT} ${DOXYFILE_IN}
+                   COMMENT "Generating Doxygen files"
+                   VERBATIM
+)
+ADD_CUSTOM_TARGET(doxygen DEPENDS ${DOXYGEN_INDEX_FILE})
+
+#=================================================
+#== Sphinx
+
+FIND_PACKAGE(Sphinx)
+
+SET(SPHINX_SOURCE ${CMAKE_SOURCE_DIR}/DocumentationSphinx/)
+SET(SPHINX_BUILD ${CMAKE_BINARY_DIR}/doc/sphinx/_build/html)
+SET(SPHINX_INDEX_FILE ${SPHINX_BUILD}/index.html)
+
+ADD_CUSTOM_COMMAND(OUTPUT ${SPHINX_INDEX_FILE}
+                   COMMAND ${SPHINX_EXECUTABLE} -b linkcheck  ${SPHINX_SOURCE} ${SPHINX_BUILD} # Check links
+                   COMMAND ${SPHINX_EXECUTABLE} -b html -Dbreathe_projects.Dyssol=${DOXYGEN_OUTPUT_DIR}/xml ${SPHINX_SOURCE} ${SPHINX_BUILD}
+                   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                   DEPENDS ${CMAKE_SOURCE_DIR}/DocumentationSphinx/index.rst ${DOXYGEN_INDEX_FILE}
+                   MAIN_DEPENDENCY ${SPHINX_SOURCE}/conf.py
+                   COMMENT "Generating documentation with Sphinx"
+)
+ADD_CUSTOM_TARGET(sphinx DEPENDS ${SPHINX_INDEX_FILE})
+
+ADD_CUSTOM_TARGET(doc DEPENDS sphinx)
+
+# Add an install target to install the docs
+INSTALL(DIRECTORY ${SPHINX_BUILD}
+        DESTINATION ${INSTALL_DOCS_PATH}/sphinx/
+)
+
+MESSAGE(STATUS ${INSTALL_DOCS_PATH})
+MESSAGE(STATUS ${CMAKE_INSTALL_DOCDIR})

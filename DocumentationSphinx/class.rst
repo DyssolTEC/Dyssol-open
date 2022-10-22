@@ -4448,4 +4448,53 @@ In Dyssol, some universal constants have been defined, which you may use directl
 +------------------------------------------+----------------------------------------+--------------------+
 
 
+Doxygen
+=======
 
+CBaseUnit
+---------
+
+.. doxygenclass:: CBaseUnit
+   :members:
+..    :protected-members:
+..    :private-members:
+..    :members-only:
+..    :outline:
+..    :no-link:
+..    :allow-dot-graphs:
+
+CBaseStream
+-----------
+
+.. doxygenclass:: CBaseStream
+   :members:
+   :protected-members:
+   :private-members:
+   :members-only:
+   :outline:
+   :no-link:
+   :allow-dot-graphs:
+
+CHoldup
+-------
+
+.. doxygenclass:: CHoldup
+   :members:
+   :protected-members:
+   :private-members:
+   :members-only:
+   :outline:
+   :no-link:
+   :allow-dot-graphs:
+
+CStream
+-------
+
+.. doxygenclass:: CStream
+   :members:
+   :protected-members:
+   :private-members:
+   :members-only:
+   :outline:
+   :no-link:
+   :allow-dot-graphs:

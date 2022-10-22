@@ -42,6 +42,7 @@ extensions = [
     'sphinx.ext.githubpages',
     'sphinx.ext.mathjax',
     'sphinx_rtd_theme',
+    "breathe",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -61,7 +62,7 @@ master_doc = 'index'
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+# language = None
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -129,3 +130,9 @@ html_logo = './static/images/logo_doc.png'
 html_favicon = './static/images/logo.png'
 
 # -- Extension configuration -------------------------------------------------
+
+# Breathe
+# breathe_projects = {
+#     "Dyssol": "/mnt/c/Projects/Dyssol/build/doc/doxygen/xml/",
+# }
+breathe_default_project = "Dyssol"
