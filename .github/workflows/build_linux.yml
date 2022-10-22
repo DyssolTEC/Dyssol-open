@@ -49,7 +49,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: ${{github.workspace}}/build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="${{ matrix.cxxflags }}" -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.linker_flags }}" -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/inst
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="${{ matrix.cxxflags }}" -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.linker_flags }}" -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/inst -DBUILD_DOCS=NO
 
     - name: Build
       working-directory: ${{github.workspace}}/build
@@ -75,7 +75,7 @@ jobs:
     - uses: actions/checkout@v3
     
     - name: Install build dependencies
-      run: sudo add-apt-repository ppa:gladky-anton/sundials && sudo apt-get install build-essential libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev doxygen
+      run: sudo apt-get install doxygen
       
     - name: Install build doc dependencies
       run: pip install -U sphinx sphinx-rtd-theme breathe
@@ -89,7 +89,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: ${{github.workspace}}/build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/inst
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/inst -DBUILD_BINARIES=NO
 
     - name: Build docs
       working-directory: ${{github.workspace}}/build
