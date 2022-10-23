@@ -66,11 +66,12 @@ Contents
 
 .. toctree::
    :maxdepth: 2
-   :caption: Models development
+   :caption: For developers
 
-   for_developers
-   models_development
-   class
+   004_development/compilation
+   004_development/models_development
+   004_development/api
+   004_development/old_api
 
 |
 

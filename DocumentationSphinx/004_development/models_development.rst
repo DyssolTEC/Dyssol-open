@@ -189,7 +189,7 @@ Application example
 
 Now you want to develop a new steady-state model of splitter with one input stream and three output streams, as the figure shown below. The splitting factors for the first and second outlets are :math:`k_1` and :math:`k_2` respectively.
 
-.. image:: ./static/images/tutorials/task5-1.jpg
+.. image:: ../static/images/tutorials/task5-1.jpg
    :width: 300px
    :alt: 
    :align: center 
@@ -769,21 +769,21 @@ Now you need the following steps:
 
 - Use exemplary flowsheet ``...\Tasks8\AirClassifier.dflw`` to test your unit. Compare your results with the expected ones below.
 
-.. image:: ./static/images/tutorials/task8-1.jpg
+.. image:: ../static/images/tutorials/task8-1.jpg
    :width: 800px
    :alt: 
    :align: center
 
 |
 
-.. image:: ./static/images/tutorials/task8-2.jpg
+.. image:: ../static/images/tutorials/task8-2.jpg
    :width: 800px
    :alt: 
    :align: center
 
 |
 
-.. image:: ./static/images/tutorials/task8-3.jpg
+.. image:: ../static/images/tutorials/task8-3.jpg
    :width: 800px
    :alt: 
    :align: center
@@ -1569,21 +1569,21 @@ Now you need the following steps:
 
 - Use exemplary flowsheet ``...\Task7\DynamicScreen.dflw`` to test your unit. Compare your results with the expected ones in the figures below.
 
-.. image:: ./static/images/tutorials/task7-1.jpg
+.. image:: ../static/images/tutorials/task7-1.jpg
    :width: 800px
    :alt: 
    :align: center
 
 |
 
-.. image:: ./static/images/tutorials/task7-2.jpg
+.. image:: ../static/images/tutorials/task7-2.jpg
    :width: 800px
    :alt: 
    :align: center
 
 |
 
-.. image:: ./static/images/tutorials/task7-3.jpg
+.. image:: ../static/images/tutorials/task7-3.jpg
    :width: 800px
    :alt: 
    :align: center
@@ -1637,7 +1637,7 @@ After builiding your own new solvers, the functionality of them can be applied i
 
 Basically, all solvers have a set of constant functions and parameters, which are available in each new solver (:ref:`label-externalSolver`). and a set of specific ones, which depend on the solver’s type. New types of solvers can be added upon request and will include a set of parameters and functions that are needed to solve a specific problem.
 
-You can implement several solvers of one type (e.g. with different models) and then choose a specific one to use it in unit by user interface, please refer to section :ref:`label-unitParameters` in :ref:`sec.classes`.
+You can implement several solvers of one type (e.g. with different models) and then choose a specific one to use it in unit by user interface, please refer to section :ref:`label-unitParameters` in :ref:`sec.development.api`.
 
 .. There is also detailed information about :ref:`label-DAE`, with which you can solve systems of differential-algebraic equations automatically.
 

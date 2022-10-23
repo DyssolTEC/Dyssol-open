@@ -1,7 +1,7 @@
-.. _sec.classes:
+.. _sec.old_classes:
 
 =======
-Classes
+Old API
 =======
 
 Here you can get necessary information about how the elements in Dyssol (like unit, solver, :abbr:`PSD (Particle size distribution)` function, matrices and external solvers) look like on a programming point of view. This is especially important if you want to develope new units and solvers. 
@@ -12,7 +12,7 @@ For more information on object-oriented programming applied in Dyssol, please re
 
 |
 
-.. _label-baseUnit:
+.. _label-old_baseUnit:
 
 Basic unit
 ==========
@@ -138,7 +138,7 @@ Removes holdup with the specified name HoldupName from the unit. Should be used 
 
 |
 
-.. _label-AddMaterialStream:
+.. _label-old_AddMaterialStream:
 
 .. code-block:: cpp
 
@@ -285,7 +285,7 @@ Returns all time points for specified time interval on which ``Stream``-s are de
 
 |
 
-.. _label-unitParameters:
+.. _label-old_unitParameters:
 
 Unit parameters
 ---------------
@@ -422,7 +422,7 @@ State variables
 ---------------
 
 
-.. _label-AddStateVariable:
+.. _label-old_AddStateVariable:
 
 .. code-block:: cpp
 
@@ -537,7 +537,7 @@ Returns value of constant physical property for specified compound. These proper
 	
 	-	``CONST_PROP_USER_DEFINED_XX``
 
-.. _label-defConstProp:
+.. _label-old_defConstProp:
 
 .. Note:: Definition of constant properties:
 
@@ -591,7 +591,7 @@ Returns value of temperature/pressure-dependent physical properties stored in th
 
 	-	``TP_PROP_USER_DEFINED_XX``
 
-.. _label-defDepProp:
+.. _label-old_defDepProp:
 	
 .. Note:: Definition of temperature-dependent properties:
 
@@ -735,7 +735,7 @@ Returns number of defined liquid phases.
 Solid distributed properties
 ----------------------------
 
-.. _label-EDistrTypes:
+.. _label-old_EDistrTypes:
 
 .. code-block:: cpp
 
@@ -787,7 +787,7 @@ Returns grid’s type, which was defined for specified solid distribution ``dist
 
 |
 
-.. _label-getNumericGrid: 
+.. _label-old_getNumericGrid: 
 
 .. code-block:: cpp
 
@@ -1043,7 +1043,7 @@ Initializes unit at the time point ``Time``. Is called by the simulator only onc
 
 |
 
-.. _label-SaveState:
+.. _label-old_SaveState:
 
 .. code-block:: cpp
 
@@ -1055,7 +1055,7 @@ For flowsheets containing **recycled streams**, this function is called when the
 
 |
 
-.. _label-LoadState:
+.. _label-old_LoadState:
 
 .. code-block:: cpp
 
@@ -1073,7 +1073,7 @@ Finalizes unit. Is called by the simulator only once at the end of the simulatio
 
 |
 
-.. _label-stream:
+.. _label-old_stream:
 
 Stream
 ======
@@ -1178,7 +1178,7 @@ Returns the nearest time point before ``Time``. Returns ``-1`` if there is no ti
 Overall properties
 ------------------
 
-.. _label-massFlow:
+.. _label-old_massFlow:
 
 .. code-block:: cpp
 
@@ -1196,7 +1196,7 @@ Returns mass or mole flow of the material stream at the specified time point ``T
 
 |
 
-.. _label-mass:
+.. _label-old_mass:
 
 .. code-block:: cpp
 
@@ -1214,7 +1214,7 @@ Returns mass or mole of the holdup at the specified time point ``Time``. If such
 
 |
 
-.. _label-setMassFlow:
+.. _label-old_setMassFlow:
 
 .. code-block:: cpp
 
@@ -1232,7 +1232,7 @@ Sets mass flow of the material stream at the time point ``Time``. Negative value
 
 |
 
-.. _label-setMass:
+.. _label-old_setMass:
 
 .. code-block:: cpp
 
@@ -1250,7 +1250,7 @@ Sets mass of the holdup at the time point ``Time``. Previously set negative valu
 
 |
 
-.. _label-temp:
+.. _label-old_temp:
 
 .. code-block:: cpp
 
@@ -1262,7 +1262,7 @@ Returns temperature of the material stream / holdup at the specified time point 
 
 |
 
-.. _label-setTemp:
+.. _label-old_setTemp:
 
 .. code-block:: cpp
 
@@ -1274,7 +1274,7 @@ Sets temperature of the material stream / holdup at the time point ``Time`` in [
 
 |
 
-.. _label-pressure:
+.. _label-old_pressure:
 
 .. code-block:: cpp
 
@@ -1286,7 +1286,7 @@ Returns pressure of the material stream / holdup at the specified time point ``T
 
 |
 
-.. _label-setPressure:
+.. _label-old_setPressure:
 
 .. code-block:: cpp
 
@@ -1733,7 +1733,7 @@ Basis is a basis of value (``BASIS_MASS`` in [kg] or ``BASIS_MOLL`` in [mol]).
 
 |
 
-.. _label-setPhaseMassFlow:
+.. _label-old_setPhaseMassFlow:
 
 .. code-block:: cpp
 	
@@ -1753,7 +1753,7 @@ Basis is a basis of value (``BASIS_MASS`` in [kg/s] or ``BASIS_MOLL`` in [mol/s]
 
 |
 
-.. _label-setPhaseMass:
+.. _label-old_setPhaseMass:
 
 .. code-block:: cpp
 	
@@ -1908,7 +1908,7 @@ Basis is a basis of value (``BASIS_MASS`` or ``BASIS_MOLL``).
 
 |
 
-.. _label-getPhaseTPD:
+.. _label-old_getPhaseTPD:
 
 .. code-block:: cpp
 
@@ -2186,7 +2186,7 @@ Praticle size distribution
 
 All functions in this section are for both ``CMaterialStream`` and ``CHoldup``.
 
-.. _label-getPSD:
+.. _label-old_getPSD:
 
 .. code-block:: cpp
 
@@ -2504,7 +2504,7 @@ If flag ``DeleteDataAfter`` is set to ``true``, all data after the time point ``
 
 |
 
-.. _label-AddHoldup:
+.. _label-old_AddHoldup:
 
 .. code-block:: cpp
 
@@ -2537,7 +2537,7 @@ Data for non-existent points are obtained by linear interpolation.
 |
 
 
-.. _label-PSD:
+.. _label-old_PSD:
 
 Particle size distribution
 ==========================
@@ -2584,7 +2584,7 @@ Calculates moment of the density distribution by :math:`M_k = \sum\limits_i d_i^
 
 |
 
-.. _label-convb0s0: 
+.. _label-old_convb0s0: 
 
 .. b for big (capital letters), s for small (lower letters)
 
@@ -2596,7 +2596,7 @@ Performs conversion from :math:`Q_0` to :math:`q_0` distributions using informat
 
 |
 
-.. _label-convs0b0:
+.. _label-old_convs0b0:
 
 .. code-block:: cpp
 
@@ -2606,7 +2606,7 @@ Performs conversion from :math:`q_0` to :math:`Q_0` distributions using informat
 
 |
 
-.. _label-convb2s2:
+.. _label-old_convb2s2:
 
 .. code-block:: cpp
 
@@ -2616,7 +2616,7 @@ Performs conversion from :math:`Q_2` to :math:`q_2` distributions using informat
 
 |
 
-.. _label-convs2b2:
+.. _label-old_convs2b2:
 
 .. code-block:: cpp
 
@@ -2626,7 +2626,7 @@ Performs conversion from :math:`q_2` to :math:`Q_2` distributions using informat
 	
 |
 
-.. _label-convb3s3:
+.. _label-old_convb3s3:
 
 .. code-block:: cpp
 
@@ -2636,7 +2636,7 @@ Performs conversion from :math:`Q_3` to :math:`q_3` distributions using informat
 
 |
 
-.. _label-convs3b3:
+.. _label-old_convs3b3:
 
 .. code-block:: cpp
 
@@ -2646,7 +2646,7 @@ Performs conversion from :math:`q_3` to :math:`Q_3` distributions using informat
 
 |
 
-.. _label-convs0s2:
+.. _label-old_convs0s2:
 
 .. code-block:: cpp
 
@@ -2656,7 +2656,7 @@ Performs conversion from :math:`q_0` to :math:`q_2` distributions using informat
 
 |
 
-.. _label-convs0s3:
+.. _label-old_convs0s3:
 
 .. code-block:: cpp
 
@@ -2666,7 +2666,7 @@ Performs conversion from :math:`q_0` to :math:`q_3` distributions using informat
 
 |
 
-.. _label-convs2s0:
+.. _label-old_convs2s0:
 
 .. code-block:: cpp
 	
@@ -2676,7 +2676,7 @@ Performs conversion from :math:`q_2` to :math:`q_0` distributions using informat
 
 |
 
-.. _label-convs2s3:
+.. _label-old_convs2s3:
 
 .. code-block:: cpp
 	
@@ -2686,7 +2686,7 @@ Performs conversion from :math:`q_2` to :math:`q_3` distributions using informat
 
 |
 
-.. _label-convs3s0:
+.. _label-old_convs3s0:
 
 .. code-block:: cpp
 
@@ -2696,7 +2696,7 @@ Performs conversion from :math:`q_3` to :math:`q_0` distributions using informat
 
 |
 
-.. _label-convs3s2:
+.. _label-old_convs3s2:
 
 .. code-block:: cpp
 
@@ -2706,7 +2706,7 @@ Performs conversion from :math:`q_3` to :math:`q_2` distributions using informat
 
 |
 
-.. _label-convms3:
+.. _label-old_convms3:
 
 .. code-block:: cpp
 
@@ -2716,7 +2716,7 @@ Calculates :math:`q_3` distribution using the size grid and the distribution of 
 
 |
 
-.. _label-convmb3:
+.. _label-old_convmb3:
 
 .. code-block:: cpp
 
@@ -2726,7 +2726,7 @@ Calculates :math:`Q_3` distribution using the distribution of mass fractions: :m
 
 |
 
-.. _label-convms0:
+.. _label-old_convms0:
 
 .. code-block:: cpp
 
@@ -2736,7 +2736,7 @@ Calculates :math:`q_0` distribution using the functions :ref:`ConvertMassFractio
 
 |
 
-.. _label-convmb0:
+.. _label-old_convmb0:
 
 .. code-block:: cpp
 
@@ -2746,7 +2746,7 @@ Calculates :math:`Q_0` distribution using the functions :ref:`ConvertMassFractio
 
 |
 
-.. _label-convms2:
+.. _label-old_convms2:
 
 .. code-block:: cpp
 	
@@ -2756,7 +2756,7 @@ Calculates :math:`q_0` distribution using the functions :ref:`ConvertMassFractio
 
 |
 
-.. _label-convmb2:
+.. _label-old_convmb2:
 
 .. code-block:: cpp
 
@@ -2766,7 +2766,7 @@ Calculates :math:`Q_0` distribution using the functions :ref:`ConvertMassFractio
 
 |
 
-.. _label-convs3m:
+.. _label-old_convs3m:
 
 .. code-block:: cpp
 
@@ -2776,7 +2776,7 @@ Calculates mass fractions from :math:`q_3` distribution using the size grid by :
 
 |
 
-.. _label-convb3m:
+.. _label-old_convb3m:
 
 .. code-block:: cpp
 
@@ -2786,7 +2786,7 @@ Calculates mass fractions from :math:`Q_3` distribution using the size grid: :ma
 
 |
 
-.. _label-convs0m:
+.. _label-old_convs0m:
 
 .. code-block:: cpp
 
@@ -2796,7 +2796,7 @@ Calculates mass fractions from :math:`q_0` distribution using the functions :ref
 
 |
 
-.. _label-convb0m:
+.. _label-old_convb0m:
 
 .. code-block:: cpp
 
@@ -2806,7 +2806,7 @@ Calculates mass fractions from :math:`Q_0` distribution using the functions :ref
 
 |
 
-.. _label-convs2m:
+.. _label-old_convs2m:
 
 .. code-block:: cpp
 
@@ -2816,7 +2816,7 @@ Calculates mass fractions from :math:`q_2` distribution using the functions :ref
 
 |
 
-.. _label-convb2m:
+.. _label-old_convb2m:
 
 .. code-block:: cpp
 
@@ -2826,7 +2826,7 @@ Calculates mass fractions from :math:`Q_2` distribution using the functions :ref
 
 |
 
-.. _label-convns0:
+.. _label-old_convns0:
 
 .. code-block:: cpp
 
@@ -2836,7 +2836,7 @@ Calculates :math:`q_0` distribution using the number distribution and the size g
 
 |
 
-.. _label-convnb2:
+.. _label-old_convnb2:
 
 .. code-block:: cpp
 
@@ -2862,7 +2862,7 @@ Calculates :math:`q_2` distribution using the number distribution and the functi
 
 |
 
-.. _label-convns3:
+.. _label-old_convns3:
 
 .. code-block:: cpp
 
@@ -2965,614 +2965,6 @@ Calculates Sauter diameter (:math:`d_{32}`) of :math:`q_3` distribution in [m].
 	double GetSpecificSurface (Grid, q3Distr)
 
 Calculates specific surface of :math:`q_3` distribution in [m :math:`^2`].
-
-|
-
-.. _label-thermo:
-
-Thermodynamics
-==============
-
-In Dyssol, thermodynamic functions are applied to calculate a material stream / holdup temperature :math:`T` from a given enthalpy value :math:`H`. In most cases, the enthalpy of a compound correlates with temperature *non-linearly*. Thus, for backward calculation of the temperature from an enthalpy value, you need to solve a non-linear equation :math:`T = f^{-1}(H)`.
-
-This solving step is replaced by a *lookup table* functionality, i.e. co-dependent temperature and enthalpy are pre-calculated for a certain range of values and then stored in a table. This table can be used to determine temperature-enthalpy value pairs by interpolation between two neighbor points.
-
-To add more functionality, these lookup tables can be called for every property defined in the materials database.
-
-.. math::
-
-	Val_{prop,i}(T/p) = f_i(T/p)
-	
-	f_{tot}(T/p) = \sum\limits_i w_i \, f_i(T/p)
-	
-	T/p = f_{tot}^{-1}(Val_{prop,tot})
-
-
-The temperature or pressure (e.g. pressure from saturation pressure or different properties) is then calculated in the following steps:
-
-	1.	Create tables of value pairs for each compound that is present in the system, i.e. temperature / pressure and respective dependent property value over a certain range of the temperature / pressure.
-
-	2.	Combine the compound-lookup tables by mass-weighted summation of the tables.
-
-	3.	Read-out of temperature / pressure from the resulting lookup-table at a certain point of the property by interpolation between neighbor value pairs.
-
-The functions in base unit are less time-consuming than the material stream / holdup-function and therefore are implemented for usage during solving process (i.e. function :ref:`CalculateResiduals <label-CalculateResiduals>`), if the composition of the material stream / holdup varies in each iteration.
-
-In :ref:`label-unitsLib`, ``Heater`` and ``HeatExchanger`` apply thermodynamic calculations.
-
-|
-
-For material stream and holdup
-------------------------------
-
-.. code-block:: cpp
-
-	double CalcTemperatureFromProperty(ECompoundTPProperties Property, double Time, double Value)
-
-Returns temperature of the material stream / holdup for a specific value ``Value`` of the property ``Property`` at the time point ``Time``. Possible properties are those defined in :ref:`sec.mdb`.
-
-|
-
-.. code-block:: cpp
-
-	double CalcPressureFromProperty(ECompoundTPProperties Property, double Time, double Value)
-
-Returns pressure of the material stream / holdup for a specific value ``Value`` of the property ``Property`` at the time point ``Time``. Possible properties are those defined in :ref:`sec.mdb`.
-
-|
-
-For base unit
--------------
-
-.. code-block:: cpp
-
-	double CalcTemperatureFromProperty(ECompoundTPProperties Property,vector<double>& CompoundFractions, double Value)
-
-Returns temperature of a generic system of composition ``CompoundFractions`` for a specific value ``Value`` of the property ``Property``. Possible properties are those defined in :ref:`sec.mdb`.
-
-|
-
-.. code-block:: cpp
-
-	double CalcPressureFromProperty(ECompoundTPProperties Property,vector<double>& CompoundFractions, double Value)
-
-Returns pressure of a generic system of composition ``CompoundFractions`` for a specific value ``Value`` of the property ``Property``. Possible properties are those defined in :ref:`sec.mdb`.
-
-|
-
-.. code-block:: cpp
-
-	void HeatExchange(CMaterialStream* Stream1, CMaterialStream* Stream2, double Time, double Efficiency);
-
-Performs a heat exchange between material streams ``Stream1`` and ``Stream2`` at specified time point ``Time`` with a specified efficiency (0 ≤ ``Efficiency`` ≤ 1).
-
-.. math::
-
-	|\dot Q| = \varepsilon \, |\dot Q_{ideal}| = \varepsilon \, \left | \int_{T_1}^{T_{mix}} \dot m_1\,c_{P,1}(\theta)\,d\theta \right | = \varepsilon \, \left | \int_{T_2}^{T_{mix}} \dot m_2\,c_{P,2}(\theta)\,d\theta \right |
-
-:math:`\varepsilon` stands for efficiency and :math:`\theta` for temperature as an integration variable.
-
-|
-
-.. _label-externalSolver:
-
-External solver
-===============
-
-As mentioned in section :ref:`label-solverDev`, you can generate your own solvers in Dyssol under class ``CExternalSolver``. 
-
-In Dyssol, external solvers are connected with :ref:`open-source programm packages <label-equationSolvers>`. Thus you can only do some basic operations for these solvers, such as generate new solver, name it, get ID and version, initialize and finalize, etc.
-
-In this section, the functions and variables applied in external solver are introduced.
-
-|
-
-.. code-block:: cpp
-
-	CExternalSolver()
-	
-Basic **constructor** of the solver. Creates an empty external solver. Called only once when solver is added to the unit.
-
-Internal variables are:
-
-- ``m_solverName``: name of the solver that will be displayed in user interface of Dyssol.
-
-- ``m_authorName``: solver’s author
-
-- ``m_solverUniqueKey``: unique identificator of the solver. Simulation environment distinguishes different solvers with the help of this identificator. You must ensure that ID of your solver is unique. This ID can be created manually or using *GUID-generator* of Visual Studio (*Tools → GUID Genarator*).
-
-- ``m_solverVersion``: current version of the solver.
-
-|
-
-Basic information
------------------
-
-.. code-block:: cpp
-
-	std::string GetName()
-
-Returns name of the solver.
-
-|
-
-.. code-block:: cpp
-
-	std::string GetUniqueID()
-	
-Returns string key, which is unique among all solvers.
-
-|
-
-.. code-block:: cpp
-
-	std::string GetAuthorName()
-
-Returns name of the solver's author.
-
-|
-
-.. code-block:: cpp
-
-	unsigned GetVersion()
-
-Returns version of the solver.
-
-|
-
-Virtual functions
------------------
-
-.. code-block:: cpp
-
-	virtual void Initialize()
-
-Solver‘s initialization. This function is called only once for each simulation during the initialization of unit. Implementation of this function is not obligatory and can be skipped.
-
-|
-
-.. code-block:: cpp
-
-	virtual void Finalize()
-
-Unit‘s finalization. This function is called only once for each simulation during the finalization of unit. Implementation of this function is not obligatory and can be skipped.
-
-|
-
-.. _label-DAE:
-
-DAE Systems
-===========
-
-In Dyssol, you can solve systems of :abbr:`DAE (Differential-algebraic equations)` automatically. In this case, the unit should contain one or several additional objects of class ``CDAEModel``. This class is used to describe :abbr:`DAE (Differential-algebraic equations)` systems and can be automatically solved with class ``CDAESolver``. 
-
-|
-
-DAE model
----------
-
-.. code-block:: cpp
-
-	CDAEModel()
-
-Basic **constructor**. Creates an empty DAE model.
-
-|
-
-Variables
-"""""""""
-
-.. _label-AddDAEVariable:
-
-.. code-block:: cpp
-
-	unsigned AddDAEVariable(bool _bIsDifferentiable, double _dVariableInit, double _dDerivativeInit, double _dConstraint)
-	
-Adds new algebraic (``_bIsDifferentiable = false``) or differential (``_bIsDifferentiable = true``) variable with initial values ``_dVariableInit`` and ``_dDerivativeInit``. 
-
-Should be called in function ``Initialize(Time)`` of the unit. Returns unique index of added variable. 
-
-``_dConstraint`` sets the constraint for the variable, different values of ``_dConstraint`` are defined as follows:
-
-	-	0.0: no constraint
-	
-	-	1.0: Variable ≥ 0.0
-	
-	-	−1.0: Variable ≤ 0.0
-	
-	-	2.0: Variable > 0.0
-	
-	-	−2.0: Variable < 0.0
-
-|
-
-.. code-block:: cpp
-
-	unsigned GetVariablesNumber()
-	
-Returns current number of defined variables. 
-
-|
-
-.. code-block:: cpp
-
-	void ClearVariables()
-
-Removes all defined variables from the model.
-
-|
-
-Tolerance
-"""""""""
-
-.. _label-setTol:
-
-.. code-block:: cpp
-
-	void SetTolerance(double _dRTol, double _dATol)
-
-Sets values of relative and absolute tolerances for all variables. 
-
-|
-
-.. code-block:: cpp
-
-	void SetTolerance(double _dRTol, std::vector<double> &_vATol)
-
-Sets value of relative tolerance for all variables and absolute tolerances for each variable separately.
-
-|
-
-.. code-block:: cpp
-
-	double GetRTol()
-
-Returns current relative tolerance. 
-
-|
-
-.. code-block:: cpp
-
-	double GetATol(unsigned _dIndex)
-
-Returns current absolute tolerance for specified variable. 
-
-|
-
-Virtual functions
-"""""""""""""""""
-
-.. _label-CalculateResiduals:
-
-.. code-block:: cpp
-
-	virtual void CalculateResiduals(double _dTime, double *_pVars, double *_pDerivs, double *_pRes, void *_pUserData)
-	
-Computes the problem residual for given values of the independent variable ``_dTime``, state vector ``_pVars``, and derivatives ``_pDerivs``. Here the :abbr:`DAE (Differential-algebraic equations)` system should be specified in implicit form. Function will be called by solver automatically.
-
-	- ``_dTime``: current value of the independent variable :math:`t`.
-
-	- ``_pVars``: pointer to an array of the dependent variables, :math:`y(t)`.
-
-	- ``_pDerivs``: pointer to an array of derivatives :math:`y'(t)`.
-
-	- ``_pRes``: output residual vector :math:`F(t, y, y')`.
-
-	- ``_pUserData``: pointer to user's data. Is used to provide access from this function to unit’s data.
-
-|
-
-.. _label-ResultsHandler:
-
-.. code-block:: cpp
-
-	virtual void ResultsHandler(double _dTime, double *_pVars, double *_pDerivs, void *_pUserData)
-	
-Processing the results returned by the solver at each calculated step. Called by solver every time when the solution in new time point is ready.
-
-	- ``_dTime``: current value of the independent variable :math:`t`.
-
-	- ``_pVars``: current values of the dependent variables, :math:`y(t)`.
-
-	- ``_pDerivs``: current values of derivatives :math:`y'(t)`.
-
-	- ``_pUserData``: pointer to user's data. Is used to provide access from this function to unit’s data.
-
-|
-
-Other functions
-"""""""""""""""
-
-.. code-block:: cpp
-
-	void Clear()
-	
-Removes all data from the model. 
-
-|
-
-.. code-block:: cpp
-
-	void SetUserData(void *_pUserData)
-
-Set pointer to user’s data. This data will be returned in overloaded functions :ref:`CalculateResiduals <label-CalculateResiduals>` and :ref:`ResultsHandler <label-ResultsHandler>`. Usually is used to provide access from these functions to unit’s data.
-
-|
-
-.. _label-DAEsolver:
-
-DAE solver
-----------
-
-.. code-block:: cpp
-
-	CDAESolver()
-
-Basic **constructor**. Creates an empty solver.
-
-|
-
-Model
-"""""
-
-.. _label-setModel:
-
-.. code-block:: cpp
-
-	bool SetModel(CDAEModel *_pModel)
-
-Sets model to a solver. Should be called in function :ref:`Initialize <label-DynamicUnitInitialize>` of the unit. 
-
-Returns ``false`` on error.
-
-|
-
-.. code-block:: cpp
-
-	bool SetMaxStep()
-
-Sets maximum time step for solver. Should be used in :ref:`Initialize <label-DynamicUnitInitialize>` before the function :ref:`SetModel <label-setModel>`.
-
-|
-
-.. _label-Calculate:
-
-.. code-block:: cpp
-
-	bool Calculate(double _dTime, unsigned _nModel = KIN_NONE)
-
-Solves problem on a given time point ``_dTime``. Should be called in function :ref:`Simulate <label-DynamicUnitSimulate>` of the unit. 
-
-Default value of ``_nModel`` is ``KIN_NONE``, a Newton-based iteration method. Other available models can be found in declaration for KINSOL parameters in the ``*.cpp`` file, including: ``KIN_FP`` (fixed point), ``KIN_LINESEARCH`` and ``KIN_PICARD``.
-
-
-Returns ``false`` on error.
-
-|
-
-.. code-block:: cpp
-
-	bool Calculate(double _dStartTime, double _dEndTime)
-
-Solves problem on a given time interval. Should be called in function :ref:`Simulate <label-DynamicUnitSimulate>` of the unit. Returns ``false`` on error.
-
-|
-
-Other functions
-"""""""""""""""
-
-.. code-block:: cpp
-
-	void SaveState()
-
-Saves current state of the solver. Should be called in function :ref:`SaveState <label-SaveState>` of the unit.
-
-|
-
-.. code-block:: cpp
-
-	void LoadState()
-
-Loads last saved state of the solver. Should be called in function :ref:`LoadState <label-LoadState>` of the unit.
-
-|
-
-.. code-block:: cpp
-
-	std::string GetError()
-
-Returns error’s description. Can be called if function :ref:`SetModel <label-setModel>` or :ref:`Calculate <label-Calculate>` returns ``false``.
-
-|
-
-Application example
--------------------
-
-Assume that you are going to solve a dynamic :abbr:`DAE (Differential-algebraic equations)` system,
-
-.. math::
-
-	\begin{cases}
-		\dfrac{dx}{dt} = -0.04 \cdot x + 10^4 \cdot y \cdot z &x(0) = 0.04 
-		
-		\dfrac{dy}{dt} = 0.04\cdot x - 10^4 \cdot y \cdot z - 3 \cdot 10^7 \cdot y^2 &y(0) = -0.04
-		
-		x + y + z = 1
-	\end{cases}
-
-where :math:`x`, :math:`y`, :math:`z` are fractions of solid, liquid and vapor phases of the output stream of the unit.
-
-Now you want to develope a new unit for for automatic calculation of this :abbr:`DAE (Differential-algebraic equations)` by using built-in solvers of Dyssol, just do the following steps:
-
-1.	Add a new template unit to your solution and name it ``DynamicUnitWithSolver``, please refer to :ref:`label-unitDev`. 
-
-2.	In file ``Unit.h``, there is already a class of :abbr:`DAE (Differential-algebraic equations)` model ``CMyDAEModel`` defined with:
-
-	- two functions, which must be overridden (:ref:`CalculateResiduals <label-CalculateResiduals>` and :ref:`ResultsHandler <label-ResultsHandler>`) and
-	
-	- a class of unit ``CUnit`` with two additional variables (for :abbr:`DAE (Differential-algebraic equations)` model ``CMyDAEModel m_Model``, for :abbr:`DAE (Differential-algebraic equations)` solver ``CDAESolver m_Solver``). 
-
-	Add three variables in class ``CMyDAEModel`` to store indices for :math:`x`, :math:`y` and :math:`z` variables, name them ``m_nS``, ``m_nL`` and ``m_nV`` respectively. 
-	
-	After adding description of class ``CMyDAEModel``, your code should look like this:
-	
-	.. code-block:: cpp
-	
-		class CMyDAEModel : public CDAEModel
-		{		
-		public:		
-			unsigned m_nS; //solid fraction			
-			unsigned m_nL; //liquid fraction			
-			unsigned m_nV; //vapor fraction
-			
-		public:		
-			void CalculateResiduals(double _dTime, double* _pVars, double* _pDers, double* _pRes, void* _pUserData);			
-			void ResultsHandler(double _dTime, double* _pVars, double* _pDers, void *_pUserData);
-		};
-
-3.	Setup unit’s basic info (name, author’s name, unique ID, ports) as described in :ref:`label-unitDev`.Then provide model with pointer to your unit, in order to have an access to the unit from functions of the model. Now your unit’s constructor should look like this:
-
-	.. code-block:: cpp
-	
-		CUnit::CUnit()
-		{
-			// Unit basic information
-			m_sUnitName = "DummyUnit4";
-			m_sAuthorName = "Author";
-			m_sUniqueID = "344BCC0048AA4c3a9117F20A9F8AF9A8"; //an example ID
-
-			// Add ports for in- and outlets
-			AddPort("InPort", INPUT_PORT);
-			AddPort("OutPort", OUTPUT_PORT);
-
-			// Set this unit as user data of the model applied 
-			m_Model.SetUserData(this);
-		}
-
-4.	Implement function ``Initialize`` of the unit: 
-
-	Since function ``Initialize`` is called every time when simulation starts, all variables must be previously removed from the model by calling ``ClearVariables``. 
-
-	.. code-block:: cpp
-
-		m_Model.ClearVariables();
-	
-	Now you can add 3 variables with specified initial conditions to the model (using function :ref:`AddDAEVariable  <label-AddDAEVariable>`) according to the equation system. Use phase fractions of the input stream as initials. 
-
-	Set tolerances to the model using function :ref:`SetTolerance <label-setTol>`. As tolerances for the model, global tolerances of the system can be used. 
-
-	.. code-block:: cpp
-
-		m_Model.SetTolerance( GetRelTolerance(), GetAbsTolerance() );
-
-	Now, you can connect your model to the solver by calling function :ref:`SetModel <label-setModel>`. To receive errors from solver, connect it to the global errors handling procedure. 
-
-	.. code-block:: cpp
-
-		if( !m_Solver.SetModel(&m_Model) )
-			RaiseError(m_Solver.GetError());
-				
-	Your code should look like this after following all steps above:
-
-	.. code-block:: cpp
-
-		void CUnit::Initialize(double _dTime)
-		{
-			// Get pointer to inlet stream
-			CMaterialStream* pInpStream = GetPortStream("InPort");	
-			
-			// Clear previous state variables in model
-			m_Model.ClearVariables();
-			
-			// Add state variables to model
-			double dSFr = pInpStream->GetSinglePhaseProp(_dTime, FRACTION, SOA_SOLID);
-			double dLFr = pInpStream->GetSinglePhaseProp(_dTime, FRACTION, SOA_LIQUID);
-			double dVFr = pInpStream->GetSinglePhaseProp(_dTime, FRACTION, SOA_VAPOR);
-			m_Model.m_nS = m_Model.AddDAEVariable(true, dSFr, 0.04, 1.0);
-			m_Model.m_nL = m_Model.AddDAEVariable(true, dLFr, -0.04, 1.0);
-			m_Model.m_nV = m_Model.AddDAEVariable(false, dVFr, 0, 1.0);
-			
-			// Set tolerance to model
-			m_Model.SetTolerance( GetRelTolerance(), GetAbsTolerance() );
-			
-			// Set model to solver
-			if( !m_Solver.SetModel(&m_Model) )
-				RaiseError(m_Solver.GetError());
-		}
-			
-5.	Connect solver to a system saving / loading procedure in functions ``SaveState()`` and ``LoadState()`` of the unit:
-
-	.. code-block:: cpp
-
-		void CUnit::SaveState()
-		{
-			m_Solver.SaveState();
-		}
-
-		void CUnit::LoadState()
-		{
-			m_Solver.LoadState();
-		}
-
-6.	In function ``Simulate`` of the unit, calculation procedure should be run by calling function ``Calculate`` of the solver. Additionally, solver can be connected to the system’s errors handling procedure to receive possible errors during the calculation. Unit’s ``Simulate`` function after that must look as follows:
-
-	.. code-block:: cpp
-
-		void CUnit::Simulate(double _dStartTime, double _dEndTime)
-		{	
-			// Get pointers to inlet and outlet streams
-			CMaterialStream *pInputStream = GetPortStream("InPort");
-			CMaterialStream *pOutputStream = GetPortStream("OutPort");
-
-			pOutputStream->RemoveTimePointsAfter(_dStartTime, true);
-			pOutputStream->CopyFromStream(pInputStream, _dStartTime); // Copy the inlet stream information to outlet stream
-			
-			// Run solver and check if errors take place
-			if( !m_Solver.Calculate(_dStartTime, _dEndTime) )
-				RaiseError( m_Solver.GetError() );
-		}
-
-7.	In function ``CalculateResiduals``, :abbr:`DAE (Differential-algebraic equations)` system in implicit form should be described. According to the given equation system
-	
-	.. math::
-
-		\begin{cases}
-			\dfrac{dx}{dt} = -0.04 \cdot x + 10^4 \cdot y \cdot z &x(0) = 0.04 
-			
-			\dfrac{dy}{dt} = 0.04\cdot x - 10^4 \cdot y \cdot z - 3 \cdot 10^7 \cdot y^2 &y(0) = -0.04
-			
-			x + y + z = 1
-		\end{cases}
-
-	and the definition of residual ``_pRes`` (difference between new and old values from last calculation), the equaitons are expressed below. Here the values are arranged in vector ``_pVars`` according to sequence :math:`[x, y, z]`, in ``_pDers`` according to :math:`[dx, dy]`.
-		
-	.. code-block:: cpp
-
-		void CMyDAEModel::CalculateResiduals(double _dTime, double* _pVars, double* _pDers, double* _pRes, void* _pUserData)
-		{
-			_pRes[0] = _pDers[0] - (-0.04*_pVars[0] + 1.0e4*_pVars[1]*_pVars[2]);
-			_pRes[1] = _pDers[1] - ( 0.04*_pVars[0] - 1.0e4*_pVars[1]*_pVars[2] - 3.0e7*_pVars[1]*_pVars[1] );
-			_pRes[2] = _pVars[0] + _pVars[1] + _pVars[2] - 1;
-		}
-
-8.	Last step is handling of results from the solver (``CMyDAEModel::ResultsHandler``). Calculated fractions can be set here to the output stream of the unit. To access to the unit’s data, use the pointer ``_pUserData`` defined previously:
-
-	.. code-block:: cpp
-
-		void CMyDAEModel::ResultsHandler(double _dTime, double* _pVars, double* _pDerivs, void *_pUserData)
-		{
-			// Get pointers to streams
-			CUnit *unit = static_cast<CUnit*>(_pUserData);
-			CMaterialStream *pStream = static_cast<CMaterialStream*>(unit->GetPortStream("OutPort"));
-			
-			// Add time point to outlet stream
-			pStream->AddTimePoint(_dTime);
-			
-			// Set calculated results to corresponding phases
-			pStream->SetSinglePhaseProp(_dTime, FRACTION, SOA_SOLID, _pVars[0]);
-			pStream->SetSinglePhaseProp(_dTime, FRACTION, SOA_LIQUID, _pVars[1]);
-			pStream->SetSinglePhaseProp(_dTime, FRACTION, SOA_VAPOR, _pVars[2]);
-		} 
 
 |
 
@@ -4419,82 +3811,3 @@ Sets all elements in matrix equal to 0.
 Removes all data and information about dimensions from the matrix.
 
 |
-
-List of universal constants
-===========================
-
-In Dyssol, some universal constants have been defined, which you may use directly in your codes.
-
-+------------------------------------------+----------------------------------------+--------------------+
-|  Define                                  |   Typical value                        |   Unit             |
-+==========================================+========================================+====================+
-|   ``AVOGADRO_CONSTANT``                  |   :math:`6.02214199(47) \cdot 10^{23}` |   [1/mol]          |
-+------------------------------------------+----------------------------------------+--------------------+
-|   ``BOLTZMANN_CONSTANT``                 |   :math:`1.3806503(24) \cdot 10^{-23}` |   [J/K]            |
-+------------------------------------------+----------------------------------------+--------------------+
-|   ``IDEAL_GAS_STATE_REFERENCE_PRESSURE`` |   :math:`101\,325`                     |   [Pa]             |
-+------------------------------------------+----------------------------------------+--------------------+
-|   ``MOLAR_GAS_CONSTANT``                 |   :math:`8.314472(15)`                 |   [J/mol/K]        |
-+------------------------------------------+----------------------------------------+--------------------+
-|   ``SPEED_OF_LIGHT_IN_VACUUM``           |   :math:`2.99792458(1) \cdot 10^8`     |  [m/s]             |
-+------------------------------------------+----------------------------------------+--------------------+
-|   ``STANDARD_ACCELERATION_OF_GRAVITY``   |  :math:`9.80665`                       |   [m/s :math:`^2`] |
-+------------------------------------------+----------------------------------------+--------------------+
-|   ``STANDARD_CONDITION_T``               |   :math:`298.15`                       |   [K]              |
-+------------------------------------------+----------------------------------------+--------------------+
-|   ``STANDARD_CONDITION_P``               |   :math:`101\,325`                     |   [Pa]             |
-+------------------------------------------+----------------------------------------+--------------------+
-|   ``MATH_PI``                            |   :math:`3.14159265358979323846`       |   [-]              |
-+------------------------------------------+----------------------------------------+--------------------+
-
-
-Doxygen
-=======
-
-CBaseUnit
----------
-
-.. doxygenclass:: CBaseUnit
-   :members:
-..    :protected-members:
-..    :private-members:
-..    :members-only:
-..    :outline:
-..    :no-link:
-..    :allow-dot-graphs:
-
-CBaseStream
------------
-
-.. doxygenclass:: CBaseStream
-   :members:
-   :protected-members:
-   :private-members:
-   :members-only:
-   :outline:
-   :no-link:
-   :allow-dot-graphs:
-
-CHoldup
--------
-
-.. doxygenclass:: CHoldup
-   :members:
-   :protected-members:
-   :private-members:
-   :members-only:
-   :outline:
-   :no-link:
-   :allow-dot-graphs:
-
-CStream
--------
-
-.. doxygenclass:: CStream
-   :members:
-   :protected-members:
-   :private-members:
-   :members-only:
-   :outline:
-   :no-link:
-   :allow-dot-graphs:

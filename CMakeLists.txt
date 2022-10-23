@@ -182,9 +182,12 @@ IF(BUILD_DOCS)
   # List of all API headers
   SET(API_FILE_NAMES
     "BaseUnit"
-    "BaseStream"
-    "Holdup"
     "Stream"
+    "Holdup"
+    "TransformMatrix"
+    "DenseMDMatrix"
+    "Matrix2D"
+    "DistributionsFunctions"
   )
 
   # Gather all API headers
