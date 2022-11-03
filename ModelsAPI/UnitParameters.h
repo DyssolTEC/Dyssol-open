@@ -317,6 +317,7 @@ public:
 	std::vector<size_t> GetItems() const;				  ///< Returns all items.
 	std::vector<std::string> GetNames() const;			  ///< Returns all items' names.
 	size_t GetItemByName(const std::string& _name) const; ///< Returns item by its name.
+	std::string GetNameByItem(size_t _item) const;        ///< Returns name of the item.
 
 	bool HasItem(size_t _item) const;				      ///< Returns true if m_items contains _item.
 	bool HasName(const std::string& _name) const;	      ///< Returns true if m_items contains item with _name.

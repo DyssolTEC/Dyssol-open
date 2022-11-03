@@ -226,7 +226,12 @@ public:
 	CSolverUnitParameter* AddSolverPBM(const std::string& _name, const std::string& _description);
 
 	// Groups the specified unit parameters and associates them with the given value of the selected unit parameter. The parameter, its value and all the adding parameters must already exist. If something does not exist, logic_error exception is thrown.
-	void AddParametersToGroup(const std::string& _unitParamName, const std::string& _unitParamValueName, const std::vector<std::string>& _groupedParamNames);
+	void AddParametersToGroup(const std::string& _unitParamNameSelector, const std::string& _unitParamSelectedValueName, const std::vector<std::string>& _groupedParamNames);
+	// Groups the specified unit parameters and associates them with the given value of the selected unit parameter. The parameter, its value and all the adding parameters must already exist. If something does not exist, logic_error exception is thrown.
+	void AddParametersToGroup(const CComboUnitParameter* _selector, size_t _selectedValue, const std::vector<CBaseUnitParameter*>& _groupedParams);
+	// Groups the specified unit parameters and associates them with the given value of the selected unit parameter. The parameter, its value and all the adding parameters must already exist. If something does not exist, logic_error exception is thrown.
+	template <typename T, typename = std::enable_if_t<std::is_enum_v<T>>>
+	void AddParametersToGroup(const CComboUnitParameter* _selector, T _selectedValue, const std::vector<CBaseUnitParameter*>& _groupedParams);
 
 	// Returns value of the real constant unit parameter. Throws logic_error exception if a real constant unit parameter with the given name does not exist.
 	double GetConstRealParameterValue(const std::string& _name) const;
@@ -725,6 +730,12 @@ template <typename T, typename>
 CComboUnitParameter* CBaseUnit::AddComboParameter(const std::string& _name, T _initValue, const std::vector<T>& _items, const std::vector<std::string>& _itemsNames, const std::string& _description)
 {
 	return AddComboParameter(_name, static_cast<size_t>(_initValue), vector_cast<size_t>(_items), _itemsNames, _description);
+}
+
+template <typename T, typename>
+void CBaseUnit::AddParametersToGroup(const CComboUnitParameter* _selector, T _selectedValue, const std::vector<CBaseUnitParameter*>& _groupedParams)
+{
+	return AddParametersToGroup(_selector, static_cast<size_t>(_selectedValue), _groupedParams);
 }
 
 typedef DECLDIR CBaseUnit* (*CreateUnit2)();

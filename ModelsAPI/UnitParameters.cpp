@@ -634,6 +634,14 @@ size_t CComboUnitParameter::GetItemByName(const std::string& _name) const
 	return -1;
 }
 
+std::string CComboUnitParameter::GetNameByItem(size_t _item) const
+{
+	for (const auto& p : m_items)
+		if (p.first == _item)
+			return p.second;
+	return {};
+}
+
 bool CComboUnitParameter::HasItem(size_t _item) const
 {
 	return MapContainsKey(m_items, _item);
