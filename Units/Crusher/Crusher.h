@@ -6,7 +6,7 @@
 
 class CCrusher : public CSteadyStateUnit
 {
-	enum EModels : size_t
+	enum class EModels : size_t
 	{
 		BondNormal, BondBimodal, Cone, Const
 	};
@@ -19,7 +19,7 @@ class CCrusher : public CSteadyStateUnit
 	std::vector<double> m_grid;				// Diameter grid for PSD.
 	std::vector<double> m_diameters;		// Mean diameters for each grid class.
 	std::vector<std::string> m_compounds;	// List of keys for defined compounds.
-	EModels m_model{ Const };				// Chosen crusher model.
+	EModels m_model{ EModels::Const };		// Chosen crusher model.
 
 public:
 	void CreateBasicInfo() override;

@@ -6,7 +6,7 @@
 
 class CScreenMultideck : public CSteadyStateUnit
 {
-	enum EModel : size_t
+	enum class EModel : size_t
 	{
 		None, Plitt, Molerus, Teipel, Probability
 	};

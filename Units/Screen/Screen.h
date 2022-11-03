@@ -6,7 +6,7 @@
 
 class CScreen : public CSteadyStateUnit
 {
-	enum EModels : size_t
+	enum class EModels : size_t
 	{
 		Plitt, Molerus, Teipel, Probability
 	};
@@ -19,7 +19,7 @@ class CScreen : public CSteadyStateUnit
 	size_t m_classesNumber{};			// Number of PSD classes.
 	std::vector<double> m_grid;			// Diameter grid for PSD.
 	std::vector<double> m_diameters;	// Mean diameters for each grid class.
-	EModels m_model{ Plitt };			// Chosen classification model.
+	EModels m_model{ EModels::Plitt };	// Chosen classification model.
 
 public:
 	void CreateBasicInfo() override;

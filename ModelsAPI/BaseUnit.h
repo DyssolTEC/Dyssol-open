@@ -205,6 +205,9 @@ public:
 	CCheckBoxUnitParameter* AddCheckBoxParameter(const std::string& _name, bool _initValue, const std::string& _description);
 	// Adds a new combo-box unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
 	CComboUnitParameter* AddComboParameter(const std::string& _name, size_t _initValue, const std::vector<size_t>& _items, const std::vector<std::string>& _itemsNames, const std::string& _description);
+	// Adds a new combo-box unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	template <typename T, typename = std::enable_if_t<std::is_enum_v<T>>>
+	CComboUnitParameter* AddComboParameter(const std::string& _name, T _initValue, const std::vector<T>& _items, const std::vector<std::string>& _itemsNames, const std::string& _description);
 	// Adds a new compound combo-box unit parameter, allowing to choose one of the defined compounds, and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
 	CCompoundUnitParameter* AddCompoundParameter(const std::string& _name, const std::string& _description);
 	// Adds a new MDB compound combo-box unit parameter, allowing to choose one of the MDB compounds, and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
@@ -717,5 +720,11 @@ private:
 	static EPhase SOA2EPhase(unsigned _soa);
 	static unsigned EPhase2SOA(EPhase _phase);
 };
+
+template <typename T, typename>
+CComboUnitParameter* CBaseUnit::AddComboParameter(const std::string& _name, T _initValue, const std::vector<T>& _items, const std::vector<std::string>& _itemsNames, const std::string& _description)
+{
+	return AddComboParameter(_name, static_cast<size_t>(_initValue), vector_cast<size_t>(_items), _itemsNames, _description);
+}
 
 typedef DECLDIR CBaseUnit* (*CreateUnit2)();
