@@ -22,7 +22,7 @@ public:
 
 class CTimeDelay : public CDynamicUnit
 {
-	enum EModel { NORM_BASED, SIMPLE_SHIFT };
+	enum class EModel { NORM_BASED, SIMPLE_SHIFT };
 
 public:
 	double m_timeDelay{};	// Requested time delay

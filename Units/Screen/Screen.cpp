@@ -27,7 +27,7 @@ void CScreen::CreateStructure()
 	AddPort("Fine",   EUnitPort::OUTPUT);
 
 	/// Add unit parameters ///
-	AddComboParameter("Model", Plitt, { Plitt, Molerus, Teipel, Probability }, { "Plitt", "Molerus & Hoffmann", "Teipel & Hennig", "Probability" }, "Classification model");
+	AddComboParameter("Model", EModels::Plitt, { EModels::Plitt, EModels::Molerus, EModels::Teipel, EModels::Probability }, { "Plitt", "Molerus & Hoffmann", "Teipel & Hennig", "Probability" }, "Classification model");
 	AddTDParameter("Xcut"     ,	0.002 , "m", "Cut size of the classification model"                , 0     );
 	AddTDParameter("Alpha"    ,	8     , "-", "Sharpness of separation"                             , 0, 100);
 	AddTDParameter("Beta"     ,	0.5   , "-", "Sharpness of separation 2"                           , 0, 100);
@@ -90,10 +90,10 @@ double CScreen::CreateTransformMatrix(double _time)
 {
 	switch (m_model)
 	{
-	case Plitt:			return CreateTransformMatrixPlitt(_time);
-	case Molerus:		return CreateTransformMatrixMolerus(_time);
-	case Teipel:		return CreateTransformMatrixTeipel(_time);
-	case Probability:	return CreateTransformMatrixProbability(_time);
+	case EModels::Plitt:		return CreateTransformMatrixPlitt(_time);
+	case EModels::Molerus:		return CreateTransformMatrixMolerus(_time);
+	case EModels::Teipel:		return CreateTransformMatrixTeipel(_time);
+	case EModels::Probability:	return CreateTransformMatrixProbability(_time);
 	}
 	return -1;
 }

@@ -47,8 +47,8 @@ void CTimeDelay::Initialize(double _time)
 
 	switch (m_model)
 	{
-	case NORM_BASED:   InitializeNormBased(_time);   break;
-	case SIMPLE_SHIFT: InitializeSimpleShift(_time); break;
+	case EModel::NORM_BASED:   InitializeNormBased(_time);   break;
+	case EModel::SIMPLE_SHIFT: InitializeSimpleShift(_time); break;
 	}
 }
 
@@ -56,8 +56,8 @@ void CTimeDelay::Simulate(double _timeBeg, double _timeEnd)
 {
 	switch (m_model)
 	{
-	case NORM_BASED:   SimulateNormBased(_timeBeg, _timeEnd);   break;
-	case SIMPLE_SHIFT: SimulateSimpleShift(_timeBeg, _timeEnd); break;
+	case EModel::NORM_BASED:   SimulateNormBased(_timeBeg, _timeEnd);   break;
+	case EModel::SIMPLE_SHIFT: SimulateSimpleShift(_timeBeg, _timeEnd); break;
 	}
 }
 
@@ -65,8 +65,8 @@ void CTimeDelay::SaveState()
 {
 	switch (m_model)
 	{
-	case NORM_BASED:   SaveStateNormBased();   break;
-	case SIMPLE_SHIFT: SaveStateSimpleShift(); break;
+	case EModel::NORM_BASED:   SaveStateNormBased();   break;
+	case EModel::SIMPLE_SHIFT: SaveStateSimpleShift(); break;
 	}
 }
 
@@ -74,8 +74,8 @@ void CTimeDelay::LoadState()
 {
 	switch (m_model)
 	{
-	case NORM_BASED:   LoadStateNormBased();   break;
-	case SIMPLE_SHIFT: LoadStateSimpleShift(); break;
+	case EModel::NORM_BASED:   LoadStateNormBased();   break;
+	case EModel::SIMPLE_SHIFT: LoadStateSimpleShift(); break;
 	}
 }
 

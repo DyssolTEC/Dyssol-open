@@ -23,7 +23,7 @@ void CCrusher::CreateStructure()
 	AddPort("Output", EUnitPort::OUTPUT);
 
 	/// Add unit parameters ///
-	AddComboParameter("Model", BondNormal, { BondNormal, BondBimodal, Cone, Const }, { "Bond (normal distribution)", "Bond (bimodal breakage)", "Cone", "Const" }, "Crushing model");
+	AddComboParameter("Model", EModels::BondNormal, { EModels::BondNormal, EModels::BondBimodal, EModels::Cone, EModels::Const }, { "Bond (normal distribution)", "Bond (bimodal breakage)", "Cone", "Const" }, "Crushing model");
 	AddTDParameter(       "P"        , 50,     "kW", "Power input"                                                 , 0          );
 	AddTDParameter(       "Mean"     , 0.001,  "m" , "Mean value of the normal output distribution"                , 0          );
 	AddTDParameter(       "Deviation", 0.0001, "m" , "Standard deviation of the normal output distribution"        , 0          );
@@ -68,10 +68,10 @@ void CCrusher::Initialize(double _time)
 	/// Model-specific initialization ///
 	switch (m_model)
 	{
-	case BondNormal:  InitializeBondNormal(_time);	break;
-	case BondBimodal: InitializeBondBimodal(_time);	break;
-	case Cone:		  InitializeCone(_time);		break;
-	case Const:		  InitializeConst(_time);		break;
+	case EModels::BondNormal:  InitializeBondNormal(_time);	 break;
+	case EModels::BondBimodal: InitializeBondBimodal(_time); break;
+	case EModels::Cone:		   InitializeCone(_time);		 break;
+	case EModels::Const:	   InitializeConst(_time);		 break;
 	}
 }
 
@@ -83,10 +83,10 @@ void CCrusher::Simulate(double _time)
 	/// Model-specific simulation ///
 	switch (m_model)
 	{
-	case BondNormal:	SimulateBondNormal(_time);	break;
-	case BondBimodal:	SimulateBondBimodal(_time);	break;
-	case Cone:			SimulateCone(_time);		break;
-	case Const:			SimulateConst(_time);		break;
+	case EModels::BondNormal:	SimulateBondNormal(_time);	break;
+	case EModels::BondBimodal:	SimulateBondBimodal(_time);	break;
+	case EModels::Cone:			SimulateCone(_time);		break;
+	case EModels::Const:		SimulateConst(_time);		break;
 	}
 }
 
