@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>CPlotsViewer</class>
  <widget class="QWidget" name="CPlotsViewer">
@@ -52,7 +52,7 @@
        <property name="tickInterval">
         <number>1</number>
        </property>
-      </widget>
+      <property name="toolTip"><string>Navigate through all time points in the selected stream</string></property><property name="whatsThis"><string>Navigate through all time points in the selected stream</string></property></widget>
      </item>
      <item>
       <widget class="QLabel" name="labelZName">
@@ -81,17 +81,17 @@
      <property name="currentIndex">
       <number>-1</number>
      </property>
-    </widget>
+    <property name="toolTip"><string>Simulation results</string></property><property name="whatsThis"><string>Simulation results</string></property></widget>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11"/>
+ <layoutdefault spacing="6" margin="11" />
  <tabstops>
   <tabstop>horizontalSlider</tabstop>
   <tabstop>tabWidget</tabstop>
  </tabstops>
  <resources>
-  <include location="../../DyssolMainWindow/Resources.qrc"/>
+  <include location="../../DyssolMainWindow/Resources.qrc" />
  </resources>
- <connections/>
+ <connections />
 </ui>

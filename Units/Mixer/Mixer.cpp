@@ -13,6 +13,7 @@ void CMixer::CreateBasicInfo()
 	SetUnitName("Mixer");
 	SetAuthorName("SPE TUHH");
 	SetUniqueID("3872940337B3492CBAA5D7E9595EBD99");
+	SetHelpLink("003_models/unit_mixer.html");
 }
 
 void CMixer::CreateStructure()

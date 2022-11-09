@@ -3,11 +3,12 @@
 #pragma once
 
 #include "ui_HoldupsEditor.h"
+#include "QtDialog.h"
 
 class CFlowsheet;
 class CUnitContainer;
 
-class CHoldupsEditor : public QDialog
+class CHoldupsEditor : public CQtDialog
 {
 	Q_OBJECT
 private:
@@ -29,7 +30,7 @@ public slots:
 	void UpdateHoldupsList(); // update the list of holdups of specified unit
 
 public:
-	CHoldupsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, QWidget *parent = 0);
+	CHoldupsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, CModelsManager* _modelsManager, QWidget* _parent = nullptr);
 
 	void InitializeConnections() const;
 

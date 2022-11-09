@@ -5,17 +5,18 @@
 #include "BaseUnit.h"
 #include "BaseStream.h"
 
-CHoldupsEditor::CHoldupsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, QWidget *parent) :
-	QDialog(parent),
-	m_pFlowsheet{ _pFlowsheet },
-	m_pSelectedModel{ nullptr },
-	m_nLastModel{ 0 },
-	m_nLastHoldup{ 0 }
-
+CHoldupsEditor::CHoldupsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, CModelsManager* _modelsManager, QWidget* _parent)
+	: CQtDialog{ _modelsManager, _parent }
+	, m_pFlowsheet{ _pFlowsheet }
+	, m_pSelectedModel{ nullptr }
+	, m_nLastModel{ 0 }
+	, m_nLastHoldup{ 0 }
 {
 	ui.setupUi(this);
 	ui.widgetHoldupsEditor->SetFlowsheet(_pFlowsheet, _materialsDB);
 	setWindowFlags(windowFlags() | Qt::WindowMaximizeButtonHint | Qt::WindowMinimizeButtonHint);
+
+	SetHelpLink("001_ui/gui.html#sec-gui-menu-setup-holdups");
 }
 
 void CHoldupsEditor::InitializeConnections() const

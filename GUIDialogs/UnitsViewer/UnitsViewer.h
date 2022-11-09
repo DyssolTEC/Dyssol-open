@@ -4,6 +4,7 @@
 
 #include "ui_UnitsViewer.h"
 #include "QtPlot.h"
+#include "QtDialog.h"
 #include <QStackedWidget>
 
 class CPlotsViewer;
@@ -13,7 +14,7 @@ class CMaterialsDatabase;
 class CFlowsheet;
 class CUnitContainer;
 
-class CUnitsViewer : public QWidget
+class CUnitsViewer : public CQtDialog
 {
 	Q_OBJECT
 
@@ -38,7 +39,7 @@ private:
 	int m_nLastCurve;
 
 public:
-	CUnitsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDatabase, QWidget* parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
+	CUnitsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDatabase, CModelsManager* _modelsManager, QWidget* _parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 	~CUnitsViewer();
 
 	void InitializeConnections();

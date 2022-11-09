@@ -7,7 +7,8 @@
 #include "DyssolStringConstants.h"
 #include <QMessageBox>
 
-CTearStreamsEditor::CTearStreamsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, QWidget *parent) : QDialog(parent)
+CTearStreamsEditor::CTearStreamsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, CModelsManager* _modelsManager, QWidget* _parent)
+	: CQtDialog{ _modelsManager, _parent }
 {
 	ui.setupUi(this);
 	ui.widgetStreamsEditor->SetFlowsheet(_pFlowsheet, _materialsDB);
@@ -15,6 +16,8 @@ CTearStreamsEditor::CTearStreamsEditor(CFlowsheet* _pFlowsheet, CMaterialsDataba
 
 	m_pFlowsheet = _pFlowsheet;
 	m_pSequence = _pFlowsheet->GetCalculationSequence();
+
+	SetHelpLink("001_ui/gui.html#sec-gui-menu-setup-recycles");
 }
 
 void CTearStreamsEditor::InitializeConnections()

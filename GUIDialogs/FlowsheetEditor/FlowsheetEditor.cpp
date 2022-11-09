@@ -14,17 +14,19 @@
 #include <cmath>
 #include <sstream>
 
-CFlowsheetEditor::CFlowsheetEditor(CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, CModelsManager* _modelsManager, QSettings* _settings, QWidget* parent /*= 0 */)
-	: QWidget(parent),
-	m_pFlowsheet(_pFlowsheet),
-	m_materialsDB{ _matrialsDB },
-	m_modelsManager{ _modelsManager },
-	m_pSelectedModel(nullptr),
-	m_pSelectedStream(nullptr)
+
+CFlowsheetEditor::CFlowsheetEditor(CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, CModelsManager* _modelsManager, QSettings* _settings, QWidget* _parent)
+	: CQtDialog{ _modelsManager, _parent }
+	, m_pFlowsheet{ _pFlowsheet }
+	, m_materialsDB{ _matrialsDB }
+	, m_pSelectedModel{ nullptr }
+	, m_pSelectedStream{ nullptr }
 	, m_viewer{ new CFlowsheetViewer{ _pFlowsheet, _settings } }
 {
 	ui.setupUi(this);
 	ui.tableListValues->EnablePasting(false);
+
+	SetHelpLink("001_ui/gui.html#sec-gui-tabs-flowsheet");
 }
 
 CFlowsheetEditor::~CFlowsheetEditor()

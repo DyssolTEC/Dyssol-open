@@ -16,6 +16,7 @@ void CAgglomerationCellAverage::CreateBasicInfo()
 	SetAuthorName("Robin Ahrens");
 	SetUniqueID("B1C8328850C34E27BE4D338AEE39B2B4");
 	SetVersion(3);
+	SetHelpLink("003_models/solver_cellaverage.html");
 }
 
 void CAgglomerationCellAverage::Initialize()

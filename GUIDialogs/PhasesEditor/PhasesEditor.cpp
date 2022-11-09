@@ -6,12 +6,14 @@
 #include "DyssolUtilities.h"
 #include <QMessageBox>
 
-CPhasesEditor::CPhasesEditor( CFlowsheet* _pFlowsheet, QWidget *parent, Qt::WindowFlags flags )
-	: QDialog(parent, flags)
+CPhasesEditor::CPhasesEditor(CFlowsheet* _pFlowsheet, CModelsManager* _modelsManager, QWidget* _parent, Qt::WindowFlags flags)
+	: CQtDialog{ _modelsManager, _parent, flags }
 {
 	ui.setupUi(this);
 
 	m_pFlowsheet = _pFlowsheet;
+
+	SetHelpLink("001_ui/gui.html#sec-gui-menu-setup-phases");
 }
 
 CPhasesEditor::~CPhasesEditor()

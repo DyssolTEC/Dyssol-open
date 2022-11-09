@@ -7,13 +7,15 @@
 #include <QMessageBox>
 #include "DyssolStringConstants.h"
 
-CCalculationSequenceEditor::CCalculationSequenceEditor(CFlowsheet* _pFlowsheet, QWidget* parent, Qt::WindowFlags flags)
-	: QDialog(parent, flags),
-	m_pFlowsheet(_pFlowsheet),
-	m_pSequence(_pFlowsheet->GetCalculationSequence())
+CCalculationSequenceEditor::CCalculationSequenceEditor(CFlowsheet* _pFlowsheet, CModelsManager* _modelsManager, QWidget* _parent, Qt::WindowFlags _flags)
+	: CQtDialog{ _modelsManager, _parent, _flags }
+	, m_pFlowsheet{ _pFlowsheet }
+	, m_pSequence{ _pFlowsheet->GetCalculationSequence() }
 {
 	ui.setupUi(this);
 	ui.treeWidget->setColumnWidth(1, 20);
+
+	SetHelpLink("001_ui/gui.html#sec-gui-menu-setup-sequence");
 }
 
 void CCalculationSequenceEditor::InitializeConnections() const

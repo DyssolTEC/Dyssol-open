@@ -3,11 +3,12 @@
 #pragma once
 
 #include "ui_CompoundsManager.h"
+#include "QtDialog.h"
 
 class CFlowsheet;
 class CMaterialsDatabase;
 
-class CCompoundsManager: public QDialog
+class CCompoundsManager: public CQtDialog
 {
 	Q_OBJECT
 private:
@@ -28,7 +29,7 @@ public slots:
 	void accept();
 
 public:
-	CCompoundsManager( CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pDatabase, QWidget *parent = 0 );
+	CCompoundsManager(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pDatabase, CModelsManager* _modelsManager, QWidget* _parent = nullptr);
 
 	void InitializeConnections();
 

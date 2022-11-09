@@ -16,6 +16,7 @@ void CAgglomerationFFT::CreateBasicInfo()
 	SetAuthorName("Lusine Shahmuradyan / Robin Ahrens");
 	SetUniqueID("5547D68E93E844F8A55A36CB957A253B");
 	SetVersion(4);
+	SetHelpLink("003_models/solver_fft.html");
 }
 
 void CAgglomerationFFT::Initialize()

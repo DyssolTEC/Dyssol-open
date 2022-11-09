@@ -43,6 +43,7 @@ protected:
 	std::string m_name{};								// User-friendly name of the solver.
 	std::string m_authorName{};							// Name of solver's author.
 	std::string m_uniqueID{};							// Unique identifier of the solver.
+	std::string m_helpLink{};							// Link to help file for solver.
 	size_t m_version{};									// Version of the solver.
 	size_t m_compilerVersion{ COMPILER_VERSION };		// Version of compiler used to build the solver.
 
@@ -64,6 +65,11 @@ public:
 	size_t GetVersion() const;
 	// Returns string key, unique for all solvers.
 	std::string GetUniqueID() const;
+	/**
+	* \brief Returns the help link of the solver.
+	* \return Help link of the solver.
+	*/
+	std::string GetHelpLink() const;
 
 	// Sets the name of the solver.
 	void SetName(const std::string& _name);
@@ -73,6 +79,11 @@ public:
 	void SetVersion(size_t _version);
 	// Sets the unique identifier of the solver.
 	void SetUniqueID(const std::string& _id);
+	/**
+	* \brief Sets the help link of the solver.
+	* \param _helpLink Help link of the solver.
+	*/
+	void SetHelpLink(const std::string& _helpLink);
 
 	// Will be called once during creation of the solver (name, author, key, version).
 	virtual void CreateBasicInfo() = 0;

@@ -4,19 +4,19 @@
 
 #include "ui_ModulesManagerTab.h"
 #include "ModelsManager.h"
+#include "QtDialog.h"
 #include <QSettings>
 #include <QCheckBox>
 
-class CModulesManagerTab: public QDialog
+class CModulesManagerTab: public CQtDialog
 {
 	Q_OBJECT
 private:
 	Ui::CModulesManagerClass ui;
-	CModelsManager* m_pModelsManager;
 	QSettings *m_pSettings;
 
 public:
-	CModulesManagerTab(CModelsManager* _pModelsManager, QSettings* _pSettings, QWidget* parent = nullptr);
+	CModulesManagerTab(CModelsManager* _pModelsManager, QSettings* _pSettings, QWidget* _parent = nullptr);
 
 	void InitializeConnections() const;
 

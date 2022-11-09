@@ -48,6 +48,7 @@ protected:
 	std::string m_unitName{};	// Name of the unit.
 	std::string m_uniqueID{};	// Unique identifier of the unit.
 	std::string m_authorName{};	// Name of the unit's author.
+	std::string m_helpLink{};	// Link to help file for unit.
 	size_t m_version{ 0 };		// Version of the unit.
 
 private:
@@ -145,6 +146,11 @@ public:
 	 * \return Unique identifier of the unit.
 	 */
 	std::string GetUniqueID() const;
+	/**
+	 * \brief Returns the help link of the unit.
+	 * \return Help link of the unit.
+	 */
+	std::string GetHelpLink() const;
 
 	// TODO: rename to SetModelName() and add an alias to SetUnitName().
 	/**
@@ -171,6 +177,12 @@ public:
 	 * \param _id Identifier of the unit. Must be unique among all units in the library.
 	 */
 	void SetUniqueID(const std::string& _id);
+
+	/**
+	 * \brief Sets the help link of the unit.
+	 * \param _helpLink Help link of the unit.
+	 */
+	void SetHelpLink(const std::string& _helpLink);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Ports

@@ -485,6 +485,12 @@ void CQtTable::RestoreSelectedCell(int _row, int _col)
 		setCurrentCell(rowCount() - 1, _col, QItemSelectionModel::SelectCurrent);
 }
 
+QString CQtTable::GetCurrentItemUserData() const
+{
+	if (!currentItem()) return {};
+	return currentItem()->data(Qt::UserRole).toString();
+}
+
 QString CQtTable::GetItemUserData(int _row /*= -1*/, int _col /*= -1*/) const
 {
 	const int row = _row == -1 ? currentRow() : _row;

@@ -6,12 +6,14 @@
 #include <QMessageBox>
 #include <QDateTime>
 
-CSimulatorTab::CSimulatorTab(CFlowsheet* _pFlowsheet, CSimulator* _pSimulator, QWidget* _parent /*= 0*/) :
-	QWidget(_parent),
-	m_pFlowsheet{ _pFlowsheet },
-	m_pSimulator{ _pSimulator }
+CSimulatorTab::CSimulatorTab(CFlowsheet* _pFlowsheet, CSimulator* _pSimulator, CModelsManager* _modelsManager, QWidget* _parent)
+	: CQtDialog{ _modelsManager, _parent }
+	, m_pFlowsheet{ _pFlowsheet }
+	, m_pSimulator{ _pSimulator }
 {
 	ui.setupUi(this);
+
+	SetHelpLink("001_ui/gui.html#sec-gui-tabs-simulator");
 }
 
 CSimulatorTab::~CSimulatorTab()

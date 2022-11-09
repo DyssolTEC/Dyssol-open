@@ -4,6 +4,7 @@
 
 #include "ui_DustFormationTesterTab.h"
 #include "DustFormationTester.h"
+#include "QtDialog.h"
 
 class CFlowsheet;
 class CUnitContainer;
@@ -12,7 +13,7 @@ class CStream;
 class CHoldup;
 class CMaterialsDatabase;
 
-class CDustFormationTesterTab : public QDialog
+class CDustFormationTesterTab : public CQtDialog
 {
 	Q_OBJECT
 private:
@@ -23,7 +24,7 @@ private:
 	enum class EType { STREAMS = 0, UNITS = 1 } m_focusType{ EType::STREAMS };
 
 public:
-	CDustFormationTesterTab(const CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, QWidget* parent = Q_NULLPTR);
+	CDustFormationTesterTab(const CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, CModelsManager* _modelsManager, QWidget* _parent = nullptr);
 
 	void InitializeConnections();
 	void UpdateWholeView();

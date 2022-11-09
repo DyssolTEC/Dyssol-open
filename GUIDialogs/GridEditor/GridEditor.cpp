@@ -11,8 +11,8 @@
 #include <QStandardItem>
 
 
-CGridEditor::CGridEditor(CFlowsheet* _flowsheet, const CMaterialsDatabase& _materialsDB, QWidget* _parent, Qt::WindowFlags _flags)
-	: QDialog{ _parent, _flags }
+CGridEditor::CGridEditor(CFlowsheet* _flowsheet, const CMaterialsDatabase& _materialsDB, CModelsManager* _modelsManager, QWidget* _parent, Qt::WindowFlags _flags)
+	: CQtDialog{ _modelsManager, _parent, _flags }
 	, m_materialsDB{ _materialsDB }
 	, m_flowsheet{ _flowsheet }
 	, m_grid{ _flowsheet->GetGrid() }
@@ -20,6 +20,8 @@ CGridEditor::CGridEditor(CFlowsheet* _flowsheet, const CMaterialsDatabase& _mate
 	ui.setupUi(this);
 	ui.splitter->setSizes(QList{ 140, 400 });
 	setWindowFlags(windowFlags() | Qt::WindowMaximizeButtonHint | Qt::WindowMinimizeButtonHint);
+
+	SetHelpLink("001_ui/gui.html#sec-gui-menu-setup-grids");
 }
 
 void CGridEditor::InitializeConnections() const

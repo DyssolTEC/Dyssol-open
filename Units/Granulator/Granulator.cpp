@@ -14,6 +14,7 @@ void CSimpleGranulator::CreateBasicInfo()
 	SetUnitName("Granulator");
 	SetAuthorName("SPE TUHH");
 	SetUniqueID("560E86013C6B4647A32A3AE346D5DB75");
+	SetHelpLink("003_models/unit_granulator.html");
 }
 
 void CSimpleGranulator::CreateStructure()

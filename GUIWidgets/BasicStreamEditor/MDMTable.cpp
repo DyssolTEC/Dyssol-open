@@ -49,6 +49,8 @@ void CMDMTable::SetHeaders(const std::vector<std::string>& _sNames)
 	auto names = _sNames;
 
 	m_pTable->setHorizontalHeaderItem( 0, new QTableWidgetItem( "Time [s]" ) );
+	m_pTable->horizontalHeaderItem(0)->setToolTip("Time point");
+	m_pTable->horizontalHeaderItem(0)->setWhatsThis("Time point");
 	int nCompoundsNumber = (int)m_pData->GetDimensionSizeByType( DISTR_COMPOUNDS );
 	if(names.size() != nCompoundsNumber )
 		names.resize( nCompoundsNumber );
@@ -57,6 +59,8 @@ void CMDMTable::SetHeaders(const std::vector<std::string>& _sNames)
 		if( m_pTable->columnCount() < i+2 )
 			m_pTable->insertColumn( i+2 );
 		m_pTable->setHorizontalHeaderItem( i+1, new QTableWidgetItem( QString::fromUtf8(names[i].c_str() ) ) );
+		m_pTable->horizontalHeaderItem(i + 1)->setToolTip("Mass fraction (0..1) of compound " + QString::fromStdString(names[i]) + " in the current phase at the corresponding time point");
+		m_pTable->horizontalHeaderItem(i + 1)->setWhatsThis("Mass fraction (0..1) of compound " + QString::fromStdString(names[i]) + " in the current phase at the corresponding time point");
 	}
 }
 

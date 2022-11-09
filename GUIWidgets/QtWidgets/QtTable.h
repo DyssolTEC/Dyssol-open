@@ -93,6 +93,7 @@ public:
 	void RestoreSelectedCell(const std::pair<int, int>& _cellPos);
 	void RestoreSelectedCell(int _row, int _col);
 
+	QString GetCurrentItemUserData() const;
 	QString GetItemUserData(int _row = -1, int _col = -1) const;
 
 	std::vector<double> GetRowValues(int _row) const;

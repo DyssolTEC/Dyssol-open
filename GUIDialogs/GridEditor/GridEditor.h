@@ -5,10 +5,11 @@
 #include "ui_GridEditor.h"
 #include "DimensionParameters.h"
 #include "MultidimensionalGrid.h"
+#include "QtDialog.h"
 
 class CFlowsheet;
 
-class CGridEditor : public QDialog
+class CGridEditor : public CQtDialog
 {
 	Q_OBJECT
 	Ui::CGridEditorClass ui{};
@@ -18,7 +19,7 @@ class CGridEditor : public QDialog
 	CMultidimensionalGrid m_grid;				// Working copy of the grid.
 
 public:
-	CGridEditor(CFlowsheet* _flowsheet, const CMaterialsDatabase& _materialsDB, QWidget* _parent = nullptr, Qt::WindowFlags _flags = Qt::WindowFlags());
+	CGridEditor(CFlowsheet* _flowsheet, const CMaterialsDatabase& _materialsDB, CModelsManager* _modelsManager, QWidget* _parent = nullptr, Qt::WindowFlags _flags = Qt::WindowFlags());
 
 	// Connects all signals and slots.
 	void InitializeConnections() const;

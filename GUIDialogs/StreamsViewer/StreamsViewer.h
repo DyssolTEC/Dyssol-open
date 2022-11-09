@@ -3,12 +3,13 @@
 #pragma once
 
 #include "ui_StreamsViewer.h"
+#include "QtDialog.h"
 
 class CMaterialsDatabase;
 class CFlowsheet;
 class CBasicStreamsViewer;
 
-class CStreamsViewer : public QWidget
+class CStreamsViewer : public CQtDialog
 {
 	Q_OBJECT
 	Ui::CStreamsViewerClass ui;
@@ -17,7 +18,7 @@ class CStreamsViewer : public QWidget
 	CBasicStreamsViewer *m_pViewer;	// streams viewer
 
 public:
-	CStreamsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, QWidget* _parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
+	CStreamsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, CModelsManager* _modelsManager, QWidget* _parent = nullptr, Qt::WindowFlags _flags = Qt::WindowFlags());
 
 	void InitializeConnections() const;
 

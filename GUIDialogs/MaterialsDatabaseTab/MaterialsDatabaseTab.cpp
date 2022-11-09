@@ -10,10 +10,10 @@
 #include <QFileDialog>
 #include <QLockFile>
 
-CMaterialsDatabaseTab::CMaterialsDatabaseTab(CMaterialsDatabase *_pMaterialsDatabase, QSettings* _pSettings, QWidget *parent)
-	: QDialog(parent),
-	m_materialsDB(_pMaterialsDatabase),
-	m_pSettings(_pSettings)
+CMaterialsDatabaseTab::CMaterialsDatabaseTab(CMaterialsDatabase* _pMaterialsDatabase, CModelsManager* _modelsManager, QSettings* _pSettings, QWidget* _parent)
+	: CQtDialog{ _modelsManager, _parent }
+	, m_materialsDB{ _pMaterialsDatabase }
+	, m_pSettings{ _pSettings }
 {
 	ui.setupUi(this);
 	setWindowFlags(windowFlags() ^ Qt::WindowContextHelpButtonHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
@@ -22,6 +22,8 @@ CMaterialsDatabaseTab::CMaterialsDatabaseTab(CMaterialsDatabase *_pMaterialsData
 	ui.tableInterProperties->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
 	UpdateWholeView();
+
+	SetHelpLink("001_ui/gui.html#sec-gui-menu-tools-mdb");
 }
 
 void CMaterialsDatabaseTab::InitializeConnections()
@@ -1016,5 +1018,5 @@ void CMaterialsDatabaseTab::keyPressEvent(QKeyEvent* _event)
 	else if (_event->matches(QKeySequence::SaveAs) || _event->key() == Qt::Key_S && _event->modifiers() & Qt::ControlModifier && _event->modifiers() & Qt::ShiftModifier)
 		SaveDatabaseAs();
 	else
-		QDialog::keyPressEvent(_event);
+		CQtDialog::keyPressEvent(_event);
 }

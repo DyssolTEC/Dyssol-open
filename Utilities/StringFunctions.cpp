@@ -112,6 +112,11 @@ namespace StringFunctions
 		return _s.find(_subs) != std::string::npos;
 	}
 
+	bool StartsWith(const std::string& _s, const std::string& _subs)
+	{
+		return _s.rfind(_subs, 0) == 0;
+	}
+
 	void ReplaceAll(std::string& _s, const std::string& _old, const std::string& _new)
 	{
 		if (_old.empty() || _s.empty()) return;

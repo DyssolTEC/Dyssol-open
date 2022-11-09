@@ -6,8 +6,8 @@
 #include "Flowsheet.h"
 #include "BaseUnit.h"
 
-CUnitsViewer::CUnitsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDatabase, QWidget* parent, Qt::WindowFlags flags)
-	: QWidget(parent, flags)
+CUnitsViewer::CUnitsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDatabase, CModelsManager* _modelsManager, QWidget* _parent, Qt::WindowFlags flags)
+	: CQtDialog{ _modelsManager, _parent, flags }
 {
 	ui.setupUi(this);
 
@@ -44,6 +44,8 @@ CUnitsViewer::CUnitsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materia
 	m_nLastTab = 0;
 	m_nLastVariable = 0;
 	m_nLastUnit = 0;
+
+	SetHelpLink("001_ui/gui.html#sec-gui-tabs-units");
 }
 
 CUnitsViewer::~CUnitsViewer()

@@ -4,11 +4,14 @@
 #include "MaterialsDatabase.h"
 #include "Flowsheet.h"
 
-CCompoundsManager::CCompoundsManager(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pDatabase, QWidget *parent) : QDialog(parent)
+CCompoundsManager::CCompoundsManager(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pDatabase, CModelsManager* _modelsManager, QWidget* _parent)
+	: CQtDialog{ _modelsManager, _parent }
 {
 	ui.setupUi(this);
 	m_pFlowsheet = _pFlowsheet;
 	m_pMaterialsDatabase = _pDatabase;
+
+	SetHelpLink("001_ui/gui.html#sec-gui-menu-setup-compounds");
 }
 
 void CCompoundsManager::InitializeConnections()

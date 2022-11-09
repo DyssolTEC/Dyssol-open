@@ -23,6 +23,12 @@
     <ClCompile Include="QtList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="QtTooltipMenuBar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="QtDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="QtTable.h">
@@ -32,6 +38,12 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="QtList.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="QtTooltipMenuBar.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="QtDialog.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

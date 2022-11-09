@@ -17,6 +17,7 @@ void CTimeDelay::CreateBasicInfo()
 	SetUnitName("Time delay");
 	SetAuthorName("SPE TUHH");
 	SetUniqueID("56D734DFB1EA441B859C2C70D6F43BBC");
+	SetHelpLink("003_models/unit_timedelay.html");
 }
 
 void CTimeDelay::CreateStructure()

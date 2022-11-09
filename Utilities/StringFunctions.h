@@ -38,6 +38,7 @@ namespace StringFunctions
 
 	bool Contains(const std::string& _s, char _c);									// Checks if the string contains a symbol.
 	bool Contains(const std::string& _s, const std::string& _subs);					// Checks if the string contains a substring.
+	bool StartsWith(const std::string& _s, const std::string& _subs);				// Checks if the string starts with a substring.
 
 	void ReplaceAll(std::string& _s, const std::string& _old, const std::string& _new);					 // Replaces all occurrences of _old with _new in _s.
 	void ReplaceAll(std::wstring& _s, const std::wstring& _old, const std::wstring& _new);				 // Replaces all occurrences of _old with _new in _s.
