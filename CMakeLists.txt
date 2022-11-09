@@ -123,6 +123,7 @@ SET(TESTS
   "Unit_Crusher_Cone"
   "Unit_Crusher_Const"
   "Unit_Crusher_PBMTM"
+  "Unit_Cyclone_Muschelknautz"
   "Unit_Granulator"
   "Unit_GranulatorSimpleBatch"
   "Unit_Mixer"
