@@ -16,7 +16,7 @@ using namespace std;
 void CCycloneMuschelknautz::CreateBasicInfo()
 {
 	// Basic unit's info
-	SetUnitName("Cyclone (Muschelknautz)");
+	SetUnitName("Cyclone Muschelknautz");
 	SetAuthorName("Moritz Buchholz & Vasyl Skorych (TUHH SPE)");
 	SetUniqueID("170BEB3E368548BDBF8B3DB1C66DB179");
 }
