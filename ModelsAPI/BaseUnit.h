@@ -9,6 +9,7 @@
 #include "UnitPorts.h"
 #include "StateVariable.h"
 #include "StreamManager.h"
+#include "DyssolUtilities.h"
 #include <mutex>
 
 #ifdef _DEBUG
