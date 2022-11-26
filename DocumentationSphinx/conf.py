@@ -70,7 +70,7 @@ master_doc = 'index'
 exclude_patterns = []
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = None
+pygments_style = "sphinx"
 
 #  Warn about all references where the target cannot be found.
 nitpicky = True

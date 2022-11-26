@@ -15,3 +15,8 @@
        overflow: visible !important;
     }
 }
+
+/* Show breathe-generated cpp code with monospace font*/
+.sig .sig.object .cpp {
+    font-family: monospace;
+}
