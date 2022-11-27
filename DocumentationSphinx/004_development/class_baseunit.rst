@@ -17,9 +17,4 @@ Functions in class ``CBaseUnit`` are introduced below.
 
 .. doxygenclass:: CBaseUnit
    :members:
-..    :protected-members:
-..    :private-members:
-..    :members-only:
-..    :outline:
-..    :no-link:
-..    :allow-dot-graphs:
+   :allow-dot-graphs:

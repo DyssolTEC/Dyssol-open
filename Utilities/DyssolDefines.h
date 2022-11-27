@@ -223,12 +223,14 @@ enum class EOverall : uint32_t
 	OVERALL_USER_DEFINED_10 = 210,
 };
 
-// Types of unit ports.
+/**
+ * Types of unit ports.
+ */
 enum class EUnitPort : uint32_t
 {
-	INPUT     = 0,
-	OUTPUT    = 1,
-	UNDEFINED = 2
+	INPUT     = 0, ///< Input port.
+	OUTPUT    = 1, ///< Output port.
+	UNDEFINED = 2  ///< Undefined.
 };
 
 

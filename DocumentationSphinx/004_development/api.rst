@@ -9,6 +9,8 @@ Models API
 	class_baseunit
 	class_stream
 	class_holdup
+	class_portsmanager
+	class_unitport
 	class_transformmatrix
 	class_densemdmatrix
 	class_matrix2d

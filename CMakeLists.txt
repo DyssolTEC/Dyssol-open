@@ -181,18 +181,20 @@ IF(BUILD_DOCS)
 
   # List of all API headers
   SET(API_FILE_NAMES
-    "BaseUnit"
-    "Stream"
-    "Holdup"
-    "TransformMatrix"
-    "DenseMDMatrix"
-    "Matrix2D"
-    "DistributionsFunctions"
+    "ModelsAPI/BaseUnit"
+    "ModelsAPI/Stream"
+    "ModelsAPI/Holdup"
+    "ModelsAPI/UnitPorts"
+    "ModelsAPI/TransformMatrix"
+    "ModelsAPI/DenseMDMatrix"
+    "ModelsAPI/Matrix2D"
+    "ModelsAPI/DistributionsFunctions"
+    "Utilities/DyssolDefines"
   )
 
   # Gather all API headers
   FOREACH(FILENAME ${API_FILE_NAMES})
-    FILE(GLOB_RECURSE HEADER ${CMAKE_SOURCE_DIR}/ModelsAPI/${FILENAME}.h)
+    FILE(GLOB_RECURSE HEADER ${CMAKE_SOURCE_DIR}/${FILENAME}.h)
     LIST(APPEND API_HEADERS ${HEADER})
   ENDFOREACH(FILENAME ${API_FILE_NAMES})
   # Format the list for Doxygen file
