@@ -17,6 +17,6 @@
 }
 
 /* Show breathe-generated cpp code with monospace font*/
-.sig .sig.object .cpp {
+.sig.cpp {
     font-family: monospace;
 }
