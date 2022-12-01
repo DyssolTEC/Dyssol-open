@@ -1,10 +1,17 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "DAESolver.h"
+#if defined(_MSC_VER)
+__pragma(warning(push))
+__pragma(warning(disable : 4305 4309))
+#endif
 #include <ida/ida.h>
 #include <ida/ida_ls_impl.h>
 #include <sunlinsol/sunlinsol_dense.h>
 #include <nvector/nvector_serial.h>
+#if defined(_MSC_VER)
+__pragma(warning(pop))
+#endif
 #include <cstring>
 
 #ifdef _MSC_VER
@@ -50,10 +57,19 @@ bool CDAESolver::SetModel( CDAEModel* _pModel )
 {
 	ClearMemory();
 
+#if SUNDIALS_VERSION_MAJOR < 6
+#else
+	SUNContext_Create(nullptr, &m_sunctx);
+#endif
+
 	m_pModel = _pModel;
 
 	// Create IDA memory
+#if SUNDIALS_VERSION_MAJOR < 6
 	m_pIDAmem = IDACreate();
+#else
+	m_pIDAmem = IDACreate(m_sunctx);
+#endif
 	if( m_pIDAmem == NULL )
 	{
 		ErrorHandler(-1, "IDA", "IDACreate", "Cannot allocate memory for solver.", &m_sErrorDescription);
@@ -68,10 +84,17 @@ bool CDAESolver::SetModel( CDAEModel* _pModel )
 	const sunindextype nVarsCnt = static_cast<sunindextype>(_pModel->GetVariablesNumber());
 
 	// Allocate N-vectors
+#if SUNDIALS_VERSION_MAJOR < 6
 	m_vectorVars  = N_VNew_Serial(nVarsCnt);
 	m_vectorDers  = N_VNew_Serial(nVarsCnt);
 	m_vectorATols = N_VNew_Serial(nVarsCnt);
 	m_vectorId    = N_VNew_Serial(nVarsCnt);
+#else
+	m_vectorVars  = N_VNew_Serial(nVarsCnt, m_sunctx);
+	m_vectorDers  = N_VNew_Serial(nVarsCnt, m_sunctx);
+	m_vectorATols = N_VNew_Serial(nVarsCnt, m_sunctx);
+	m_vectorId    = N_VNew_Serial(nVarsCnt, m_sunctx);
+#endif
 
 	if (!m_vectorVars || !m_vectorDers || !m_vectorATols || !m_vectorId)
 	{
@@ -93,7 +116,11 @@ bool CDAESolver::SetModel( CDAEModel* _pModel )
 		return false;
 
 	// Set constraints
+#if SUNDIALS_VERSION_MAJOR < 6
 	N_Vector vConstrVars = N_VNew_Serial(nVarsCnt);
+#else
+	N_Vector vConstrVars = N_VNew_Serial(nVarsCnt, m_sunctx);
+#endif
 	bool bAllZero = true;
 	for (size_t i = 0; i < static_cast<size_t>(nVarsCnt); ++i)
 	{
@@ -126,9 +153,17 @@ bool CDAESolver::SetModel( CDAEModel* _pModel )
 
 	// Set linear solver
 	/* Create dense SUNMatrix for use in linear solves */
+#if SUNDIALS_VERSION_MAJOR < 6
 	m_A = SUNDenseMatrix(nVarsCnt, nVarsCnt);
+#else
+	m_A = SUNDenseMatrix(nVarsCnt, nVarsCnt, m_sunctx);
+#endif
 	/* Create dense SUNMatrix for use in linear solves */
+#if SUNDIALS_VERSION_MAJOR < 6
 	m_LS = SUNLinSol_Dense(m_vectorVars, m_A);
+#else
+	m_LS = SUNLinSol_Dense(m_vectorVars, m_A, m_sunctx);
+#endif
 	/* Attach the matrix and linear solver */
 	if (IDASetLinearSolver(m_pIDAmem, m_LS, m_A) != IDALS_SUCCESS)
 		return false;
@@ -154,8 +189,13 @@ bool CDAESolver::Calculate( realtype _dStartTime, realtype _dEndTime )
 		if( IDACalcIC( m_pIDAmem, IDA_YA_YDP_INIT, 0.001 ) != IDA_SUCCESS )
 			return false;
 		N_Vector vConsistVars, vConsistDers;
+#if SUNDIALS_VERSION_MAJOR < 6
 		vConsistVars = N_VNew_Serial( static_cast<sunindextype>(m_pModel->GetVariablesNumber()) );
 		vConsistDers = N_VNew_Serial( static_cast<sunindextype>(m_pModel->GetVariablesNumber()) );
+#else
+		vConsistVars = N_VNew_Serial( static_cast<sunindextype>(m_pModel->GetVariablesNumber()), m_sunctx);
+		vConsistDers = N_VNew_Serial( static_cast<sunindextype>(m_pModel->GetVariablesNumber()), m_sunctx);
+#endif
 		if( IDAGetConsistentIC( m_pIDAmem, vConsistVars, vConsistDers ) != IDA_SUCCESS )
 			return false;
 		m_pModel->HandleResults( 0, NV_DATA_S( vConsistVars ), NV_DATA_S( vConsistDers ) );
@@ -252,8 +292,17 @@ int CDAESolver::ResidualFunction( realtype _dTime, N_Vector _value, N_Vector _de
 
 bool CDAESolver::InitStoringMemory()
 {
+#if SUNDIALS_VERSION_MAJOR < 6
+#else
+	SUNContext_Create(nullptr, &m_sunctxStore);
+#endif
+
 	// Allocate IDA memory for storing
+#if SUNDIALS_VERSION_MAJOR < 6
 	m_pStoreIDAmem = IDACreate();
+#else
+	m_pStoreIDAmem = IDACreate(m_sunctxStore);
+#endif
 	if (!m_pStoreIDAmem)
 	{
 		ErrorHandler( -1, "IDA", "IDACreate", "Cannot allocate memory for solver.", &m_sErrorDescription );
@@ -266,8 +315,13 @@ bool CDAESolver::InitStoringMemory()
 	}
 
 	const sunindextype nVarsCnt = static_cast<sunindextype>(m_pModel->GetVariablesNumber());
+#if SUNDIALS_VERSION_MAJOR < 6
 	m_StoreVectorVars = N_VNew_Serial( nVarsCnt );
 	m_StoreVectorDers = N_VNew_Serial( nVarsCnt );
+#else
+	m_StoreVectorVars = N_VNew_Serial(nVarsCnt, m_sunctxStore);
+	m_StoreVectorDers = N_VNew_Serial(nVarsCnt, m_sunctxStore);
+#endif
 	if (!m_StoreVectorVars || !m_StoreVectorDers)
 	{
 		ErrorHandler( -1, "IDA", "N_VNew_Serial", "Cannot allocate memory for solver.", &m_sErrorDescription );
@@ -280,9 +334,17 @@ bool CDAESolver::InitStoringMemory()
 
 	// Set linear solver
 	/* Create dense SUNMatrix for use in linear solves */
+#if SUNDIALS_VERSION_MAJOR < 6
 	m_A_store = SUNDenseMatrix(nVarsCnt, nVarsCnt);
+#else
+	m_A_store = SUNDenseMatrix(nVarsCnt, nVarsCnt, m_sunctxStore);
+#endif
 	/* Create dense SUNMatrix for use in linear solves */
-	m_LS_store = SUNDenseLinearSolver(m_vectorVars, m_A_store);
+#if SUNDIALS_VERSION_MAJOR < 6
+	m_LS_store = SUNLinSol_Dense(m_vectorVars, m_A_store);
+#else
+	m_LS_store = SUNLinSol_Dense(m_vectorVars, m_A_store, m_sunctxStore);
+#endif
 	/* Attach the matrix and linear solver */
 	if (IDASetLinearSolver(m_pStoreIDAmem, m_LS_store, m_A_store) != IDALS_SUCCESS)
 		return false;
@@ -291,10 +353,17 @@ bool CDAESolver::InitStoringMemory()
 	auto* storeMem = static_cast<IDAMemRec*>( m_pStoreIDAmem );
 
 	// Allocate memory in m_pStoreIDAmem
+#if SUNDIALS_VERSION_MAJOR < 6
 	if (!storeMem->ida_ewt)		storeMem->ida_ewt   = N_VNew_Serial(nVarsCnt);
 	if (!storeMem->ida_yy)		storeMem->ida_yy    = N_VNew_Serial(nVarsCnt);
 	if (!storeMem->ida_yp)		storeMem->ida_yp    = N_VNew_Serial(nVarsCnt);
 	if (!storeMem->ida_delta)	storeMem->ida_delta = N_VNew_Serial(nVarsCnt);
+#else
+	if (!storeMem->ida_ewt)		storeMem->ida_ewt   = N_VNew_Serial(nVarsCnt, m_sunctxStore);
+	if (!storeMem->ida_yy)		storeMem->ida_yy    = N_VNew_Serial(nVarsCnt, m_sunctxStore);
+	if (!storeMem->ida_yp)		storeMem->ida_yp    = N_VNew_Serial(nVarsCnt, m_sunctxStore);
+	if (!storeMem->ida_delta)	storeMem->ida_delta = N_VNew_Serial(nVarsCnt, m_sunctxStore);
+#endif
 
 	return true;
 }
@@ -314,6 +383,11 @@ void CDAESolver::ClearMemory()
 	SUNLinSolFree(m_LS);
 	// free IDA memory
 	if (m_pIDAmem)			{ IDAFree(&m_pIDAmem);					m_pIDAmem = nullptr; }
+#if SUNDIALS_VERSION_MAJOR < 6
+#else
+	// free context
+	SUNContext_Free(&m_sunctx);
+#endif
 	// free store IDA memory
 	if (m_pStoreIDAmem)
 	{
@@ -326,6 +400,11 @@ void CDAESolver::ClearMemory()
 		SUNLinSolFree(m_LS_store);
 		IDAFree(&m_pStoreIDAmem);	m_pStoreIDAmem = nullptr;
 	}
+#if SUNDIALS_VERSION_MAJOR < 6
+#else
+	// free context
+	SUNContext_Free(&m_sunctxStore);
+#endif
 }
 
 void CDAESolver::CopyNVector( N_Vector _dst, N_Vector _src )
@@ -376,7 +455,11 @@ void CDAESolver::CopyIDAmem( void* _pDst, void* _pSrc )
 	dst->ida_h0u = src->ida_h0u;
 	dst->ida_hh = src->ida_hh;
 	dst->ida_hused = src->ida_hused;
+#if SUNDIALS_VERSION_MAJOR < 6
 	dst->ida_rr = src->ida_rr;
+#else
+	dst->ida_eta = src->ida_eta;
+#endif
 	dst->ida_tn = src->ida_tn;
 	dst->ida_tretlast = src->ida_tretlast;
 	dst->ida_cj = src->ida_cj;
@@ -384,12 +467,30 @@ void CDAESolver::CopyIDAmem( void* _pDst, void* _pSrc )
 	dst->ida_cjold = src->ida_cjold;
 	dst->ida_cjratio = src->ida_cjratio;
 	dst->ida_ss = src->ida_ss;
+	dst->ida_oldnrm = src->ida_oldnrm;
 	dst->ida_epsNewt = src->ida_epsNewt;
 	dst->ida_epcon = src->ida_epcon;
 	dst->ida_toldel = src->ida_toldel;
 
 	/// Limits
 	dst->ida_hmax_inv = src->ida_hmax_inv;
+	dst->ida_maxncf = src->ida_maxncf;
+	dst->ida_maxnef = src->ida_maxnef;
+	dst->ida_maxord = src->ida_maxord;
+	dst->ida_maxord_alloc = src->ida_maxord_alloc;
+	dst->ida_mxstep = src->ida_mxstep;
+	dst->ida_hmax_inv = src->ida_hmax_inv;
+#if SUNDIALS_VERSION_MAJOR < 6
+#else
+	dst->ida_hmin = src->ida_hmin;
+	dst->ida_eta_max_fx = src->ida_eta_max_fx;
+	dst->ida_eta_min_fx = src->ida_eta_min_fx;
+	dst->ida_eta_max = src->ida_eta_max;
+	dst->ida_eta_min = src->ida_eta_min;
+	dst->ida_eta_low = src->ida_eta_low;
+	dst->ida_eta_min_ef = src->ida_eta_min_ef;
+	dst->ida_eta_cf = src->ida_eta_cf;
+#endif
 
 	/// Counters
 	dst->ida_nst = src->ida_nst;
@@ -397,6 +498,10 @@ void CDAESolver::CopyIDAmem( void* _pDst, void* _pSrc )
 	dst->ida_ncfn = src->ida_ncfn;
 	dst->ida_netf = src->ida_netf;
 	dst->ida_nni = src->ida_nni;
+#if SUNDIALS_VERSION_MAJOR < 6
+#else
+	dst->ida_nnf = src->ida_nnf;
+#endif
 	dst->ida_nsetups = src->ida_nsetups;
 
 	/// Space requirements for IDA
@@ -407,6 +512,10 @@ void CDAESolver::CopyIDAmem( void* _pDst, void* _pSrc )
 	dst->ida_trout = src->ida_trout;
 	dst->ida_toutc = src->ida_toutc;
 	dst->ida_taskc = src->ida_taskc;
+#if SUNDIALS_VERSION_MAJOR < 6
+#else
+	dst->ida_nnf = src->ida_nnf;
+#endif
 
 	/// Linear Solver specific memory
 	((IDALsMemRec*)dst->ida_lmem)->nje = ((IDALsMemRec*)src->ida_lmem)->nje;

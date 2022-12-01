@@ -34,6 +34,12 @@ private:
 	SUNMatrix m_A, m_A_store;
 	SUNLinearSolver m_LS, m_LS_store;
 
+#if SUNDIALS_VERSION_MAJOR < 6
+#else
+	SUNContext m_sunctx{};      ///< SUNDIALS simulation context.
+	SUNContext m_sunctxStore{}; ///< Memory for storing SUNDIALS simulation context.
+#endif
+
 	// Solver settings
 	size_t m_nMaxIter;		///< Integer with maximum number of solver iterations
 
