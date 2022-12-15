@@ -10,7 +10,7 @@ stages:
     - export CCACHE_BASEDIR="$PWD"
     - export CCACHE_DIR="$PWD/ccache"
     - ccache -s
-    - mkdir build && cd build && cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_VERBOSE_MAKEFILE=ON  -DCMAKE_CXX_FLAGS="$CXXFLAGS" -DCMAKE_INSTALL_PREFIX=../inst .. && make && make install
+    - mkdir build && cd build && cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_VERBOSE_MAKEFILE=ON  -DCMAKE_CXX_FLAGS="$CXXFLAGS" -DCMAKE_INSTALL_PREFIX=../install .. && make && make install
     - CTEST_OUTPUT_ON_FAILURE=1 make test
     - ccache -s
 
@@ -18,7 +18,7 @@ stages:
   artifacts:
     when: always
     paths:
-      - inst
+      - install
       - build
     expire_in: 2 weeks
 
