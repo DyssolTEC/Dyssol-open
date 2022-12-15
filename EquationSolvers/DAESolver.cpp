@@ -430,20 +430,6 @@ void CDAESolver::CopyIDAmem( void* _pDst, void* _pSrc )
 	std::memcpy( dst->ida_sigma, src->ida_sigma, sizeof(realtype)*MXORDP1 );
 	std::memcpy( dst->ida_gamma, src->ida_gamma, sizeof(realtype)*MXORDP1 );
 
-	/// N_Vectors
-	if( ( src->ida_ewt != NULL ) && ( dst->ida_ewt != NULL) )
-		std::memcpy( NV_DATA_S( dst->ida_ewt ), NV_DATA_S( src->ida_ewt ), sizeof(realtype)*static_cast<size_t>(NV_LENGTH_S(src->ida_ewt)) );
-	if( ( src->ida_yy != NULL ) && ( dst->ida_yy != NULL) )
-		std::memcpy( NV_DATA_S( dst->ida_yy ), NV_DATA_S( src->ida_yy ), sizeof(realtype)*static_cast<size_t>(NV_LENGTH_S(src->ida_yy)) );
-	if( ( src->ida_yp != NULL ) && ( dst->ida_yp != NULL) )
-		std::memcpy( NV_DATA_S( dst->ida_yp ), NV_DATA_S( src->ida_yp ), sizeof(realtype)*static_cast<size_t>(NV_LENGTH_S(src->ida_yp)) );
-	if( ( src->ida_delta != NULL ) && ( dst->ida_delta != NULL) )
-		std::memcpy( NV_DATA_S( dst->ida_delta ), NV_DATA_S( src->ida_delta ), sizeof(realtype)*static_cast<size_t>(NV_LENGTH_S(src->ida_delta)) );
-
-	/// Tstop information
-	dst->ida_tstopset = src->ida_tstopset;
-	dst->ida_tstop = src->ida_tstop;
-
 	/// Step Data
 	dst->ida_kk = src->ida_kk;
 	dst->ida_kused = src->ida_kused;
@@ -472,26 +458,6 @@ void CDAESolver::CopyIDAmem( void* _pDst, void* _pSrc )
 	dst->ida_epcon = src->ida_epcon;
 	dst->ida_toldel = src->ida_toldel;
 
-	/// Limits
-	dst->ida_hmax_inv = src->ida_hmax_inv;
-	dst->ida_maxncf = src->ida_maxncf;
-	dst->ida_maxnef = src->ida_maxnef;
-	dst->ida_maxord = src->ida_maxord;
-	dst->ida_maxord_alloc = src->ida_maxord_alloc;
-	dst->ida_mxstep = src->ida_mxstep;
-	dst->ida_hmax_inv = src->ida_hmax_inv;
-#if SUNDIALS_VERSION_MAJOR < 6
-#else
-	dst->ida_hmin = src->ida_hmin;
-	dst->ida_eta_max_fx = src->ida_eta_max_fx;
-	dst->ida_eta_min_fx = src->ida_eta_min_fx;
-	dst->ida_eta_max = src->ida_eta_max;
-	dst->ida_eta_min = src->ida_eta_min;
-	dst->ida_eta_low = src->ida_eta_low;
-	dst->ida_eta_min_ef = src->ida_eta_min_ef;
-	dst->ida_eta_cf = src->ida_eta_cf;
-#endif
-
 	/// Counters
 	dst->ida_nst = src->ida_nst;
 	dst->ida_nre = src->ida_nre;
@@ -503,27 +469,6 @@ void CDAESolver::CopyIDAmem( void* _pDst, void* _pSrc )
 	dst->ida_nnf = src->ida_nnf;
 #endif
 	dst->ida_nsetups = src->ida_nsetups;
-
-	/// Space requirements for IDA
-	dst->ida_tolsf = src->ida_tolsf;
-
-	// Rootfinding Data
-	dst->ida_nrtfn = src->ida_nrtfn;
-	dst->ida_trout = src->ida_trout;
-	dst->ida_toutc = src->ida_toutc;
-	dst->ida_taskc = src->ida_taskc;
-#if SUNDIALS_VERSION_MAJOR < 6
-#else
-	dst->ida_nnf = src->ida_nnf;
-#endif
-
-	/// Linear Solver specific memory
-	((IDALsMemRec*)dst->ida_lmem)->nje = ((IDALsMemRec*)src->ida_lmem)->nje;
-	((IDALsMemRec*)dst->ida_lmem)->nreDQ = ((IDALsMemRec*)src->ida_lmem)->nreDQ;
-
-	 SUNMatCopy(((IDALsMemRec*)src->ida_lmem)->J, ((IDALsMemRec*)dst->ida_lmem)->J);
-	if ((((IDALsMemRec*)dst->ida_lmem)->x != NULL) && (((IDALsMemRec*)src->ida_lmem)->x != NULL))
-		std::memcpy(NV_DATA_S(((IDALsMemRec*)dst->ida_lmem)->x), NV_DATA_S(((IDALsMemRec*)src->ida_lmem)->x), sizeof(realtype)*static_cast<size_t>(NV_LENGTH_S(((IDALsMemRec*)src->ida_lmem)->x)));
 }
 
 void CDAESolver::ErrorHandler( int _nErrorCode, const char *_pModule, const char *_pFunction, char *_pMsg, void *_sOutString )
