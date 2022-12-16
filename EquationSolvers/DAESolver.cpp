@@ -304,57 +304,18 @@ void CDAESolver::CopyIDAmem(void* _dst, void* _src)
 {
 	if (_src == nullptr || _dst == nullptr) return;
 
-	auto* src = static_cast<IDAMem>(_src);
+	const auto* src = static_cast<IDAMem>(_src);
 	auto* dst = static_cast<IDAMem>(_dst);
 
-	// divided differences array and associated minor arrays
 	for (size_t i = 0; i < MXORDP1; ++i)
 		CopyNVector(dst->ida_phi[i], src->ida_phi[i]);
 	std::memcpy(dst->ida_psi  , src->ida_psi  , sizeof(realtype) * MXORDP1);
-	std::memcpy(dst->ida_alpha, src->ida_alpha, sizeof(realtype) * MXORDP1);
-	std::memcpy(dst->ida_beta , src->ida_beta , sizeof(realtype) * MXORDP1);
-	std::memcpy(dst->ida_sigma, src->ida_sigma, sizeof(realtype) * MXORDP1);
-	std::memcpy(dst->ida_gamma, src->ida_gamma, sizeof(realtype) * MXORDP1);
-
-	/// step data
-	dst->ida_kk    = src->ida_kk;
 	dst->ida_kused = src->ida_kused;
-	dst->ida_knew  = src->ida_knew;
-	dst->ida_phase = src->ida_phase;
 	dst->ida_ns    = src->ida_ns;
-
-	dst->ida_hin      = src->ida_hin;
-	dst->ida_h0u      = src->ida_h0u;
-	dst->ida_hh       = src->ida_hh;
-	dst->ida_hused    = src->ida_hused;
-#if SUNDIALS_VERSION_MAJOR < 6
-	dst->ida_rr       = src->ida_rr;
-#else
-	dst->ida_eta      = src->ida_eta;
-#endif
-	dst->ida_tn       = src->ida_tn;
-	dst->ida_tretlast = src->ida_tretlast;
-	dst->ida_cj       = src->ida_cj;
-	dst->ida_cjlast   = src->ida_cjlast;
-	dst->ida_cjold    = src->ida_cjold;
-	dst->ida_cjratio  = src->ida_cjratio;
-	dst->ida_ss       = src->ida_ss;
-	dst->ida_oldnrm   = src->ida_oldnrm;
-	dst->ida_epsNewt  = src->ida_epsNewt;
-	dst->ida_epcon    = src->ida_epcon;
-	dst->ida_toldel   = src->ida_toldel;
-
-	/// counters
-	dst->ida_nst     = src->ida_nst;
-	dst->ida_nre     = src->ida_nre;
-	dst->ida_ncfn    = src->ida_ncfn;
-	dst->ida_netf    = src->ida_netf;
-	dst->ida_nni     = src->ida_nni;
-#if SUNDIALS_VERSION_MAJOR < 6
-#else
-	dst->ida_nnf     = src->ida_nnf;
-#endif
-	dst->ida_nsetups = src->ida_nsetups;
+	dst->ida_hh    = src->ida_hh;
+	dst->ida_tn    = src->ida_tn;
+	dst->ida_cj    = src->ida_cj;
+	dst->ida_nst   = src->ida_nst;
 }
 
 int CDAESolver::ResidualFunction(realtype _time, N_Vector _vals, N_Vector _ders, N_Vector _ress, void* _model)
