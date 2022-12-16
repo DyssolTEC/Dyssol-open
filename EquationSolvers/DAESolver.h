@@ -7,110 +7,135 @@
 #include <sundials/sundials_matrix.h>
 #include <sundials/sundials_linearsolver.h>
 
-#define ZERO RCONST(0.0)
-
 /** Solver of differential algebraic equations. Uses IDA solver from SUNDIALS package*/
 class CDAESolver
 {
-private:
-	CDAEModel * m_pModel{};		///< Pointer to a DAE model
-	void *m_pIDAmem{};			///< IDA memory
-
-	N_Vector m_vectorVars;		///< Vector of variables
-	N_Vector m_vectorDers;		///< Vector of derivatives
-	N_Vector m_vectorATols;		///< Vector of absolute tolerances
-	N_Vector m_vectorId;		///< Vector of states (algebraic/differential)
-
-	realtype m_dLastTime;		///< Last calculated time
-	realtype m_dMaxStep;		// Maximum iteration time step.
-
-	std::string m_sErrorDescription;	///< Text description of the last occurred error
-
-	// Variables for storing
-	void *m_pStoreIDAmem{};		///< Memory for storing of IDA memory
-	N_Vector m_StoreVectorVars;	///< Memory for storing of vector of variables
-	N_Vector m_StoreVectorDers;	///< Memory for storing of vector of derivatives
-
-	SUNMatrix m_A, m_A_store;
-	SUNLinearSolver m_LS, m_LS_store;
-
+	struct SSolverMemory
+	{
 #if SUNDIALS_VERSION_MAJOR < 6
 #else
-	SUNContext m_sunctx{};      ///< SUNDIALS simulation context.
-	SUNContext m_sunctxStore{}; ///< Memory for storing SUNDIALS simulation context.
+		SUNContext sunctx{};      ///< SUNDIALS simulation context.
 #endif
+		void* idamem{};			  ///< Pointer to IDA memory.
+		SUNMatrix sunmatr{};      ///< Matrix object.
+		SUNLinearSolver linsol{}; ///< Linear solver object.
+		N_Vector vars{};          ///< Vector of variables.
+		N_Vector ders{};          ///< Vector of derivatives.
+		N_Vector atols{};         ///< Vector of absolute tolerances.
+		N_Vector types{};         ///< Vector of variables' types: algebraic/differential.
+		N_Vector constr{};        ///< Vector of variables' constraints.
+	};
 
-	// Solver settings
-	size_t m_nMaxIter;		///< Integer with maximum number of solver iterations
+	CDAEModel* m_model{};	           ///< Pointer to a DAE model.
+
+	SSolverMemory m_solverMem{};       ///< Solver-specific memory.
+	SSolverMemory m_solverMem_store{}; ///< Solver-specific memory for temporary storing.
+
+	realtype m_timeLast{};             ///< Last calculated time point.
+	realtype m_maxStep{};              ///< Maximum iteration time step.
+	size_t m_maxNumSteps{ 500 };       ///< Maximum number of allowed solver iterations.
+
+	std::string m_errorMessage;	       ///< Text description of the occurred errors.
 
 public:
-	/**	Basic constructor.*/
-	CDAESolver();
-	/**	Basic destructor.*/
+	/**	Basic constructor. */
+	CDAESolver() = default;
+	/**	Basic destructor. */
 	~CDAESolver();
 
 	/** Set model to a solver.
-	*	\param _pModel Pointer to a model
-	*	\retval true No errors occurred*/
-	bool SetModel(CDAEModel* _pModel);
+	*	\param _model Pointer to a model.
+	*	\retval true No errors occurred. */
+	bool SetModel(CDAEModel* _model);
 
-	/** Solve problem on a given time interval.
-	*	\param _dStartTime Start of the time interval
-	*	\param _dEndTime End of the time interval
-	*	\retval true No errors occurred*/
-	bool Calculate(realtype _dStartTime, realtype _dEndTime);
 	/** Solve problem on a given time point.
-	*	\param _dTime Time point
-	*	\retval true No errors occurred*/
-	bool Calculate(realtype _dTime);
+	*	\param _time Time point.
+	*	\retval true No errors occurred. */
+	bool Calculate(realtype _time);
+	/** Solve problem on a given time interval.
+	*	\param _timeBeg Start of the time interval.
+	*	\param _timeEnd End of the time interval.
+	*	\retval true No errors occurred. */
+	bool Calculate(realtype _timeBeg, realtype _timeEnd);
 
-	/** Save current state of solver. Should be called during saving of unit.*/
-	void SaveState();
-	/** Load current state of solver. Should be called during loading of unit.*/
-	void LoadState();
+	/** Save current state of solver.
+	*	Should be called during saving of unit. */
+	void SaveState() const;
+	/** Load current state of solver.
+	*	Should be called during loading of unit. */
+	void LoadState() const;
 
-	/** Return error description.*/
-	std::string GetError();
+	/** Returns error description.
+	 *	\return Current error description. */
+	[[nodiscard]] std::string GetError() const;
 
-	/** Sets maximum time step for solver.*/
-	bool SetMaxStep(double _dStep);
+	/** Returns the maximum allowed steps number of the solver.
+	 *	\return Number of steps. */
+	[[nodiscard]] size_t GetSolverMaxNumSteps() const;
+	/** Sets the maximum allowed steps number of the solver.
+	 *	\param _num Number of steps. */
+	void SetSolverMaxNumSteps(size_t _num);
+	/** Returns the maximum time step for solver.
+	 *	\return Time step. */
+	[[nodiscard]] double GetMaxStep() const;
+	/** Sets the maximum time step for solver.
+	 *	\param _step Time step. */
+	void SetMaxStep(double _step);
 
 private:
-	/** Calculate residuals. Function computes residual for given values of the independent variable, state vector, and derivative.
-	*	\param _dTime Current value of the independent variable
-	*	\param _value Current value of the dependent variable vector, y(t)
-	*	\param _deriv Current value of y'(t)
-	*	\param _res Output residual vector F(t, y, y')
-	*	\param _pModel Pointer to a DAE model
-	*	\return Error code*/
-	static int ResidualFunction(realtype _dTime, N_Vector _value, N_Vector _deriv, N_Vector _res, void *_pModel);
+	/** Allocates and initializes memory required for solver.
+	 *	\param _mem Reference to the memory struct.
+	 *	\retval true No errors occurred. */
+	bool InitSolverMemory(SSolverMemory& _mem);
+	/** Clear allocated solver-related memory.
+	 *	\param _mem Reference to the memory struct. */
+	static void ClearSolverMemory(SSolverMemory& _mem);
 
-	/** Initialize memory for storing.*/
-	bool InitStoringMemory();
-	/** Clear all allocated memory.*/
-	void ClearMemory();
+	/** De-allocates and clears all internal data. */
+	void Clear();
 
-	/** Copy N_Vector.
-	*	\param _dst Pointer to the memory location to copy to
-	*	\param _src Pointer to the memory location to copy from*/
-	void CopyNVector(N_Vector _dst, N_Vector _src);
-	/** Copy IDAMem.
-	*	\param _pDst Pointer to the memory location to copy to
-	*	\param _pSrc Pointer to the memory location to copy from*/
-	void CopyIDAmem(void* _pDst, void* _pSrc);
+	/** Copies N_Vector.
+	*	\param _dst Pointer to the destination memory location.
+	*	\param _src Pointer to the source memory location. */
+	static void CopyNVector(N_Vector _dst, N_Vector _src);
+	/** Copy IDA memory structure.
+	*	\param _dst Pointer to the destination memory location.
+	*	\param _src Pointer to the source memory location. */
+	static void CopyIDAmem(void* _dst, void* _src);
 
-	/** Function to handle errors.
-	*	\param _nErrorCode Error code
-	*	\param _pModule Name of the ida module reporting the error.
-	*	\param _pFunction Name of the function in which the error occurred
-	*	\param _pMsg The error message
-	*	\param _sOutString Pointer to a string to put error message*/
-	static void ErrorHandler(int _nErrorCode, const char *_pModule, const char *_pFunction, char *_pMsg, void *_sOutString);
+	/** A callback function called to calculate the problem residuals.
+	*   The function computes residual for given values of the independent variables, state vectors, and derivatives.
+	*	\param _time Current value of the independent variable.
+	*	\param _vals Current value of the dependent variable vector, y(t).
+	*	\param _ders Current value of derivative y'(t).
+	*	\param _ress Output residual vector F(t, y, y').
+	*	\param _model Pointer to a DAE model.
+	*	\return Error code. */
+	static int ResidualFunction(realtype _time, N_Vector _vals, N_Vector _ders, N_Vector _ress, void *_model);
 
-	// ========== Functions to work with solver settings
-
-	/** Returns the maximum iteration number of the solver (default: 200)*/
-	size_t GetSolverMaxIter();
-	/** Sets the maximum iteration number of the solver*/
-	void SetSolverMaxIter(size_t _nMaxIter);
+	/** A callback function called by the solver to handle internal errors.
+	*	\param _errorCode Error code
+	*	\param _module Name of the  module reporting the error
+	*	\param _function Name of the function in which the error occurred
+	*	\param _message The error message
+	*	\param _outString Pointer to a string to put error message*/
+	static void ErrorHandler(int _errorCode, const char* _module, const char* _function, char* _message, void* _outString);
+	/** Builds an error message from its parts.
+	*	\param _module Name of the module reporting the error
+	*	\param _function Name of the function in which the error occurred
+	*	\param _message The error message
+	*	\return Built error message*/
+	static std::string BuildErrorMessage(const std::string& _module, const std::string& _function, const std::string& _message);
+	/** Appends an error message to the given output string.
+	*	\param _module Name of the module reporting the error
+	*	\param _function Name of the function in which the error occurred
+	*	\param _message The error message
+	*	\param _out Output string */
+	static void AppendMessage(const std::string& _module, const std::string& _function, const std::string& _message, std::string& _out);
+	/** Appends an error message to the current error description.
+	*	\param _module Name of the module reporting the error
+	*	\param _function Name of the function in which the error occurred
+	*	\param _message The error message
+	*	\return false */
+	bool WriteError(const std::string& _module, const std::string& _function, const std::string& _message);
 };
