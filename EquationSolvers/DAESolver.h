@@ -12,8 +12,7 @@ class CDAESolver
 {
 	struct SSolverMemory
 	{
-#if SUNDIALS_VERSION_MAJOR < 6
-#else
+#if SUNDIALS_VERSION_MAJOR >= 6
 		SUNContext sunctx{};      ///< SUNDIALS simulation context.
 #endif
 		void* idamem{};			  ///< Pointer to IDA memory.
