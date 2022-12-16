@@ -10,6 +10,7 @@
 /** Solver of differential algebraic equations. Uses IDA solver from SUNDIALS package*/
 class CDAESolver
 {
+	/** Memory needed for solver. */
 	struct SSolverMemory
 	{
 #if SUNDIALS_VERSION_MAJOR >= 6
@@ -25,16 +26,31 @@ class CDAESolver
 		N_Vector constr{};        ///< Vector of variables' constraints.
 	};
 
-	CDAEModel* m_model{};	           ///< Pointer to a DAE model.
+	/** Data field from IDA memory needed to be temporary stored. */
+	struct SStoreMemory
+	{
+		std::vector<realtype> vars;
+		std::vector<realtype> ders;
+		std::vector<std::vector<realtype>> ida_phi;
+		std::vector<realtype> ida_psi;
+		int ida_kused;
+		int ida_ns;
+		realtype ida_hh;
+		realtype ida_tn;
+		realtype ida_cj;
+		long int ida_nst;
+	};
 
-	SSolverMemory m_solverMem{};       ///< Solver-specific memory.
-	SSolverMemory m_solverMem_store{}; ///< Solver-specific memory for temporary storing.
+	CDAEModel* m_model{};	          ///< Pointer to a DAE model.
 
-	realtype m_timeLast{};             ///< Last calculated time point.
-	realtype m_maxStep{};              ///< Maximum iteration time step.
-	size_t m_maxNumSteps{ 500 };       ///< Maximum number of allowed solver iterations.
+	SSolverMemory m_solverMem{};      ///< Solver-specific memory.
+	SStoreMemory m_solverMem_store{}; ///< Solver-specific memory for temporary storing.
 
-	std::string m_errorMessage;	       ///< Text description of the occurred errors.
+	realtype m_timeLast{};            ///< Last calculated time point.
+	realtype m_maxStep{};             ///< Maximum iteration time step.
+	size_t m_maxNumSteps{ 500 };      ///< Maximum number of allowed solver iterations.
+
+	std::string m_errorMessage;	      ///< Text description of the occurred errors.
 
 public:
 	/**	Basic constructor. */
@@ -59,7 +75,7 @@ public:
 
 	/** Save current state of solver.
 	*	Should be called during saving of unit. */
-	void SaveState() const;
+	void SaveState();
 	/** Load current state of solver.
 	*	Should be called during loading of unit. */
 	void LoadState() const;
@@ -89,18 +105,12 @@ private:
 	/** Clear allocated solver-related memory.
 	 *	\param _mem Reference to the memory struct. */
 	static void ClearSolverMemory(SSolverMemory& _mem);
+	/** Initializes memory required for storing solver data.
+	 *	\param _mem Reference to the memory struct. */
+	void InitStoreMemory(SStoreMemory& _mem) const;
 
 	/** De-allocates and clears all internal data. */
 	void Clear();
-
-	/** Copies N_Vector.
-	*	\param _dst Pointer to the destination memory location.
-	*	\param _src Pointer to the source memory location. */
-	static void CopyNVector(N_Vector _dst, N_Vector _src);
-	/** Copy IDA memory structure.
-	*	\param _dst Pointer to the destination memory location.
-	*	\param _src Pointer to the source memory location. */
-	static void CopyIDAmem(void* _dst, void* _src);
 
 	/** A callback function called to calculate the problem residuals.
 	*   The function computes residual for given values of the independent variables, state vectors, and derivatives.
