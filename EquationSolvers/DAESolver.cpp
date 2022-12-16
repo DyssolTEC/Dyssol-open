@@ -6,7 +6,7 @@ __pragma(warning(push))
 __pragma(warning(disable : 4305 4309))
 #endif
 #include <ida/ida.h>
-#include <ida/ida_ls_impl.h>
+#include <ida/ida_impl.h>
 #include <sunlinsol/sunlinsol_dense.h>
 #include <nvector/nvector_serial.h>
 #if defined(_MSC_VER)
@@ -45,11 +45,7 @@ bool CDAESolver::SetModel(CDAEModel* _model)
 		ClearSolverMemory(m_solverMem);
 		return false;
 	}
-	if (!InitSolverMemory(m_solverMem_store))
-	{
-		ClearSolverMemory(m_solverMem_store);
-		return false;
-	}
+	InitStoreMemory(m_solverMem_store);
 
 	SaveState();
 	return true;
@@ -128,18 +124,42 @@ bool CDAESolver::Calculate(realtype _timeBeg, realtype _timeEnd)
 	return true;
 }
 
-void CDAESolver::SaveState() const
+void CDAESolver::SaveState()
 {
-	CopyIDAmem (m_solverMem_store.idamem, m_solverMem.idamem);
-	CopyNVector(m_solverMem_store.vars  , m_solverMem.vars  );
-	CopyNVector(m_solverMem_store.ders  , m_solverMem.ders  );
+	const size_t len = m_model->GetVariablesNumber();
+	const auto* src = static_cast<IDAMem>(m_solverMem.idamem);
+
+	std::memcpy(m_solverMem_store.vars.data(), N_VGetArrayPointer(m_solverMem.vars), sizeof(realtype) * len);
+	std::memcpy(m_solverMem_store.ders.data(), N_VGetArrayPointer(m_solverMem.ders), sizeof(realtype) * len);
+
+	for (size_t i = 0; i < MXORDP1; ++i)
+		std::memcpy(m_solverMem_store.ida_phi[i].data(), N_VGetArrayPointer(src->ida_phi[i]), sizeof(realtype) * len);
+	std::memcpy(m_solverMem_store.ida_psi.data(), src->ida_psi, sizeof(realtype) * MXORDP1);
+	m_solverMem_store.ida_kused = src->ida_kused;
+	m_solverMem_store.ida_ns    = src->ida_ns;
+	m_solverMem_store.ida_hh    = src->ida_hh;
+	m_solverMem_store.ida_tn    = src->ida_tn;
+	m_solverMem_store.ida_cj    = src->ida_cj;
+	m_solverMem_store.ida_nst   = src->ida_nst;
 }
 
 void CDAESolver::LoadState() const
 {
-	CopyIDAmem (m_solverMem.idamem, m_solverMem_store.idamem);
-	CopyNVector(m_solverMem.vars  , m_solverMem_store.vars  );
-	CopyNVector(m_solverMem.ders  , m_solverMem_store.ders  );
+	const size_t len = m_model->GetVariablesNumber();
+	auto* dst = static_cast<IDAMem>(m_solverMem.idamem);
+
+	std::memcpy(N_VGetArrayPointer(m_solverMem.vars), m_solverMem_store.vars.data(), sizeof(realtype) * len);
+	std::memcpy(N_VGetArrayPointer(m_solverMem.ders), m_solverMem_store.ders.data(), sizeof(realtype) * len);
+
+	for (size_t i = 0; i < MXORDP1; ++i)
+		std::memcpy(N_VGetArrayPointer(dst->ida_phi[i]), m_solverMem_store.ida_phi[i].data(), sizeof(realtype) * len);
+	std::memcpy(dst->ida_psi, m_solverMem_store.ida_psi.data(), sizeof(realtype) * MXORDP1);
+	dst->ida_kused = m_solverMem_store.ida_kused;
+	dst->ida_ns    = m_solverMem_store.ida_ns;
+	dst->ida_hh    = m_solverMem_store.ida_hh;
+	dst->ida_tn    = m_solverMem_store.ida_tn;
+	dst->ida_cj    = m_solverMem_store.ida_cj;
+	dst->ida_nst   = m_solverMem_store.ida_nst;
 }
 
 std::string CDAESolver::GetError() const
@@ -266,37 +286,21 @@ void CDAESolver::ClearSolverMemory(SSolverMemory& _mem)
 #endif
 }
 
+void CDAESolver::InitStoreMemory(SStoreMemory& _mem) const
+{
+	const auto len = static_cast<sunindextype>(m_model->GetVariablesNumber());
+	_mem.vars.resize(len);
+	_mem.ders.resize(len);
+	_mem.ida_phi.resize(MXORDP1, std::vector<realtype>(len));
+	_mem.ida_psi.resize(MXORDP1);
+}
+
 void CDAESolver::Clear()
 {
 	m_model = nullptr;
 	m_errorMessage.clear();
 
 	ClearSolverMemory(m_solverMem);
-	ClearSolverMemory(m_solverMem_store);
-}
-
-void CDAESolver::CopyNVector(N_Vector _dst, N_Vector _src)
-{
-	if (_dst == nullptr || _src == nullptr) return;
-	std::memcpy(N_VGetArrayPointer(_dst), N_VGetArrayPointer(_src), sizeof(realtype) * static_cast<size_t>(NV_LENGTH_S(_src)));
-}
-
-void CDAESolver::CopyIDAmem(void* _dst, void* _src)
-{
-	if (_src == nullptr || _dst == nullptr) return;
-
-	const auto* src = static_cast<IDAMem>(_src);
-	auto* dst = static_cast<IDAMem>(_dst);
-
-	for (size_t i = 0; i < MXORDP1; ++i)
-		CopyNVector(dst->ida_phi[i], src->ida_phi[i]);
-	std::memcpy(dst->ida_psi  , src->ida_psi  , sizeof(realtype) * MXORDP1);
-	dst->ida_kused = src->ida_kused;
-	dst->ida_ns    = src->ida_ns;
-	dst->ida_hh    = src->ida_hh;
-	dst->ida_tn    = src->ida_tn;
-	dst->ida_cj    = src->ida_cj;
-	dst->ida_nst   = src->ida_nst;
 }
 
 int CDAESolver::ResidualFunction(realtype _time, N_Vector _vals, N_Vector _ders, N_Vector _ress, void* _model)
