@@ -14,7 +14,7 @@ if (-not (Get-Command Expand-7Zip -ErrorAction Ignore)) {
 
 $HDF5_MAJOR_VERSION = "1"
 $HDF5_MIDDLE_VERSION = "12"
-$HDF5_MINOR_VERSION = "0"
+$HDF5_MINOR_VERSION = "2"
 $HDF5_VERSION = "$HDF5_MAJOR_VERSION.$HDF5_MIDDLE_VERSION.$HDF5_MINOR_VERSION"
 $HDF5_DOWNLOAD_ADDRESS = "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-$HDF5_MAJOR_VERSION.$HDF5_MIDDLE_VERSION/hdf5-$HDF5_VERSION/src/hdf5-$HDF5_VERSION.zip"
 $HDF5_NAME = "hdf5-$HDF5_VERSION"
@@ -46,16 +46,16 @@ Expand-Archive -Path $HDF5_ZIP_NAME -DestinationPath .
 New-Item $HDF5_BUILD_PATH\x32 -ItemType directory
 Set-Location $HDF5_BUILD_PATH\x32
 cmake -G "Visual Studio 16 2019" -A Win32 $HDF5_SRC_PATH -DCMAKE_INSTALL_PREFIX:PATH=$HDF5_INSTALL_PATH -DBUILD_SHARED_LIBS=NO -DBUILD_TESTING=NO -DHDF5_BUILD_CPP_LIB=YES -DHDF5_BUILD_HL_LIB=YES -DHDF5_BUILD_EXAMPLES=NO -DHDF5_BUILD_TOOLS=NO -DHDF5_ENABLE_Z_LIB_SUPPORT=YES -DZLIB_DIR="" -DZLIB_INCLUDE_DIR="$ZLIB_INSTALL_PATH/include" -DZLIB_LIBRARY_DEBUG="$ZLIB_INSTALL_PATH/lib32/zlibstaticd.lib" -DZLIB_LIBRARY_RELEASE="$ZLIB_INSTALL_PATH/lib32/zlibstatic.lib"
-cmake --build . --target INSTALL --config Debug
-cmake --build . --target INSTALL --config Release
+cmake --build . --parallel --target INSTALL --config Debug
+cmake --build . --parallel --target INSTALL --config Release
 Rename-Item -Path "$HDF5_INSTALL_PATH\lib" -NewName "$HDF5_INSTALL_PATH\lib32"
 
 # Build x64
 New-Item $HDF5_BUILD_PATH\x64 -ItemType directory
 Set-Location $HDF5_BUILD_PATH\x64
 cmake -G "Visual Studio 16 2019" -A x64 $HDF5_SRC_PATH -DCMAKE_INSTALL_PREFIX:PATH=$HDF5_INSTALL_PATH -DBUILD_SHARED_LIBS=NO -DBUILD_TESTING=NO -DHDF5_BUILD_CPP_LIB=YES -DHDF5_BUILD_HL_LIB=YES -DHDF5_BUILD_EXAMPLES=NO -DHDF5_BUILD_TOOLS=NO -DHDF5_ENABLE_Z_LIB_SUPPORT=YES -DZLIB_DIR="" -DZLIB_INCLUDE_DIR="$ZLIB_INSTALL_PATH/include" -DZLIB_LIBRARY_DEBUG="$ZLIB_INSTALL_PATH/lib64/zlibstaticd.lib" -DZLIB_LIBRARY_RELEASE="$ZLIB_INSTALL_PATH/lib64/zlibstatic.lib"
-cmake --build . --target INSTALL --config Debug
-cmake --build . --target INSTALL --config Release
+cmake --build . --parallel --target INSTALL --config Debug
+cmake --build . --parallel --target INSTALL --config Release
 Rename-Item -Path "$HDF5_INSTALL_PATH\lib" -NewName "$HDF5_INSTALL_PATH\lib64"
 
 ################################################################################

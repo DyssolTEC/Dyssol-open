@@ -18,9 +18,9 @@ catch [System.Management.Automation.CommandNotFoundException] { Throw "python3 i
 ################################################################################
 ### Paths
 
-$GRAPHVIZ_MAJOR_VERSION  = "2"
-$GRAPHVIZ_MIDDLE_VERSION = "49"
-$GRAPHVIZ_MINOR_VERSION  = "3"
+$GRAPHVIZ_MAJOR_VERSION  = "7"
+$GRAPHVIZ_MIDDLE_VERSION = "0"
+$GRAPHVIZ_MINOR_VERSION  = "4"
 $GRAPHVIZ_VERSION        = "$GRAPHVIZ_MAJOR_VERSION.$GRAPHVIZ_MIDDLE_VERSION.$GRAPHVIZ_MINOR_VERSION"
 $GRAPHVIZ_GIT_ADDRESS    = "https://gitlab.com/graphviz/graphviz.git"
 $GRAPHVIZ_NAME           = "graphviz-$GRAPHVIZ_VERSION"
@@ -108,12 +108,13 @@ cmake -G "Visual Studio 16 2019" -A Win32 $GRAPHVIZ_SRC_PATH `
 	-Dwith_cxx_tests=NO `
 	-Dwith_digcola=YES `
 	-Dwith_expat=YES `
+	-Dwith_gvedit=NO `
 	-Dwith_ipsepcola=NO `
 	-Dwith_ortho=YES `
 	-Dwith_sfdp=YES `
 	-Dwith_smyrna=NO `
 	-Dwith_zlib=YES
-cmake --build . --target INSTALL --config Release
+cmake --build . --parallel --target INSTALL --config Release
 Rename-Item -Path "$GRAPHVIZ_INSTALL_PATH\bin" -NewName "$GRAPHVIZ_INSTALL_PATH\bin32"
 Rename-Item -Path "$GRAPHVIZ_INSTALL_PATH\lib" -NewName "$GRAPHVIZ_INSTALL_PATH\lib32"
 Copy-Item -Path "$CURRENT_PATH\graphviz_config" -Destination "$GRAPHVIZ_INSTALL_PATH\bin32\config6"
@@ -167,12 +168,13 @@ cmake -G "Visual Studio 16 2019" -A x64 $GRAPHVIZ_SRC_PATH `
 	-Dwith_cxx_tests=NO `
 	-Dwith_digcola=YES `
 	-Dwith_expat=YES `
+	-Dwith_gvedit=NO `
 	-Dwith_ipsepcola=NO `
 	-Dwith_ortho=YES `
 	-Dwith_sfdp=YES `
 	-Dwith_smyrna=NO `
 	-Dwith_zlib=YES
-cmake --build . --target INSTALL --config Release
+cmake --build . --parallel --target INSTALL --config Release
 Rename-Item -Path "$GRAPHVIZ_INSTALL_PATH\bin" -NewName "$GRAPHVIZ_INSTALL_PATH\bin64"
 Rename-Item -Path "$GRAPHVIZ_INSTALL_PATH\lib" -NewName "$GRAPHVIZ_INSTALL_PATH\lib64"
 Copy-Item -Path "$CURRENT_PATH\graphviz_config" -Destination "$GRAPHVIZ_INSTALL_PATH\bin64\config6"
