@@ -76,14 +76,27 @@ public:
 	 *	\return Index of the first variable*/
 	size_t AddDAEVariables(bool _isDifferentiable, const std::vector<double>& _variablesInit, const std::vector<double>& _derivativesInit, double _constraint = 0.0);
 	/**	Get current number of variables.*/
-	size_t GetVariablesNumber();
+	size_t GetVariablesNumber() const;
 	/**	Get initial value of variable.
 	 *	\param _dIndex Index of variable*/
 	double GetVarInitValue(size_t _dIndex);
+	/**	Get initial value of all variables.
+	 *	\return Vector of initial values of all variables*/
+	std::vector<double> GetVarInitValues() const;
 	/**	Get initial value of derivative.
 	 *	\param _dIndex Index of variable*/
 	double GetDerInitValue(size_t _dIndex);
+	/**	Get initial value of all derivatives.
+	 *	\return Vector of initial values of all derivatives*/
+	std::vector<double> GetDerInitValues() const;
 	double GetConstraintValue(size_t _dIndex);
+	/**	Get constraint values for all variables.
+	 *	\return Vector of constraint values for all variables*/
+	std::vector<double> GetConstraintValues() const;
+	/** Checks if a constraint defined for any variable.
+	 *	\return true There are defined constraints.
+	 *	\return false No defined constraints. */
+	bool IsConstraintsDefined() const;
 	/** Remove all variables*/
 	void ClearVariables();
 	/**	Get type of the variable.
@@ -91,6 +104,9 @@ public:
 	 *	\retval 0.0 Algebraic variable
 	 *	\retval 1.0 Differential variable*/
 	double GetVarType(size_t _dIndex);
+	/**	Get types of all variables.
+	 *	\return Vector of types of all variables: 0.0 - algebraic variable, 1.0 - differential variable */
+	std::vector<double> GetVarTypes() const;
 
 	// ========== Functions to work with tolerances
 
@@ -107,6 +123,9 @@ public:
 	/**	Get absolute tolerance.
 	 *	\param _dIndex Index of variable*/
 	double GetATol(size_t _dIndex);
+	/**	Get absolute tolerances for all variables.
+	 *	\return Vector of absolute tolerances for all variables*/
+	std::vector<double> GetATols() const;
 
 	/**	Set pointer to user data. This pointer will be returned with functions \a CalculateResiduals and \a ResultsHandler.
 	 *	\param _pUserData Pointer to user data*/

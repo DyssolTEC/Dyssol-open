@@ -1,6 +1,7 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "DAEModel.h"
+#include "ContainerFunctions.h"
 #include <cfloat>
 
 CDAEModel::CDAEModel( void )
@@ -47,7 +48,7 @@ size_t CDAEModel::AddDAEVariables(bool _isDifferentiable, const std::vector<doub
 	return m_vVariables.size() - _variablesInit.size();
 }
 
-size_t CDAEModel::GetVariablesNumber()
+size_t CDAEModel::GetVariablesNumber() const
 {
 	return m_vVariables.size();
 }
@@ -59,6 +60,14 @@ double CDAEModel::GetVarInitValue(size_t _dIndex)
 	return 0;
 }
 
+std::vector<double> CDAEModel::GetVarInitValues() const
+{
+	std::vector<double> res = ReservedVector<double>(GetVariablesNumber());
+	for (const auto& v : m_vVariables)
+		res.push_back(v.dVariableInit);
+	return res;
+}
+
 double CDAEModel::GetDerInitValue(size_t _dIndex)
 {
 	if( _dIndex < m_vVariables.size() )
@@ -66,11 +75,32 @@ double CDAEModel::GetDerInitValue(size_t _dIndex)
 	return 0;
 }
 
+std::vector<double> CDAEModel::GetDerInitValues() const
+{
+	std::vector<double> res = ReservedVector<double>(GetVariablesNumber());
+	for (const auto& v : m_vVariables)
+		res.push_back(v.dDerivativeInit);
+	return res;
+}
+
 double CDAEModel::GetConstraintValue(size_t _dIndex)
 {
 	if( _dIndex < m_vVariables.size() )
 		return m_vVariables[_dIndex].dConstraint;
 	return 0;
+}
+
+std::vector<double> CDAEModel::GetConstraintValues() const
+{
+	std::vector<double> res = ReservedVector<double>(GetVariablesNumber());
+	for (const auto& v : m_vVariables)
+		res.push_back(v.dConstraint);
+	return res;
+}
+
+bool CDAEModel::IsConstraintsDefined() const
+{
+	return std::any_of(m_vVariables.begin(), m_vVariables.end(), [](const auto& v) { return v.dConstraint != 0.0; });
 }
 
 void CDAEModel::ClearVariables()
@@ -84,6 +114,14 @@ double CDAEModel::GetVarType(size_t _dIndex)
 	if( _dIndex < m_vVariables.size() )
 		return m_vVariables[_dIndex].bIsDifferential ? 1 : 0;
 	return 0;
+}
+
+std::vector<double> CDAEModel::GetVarTypes() const
+{
+	std::vector<double> res = ReservedVector<double>(GetVariablesNumber());
+	for (const auto& v : m_vVariables)
+		res.push_back(v.bIsDifferential ? 1. : 0.);
+	return res;
 }
 
 void CDAEModel::SetTolerance( double _dRTol, double _dATol )
@@ -113,6 +151,13 @@ double CDAEModel::GetATol(size_t _dIndex)
 	if( _dIndex < m_vVariables.size() )
 		return m_vATol[ _dIndex ];
 	return DEFAULT_ATOL;
+}
+
+std::vector<double> CDAEModel::GetATols() const
+{
+	if (!m_vATol.empty())
+		return m_vATol;
+	return std::vector<double>(GetVariablesNumber(), DEFAULT_ATOL);
 }
 
 void CDAEModel::SetUserData( void* _pUserData )
