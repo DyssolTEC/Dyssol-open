@@ -21,6 +21,15 @@ __pragma(warning(pop))
 #pragma GCC diagnostic ignored "-Wwrite-strings"
 #endif
 
+// Macros for convenient adding context to functions depending on the sundials version
+#if SUNDIALS_VERSION_MAJOR >= 6
+#define MAYBE_CONTEXT(mem) mem.sunctx
+#define MAYBE_COMMA_CONTEXT(mem) ,mem.sunctx
+#else
+#define MAYBE_CONTEXT(mem)
+#define MAYBE_COMMA_CONTEXT(mem)
+#endif
+
 CDAESolver::~CDAESolver()
 {
 	Clear();
@@ -87,14 +96,8 @@ bool CDAESolver::Calculate(realtype _timeBeg, realtype _timeEnd)
 		if (res != IDA_SUCCESS)
 			return WriteError("IDA", "IDACalcIC", "Cannot calculate initial conditions.");
 
-		N_Vector consistVars, consistDers;
-#if SUNDIALS_VERSION_MAJOR < 6
-		consistVars = N_VNew_Serial(static_cast<sunindextype>(m_model->GetVariablesNumber()));
-		consistDers = N_VNew_Serial(static_cast<sunindextype>(m_model->GetVariablesNumber()));
-#else
-		consistVars = N_VNew_Serial(static_cast<sunindextype>(m_model->GetVariablesNumber()), m_solverMem.sunctx);
-		consistDers = N_VNew_Serial(static_cast<sunindextype>(m_model->GetVariablesNumber()), m_solverMem.sunctx);
-#endif
+		const N_Vector consistVars = N_VNew_Serial(static_cast<sunindextype>(m_model->GetVariablesNumber()) MAYBE_COMMA_CONTEXT(m_solverMem));
+		const N_Vector consistDers = N_VNew_Serial(static_cast<sunindextype>(m_model->GetVariablesNumber()) MAYBE_COMMA_CONTEXT(m_solverMem));
 		res = IDAGetConsistentIC(m_solverMem.idamem, consistVars, consistDers);
 		if (res != IDA_SUCCESS)
 			return WriteError("IDA", "IDAGetConsistentIC", "Cannot obtain consistent initial conditions.");
@@ -169,8 +172,7 @@ bool CDAESolver::InitSolverMemory(SSolverMemory& _mem)
 	int res; // return value
 
 	// create context
-#if SUNDIALS_VERSION_MAJOR < 6
-#else
+#if SUNDIALS_VERSION_MAJOR >= 6
 	res = SUNContext_Create(nullptr, &_mem.sunctx);
 	if (res != IDA_SUCCESS)
 		return WriteError("IDA", "SUNContext_Create", "Cannot create SUNDIALS context.");
@@ -179,19 +181,11 @@ bool CDAESolver::InitSolverMemory(SSolverMemory& _mem)
 	const auto len = static_cast<sunindextype>(m_model->GetVariablesNumber());
 
 	// allocate vectors for y, y', tolerances, types, constraints
-#if SUNDIALS_VERSION_MAJOR < 6
-	_mem.vars   = N_VNew_Serial(len);
-	_mem.ders   = N_VNew_Serial(len);
-	_mem.atols  = N_VNew_Serial(len);
-	_mem.types  = N_VNew_Serial(len);
-	_mem.constr = N_VNew_Serial(len);
-#else
-	_mem.vars   = N_VNew_Serial(len, m_solverMem.sunctx);
-	_mem.ders   = N_VNew_Serial(len, m_solverMem.sunctx);
-	_mem.atols  = N_VNew_Serial(len, m_solverMem.sunctx);
-	_mem.types  = N_VNew_Serial(len, m_solverMem.sunctx);
-	_mem.constr = N_VNew_Serial(len, m_solverMem.sunctx);
-#endif
+	_mem.vars   = N_VNew_Serial(len MAYBE_COMMA_CONTEXT(m_solverMem));
+	_mem.ders   = N_VNew_Serial(len MAYBE_COMMA_CONTEXT(m_solverMem));
+	_mem.atols  = N_VNew_Serial(len MAYBE_COMMA_CONTEXT(m_solverMem));
+	_mem.types  = N_VNew_Serial(len MAYBE_COMMA_CONTEXT(m_solverMem));
+	_mem.constr = N_VNew_Serial(len MAYBE_COMMA_CONTEXT(m_solverMem));
 	if (!_mem.vars || !_mem.ders || !_mem.atols || !_mem.types || !_mem.constr)
 		return WriteError("IDA", "N_VNew_Serial", "Cannot create vectors.");
 
@@ -203,29 +197,17 @@ bool CDAESolver::InitSolverMemory(SSolverMemory& _mem)
 	std::memcpy(N_VGetArrayPointer(_mem.constr), m_model->GetConstraintValues().data(), sizeof(realtype) * len);
 
 	// create matrix object
-#if SUNDIALS_VERSION_MAJOR < 6
-	_mem.sunmatr = SUNDenseMatrix(len, len);
-#else
-	_mem.sunmatr = SUNDenseMatrix(len, len, _mem.sunctx);
-#endif
+	_mem.sunmatr = SUNDenseMatrix(len, len MAYBE_COMMA_CONTEXT(m_solverMem));
 	if (!_mem.sunmatr)
 		return WriteError("IDA", "SUNDenseMatrix", "Cannot create matrix.");
 
 	// create linear solver object
-#if SUNDIALS_VERSION_MAJOR < 6
-	_mem.linsol = SUNLinSol_Dense(_mem.vars, _mem.sunmatr);
-#else
-	_mem.linsol = SUNLinSol_Dense(_mem.vars, _mem.sunmatr, _mem.sunctx);
-#endif
+	_mem.linsol = SUNLinSol_Dense(_mem.vars, _mem.sunmatr MAYBE_COMMA_CONTEXT(m_solverMem));
 	if (!_mem.linsol)
 		return WriteError("IDA", "SUNLinSol_Dense", "Cannot create linear solver.");
 
 	// create IDA object
-#if SUNDIALS_VERSION_MAJOR < 6
-	_mem.idamem = IDACreate();
-#else
-	_mem.idamem = IDACreate(_mem.sunctx);
-#endif
+	_mem.idamem = IDACreate(MAYBE_CONTEXT(m_solverMem));
 	if (!_mem.idamem)
 		return WriteError("IDA", "IDACreate", "Cannot initialize IDA solver object.");
 
@@ -279,8 +261,7 @@ void CDAESolver::ClearSolverMemory(SSolverMemory& _mem)
 	SUNMatDestroy(_mem.sunmatr);    _mem.sunmatr = nullptr;
 	SUNLinSolFree(_mem.linsol);     _mem.linsol  = nullptr;
 	IDAFree(&_mem.idamem);          _mem.idamem  = nullptr;
-#if SUNDIALS_VERSION_MAJOR < 6
-#else
+#if SUNDIALS_VERSION_MAJOR >= 6
 	SUNContext_Free(&_mem.sunctx);  _mem.sunctx  = nullptr;
 #endif
 }
