@@ -13,7 +13,7 @@
 #elif (_MSC_VER == 1910)
 #define VISUAL_STUDIO_VERSION	"Visual Studio 2017"
 #elif (_MSC_VER == 1911)
-#define VISUAL_STUDIO_VERSION	"Visual Studio 2017 15.4"
+#define VISUAL_STUDIO_VERSION	"Visual Studio 2017 15.3"
 #elif (_MSC_VER == 1912)
 #define VISUAL_STUDIO_VERSION	"Visual Studio 2017 15.5"
 #elif (_MSC_VER == 1913)
@@ -41,9 +41,15 @@
 #elif (_MSC_VER == 1927)
 #define VISUAL_STUDIO_VERSION	"Visual Studio 2019 16.7"
 #elif (_MSC_VER == 1928)
-#define VISUAL_STUDIO_VERSION	"Visual Studio 2019 16.8"
+#define VISUAL_STUDIO_VERSION	"Visual Studio 2019 16.8-16.9"
 #elif (_MSC_VER == 1929)
-#define VISUAL_STUDIO_VERSION	"Visual Studio 2019 16.9"
+#define VISUAL_STUDIO_VERSION	"Visual Studio 2019 16.10-16.11"
+#elif (_MSC_VER == 1930)
+#define VISUAL_STUDIO_VERSION	"Visual Studio 2022 17.0"
+#elif (_MSC_VER == 1931)
+#define VISUAL_STUDIO_VERSION	"Visual Studio 2022 17.1"
+#elif (_MSC_VER == 1932)
+#define VISUAL_STUDIO_VERSION	"Visual Studio 2022 17.2"
 #else
 #define VISUAL_STUDIO_VERSION	"Unknown"
 #endif
