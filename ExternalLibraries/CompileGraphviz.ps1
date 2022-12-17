@@ -64,39 +64,19 @@ New-Item $GRAPHVIZ_BUILD_PATH\x32 -ItemType directory
 Set-Location $GRAPHVIZ_BUILD_PATH\x32
 cmake -G "Visual Studio 16 2019" -A Win32 $GRAPHVIZ_SRC_PATH `
 	-DCMAKE_INSTALL_PREFIX:PATH=$GRAPHVIZ_INSTALL_PATH `
-	-DAWK_EXECUTABLE="$DEPEND_UTILS\awk.exe" `
+	-DCMAKE_DISABLE_FIND_PACKAGE_ANN=YES `
+	-DCMAKE_DISABLE_FIND_PACKAGE_CAIRO=YES `
+	-DCMAKE_DISABLE_FIND_PACKAGE_GD=YES `
+	-DCMAKE_DISABLE_FIND_PACKAGE_NSIS=YES `
+	-DCMAKE_DISABLE_FIND_PACKAGE_PANGOCAIRO=YES `
 	-DBISON_EXECUTABLE="$DEPEND_UTILS\winflexbison\win_bison.exe" `
 	-DBUILD_TESTING=NO `
-	-DCario_INCLUDE_DIR="$DEPEND_LIBS32\include" `
-	-DCario_LIBRARY="$DEPEND_LIBS32\lib\cairo.lib" `
-	-DCario_RUNTIME_LIBRARY="$DEPEND_LIBS32\bin\cairo.dll" `
 	-DEXPAT_INCLUDE_DIR="$DEPEND_LIBS32\include" `
 	-DEXPAT_LIBRARY="$DEPEND_LIBS32\lib\expat.lib" `
 	-DEXPAT_RUNTIME_LIBRARIES="$DEPEND_LIBS32\bin\expat.dll" `
-	-DEXPAT_RUNTIME_LIBRARY="$DEPEND_LIBS32\bin\expat.dll" `
 	-DFLEX_EXECUTABLE="$DEPEND_UTILS\winflexbison\win_flex.exe" `
 	-DFLEX_INCLUDE_DIR="$DEPEND_UTILS\winflexbison" `
-	-DFONTCONFIG_RUNTIME_LIBRARY="$DEPEND_LIBS32\bin\fontconfig.dll" `
-	-DGLIBCONFIG_INCLUDE_DIR="$DEPEND_LIBS32\include" `
-	-DGLIB_INCLUDE_DIR="$DEPEND_LIBS32\include" `
-	-DGLIB_LIBRARY="$DEPEND_LIBS32\lib\glib-2.0.lib" `
-	-DGLIB_RUNTIME_LIBRARY="$DEPEND_LIBS32\bin\glib-2.dll" `
-	-DGOBJECT_LIBRARY="$DEPEND_LIBS32\lib\gobject-2.0.lib" `
-	-DGOBJECT_RUNTIME_LIBRARY="$DEPEND_LIBS32\bin\gobject-2.dll" `
-	-DGetopt_INCLUDE_DIR="$DEPEND_VCPKG32\include" `
-	-DGetopt_LIBRARY="$DEPEND_VCPKG32\lib\getopt.lib" `
-	-DGetopt_RUNTIME_LIBRARY="$DEPEND_VCPKG32\bin\getopt.dll" `
-	-DHARFBUZZ_RUNTIME_LIBRARY="$DEPEND_LIBS32\bin\libharfbuzz-0.dll" `
 	-DLTDL_INCLUDE_DIR="$DEPEND_LIBS32\include" `
-	-DNSIS_MAKE="$DEPEND_UTILS\NSIS" `
-	-DPANGOFT_RUNTIME_LIBRARY="$DEPEND_LIBS32\bin\pangoft2-1.dll" `
-	-DPANGOWIN_RUNTIME_LIBRARY="$DEPEND_LIBS32\bin\pangowin32-1.dll" `
-	-DPANGO_LIBRARY="$DEPEND_LIBS32\lib\pango-1.0.lib" `
-	-DPANGO_RUNTIME_LIBRARY="$DEPEND_LIBS32\bin\pango-1.dll" `
-	-DPIXMAN_RUNTIME_LIBRARY="$DEPEND_LIBS32\bin\pixman-1.dll" `
-	-DPangoCairo_INCLUDE_DIR="$DEPEND_LIBS32\include" `
-	-DPangoCairo_LIBRARY="$DEPEND_LIBS32\lib\pangocairo-1.0.lib" `
-	-DPangoCairo_RUNTIME_LIBRARY="$DEPEND_LIBS32\bin\pangocairo-1.dll" `
 	-DZLIB_INCLUDE_DIR="$ZLIB_INSTALL_PATH\include" `
 	-DZLIB_LIBRARY_DEBUG="$ZLIB_INSTALL_PATH\lib32\zlibstaticd.lib" `
 	-DZLIB_LIBRARY_RELEASE="$ZLIB_INSTALL_PATH\lib32\zlibstatic.lib" `
@@ -106,12 +86,12 @@ cmake -G "Visual Studio 16 2019" -A Win32 $GRAPHVIZ_SRC_PATH `
 	-Duse_win_pre_inst_libs=YES `
 	-Dwith_cxx_api=NO `
 	-Dwith_cxx_tests=NO `
-	-Dwith_digcola=YES `
+	-Dwith_digcola=NO `
 	-Dwith_expat=YES `
 	-Dwith_gvedit=NO `
 	-Dwith_ipsepcola=NO `
-	-Dwith_ortho=YES `
-	-Dwith_sfdp=YES `
+	-Dwith_ortho=NO `
+	-Dwith_sfdp=NO `
 	-Dwith_smyrna=NO `
 	-Dwith_zlib=YES
 cmake --build . --parallel --target INSTALL --config Release
@@ -124,39 +104,19 @@ New-Item $GRAPHVIZ_BUILD_PATH\x64 -ItemType directory
 Set-Location $GRAPHVIZ_BUILD_PATH\x64
 cmake -G "Visual Studio 16 2019" -A x64 $GRAPHVIZ_SRC_PATH `
 	-DCMAKE_INSTALL_PREFIX:PATH=$GRAPHVIZ_INSTALL_PATH `
-	-DAWK_EXECUTABLE="$DEPEND_UTILS\awk.exe" `
+	-DCMAKE_DISABLE_FIND_PACKAGE_ANN=YES `
+	-DCMAKE_DISABLE_FIND_PACKAGE_CAIRO=YES `
+	-DCMAKE_DISABLE_FIND_PACKAGE_GD=YES `
+	-DCMAKE_DISABLE_FIND_PACKAGE_NSIS=YES `
+	-DCMAKE_DISABLE_FIND_PACKAGE_PANGOCAIRO=YES `
 	-DBISON_EXECUTABLE="$DEPEND_UTILS\winflexbison\win_bison.exe" `
 	-DBUILD_TESTING=NO `
-	-DCario_INCLUDE_DIR="$DEPEND_LIBS64\include" `
-	-DCario_LIBRARY="$DEPEND_LIBS64\lib\cairo.lib" `
-	-DCario_RUNTIME_LIBRARY="$DEPEND_LIBS64\bin\cairo.dll" `
 	-DEXPAT_INCLUDE_DIR="$DEPEND_LIBS64\include" `
 	-DEXPAT_LIBRARY="$DEPEND_LIBS64\lib\expat.lib" `
 	-DEXPAT_RUNTIME_LIBRARIES="$DEPEND_LIBS64\bin\expat.dll" `
-	-DEXPAT_RUNTIME_LIBRARY="$DEPEND_LIBS64\bin\expat.dll" `
 	-DFLEX_EXECUTABLE="$DEPEND_UTILS\winflexbison\win_flex.exe" `
 	-DFLEX_INCLUDE_DIR="$DEPEND_UTILS\winflexbison" `
-	-DFONTCONFIG_RUNTIME_LIBRARY="$DEPEND_LIBS64\bin\fontconfig.dll" `
-	-DGLIBCONFIG_INCLUDE_DIR="$DEPEND_LIBS64\include" `
-	-DGLIB_INCLUDE_DIR="$DEPEND_LIBS64\include" `
-	-DGLIB_LIBRARY="$DEPEND_LIBS64\lib\glib-2.0.lib" `
-	-DGLIB_RUNTIME_LIBRARY="$DEPEND_LIBS64\bin\glib-2.dll" `
-	-DGOBJECT_LIBRARY="$DEPEND_LIBS64\lib\gobject-2.0.lib" `
-	-DGOBJECT_RUNTIME_LIBRARY="$DEPEND_LIBS64\bin\gobject-2.dll" `
-	-DGetopt_INCLUDE_DIR="$DEPEND_VCPKG64\include" `
-	-DGetopt_LIBRARY="$DEPEND_VCPKG64\lib\getopt.lib" `
-	-DGetopt_RUNTIME_LIBRARY="$DEPEND_VCPKG64\bin\getopt.dll" `
-	-DHARFBUZZ_RUNTIME_LIBRARY="$DEPEND_LIBS64\bin\libharfbuzz-0.dll" `
 	-DLTDL_INCLUDE_DIR="$DEPEND_LIBS64\include" `
-	-DNSIS_MAKE="$DEPEND_UTILS\NSIS" `
-	-DPANGOFT_RUNTIME_LIBRARY="$DEPEND_LIBS64\bin\pangoft2-1.dll" `
-	-DPANGOWIN_RUNTIME_LIBRARY="$DEPEND_LIBS64\bin\pangowin32-1.dll" `
-	-DPANGO_LIBRARY="$DEPEND_LIBS64\lib\pango-1.0.lib" `
-	-DPANGO_RUNTIME_LIBRARY="$DEPEND_LIBS64\bin\pango-1.dll" `
-	-DPIXMAN_RUNTIME_LIBRARY="$DEPEND_LIBS64\bin\pixman-1.dll" `
-	-DPangoCairo_INCLUDE_DIR="$DEPEND_LIBS64\include" `
-	-DPangoCairo_LIBRARY="$DEPEND_LIBS64\lib\pangocairo-1.0.lib" `
-	-DPangoCairo_RUNTIME_LIBRARY="$DEPEND_LIBS64\bin\pangocairo-1.dll" `
 	-DZLIB_INCLUDE_DIR="$ZLIB_INSTALL_PATH\include" `
 	-DZLIB_LIBRARY_DEBUG="$ZLIB_INSTALL_PATH\lib64\zlibstaticd.lib" `
 	-DZLIB_LIBRARY_RELEASE="$ZLIB_INSTALL_PATH\lib64\zlibstatic.lib" `
@@ -166,15 +126,15 @@ cmake -G "Visual Studio 16 2019" -A x64 $GRAPHVIZ_SRC_PATH `
 	-Duse_win_pre_inst_libs=YES `
 	-Dwith_cxx_api=NO `
 	-Dwith_cxx_tests=NO `
-	-Dwith_digcola=YES `
+	-Dwith_digcola=NO `
 	-Dwith_expat=YES `
 	-Dwith_gvedit=NO `
 	-Dwith_ipsepcola=NO `
-	-Dwith_ortho=YES `
-	-Dwith_sfdp=YES `
+	-Dwith_ortho=NO `
+	-Dwith_sfdp=NO `
 	-Dwith_smyrna=NO `
 	-Dwith_zlib=YES
-cmake --build . --parallel --target INSTALL --config Release
+cmake --build . --parallel 4 --target INSTALL --config Release
 Rename-Item -Path "$GRAPHVIZ_INSTALL_PATH\bin" -NewName "$GRAPHVIZ_INSTALL_PATH\bin64"
 Rename-Item -Path "$GRAPHVIZ_INSTALL_PATH\lib" -NewName "$GRAPHVIZ_INSTALL_PATH\lib64"
 Copy-Item -Path "$CURRENT_PATH\graphviz_config" -Destination "$GRAPHVIZ_INSTALL_PATH\bin64\config6"
