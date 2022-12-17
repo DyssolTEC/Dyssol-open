@@ -97,7 +97,7 @@ cmake -G "Visual Studio 16 2019" -A Win32 $GRAPHVIZ_SRC_PATH `
 	-Dwith_sfdp=NO `
 	-Dwith_smyrna=NO `
 	-Dwith_zlib=YES
-cmake --build . --parallel --target INSTALL --config Release
+cmake --build . --target INSTALL --config Release
 dir 
 dir $GRAPHVIZ_INSTALL_PATH
 
