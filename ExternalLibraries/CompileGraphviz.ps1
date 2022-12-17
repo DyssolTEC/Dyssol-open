@@ -99,6 +99,10 @@ cmake -G "Visual Studio 16 2019" -A Win32 $GRAPHVIZ_SRC_PATH `
 	-Dwith_zlib=YES
 cmake --build . --target INSTALL --config Release
 dir 
+dir $GRAPHVIZ_BUILD_PATH
+dir $CURRENT_PATH
+dir D:\a\Dyssol-open\Dyssol-open\ExternalLibraries
+dir D:\a\Dyssol-open\Dyssol-open\ExternalLibraries\graphviz
 dir $GRAPHVIZ_INSTALL_PATH
 
 #Rename-Item -Path "$GRAPHVIZ_INSTALL_PATH\bin" -NewName "$GRAPHVIZ_INSTALL_PATH\bin32"
