@@ -87,7 +87,7 @@ jobs:
       uses: jurplel/install-qt-action@v3
       with:
         # If cached, only install essential build tools and set environmental variables
-        cached: ${{steps.cache-qt.outputs.cache-hit}}
+        cache: ${{steps.cache-qt.outputs.cache-hit}}
         # Version of Qt to install
         version: ${{env.QT_VERSION}}
         # Architecture for Windows/Android

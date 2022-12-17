@@ -97,8 +97,10 @@ cmake -G "Visual Studio 16 2019" -A Win32 $GRAPHVIZ_SRC_PATH `
 	-Dwith_sfdp=NO `
 	-Dwith_smyrna=NO `
 	-Dwith_zlib=YES
-echo "RUN CMAKE"
-cmake --build . --target ALL_BUILD INSTALL --config Release
+echo "RUN CMAKE ALL_BUILD"
+cmake --build . --target ALL_BUILD --config Release
+echo "RUN CMAKE INSTALL"
+cmake --build . --target INSTALL   --config Release
 echo "END CMAKE"
 dir 
 dir $GRAPHVIZ_BUILD_PATH
