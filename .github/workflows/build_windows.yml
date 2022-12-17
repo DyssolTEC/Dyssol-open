@@ -83,6 +83,20 @@ jobs:
       # Run the script to build the third-party tool
       run: .\CompileZLib.ps1
       
+    - name: Cache Graphviz
+      id: cache-graphviz
+      uses: actions/cache@v3
+      with:
+        path: ${{github.workspace}}/ExternalLibraries/graphviz
+        key: ${{runner.os}}-GraphvizCache-${{env.GRAPHVIZ_VERSION}}
+        
+    - name: Build Graphviz
+      if: steps.cache-graphviz.outputs.cache-hit != 'true'
+      working-directory: ${{github.workspace}}/ExternalLibraries
+      shell: pwsh
+      # Run the script to build the third-party tool
+      run: .\CompileGraphviz.ps1
+      
     - name: Cache SUNDIALS
       id: cache-sundials
       uses: actions/cache@v3
@@ -111,20 +125,6 @@ jobs:
       # Run the script to build the third-party tool
       run: .\CompileHDF5.ps1
       
-    - name: Cache Graphviz
-      id: cache-graphviz
-      uses: actions/cache@v3
-      with:
-        path: ${{github.workspace}}/ExternalLibraries/graphviz
-        key: ${{runner.os}}-GraphvizCache-${{env.GRAPHVIZ_VERSION}}
-        
-    - name: Build Graphviz
-      if: steps.cache-graphviz.outputs.cache-hit != 'true'
-      working-directory: ${{github.workspace}}/ExternalLibraries
-      shell: pwsh
-      # Run the script to build the third-party tool
-      run: .\CompileGraphviz.ps1
-        
     - name: Build
       working-directory: ${{github.workspace}}
       env:

@@ -61,6 +61,7 @@ $DEPEND_VCPKG64 = "$DEPEND_PATH\libraries\vcpkg\installed\x64-windows"
 
 # Build x32
 New-Item $GRAPHVIZ_BUILD_PATH\x32 -ItemType directory
+New-Item $GRAPHVIZ_INSTALL_PATH -ItemType directory
 Set-Location $GRAPHVIZ_BUILD_PATH\x32
 cmake -G "Visual Studio 16 2019" -A Win32 $GRAPHVIZ_SRC_PATH `
 	-DCMAKE_INSTALL_PREFIX:PATH=$GRAPHVIZ_INSTALL_PATH `
@@ -97,6 +98,7 @@ cmake -G "Visual Studio 16 2019" -A Win32 $GRAPHVIZ_SRC_PATH `
 	-Dwith_smyrna=NO `
 	-Dwith_zlib=YES
 cmake --build . --parallel --target INSTALL --config Release
+dir 
 dir $GRAPHVIZ_INSTALL_PATH
 
 #Rename-Item -Path "$GRAPHVIZ_INSTALL_PATH\bin" -NewName "$GRAPHVIZ_INSTALL_PATH\bin32"
