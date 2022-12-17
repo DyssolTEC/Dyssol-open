@@ -31,27 +31,6 @@ jobs:
         
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1
-      
-    - name: Cache Qt
-      id: cache-qt
-      uses: actions/cache@v3
-      with:
-        path: ${{github.workspace}}/ExternalLibraries/qt
-        key: ${{runner.os}}-QtCache-${{env.QT_VERSION}}
-    
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v3
-      with:
-        # If cached, only install essential build tools and set environmental variables
-        cached: ${{steps.cache-qt.outputs.cache-hit}}
-        # Version of Qt to install
-        version: ${{env.QT_VERSION}}
-        # Architecture for Windows/Android
-        arch: win64_${{env.QT_VS_VERSION}}
-        # Directory to install.
-        dir: ${{github.workspace}}/ExternalLibraries/qt
-        # Whether or not to automatically run setup-python to find a valid python version.
-        setup-python: 'false'
                 
     - name: Cache QtMsBuild tools
       id: cache-qt-ms-build-tools
@@ -96,6 +75,27 @@ jobs:
       shell: pwsh
       # Run the script to build the third-party tool
       run: .\CompileGraphviz.ps1
+      
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v3
+      with:
+        path: ${{github.workspace}}/ExternalLibraries/qt
+        key: ${{runner.os}}-QtCache-${{env.QT_VERSION}}
+    
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        # If cached, only install essential build tools and set environmental variables
+        cached: ${{steps.cache-qt.outputs.cache-hit}}
+        # Version of Qt to install
+        version: ${{env.QT_VERSION}}
+        # Architecture for Windows/Android
+        arch: win64_${{env.QT_VS_VERSION}}
+        # Directory to install.
+        dir: ${{github.workspace}}/ExternalLibraries/qt
+        # Whether or not to automatically run setup-python to find a valid python version.
+        setup-python: 'false'
       
     - name: Cache SUNDIALS
       id: cache-sundials
