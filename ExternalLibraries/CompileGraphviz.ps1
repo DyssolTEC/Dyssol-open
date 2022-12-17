@@ -94,7 +94,7 @@ cmake -G "Visual Studio 16 2019" -A Win32 $GRAPHVIZ_SRC_PATH `
 	-Dwith_sfdp=NO `
 	-Dwith_smyrna=NO `
 	-Dwith_zlib=YES
-cmake --build . --parallel --target INSTALL --config Release
+cmake --build . --target INSTALL --config Release
 Rename-Item -Path "$GRAPHVIZ_INSTALL_PATH\bin" -NewName "$GRAPHVIZ_INSTALL_PATH\bin32"
 Rename-Item -Path "$GRAPHVIZ_INSTALL_PATH\lib" -NewName "$GRAPHVIZ_INSTALL_PATH\lib32"
 Copy-Item -Path "$CURRENT_PATH\graphviz_config" -Destination "$GRAPHVIZ_INSTALL_PATH\bin32\config6"
@@ -134,7 +134,7 @@ cmake -G "Visual Studio 16 2019" -A x64 $GRAPHVIZ_SRC_PATH `
 	-Dwith_sfdp=NO `
 	-Dwith_smyrna=NO `
 	-Dwith_zlib=YES
-cmake --build . --parallel 4 --target INSTALL --config Release
+cmake --build . --target INSTALL --config Release
 Rename-Item -Path "$GRAPHVIZ_INSTALL_PATH\bin" -NewName "$GRAPHVIZ_INSTALL_PATH\bin64"
 Rename-Item -Path "$GRAPHVIZ_INSTALL_PATH\lib" -NewName "$GRAPHVIZ_INSTALL_PATH\lib64"
 Copy-Item -Path "$CURRENT_PATH\graphviz_config" -Destination "$GRAPHVIZ_INSTALL_PATH\bin64\config6"
