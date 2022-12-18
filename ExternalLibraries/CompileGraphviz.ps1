@@ -67,8 +67,11 @@ cmake -G "Visual Studio 16 2019" -A Win32 $GRAPHVIZ_SRC_PATH `
 	-DCMAKE_DISABLE_FIND_PACKAGE_ANN=YES `
 	-DCMAKE_DISABLE_FIND_PACKAGE_CAIRO=YES `
 	-DCMAKE_DISABLE_FIND_PACKAGE_GD=YES `
+	-DCMAKE_DISABLE_FIND_PACKAGE_GTK2=YES `
+	-DCMAKE_DISABLE_FIND_PACKAGE_Freetype=YES `
 	-DCMAKE_DISABLE_FIND_PACKAGE_NSIS=YES `
 	-DCMAKE_DISABLE_FIND_PACKAGE_PANGOCAIRO=YES `
+	-DPKG_CONFIG_EXECUTABLE="" `
 	-DBISON_EXECUTABLE="$DEPEND_UTILS\winflexbison\win_bison.exe" `
 	-DBUILD_TESTING=NO `
 	-DEXPAT_INCLUDE_DIR="$DEPEND_LIBS32\include" `
@@ -94,7 +97,7 @@ cmake -G "Visual Studio 16 2019" -A Win32 $GRAPHVIZ_SRC_PATH `
 	-Dwith_sfdp=NO `
 	-Dwith_smyrna=NO `
 	-Dwith_zlib=YES
-cmake --build . --target INSTALL --config Release
+cmake --build . --parallel --target INSTALL --config Release
 Rename-Item -Path "$GRAPHVIZ_INSTALL_PATH\bin" -NewName "$GRAPHVIZ_INSTALL_PATH\bin32"
 Rename-Item -Path "$GRAPHVIZ_INSTALL_PATH\lib" -NewName "$GRAPHVIZ_INSTALL_PATH\lib32"
 Copy-Item -Path "$CURRENT_PATH\graphviz_config" -Destination "$GRAPHVIZ_INSTALL_PATH\bin32\config6"
@@ -107,8 +110,11 @@ cmake -G "Visual Studio 16 2019" -A x64 $GRAPHVIZ_SRC_PATH `
 	-DCMAKE_DISABLE_FIND_PACKAGE_ANN=YES `
 	-DCMAKE_DISABLE_FIND_PACKAGE_CAIRO=YES `
 	-DCMAKE_DISABLE_FIND_PACKAGE_GD=YES `
+	-DCMAKE_DISABLE_FIND_PACKAGE_GTK2=YES `
+	-DCMAKE_DISABLE_FIND_PACKAGE_Freetype=YES `
 	-DCMAKE_DISABLE_FIND_PACKAGE_NSIS=YES `
 	-DCMAKE_DISABLE_FIND_PACKAGE_PANGOCAIRO=YES `
+	-DPKG_CONFIG_EXECUTABLE="" `
 	-DBISON_EXECUTABLE="$DEPEND_UTILS\winflexbison\win_bison.exe" `
 	-DBUILD_TESTING=NO `
 	-DEXPAT_INCLUDE_DIR="$DEPEND_LIBS64\include" `
@@ -134,7 +140,7 @@ cmake -G "Visual Studio 16 2019" -A x64 $GRAPHVIZ_SRC_PATH `
 	-Dwith_sfdp=NO `
 	-Dwith_smyrna=NO `
 	-Dwith_zlib=YES
-cmake --build . --target INSTALL --config Release
+cmake --build . --parallel --target INSTALL --config Release
 Rename-Item -Path "$GRAPHVIZ_INSTALL_PATH\bin" -NewName "$GRAPHVIZ_INSTALL_PATH\bin64"
 Rename-Item -Path "$GRAPHVIZ_INSTALL_PATH\lib" -NewName "$GRAPHVIZ_INSTALL_PATH\lib64"
 Copy-Item -Path "$CURRENT_PATH\graphviz_config" -Destination "$GRAPHVIZ_INSTALL_PATH\bin64\config6"
