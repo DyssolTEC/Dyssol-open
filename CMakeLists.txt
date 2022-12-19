@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 3.1.0)
 
-set (VERSION 1.0.5)
+set (VERSION 1.1.0)
 set (SOVERSION 1.0)
 
 set(CMAKE_CXX_STANDARD 17)
