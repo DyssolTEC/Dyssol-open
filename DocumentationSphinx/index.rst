@@ -59,8 +59,8 @@ Contents
    :maxdepth: 2
    :caption: Libraries
 
-   units
-   solver
+   003_models/units
+   003_models/solvers
 
 |
 
