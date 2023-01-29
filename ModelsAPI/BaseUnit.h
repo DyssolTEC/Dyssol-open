@@ -137,25 +137,25 @@ public:
 	// TODO: rename to SetModelName() and add an alias to SetUnitName().
 	/**
 	 * \brief Sets the name of the unit.
-	 * \details Should be used in CreateBasicInfo function only.
+	 * \details Should be used in CBaseUnit::CreateBasicInfo() function only.
 	 * \param _name Name of the unit.
 	 */
 	void SetUnitName(const std::string& _name);
 	/**
 	 * \brief Sets the name of unit's author.
-	 * \details Should be used in CreateBasicInfo function only.
+	 * \details Should be used in CBaseUnit::CreateBasicInfo() function only.
 	 * \param _author Author's name
 	 */
 	void SetAuthorName(const std::string& _author);
 	/**
 	 * \brief Sets the version of the unit.
-	 * \details Should be used in CreateBasicInfo function only.
+	 * \details Should be used in CBaseUnit::CreateBasicInfo() function only.
 	 * \param _version Unit's version.
 	 */
 	void SetVersion(size_t _version);
 	/**
 	 * \brief Sets the unique identifier of the unit.
-	 * \details Should be used in CreateBasicInfo function only.
+	 * \details Should be used in CBaseUnit::CreateBasicInfo() function only.
 	 * \param _id Identifier of the unit. Must be unique among all units in the library.
 	 */
 	void SetUniqueID(const std::string& _id);
@@ -173,7 +173,7 @@ public:
 
 	/**
 	 * \brief Adds a port to the unit.
-	 * \details Should be used in CreateStructure function only. If the unit already has a port with the same name, a logic_error exception is thrown.
+	 * \details Should be used in CBaseUnit::CreateBasicInfo() function only. If the unit already has a port with the same name, a logic_error exception is thrown.
 	 * \param _portName Name of the port. Must be unique within the unit.
 	 * \param _type Type of the port.
 	 * \return Pointer to the created port.
@@ -181,7 +181,7 @@ public:
 	CUnitPort* AddPort(const std::string& _portName, EUnitPort _type);
 	/**
 	 * \brief Returns a const pointer to the specified port of the unit.
-	 * \details Should be used in CreateStructure function only. If no such port exists, a logic_error exception is thrown.
+	 * \details Should be used in CBaseUnit::CreateBasicInfo() function only. If no such port exists, a logic_error exception is thrown.
 	 * \param _portName Name of the port.
 	 * \return Const pointer to the port.
 	 */
@@ -211,53 +211,76 @@ public:
 	CStreamManager& GetStreamsManager();
 
 	/**
-	 * Adds a new feed to the unit with proper structure (MD dimensions, phases, materials, etc.), and returns a pointer to it. If a feed with the given name already exists, a logic_error exception is thrown.
+	 * \brief Adds a new feed to the unit.
+	 * \details Adds a new feed with the specified name to the unit.
+	 * The structure of the feed will be the same as the global streams structure (MD dimensions, phases, grids, compounds etc.).
+	 * Name should be unique within the unit. If a feed with the given name already exists in the unit, a logic_error exception is thrown.
+	 * Should be used in the CBaseUnit::CreateStructure() function; then the feed will be automatically handled by the simulation system
+	 * (saved and loaded during the simulation, cleared and removed after use).
+	 * However, it is allowed to add feed outside the CBaseUnit::CreateStructure() function for temporal purposes, but you have to
+	 * save, load (in the functions CBaseUnit::SaveState(), CBaseUnit::LoadState()) and remove this feed (by calling CBaseUnit::RemoveFeed()) manually.
+	 * Otherwise, all such feeds will be removed at the end of the simulation.
+	 * This function returns the pointer to a created feed. This pointer should not be used inside the CBaseUnit::CreateStructure() function,
+	 * since all changes of the feed made through this pointer will be discarded during the initialization of the unit.
+	 * \param _name Name of the feed.
+	 * \return Pointer to the added feed.
 	 */
 	CStream* AddFeed(const std::string& _name);
 	/**
-	 * Returns a const feed with the specified name. If such feed does not exist, a logic_error exception is thrown.
+	 * \brief Returns a const feed with the specified name.
+	 * \details If such feed does not exist, a logic_error exception is thrown.
 	 */
 	const CStream* GetFeed(const std::string & _name) const;
 	/**
-	 * Returns a feed with the specified name. If such feed does not exist, a logic_error exception is thrown.
+	 * \brief Returns a feed with the specified name.
+	 * \details If such feed does not exist, a logic_error exception is thrown.
 	 */
 	CStream* GetFeed(const std::string& _name);
 	/**
-	 * Removes the feed with the specified name from the unit. If such feed does not exist, a logic_error exception is thrown.
+	 * \brief Removes the feed with the specified name from the unit.
+	 * \details If such feed does not exist, a logic_error exception is thrown.
 	 */
 	void RemoveFeed(const std::string& _name);
 
 	/**
-	 * Adds a new holdup to the unit with proper structure (MD dimensions, phases, materials, etc.), and returns a pointer to it. If a holdup with the given name already exists, a logic_error exception is thrown.
+	 * \brief Adds a new holdup to the unit with proper structure (MD dimensions, phases, materials, etc.), and returns a pointer to it.
+	 * If a holdup with the given name already exists, a logic_error exception is thrown.
 	 */
 	CHoldup* AddHoldup(const std::string& _name);
 	/**
-	 * Returns a const holdup with the specified name. If such holdup does not exist, a logic_error exception is thrown.
+	 * \brief Returns a const holdup with the specified name.
+	 * \details If such holdup does not exist, a logic_error exception is thrown.
 	 */
 	const CHoldup* GetHoldup(const std::string & _name) const;
 	/**
-	 * Returns a holdup with the specified name. If such holdup does not exist, a logic_error exception is thrown.
+	 * \brief Returns a holdup with the specified name.
+	 * \details If such holdup does not exist, a logic_error exception is thrown.
 	 */
 	CHoldup* GetHoldup(const std::string& _name);
 	/**
-	 * Removes the holdup with the specified name from the unit. If such holdup does not exist, a logic_error exception is thrown.
+	 * \brief Removes the holdup with the specified name from the unit.
+	 * \details If such holdup does not exist, a logic_error exception is thrown.
 	 */
 	void RemoveHoldup(const std::string& _name);
 
 	/**
-	 * Adds a new stream to the unit with proper structure (MD dimensions, phases, materials, etc.), and returns a pointer to it. If a stream with the given name already exists, a logic_error exception is thrown.
+	 * \brief Adds a new stream to the unit with proper structure (MD dimensions, phases, materials, etc.), and returns a pointer to it.
+	 * \details If a stream with the given name already exists, a logic_error exception is thrown.
 	 */
 	CStream* AddStream(const std::string& _name);
 	/**
-	 * Returns a const stream with the specified name. If such stream does not exist, a logic_error exception is thrown.
+	 * \brief Returns a const stream with the specified name.
+	 * \details If such stream does not exist, a logic_error exception is thrown.
 	 */
 	const CStream* GetStream(const std::string & _name) const;
 	/**
-	 * Returns a stream with the specified name. If such stream does not exist, a logic_error exception is thrown.
+	 * \brief Returns a stream with the specified name.
+	 * \details If such stream does not exist, a logic_error exception is thrown.
 	 */
 	CStream* GetStream(const std::string& _name);
 	/**
-	 * Removes the stream with the specified name from the unit. If such stream does not exist, a logic_error exception is thrown.
+	 * \brief Removes the stream with the specified name from the unit.
+	 * \details If such stream does not exist, a logic_error exception is thrown.
 	 */
 	void RemoveStream(const std::string& _name);
 

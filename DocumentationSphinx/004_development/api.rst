@@ -3,6 +3,8 @@
 Models API
 ==========
 
+All functions, classes, their member variables and methods, needed to develop new models are described here.
+
 .. toctree::
 	:maxdepth: 2
 

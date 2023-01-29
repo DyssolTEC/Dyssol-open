@@ -4,14 +4,6 @@
 Old API
 =======
 
-Here you can get necessary information about how the elements in Dyssol (like unit, solver, :abbr:`PSD (Particle size distribution)` function, matrices and external solvers) look like on a programming point of view. This is especially important if you want to develope new units and solvers. 
-
-All elements mentioned above are defined as classes, which consists of member variables (data fields) and associated functions (methods). Every new independent instance generated under a class is called an object.
-
-For more information on object-oriented programming applied in Dyssol, please refer to internet sources about C++.
-
-|
-
 .. _label-old_baseUnit:
 
 Basic unit
