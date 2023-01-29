@@ -45,13 +45,13 @@ Contents
    :maxdepth: 2
    :caption: Structure and algorithms
 
-   brief
-   simulation
-   data
-   materials
-   multiDim
-   time
-   theory
+   002_theory/brief
+   002_theory/simulation
+   002_theory/data
+   002_theory/materials
+   002_theory/multiDim
+   002_theory/time
+   002_theory/theory
 
 |
 

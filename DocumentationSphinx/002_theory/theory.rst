@@ -1,4 +1,3 @@
-
 ======================
 Theoretical background
 ======================
@@ -12,7 +11,7 @@ Discretization
 
 A continuous processes is discretized using time points, and each time point is a snapshot of the process state, as shown below.
 
-.. image:: ./static/images/discrete.png
+.. image:: ../static/images/002_theory/discrete.png
    :width: 900px
    :alt: screen
    :align: center
@@ -29,7 +28,7 @@ Sequential-modular approach
 
 The simulator of Dyssol applies sequential-modular approach, which processes the units in sequence. For each unit there are a equation system and the corresponding solver, as shown in the figure below.
 
-.. image:: ./static/images/theory/seq-module.png
+.. image:: ../static/images/002_theory/seq-module.png
    :width: 500px
    :alt: screen
    :align: center
@@ -57,7 +56,7 @@ Equation-oriented approach
 
 Unlike sequential-modular approach, the equation-oriented approach processes all units with a whole equation system and the same solver.
 
-.. image:: ./static/images/theory/eq-module.png
+.. image:: ../static/images/002_theory/eq-module.png
    :width: 500px
    :alt: screen
    :align: center
@@ -85,14 +84,14 @@ Dyssol converts the process structure into a suitable sequential form, initializ
 
 An example is shown in the following process flow sheet.
 
-.. image:: ./static/images/theory/example-flowsheet.png
+.. image:: ../static/images/002_theory/example-flowsheet.png
    :width: 700px
    :alt: screen
    :align: center
 
 For this flow sheet, the operation units and streams with 3 partitions are shown below schematically.
 
-.. image:: ./static/images/theory/example-tear.png
+.. image:: ../static/images/002_theory/example-tear.png
    :width: 700px
    :alt: screen
    :align: center
@@ -101,7 +100,7 @@ Alternatively, single and multiple schemes can be applied.
 
 For a single scheme, the units and streams are rearranged as below.
 
-.. image:: ./static/images/theory/singlepart.png
+.. image:: ../static/images/002_theory/singlepart.png
    :width: 900px
    :alt: screen
    :align: center
@@ -120,14 +119,14 @@ Furthermore, the bi-directional connection can be represented in Dyssol as two i
 
 An example is shown in the figure below.
 
-.. image:: ./static/images/theory/bi-direct.png
+.. image:: ../static/images/002_theory/bi-direct.png
    :width: 500px
    :alt: screen
    :align: center
    
 The corresponding calculation sequence is 
 
-.. image:: ./static/images/theory/bi-directSeq.png
+.. image:: ../static/images/002_theory/bi-directSeq.png
    :width: 650px
    :alt: screen
    :align: center
@@ -152,7 +151,7 @@ Waveform relaxation method
 
 The waveform relaxation method (WRM) is applied to calculate the tear streams. You can find the algorithm in the flowsheet below.
 
-.. image:: ./static/images/theory/wrm1.png
+.. image:: ../static/images/002_theory/wrm1.png
    :width: 900px
    :alt: screen
    :align: center
@@ -161,7 +160,7 @@ Dyssol splits the whole simulation interval into smaller time windows, it calcul
 
 Size of the time window varies depending on the convergence rate, and the convergence criterion is the difference between values on successive iterations.
 
-.. image:: ./static/images/theory/wrm-diagram.png
+.. image:: ../static/images/002_theory/wrm-diagram.png
    :width: 500px
    :alt: screen
    :align: center
@@ -180,14 +179,14 @@ Data extrapolation
 
 Dyssol initializes all parameters of tear streams within the time window before its calculation, and then uses extrapolated values from the previous time intervals as initial data. Prediction accuracy affects the number of iterations required to achieve convergence.
 
-.. image:: ./static/images/theory/extrapolation.png
+.. image:: ../static/images/002_theory/extrapolation.png
    :width: 900px
    :alt: screen
    :align: center
 
 The implemented methods for extrapolation include nearest-neighbor, linear and spline.
 
-.. image:: ./static/images/theory/extrapolation-diagram.png
+.. image:: ../static/images/002_theory/extrapolation-diagram.png
    :width: 500px
    :alt: screen
    :align: center
@@ -201,7 +200,7 @@ Convergence methods
 
 Dyssol uses different convergence methods to initialize parameters of tear streams before each iteration, performs calculations iteratively and stops iterative calculations when the convergence is reached. Between each value, different methods can be applied, as shown in the figure below.
 
-.. image:: ./static/images/theory/convergence.png
+.. image:: ../static/images/002_theory/convergence.png
    :width: 600px
    :alt: screen
    :align: center
