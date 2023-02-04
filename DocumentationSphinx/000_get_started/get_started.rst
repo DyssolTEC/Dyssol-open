@@ -76,7 +76,7 @@ The following files are used and created by Dyssol:
 Run your first simulation
 -------------------------
 
-Here you can find a detailed guide for creating and running the :ref:`label-screen` process.
+Here you can find a detailed guide for creating and running the screen process.
 
 A flowsheet of this example is shown below with all stream names.
 

@@ -13,6 +13,10 @@ All functions, classes, their member variables and methods, needed to develop ne
 	class_holdup
 	class_portsmanager
 	class_unitport
+	class_unitparameters
+	class_chemicalreaction
+	class_agglomerationsolver
+	class_basesolver
 	class_transformmatrix
 	class_densemdmatrix
 	class_matrix2d

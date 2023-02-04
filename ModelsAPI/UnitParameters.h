@@ -76,7 +76,9 @@ public:
 };
 
 
-// Class for constant single-value unit parameters.
+/**
+ * \brief Basic class for constant unit parameters.
+ */
 template<typename T>
 class CConstUnitParameter : public CBaseUnitParameter
 {
@@ -111,8 +113,17 @@ public:
 	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
 };
 
+/**
+ * \brief Specialization of the class CConstUnitParameter for real constant unit parameters.
+ */
 using CConstRealUnitParameter = CConstUnitParameter<double>;
-using CConstIntUnitParameter  = CConstUnitParameter<int64_t>;
+/**
+ * \brief Specialization of the class CConstUnitParameter for signed integer constant unit parameters.
+ */
+using CConstIntUnitParameter = CConstUnitParameter<int64_t>;
+/**
+ * \brief Specialization of the class CConstUnitParameter for unsigned integer constant unit parameters.
+ */
 using CConstUIntUnitParameter = CConstUnitParameter<uint64_t>;
 
 // Class for constant list unit parameters.
@@ -169,8 +180,17 @@ public:
 	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
 };
 
+/**
+ * \brief Specialization of the class CListUnitParameter for real constant unit parameters.
+ */
 using CListRealUnitParameter = CListUnitParameter<double>;
+/**
+ * \brief Specialization of the class CListUnitParameter for signed integer constant unit parameters.
+ */
 using CListIntUnitParameter  = CListUnitParameter<int64_t>;
+/**
+ * \brief Specialization of the class CListUnitParameter for unsigned integer constant unit parameters.
+ */
 using CListUIntUnitParameter = CListUnitParameter<uint64_t>;
 
 // Class for time-dependent unit parameters.

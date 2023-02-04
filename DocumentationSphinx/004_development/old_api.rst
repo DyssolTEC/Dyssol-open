@@ -14,90 +14,6 @@ Material streams and holdups
 
 .. code-block:: cpp
 
-	CHoldup* AddHoldup(std::string HoldupName, std::string StreamKey = "")
-	
-Adds new holdup with the specified name HoldupName to the unit. ``HoldupName`` should be unique within the unit. The structure of the holdup will be the same as the global stream’s structure (phases, grids, compounds etc.). 
-
-Should be used in unit’s constructor; then the holdup will be automatically handled by the simulation system (saved and loaded during the simulation, cleared and removed after use). However, it is allowed to add holdups outside the constructor for temporal purposes, but afterwards you have to save, load or remove this holdup manually by calling functions ``SaveState()``, ``LoadState()`` and ``RemoveHoldup()``. Otherwise, all such holdups will be removed at the end of the simulation. 
-
-Returns pointer to a created holdup. This pointer should not be used inside the constructor of the unit, since all changes of the holdup made through this pointer will be cancelled during the initialization of the unit. 
-
-|
-
-.. code-block:: cpp
-
-	CHoldup* GetHoldup(std::string HoldupName)
-	
-Returns pointer to a holdup with the specified name ``HoldupName``. This pointer should not be used inside the constructor of the unit, since all changes of the holdup made through this pointer will be cancelled during the initialization of the unit. ``NULL`` will be returned if such holdup has not been defined.
-
-|
-
-.. code-block:: cpp
-
-	std::vector<CHoldup*> GetHoldups()
-	
-Returns pointers to all holdups of the unit. These pointers should not be used inside the constructor of the unit, since all changes of the holdup made through them will be cancelled during the initialization of the unit.
-
-|
-
-.. code-block:: cpp
-
-	void RemoveHoldup(std::string HoldupName)
-	
-Removes holdup with the specified name HoldupName from the unit. Should be used only for those holdups, which have been added to the unit outside the constructor.
-
-|
-
-.. _label-old_AddMaterialStream:
-
-.. code-block:: cpp
-
-	CMaterialStream* AddMaterialStream(std::string StreamName, std::string StreamKey = "") 
-	
-Adds new material stream with the specified name ``StreamName`` for internal temporary use to the unit. ``StreamName`` should be unique within the unit. Structure of the stream will be the same as the global stream’s structure (phases, grids, compounds etc.). 
-
-Should be used in unit’s constructor; then the material stream will be automatically handled by the simulation system, this means saved and loaded during the simulation, cleared and removed after use. However, it is allowed to add material outside the constructor for temporal purposes, but you have to save, load or remove this stream manually by calling functions ``SaveState()``, ``LoadState()`` and ``RemoveMaterialStream()``. Otherwise, all such material streams will be removed at the end of the simulation.
-
-Returns pointer to a created material stream. 
-
-|
-
-.. code-block:: cpp
-
-	CMaterialStream* GetMaterialStream(std::string StreamName)
-	
-Returns pointer to a material stream with specified name ``StreamName``. ``NULL`` will be returned if such stream has not been defined.
-
-|
-
-.. code-block:: cpp
-
-	void RemoveMaterialStream(std::string StreamName)
-	
-Removes material stream with the specified name ``StreamName`` from the unit. Should be used only for those material streams, which have been added to the unit outside the constructor.
-
-|
-
-.. code-block:: cpp
-
-	CMaterialStream* AddFeed(std::string FeedName, std::string StreamKey = "")
-	
-Adds new feed stream with the name ``FeedName`` to the unit. ``FeedName`` should be unique within the unit. The structure of the stream will be the same as the global stream structure (phases, grids, compounds etc.). 
-
-Should be used only in constructor of the unit describing the feed. Returns pointer to a created stream. This pointer should not be used inside the constructor of the unit, since all changes of the stream made through this pointer will be cancelled during the initialization of the unit.
-
-|
-
-.. code-block:: cpp
-
-	CMaterialStream* GetFeed(std::string FeedName)
-	
-Returns pointer to a feed with specified name ``FeedName``. This pointer should not be used inside the constructor of the unit, since all changes of the stream made through this pointer will be cancelled during the initialization of the unit. ``NULL`` will be returned if such feed has not been defined.
-
-|
-
-.. code-block:: cpp
-
 	void CopyStreamToStream(CMaterialStream* SrcStream, CMaterialStream DstStream, double Time, bool DeleteDataAfter = true)
 	
 Copies all data from ``SrcStream`` to ``DestStream`` for specified time point. If flag ``DeleteDataAfter`` is set to true, all data after the time point ``Time`` in the destination stream will be removed before being copied.
@@ -202,46 +118,6 @@ Unit parameters
 
 .. code-block:: cpp
 
-	unsigned AddConstParameter(std::string Name, double MinValue, double MaxValue, double InitValue, std::string Description = "")
-
-Adds new constant unit parameter to the unit with the name ``Name``, boundary values ``MinValue`` and ``MaxValue``, description ``Description``, and initializes it with the value ``InitValue``. The name of the parameter should be unique within the unit. 
-
-Should be used in unit’s constructor only. Returns index of the parameter. 
-
-|
-
-.. code-block:: cpp
-
-	unsigned AddTDParameter(std::string Name, double MinValue, double MaxValue, double InitValue, std::string Description = "")
-
-Adds new time-dependent unit parameter to the unit with the name ``Name``, boundary values ``MinValue`` and ``MaxValue``, description ``Description``, and initializes it in the time point 0 s with the value ``InitValue``. The name of the parameter should be unique within the unit. 
-
-Should be used in unit’s constructor only. Returns index of the parameter. 
-
-|
-
-.. code-block:: cpp
-
-	unsigned AddStringParameter(std::string Name, std::string InitValue = "", std::string Description = "")
-
-Adds new string unit parameter to the unit with the name ``Name``, description ``Description``, and initializes it with the value ``InitValue``. The name of the parameter should be unique within the unit. 
-
-Should be used in unit’s constructor only. Returns index of the parameter. 
-
-|
-
-.. code-block:: cpp
-
-	unsigned AddSolverAggregation(std::string Name, std::string Description = "")
-
-Adds new solver parameter of type ``SOLVER_AGGREGATION_1`` with name ``Name`` and description ``Description``. Allows choosing a specific solver with current type to use it in unit. The name of the parameter should be unique within the unit. 
-
-Should be used in unit’s constructor only. Returns index of the parameter.
-
-|
-
-.. code-block:: cpp
-
 	unsigned GetParametersNumber()
 
 Returns number of unit parameters which have been defined in the unit. 
@@ -269,54 +145,6 @@ Returns minimum allowable value of the time-dependent or constant unit parameter
 	double GetParameterMaxVal(std::string ParameterName)
 
 Returns maximum allowable value of the time-dependent or constant unit parameter with the name ``ParameterName``. Returns ``0`` if such parameter has not been defined or this is not a constant or time-dependent parameter.
-
-|
-
-.. code-block:: cpp
-
-	double GetConstParameterValue(std::string ParameterName)
-	
-Returns value of a constant unit parameter with the name ``ParameterName``. Returns ``0`` if such constant parameter has not been defined.
-
-|
-
-.. code-block:: cpp
-
-	double GetTDParameterValue(std::string ParameterName, double Time)
-
-Returns value of a time-dependent unit parameter with the name ``ParameterName`` at the specified time point ``Time``. If the parameter is not defined at ``Time``, linear interpolation will be used to obtain the value. Returns ``0`` if such time-dependent parameter has not been defined.
-
-|
-
-.. code-block:: cpp
-
-	std::string GetStringParameterValue(std::string ParameterName)
-	
-Returns value of a string unit parameter. If such string parameter has not been defined, empty string will be returned.
-
-|
-
-.. code-block:: cpp
-
-	CAggregationSolver* GetSolverAggregation(std::string ParameterName)
-	
-Returns pointer to a chosen solver of ``SOLVER_AGGREGATION_1`` type. Returns ``nullptr`` if such unit parameter has not been defined.
-
-|
-
-.. code-block:: cpp
-
-	void SetParameterValue(std::string ParameterName, double Value, double Time = 0)
-
-Sets ``Value`` of a constant or a time dependent unit parameter in the specified time point ``Time``. If the time point does not exist, it will be created. If the time point already exists, its value will be overwritten.
-
-|
-
-.. code-block:: cpp
-
-	void SetParameterValue(std::string ParameterName, std::string Value)
-	
-Sets new ``Value`` of a string unit parameter with the specified name ``ParameterName``. 
 
 |
 

@@ -7,7 +7,7 @@ Solver library
 
 Basic solver provides interfaces to the simulation system and to units. 
 
-Currently in Dyssol, you can develop your own :ref:`agglomeration <label-agg>` solver and add it to the solver library. Please refer to :ref:`label-solverDev` for detailed information. 
+Currently in Dyssol, you can develop your own :ref:`agglomeration <sec.units.agglomerator>` solver and add it to the solver library. Please refer to :ref:`label-solverDev` for detailed information. 
 
 The solver can also be added to a unit as a parameter.
 

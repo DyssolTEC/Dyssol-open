@@ -182,13 +182,17 @@ IF(BUILD_DOCS)
   # List of all API headers
   SET(API_FILE_NAMES
     "ModelsAPI/BaseUnit"
-    "ModelsAPI/Stream"
-    "ModelsAPI/Holdup"
-    "ModelsAPI/UnitPorts"
-    "ModelsAPI/TransformMatrix"
+    "ModelsAPI/ChemicalReaction"
     "ModelsAPI/DenseMDMatrix"
-    "ModelsAPI/Matrix2D"
     "ModelsAPI/DistributionsFunctions"
+    "ModelsAPI/Holdup"
+    "ModelsAPI/Matrix2D"
+    "ModelsAPI/Stream"
+    "ModelsAPI/TransformMatrix"
+    "ModelsAPI/UnitParameters"
+    "ModelsAPI/UnitPorts"
+	"BaseSolvers/AgglomerationSolver"
+	"BaseSolvers/BaseSolver"
     "Utilities/DyssolDefines"
   )
 

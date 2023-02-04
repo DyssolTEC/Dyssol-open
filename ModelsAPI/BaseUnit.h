@@ -32,8 +32,8 @@ class CStream;
 // TODO: rename to CBaseModel and create a type alias to CBaseUnit.
 
 /**
- * \brief Basic class for dynamic and steady-state units.
- * \details Basically, it describes a mathematical Model. A bit misleading name of the class is kept for compatibility reasons.
+ * \brief Basic class for dynamic and steady-state models.
+ * \details Basically, it describes a mathematical model. A somewhat misleading name of the class is kept for compatibility reasons.
  */
 class CBaseUnit
 {
@@ -119,18 +119,22 @@ public:
 	// TODO: rename to ModelName() and add an alias to GetUnitName().
 	/**
 	 * \brief Returns the name of the unit.
+	 * \return Name of the unit.
 	 */
 	std::string GetUnitName() const;
 	/**
 	 * \brief Returns the name of unit's author.
+	 * \return Name of unit's author.
 	 */
 	std::string GetAuthorName() const;
 	/**
 	 * \brief Returns the version of the unit.
+	 * \return Version of the unit.
 	 */
 	size_t GetVersion() const;
 	/**
 	 * \brief Returns the unique identifier of the unit.
+	 * \return Unique identifier of the unit.
 	 */
 	std::string GetUniqueID() const;
 
@@ -165,7 +169,9 @@ public:
 	//
 
 	/**
-	 * Returns a const reference to ports manager.
+	 * \brief Returns a const reference to ports manager.
+	 * \details Can be used for centralized access to ports.
+	 * \return Const reference to ports manager.
 	 */
 	const CPortsManager& GetPortsManager() const;
 	// Returns a reference to ports manager.
@@ -173,7 +179,8 @@ public:
 
 	/**
 	 * \brief Adds a port to the unit.
-	 * \details Should be used in CBaseUnit::CreateBasicInfo() function only. If the unit already has a port with the same name, a logic_error exception is thrown.
+	 * \details Should be used in CBaseUnit::CreateBasicInfo() function only.
+	 * If the unit already has a port with the same name, a logic_error exception is thrown.
 	 * \param _portName Name of the port. Must be unique within the unit.
 	 * \param _type Type of the port.
 	 * \return Pointer to the created port.
@@ -181,7 +188,7 @@ public:
 	CUnitPort* AddPort(const std::string& _portName, EUnitPort _type);
 	/**
 	 * \brief Returns a const pointer to the specified port of the unit.
-	 * \details Should be used in CBaseUnit::CreateBasicInfo() function only. If no such port exists, a logic_error exception is thrown.
+	 * \details If no such port exists, a logic_error exception is thrown.
 	 * \param _portName Name of the port.
 	 * \return Const pointer to the port.
 	 */
@@ -217,7 +224,7 @@ public:
 	 * Name should be unique within the unit. If a feed with the given name already exists in the unit, a logic_error exception is thrown.
 	 * Should be used in the CBaseUnit::CreateStructure() function; then the feed will be automatically handled by the simulation system
 	 * (saved and loaded during the simulation, cleared and removed after use).
-	 * However, it is allowed to add feed outside the CBaseUnit::CreateStructure() function for temporal purposes, but you have to
+	 * However, it is allowed to add feed outside CBaseUnit::CreateStructure() for temporal purposes, but you have to
 	 * save, load (in the functions CBaseUnit::SaveState(), CBaseUnit::LoadState()) and remove this feed (by calling CBaseUnit::RemoveFeed()) manually.
 	 * Otherwise, all such feeds will be removed at the end of the simulation.
 	 * This function returns the pointer to a created feed. This pointer should not be used inside the CBaseUnit::CreateStructure() function,
@@ -227,60 +234,112 @@ public:
 	 */
 	CStream* AddFeed(const std::string& _name);
 	/**
-	 * \brief Returns a const feed with the specified name.
+	 * \brief Returns a const pointer to the feed with the specified name.
 	 * \details If such feed does not exist, a logic_error exception is thrown.
+	 * The returned pointer should not be used inside the CBaseUnit::CreateStructure() function,
+	 * since all changes of the feed made through this pointer will be discarded during the initialization of the unit.
+	 * \param _name Name of the feed.
+	 * \return Const pointer to the feed.
 	 */
 	const CStream* GetFeed(const std::string & _name) const;
 	/**
-	 * \brief Returns a feed with the specified name.
+	 * \brief Returns a pointer to the feed with the specified name.
 	 * \details If such feed does not exist, a logic_error exception is thrown.
+	 * The returned pointer should not be used inside the CBaseUnit::CreateStructure() function,
+	 * since all changes of the feed made through this pointer will be discarded during the initialization of the unit.
+	 * \param _name Name of the feed.
+	 * \return Pointer to the feed.
 	 */
 	CStream* GetFeed(const std::string& _name);
 	/**
 	 * \brief Removes the feed with the specified name from the unit.
 	 * \details If such feed does not exist, a logic_error exception is thrown.
+	 * Should be used only for those feeds, which have been added to the unit outside the CBaseUnit::CreateStructure().
+	 * \param _name Name of the feed.
 	 */
 	void RemoveFeed(const std::string& _name);
 
 	/**
-	 * \brief Adds a new holdup to the unit with proper structure (MD dimensions, phases, materials, etc.), and returns a pointer to it.
-	 * If a holdup with the given name already exists, a logic_error exception is thrown.
+	 * \brief Adds a new holdup to the unit.
+	 * \details Adds a new holdup with the specified name to the unit.
+	 * The structure of the holdup will be the same as the global streams structure (MD dimensions, phases, grids, compounds etc.).
+	 * Name should be unique within the unit. If a holdup with the given name already exists in the unit, a logic_error exception is thrown.
+	 * Should be used in the CBaseUnit::CreateStructure() function; then the holdup will be automatically handled by the simulation system
+	 * (saved and loaded during the simulation, cleared and removed after use).
+	 * However, it is allowed to add holdup outside CBaseUnit::CreateStructure() for temporal purposes, but you have to
+	 * save, load (in the functions CBaseUnit::SaveState(), CBaseUnit::LoadState()) and remove this holdup (by calling CBaseUnit::RemoveFeed()) manually.
+	 * Otherwise, all such holdups will be removed at the end of the simulation.
+	 * This function returns the pointer to a created holdup. This pointer should not be used inside the CBaseUnit::CreateStructure() function,
+	 * since all changes of the holdup made through this pointer will be discarded during the initialization of the unit.
+	 * \param _name Name of the holdup.
+	 * \return Pointer to the added holdup.
 	 */
 	CHoldup* AddHoldup(const std::string& _name);
 	/**
-	 * \brief Returns a const holdup with the specified name.
+	 * \brief Returns a const pointer to the holdup with the specified name.
 	 * \details If such holdup does not exist, a logic_error exception is thrown.
+	 * The returned pointer should not be used inside the CBaseUnit::CreateStructure() function,
+	 * since all changes of the holdup made through this pointer will be discarded during the initialization of the unit.
+	 * \param _name Name of the holdup.
+	 * \return Const pointer to the holdup.
 	 */
 	const CHoldup* GetHoldup(const std::string & _name) const;
 	/**
-	 * \brief Returns a holdup with the specified name.
+	 * \brief Returns a pointer to the holdup with the specified name.
 	 * \details If such holdup does not exist, a logic_error exception is thrown.
+	 * The returned pointer should not be used inside the CBaseUnit::CreateStructure() function,
+	 * since all changes of the holdup made through this pointer will be discarded during the initialization of the unit.
+	 * \param _name Name of the holdup.
+	 * \return Pointer to the holdup.
 	 */
 	CHoldup* GetHoldup(const std::string& _name);
 	/**
 	 * \brief Removes the holdup with the specified name from the unit.
 	 * \details If such holdup does not exist, a logic_error exception is thrown.
+	 * Should be used only for those holdups, which have been added to the unit outside the CBaseUnit::CreateStructure().
+	 * \param _name Name of the holdup.
 	 */
 	void RemoveHoldup(const std::string& _name);
 
 	/**
-	 * \brief Adds a new stream to the unit with proper structure (MD dimensions, phases, materials, etc.), and returns a pointer to it.
-	 * \details If a stream with the given name already exists, a logic_error exception is thrown.
+	 * \brief Adds a new stream to the unit.
+	 * \details Adds a new stream with the specified name to the unit.
+	 * The structure of the stream will be the same as the global streams structure (MD dimensions, phases, grids, compounds etc.).
+	 * Name should be unique within the unit. If a stream with the given name already exists in the unit, a logic_error exception is thrown.
+	 * Should be used in the CBaseUnit::CreateStructure() function; then the stream will be automatically handled by the simulation system
+	 * (saved and loaded during the simulation, cleared and removed after use).
+	 * However, it is allowed to add stream outside CBaseUnit::CreateStructure() for temporal purposes, but you have to
+	 * save, load (in the functions CBaseUnit::SaveState(), CBaseUnit::LoadState()) and remove this stream (by calling CBaseUnit::RemoveFeed()) manually.
+	 * Otherwise, all such streams will be removed at the end of the simulation.
+	 * This function returns the pointer to a created stream. This pointer should not be used inside the CBaseUnit::CreateStructure() function,
+	 * since all changes of the stream made through this pointer will be discarded during the initialization of the unit.
+	 * \param _name Name of the stream.
+	 * \return Pointer to the added stream.
 	 */
 	CStream* AddStream(const std::string& _name);
 	/**
-	 * \brief Returns a const stream with the specified name.
+	 * \brief Returns a const pointer to the stream with the specified name.
 	 * \details If such stream does not exist, a logic_error exception is thrown.
+	 * The returned pointer should not be used inside the CBaseUnit::CreateStructure() function,
+	 * since all changes of the stream made through this pointer will be discarded during the initialization of the unit.
+	 * \param _name Name of the stream.
+	 * \return Const pointer to the stream.
 	 */
 	const CStream* GetStream(const std::string & _name) const;
 	/**
-	 * \brief Returns a stream with the specified name.
+	 * \brief Returns a pointer to the stream with the specified name.
 	 * \details If such stream does not exist, a logic_error exception is thrown.
+	 * The returned pointer should not be used inside the CBaseUnit::CreateStructure() function,
+	 * since all changes of the stream made through this pointer will be discarded during the initialization of the unit.
+	 * \param _name Name of the stream.
+	 * \return Pointer to the stream.
 	 */
 	CStream* GetStream(const std::string& _name);
 	/**
 	 * \brief Removes the stream with the specified name from the unit.
 	 * \details If such stream does not exist, a logic_error exception is thrown.
+	 * Should be used only for those streams, which have been added to the unit outside the CBaseUnit::CreateStructure().
+	 * \param _name Name of the stream.
 	 */
 	void RemoveStream(const std::string& _name);
 
@@ -297,137 +356,345 @@ public:
 	CUnitParametersManager& GetUnitParametersManager();
 
 	/**
-	 * Adds a new real constant unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * \brief Adds a new real constant unit parameter to the unit.
+	 * \details Should be used in the CBaseUnit::CreateStructure() function.
+	 * Adds the possibility to specify one real value as a parameter.
+	 * The name of the parameter should be unique within the unit. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * Boundary values are only a recommendation to the user, and going beyond them will only result in a warning to the user.
+	 * Boundary values are optional; if they are not specified, the limits do not apply.
+	 * \param _name Name of the unit parameter.
+	 * \param _initValue Initial value.
+	 * \param _units Units of measurement.
+	 * \param _description Extended parameter description.
+	 * \param _minValue Minimum boundary value of the parameter.
+	 * \param _maxValue Maximum boundary value of the parameter.
+	 * \return Pointer to the added unit parameter.
 	 */
 	CConstRealUnitParameter* AddConstRealParameter(const std::string& _name, double _initValue, const std::string& _units, const std::string& _description, double _minValue = std::numeric_limits<double>::lowest(), double _maxValue = std::numeric_limits<double>::max());
 	/**
-	 * Adds a new signed integer constant unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * \brief Adds a new signed integer constant unit parameter to the unit.
+	 * \details Should be used in the CBaseUnit::CreateStructure() function.
+	 * Adds the possibility to specify one signed integer value as a parameter.
+	 * The name of the parameter should be unique within the unit. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * Boundary values are only a recommendation to the user, and going beyond them will only result in a warning to the user.
+	 * Boundary values are optional; if they are not specified, the limits do not apply.
+	 * \param _name Name of the unit parameter.
+	 * \param _initValue Initial value.
+	 * \param _units Units of measurement.
+	 * \param _description Extended parameter description.
+	 * \param _minValue Minimum boundary value of the parameter.
+	 * \param _maxValue Maximum boundary value of the parameter.
+	 * \return Pointer to the added unit parameter.
 	 */
 	CConstIntUnitParameter* AddConstIntParameter(const std::string& _name, int64_t _initValue, const std::string& _units, const std::string& _description, int64_t _minValue = std::numeric_limits<int64_t>::lowest(), int64_t _maxValue = std::numeric_limits<int64_t>::max());
 	/**
-	 * Adds a new unsigned integer constant unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * \brief Adds a new unsigned integer constant unit parameter to the unit.
+	 * \details Should be used in the CBaseUnit::CreateStructure() function.
+	 * Adds the possibility to specify one unsigned integer value as a parameter.
+	 * The name of the parameter should be unique within the unit. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * Boundary values are only a recommendation to the user, and going beyond them will only result in a warning to the user.
+	 * Boundary values are optional; if they are not specified, the limits do not apply.
+	 * \param _name Name of the unit parameter.
+	 * \param _initValue Initial value.
+	 * \param _units Units of measurement.
+	 * \param _description Extended parameter description.
+	 * \param _minValue Minimum boundary value of the parameter.
+	 * \param _maxValue Maximum boundary value of the parameter.
+	 * \return Pointer to the added unit parameter.
 	 */
 	CConstUIntUnitParameter* AddConstUIntParameter(const std::string& _name, uint64_t _initValue, const std::string& _units, const std::string& _description, uint64_t _minValue = std::numeric_limits<uint64_t>::lowest(), uint64_t _maxValue = std::numeric_limits<uint64_t>::max());
 	/**
-	 * Adds a new time-dependent unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * \brief Adds a new real time-dependent unit parameter to the unit.
+	 * \details Should be used in the CBaseUnit::CreateStructure() function.
+	 * Adds the possibility to specify multiple values at different time points as a parameter.
+	 * The name of the parameter should be unique within the unit. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * Boundary values are only a recommendation to the user, and going beyond them will only result in a warning to the user.
+	 * Boundary values are optional; if they are not specified, the limits do not apply.
+	 * \param _name Name of the unit parameter.
+	 * \param _initValue Initial value.
+	 * \param _units Units of measurement.
+	 * \param _description Extended parameter description.
+	 * \param _minValue Minimum boundary value of the parameter.
+	 * \param _maxValue Maximum boundary value of the parameter.
+	 * \return Pointer to the added unit parameter.
 	 */
 	CTDUnitParameter* AddTDParameter(const std::string& _name, double _initValue, const std::string& _units, const std::string& _description, double _minValue = std::numeric_limits<double>::lowest(), double _maxValue = std::numeric_limits<double>::max());
 	/**
-	 * Adds a new string unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * \brief Adds a new string unit parameter to the unit.
+	 * \details Should be used in the CBaseUnit::CreateStructure() function.
+	 * Adds the possibility to specify one string value as a parameter.
+	 * The name of the parameter should be unique within the unit. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * \param _name Name of the unit parameter.
+	 * \param _initValue Initial value.
+	 * \param _description Extended parameter description.
+	 * \return Pointer to the added unit parameter.
 	 */
 	CStringUnitParameter* AddStringParameter(const std::string& _name, const std::string& _initValue, const std::string& _description);
 	/**
-	 * Adds a new two-positional check box unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * \brief Adds a new two-positional checkbox unit parameter to the unit.
+	 * \details Should be used in the CBaseUnit::CreateStructure() function.
+	 * Adds the possibility to specify one two-positional (yes/no) parameter.
+	 * The name of the parameter should be unique within the unit. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * \param _name Name of the unit parameter.
+	 * \param _initValue Initial value.
+	 * \param _description Extended parameter description.
+	 * \return Pointer to the added unit parameter.
 	 */
 	CCheckBoxUnitParameter* AddCheckBoxParameter(const std::string& _name, bool _initValue, const std::string& _description);
 	/**
-	 * Adds a new combo-box unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * \brief Adds a new combobox unit parameter to the unit.
+	 * \details Should be used in the CBaseUnit::CreateStructure() function.
+	 * Adds the possibility to select a single value from the list.
+	 * The name of the parameter should be unique within the unit. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * \param _name Name of the unit parameter.
+	 * \param _initValue Initial value.
+	 * \param _items List of selectable items.
+	 * \param _itemsNames List of names for each selectable item.
+	 * \param _description Extended parameter description.
+	 * \return Pointer to the added unit parameter.
 	 */
 	CComboUnitParameter* AddComboParameter(const std::string& _name, size_t _initValue, const std::vector<size_t>& _items, const std::vector<std::string>& _itemsNames, const std::string& _description);
 	/**
-	 * Adds a new compound combo-box unit parameter, allowing to choose one of the defined compounds, and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * \brief Adds a new compound combobox unit parameter to the unit.
+	 * \details Should be used in the CBaseUnit::CreateStructure() function.
+	 * Adds the possibility to select a single compound from the list of active compounds.
+	 * The name of the parameter should be unique within the unit. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * \param _name Name of the unit parameter.
+	 * \param _description Extended parameter description.
+	 * \return Pointer to the added unit parameter.
 	 */
 	CCompoundUnitParameter* AddCompoundParameter(const std::string& _name, const std::string& _description);
 	/**
-	 * Adds a new MDB compound combo-box unit parameter, allowing to choose one of the MDB compounds, and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * \brief Adds a new MDB compound combobox unit parameter to the unit.
+	 * \details Should be used in the CBaseUnit::CreateStructure() function.
+	 * Adds the possibility to select a single compound from the materials database.
+	 * The name of the parameter should be unique within the unit. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * \param _name Name of the unit parameter.
+	 * \param _description Extended parameter description.
+	 * \return Pointer to the added unit parameter.
 	 */
 	CMDBCompoundUnitParameter* AddMDBCompoundParameter(const std::string& _name, const std::string& _description);
 	/**
-	 * Adds a new reaction unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * \brief Adds a new reaction unit parameter to the unit.
+	 * \details Should be used in the CBaseUnit::CreateStructure() function.
+	 * Adds the possibility to specify one or several reactions.
+	 * The name of the parameter should be unique within the unit. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * \param _name Name of the unit parameter.
+	 * \param _description Extended parameter description.
+	 * \return Pointer to the added unit parameter.
 	 */
 	CReactionUnitParameter* AddReactionParameter(const std::string& _name, const std::string& _description);
 	/**
-	 * Adds a new real list unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * \brief Adds a new real list unit parameter to the unit.
+	 * \details Should be used in the CBaseUnit::CreateStructure() function.
+	 * Adds the possibility to specify multiple real values as a parameter.
+	 * The name of the parameter should be unique within the unit. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * Boundary values are only a recommendation to the user, and going beyond them will only result in a warning to the user.
+	 * Boundary values are optional; if they are not specified, the limits do not apply.
+	 * \param _name Name of the unit parameter.
+	 * \param _initValue Initial value.
+	 * \param _units Units of measurement.
+	 * \param _description Extended parameter description.
+	 * \param _minValue Minimum boundary value of the parameter.
+	 * \param _maxValue Maximum boundary value of the parameter.
+	 * \return Pointer to the added unit parameter.
 	 */
 	CListRealUnitParameter* AddListRealParameter(const std::string& _name, double _initValue, const std::string& _units, const std::string& _description, double _minValue = std::numeric_limits<double>::lowest(), double _maxValue = std::numeric_limits<double>::max());
 	/**
-	 * Adds a new signed integer list unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * \brief Adds a new signed integer list unit parameter to the unit.
+	 * \details Should be used in the CBaseUnit::CreateStructure() function.
+	 * Adds the possibility to specify multiple signed integer values as a parameter.
+	 * The name of the parameter should be unique within the unit. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * Boundary values are only a recommendation to the user, and going beyond them will only result in a warning to the user.
+	 * Boundary values are optional; if they are not specified, the limits do not apply.
+	 * \param _name Name of the unit parameter.
+	 * \param _initValue Initial value.
+	 * \param _units Units of measurement.
+	 * \param _description Extended parameter description.
+	 * \param _minValue Minimum boundary value of the parameter.
+	 * \param _maxValue Maximum boundary value of the parameter.
+	 * \return Pointer to the added unit parameter.
 	 */
 	CListIntUnitParameter* AddListIntParameter(const std::string& _name, int64_t _initValue, const std::string& _units, const std::string& _description, int64_t _minValue = std::numeric_limits<int64_t>::lowest(), int64_t _maxValue = std::numeric_limits<int64_t>::max());
 	/**
-	 * Adds a new unsigned integer list unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * \brief Adds a new unsigned integer list unit parameter to the unit.
+	 * \details Should be used in the CBaseUnit::CreateStructure() function.
+	 * Adds the possibility to specify multiple unsigned integer values as a parameter.
+	 * The name of the parameter should be unique within the unit. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * Boundary values are only a recommendation to the user, and going beyond them will only result in a warning to the user.
+	 * Boundary values are optional; if they are not specified, the limits do not apply.
+	 * \param _name Name of the unit parameter.
+	 * \param _initValue Initial value.
+	 * \param _units Units of measurement.
+	 * \param _description Extended parameter description.
+	 * \param _minValue Minimum boundary value of the parameter.
+	 * \param _maxValue Maximum boundary value of the parameter.
+	 * \return Pointer to the added unit parameter.
 	 */
 	CListUIntUnitParameter* AddListUIntParameter(const std::string& _name, uint64_t _initValue, const std::string& _units, const std::string& _description, uint64_t _minValue = std::numeric_limits<uint64_t>::lowest(), uint64_t _maxValue = std::numeric_limits<uint64_t>::max());
 	/**
-	 * Adds a new solver unit parameter with type SOLVER_AGGLOMERATION_1, allowing to choose one of the available solvers of this type, and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * \brief Adds a new agglomeration solver unit parameter to the unit.
+	 * \details Should be used in the CBaseUnit::CreateStructure() function.
+	 * Adds the possibility to choose one of the available agglomeration solvers of this type.
+	 * The name of the parameter should be unique within the unit. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * Boundary values are only a recommendation to the user, and going beyond them will only result in a warning to the user.
+	 * Boundary values are optional; if they are not specified, the limits do not apply.
+	 * \param _name Name of the unit parameter.
+	 * \param _description Extended parameter description.
+	 * \return Pointer to the added unit parameter.
 	 */
 	CSolverUnitParameter* AddSolverAgglomeration(const std::string& _name, const std::string& _description);
 	/**
-	 * Adds a new solver unit parameter with type SOLVER_PBM_1, allowing to choose one of the available solvers of this type, and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * \internal
+	 * \brief Adds a new PBM solver unit parameter to the unit.
+	 * \details Should be used in the CBaseUnit::CreateStructure() function.
+	 * Adds the possibility to choose one of the available PBM solvers of this type.
+	 * The name of the parameter should be unique within the unit. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * Boundary values are only a recommendation to the user, and going beyond them will only result in a warning to the user.
+	 * Boundary values are optional; if they are not specified, the limits do not apply.
+	 * \param _name Name of the unit parameter.
+	 * \param _description Extended parameter description.
+	 * \return Pointer to the added unit parameter.
 	 */
 	CSolverUnitParameter* AddSolverPBM(const std::string& _name, const std::string& _description);
 
 	/**
-	 * Groups the specified unit parameters and associates them with the given value of the selected unit parameter. The parameter, its value and all the adding parameters must already exist. If something does not exist, logic_error exception is thrown.
+	 * \brief Groups the specified unit parameters.
+	 * \details Allows to hide groups of parameters depending on the selected value of a combobox unit parameter.
+	 * The parameter, its value and all the adding parameters must already exist. If something does not exist, logic_error exception is thrown.
+	 * \param _unitParamName Name of the target combobox unit parameter.
+	 * \param _unitParamValueName Selected value of of the target combobox unit parameter.
+	 * \param _groupedParamNames Names of other unit parameters that will be shown if \p _unitParamValueName is selected.
 	 */
 	void AddParametersToGroup(const std::string& _unitParamName, const std::string& _unitParamValueName, const std::vector<std::string>& _groupedParamNames);
 
 	/**
-	 * Returns value of the real constant unit parameter. Throws logic_error exception if a real constant unit parameter with the given name does not exist./
+	 * \brief Returns value of the real constant unit parameter.
+	 * \details Throws logic_error exception if a unit parameter with the given name and type does not exist.
+	 * \param _name Name of the unit parameter.
+	 * \return Current value of the unit parameter.
 	 */
 	double GetConstRealParameterValue(const std::string& _name) const;
 	/**
-	 * Returns value of the signed integer constant unit parameter. Throws logic_error exception if a signed integer constant unit parameter with the given name does not exist.
+	 * \brief Returns value of the signed integer constant unit parameter.
+	 * \details Throws logic_error exception if a unit parameter with the given name and type does not exist.
+	 * \param _name Name of the unit parameter.
+	 * \return Current value of the unit parameter.
 	 */
 	int64_t GetConstIntParameterValue(const std::string& _name) const;
 	/**
-	 * Returns value of the unsigned integer constant unit parameter. Throws logic_error exception if an unsigned integer constant unit parameter with the given name does not exist.
+	 * \brief Returns value of the unsigned integer constant unit parameter.
+	 * \details Throws logic_error exception if a unit parameter with the given name and type does not exist.
+	 * \param _name Name of the unit parameter.
+	 * \return Current value of the unit parameter.
 	 */
 	uint64_t GetConstUIntParameterValue(const std::string& _name) const;
 	/**
-	 * Returns value of the time-dependent unit parameter at the specified time point. Throws logic_error exception if a time-dependent unit parameter with the given name does not exist.
+	 * \brief Returns value of the real time-dependent unit parameter at the given time point.
+	 * \details If the selected time point has not been defined, linear interpolation or nearest-neighbor extrapolation will be performed.
+	 * Throws logic_error exception if a unit parameter with the given name and type does not exist.
+	 * \param _name Name of the unit parameter.
+	 * \param _time Target time point.
+	 * \return Current value of the unit parameter at the given time point.
 	 */
 	double GetTDParameterValue(const std::string& _name, double _time) const;
 	/**
-	 * Returns value of the string unit parameter. Throws logic_error exception if a string unit parameter with the given name does not exist.
+	 * \brief Returns value of the string unit parameter.
+	 * \details Throws logic_error exception if a unit parameter with the given name and type does not exist.
+	 * \param _name Name of the unit parameter.
+	 * \return Current value of the unit parameter.
 	 */
 	std::string GetStringParameterValue(const std::string& _name) const;
 	/**
-	 * Returns value of the check box unit parameter. Throws logic_error exception if a check box unit parameter with the given name does not exist.
+	 * \brief Returns value of the checkbox unit parameter.
+	 * \details Throws logic_error exception if a unit parameter with the given name and type does not exist.
+	 * \param _name Name of the unit parameter.
+	 * \return Current value of the unit parameter.
 	 */
 	bool GetCheckboxParameterValue(const std::string& _name) const;
 	/**
-	 * Returns value of the combo box unit parameter. Throws logic_error exception if combo box unit parameter with the given name does not exist.
+	 * \brief Returns value of the combobox unit parameter.
+	 * \details Throws logic_error exception if a unit parameter with the given name and type does not exist.
+	 * \param _name Name of the unit parameter.
+	 * \return Current value of the unit parameter.
 	 */
 	size_t GetComboParameterValue(const std::string& _name) const;
 	/**
-	 * Returns value of the compound unit parameter. Throws logic_error exception if a compound unit parameter with the given name does not exist.
+	 * \brief Returns value of the compound combobox unit parameter.
+	 * \details Throws logic_error exception if a unit parameter with the given name and type does not exist.
+	 * \param _name Name of the unit parameter.
+	 * \return Unique key of the selected compound.
 	 */
 	std::string GetCompoundParameterValue(const std::string& _name) const;
 	/**
-	 * Returns value of the MDB compound unit parameter. Throws logic_error exception if a compound unit parameter with the given name does not exist.
+	 * \brief Returns value of the MDB compound combobox unit parameter.
+	 * \details Throws logic_error exception if a unit parameter with the given name and type does not exist.
+	 * \param _name Name of the unit parameter.
+	 * \return Unique key of the selected compound.
 	 */
 	std::string GetMDBCompoundParameterValue(const std::string& _name) const;
 	/**
-	 * Returns value of the reaction unit parameter. Throws logic_error exception if a reaction unit parameter with the given name does not exist.
+	 * \brief Returns value of the reaction unit parameter.
+	 * \details Throws logic_error exception if a unit parameter with the given name and type does not exist.
+	 * \param _name Name of the unit parameter.
+	 * \return List of defined reactions.
 	 */
 	std::vector<CChemicalReaction> GetReactionParameterValue(const std::string& _name) const;
 	/**
-	 * Returns value of the real list unit parameter. Throws logic_error exception if a real list unit parameter with the given name does not exist.
+	 * \brief Returns value of the real list unit parameter at the given index.
+	 * \details If the selected index has not been defined, 0 is returned.
+	 * Throws logic_error exception if a unit parameter with the given name and type does not exist.
+	 * \param _name Name of the unit parameter.
+	 * \param _index Target index.
+	 * \return Current value of the unit parameter at the given time point.
 	 */
 	double GetListRealParameterValue(const std::string& _name, size_t _index) const;
 	/**
-	 * Returns value of the signed integer list unit parameter. Throws logic_error exception if a signed integer list unit parameter with the given name does not exist.
+	 * \brief Returns value of the signed integer list unit parameter at the given index.
+	 * \details If the selected index has not been defined, 0 is returned.
+	 * Throws logic_error exception if a unit parameter with the given name and type does not exist.
+	 * \param _name Name of the unit parameter.
+	 * \param _index Target index.
+	 * \return Current value of the unit parameter at the given time point.
 	 */
 	int64_t GetListIntParameterValue(const std::string& _name, size_t _index) const;
 	/**
-	 * Returns value of the unsigned integer list unit parameter. Throws logic_error exception if an unsigned integer list unit parameter with the given name does not exist.
+	 * \brief Returns value of the unsigned integer list unit parameter at the given index.
+	 * \details If the selected index has not been defined, 0 is returned.
+	 * Throws logic_error exception if a unit parameter with the given name and type does not exist.
+	 * \param _name Name of the unit parameter.
+	 * \param _index Target index.
+	 * \return Current value of the unit parameter at the given time point.
 	 */
 	uint64_t GetListUIntParameterValue(const std::string& _name, size_t _index) const;
 	/**
-	 * Returns a pointer to an agglomeration solver of a type SOLVER_AGGLOMERATION_1 with the specified name. Throws logic_error exception if a solver unit parameter with the given name does not exist.
+	 * \brief Returns value of the agglomeration solver unit parameter.
+	 * Throws logic_error exception if a unit parameter with the given name and type does not exist.
+	 * \param _name Name of the unit parameter.
+	 * \return Pointer to the selected agglomeration solver.
 	 */
 	CAgglomerationSolver* GetSolverAgglomeration(const std::string& _name) const;
 	/**
-	 * Returns a pointer to an agglomeration solver of a type SOLVER_AGGLOMERATION_1 from the specified unit parameter. Throws logic_error exception if a solver unit parameter with the given type does not exist.
+	 * \brief Returns value of the agglomeration solver unit parameter.
+	 * Throws logic_error exception if the provided pointer to the unit parameter is of the wrong type.
+	 * \param _param Pointer to the agglomeration solver unit parameter.
+	 * \return Pointer to the selected agglomeration solver.
 	 */
 	CAgglomerationSolver* GetSolverAgglomeration(const CSolverUnitParameter* _param) const;
 	/**
-	 * Returns a pointer to a PBM solver of a type SOLVER_PBM_1 with the specified name. Throws logic_error exception if a solver unit parameter with the given name does not exist.
+	 * \internal
+	 * \brief Returns value of the PBM solver unit parameter.
+	 * Throws logic_error exception if a unit parameter with the given name and type does not exist.
+	 * \param _name Name of the unit parameter.
+	 * \return Pointer to the selected PBM solver.
 	 */
 	CPBMSolver* GetSolverPBM(const std::string& _name) const;
 	/**
-	 * Returns a pointer to a PBM solver of a type SOLVER_PBM_1 from the specified unit parameter. Throws logic_error exception if a solver unit parameter with the given type does not exist.
+	 * \internal
+	 * \brief Returns value of the PBM solver unit parameter.
+	 * Throws logic_error exception if the provided pointer to the unit parameter is of the wrong type.
+	 * \param _param Pointer to the PBM solver unit parameter.
+	 * \return Pointer to the selected PBM solver.
 	 */
 	CPBMSolver* GetSolverPBM(const CSolverUnitParameter* _param) const;
 
