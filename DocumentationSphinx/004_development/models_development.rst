@@ -206,7 +206,7 @@ You need the following steps:
 
 5. Rename added project in Visual Studio from ``UnitT_SteadyState`` to ``Unit_MySplitter``.
 
-6. Open ``Unit_MySplitter`` → ``Unit.cpp`` in the Visual Studio’s *Solution Explorer* and extend the unit with the following functionality (please refer to :ref:`label-baseUnit`, :ref:`label-stream` and :ref:`label-PSD` when necessary):
+6. Open ``Unit_MySplitter`` → ``Unit.cpp`` in the Visual Studio’s *Solution Explorer* and extend the unit with the following functionality (please refer to :ref:`sec.development.api.class_baseunit`, :ref:`sec.development.api.class_stream` and :ref:`label-PSD` when necessary):
 
 - Modify constructor ``CUnit()``:
 
@@ -884,7 +884,7 @@ Do the following steps:
 
 5. Rename added project in Visual Studio from ``UnitT_Dynamic`` to ``Unit_Basics``.
 
-6. Open ``Unit_Basics`` → ``Unit.cpp`` in the Visual Studio’s *Solution Explorer* and develop your unit as shown follows. You can use :ref:`label-baseUnit`, :ref:`label-stream` and :ref:`label-PSD` for references.
+6. Open ``Unit_Basics`` → ``Unit.cpp`` in the Visual Studio’s *Solution Explorer* and develop your unit as shown follows. You can use :ref:`sec.development.api.class_baseunit`, :ref:`sec.development.api.class_stream` and :ref:`label-PSD` for references.
 
 - Modify constructor ``CUnit()``:
 	

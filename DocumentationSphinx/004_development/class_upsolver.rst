@@ -4,4 +4,5 @@ Solver
 ======
 
 .. doxygenclass:: CSolverUnitParameter
+   :project: dyssol_models_api
    :members:

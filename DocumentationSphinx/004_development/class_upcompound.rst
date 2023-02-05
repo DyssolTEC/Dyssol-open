@@ -4,4 +4,5 @@ Compound
 ========
 
 .. doxygenclass:: CCompoundUnitParameter
+   :project: dyssol_models_api
    :members:

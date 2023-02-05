@@ -1,4 +1,3 @@
-
 .. _label-multiDim:
 
 =================================================
@@ -108,7 +107,7 @@ Transformation matrix is written in tree structure form. ...
 Application example
 """""""""""""""""""
 
-As an example, the calculation of the particle size distribution in outlet stream from a :ref:`label-crusher` is shown below. 
+As an example, the calculation of the particle size distribution in outlet stream is shown below. 
 
 The input stream information - particle size and form factor distribution - is listed in the table below. The form factor and size values are reprensented by indices from 1 to 5 and 1 to 6, respectively.
 

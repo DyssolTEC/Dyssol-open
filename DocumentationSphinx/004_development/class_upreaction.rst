@@ -4,4 +4,5 @@ Reaction
 ========
 
 .. doxygenclass:: CReactionUnitParameter
+   :project: dyssol_models_api
    :members:

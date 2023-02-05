@@ -4,4 +4,5 @@ Time-dependent
 ==============
 
 .. doxygenclass:: CTDUnitParameter
+   :project: dyssol_models_api
    :members:

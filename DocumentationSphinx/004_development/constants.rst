@@ -28,3 +28,4 @@ In Dyssol, some universal constants have been defined, which you may use directl
 +------------------------------------------+----------------------------------------+--------------------+
 
 .. doxygenenum:: EUnitPort
+    :project: dyssol_models_api

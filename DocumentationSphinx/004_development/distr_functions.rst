@@ -8,6 +8,7 @@ Several global functions are defined to work with particle size distributions. T
 All functions receive grid (``Grid``) as the input parameter. The grid can be previously obtained with the help of the function ``GetNumericGrid``, for more information please refer to :ref:`getNumericGrid <label-getNumericGrid>` in section :ref:`label-baseUnit`. 
 
 .. doxygenfile:: DistributionsFunctions.h
+	:project: dyssol_models_api
 ..    :members:
 ..    :protected-members:
 ..    :private-members:

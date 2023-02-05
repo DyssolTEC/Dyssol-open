@@ -1,4 +1,3 @@
-
 .. _label-simulation:
 
 ===============
@@ -36,7 +35,7 @@ The structure of material streams is illustrated in the figure below. The inform
 
 .. seealso::
 
-	:ref:`label-stream` for program interface of material streams.
+	:ref:`sec.development.api.class_stream` for program interface of material streams.
 
 |
 

@@ -4,4 +4,5 @@ MDB compound
 ============
 
 .. doxygenclass:: CMDBCompoundUnitParameter
+   :project: dyssol_models_api
    :members:

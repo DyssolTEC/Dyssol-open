@@ -233,3 +233,4 @@ Dyssol.VC.VC.opendb
 /ExternalLibraries/zlib/
 /ExternalLibraries/graphviz
 /DocumentationSphinx/_build
+/DocumentationSphinx/conf.py

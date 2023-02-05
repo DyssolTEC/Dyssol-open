@@ -4,4 +4,5 @@ String
 ======
 
 .. doxygenclass:: CStringUnitParameter
+   :project: dyssol_models_api
    :members:

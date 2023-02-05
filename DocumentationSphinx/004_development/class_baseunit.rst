@@ -1,4 +1,4 @@
-.. _sec.development.api.baseunit:
+.. _sec.development.api.class_baseunit:
 
 Basic unit
 ==========
@@ -16,5 +16,6 @@ Functions of the class ``CBaseUnit`` are introduced below.
 |
 
 .. doxygenclass:: CBaseUnit
-   :members:
-   :allow-dot-graphs:
+	:project: dyssol_models_api
+	:members:
+	:allow-dot-graphs:

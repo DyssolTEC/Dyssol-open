@@ -4,4 +4,5 @@ Combo box
 =========
 
 .. doxygenclass:: CComboUnitParameter
+   :project: dyssol_models_api
    :members:

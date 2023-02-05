@@ -4,4 +4,5 @@ Base solver
 ===========
 
 .. doxygenclass:: CBaseSolver
+   :project: dyssol_models_api
    :members:

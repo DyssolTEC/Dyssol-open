@@ -4,4 +4,5 @@ Chemical reaction
 =================
 
 .. doxygenclass:: CChemicalReaction
+   :project: dyssol_models_api
    :members:

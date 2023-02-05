@@ -4,4 +4,5 @@ Base class
 ==========
 
 .. doxygenclass:: CBaseUnitParameter
+   :project: dyssol_models_api
    :members:

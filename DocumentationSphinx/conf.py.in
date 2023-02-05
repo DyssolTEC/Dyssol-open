@@ -72,8 +72,9 @@ exclude_patterns = []
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = "sphinx"
 
-#  Warn about all references where the target cannot be found.
-nitpicky = True
+# Warn about all references where the target cannot be found.
+# nitpicky = True
+# nitpick_ignore = [('cpp:type', 'size_t')]
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -132,7 +133,7 @@ html_favicon = './static/images/logo.png'
 # -- Extension configuration -------------------------------------------------
 
 # Breathe
-# breathe_projects = {
-#     "Dyssol": "/mnt/c/Projects/Dyssol/build/doc/doxygen/xml/",
-# }
-breathe_default_project = "Dyssol"
+breathe_projects = {
+    "dyssol_models_api": "@DOXYGEN_OUTPUT_XML_DIR@",
+}
+# breathe_default_project = "Dyssol"

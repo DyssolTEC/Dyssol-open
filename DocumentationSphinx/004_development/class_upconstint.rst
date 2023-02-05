@@ -4,3 +4,4 @@ Const int
 =========
 
 .. doxygentypedef:: CConstIntUnitParameter
+    :project: dyssol_models_api

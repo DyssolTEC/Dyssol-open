@@ -4,4 +4,5 @@ List
 ====
 
 .. doxygenclass:: CListUnitParameter
+   :project: dyssol_models_api
    :members:

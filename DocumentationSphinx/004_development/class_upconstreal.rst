@@ -4,3 +4,4 @@ Const real
 ==========
 
 .. doxygentypedef:: CConstRealUnitParameter
+    :project: dyssol_models_api
