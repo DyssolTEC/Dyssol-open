@@ -187,6 +187,8 @@ IF(BUILD_DOCS)
     "ModelsAPI/DistributionsFunctions"
     "ModelsAPI/Holdup"
     "ModelsAPI/Matrix2D"
+    "ModelsAPI/PlotManager"
+    "ModelsAPI/StateVariable"
     "ModelsAPI/Stream"
     "ModelsAPI/TransformMatrix"
     "ModelsAPI/UnitParameters"

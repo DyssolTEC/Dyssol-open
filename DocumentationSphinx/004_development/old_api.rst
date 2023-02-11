@@ -164,16 +164,6 @@ State variables
 
 .. code-block:: cpp
 
-	unsigned AddStateVariable(std::string Name, double InitValue, bool SaveHistory = false)
-	
-Adds new state variable and initializes it with ``InitValue``. Name must be unique within the unit’s state variables. Parameter ``SaveHistory`` specifies if the history of all changes of variable should be saved during calculation for further post-processing. To save history, function ``SaveStateVariables()`` should be called. All variables which are added with this function will be automatically saved and restored during the simulation. Should be used in ``Initialize`` function of the unit. 
-
-Returns index of added variable.
-
-|
-
-.. code-block:: cpp
-
 	unsigned GetStateVariablesNumber()	
 
 Returns number of state variables which have been defined in this unit. 
@@ -190,33 +180,9 @@ Returns the name of the state variable with specified index. Returns empty strin
 
 .. code-block:: cpp
 
-	double GetStateVariable(std::string Name)
-	
-Returns value of internal state variable with name Name. Returns ``0`` if such variable has not been defined.
-
-|
-
-.. code-block:: cpp
-
-	void SetStateVariable(std::string Name, double Value)
-	
-Sets new value ``Value`` of a state variable ``Name``. 
-
-|
-
-.. code-block:: cpp
-
 	void ClearStateVariables()
 	
 Removes all state variables and history of their changes. 
-
-|
-
-.. code-block:: cpp
-
-	void SaveStateVariables(double Time)
-	
-Saves values of those internal variables defined as having history at the current time ``Time``.
 
 |
 
@@ -676,77 +642,6 @@ Can be called to indicate warning. Description will be displayed in the simulati
 	void ShowInfo(std::string Description)
 
 Can be called to write out messages to the simulation’s log screen during the simulation. Description will be displayed in the simulation’s log.
-
-|
-
-Plots
------
-
-.. code-block:: cpp
-
-	int AddPlot(std::string PlotName, std::string XAxisName, std::string YAxisName)
-
-Adds new 2-dimensional plot with specified name and axis, returns index of the plot. ``PlotName`` must be unique within the unit’s plots. Returns ``-1`` on error.
-
-|
-
-.. code-block:: cpp
-
-	int AddPlot(std::string PlotName, std::string XAxisName, std::string YAxisName, std::string ZAxisName)
-
-Adds new 3-dimensional plot with specified name and axis, returns index of the plot. ``PlotName`` must be unique within the unit’s plots. Returns ``-1`` on error.
-
-|
-
-.. code-block:: cpp
-
-	int AddCurveOnPlot(std::string PlotName, std::string CurveName)
-
-Adds new curve with specified name ``CurveName`` on the 2-dimensional plot with name ``PlotName``. Returns index of the curve within specified plot. Returns ``-1`` on error.
-
-|
-
-.. code-block:: cpp
-
-	int AddCurveOnPlot(std::string PlotName, double ZValue)
-
-Adds new curve with specified ``ZValue`` on the 2- or 3-dimensional plot with name ``PlotName``. Returns index of the curve within specified plot. 
-
-``ZValue`` can be time, ...
-
-Returns ``-1`` on error.
-
-|
-
-.. code-block:: cpp
-
-	void AddPointOnCurve(std::string PlotName, std::string CurveName, double X, double Y)
-
-Adds new point on specified curve ``CurveName`` for 2-dimensional plot.
-
-|
-
-.. code-block:: cpp
-
-	void AddPointOnCurve(std::string PlotName, double ZValue, double X, double Y)
-
-Adds new point on specified curve for 3-dimensional plot with specified ``ZValue``. ``ZValue`` can be time, ...
-
-|
-
-.. code-block:: cpp
-
-	void AddPointOnCurve(std::string PlotName, std::string CurveName, std::vector<double> X, std::vector<double> Y)
-
-Adds new points on specified curve ``CurveName`` for 2-dimensional plot named ``PlotName``.
-
-|
-
-.. code-block:: cpp
-
-	void AddPointOnCurve(std::string PlotName, double ZValue, std::vector<double> X, std::vector<double> Y)
-
-Adds new points on specified curve ``ZValue`` for 3-dimensional plot named ``PlotName``. ``ZValue`` can be time, ...
 
 |
 

@@ -17,6 +17,8 @@ All functions, classes, their member variables and methods, needed to develop ne
 	class_chemicalreaction
 	class_agglomerationsolver
 	class_basesolver
+	class_statevariable
+	class_plot
 	class_transformmatrix
 	class_densemdmatrix
 	class_matrix2d

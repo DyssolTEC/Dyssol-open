@@ -669,14 +669,14 @@ public:
 	uint64_t GetListUIntParameterValue(const std::string& _name, size_t _index) const;
 	/**
 	 * \brief Returns value of the agglomeration solver unit parameter.
-	 * Throws logic_error exception if a unit parameter with the given name and type does not exist.
+	 * \details Throws logic_error exception if a unit parameter with the given name and type does not exist.
 	 * \param _name Name of the unit parameter.
 	 * \return Pointer to the selected agglomeration solver.
 	 */
 	CAgglomerationSolver* GetSolverAgglomeration(const std::string& _name) const;
 	/**
 	 * \brief Returns value of the agglomeration solver unit parameter.
-	 * Throws logic_error exception if the provided pointer to the unit parameter is of the wrong type.
+	 * \details Throws logic_error exception if the provided pointer to the unit parameter is of the wrong type.
 	 * \param _param Pointer to the agglomeration solver unit parameter.
 	 * \return Pointer to the selected agglomeration solver.
 	 */
@@ -684,7 +684,7 @@ public:
 	/**
 	 * \internal
 	 * \brief Returns value of the PBM solver unit parameter.
-	 * Throws logic_error exception if a unit parameter with the given name and type does not exist.
+	 * \details Throws logic_error exception if a unit parameter with the given name and type does not exist.
 	 * \param _name Name of the unit parameter.
 	 * \return Pointer to the selected PBM solver.
 	 */
@@ -692,7 +692,7 @@ public:
 	/**
 	 * \internal
 	 * \brief Returns value of the PBM solver unit parameter.
-	 * Throws logic_error exception if the provided pointer to the unit parameter is of the wrong type.
+	 * \details Throws logic_error exception if the provided pointer to the unit parameter is of the wrong type.
 	 * \param _param Pointer to the PBM solver unit parameter.
 	 * \return Pointer to the selected PBM solver.
 	 */
@@ -708,19 +708,36 @@ public:
 	CStateVariablesManager& GetStateVariablesManager();
 
 	/**
-	 * Adds a new time-dependent state variable to the unit and returns a pointer to it. If the unit already has a state variable with the same name, logic_error exception is thrown.
+	 * \brief Adds a new state variable.
+	 * \details Can be used to handle state-dependent values: all variables added with this function will be automatically saved and restored during the simulation.
+	 * Can also store the history of changes during the simulation for further post-processing.
+	 * The name must by unique within the unit. If the unit already has a state variable with the same name, logic_error exception is thrown.
+	 * Should be used in the CBaseUnit::CreateStructure() function.
+	 * \param _name Name of the variable.
+	 * \param _initValue Initial value of the variable.
+	 * \return Pointer to the added state variable.
 	 */
 	CStateVariable* AddStateVariable(const std::string& _name, double _initValue);
 	/**
-	 * Returns current value of a state variable. If a state variable with the given name does not exist in this unit, logic_error exception is thrown.
+	 * \brief Returns current value of the state variable.
+	 * \details If a state variable with the given name does not exist in this unit, logic_error exception is thrown.
+	 * \param _name Name of the variable.
+	 * \return Current value of the state variable.
 	 */
 	double GetStateVariable(const std::string& _name) const;
 	/**
-	 * Sets new value of a state variable. If a state variable with the given name does not exist in this unit, logic_error exception is thrown.
+	 * \brief Sets a new value of the state variable.
+	 * \details If a state variable with the given name does not exist in this unit, logic_error exception is thrown.
+	 * \param _name Name of the variable.
+	 * \param _value Name value of the variable.
 	 */
 	void SetStateVariable(const std::string& _name, double _value);
 	/**
-	 * Sets new value of a state variable and adds its value to the history of time-dependent changes. If a state variable with the given name does not exist in this unit, logic_error exception is thrown.
+	 * \brief Sets a new value of the state variable and adds its value to the history.
+	 * \details If a state variable with the given name does not exist in this unit, logic_error exception is thrown.
+	 * \param _name Name of the variable.
+	 * \param _value Name value of the variable.
+	 * \param _time Time point for which new value is added to the history.
 	 */
 	void SetStateVariable(const std::string& _name, double _value, double _time);
 
@@ -734,35 +751,82 @@ public:
 	CPlotManager& GetPlotsManager();
 
 	/**
-	 * Adds a new 2-dimensional plot with the specified name and axes labels to the units and returns a pointer to it. If the unit already has a plot with the same name, logic_error exception is thrown.
+	 * \brief Adds a new 2-dimensional plot to the unit.
+	 * \details Adds a plot with the specified name and axes labels to the unit and returns a pointer to it.
+	 * If the unit already has a plot with the same name, logic_error exception is thrown.
+	 * \param _plotName Name of the plot.
+	 * \param _labelX Text label of the X-axis.
+	 * \param _labelY Text label of the Y-axis.
+	 * \return Pointer to the added plot.
 	 */
 	CPlot* AddPlot(const std::string& _plotName, const std::string& _labelX, const std::string& _labelY);
 	/**
-	 * Adds a new 3-dimensional plot with the specified name and axes labels to the units and returns a pointer to it. If the unit already has a plot with the same name, logic_error exception is thrown.
+	 * \brief Adds a new 3-dimensional plot to the unit.
+	 * \details Adds a plot with the specified name and axes labels to the unit and returns a pointer to it.
+	 * If the unit already has a plot with the same name, logic_error exception is thrown.
+	 * \param _plotName Name of the plot.
+	 * \param _labelX Text label of the X-axis.
+	 * \param _labelY Text label of the Y-axis.
+	 * \param _labelZ Text label of the Z-axis.
+	 * \return Pointer to the added plot.
 	 */
 	CPlot* AddPlot(const std::string& _plotName, const std::string& _labelX, const std::string& _labelY, const std::string& _labelZ);
 	/**
-	 * Adds a new curve with the specified name on the 2-dimensional plot with the given name and returns a pointer to it. If a plot with this name does not exist or it already contains a curve with the given name, logic_error exception is thrown.
+	 * \brief Adds a new curve to a 2-dimensional plot.
+	 * \details Adds a new curve with the specified name to the 2-dimensional plot with the given name and returns a pointer to it.
+	 * If a plot with this name does not exist or it already contains a curve with the given name, logic_error exception is thrown.
+	 * \param _plotName Name of the plot.
+	 * \param _curveName Name of the new curve.
+	 * \return Pointer to the added curve.
 	 */
 	CCurve* AddCurveOnPlot(const std::string& _plotName, const std::string& _curveName);
 	/**
-	 * Adds a new curve with the specified Z-value on the 3-dimensional plot with the given name and returns a pointer to it. If a plot with this name does not exist or it already contains a curve with the given Z-value, logic_error exception is thrown.
+	 * \brief Adds a new curve to a 3-dimensional plot.
+	 * \details Adds a new curve with the specified Z-value to the 3-dimensional plot with the given name and returns a pointer to it.
+	 * If a plot with this name does not exist or it already contains a curve with the given Z-value, logic_error exception is thrown.
+	 * \param _plotName Name of the plot.
+	 * \param _valueZ Z-value of the new curve.
+	 * \return Pointer to the added curve.
 	 */
 	CCurve* AddCurveOnPlot(const std::string& _plotName, double _valueZ);
 	/**
-	 * Adds a new point to the specified curve of the 2-dimensional plot. If a plot or a curve with these names do not exist, logic_error exception is thrown.
+	 * \brief Adds a new point to the curve on the 2-dimensional plot.
+	 * \details Adds a new point to the specified curve on the 2-dimensional plot.
+	 * If a plot or a curve with these names do not exist, logic_error exception is thrown.
+	 * \param _plotName Name of the plot.
+	 * \param _curveName Name of the curve on plot.
+	 * \param _x X-value of the new point.
+	 * \param _y Y-value of the new point.
 	 */
 	void AddPointOnCurve(const std::string& _plotName, const std::string& _curveName, double _x, double _y);
 	/**
-	 * Adds a new point to the specified curve of the 3-dimensional plot. If a plot with this name or a curve with this Z-value do not exist, logic_error exception is thrown.
+	 * \brief Adds a new point to the curve on the 3-dimensional plot.
+	 * \details Adds a new point to the specified curve on the 2-dimensional plot.
+	 * If a plot with this name or a curve with this Z-value do not exist, logic_error exception is thrown.
+	 * \param _plotName Name of the plot.
+	 * \param _valueZ Z-value of the curve.
+	 * \param _x X-value of the new point.
+	 * \param _y Y-value of the new point.
 	 */
 	void AddPointOnCurve(const std::string& _plotName, double _valueZ, double _x, double _y);
 	/**
-	 * Adds new points to the specified curve of the 2-dimensional plot. If a plot or a curve with these names do not exist, logic_error exception is thrown.
+	 * \brief Adds new points to the curve on the 2-dimensional plot.
+	 * \details Adds new points to the specified curve on the 2-dimensional plot.
+	 * If a plot or a curve with these names do not exist, logic_error exception is thrown.
+	 * \param _plotName Name of the plot.
+	 * \param _curveName Name of the curve on plot.
+	 * \param _x X-values of the new points.
+	 * \param _y Y-values of the new points.
 	 */
 	void AddPointsOnCurve(const std::string& _plotName, const std::string& _curveName, const std::vector<double>& _x, const std::vector<double>& _y);
 	/**
-	 * Adds new points to the specified curve of the 3-dimensional plot. If a plot with this name or a curve with this Z-value do not exist, logic_error exception is thrown.
+	 * \brief Adds new points to the curve on the 3-dimensional plot.
+	 * \details Adds new points to the specified curve on the 2-dimensional plot.
+	 * If a plot with this name or a curve with this Z-value do not exist, logic_error exception is thrown.
+	 * \param _plotName Name of the plot.
+	 * \param _valueZ Z-value of the curve.
+	 * \param _x X-values of the new points.
+	 * \param _y Y-values of the new points.
 	 */
 	void AddPointsOnCurve(const std::string& _plotName, double _valueZ, const std::vector<double>& _x, const std::vector<double>& _y);
 
