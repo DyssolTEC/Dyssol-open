@@ -835,43 +835,88 @@ public:
 	//
 
 	/**
-	 * Copies all stream data from one stream to another at the given time point. All data after the time point are removed from the destination stream.
+	 * \brief Copies all stream data from one stream to another at the given time point.
+	 * \details All data after the time point are removed from the destination stream.
+	 * \param _time Time point to copy.
+	 * \param _srcStream Source stream.
+	 * \param _dstStream Destination stream.
 	 */
 	static void CopyStreamToStream(double _time, const CStream* _srcStream, CStream* _dstStream);
 	/**
-	 * Copies all stream data from one stream to another at the given time interval. All data after the end time point are removed from the destination stream.
+	 * \brief Copies all stream data from one stream to another at the given time interval.
+	 * \details All data after the end time point are removed from the destination stream.
+	 * \param _timeBeg Begin of the time interval to copy.
+	 * \param _timeEnd End of the time interval to copy.
+	 * \param _srcStream Source stream.
+	 * \param _dstStream Destination stream.
 	 */
 	static void CopyStreamToStream(double _timeBeg, double _timeEnd, const CStream* _srcStream, CStream* _dstStream);
 	/**
-	 * Copies all stream data from the given stream to the stream connected to the selected output port at the given time point. All data after the time point are removed from the destination stream. Throws logic_error exception on error.
+	 * \brief Copies all stream data from the given stream to the stream connected to the selected output port at the given time point.
+	 * \details All data after the time point are removed from the destination stream. Throws logic_error exception on error.
+	 * \param _time Time point to copy.
+	 * \param _stream Source stream.
+	 * \param _port Destination port.
 	 */
 	void CopyStreamToPort(double _time, const CStream* _stream, CUnitPort* _port) const;
 	/**
-	 * Copies all stream data from the given stream to the stream connected to the selected output port at the given time point. All data after the time point are removed from the destination stream. Throws logic_error exception on error.
+	 * \brief Copies all stream data from the given stream to the stream connected to the selected output port at the given time point.
+	 * \details All data after the time point are removed from the destination stream. Throws logic_error exception on error.
+	 * \param _time Time point to copy.
+	 * \param _stream Source stream.
+	 * \param _portName Name of the destination port.
 	 */
 	void CopyStreamToPort(double _time, const CStream* _stream, const std::string& _portName);
 	/**
-	 * Copies all stream data from the given stream to the stream connected to the selected output port at the given time interval. All data after the end time point are removed from the destination stream. Throws logic_error exception on error.
+	 * \brief Copies all stream data from the given stream to the stream connected to the selected output port at the given time interval.
+	 * \details All data after the end time point are removed from the destination stream. Throws logic_error exception on error.
+	 * \param _timeBeg Begin of the time interval to copy.
+	 * \param _timeEnd End of the time interval to copy.
+	 * \param _stream Source stream.
+	 * \param _port Destination port.
 	 */
 	void CopyStreamToPort(double _timeBeg, double _timeEnd, const CStream* _stream, CUnitPort* _port) const;
 	/**
-	 * Copies all stream data from the given stream to the stream connected to the selected output port at the given time interval. All data after the end time point are removed from the destination stream. Throws logic_error exception on error.
+	 * \brief Copies all stream data from the given stream to the stream connected to the selected output port at the given time interval.
+	 * \details All data after the end time point are removed from the destination stream. Throws logic_error exception on error.
+	 * \param _timeBeg Begin of the time interval to copy.
+	 * \param _timeEnd End of the time interval to copy.
+	 * \param _stream Source stream.
+	 * \param _portName Name of the destination port.
 	 */
 	void CopyStreamToPort(double _timeBeg, double _timeEnd, const CStream* _stream, const std::string& _portName);
 	/**
-	 * Copies all stream data from the stream connected to the selected input port to the given stream at the given time point. All data after the time point are removed from the destination stream. Throws logic_error exception on error.
+	 * \brief Copies all stream data from the stream connected to the selected input port to the given stream at the given time point.
+	 * \details All data after the time point are removed from the destination stream. Throws logic_error exception on error.
+	 * \param _time Time point to copy.
+	 * \param _port Source port.
+	 * \param _stream Destination stream.
 	 */
 	void CopyPortToStream(double _time, const CUnitPort* _port, CStream* _stream) const;
 	/**
-	 * Copies all stream data from the stream connected to the selected input port to the given stream at the given time point. All data after the time point are removed from the destination stream. Throws logic_error exception on error.
+	 * \brief Copies all stream data from the stream connected to the selected input port to the given stream at the given time point.
+	 * \details All data after the time point are removed from the destination stream. Throws logic_error exception on error.
+	 * \param _time Time point to copy.
+	 * \param _portName Name of the source port.
+	 * \param _stream Destination stream.
 	 */
 	void CopyPortToStream(double _time, const std::string& _portName, CStream* _stream);
 	/**
-	 * Copies all stream data from the stream connected to the selected input port to the given stream at the given time interval. All data after the end time point are removed from the destination stream. Throws logic_error exception on error.
+	 * \brief Copies all stream data from the stream connected to the selected input port to the given stream at the given time interval.
+	 * \details All data after the end time point are removed from the destination stream. Throws logic_error exception on error.
+	 * \param _timeBeg Begin of the time interval to copy.
+	 * \param _timeEnd End of the time interval to copy.
+	 * \param _port Source port.
+	 * \param _stream Destination stream.
 	 */
 	void CopyPortToStream(double _timeBeg, double _timeEnd, const CUnitPort* _port, CStream* _stream) const;
 	/**
-	 * Copies all stream data from the stream connected to the selected input port to the given stream at the given time interval. All data after the end time point are removed from the destination stream. Throws logic_error exception on error.
+	 * \brief Copies all stream data from the stream connected to the selected input port to the given stream at the given time interval.
+	 * \details All data after the end time point are removed from the destination stream. Throws logic_error exception on error.
+	 * \param _timeBeg Begin of the time interval to copy.
+	 * \param _timeEnd End of the time interval to copy.
+	 * \param _portName Name of the source port.
+	 * \param _stream Destination stream.
 	 */
 	void CopyPortToStream(double _timeBeg, double _timeEnd, const std::string& _portName, CStream* _stream);
 
@@ -880,32 +925,53 @@ public:
 	//
 
 	/**
-	 * Returns all time points in the specified time interval at which input streams and time-dependent parameters are defined.
+	 * \brief Returns all time points in the specified time interval at which input streams and time-dependent parameters are defined.
+	 * \param _timeBeg Begin of the time interval.
+	 * \param _timeEnd End of the time interval.
 	 */
 	std::vector<double> GetAllTimePoints(double _timeBeg, double _timeEnd) const;
 	/**
-	 * Returns all time points in the specified time interval at which input streams and time-dependent parameters are defined. Boundary time points are unconditionally included into result.
+	 * \brief Returns all time points in the specified time interval at which input streams and time-dependent parameters are defined.
+	 * \details Boundary time points are unconditionally included into result.
+	 * \param _timeBeg Begin of the time interval.
+	 * \param _timeEnd End of the time interval.
 	 */
 	std::vector<double> GetAllTimePointsClosed(double _timeBeg, double _timeEnd) const;
 	/**
-	 * Returns all time points in the specified time interval at which input streams are defined.
+	 * \brief Returns all time points in the specified time interval at which input streams are defined.
+	 * \param _timeBeg Begin of the time interval.
+	 * \param _timeEnd End of the time interval.
 	 */
 	std::vector<double> GetInputTimePoints(double _timeBeg, double _timeEnd) const;
 	/**
-	 * Returns all time points in the specified time interval at which input streams are defined. Boundary time points are unconditionally included into result.
+	 * \brief Returns all time points in the specified time interval at which input streams are defined.
+	 * \details Boundary time points are unconditionally included into result.
+	 * \param _timeBeg Begin of the time interval.
+	 * \param _timeEnd End of the time interval.
 	 */
 	std::vector<double> GetInputTimePointsClosed(double _timeBeg, double _timeEnd) const;
 	/**
-	 * Returns all time points in the specified time interval at which given streams are defined.
+	 * \brief Returns all time points in the specified time interval at which given streams are defined.
+	 * \param _timeBeg Begin of the time interval.
+	 * \param _timeEnd End of the time interval.
+	 * \param _srteams List of streams.
 	 */
 	std::vector<double> GetStreamsTimePoints(double _timeBeg, double _timeEnd, const std::vector<CStream*>& _srteams) const;
 	/**
-	 * Returns all time points in the specified time interval at which given streams are defined. Boundary time points are unconditionally included into result.
+	 * \brief Returns all time points in the specified time interval at which given streams are defined.
+	 * \details Boundary time points are unconditionally included into result.
+	 * \param _timeBeg Begin of the time interval.
+	 * \param _timeEnd End of the time interval.
+	 * \param _srteams List of streams.
 	 */
 	std::vector<double> GetStreamsTimePointsClosed(double _timeBeg, double _timeEnd, const std::vector<CStream*>& _srteams) const;
 
 	/**
-	 * Removes time points within the specified interval [timeBeg; timeEnd) that are closer together than step.
+	 * \internal
+	 * \brief Removes time points within the specified interval [timeBeg; timeEnd) that are closer together than the step.
+	 * \param _timeBeg Begin of the time interval.
+	 * \param _timeEnd End of the time interval.
+	 * \param _step Time step.
 	 */
 	void ReduceTimePoints(double _timeBeg, double _timeEnd, double _step);
 
@@ -919,47 +985,71 @@ public:
 	void RemoveCompound(const std::string& _compoundKey);
 
 	/**
-	 * Returns the name of the compound with the specified unique key. Returns empty string if such compound does not exist.
+	 * \brief Returns the name of the compound with the specified unique key.
+	 * \details Returns empty string if such compound does not exist in the list of active compounds.
+	 * \param _compoundKey Unique key of the compound.
+	 * \return Name of the compound.
 	 */
 	std::string GetCompoundName(const std::string& _compoundKey) const;
 	/**
-	 * Returns the name of the compound with the specified index. Returns empty string if such compound does not exist.
+	 * \brief Returns the name of the compound with the specified index.
+	 * \details Indexing is done in the list of active compounds in the list of active compounds.
+	 * Returns empty string if such compound does not exist.
+	 * \param _index Index of the compound in the list of active compounds.
+	 * \return Name of the compound.
 	 */
 	std::string GetCompoundName(size_t _index) const;
 	/**
-	 * Returns the unique key of the compound with the specified name. Returns empty string if such compound does not exist.
+	 * \brief Returns the unique key of the compound with the specified name.
+	 * \details Returns empty string if such compound does not exist in the list of active compounds.
+	 * \param _compoundName Name of the compound.
+	 * \return Unique key of the compound.
 	 */
 	std::string GetCompoundKey(const std::string& _compoundName) const;
 	/**
-	 * Returns the unique key of the compound with the specified index. Returns empty string if such compound does not exist.
+	 * \brief Returns the unique key of the compound with the specified index.
+	 * \details Returns empty string if such compound does not exist in the list of active compounds.
+	 * \param _index Index of the compound in the list of active compounds.
+	 * \return Unique key of the compound.
 	 */
 	std::string GetCompoundKey(size_t _index) const;
 	/**
-	 * Returns index of the compound with the specified key. Returns -1 if such compound does not exist.
+	 * \brief Returns index of the compound with the specified key.
+	 * \details Returns -1 if such compound does not exist in the list of active compounds.
+	 * \param _compoundKey Unique key of the compound.
+	 * \return Index of the compound in the list of active compounds.
 	 */
 	size_t GetCompoundIndex(const std::string& _compoundKey) const;
 	/**
-	 * Returns index of the compound with the specified name. Returns -1 if such compound does not exist.
+	 * \brief Returns index of the compound with the specified name.
+	 * \details Returns -1 if such compound does not exist in the list of active compounds.
+	 * \param _compoundName Name of the compound.
+	 * \return Index of the compound in the list of active compounds.
 	 */
 	size_t GetCompoundIndexByName(const std::string& _compoundName) const;
 	/**
-	 * Returns unique keys of all defined materials.
+	 * \brief Returns unique keys of all active compounds.
+	 * \return Unique keys of all active compounds.
 	 */
 	std::vector<std::string> GetAllCompounds() const;
 	/**
-	 * Returns names of all defined materials.
+	 * \brief Returns names of all active compounds.
+	 * \return Unique keys of all active compounds.
 	 */
 	std::vector<std::string> GetAllCompoundsNames() const;
 	/**
-	 * Returns the number of defined compounds.
+	 * \brief Returns the number of active compounds.
+	 * \return Number of active compounds.
 	 */
 	size_t GetCompoundsNumber() const;
 	/**
-	 * Checks if a compound with the specified unique key is defined.
+	 * \brief Checks if a compound with the specified unique key is defined.
+	 * \return Whether a compound with the specified unique key is defined.
 	 */
 	bool IsCompoundDefined(const std::string& _compoundKey) const;
 	/**
-	 * Checks if a compound with the specified name is defined.
+	 * \brief Checks if a compound with the specified name is defined.
+	 * \return Whether a compound with the specified unique name is defined.
 	 */
 	bool IsCompoundNameDefined(const std::string& _compoundName) const;
 

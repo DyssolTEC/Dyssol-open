@@ -14,54 +14,6 @@ Material streams and holdups
 
 .. code-block:: cpp
 
-	void CopyStreamToStream(CMaterialStream* SrcStream, CMaterialStream DstStream, double Time, bool DeleteDataAfter = true)
-	
-Copies all data from ``SrcStream`` to ``DestStream`` for specified time point. If flag ``DeleteDataAfter`` is set to true, all data after the time point ``Time`` in the destination stream will be removed before being copied.
-
-|
-
-.. code-block:: cpp
-
-	void CopyStreamToStream(CMaterialStream* SrcStream, CMaterialStream DstStream, double StartTime, double EndTime, bool DeleteDataAfter = true)
-	
-Copies all data from ``SrcStream`` to ``DstStream`` on a specified time interval. If flag ``DeleteDataAfter`` is set to true, all data after the time point ``StartTime`` in the destination stream will be removed before being copied.
-
-|
-
-.. code-block:: cpp
-
-	void CopyStreamToPort(CMaterialStream* Stream, std::string PortName, double Time, bool DeleteDataAfter = true)
-	
-Copies all data from ``Stream`` to a stream connected to an output port ``PortName`` for specified time point. If flag ``DeleteDataAfter`` is set to true, all data after the time point ``Time`` in the destination stream will be removed before being copied.
-
-|
-
-.. code-block:: cpp
-
-	void CopyStreamToPort(CMaterialStream* Stream, std::string PortName, double StartTime, double EndTime, bool DeleteDataAfter = true)
-	
-Copies all data from ``Stream`` to a stream connected to an output port ``PortName`` for specified time interval. If flag ``DeleteDataAfter`` is set to true, all data after the time point ``StartTime`` in the destination stream will be removed before being copied.
-
-|
-
-.. code-block:: cpp
-
-	void CopyPortToStream(std::string PortName, CMaterialStream* Stream, double Time, bool DeleteDataAfter = true)
-	
-Copies stream’s data of the input port ``PortName`` to another stream ``Stream`` for specified time point. If flag ``DeleteDataAfter`` is set to true, all data after the time point Time in the destination stream will be removed before being copied.
-
-|
-
-.. code-block:: cpp
-
-	void CopyPortToStream(std::string PortName, CMaterialStream* Stream, double StartTime, double EndTime, bool DeleteDataAfter = true)
-	
-Copies stream’s data of the input port ``PortName`` to another stream ``Stream`` for specified time interval. If flag ``DeleteDataAfter`` is set to true, all data after the time point ``StartTime`` in the destination stream will be removed before being copied.
-
-|
-
-.. code-block:: cpp
-
 	double CalcTemperatureFromProperty(ECompoundTPProperties Property, std::vector<double> CompoundFractions, double Value)
 	
 Returns temperature of a generic system of composition ``CompoundFractions`` for a specific value ``Value`` of the property ``Property``. Possible properties are those defined in :ref:`material database <label-materialDataDetailed>`. For more information, please refer to :ref:`label-thermo` on this page.
@@ -81,33 +33,6 @@ Returns pressure of a generic system of composition ``CompoundFractions`` for a 
 	void HeatExchange(CMaterialStream* Stream1, CMaterialStream* Stream2, double Time, double Efficiency);
 	
 Performs a heat exchange between material streams ``Stream1`` and ``Stream2`` at specified time point ``Time`` with a specified efficiency ``Efficiency`` ranging between 0 and 1. For more information, please refer to :ref:`label-thermo` on this page.
-
-|
-
-Time points
------------
-
-.. code-block:: cpp
-
-	std::vector<double> GetAllInputTimePoints(double StartTime, double EndTime, bool ForceStartBoundary = false, bool ForceEndBoundary = false)
-
-Returns all time points on which input streams of the unit are defined for specified time interval. Input streams are all streams connected to the input ports. If ``ForceStartBoundary`` and/or ``ForceEndBoundary`` flag is enabled, corresponding boundary points will be forcibly added to the resulting vector.
-
-|
-
-.. code-block:: cpp
-
-	std::vector<double> GetAllDefinedTimePoints(double StartTime, double EndTime, bool ForceStartBoundary = false, bool ForceEndBoundary = false)
-
-Returns all time points for specified time interval on which input streams and unit parameters are defined. Input streams are all streams connected to the input ports. If ``ForceStartBoundary`` and/or ``ForceEndBoundary`` flag is enabled, corresponding boundary points will be forcibly added to the resulting vector.
-
-|
-
-.. code-block:: cpp
-
-	std::vector<double> GetAllStreamsTimePoints(std::vector<CMaterialStream*> Srteams, double StartTime, double EndTime)
-
-Returns all time points for specified time interval on which ``Stream``-s are defined. 
 
 |
 
@@ -188,30 +113,6 @@ Removes all state variables and history of their changes.
 
 Compounds
 ---------
-
-.. code-block:: cpp
-
-	std::vector<std::string> GetCompoundsList()
-	
-Returns unique keys of all compounds defined in the current flowsheet. 
-
-|
-
-.. code-block:: cpp
-
-	std::vector<std::string> GetCompoundsNames()
-
-Returns names of all compounds defined in the current flowsheet. 
-
-|
-
-.. code-block:: cpp
-
-	unsigned GetCompoundsNumber()
-
-Returns number of compounds which are defined in the current flowsheet. 
-
-|
 
 .. code-block:: cpp
 
@@ -340,22 +241,6 @@ Returns the value of the interaction property for selected compounds under the s
 	+------------------------------+-------------------------+---------+
 	| ``INT_PROP_USER_DEFINED_XX`` |   User defined property |  [-]    |
 	+------------------------------+-------------------------+---------+
-
-|
-
-.. code-block:: cpp
-
-	bool IsCompoundNameDefined(std::string CompoundName)
-	
-Returns ``true`` if compound with specified name has been defined, otherwise returns ``false``.
-
-|
-
-.. code-block:: cpp
-
-	bool IsCompoundKeyDefined(std::string CompoundKey)
-	
-Returns ``true`` if compound with specified unique key has been defined, otherwise returns ``false``.
 
 |
 
