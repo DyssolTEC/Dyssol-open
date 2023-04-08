@@ -291,7 +291,7 @@ void CFlowsheetEditor::AddUnitParamListItem()
 		if (paramTD->IsEmpty()) // add the first time point
 			paramTD->SetValue(0, 0);
 		else                  // add next as (lastTime + 1, lastValue)
-			paramTD->SetValue(paramTD->GetTimes().back() + 1, paramTD->GetValues().back());
+			paramTD->SetValue(paramTD->GetParams().back() + 1, paramTD->GetValues().back());
 
 	}
 	else if (param->GetType() == EUnitParameter::LIST_DOUBLE)
@@ -311,6 +311,16 @@ void CFlowsheetEditor::AddUnitParamListItem()
 		auto* paramL = dynamic_cast<CListIntUnitParameter*>(param);
 		if (paramL->IsEmpty())	paramL->AddValue(0);
 		else					paramL->AddValue(paramL->GetValues().back());
+	}
+	else if (param->GetType() == EUnitParameter::PARAM_DEPENDENT)
+	{
+		auto* paramD = dynamic_cast<CDependentUnitParameter*>(param);
+
+		// add new dependent point
+		if (paramD->IsEmpty()) // add the first dependent point
+			paramD->SetValue(0, 0);
+		else                  // add next as (lastTime + 1, lastValue)
+			paramD->SetValue(paramD->GetParams().back() + 1, paramD->GetValues().back());
 	}
 
 	UpdateUnitParamTable();
@@ -340,9 +350,9 @@ void CFlowsheetEditor::DeleteUnitParamListItem()
 		const int iTP = ui.tableListValues->currentRow();
 
 		if (iTP != -1) // remove selected
-			paramTD->RemoveValue(paramTD->GetTimes()[iTP]);
+			paramTD->RemoveValue(paramTD->GetParams()[iTP]);
 		else           // remove last
-			paramTD->RemoveValue(paramTD->GetTimes().back());
+			paramTD->RemoveValue(paramTD->GetParams().back());
 
 	}
 	else if (param->GetType() == EUnitParameter::LIST_DOUBLE)
@@ -369,6 +379,23 @@ void CFlowsheetEditor::DeleteUnitParamListItem()
 		const int index = ui.tableListValues->currentRow();
 		if (index != -1)	paramL->RemoveValue(index);					// remove selected
 		else           		paramL->RemoveValue(paramL->Size() - 1);	// remove last
+	}
+	else if (param->GetType() == EUnitParameter::PARAM_DEPENDENT)
+	{
+		auto* paramD = dynamic_cast<CDependentUnitParameter*>(param);
+		if (paramD->Size() < 2)
+		{
+			QMessageBox::information(this, StrConst::Dyssol_ApplicationName, StrConst::FE_DRemoveLast);
+			return;
+		}
+
+		// get selected time point
+		const int iTP = ui.tableListValues->currentRow();
+
+		if (iTP != -1) // remove selected
+			paramD->RemoveValue(paramD->GetParams()[iTP]);
+		else           // remove last
+			paramD->RemoveValue(paramD->GetParams().back());
 	}
 
 	UpdateUnitParamTable();
@@ -391,25 +418,32 @@ void CFlowsheetEditor::ListValueChanged()
 	{
 		auto* paramTD = dynamic_cast<CTDUnitParameter*>(param);
 		if (ui.tableListValues->currentColumn() == 0) // change time
-			paramTD->RemoveValue(paramTD->GetTimes()[iRow]);
-		paramTD->SetValue(ui.tableListValues->GetItem(iRow, 0).toDouble(), ui.tableListValues->GetItem(iRow, 2).toDouble());
+			paramTD->RemoveValue(paramTD->GetParams()[iRow]);
+		paramTD->SetValue(ui.tableListValues->GetItem(iRow, 0).toDouble(), ui.tableListValues->GetItem(iRow, 1).toDouble());
 
 	}
 	else if (param->GetType() == EUnitParameter::LIST_DOUBLE)
 	{
 		auto* paramL = dynamic_cast<CListRealUnitParameter*>(param);
-		paramL->SetValue(iRow, ui.tableListValues->GetItem(iRow, 2).toDouble());
+		paramL->SetValue(iRow, ui.tableListValues->GetItem(iRow, 1).toDouble());
 	}
 	else if (param->GetType() == EUnitParameter::LIST_UINT64)
 	{
 		auto* paramL = dynamic_cast<CListUIntUnitParameter*>(param);
-		paramL->SetValue(iRow, ui.tableListValues->GetItem(iRow, 2).toUInt());
+		paramL->SetValue(iRow, ui.tableListValues->GetItem(iRow, 1).toUInt());
 
 	}
 	else if (param->GetType() == EUnitParameter::LIST_INT64)
 	{
 		auto* paramL = dynamic_cast<CListIntUnitParameter*>(param);
-		paramL->SetValue(iRow, ui.tableListValues->GetItem(iRow, 2).toInt());
+		paramL->SetValue(iRow, ui.tableListValues->GetItem(iRow, 1).toInt());
+	}
+	else if (param->GetType() == EUnitParameter::PARAM_DEPENDENT)
+	{
+		auto* paramD = dynamic_cast<CDependentUnitParameter*>(param);
+		if (ui.tableListValues->currentColumn() == 0) // change dependent point
+			paramD->RemoveValue(paramD->GetParams()[iRow]);
+		paramD->SetValue(ui.tableListValues->GetItem(iRow, 0).toDouble(), ui.tableListValues->GetItem(iRow, 1).toDouble());
 	}
 
 	UpdateUnitParamTable();
@@ -440,7 +474,10 @@ void CFlowsheetEditor::UnitParamValueChanged(int _row, int _col)
 		dynamic_cast<CConstUIntUnitParameter*>(param)->SetValue(ui.tableUnitParams->GetItem(_row, _col).toUInt());
 		break;
 	case EUnitParameter::TIME_DEPENDENT:
-		dynamic_cast<CTDUnitParameter*>(param)->SetValue(dynamic_cast<CTDUnitParameter*>(param)->GetTimes().front(), ui.tableUnitParams->GetItem(_row, _col).toDouble());
+		dynamic_cast<CTDUnitParameter*>(param)->SetValue(dynamic_cast<CTDUnitParameter*>(param)->GetParams().front(), ui.tableUnitParams->GetItem(_row, _col).toDouble());
+		break;
+	case EUnitParameter::PARAM_DEPENDENT:
+		dynamic_cast<CDependentUnitParameter*>(param)->SetValue(dynamic_cast<CDependentUnitParameter*>(param)->GetParams().front(), ui.tableUnitParams->GetItem(_row, _col).toDouble());
 		break;
 	case EUnitParameter::STRING:
 		dynamic_cast<CStringUnitParameter*>(param)->SetValue(ui.tableUnitParams->GetItem(_row, _col).toStdString());
@@ -660,7 +697,25 @@ void CFlowsheetEditor::UpdateUnitParamTable() const
 			const auto* p = dynamic_cast<const CTDUnitParameter*>(param);
 			if (p->Size() == 1)
 			{
-				ui.tableUnitParams->SetItemEditable(iRow, 2, p->GetValue(p->GetTimes().front()));
+				ui.tableUnitParams->SetItemEditable(iRow, 2, p->GetValue(p->GetParams().front()));
+				if (!p->IsInBounds())
+					ui.tableUnitParams->SetItemBackgroundColor(iRow, 2, Qt::red);
+			}
+			else
+			{
+				ui.tableUnitParams->SetItemNotEditable(iRow, 2, QString(StrConst::FE_TDParamMessage));
+				ui.tableUnitParams->SetItemBackgroundColor(iRow, 2, Qt::gray);
+				ui.tableUnitParams->SetItemFontItalic(iRow, 2);
+			}
+			ui.tableUnitParams->SetItemNotEditable(iRow, 1, !p->GetUnits().empty() ? "[" + p->GetUnits() + "]" : std::string{});
+			break;
+		}
+		case EUnitParameter::PARAM_DEPENDENT:
+		{
+			const auto* p = dynamic_cast<const CDependentUnitParameter*>(param);
+			if (p->Size() == 1)
+			{
+				ui.tableUnitParams->SetItemEditable(iRow, 2, p->GetValue(p->GetParams().front()));
 				if (!p->IsInBounds())
 					ui.tableUnitParams->SetItemBackgroundColor(iRow, 2, Qt::red);
 			}
@@ -825,15 +880,41 @@ void CFlowsheetEditor::UpdateListValuesTable() const
 
 		// create table with parameter values
 		ui.tableListValues->setRowCount(static_cast<int>(paramTD->Size()));
-		ui.tableListValues->SetItemsColEditable(0, 0, paramTD->GetTimes());
-		ui.tableListValues->SetItemsColEditable(0, 2, paramTD->GetValues());
-		ui.tableListValues->SetItemsColNotEditable(0, 1, "[" + paramTD->GetUnits() + "]");
+		ui.tableListValues->SetItemsColEditable(0, 0, paramTD->GetParams());
+		ui.tableListValues->SetItemsColEditable(0, 1, paramTD->GetValues());
+
+		ui.tableListValues->SetColHeaderItem(0, paramTD->GetTypeName());
+		ui.tableListValues->SetColHeaderItem(1, paramTD->GetName() + " [" + paramTD->GetUnits() + "]");
 
 		// check if values are in boundaries
 		if (!paramTD->IsInBounds())
 			for (int i = 0; i < static_cast<int>(paramTD->Size()); ++i)
-				if (paramTD->GetValue(paramTD->GetTimes()[i]) < paramTD->GetMin() || paramTD->GetValue(paramTD->GetTimes()[i]) > paramTD->GetMax())
-					ui.tableListValues->item(i, 2)->setBackground(Qt::red);
+				if (paramTD->GetValue(paramTD->GetParams()[i]) < paramTD->GetMin() || paramTD->GetValue(paramTD->GetParams()[i]) > paramTD->GetMax())
+					ui.tableListValues->item(i, 1)->setBackground(Qt::red);
+
+	}
+	else if (param->GetType() == EUnitParameter::PARAM_DEPENDENT)
+	{
+		const auto* paramD = dynamic_cast<const CDependentUnitParameter*>(param);
+
+		// enable GUI elements
+		ui.frameListValues->setEnabled(true);
+
+		ui.tableListValues->ShowCol(0, true); // show times
+
+		// create table with parameter values
+		ui.tableListValues->setRowCount(static_cast<int>(paramD->Size()));
+		ui.tableListValues->SetItemsColEditable(0, 0, paramD->GetParams());
+		ui.tableListValues->SetItemsColEditable(0, 1, paramD->GetValues());
+
+		ui.tableListValues->SetColHeaderItem(0, paramD->GetTypeName());
+		ui.tableListValues->SetColHeaderItem(1, paramD->GetName() + " [" + paramD->GetUnits() + "]");
+
+		// check if values are in boundaries
+		if (!paramD->IsInBounds())
+			for (int i = 0; i < static_cast<int>(paramD->Size()); ++i)
+				if (paramD->GetValue(paramD->GetParams()[i]) < paramD->GetMin() || paramD->GetValue(paramD->GetParams()[i]) > paramD->GetMax())
+					ui.tableListValues->item(i, 1)->setBackground(Qt::red);
 
 	}
 	else if (param->GetType() == EUnitParameter::LIST_DOUBLE)
@@ -847,14 +928,15 @@ void CFlowsheetEditor::UpdateListValuesTable() const
 
 		// create table with parameter values
 		ui.tableListValues->setRowCount(static_cast<int>(paramL->Size()));
-		ui.tableListValues->SetItemsColEditable(0, 2, paramL->GetValues());
-		ui.tableListValues->SetItemsColNotEditable(0, 1, "[" + paramL->GetUnits() + "]");
+		ui.tableListValues->SetItemsColEditable(0, 1, paramL->GetValues());
+
+		ui.tableListValues->SetColHeaderItem(1, paramL->GetName() + " [" + paramL->GetUnits() + "]");
 
 		// check if values are in boundaries
 		if (!paramL->IsInBounds())
 			for (int i = 0; i < static_cast<int>(paramL->Size()); ++i)
 				if (paramL->GetValue(i) < paramL->GetMin() || paramL->GetValue(i) > paramL->GetMax())
-					ui.tableListValues->item(i, 2)->setBackground(Qt::red);
+					ui.tableListValues->item(i, 1)->setBackground(Qt::red);
 	}
 	else if (param->GetType() == EUnitParameter::LIST_UINT64)
 	{
@@ -867,14 +949,15 @@ void CFlowsheetEditor::UpdateListValuesTable() const
 
 		// create table with parameter values
 		ui.tableListValues->setRowCount(static_cast<int>(paramL->Size()));
-		ui.tableListValues->SetItemsColEditable(0, 2, paramL->GetValues());
-		ui.tableListValues->SetItemsColNotEditable(0, 1, "[" + paramL->GetUnits() + "]");
+		ui.tableListValues->SetItemsColEditable(0, 1, paramL->GetValues());
+
+		ui.tableListValues->SetColHeaderItem(1, paramL->GetName() + " [" + paramL->GetUnits() + "]");
 
 		// check if values are in boundaries
 		if (!paramL->IsInBounds())
 			for (int i = 0; i < static_cast<int>(paramL->Size()); ++i)
 				if (paramL->GetValue(i) < paramL->GetMin() || paramL->GetValue(i) > paramL->GetMax())
-					ui.tableListValues->item(i, 2)->setBackground(Qt::red);
+					ui.tableListValues->item(i, 1)->setBackground(Qt::red);
 	}
 	else if (param->GetType() == EUnitParameter::LIST_INT64)
 	{
@@ -887,14 +970,15 @@ void CFlowsheetEditor::UpdateListValuesTable() const
 
 		// create table with parameter values
 		ui.tableListValues->setRowCount(static_cast<int>(paramL->Size()));
-		ui.tableListValues->SetItemsColEditable(0, 2, paramL->GetValues());
-		ui.tableListValues->SetItemsColNotEditable(0, 1, "[" + paramL->GetUnits() + "]");
+		ui.tableListValues->SetItemsColEditable(0, 1, paramL->GetValues());
+
+		ui.tableListValues->SetColHeaderItem(1, paramL->GetName() + " [" + paramL->GetUnits() + "]");
 
 		// check if values are in boundaries
 		if (!paramL->IsInBounds())
 			for (int i = 0; i < static_cast<int>(paramL->Size()); ++i)
 				if (paramL->GetValue(i) < paramL->GetMin() || paramL->GetValue(i) > paramL->GetMax())
-					ui.tableListValues->item(i, 2)->setBackground(Qt::red);
+					ui.tableListValues->item(i, 1)->setBackground(Qt::red);
 	}
 }
 

@@ -26,6 +26,7 @@ enum class EUnitParameter
 	LIST_INT64            = 14,
 	LIST_UINT64           = 15,
 	MDB_COMPOUND          = 16,
+	PARAM_DEPENDENT		  = 17,
 };
 
 // TODO: remove
@@ -173,43 +174,61 @@ using CListRealUnitParameter = CListUnitParameter<double>;
 using CListIntUnitParameter  = CListUnitParameter<int64_t>;
 using CListUIntUnitParameter = CListUnitParameter<uint64_t>;
 
-// Class for time-dependent unit parameters.
-class CTDUnitParameter : public CBaseUnitParameter
+// Class for dependent unit parameters.
+class CDependentUnitParameter : public CBaseUnitParameter
 {
 	static const unsigned m_cnSaveVersion{ 1 };
 
-	CDependentValues m_values;                  ///< Time dependent values.
-	double m_min{};								///< Minimum allowed value.
-	double m_max{};								///< Maximum allowed value.
+	CDependentValues m_values;							///< Dependent values.
+	double m_min{};										///< Minimum allowed value.
+	double m_max{};										///< Maximum allowed value.
+
+	std::string m_typeName;
 
 public:
-	CTDUnitParameter();
-	CTDUnitParameter(std::string _name, std::string _units, std::string _description, double _min, double _max, double _value);
+	CDependentUnitParameter(EUnitParameter _unitParam);
+	CDependentUnitParameter(EUnitParameter _unitParam, std::string _name, std::string _typeName, std::string _units, std::string _description, double _min, double _max, double _param, double _value);
 
-	void Clear() override;                      ///< Removes all values.
+	void Clear() override;								///< Removes all values.
 
-	double GetMin() const;						///< Returns minimum allowed value.
-	double GetMax() const;						///< Returns maximum allowed value.
+	std::string GetTypeName() const;
+	void SetTypeName(std::string _typeName);
 
-	void SetMin(double _min);					///< Sets minimum allowed value.
-	void SetMax(double _max);					///< Sets maximum allowed value.
+	double GetMin() const;								///< Returns minimum allowed value.
+	double GetMax() const;								///< Returns maximum allowed value.
 
-	double GetValue(double _time) const;		///< Returns unit parameter value at given time point using interpolation if necessary.
-	void SetValue(double _time, double _value);	///< Adds new unit parameter value at given time point or changes the value of existing one.
-	void RemoveValue(double _time);             ///< Removes unit parameter value at given time point if it exists.
+	void SetMin(double _min);							///< Sets minimum allowed value.
+	void SetMax(double _max);							///< Sets maximum allowed value.
 
-	std::vector<double> GetTimes() const;		///< Returns list of all defined time points.
-	std::vector<double> GetValues() const;		///< Returns list of all defined values.
-	const CDependentValues& GetTDData() const;  ///< Returns the time dependent data itself.
+	double GetValue(double _time) const;				///< Returns unit parameter value at given dependent point using interpolation if necessary.
+	void SetValue(double _time, double _value);			///< Adds new unit parameter value at given dependent point or changes the value of existing one.
+	void RemoveValue(double _time);						///< Removes unit parameter value at given dependent point if it exists.
 
-	size_t Size() const;	                    ///< Returns number of defined time points.
-	bool IsEmpty() const;	                    ///< Checks whether any time point is defined.
-	bool IsInBounds() const override;           ///< Checks whether all m_values lay in range [m_min; m_max].
+	std::vector<double> GetParams() const;				///< Returns list of all defined dependent points.
+	std::vector<double> GetValues() const;				///< Returns list of all defined values.
+	const CDependentValues& GetDependentData() const;   ///< Returns the dependent data itself.
+
+	size_t Size() const;								///< Returns number of defined dependent points.
+	bool IsEmpty() const;								///< Checks whether any dependent point is defined.
+	bool IsInBounds() const override;					///< Checks whether all m_values lay in range [m_min; m_max].
 
 	// Outputs user-specified values of the parameter to a stream.
 	std::ostream& ValueToStream(std::ostream& _s) override;
 	// Reads user-specified values of the parameter from a stream.
 	std::istream& ValueFromStream(std::istream& _s) override;
+
+	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
+	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
+};
+
+// Class for time-dependent unit parameters.
+class CTDUnitParameter : public CDependentUnitParameter
+{
+	static const unsigned m_cnSaveVersion{ 1 };
+
+public:
+	CTDUnitParameter();
+	CTDUnitParameter(std::string _name, std::string _units, std::string _description, double _min, double _max, double _value);
 
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
 	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
@@ -430,6 +449,8 @@ public:
 	void AddConstUIntParameter(const std::string& _name, const std::string& _units, const std::string& _description, uint64_t _min, uint64_t _max, uint64_t _value);
 	// Adds new time-dependent unit parameter. If parameter with the given name already exists, does nothing.
 	void AddTDParameter(const std::string& _name, const std::string& _units, const std::string& _description, double _min, double _max, double _value);
+	// Adds new dependent unit parameter. If parameter with the given name already exists, does nothing.
+	void AddDependentParameter(const std::string& _name, const std::string& _typeName, const std::string& _units, const std::string& _description, double _min, double _max, double _param, double _value);
 	// Adds new string unit parameter. If parameter with the given name already exists, does nothing.
 	void AddStringParameter(const std::string& _name, const std::string& _description, const std::string& _value);
 	// Adds new check box unit parameter. If parameter with the given name already exists, does nothing.
@@ -477,8 +498,12 @@ public:
 	CConstUIntUnitParameter* GetConstUIntParameter(size_t _index);
 	// Returns const pointer to the time-dependent unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
 	const CTDUnitParameter* GetTDParameter(size_t _index) const;
+	// Returns const pointer to the dependent unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
+	const CDependentUnitParameter* GetDependentParameter(size_t _index) const;
 	// Returns pointer to the time-dependent unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
 	CTDUnitParameter* GetTDParameter(size_t _index);
+	// Returns pointer to the dependent unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
+	CDependentUnitParameter* GetDependentParameter(size_t _index);
 	// Returns const pointer to the string unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
 	const CStringUnitParameter* GetStringParameter(size_t _index) const;
 	// Returns pointer to the string unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
@@ -534,8 +559,12 @@ public:
 	CConstUIntUnitParameter* GetConstUIntParameter(const std::string& _name);
 	// Returns const pointer to the time-dependent unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
 	const CTDUnitParameter* GetTDParameter(const std::string& _name) const;
+	// Returns const pointer to the dependent unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
+	const CDependentUnitParameter* GetDependentParameter(const std::string& _name) const;
 	// Returns pointer to the time-dependent unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
 	CTDUnitParameter* GetTDParameter(const std::string& _name);
+	// Returns pointer to the time-dependent unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
+	CDependentUnitParameter* GetDependentParameter(const std::string& _name);
 	// Returns const pointer to the string unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
 	const CStringUnitParameter* GetStringParameter(const std::string& _name) const;
 	// Returns pointer to the string unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
@@ -585,6 +614,8 @@ public:
 	uint64_t GetConstUIntParameterValue(size_t _index) const;
 	// Returns value of a TD unit parameter with the specified _index and _time. If such parameter does not exist or is not a TD parameter, returns 0.
 	double GetTDParameterValue(size_t _index, double _time) const;
+	// Returns value of a dependent unit parameter with the specified _index and _param. If such parameter does not exist or is not a dependent parameter, returns 0.
+	double GetDependentParameterValue(size_t _index, double _param) const;
 	// Returns value of a string unit parameter with the specified _index. If such parameter does not exist or is not a string parameter, returns "".
 	std::string GetStringParameterValue(size_t _index) const;
 	// Returns value of a check box unit parameter with the specified _index. If such parameter does not exist or is not a check box parameter, returns false.
@@ -614,6 +645,8 @@ public:
 	uint64_t GetConstUIntParameterValue(const std::string& _name) const;
 	// Returns value of a TD unit parameter with the specified _name and _time. If such parameter does not exist or is not a TD parameter, returns 0.
 	double GetTDParameterValue(const std::string& _name, double _time) const;
+	// Returns value of a dependent unit parameter with the specified _name and _param. If such parameter does not exist or is not a dependent parameter, returns 0.
+	double GetDependentParameterValue(const std::string& _name, double _param) const;
 	// Returns value of a string unit parameter with the specified _name. If such parameter does not exist or is not a string parameter, returns "".
 	std::string GetStringParameterValue(const std::string& _name) const;
 	// Returns value of a check box unit parameter with the specified _name. If such parameter does not exist or is not a check box parameter, returns "".
@@ -650,6 +683,8 @@ public:
 	std::vector<CSolverUnitParameter*> GetAllSolverParameters();
 	// Returns a sorted list of time points form given interval defined in all unit parameters.
 	std::vector<double> GetAllTimePoints(double _tBeg, double _tEnd) const;
+	// Returns a sorted list of depedent points form given interval defined in all unit parameters.
+	std::vector<double> GetAllDependentPoints(double _pBeg, double _pEnd) const;
 
 	// Adds the list of _parameters by their indices to existing _group of existing _block. If _block, _group or some of parameters do not exist, does nothing.
 	void AddParametersToGroup(size_t _block, size_t _group, const std::vector<size_t>& _parameters);

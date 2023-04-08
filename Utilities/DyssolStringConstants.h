@@ -351,6 +351,7 @@ namespace StrConst
 	const char* const UParam_H5Reaction         = "Reaction";
 	const char* const UParam_H5Names            = "ParamsNames";
 	const char* const UParam_H5GroupParamName   = "UnitParameter";
+	const char* const UParam_H5Params			= "Params";
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -603,6 +604,7 @@ namespace StrConst
 	const char* const FE_StreamDefaultName = "Stream";
 	const char* const FE_TDParamMessage    = "Use the table below to set values";
 	const char* const FE_TDRemoveLast      = "At least one time point must remain";
+	const char* const FE_DRemoveLast	   = "At least one dependent point must remain";
 
 //////////////////////////////////////////////////////////////////////////
 /// CFlowsheetViewer

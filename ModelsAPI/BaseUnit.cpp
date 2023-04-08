@@ -253,6 +253,14 @@ CTDUnitParameter* CBaseUnit::AddTDParameter(const std::string& _name, double _in
 	return m_unitParameters.GetTDParameter(_name);
 }
 
+CDependentUnitParameter* CBaseUnit::AddDependentParameter(const std::string& _name, const std::string& _typeName, double _initParam, double _initValue, const std::string& _units, const std::string& _description, double _minValue, double _maxValue)
+{
+	if (m_unitParameters.IsNameExist(_name))
+		throw std::logic_error(StrConst::BUnit_ErrAddParam(m_unitName, _name, __func__));
+	m_unitParameters.AddDependentParameter(_name, _typeName, _units, _description, _minValue, _maxValue, _initParam, _initValue);
+	return m_unitParameters.GetDependentParameter(_name);
+}
+
 CStringUnitParameter* CBaseUnit::AddStringParameter(const std::string& _name, const std::string& _initValue, const std::string& _description)
 {
 	if (m_unitParameters.IsNameExist(_name))
@@ -403,6 +411,13 @@ double CBaseUnit::GetTDParameterValue(const std::string& _name, double _time) co
 {
 	if (const CTDUnitParameter* param = m_unitParameters.GetTDParameter(_name))
 		return param->GetValue(_time);
+	throw std::logic_error(StrConst::BUnit_ErrGetParam(m_unitName, _name, __func__));
+}
+
+double CBaseUnit::GetDependentParameterValue(const std::string& _name, double _param) const
+{
+	if (const CDependentUnitParameter* param = m_unitParameters.GetDependentParameter(_name))
+		return param->GetValue(_param);
 	throw std::logic_error(StrConst::BUnit_ErrGetParam(m_unitName, _name, __func__));
 }
 

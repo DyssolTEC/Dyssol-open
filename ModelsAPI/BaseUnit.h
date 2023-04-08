@@ -200,6 +200,8 @@ public:
 	CConstUIntUnitParameter* AddConstUIntParameter(const std::string& _name, uint64_t _initValue, const std::string& _units, const std::string& _description, uint64_t _minValue = std::numeric_limits<uint64_t>::lowest(), uint64_t _maxValue = std::numeric_limits<uint64_t>::max());
 	// Adds a new time-dependent unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
 	CTDUnitParameter* AddTDParameter(const std::string& _name, double _initValue, const std::string& _units, const std::string& _description, double _minValue = std::numeric_limits<double>::lowest(), double _maxValue = std::numeric_limits<double>::max());
+	// Adds a new dependent unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	CDependentUnitParameter* AddDependentParameter(const std::string& _name, const std::string& _typeName, double _initParam, double _initValue, const std::string& _units, const std::string& _description, double _minValue = std::numeric_limits<double>::lowest(), double _maxValue = std::numeric_limits<double>::max());
 	// Adds a new string unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
 	CStringUnitParameter* AddStringParameter(const std::string& _name, const std::string& _initValue, const std::string& _description);
 	// Adds a new two-positional check box unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
@@ -242,6 +244,8 @@ public:
 	uint64_t GetConstUIntParameterValue(const std::string& _name) const;
 	// Returns value of the time-dependent unit parameter at the specified time point. Throws logic_error exception if a time-dependent unit parameter with the given name does not exist.
 	double GetTDParameterValue(const std::string& _name, double _time) const;
+	// Returns value of the dependent unit parameter at the specified dependent point. Throws logic_error exception if a dependent unit parameter with the given name does not exist.
+	double GetDependentParameterValue(const std::string& _name, double _param) const;
 	// Returns value of the string unit parameter. Throws logic_error exception if a string unit parameter with the given name does not exist.
 	std::string GetStringParameterValue(const std::string& _name) const;
 	// Returns value of the check box unit parameter. Throws logic_error exception if a check box unit parameter with the given name does not exist.

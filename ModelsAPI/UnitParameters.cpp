@@ -223,90 +223,98 @@ void CListUnitParameter<T>::LoadFromFile(const CH5Handler& _h5File, const std::s
 	// read data
 	_h5File.ReadData(_path, StrConst::UParam_H5Values, m_values);
 }
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// CTDUnitParameter
-
-CTDUnitParameter::CTDUnitParameter() :
-	CBaseUnitParameter(EUnitParameter::TIME_DEPENDENT)
+/// CDependentUnitParameter
+CDependentUnitParameter::CDependentUnitParameter(EUnitParameter _unitParam) :
+	CBaseUnitParameter(std::move(_unitParam))
 {
 }
 
-CTDUnitParameter::CTDUnitParameter(std::string _name, std::string _units, std::string _description, double _min, double _max, double _value) :
-	CBaseUnitParameter(EUnitParameter::TIME_DEPENDENT, std::move(_name), std::move(_units), std::move(_description)),
+CDependentUnitParameter::CDependentUnitParameter(EUnitParameter _unitParam, std::string _name, std::string _typeName, std::string _units, std::string _description, double _min, double _max, double _param, double _value) :
+	CBaseUnitParameter(std::move(_unitParam), std::move(_name), std::move(_units), std::move(_description)),
 	m_min{ _min },
 	m_max{ _max }
 {
-	m_values.SetValue(0, _value);
+	m_values.SetValue(_param, _value);
+	m_typeName = _typeName;
 }
 
-void CTDUnitParameter::Clear()
+void CDependentUnitParameter::Clear()
 {
 	m_values.Clear();
 }
 
-double CTDUnitParameter::GetMin() const
+std::string CDependentUnitParameter::GetTypeName() const
+{
+	return m_typeName;
+}
+
+void CDependentUnitParameter::SetTypeName(std::string _typeName)
+{
+	m_typeName = _typeName;
+}
+
+double CDependentUnitParameter::GetMin() const
 {
 	return m_min;
 }
 
-double CTDUnitParameter::GetMax() const
+double CDependentUnitParameter::GetMax() const
 {
 	return m_max;
 }
 
-void CTDUnitParameter::SetMin(double _min)
+void CDependentUnitParameter::SetMin(double _min)
 {
 	m_min = _min;
 }
 
-void CTDUnitParameter::SetMax(double _max)
+void CDependentUnitParameter::SetMax(double _max)
 {
 	m_max = _max;
 }
 
-double CTDUnitParameter::GetValue(double _time) const
+double CDependentUnitParameter::GetValue(double _param) const
 {
-	return m_values.GetValue(_time);
+	return m_values.GetValue(_param);
 }
 
-void CTDUnitParameter::SetValue(double _time, double _value)
+void CDependentUnitParameter::SetValue(double _param, double _value)
 {
-	m_values.SetValue(_time, _value);
+	m_values.SetValue(_param, _value);
 }
 
-void CTDUnitParameter::RemoveValue(double _time)
+void CDependentUnitParameter::RemoveValue(double _param)
 {
-	m_values.RemoveValue(_time);
+	m_values.RemoveValue(_param);
 }
 
-std::vector<double> CTDUnitParameter::GetTimes() const
+std::vector<double> CDependentUnitParameter::GetParams() const
 {
 	return m_values.GetParamsList();
 }
 
-std::vector<double> CTDUnitParameter::GetValues() const
+std::vector<double> CDependentUnitParameter::GetValues() const
 {
 	return m_values.GetValuesList();
 }
 
-const CDependentValues& CTDUnitParameter::GetTDData() const
+const CDependentValues& CDependentUnitParameter::GetDependentData() const
 {
 	return m_values;
 }
 
-size_t CTDUnitParameter::Size() const
+size_t CDependentUnitParameter::Size() const
 {
 	return m_values.Size();
 }
 
-bool CTDUnitParameter::IsEmpty() const
+bool CDependentUnitParameter::IsEmpty() const
 {
 	return m_values.IsEmpty();
 }
 
-bool CTDUnitParameter::IsInBounds() const
+bool CDependentUnitParameter::IsInBounds() const
 {
 	for (const auto& value : m_values.GetValuesList())
 		if (value < m_min || value > m_max)
@@ -314,14 +322,57 @@ bool CTDUnitParameter::IsInBounds() const
 	return true;
 }
 
-std::ostream& CTDUnitParameter::ValueToStream(std::ostream& _s)
+std::ostream& CDependentUnitParameter::ValueToStream(std::ostream& _s)
 {
 	return _s << m_values;
 }
 
-std::istream& CTDUnitParameter::ValueFromStream(std::istream& _s)
+std::istream& CDependentUnitParameter::ValueFromStream(std::istream& _s)
 {
 	return _s >> m_values;
+}
+
+void CDependentUnitParameter::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
+{
+	if (!_h5File.IsValid()) return;
+
+	// current version of save procedure
+	_h5File.WriteAttribute(_path, StrConst::BUnit_H5AttrSaveVersion, m_cnSaveVersion);
+
+	// save data
+	_h5File.WriteData(_path, StrConst::UParam_H5Params, GetParams());
+	_h5File.WriteData(_path, StrConst::UParam_H5Values, GetValues());
+}
+
+void CDependentUnitParameter::LoadFromFile(const CH5Handler& _h5File, const std::string& _path)
+{
+	if (!_h5File.IsValid()) return;
+
+	// load version of save procedure
+	//const int version = _h5File.ReadAttribute(_path, StrConst::BUnit_H5AttrSaveVersion);
+
+	m_values.Clear();
+
+	// read data
+	std::vector<double> params, values;
+	_h5File.ReadData(_path, StrConst::UParam_H5Params, params);
+	_h5File.ReadData(_path, StrConst::UParam_H5Values, values);
+	for (size_t i = 0; i < params.size(); ++i)
+		SetValue(params[i], values[i]);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// CTDUnitParameter
+
+CTDUnitParameter::CTDUnitParameter() :
+	CDependentUnitParameter(EUnitParameter::TIME_DEPENDENT)
+{
+}
+
+CTDUnitParameter::CTDUnitParameter(std::string _name, std::string _units, std::string _description, double _min, double _max, double _value) :
+	CDependentUnitParameter(EUnitParameter::TIME_DEPENDENT, std::move(_name), "Time [s]", std::move(_units), std::move(_description), 
+		std::move(_min), std::move(_max), 0.0, std::move(_value))
+{
 }
 
 void CTDUnitParameter::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
@@ -332,7 +383,7 @@ void CTDUnitParameter::SaveToFile(CH5Handler& _h5File, const std::string& _path)
 	_h5File.WriteAttribute(_path, StrConst::BUnit_H5AttrSaveVersion, m_cnSaveVersion);
 
 	// save data
-	_h5File.WriteData(_path, StrConst::UParam_H5Times, GetTimes());
+	_h5File.WriteData(_path, StrConst::UParam_H5Times, GetParams());
 	_h5File.WriteData(_path, StrConst::UParam_H5Values, GetValues());
 }
 
@@ -343,7 +394,7 @@ void CTDUnitParameter::LoadFromFile(const CH5Handler& _h5File, const std::string
 	// load version of save procedure
 	//const int version = _h5File.ReadAttribute(_path, StrConst::BUnit_H5AttrSaveVersion);
 
-	m_values.Clear();
+	Clear();
 
 	// read data
 	std::vector<double> times, values;
@@ -943,6 +994,12 @@ void CUnitParametersManager::AddTDParameter(const std::string& _name, const std:
 	m_parameters.emplace_back(new CTDUnitParameter{ _name, _units, _description, _min, _max, _value });
 }
 
+void CUnitParametersManager::AddDependentParameter(const std::string& _name, const std::string& _typeName, const std::string& _units, const std::string& _description, double _min, double _max, double _param, double _value)
+{
+	if (IsNameExist(_name)) return;
+	m_parameters.emplace_back(new CDependentUnitParameter{EUnitParameter::PARAM_DEPENDENT, _name, _typeName, _units, _description, _min, _max, _param, _value });
+}
+
 void CUnitParametersManager::AddStringParameter(const std::string& _name, const std::string& _description, const std::string& _value)
 {
 	if (IsNameExist(_name)) return;
@@ -1067,9 +1124,19 @@ const CTDUnitParameter* CUnitParametersManager::GetTDParameter(size_t _index) co
 	return dynamic_cast<const CTDUnitParameter*>(GetParameter(_index));
 }
 
+const CDependentUnitParameter* CUnitParametersManager::GetDependentParameter(size_t _index) const
+{
+	return dynamic_cast<const CDependentUnitParameter*>(GetParameter(_index));
+}
+
 CTDUnitParameter* CUnitParametersManager::GetTDParameter(size_t _index)
 {
 	return const_cast<CTDUnitParameter*>(static_cast<const CUnitParametersManager&>(*this).GetTDParameter(_index));
+}
+
+CDependentUnitParameter* CUnitParametersManager::GetDependentParameter(size_t _index)
+{
+	return const_cast<CDependentUnitParameter*>(static_cast<const CUnitParametersManager&>(*this).GetDependentParameter(_index));
 }
 
 const CStringUnitParameter* CUnitParametersManager::GetStringParameter(size_t _index) const
@@ -1207,9 +1274,19 @@ const CTDUnitParameter* CUnitParametersManager::GetTDParameter(const std::string
 	return GetTDParameter(Name2Index(_name));
 }
 
+const CDependentUnitParameter* CUnitParametersManager::GetDependentParameter(const std::string& _name) const
+{
+	return GetDependentParameter(Name2Index(_name));
+}
+
 CTDUnitParameter* CUnitParametersManager::GetTDParameter(const std::string& _name)
 {
 	return GetTDParameter(Name2Index(_name));
+}
+
+CDependentUnitParameter* CUnitParametersManager::GetDependentParameter(const std::string& _name)
+{
+	return GetDependentParameter(Name2Index(_name));
 }
 
 const CStringUnitParameter* CUnitParametersManager::GetStringParameter(const std::string& _name) const
@@ -1340,6 +1417,13 @@ double CUnitParametersManager::GetTDParameterValue(size_t _index, double _time) 
 	return {};
 }
 
+double CUnitParametersManager::GetDependentParameterValue(size_t _index, double _param) const
+{
+	if (const auto* p = GetDependentParameter(_index))
+		return p->GetValue(_param);
+	return {};
+}
+
 std::string CUnitParametersManager::GetStringParameterValue(size_t _index) const
 {
 	if (const auto* p = GetStringParameter(_index))
@@ -1428,6 +1512,11 @@ uint64_t CUnitParametersManager::GetConstUIntParameterValue(const std::string& _
 double CUnitParametersManager::GetTDParameterValue(const std::string& _name, double _time) const
 {
 	return GetTDParameterValue(Name2Index(_name), _time);
+}
+
+double CUnitParametersManager::GetDependentParameterValue(const std::string& _name, double _param) const
+{
+	return GetDependentParameterValue(Name2Index(_name), _param);
 }
 
 std::string CUnitParametersManager::GetStringParameterValue(const std::string& _name) const
@@ -1539,8 +1628,19 @@ std::vector<double> CUnitParametersManager::GetAllTimePoints(double _tBeg, doubl
 	std::set<double> res;
 	for (const auto& p : m_parameters)
 		if (p->GetType() == EUnitParameter::TIME_DEPENDENT)
-			for (const auto t : dynamic_cast<const CTDUnitParameter*>(p.get())->GetTimes())
+			for (const auto t : dynamic_cast<const CTDUnitParameter*>(p.get())->GetParams())
 				if (t >= _tBeg && t <= _tEnd)
+					res.insert(t);
+	return std::vector<double>{res.begin(), res.end()};
+}
+
+std::vector<double> CUnitParametersManager::GetAllDependentPoints(double _pBeg, double _pEnd) const
+{
+	std::set<double> res;
+	for (const auto& p : m_parameters)
+		if (p->GetType() == EUnitParameter::PARAM_DEPENDENT)
+			for (const auto t : dynamic_cast<const CDependentUnitParameter*>(p.get())->GetParams())
+				if (t >= _pBeg && t <= _pEnd)
 					res.insert(t);
 	return std::vector<double>{res.begin(), res.end()};
 }
@@ -1611,6 +1711,7 @@ void CUnitParametersManager::SaveToFile(CH5Handler& _h5Saver, const std::string&
 		case EUnitParameter::LIST_DOUBLE:		dynamic_cast<CListRealUnitParameter*>       (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
 		case EUnitParameter::LIST_INT64:		dynamic_cast<CListIntUnitParameter*>        (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
 		case EUnitParameter::LIST_UINT64:		dynamic_cast<CListUIntUnitParameter*>       (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
+		case EUnitParameter::PARAM_DEPENDENT:	dynamic_cast<CDependentUnitParameter*>      (m_parameters[i].get())->SaveToFile(_h5Saver, groupPath);	break;
 		case EUnitParameter::UNKNOWN: break;
 		}
 	}
@@ -1666,6 +1767,7 @@ void CUnitParametersManager::LoadFromFile(const CH5Handler& _h5Loader, const std
 			case EUnitParameter::LIST_DOUBLE:		dynamic_cast<CListUnitParameter<double>*>   (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
 			case EUnitParameter::LIST_INT64: 		dynamic_cast<CListUnitParameter<int64_t>*>  (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
 			case EUnitParameter::LIST_UINT64:		dynamic_cast<CListUnitParameter<uint64_t>*> (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
+			case EUnitParameter::PARAM_DEPENDENT:	dynamic_cast<CDependentUnitParameter*>      (m_parameters[i].get())->LoadFromFile(_h5Loader, paramPath); break;
 			case EUnitParameter::UNKNOWN: break;
 			}
 		}
