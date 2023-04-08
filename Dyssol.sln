@@ -144,8 +144,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unit_ScreenMultideck", "Uni
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unit_GranulatorSimpleBatch", "Units\GranulatorSimpleBatch\GranulatorSimpleBatch.vcxproj", "{80FB8E0A-CCA8-4AB7-BC79-21E82A141842}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitT_MySplitter", "Units\MySplitter\MySplitter.vcxproj", "{3AD2B6C6-213B-4536-8CE8-D8F570AEECA7}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -622,12 +620,6 @@ Global
 		{80FB8E0A-CCA8-4AB7-BC79-21E82A141842}.Release|Win32.Build.0 = Release|Win32
 		{80FB8E0A-CCA8-4AB7-BC79-21E82A141842}.Release|x64.ActiveCfg = Release|x64
 		{80FB8E0A-CCA8-4AB7-BC79-21E82A141842}.Release|x64.Build.0 = Release|x64
-		{3AD2B6C6-213B-4536-8CE8-D8F570AEECA7}.Debug|Win32.ActiveCfg = Debug|x64
-		{3AD2B6C6-213B-4536-8CE8-D8F570AEECA7}.Debug|x64.ActiveCfg = Debug|x64
-		{3AD2B6C6-213B-4536-8CE8-D8F570AEECA7}.Debug|x64.Build.0 = Debug|x64
-		{3AD2B6C6-213B-4536-8CE8-D8F570AEECA7}.Release|Win32.ActiveCfg = Release|x64
-		{3AD2B6C6-213B-4536-8CE8-D8F570AEECA7}.Release|x64.ActiveCfg = Release|x64
-		{3AD2B6C6-213B-4536-8CE8-D8F570AEECA7}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -696,10 +688,9 @@ Global
 		{0736DDB9-C29B-4DEA-8E9A-6FEFFED8CFB6} = {241094B3-C6C5-43FA-B884-DDDEEFF788C8}
 		{1C6761A3-DD4E-4978-A4C6-24D3A50C502D} = {DA539701-563C-4DCF-883B-941DE792BC4A}
 		{80FB8E0A-CCA8-4AB7-BC79-21E82A141842} = {DA539701-563C-4DCF-883B-941DE792BC4A}
-		{3AD2B6C6-213B-4536-8CE8-D8F570AEECA7} = {8DB3F988-5C33-4D8A-BF19-040D5CDCD99C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {CAC327DA-BA65-4990-BEC0-618347D67688}
 		Qt5Version = msvc2019_64
+		SolutionGuid = {CAC327DA-BA65-4990-BEC0-618347D67688}
 	EndGlobalSection
 EndGlobal
