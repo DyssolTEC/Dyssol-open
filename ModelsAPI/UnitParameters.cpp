@@ -225,111 +225,147 @@ void CListUnitParameter<T>::LoadFromFile(const CH5Handler& _h5File, const std::s
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// CDependentUnitParameter
-CDependentUnitParameter::CDependentUnitParameter(EUnitParameter _unitParam) :
-	CBaseUnitParameter(std::move(_unitParam))
+CDependentUnitParameter::CDependentUnitParameter() :
+	CBaseUnitParameter(EUnitParameter::PARAM_DEPENDENT)
 {
 }
 
-CDependentUnitParameter::CDependentUnitParameter(EUnitParameter _unitParam, std::string _name, std::string _typeName, std::string _units, std::string _description, double _min, double _max, double _param, double _value) :
-	CBaseUnitParameter(std::move(_unitParam), std::move(_name), std::move(_units), std::move(_description)),
-	m_min{ _min },
-	m_max{ _max }
+CDependentUnitParameter::CDependentUnitParameter(std::string _valueName, double _valueInit, std::string _valueUnits, std::string _paramName, double _paramInit, std::string _paramUnits, std::string _description, double _valueMin, double _valueMax, double _paramMin, double _paramMax) :
+	CBaseUnitParameter(EUnitParameter::PARAM_DEPENDENT, std::move(_valueName), std::move(_valueUnits), std::move(_description)),
+	m_valueMin{ _valueMin },
+	m_valueMax{ _valueMax },
+	m_paramMin{ _paramMin },
+	m_paramMax{ _paramMax }
 {
-	m_values.SetValue(_param, _value);
-	m_typeName = _typeName;
+	m_data.SetValue(_paramInit, _valueInit);
+	m_paramName = _paramName;
+	m_paramUnits = _paramUnits;
 }
 
 void CDependentUnitParameter::Clear()
 {
-	m_values.Clear();
+	m_data.Clear();
 }
 
-std::string CDependentUnitParameter::GetTypeName() const
+std::string CDependentUnitParameter::GetParamName() const
 {
-	return m_typeName;
+	return m_paramName;
 }
 
-void CDependentUnitParameter::SetTypeName(std::string _typeName)
+void CDependentUnitParameter::SetParamName(std::string _paramName)
 {
-	m_typeName = _typeName;
+	m_paramName = _paramName;
 }
 
-double CDependentUnitParameter::GetMin() const
+std::string CDependentUnitParameter::GetParamUnits() const
 {
-	return m_min;
+	return m_paramUnits;
 }
 
-double CDependentUnitParameter::GetMax() const
+void CDependentUnitParameter::SetParamUnits(std::string _paramUnits)
 {
-	return m_max;
+	m_paramUnits = _paramUnits;
 }
 
-void CDependentUnitParameter::SetMin(double _min)
+double CDependentUnitParameter::GetValueMin() const
 {
-	m_min = _min;
+	return m_valueMin;
 }
 
-void CDependentUnitParameter::SetMax(double _max)
+double CDependentUnitParameter::GetValueMax() const
 {
-	m_max = _max;
+	return m_valueMax;
+}
+
+void CDependentUnitParameter::SetValueMin(double _valueMin)
+{
+	m_valueMin = _valueMin;
+}
+
+void CDependentUnitParameter::SetValueMax(double _valueMax)
+{
+	m_valueMax = _valueMax;
+}
+
+double CDependentUnitParameter::GetParamMin() const
+{
+	return m_paramMin;
+}
+
+double CDependentUnitParameter::GetParamMax() const
+{
+	return m_paramMax;
+}
+
+void CDependentUnitParameter::SetParamMin(double _paramMin)
+{
+	m_paramMin = _paramMin;
+}
+
+void CDependentUnitParameter::SetParamMax(double _paramMax)
+{
+	m_paramMax = _paramMax;
 }
 
 double CDependentUnitParameter::GetValue(double _param) const
 {
-	return m_values.GetValue(_param);
+	return m_data.GetValue(_param);
 }
 
 void CDependentUnitParameter::SetValue(double _param, double _value)
 {
-	m_values.SetValue(_param, _value);
+	m_data.SetValue(_param, _value);
 }
 
 void CDependentUnitParameter::RemoveValue(double _param)
 {
-	m_values.RemoveValue(_param);
+	m_data.RemoveValue(_param);
 }
 
 std::vector<double> CDependentUnitParameter::GetParams() const
 {
-	return m_values.GetParamsList();
+	return m_data.GetParamsList();
 }
 
 std::vector<double> CDependentUnitParameter::GetValues() const
 {
-	return m_values.GetValuesList();
+	return m_data.GetValuesList();
 }
 
 const CDependentValues& CDependentUnitParameter::GetDependentData() const
 {
-	return m_values;
+	return m_data;
 }
 
 size_t CDependentUnitParameter::Size() const
 {
-	return m_values.Size();
+	return m_data.Size();
 }
 
 bool CDependentUnitParameter::IsEmpty() const
 {
-	return m_values.IsEmpty();
+	return m_data.IsEmpty();
 }
 
 bool CDependentUnitParameter::IsInBounds() const
 {
-	for (const auto& value : m_values.GetValuesList())
-		if (value < m_min || value > m_max)
+	for (const auto& value : m_data.GetValuesList())
+		if (value < m_valueMin || value > m_valueMax)
+			return false;
+	for (const auto& param : m_data.GetParamsList())
+		if (param < m_paramMin || param > m_paramMax)
 			return false;
 	return true;
 }
 
 std::ostream& CDependentUnitParameter::ValueToStream(std::ostream& _s)
 {
-	return _s << m_values;
+	return _s << m_data;
 }
 
 std::istream& CDependentUnitParameter::ValueFromStream(std::istream& _s)
 {
-	return _s >> m_values;
+	return _s >> m_data;
 }
 
 void CDependentUnitParameter::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
@@ -351,7 +387,7 @@ void CDependentUnitParameter::LoadFromFile(const CH5Handler& _h5File, const std:
 	// load version of save procedure
 	//const int version = _h5File.ReadAttribute(_path, StrConst::BUnit_H5AttrSaveVersion);
 
-	m_values.Clear();
+	m_data.Clear();
 
 	// read data
 	std::vector<double> params, values;
@@ -365,43 +401,45 @@ void CDependentUnitParameter::LoadFromFile(const CH5Handler& _h5File, const std:
 /// CTDUnitParameter
 
 CTDUnitParameter::CTDUnitParameter() :
-	CDependentUnitParameter(EUnitParameter::TIME_DEPENDENT)
+	CDependentUnitParameter()
 {
+	SetType(EUnitParameter::TIME_DEPENDENT);
 }
 
 CTDUnitParameter::CTDUnitParameter(std::string _name, std::string _units, std::string _description, double _min, double _max, double _value) :
-	CDependentUnitParameter(EUnitParameter::TIME_DEPENDENT, std::move(_name), "Time [s]", std::move(_units), std::move(_description), 
-		std::move(_min), std::move(_max), 0.0, std::move(_value))
+	CDependentUnitParameter(std::move(_name), std::move(_value), std::move(_units), "Time", 0.0, "s", std::move(_description),
+		std::move(_min), std::move(_max), 0.0, std::numeric_limits<double>::max())
 {
+	SetType(EUnitParameter::TIME_DEPENDENT);
 }
 
-void CTDUnitParameter::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
+std::vector<double> CTDUnitParameter::GetTimes() const
 {
-	if (!_h5File.IsValid()) return;
-
-	// current version of save procedure
-	_h5File.WriteAttribute(_path, StrConst::BUnit_H5AttrSaveVersion, m_cnSaveVersion);
-
-	// save data
-	_h5File.WriteData(_path, StrConst::UParam_H5Times, GetParams());
-	_h5File.WriteData(_path, StrConst::UParam_H5Values, GetValues());
+	return GetParams();
 }
+
 
 void CTDUnitParameter::LoadFromFile(const CH5Handler& _h5File, const std::string& _path)
 {
 	if (!_h5File.IsValid()) return;
 
 	// load version of save procedure
-	//const int version = _h5File.ReadAttribute(_path, StrConst::BUnit_H5AttrSaveVersion);
+	const int version = _h5File.ReadAttribute(_path, StrConst::BUnit_H5AttrSaveVersion);
 
-	Clear();
+	if (version <= 1)
+	{
+		Clear();
 
-	// read data
-	std::vector<double> times, values;
-	_h5File.ReadData(_path, StrConst::UParam_H5Times, times);
-	_h5File.ReadData(_path, StrConst::UParam_H5Values, values);
-	for (size_t i = 0; i < times.size(); ++i)
-		SetValue(times[i], values[i]);
+		// read data
+		std::vector<double> times, values;
+		_h5File.ReadData(_path, StrConst::UParam_H5Times, times);
+		_h5File.ReadData(_path, StrConst::UParam_H5Values, values);
+		for (size_t i = 0; i < times.size(); ++i)
+			SetValue(times[i], values[i]);
+	}
+	else
+		CDependentUnitParameter::LoadFromFile(_h5File, _path);
+	
 }
 
 
@@ -988,16 +1026,16 @@ void CUnitParametersManager::AddConstUIntParameter(const std::string& _name, con
 	m_parameters.emplace_back(new CConstUnitParameter<uint64_t>{ _name, _units, _description, _min, _max, _value });
 }
 
+void CUnitParametersManager::AddDependentParameter(const std::string& _valueName, double _valueInit, const std::string& _valueUnits, const std::string& _paramName, double _paramInit, const std::string& _paramUnits, const std::string& _description, double _valueMin, double _valueMax, double _paramMin, double _paramMax)
+{
+	if (IsNameExist(_valueName)) return;
+	m_parameters.emplace_back(new CDependentUnitParameter{ _valueName, _valueInit, _valueUnits, _paramName, _paramInit, _paramUnits, _description, _valueMin, _valueMax, _paramMin, _paramMax });
+}
+
 void CUnitParametersManager::AddTDParameter(const std::string& _name, const std::string& _units, const std::string& _description, double _min, double _max, double _value)
 {
 	if (IsNameExist(_name)) return;
 	m_parameters.emplace_back(new CTDUnitParameter{ _name, _units, _description, _min, _max, _value });
-}
-
-void CUnitParametersManager::AddDependentParameter(const std::string& _name, const std::string& _typeName, const std::string& _units, const std::string& _description, double _min, double _max, double _param, double _value)
-{
-	if (IsNameExist(_name)) return;
-	m_parameters.emplace_back(new CDependentUnitParameter{EUnitParameter::PARAM_DEPENDENT, _name, _typeName, _units, _description, _min, _max, _param, _value });
 }
 
 void CUnitParametersManager::AddStringParameter(const std::string& _name, const std::string& _description, const std::string& _value)
@@ -1119,14 +1157,19 @@ CConstUIntUnitParameter* CUnitParametersManager::GetConstUIntParameter(size_t _i
 	return const_cast<CConstUIntUnitParameter*>(static_cast<const CUnitParametersManager&>(*this).GetConstUIntParameter(_index));
 }
 
-const CTDUnitParameter* CUnitParametersManager::GetTDParameter(size_t _index) const
-{
-	return dynamic_cast<const CTDUnitParameter*>(GetParameter(_index));
-}
-
 const CDependentUnitParameter* CUnitParametersManager::GetDependentParameter(size_t _index) const
 {
 	return dynamic_cast<const CDependentUnitParameter*>(GetParameter(_index));
+}
+
+CDependentUnitParameter* CUnitParametersManager::GetDependentParameter(size_t _index)
+{
+	return const_cast<CDependentUnitParameter*>(static_cast<const CUnitParametersManager&>(*this).GetDependentParameter(_index));
+}
+
+const CTDUnitParameter* CUnitParametersManager::GetTDParameter(size_t _index) const
+{
+	return dynamic_cast<const CTDUnitParameter*>(GetParameter(_index));
 }
 
 CTDUnitParameter* CUnitParametersManager::GetTDParameter(size_t _index)
@@ -1134,10 +1177,6 @@ CTDUnitParameter* CUnitParametersManager::GetTDParameter(size_t _index)
 	return const_cast<CTDUnitParameter*>(static_cast<const CUnitParametersManager&>(*this).GetTDParameter(_index));
 }
 
-CDependentUnitParameter* CUnitParametersManager::GetDependentParameter(size_t _index)
-{
-	return const_cast<CDependentUnitParameter*>(static_cast<const CUnitParametersManager&>(*this).GetDependentParameter(_index));
-}
 
 const CStringUnitParameter* CUnitParametersManager::GetStringParameter(size_t _index) const
 {
@@ -1269,24 +1308,24 @@ CConstUIntUnitParameter* CUnitParametersManager::GetConstUIntParameter(const std
 	return GetConstUIntParameter(Name2Index(_name));
 }
 
-const CTDUnitParameter* CUnitParametersManager::GetTDParameter(const std::string& _name) const
-{
-	return GetTDParameter(Name2Index(_name));
-}
-
 const CDependentUnitParameter* CUnitParametersManager::GetDependentParameter(const std::string& _name) const
 {
 	return GetDependentParameter(Name2Index(_name));
 }
 
-CTDUnitParameter* CUnitParametersManager::GetTDParameter(const std::string& _name)
+CDependentUnitParameter* CUnitParametersManager::GetDependentParameter(const std::string& _name)
+{
+	return GetDependentParameter(Name2Index(_name));
+}
+
+const CTDUnitParameter* CUnitParametersManager::GetTDParameter(const std::string& _name) const
 {
 	return GetTDParameter(Name2Index(_name));
 }
 
-CDependentUnitParameter* CUnitParametersManager::GetDependentParameter(const std::string& _name)
+CTDUnitParameter* CUnitParametersManager::GetTDParameter(const std::string& _name)
 {
-	return GetDependentParameter(Name2Index(_name));
+	return GetTDParameter(Name2Index(_name));
 }
 
 const CStringUnitParameter* CUnitParametersManager::GetStringParameter(const std::string& _name) const
@@ -1410,17 +1449,17 @@ uint64_t CUnitParametersManager::GetConstUIntParameterValue(size_t _index) const
 	return {};
 }
 
-double CUnitParametersManager::GetTDParameterValue(size_t _index, double _time) const
-{
-	if (const auto* p = GetTDParameter(_index))
-		return p->GetValue(_time);
-	return {};
-}
-
 double CUnitParametersManager::GetDependentParameterValue(size_t _index, double _param) const
 {
 	if (const auto* p = GetDependentParameter(_index))
 		return p->GetValue(_param);
+	return {};
+}
+
+double CUnitParametersManager::GetTDParameterValue(size_t _index, double _time) const
+{
+	if (const auto* p = GetTDParameter(_index))
+		return p->GetValue(_time);
 	return {};
 }
 
@@ -1509,14 +1548,14 @@ uint64_t CUnitParametersManager::GetConstUIntParameterValue(const std::string& _
 	return GetConstUIntParameterValue(Name2Index(_name));
 }
 
-double CUnitParametersManager::GetTDParameterValue(const std::string& _name, double _time) const
-{
-	return GetTDParameterValue(Name2Index(_name), _time);
-}
-
 double CUnitParametersManager::GetDependentParameterValue(const std::string& _name, double _param) const
 {
 	return GetDependentParameterValue(Name2Index(_name), _param);
+}
+
+double CUnitParametersManager::GetTDParameterValue(const std::string& _name, double _time) const
+{
+	return GetTDParameterValue(Name2Index(_name), _time);
 }
 
 std::string CUnitParametersManager::GetStringParameterValue(const std::string& _name) const
@@ -1630,17 +1669,6 @@ std::vector<double> CUnitParametersManager::GetAllTimePoints(double _tBeg, doubl
 		if (p->GetType() == EUnitParameter::TIME_DEPENDENT)
 			for (const auto t : dynamic_cast<const CTDUnitParameter*>(p.get())->GetParams())
 				if (t >= _tBeg && t <= _tEnd)
-					res.insert(t);
-	return std::vector<double>{res.begin(), res.end()};
-}
-
-std::vector<double> CUnitParametersManager::GetAllDependentPoints(double _pBeg, double _pEnd) const
-{
-	std::set<double> res;
-	for (const auto& p : m_parameters)
-		if (p->GetType() == EUnitParameter::PARAM_DEPENDENT)
-			for (const auto t : dynamic_cast<const CDependentUnitParameter*>(p.get())->GetParams())
-				if (t >= _pBeg && t <= _pEnd)
 					res.insert(t);
 	return std::vector<double>{res.begin(), res.end()};
 }
