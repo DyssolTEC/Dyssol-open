@@ -249,7 +249,7 @@ CDependentUnitParameter* CBaseUnit::AddDependentParameter(const std::string& _va
 {
 	if (m_unitParameters.IsNameExist(_valueName))
 		throw std::logic_error(StrConst::BUnit_ErrAddParam(m_unitName, _valueName, __func__));
-	m_unitParameters.AddDependentParameter(_valueName, _valueInit, _valueUnits, _paramName, _paramInit, _paramUnits, _description, _valueMin, _valueMax, _paramMin, _paramMax);
+	m_unitParameters.AddDependentParameter(_valueName, _valueUnits, _description, _valueMin, _valueMax, _valueInit, _paramName, _paramUnits, _paramMin, _paramMax, _paramInit);
 	return m_unitParameters.GetDependentParameter(_valueName);
 }
 

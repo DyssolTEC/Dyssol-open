@@ -177,15 +177,13 @@ using CListUIntUnitParameter = CListUnitParameter<uint64_t>;
 // Class for dependent unit parameters.
 class CDependentUnitParameter : public CBaseUnitParameter
 {
-	static const unsigned m_cnSaveVersion{ 1 };
+	static const unsigned m_cnSaveVersion{ 2 };
 
 	CDependentValues m_data;							///< Dependent values.
 	double m_valueMin{};								///< Minimum allowed value.
 	double m_valueMax{};								///< Maximum allowed value.
-
 	double m_paramMin{};								///< Minimum allowed parameter.
 	double m_paramMax{};								///< Maximum allowed parameter.
-
 	std::string m_paramName;							///< Parameter name.
 	std::string m_paramUnits;							///< Parameter units.
 
@@ -196,10 +194,10 @@ public:
 	void Clear() override;								///< Removes all values.
 
 	std::string GetParamName() const;					///< Returns parameter name.
-	void SetParamName(std::string _paramName);			///< Sets parameter name.
+	void SetParamName(const std::string& _paramName);	///< Sets parameter name.
 
 	std::string GetParamUnits() const;					///< Returns parameter units.
-	void SetParamUnits(std::string _paramUnits);		///< Sets parameter units.
+	void SetParamUnits(const std::string& _paramUnits);	///< Sets parameter units.
 
 	double GetValueMin() const;							///< Returns minimum allowed value.
 	double GetValueMax() const;							///< Returns maximum allowed value.
@@ -245,6 +243,7 @@ public:
 
 	std::vector<double> GetTimes() const;				///< Returns list of all defined time points.
 
+	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
 	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
 };
 
@@ -462,7 +461,7 @@ public:
 	// Adds new unsigned integer constant unit parameter. If parameter with the given name already exists, does nothing.
 	void AddConstUIntParameter(const std::string& _name, const std::string& _units, const std::string& _description, uint64_t _min, uint64_t _max, uint64_t _value);
 	// Adds new dependent unit parameter. If parameter with the given name already exists, does nothing.
-	void AddDependentParameter(const std::string& _valueName, double _valueInit, const std::string& _valueUnits, const std::string& _paramName, double _paramInit, const std::string& _paramUnits, const std::string& _description, double _valueMin, double _valueMax, double _paramMin, double _paramMax);
+	void AddDependentParameter(const std::string& _name, const std::string& _units, const std::string& _description, double _min, double _max, double _value, const std::string& _paramName, const std::string& _paramUnits, double _paramMin, double _paramMax, double _paramValue);
 	// Adds new time-dependent unit parameter. If parameter with the given name already exists, does nothing.
 	void AddTDParameter(const std::string& _name, const std::string& _units, const std::string& _description, double _min, double _max, double _value);
 	// Adds new string unit parameter. If parameter with the given name already exists, does nothing.
