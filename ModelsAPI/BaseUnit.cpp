@@ -245,6 +245,14 @@ CConstUIntUnitParameter* CBaseUnit::AddConstUIntParameter(const std::string& _na
 	return m_unitParameters.GetConstUIntParameter(_name);
 }
 
+CDependentUnitParameter* CBaseUnit::AddDependentParameter(const std::string& _valueName, double _valueInit, const std::string& _valueUnits, const std::string& _paramName, double _paramInit, const std::string& _paramUnits, const std::string& _description, double _valueMin, double _valueMax, double _paramMin, double _paramMax)
+{
+	if (m_unitParameters.IsNameExist(_valueName))
+		throw std::logic_error(StrConst::BUnit_ErrAddParam(m_unitName, _valueName, __func__));
+	m_unitParameters.AddDependentParameter(_valueName, _valueUnits, _description, _valueMin, _valueMax, _valueInit, _paramName, _paramUnits, _paramMin, _paramMax, _paramInit);
+	return m_unitParameters.GetDependentParameter(_valueName);
+}
+
 CTDUnitParameter* CBaseUnit::AddTDParameter(const std::string& _name, double _initValue, const std::string& _units, const std::string& _description, double _minValue, double _maxValue)
 {
 	if (m_unitParameters.IsNameExist(_name))
@@ -396,6 +404,13 @@ uint64_t CBaseUnit::GetConstUIntParameterValue(const std::string& _name) const
 {
 	if (const CConstUIntUnitParameter* param = m_unitParameters.GetConstUIntParameter(_name))
 		return param->GetValue();
+	throw std::logic_error(StrConst::BUnit_ErrGetParam(m_unitName, _name, __func__));
+}
+
+double CBaseUnit::GetDependentParameterValue(const std::string& _name, double _param) const
+{
+	if (const CDependentUnitParameter* param = m_unitParameters.GetDependentParameter(_name))
+		return param->GetValue(_param);
 	throw std::logic_error(StrConst::BUnit_ErrGetParam(m_unitName, _name, __func__));
 }
 

@@ -26,6 +26,7 @@ enum class EUnitParameter
 	LIST_INT64            = 14,
 	LIST_UINT64           = 15,
 	MDB_COMPOUND          = 16,
+	PARAM_DEPENDENT		  = 17,
 };
 
 // TODO: remove
@@ -173,43 +174,74 @@ using CListRealUnitParameter = CListUnitParameter<double>;
 using CListIntUnitParameter  = CListUnitParameter<int64_t>;
 using CListUIntUnitParameter = CListUnitParameter<uint64_t>;
 
-// Class for time-dependent unit parameters.
-class CTDUnitParameter : public CBaseUnitParameter
+// Class for dependent unit parameters.
+class CDependentUnitParameter : public CBaseUnitParameter
 {
-	static const unsigned m_cnSaveVersion{ 1 };
+	static const unsigned m_cnSaveVersion{ 2 };
 
-	CDependentValues m_values;                  ///< Time dependent values.
-	double m_min{};								///< Minimum allowed value.
-	double m_max{};								///< Maximum allowed value.
+	CDependentValues m_data;							///< Dependent values.
+	double m_valueMin{};								///< Minimum allowed value.
+	double m_valueMax{};								///< Maximum allowed value.
+	double m_paramMin{};								///< Minimum allowed parameter.
+	double m_paramMax{};								///< Maximum allowed parameter.
+	std::string m_paramName;							///< Parameter name.
+	std::string m_paramUnits;							///< Parameter units.
 
 public:
-	CTDUnitParameter();
-	CTDUnitParameter(std::string _name, std::string _units, std::string _description, double _min, double _max, double _value);
+	CDependentUnitParameter();
+	CDependentUnitParameter(std::string _valueName, double _valueInit, std::string _valueUnits, std::string _paramName, double _paramInit, std::string _paramUnits, std::string _description, double _valueMin, double _valueMax, double _paramMin, double _paramMax);
 
-	void Clear() override;                      ///< Removes all values.
+	void Clear() override;								///< Removes all values.
 
-	double GetMin() const;						///< Returns minimum allowed value.
-	double GetMax() const;						///< Returns maximum allowed value.
+	std::string GetParamName() const;					///< Returns parameter name.
+	void SetParamName(const std::string& _paramName);	///< Sets parameter name.
 
-	void SetMin(double _min);					///< Sets minimum allowed value.
-	void SetMax(double _max);					///< Sets maximum allowed value.
+	std::string GetParamUnits() const;					///< Returns parameter units.
+	void SetParamUnits(const std::string& _paramUnits);	///< Sets parameter units.
 
-	double GetValue(double _time) const;		///< Returns unit parameter value at given time point using interpolation if necessary.
-	void SetValue(double _time, double _value);	///< Adds new unit parameter value at given time point or changes the value of existing one.
-	void RemoveValue(double _time);             ///< Removes unit parameter value at given time point if it exists.
+	double GetValueMin() const;							///< Returns minimum allowed value.
+	double GetValueMax() const;							///< Returns maximum allowed value.
 
-	std::vector<double> GetTimes() const;		///< Returns list of all defined time points.
-	std::vector<double> GetValues() const;		///< Returns list of all defined values.
-	const CDependentValues& GetTDData() const;  ///< Returns the time dependent data itself.
+	void SetValueMin(double _valueMin);					///< Sets minimum allowed value.
+	void SetValueMax(double _valueMax);					///< Sets maximum allowed value.
 
-	size_t Size() const;	                    ///< Returns number of defined time points.
-	bool IsEmpty() const;	                    ///< Checks whether any time point is defined.
-	bool IsInBounds() const override;           ///< Checks whether all m_values lay in range [m_min; m_max].
+	double GetParamMin() const;							///< Returns minimum allowed parameter.
+	double GetParamMax() const;							///< Returns maximum allowed parameter.
+
+	void SetParamMin(double _paramMin);					///< Sets minimum allowed parameter.
+	void SetParamMax(double _paramMax);					///< Sets maximum allowed parameter.
+
+	double GetValue(double _param) const;				///< Returns unit parameter value at given dependent value using interpolation if necessary.
+	void SetValue(double _param, double _value);		///< Adds new unit parameter value at given dependent value or changes the value of existing one.
+	void RemoveValue(double _param);					///< Removes unit parameter value at given dependent value if it exists.
+
+	std::vector<double> GetParams() const;				///< Returns list of all defined dependent params.
+	std::vector<double> GetValues() const;				///< Returns list of all defined values.
+	const CDependentValues& GetDependentData() const;   ///< Returns the dependent data itself.
+
+	size_t Size() const;								///< Returns number of defined dependent values.
+	bool IsEmpty() const;								///< Checks whether any dependent value is defined.
+	bool IsInBounds() const override;					///< Checks whether all m_values lay in range [m_valueMin; m_valueMax] and m_params lay in range [m_paramMin; m_paramMax].
 
 	// Outputs user-specified values of the parameter to a stream.
 	std::ostream& ValueToStream(std::ostream& _s) override;
 	// Reads user-specified values of the parameter from a stream.
 	std::istream& ValueFromStream(std::istream& _s) override;
+
+	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
+	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
+};
+
+// Class for time-dependent unit parameters.
+class CTDUnitParameter : public CDependentUnitParameter
+{
+	static const unsigned m_cnSaveVersion{ 2 };
+
+public:
+	CTDUnitParameter();
+	CTDUnitParameter(std::string _name, std::string _units, std::string _description, double _min, double _max, double _value);
+
+	std::vector<double> GetTimes() const;				///< Returns list of all defined time points.
 
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
 	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
@@ -428,6 +460,8 @@ public:
 	void AddConstIntParameter(const std::string& _name, const std::string& _units, const std::string& _description, int64_t _min, int64_t _max, int64_t _value);
 	// Adds new unsigned integer constant unit parameter. If parameter with the given name already exists, does nothing.
 	void AddConstUIntParameter(const std::string& _name, const std::string& _units, const std::string& _description, uint64_t _min, uint64_t _max, uint64_t _value);
+	// Adds new dependent unit parameter. If parameter with the given name already exists, does nothing.
+	void AddDependentParameter(const std::string& _name, const std::string& _units, const std::string& _description, double _min, double _max, double _value, const std::string& _paramName, const std::string& _paramUnits, double _paramMin, double _paramMax, double _paramValue);
 	// Adds new time-dependent unit parameter. If parameter with the given name already exists, does nothing.
 	void AddTDParameter(const std::string& _name, const std::string& _units, const std::string& _description, double _min, double _max, double _value);
 	// Adds new string unit parameter. If parameter with the given name already exists, does nothing.
@@ -475,6 +509,10 @@ public:
 	const CConstUIntUnitParameter* GetConstUIntParameter(size_t _index) const;
 	// Returns pointer to the constant unsigned integer unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
 	CConstUIntUnitParameter* GetConstUIntParameter(size_t _index);
+	// Returns const pointer to the dependent unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
+	const CDependentUnitParameter* GetDependentParameter(size_t _index) const;
+	// Returns pointer to the dependent unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
+	CDependentUnitParameter* GetDependentParameter(size_t _index);
 	// Returns const pointer to the time-dependent unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
 	const CTDUnitParameter* GetTDParameter(size_t _index) const;
 	// Returns pointer to the time-dependent unit parameter with the specified _index. If such parameter does not exist, returns nullptr.
@@ -532,6 +570,10 @@ public:
 	const CConstUIntUnitParameter* GetConstUIntParameter(const std::string& _name) const;
 	// Returns pointer to the constant unsigned integer unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
 	CConstUIntUnitParameter* GetConstUIntParameter(const std::string& _name);
+	// Returns const pointer to the dependent unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
+	const CDependentUnitParameter* GetDependentParameter(const std::string& _name) const;
+	// Returns pointer to the time-dependent unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
+	CDependentUnitParameter* GetDependentParameter(const std::string& _name);
 	// Returns const pointer to the time-dependent unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
 	const CTDUnitParameter* GetTDParameter(const std::string& _name) const;
 	// Returns pointer to the time-dependent unit parameter with the specified _name. If such parameter does not exist, returns nullptr.
@@ -583,6 +625,8 @@ public:
 	int64_t GetConstIntParameterValue(size_t _index) const;
 	// Returns value of a constant unsigned integer unit parameter with the specified _index. If such parameter does not exist or is not a constant unsigned integer parameter, returns 0.
 	uint64_t GetConstUIntParameterValue(size_t _index) const;
+	// Returns value of a dependent unit parameter with the specified _index and _param. If such parameter does not exist or is not a dependent parameter, returns 0.
+	double GetDependentParameterValue(size_t _index, double _param) const;
 	// Returns value of a TD unit parameter with the specified _index and _time. If such parameter does not exist or is not a TD parameter, returns 0.
 	double GetTDParameterValue(size_t _index, double _time) const;
 	// Returns value of a string unit parameter with the specified _index. If such parameter does not exist or is not a string parameter, returns "".
@@ -612,6 +656,8 @@ public:
 	int64_t GetConstIntParameterValue(const std::string& _name) const;
 	// Returns value of a constant unsigned integer unit parameter with the specified _name. If such parameter does not exist or is not a constant unsigned integer parameter, returns 0.
 	uint64_t GetConstUIntParameterValue(const std::string& _name) const;
+	// Returns value of a dependent unit parameter with the specified _name and _param. If such parameter does not exist or is not a dependent parameter, returns 0.
+	double GetDependentParameterValue(const std::string& _name, double _param) const;
 	// Returns value of a TD unit parameter with the specified _name and _time. If such parameter does not exist or is not a TD parameter, returns 0.
 	double GetTDParameterValue(const std::string& _name, double _time) const;
 	// Returns value of a string unit parameter with the specified _name. If such parameter does not exist or is not a string parameter, returns "".

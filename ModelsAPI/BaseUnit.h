@@ -198,6 +198,8 @@ public:
 	CConstIntUnitParameter* AddConstIntParameter(const std::string& _name, int64_t _initValue, const std::string& _units, const std::string& _description, int64_t _minValue = std::numeric_limits<int64_t>::lowest(), int64_t _maxValue = std::numeric_limits<int64_t>::max());
 	// Adds a new unsigned integer constant unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
 	CConstUIntUnitParameter* AddConstUIntParameter(const std::string& _name, uint64_t _initValue, const std::string& _units, const std::string& _description, uint64_t _minValue = std::numeric_limits<uint64_t>::lowest(), uint64_t _maxValue = std::numeric_limits<uint64_t>::max());
+	// Adds a new dependent unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	CDependentUnitParameter* AddDependentParameter(const std::string& _valueName, double _valueInit, const std::string& _valueUnits, const std::string& _paramName, double _paramInit, const std::string& _paramUnits, const std::string& _description, double _valueMin = std::numeric_limits<double>::lowest(), double _valueMax = std::numeric_limits<double>::max(), double _paramMin = std::numeric_limits<double>::lowest(), double _paramMax = std::numeric_limits<double>::max());
 	// Adds a new time-dependent unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
 	CTDUnitParameter* AddTDParameter(const std::string& _name, double _initValue, const std::string& _units, const std::string& _description, double _minValue = std::numeric_limits<double>::lowest(), double _maxValue = std::numeric_limits<double>::max());
 	// Adds a new string unit parameter and returns a pointer to it. If the unit already has a parameter with the same name, logic_error exception is thrown.
@@ -240,6 +242,8 @@ public:
 	int64_t GetConstIntParameterValue(const std::string& _name) const;
 	// Returns value of the unsigned integer constant unit parameter. Throws logic_error exception if an unsigned integer constant unit parameter with the given name does not exist.
 	uint64_t GetConstUIntParameterValue(const std::string& _name) const;
+	// Returns value of the dependent unit parameter at the specified dependent value. Throws logic_error exception if a dependent unit parameter with the given name does not exist.
+	double GetDependentParameterValue(const std::string& _name, double _param) const;
 	// Returns value of the time-dependent unit parameter at the specified time point. Throws logic_error exception if a time-dependent unit parameter with the given name does not exist.
 	double GetTDParameterValue(const std::string& _name, double _time) const;
 	// Returns value of the string unit parameter. Throws logic_error exception if a string unit parameter with the given name does not exist.
