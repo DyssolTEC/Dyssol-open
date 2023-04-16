@@ -41,16 +41,16 @@ Expand-7Zip $ZLIB_ZIP_NAME . | Expand-7Zip $ZLIB_TAR_NAME .
 New-Item $ZLIB_BUILD_PATH\x32 -ItemType directory
 Set-Location $ZLIB_BUILD_PATH\x32
 cmake -G "Visual Studio 16 2019" -A Win32 $ZLIB_SRC_PATH -DCMAKE_INSTALL_PREFIX:PATH=$ZLIB_INSTALL_PATH
-cmake --build . --target INSTALL --config Debug
-cmake --build . --target INSTALL --config Release
+cmake --build . --parallel --target INSTALL --config Debug
+cmake --build . --parallel --target INSTALL --config Release
 Rename-Item -Path "$ZLIB_INSTALL_PATH\lib" -NewName "$ZLIB_INSTALL_PATH\lib32"
 
 # Build x64
 New-Item $ZLIB_BUILD_PATH\x64 -ItemType directory
 Set-Location $ZLIB_BUILD_PATH\x64
 cmake -G "Visual Studio 16 2019" -A x64 $ZLIB_SRC_PATH -DCMAKE_INSTALL_PREFIX:PATH=$ZLIB_INSTALL_PATH
-cmake --build . --target INSTALL --config Debug
-cmake --build . --target INSTALL --config Release
+cmake --build . --parallel --target INSTALL --config Debug
+cmake --build . --parallel --target INSTALL --config Release
 Rename-Item -Path "$ZLIB_INSTALL_PATH\lib" -NewName "$ZLIB_INSTALL_PATH\lib64"
 
 ################################################################################

@@ -38,13 +38,9 @@ void CParamsItem::SetupSlider()
 		return;
 	}
 
-	int nDistr = m_pCombo->itemData( m_pCombo->currentIndex() ).toInt();
-	size_t nMax;
-	if (nDistr != -1)
-		nMax = m_pGrid->GetGridDimension(static_cast<EDistrTypes>(nDistrIndex))->ClassesNumber();
-	else
-		nMax = 0;
-	//unsigned nMax = m_pGrid->GetClassesNumberByIndex( static_cast<unsigned>(nDistrIndex) );
+	const int distr = m_pCombo->itemData(m_pCombo->currentIndex()).toInt();
+	const auto* gridDim = m_pGrid->GetGridDimension(static_cast<EDistrTypes>(distr));
+	const size_t nMax = gridDim ? gridDim->ClassesNumber() : 0;
 
 	int nLastPos = m_pSlider->sliderPosition();
 	if( nMax != 0 )
@@ -67,26 +63,26 @@ void CParamsItem::UpdateLabel()
 	std::vector<double> vNumGrid;
 	std::vector<std::string> vStrGrid;
 
-	//int nDistrIndex = GetDistrIndex();
-	int nDistr = m_pCombo->itemData( m_pCombo->currentIndex() ).toInt();
+	const int distr = m_pCombo->itemData(m_pCombo->currentIndex()).toInt();
+	const auto* gridDim = m_pGrid->GetGridDimension(static_cast<EDistrTypes>(distr));
 
-	if( nDistr == -1 ) // clear
+	if (!gridDim) // clear
 	{
 		m_pLabel->setText( "" );
 		return;
 	}
 
 	int nCurrIndex = m_pSlider->sliderPosition();
-	EGridEntry nState = m_pGrid->GetGridDimension(static_cast<EDistrTypes>(nDistr))->GridType();
+	const EGridEntry gridEntry = gridDim->GridType();
 
-	switch( nState )
+	switch( gridEntry )
 	{
 	case EGridEntry::GRID_NUMERIC:
-		vNumGrid = m_pGrid->GetNumericGrid(static_cast<EDistrTypes>(nDistr));
+		vNumGrid = dynamic_cast<const CGridDimensionNumeric*>(gridDim)->Grid();
 		sLabelText = "[" + QString::number( vNumGrid[nCurrIndex] ) + " : " + QString::number( vNumGrid[nCurrIndex+1] ) + "]";
 		break;
 	case EGridEntry::GRID_SYMBOLIC:
-		vStrGrid = m_pGrid->GetSymbolicGrid(static_cast<EDistrTypes>(nDistr));
+		vStrGrid = dynamic_cast<const CGridDimensionSymbolic*>(gridDim)->Grid();
 		sLabelText = QString::fromStdString(vStrGrid[nCurrIndex]);
 		break;
 	default:

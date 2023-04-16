@@ -34,7 +34,7 @@ void CScreenMultideck::CreateStructure()
 		const auto I = " " + std::to_string(i + 1);
 
 		// add unit parameters
-		m_decks[i].model     = AddComboParameter("Model" + I, None, { None, Plitt, Molerus, Teipel, Probability }, { "-", "Plitt", "Molerus & Hoffmann", "Teipel & Hennig", "Probability" }, "Classification model");
+		m_decks[i].model     = AddComboParameter("Model" + I, EModel::None, { EModel::None, EModel::Plitt, EModel::Molerus, EModel::Teipel, EModel::Probability }, { "-", "Plitt", "Molerus & Hoffmann", "Teipel & Hennig", "Probability" }, "Classification model");
 		m_decks[i].xCut      = AddTDParameter("Cut size"  + I, 0.002 , "m", "Cut size of the classification model, deck"                 + I, 0     );
 		m_decks[i].alpha     = AddTDParameter("Alpha"     + I, 8     , "-", "Sharpness of separation, deck"                              + I, 0, 100);
 		m_decks[i].beta      = AddTDParameter("Beta"      + I, 0.5   , "-", "Sharpness of separation 2, deck"                            + I, 0, 100);
@@ -92,7 +92,7 @@ void CScreenMultideck::Simulate(double _time)
 		deck.streamOutF->CopyFromStream(_time, deck.streamIn);
 
 		// if deck is disabled - just propagate stream
-		if (static_cast<EModel>(deck.model->GetValue()) == None)
+		if (static_cast<EModel>(deck.model->GetValue()) == EModel::None)
 		{
 			deck.streamOutC->SetMassFlow(_time, 0.0);
 			continue;
@@ -117,11 +117,11 @@ double CScreenMultideck::CreateTransformMatrix(double _time, const SDeck& _deck)
 	for (const auto& deck : m_decks)
 		switch(static_cast<EModel>(deck.model->GetValue()))
 		{
-		case Plitt:			return CreateTransformMatrixPlitt(_time, _deck);
-		case Molerus:		return CreateTransformMatrixMolerus(_time, _deck);
-		case Teipel:		return CreateTransformMatrixTeipel(_time, _deck);
-		case Probability:	return CreateTransformMatrixProbability(_time, _deck);
-		case None: break;
+		case EModel::Plitt:			return CreateTransformMatrixPlitt(_time, _deck);
+		case EModel::Molerus:		return CreateTransformMatrixMolerus(_time, _deck);
+		case EModel::Teipel:		return CreateTransformMatrixTeipel(_time, _deck);
+		case EModel::Probability:	return CreateTransformMatrixProbability(_time, _deck);
+		case EModel::None: break;
 		}
 	return -1;
 }

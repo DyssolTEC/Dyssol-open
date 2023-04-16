@@ -3,7 +3,6 @@
 #include "NLSolver.h"
 #include <kinsol/kinsol.h>
 #include <sunlinsol/sunlinsol_dense.h>
-#include <sunmatrix/sunmatrix_dense.h>
 #include <nvector/nvector_serial.h>
 #include "DyssolUtilities.h"
 #include <cstring>
@@ -106,10 +105,19 @@ bool CNLSolver::SetModel(CNLModel* _pModel)
 {
 	ClearMemory();
 
+#if SUNDIALS_VERSION_MAJOR < 6
+#else
+	SUNContext_Create(nullptr, &m_sunctx);
+#endif
+
 	m_pModel = _pModel;
 
 	// Create IDA memory
+#if SUNDIALS_VERSION_MAJOR < 6
 	m_pKINmem = KINCreate();
+#else
+	m_pKINmem = KINCreate(m_sunctx);
+#endif
 	if (m_pKINmem == nullptr)
 	{
 		ErrorHandler(-1, "KIN", "KINCreate", "Cannot allocate memory for solver.", &m_sErrorDescription);
@@ -125,9 +133,15 @@ bool CNLSolver::SetModel(CNLModel* _pModel)
 	m_pModel->SetStrategy(m_eStrategy);
 
 	// Allocate N-vectors
+#if SUNDIALS_VERSION_MAJOR < 6
 	m_vectorVars    = N_VNew_Serial(nVarsCnt);
 	m_vectorUScales = N_VNew_Serial(nVarsCnt);
 	m_vectorFScales = N_VNew_Serial(nVarsCnt);
+#else
+	m_vectorVars    = N_VNew_Serial(nVarsCnt, m_sunctx);
+	m_vectorUScales = N_VNew_Serial(nVarsCnt, m_sunctx);
+	m_vectorFScales = N_VNew_Serial(nVarsCnt, m_sunctx);
+#endif
 
 
 	if (!m_vectorVars || !m_vectorUScales || !m_vectorFScales)
@@ -145,7 +159,11 @@ bool CNLSolver::SetModel(CNLModel* _pModel)
 	}
 
 	// Set constraints
+#if SUNDIALS_VERSION_MAJOR < 6
 	N_Vector vConstrVars = N_VNew_Serial(nVarsCnt);
+#else
+	N_Vector vConstrVars = N_VNew_Serial(nVarsCnt, m_sunctx);
+#endif
 	bool bAllZero = true;
 	for (size_t i = 0; i < static_cast<size_t>(nVarsCnt); ++i)
 	{
@@ -186,9 +204,17 @@ bool CNLSolver::SetModel(CNLModel* _pModel)
 		return false;
 
 	/* Create dense SUNMatrix for use in linear solves */
+#if SUNDIALS_VERSION_MAJOR < 6
 	m_A = SUNDenseMatrix(nVarsCnt, nVarsCnt);
+#else
+	m_A = SUNDenseMatrix(nVarsCnt, nVarsCnt, m_sunctx);
+#endif
 	/* Create dense SUNMatrix for use in linear solves */
-	m_LS = SUNDenseLinearSolver(m_vectorVars, m_A);
+#if SUNDIALS_VERSION_MAJOR < 6
+	m_LS = SUNLinSol_Dense(m_vectorVars, m_A);
+#else
+	m_LS = SUNLinSol_Dense(m_vectorVars, m_A, m_sunctx);
+#endif
 	/* Attach the matrix and linear solver */
 	if (KINSetLinearSolver(m_pKINmem, m_LS, m_A) != KINLS_SUCCESS)
 		return false;
@@ -251,6 +277,12 @@ void CNLSolver::ClearMemory()
 	if (m_vectorFScales) { N_VDestroy_Serial(m_vectorFScales);	m_vectorFScales = nullptr; }
 
 	if (m_StoreVectorVars) { N_VDestroy_Serial(m_StoreVectorVars);			m_StoreVectorVars = nullptr; }
+
+#if SUNDIALS_VERSION_MAJOR < 6
+#else
+	// free context
+	SUNContext_Free(&m_sunctx);
+#endif
 }
 
 void CNLSolver::CopyNVector(N_Vector _dst, N_Vector _src)

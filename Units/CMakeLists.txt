@@ -6,7 +6,7 @@ set(UnitsNames
     "Bunker"
     "Crusher"
     "CrusherPBMTM"
-    "Cyclone2"
+    "CycloneMuschelknautz"
     "Granulator"
     "GranulatorSimpleBatch"
     "HeatExchanger"

@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A0BF6E68-6F8E-42EB-AE81-CCD6E889373E}</ProjectGuid>
-    <RootNamespace>Cyclone2</RootNamespace>
-    <ProjectName>Unit_Cyclone2</ProjectName>
+    <RootNamespace>CycloneMuschelknautz</RootNamespace>
+    <ProjectName>Unit_CycloneMuschelknautz</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -116,10 +116,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Cyclone2.cpp" />
+    <ClCompile Include="CycloneMuschelknautz.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Cyclone2.h" />
+    <ClInclude Include="CycloneMuschelknautz.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -159,6 +159,9 @@ void CSimulator::SimulateUnitsWithRecycles(const CCalculationSequence::SPartitio
 				for (auto& stream : vRecycles)			stream->RemoveAllTimePoints();			// clear recycle streams
 				for (auto& stream : vRecyclesPrev)		stream->RemoveAllTimePoints();			// clear previous state of recycles
 				for (auto& stream : vRecyclesPrevPrev)	stream->RemoveAllTimePoints();			// clear pre-previous state of recycles
+				for (auto& stream : vRecycles)													// make sure, there is at least one time point in the stream
+					if (stream->GetAllTimePoints().empty())
+						stream->AddTimePoint(0.0);
 				bTearStreamsFromInit = false;													// turn off the control flag to prevent a repeated reset
 				m_iTWIterationFull = 0;															// reset iteration number
 				m_iTWIterationCurr = 0;															// reset iteration number

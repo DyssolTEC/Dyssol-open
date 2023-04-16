@@ -26,7 +26,7 @@ void CBunker::CreateStructure()
 	AddPort("Outflow", EUnitPort::OUTPUT);
 
 	/// Add unit parameters ///
-	m_upModel = AddComboParameter("Model", Adaptive, { Adaptive, Constant }, { "Adaptive", "Constant" }, "Outflow model");
+	m_upModel = AddComboParameter("Model", EModel::Adaptive, { EModel::Adaptive, EModel::Constant }, { "Adaptive", "Constant" }, "Outflow model");
 	m_upMassFlow   = AddTDParameter       ("Output mass flow"  , 1     , "kg/s", "Output mass flow"                                               , 0.0);
 	m_upTargetMass = AddConstRealParameter("Target mass"       , 100000, "kg"  , "Target mass of bunker."                                         , 0.0);
 	m_upRTol       = AddConstRealParameter("Relative tolerance", 0.0   , "-"   , "Solver relative tolerance. Set to 0 to use flowsheet-wide value", 0.0);
@@ -163,7 +163,7 @@ void CMyDAEModel::ResultsHandler(double _time, double* _vars, double* _ders, voi
 	/// General information ///
 	const auto* unit = static_cast<CBunker*>(_unit);
 
-	if (unit->m_outputModel == CBunker::Constant && _vars[m_iMass] > unit->m_targetMass)
+	if (unit->m_outputModel == CBunker::EModel::Constant && _vars[m_iMass] > unit->m_targetMass)
 		static_cast<CBunker*>(_unit)->RaiseError("Bunker overflow at t = " + std::to_string(_time) + "s!");
 
 	const double timePrev = unit->m_holdup->GetPreviousTimePoint(_time);

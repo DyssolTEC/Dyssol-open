@@ -9,6 +9,7 @@
 #include "UnitPorts.h"
 #include "StateVariable.h"
 #include "StreamManager.h"
+#include "DyssolUtilities.h"
 #include <mutex>
 
 #ifdef _DEBUG
@@ -404,6 +405,27 @@ public:
 	 */
 	CConstUIntUnitParameter* AddConstUIntParameter(const std::string& _name, uint64_t _initValue, const std::string& _units, const std::string& _description, uint64_t _minValue = std::numeric_limits<uint64_t>::lowest(), uint64_t _maxValue = std::numeric_limits<uint64_t>::max());
 	/**
+	 * \brief Adds a new dependent unit parameter to the unit.
+	 * \details Should be used in the CBaseUnit::CreateStructure() function.
+	 * Adds the possibility to specify dependency between two values.
+	 * The name of the parameter should be unique within the unit. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * Boundary values are only a recommendation to the user, and going beyond them will only result in a warning to the user.
+	 * Boundary values are optional; if they are not specified, the limits do not apply.
+	 * \param _valueName Name of the value and the unit parameter.
+	 * \param _valueInit Initial value.
+	 * \param _valueUnits Units of measurement of values.
+	 * \param _paramName Name of the parameter.
+	 * \param _paramInit Initial value of the parameter.
+	 * \param _paramUnits Units of measurement of parameters.
+	 * \param _description Extended parameter description.
+	 * \param _valueMin Minimum boundary of the value.
+	 * \param _valueMax Maximum boundary of the value.
+	 * \param _paramMin Minimum boundary of the parameter.
+	 * \param _paramMax Maximum boundary of the parameter.
+	 * \return Pointer to the added unit parameter.
+	 */
+	CDependentUnitParameter* AddDependentParameter(const std::string& _valueName, double _valueInit, const std::string& _valueUnits, const std::string& _paramName, double _paramInit, const std::string& _paramUnits, const std::string& _description, double _valueMin = std::numeric_limits<double>::lowest(), double _valueMax = std::numeric_limits<double>::max(), double _paramMin = std::numeric_limits<double>::lowest(), double _paramMax = std::numeric_limits<double>::max());
+	/**
 	 * \brief Adds a new real time-dependent unit parameter to the unit.
 	 * \details Should be used in the CBaseUnit::CreateStructure() function.
 	 * Adds the possibility to specify multiple values at different time points as a parameter.
@@ -454,6 +476,20 @@ public:
 	 * \return Pointer to the added unit parameter.
 	 */
 	CComboUnitParameter* AddComboParameter(const std::string& _name, size_t _initValue, const std::vector<size_t>& _items, const std::vector<std::string>& _itemsNames, const std::string& _description);
+	/**
+	 * \brief Adds a new combobox unit parameter to the unit.
+	 * \details Should be used in the CBaseUnit::CreateStructure() function.
+	 * Adds the possibility to select a single value from the list.
+	 * The name of the parameter should be unique within the unit. If the unit already has a parameter with the same name, logic_error exception is thrown.
+	 * \param _name Name of the unit parameter.
+	 * \param _initValue Initial value.
+	 * \param _items List of selectable items.
+	 * \param _itemsNames List of names for each selectable item.
+	 * \param _description Extended parameter description.
+	 * \return Pointer to the added unit parameter.
+	 */
+	template <typename T, typename = std::enable_if_t<std::is_enum_v<T>>>
+	CComboUnitParameter* AddComboParameter(const std::string& _name, T _initValue, const std::vector<T>& _items, const std::vector<std::string>& _itemsNames, const std::string& _description);
 	/**
 	 * \brief Adds a new compound combobox unit parameter to the unit.
 	 * \details Should be used in the CBaseUnit::CreateStructure() function.
@@ -562,11 +598,31 @@ public:
 	 * \brief Groups the specified unit parameters.
 	 * \details Allows to hide groups of parameters depending on the selected value of a combobox unit parameter.
 	 * The parameter, its value and all the adding parameters must already exist. If something does not exist, logic_error exception is thrown.
-	 * \param _unitParamName Name of the target combobox unit parameter.
-	 * \param _unitParamValueName Selected value of of the target combobox unit parameter.
+	 * \param _unitParamNameSelector Name of the target combobox unit parameter.
+	 * \param _unitParamSelectedValueName Selected value of of the target combobox unit parameter.
 	 * \param _groupedParamNames Names of other unit parameters that will be shown if \p _unitParamValueName is selected.
 	 */
-	void AddParametersToGroup(const std::string& _unitParamName, const std::string& _unitParamValueName, const std::vector<std::string>& _groupedParamNames);
+	void AddParametersToGroup(const std::string& _unitParamNameSelector, const std::string& _unitParamSelectedValueName, const std::vector<std::string>& _groupedParamNames);
+	/**
+	 * \brief Groups the specified unit parameters.
+	 * \details Allows to hide groups of parameters depending on the selected value of a combobox unit parameter.
+	 * The parameter, its value and all the adding parameters must already exist. If something does not exist, logic_error exception is thrown.
+	 * \param _selector Target combobox unit parameter.
+	 * \param _selectedValue Selected value of of the target combobox unit parameter.
+	 * \param _groupedParams Other unit parameters that will be shown if \p _unitParamValueName is selected.
+	 */
+	void AddParametersToGroup(const CComboUnitParameter* _selector, size_t _selectedValue, const std::vector<CBaseUnitParameter*>& _groupedParams);
+	/**
+	 * \brief Groups the specified unit parameters.
+	 * \details Allows to hide groups of parameters depending on the selected value of a combobox unit parameter.
+	 * The parameter, its value and all the adding parameters must already exist. If something does not exist, logic_error exception is thrown.
+	 * \param _selector Target combobox unit parameter.
+	 * \param _selectedValue Selected value of of the target combobox unit parameter.
+	 * \param _groupedParams Other unit parameters that will be shown if \p _unitParamValueName is selected.
+	 */
+	template <typename T, typename = std::enable_if_t<std::is_enum_v<T>>>
+	void AddParametersToGroup(const CComboUnitParameter* _selector, T _selectedValue, const std::vector<CBaseUnitParameter*>& _groupedParams);
+
 
 	/**
 	 * \brief Returns value of the real constant unit parameter.
@@ -589,6 +645,15 @@ public:
 	 * \return Current value of the unit parameter.
 	 */
 	uint64_t GetConstUIntParameterValue(const std::string& _name) const;
+	/**
+	 * \brief Returns value of the dependent unit parameter at the given value of the parameter.
+	 * \details If the selected parameter value has not been defined, linear interpolation or nearest-neighbor extrapolation will be performed.
+	 * Throws logic_error exception if a unit parameter with the given name and type does not exist.
+	 * \param _name Name of the unit parameter.
+	 * \param _param Target parameter value.
+	 * \return Current value of the unit parameter at the given parameter value.
+	 */
+	double GetDependentParameterValue(const std::string& _name, double _param) const;
 	/**
 	 * \brief Returns value of the real time-dependent unit parameter at the given time point.
 	 * \details If the selected time point has not been defined, linear interpolation or nearest-neighbor extrapolation will be performed.
@@ -1502,5 +1567,17 @@ private:
 	static EPhase SOA2EPhase(unsigned _soa);
 	static unsigned EPhase2SOA(EPhase _phase);
 };
+
+template <typename T, typename>
+CComboUnitParameter* CBaseUnit::AddComboParameter(const std::string& _name, T _initValue, const std::vector<T>& _items, const std::vector<std::string>& _itemsNames, const std::string& _description)
+{
+	return AddComboParameter(_name, static_cast<size_t>(_initValue), vector_cast<size_t>(_items), _itemsNames, _description);
+}
+
+template <typename T, typename>
+void CBaseUnit::AddParametersToGroup(const CComboUnitParameter* _selector, T _selectedValue, const std::vector<CBaseUnitParameter*>& _groupedParams)
+{
+	return AddParametersToGroup(_selector, static_cast<size_t>(_selectedValue), _groupedParams);
+}
 
 typedef DECLDIR CBaseUnit* (*CreateUnit2)();

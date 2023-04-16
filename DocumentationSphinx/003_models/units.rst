@@ -23,6 +23,7 @@ You can also develope your own operation unit and refer to :ref:`label-unitDev` 
 	unit_agglomerator
 	unit_bunker
 	unit_crusher
+	unit_cyclone
 	unit_granulator
 	unit_inletflow
 	unit_mixer

@@ -27,7 +27,7 @@ class CBunker : public CDynamicUnit
 	CDAESolver m_solver;		// Solver of DAE
 
 public:
-	enum EModel : size_t { Adaptive, Constant };
+	enum class EModel : size_t { Adaptive, Constant };
 	EModel m_outputModel{}; // Output mass model.
 	double m_targetMass{};	// Target mass for bunker.
 

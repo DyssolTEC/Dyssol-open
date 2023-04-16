@@ -41,6 +41,11 @@ private:
 	long m_nMAA;						///< Anderson Acceleration subspace size. The value of nMAA should always be less than nMaxIter.
 	double m_dDampingAA;				///< Anderson Acceleration damping parameter between 0 and 1
 
+#if SUNDIALS_VERSION_MAJOR < 6
+#else
+	SUNContext m_sunctx{};              ///< SUNDIALS simulation context.
+#endif
+
 public:
 	/**	Basic constructor.*/
 	CNLSolver();

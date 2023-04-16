@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 3.1.0)
 
-set (VERSION 1.0.5)
+set (VERSION 1.1.1)
 set (SOVERSION 1.0)
 
 OPTION(BUILD_BINARIES "Whether to build binary files" ON)
@@ -130,6 +130,7 @@ IF(BUILD_BINARIES)
     "Unit_Crusher_Cone"
     "Unit_Crusher_Const"
     "Unit_Crusher_PBMTM"
+    "Unit_Cyclone_Muschelknautz"
     "Unit_Granulator"
     "Unit_GranulatorSimpleBatch"
     "Unit_Mixer"

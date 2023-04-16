@@ -44,12 +44,12 @@ jobs:
       run: cmake -E make_directory ${{github.workspace}}/build
 
     - name: Create install environment
-      run: cmake -E make_directory ${{github.workspace}}/inst
+      run: cmake -E make_directory ${{github.workspace}}/install
 
     - name: Configure CMake
       shell: bash
       working-directory: ${{github.workspace}}/build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="${{ matrix.cxxflags }}" -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.linker_flags }}" -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/inst -DBUILD_DOCS=NO
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="${{ matrix.cxxflags }}" -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.linker_flags }}" -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DBUILD_DOCS=NO
 
     - name: Build
       working-directory: ${{github.workspace}}/build
@@ -84,12 +84,12 @@ jobs:
       run: cmake -E make_directory ${{github.workspace}}/build
     
     - name: Create install environment
-      run: cmake -E make_directory ${{github.workspace}}/inst
+      run: cmake -E make_directory ${{github.workspace}}/install
       
     - name: Configure CMake
       shell: bash
       working-directory: ${{github.workspace}}/build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/inst -DBUILD_BINARIES=NO
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DBUILD_BINARIES=NO
 
     - name: Build docs
       working-directory: ${{github.workspace}}/build
@@ -101,6 +101,6 @@ jobs:
       uses: JamesIves/github-pages-deploy-action@v4.3.3
       with:
         branch: gh-pages # The branch the action should deploy to.
-        folder: ${{github.workspace}}/inst/share/Dyssol/docs/sphinx/html # The folder the action should deploy.
+        folder: ${{github.workspace}}/install/share/Dyssol/docs/sphinx/html # The folder the action should deploy.
         single-commit: true
     
