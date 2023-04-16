@@ -45,13 +45,13 @@ Contents
    :maxdepth: 2
    :caption: Structure and algorithms
 
-   brief
-   simulation
-   data
-   materials
-   multiDim
-   time
-   theory
+   002_theory/brief
+   002_theory/simulation
+   002_theory/data
+   002_theory/materials
+   002_theory/multiDim
+   002_theory/time
+   002_theory/theory
 
 |
 
@@ -59,18 +59,19 @@ Contents
    :maxdepth: 2
    :caption: Libraries
 
-   units
-   solver
+   003_models/units
+   003_models/solvers
 
 |
 
 .. toctree::
    :maxdepth: 2
-   :caption: Models development
+   :caption: For developers
 
-   for_developers
-   models_development
-   class
+   004_development/compilation
+   004_development/models_development
+   004_development/api
+   004_development/old_api
 
 |
 
