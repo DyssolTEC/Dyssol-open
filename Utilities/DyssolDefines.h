@@ -197,11 +197,11 @@ enum class EPSDGridType : unsigned
 // Identifiers of phase types.
 enum class EPhase : uint32_t
 {
-	UNDEFINED = 0,
-	SOLID     = 1,
-	LIQUID    = 2,
-	VAPOR     = 3,
-	GAS       = 3,
+	UNDEFINED = 0, ///< Type is undefined.
+	SOLID     = 1, ///< Solid phase.
+	LIQUID    = 2, ///< Liquid phase.
+	VAPOR     = 3, ///< Gas phase.
+	GAS       = 3, ///< Gas phase.
 };
 
 // Identifiers of time-dependent overall parameters.

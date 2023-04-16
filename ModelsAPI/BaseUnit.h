@@ -993,7 +993,7 @@ public:
 	std::string GetCompoundName(const std::string& _compoundKey) const;
 	/**
 	 * \brief Returns the name of the compound with the specified index.
-	 * \details Indexing is done in the list of active compounds in the list of active compounds.
+	 * \details Indexing is done in the list of active compounds.
 	 * Returns empty string if such compound does not exist.
 	 * \param _index Index of the compound in the list of active compounds.
 	 * \return Name of the compound.
@@ -1044,11 +1044,13 @@ public:
 	size_t GetCompoundsNumber() const;
 	/**
 	 * \brief Checks if a compound with the specified unique key is defined.
+	 * \param _compoundKey Unique key of the compound.
 	 * \return Whether a compound with the specified unique key is defined.
 	 */
 	bool IsCompoundDefined(const std::string& _compoundKey) const;
 	/**
 	 * \brief Checks if a compound with the specified name is defined.
+	 * \param _compoundName Name of the compound.
 	 * \return Whether a compound with the specified unique name is defined.
 	 */
 	bool IsCompoundNameDefined(const std::string& _compoundName) const;
@@ -1072,23 +1074,32 @@ public:
 	void RemovePhase(EPhase _phase);
 
 	/**
-	 * Returns the name of the specified phase.
+	 * \brief Returns the name of the specified phase.
+	 * \details Returns empty string if such phase does not exist in the list of active phases.
+	 * \param _phase Phase type.
+	 * \return Name of the phase.
 	 */
 	std::string GetPhaseName(EPhase _phase) const;
 	/**
-	 * Returns the type of the phase with the specified index.
+	 * \brief Returns the type of the phase with the specified index.
+	 * \details Returns #EPhase::UNDEFINED if the phase with the given index does not exist.
+	 * \param _index Index of the phase in the list of active phases.
+	 * \return Phase type.
 	 */
 	EPhase GetPhaseType(size_t _index) const;
 	/**
-	 * Returns types of all defined phases.
+	 * \brief Returns types of all active phases.
+	 * \return Types of all active phases.
 	 */
 	std::vector<EPhase> GetAllPhases() const;
 	/**
-	 * Returns the number of defined phases.
+	 * \brief Returns the number of active phases.
+	 * \return Number of active phases.
 	 */
 	size_t GetPhasesNumber() const;
 	/**
-	 * Checks if a specified phase is defined.
+	 * \brief Checks if a phase of the specified type is in the list of active phases.
+	 * \return Whether a phase of the specified type is defined.
 	 */
 	bool IsPhaseDefined(EPhase _phase) const;
 
