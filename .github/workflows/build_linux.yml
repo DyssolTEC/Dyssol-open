@@ -95,6 +95,12 @@ jobs:
       working-directory: ${{github.workspace}}/build
       shell: bash
       run: make doc
+
+    - name: Install docs
+      # if: ${{ github.ref == 'refs/heads/master' }}
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: make install
       
     - name: Deploy docs
       # if: ${{ github.ref == 'refs/heads/master' }}
