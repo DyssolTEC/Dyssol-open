@@ -64,6 +64,7 @@ private slots:
 	void DeleteUnitParamListItem();								// Remove time point from selected unit parameter.
 	void ListValueChanged();											// User changed value or time of selected unit parameter.
 	void UnitParamValueChanged(int _row, int _col);				// Value of unit parameter has been changed.
+	void PasteParamTable(int _row, int _col);							// Paste values for parameter from clipboard.
 
 
 private:

@@ -25,6 +25,11 @@ void CQtTable::SetGeometry(int _rows, int _cols)
 	setColumnCount(_cols);
 }
 
+void CQtTable::SetExtendableParsing(bool _extendable)
+{
+	extendable = _extendable;
+}
+
 QString CQtTable::GetColHeaderItem(int _col) const
 {
 	if (const auto* itm = horizontalHeaderItem(_col))
@@ -576,13 +581,6 @@ void CQtTable::Copy()
 
 void CQtTable::Paste()
 {
-	const bool bOldBlock = blockSignals(true);
-
-	QString sSelectedText = QApplication::clipboard()->text();
-	QStringList rows = sSelectedText.split(QRegExp(QLatin1String("\n")));
-	while (!rows.empty() && rows.back().size() == 0)
-		rows.pop_back();
-
 	QModelIndexList indexes = selectionModel()->selection().indexes();
 	int nFirstRow = 0;
 	int nFirstColumn = 0;
@@ -591,6 +589,19 @@ void CQtTable::Paste()
 		nFirstRow = indexes.at(0).row();
 		nFirstColumn = indexes.at(0).column();
 	}
+	if (extendable) {
+		emit PasteInitiated(nFirstRow, nFirstColumn);
+		return;
+	}
+
+	const bool bOldBlock = blockSignals(true);
+
+	QString sSelectedText = QApplication::clipboard()->text();
+	QStringList rows = sSelectedText.split(QRegExp(QLatin1String("\n")));
+	while (!rows.empty() && rows.back().size() == 0)
+		rows.pop_back();
+
+
 
 	if (nFirstRow < 0) nFirstRow = 0;
 	int nRowMax = rows.count();
@@ -610,7 +621,6 @@ void CQtTable::Paste()
 	}
 
 	blockSignals(bOldBlock);
-
 	emit DataPasted();
 	emit cellChanged(nRowMax - 1 + nFirstRow, rows[nRowMax - 1].split(QRegExp("[\t ]")).count() - 1 + nFirstColumn);
 }

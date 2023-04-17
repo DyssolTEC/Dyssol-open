@@ -10,6 +10,8 @@
 #include "ContainerFunctions.h"
 #include "FlowsheetViewer.h"
 #include <QMessageBox>
+#include <QApplication>
+#include <QClipboard>
 #include <cmath>
 
 CFlowsheetEditor::CFlowsheetEditor(CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, CModelsManager* _modelsManager, QSettings* _settings, QWidget* parent /*= 0 */)
@@ -22,6 +24,7 @@ CFlowsheetEditor::CFlowsheetEditor(CFlowsheet* _pFlowsheet, const CMaterialsData
 	, m_viewer{ new CFlowsheetViewer{ _pFlowsheet, _settings } }
 {
 	ui.setupUi(this);
+	ui.tableListValues->SetExtendableParsing(true);
 }
 
 CFlowsheetEditor::~CFlowsheetEditor()
@@ -52,6 +55,8 @@ void CFlowsheetEditor::InitializeConnections()
 	connect(ui.buttonAddListValue,		&QPushButton::clicked,				this, &CFlowsheetEditor::AddUnitParamListItem);
 	connect(ui.buttonRemoveListValue,	&QPushButton::clicked,				this, &CFlowsheetEditor::DeleteUnitParamListItem);
 	connect(ui.tableListValues,			&QTableWidget::itemChanged,			this, &CFlowsheetEditor::ListValueChanged);
+	connect(ui.tableListValues,			&CQtTable::PasteInitiated,			this, &CFlowsheetEditor::PasteParamTable);
+
 
 	connect(ui.tableUnitParams,		&QTableWidget::itemSelectionChanged,	this, &CFlowsheetEditor::NewUnitParameterSelected);
 	connect(ui.tableUnitParams,		&QTableWidget::cellChanged,				this, &CFlowsheetEditor::UnitParamValueChanged);
@@ -515,6 +520,125 @@ void CFlowsheetEditor::UnitParamValueChanged(int _row, int _col)
 
 	if (dataChanged)
 		emit DataChanged();
+}
+
+void CFlowsheetEditor::PasteParamTable(int _row, int _col)
+{
+
+	if (!m_pModelParams) return;
+
+	auto* param = m_pModelParams->GetParameter(ui.tableUnitParams->GetItemUserData(ui.tableUnitParams->currentRow(), 0).toInt());
+	if (!param) return;
+
+	QString sSelectedText = QApplication::clipboard()->text();
+	QStringList rows = sSelectedText.split(QRegExp(QLatin1String("\n")));
+	while (!rows.empty() && rows.back().size() == 0)
+		rows.pop_back();
+
+	switch (param->GetType()) {
+	case EUnitParameter::TIME_DEPENDENT: {
+		auto* paramTD = dynamic_cast<CTDUnitParameter*>(param);
+		std::vector<double> times = paramTD->GetTimes();
+		if (_col == 0) {
+			for (int i = _row; i < times.size() && i < rows.length() + _row; i++) {
+				paramTD->RemoveValue(times[i]);
+			}
+		}
+		for (int i = 0; i < rows.length(); i++) {
+			QStringList columns = rows[i].split(QRegExp("[\t ]"));
+			while (!columns.empty() && columns.back().size() == 0)
+				columns.pop_back();
+			double time, value;
+			if (_col == 0) {
+				times = paramTD->GetTimes();
+				if (columns.count() < 2) {
+					columns.push_back("0");
+				}
+				time = columns[0].toDouble();
+				value = columns[1].toDouble();
+				if (std::find(times.begin(), times.end(), time) != times.end())
+				{
+					double oldValue = paramTD->GetValue(time);
+					if (oldValue != value) {
+						const QMessageBox::StandardButtons buttons = QMessageBox::Yes | QMessageBox::No;
+						const QMessageBox::StandardButton reply = QMessageBox::question(this, StrConst::Dyssol_InvalidDataInput,
+							QString::fromStdString(StrConst::Dyssol_DialogTimepointAlreadyExists(paramTD->GetName(), time, oldValue, value)),
+							buttons);
+						if (reply == QMessageBox::No) continue;
+					}
+					else {
+						const QMessageBox::StandardButtons buttons = QMessageBox::Ok;
+						const QMessageBox::StandardButton reply = QMessageBox::information(this, StrConst::Dyssol_InvalidDataInput,
+							QString::fromStdString(StrConst::Dyssol_DialogTimepointMerged(paramTD->GetName(), time, value)),
+							buttons);
+					}
+				}
+			}
+			else
+			{
+				int index = i + _row;
+				if (index >= times.size()) {
+					const QMessageBox::StandardButtons buttons = QMessageBox::Ok;
+					const QMessageBox::StandardButton reply = QMessageBox::information(this, StrConst::Dyssol_InvalidDataInput,
+						StrConst::Dyssol_NotEnoughTimepoints,
+						buttons);
+					break;
+				}
+				time = times[index];
+				value = columns[0].toDouble();
+			}
+			paramTD->SetValue(time, value);
+		}
+		break;
+	}
+	case EUnitParameter::LIST_DOUBLE: {
+		CListRealUnitParameter* ListParam = dynamic_cast<CListRealUnitParameter*>(param);
+		int ListSize = ListParam->GetValues().size();
+		for (int i = 0; i < rows.size(); i++) {
+			int index = i + _row;
+			QStringList columns = rows[i].split(QRegExp("[\t ]"));
+			if (i >= ListSize) {
+				ListParam->AddValue(columns[0].toDouble());
+			}
+			else ListParam->SetValue(index, columns[0].toDouble());
+		}
+		break;
+	}
+	case EUnitParameter::LIST_UINT64: {
+		CListUIntUnitParameter* ListParam = dynamic_cast<CListUIntUnitParameter*>(param);
+		int ListSize = ListParam->GetValues().size();
+		for (int i = 0; i < rows.size(); i++) {
+			int index = i + _row;
+			QStringList columns = rows[i].split(QRegExp("[\t ]"));
+			if (i >= ListSize) {
+				ListParam->AddValue(columns[0].toUInt());
+			}
+			else ListParam->SetValue(index, columns[0].toUInt());
+		}
+		break;
+	}
+	case EUnitParameter::LIST_INT64: {
+		CListIntUnitParameter* ListParam = dynamic_cast<CListIntUnitParameter*>(param);
+		int ListSize = ListParam->GetValues().size();
+		for (int i = 0; i < rows.size(); i++) {
+			int index = i + _row;
+			QStringList columns = rows[i].split(QRegExp("[\t ]"));
+			if (i >= ListSize) {
+				ListParam->AddValue(columns[0].toInt());
+			}
+			else ListParam->SetValue(index, columns[0].toInt());
+		}
+		break;
+	}
+	default: {
+		break;
+	}
+	}
+
+	UpdateUnitParamTable();
+	UpdateListValuesTable();
+
+	emit DataChanged();
 }
 
 void CFlowsheetEditor::UpdateModelsView()

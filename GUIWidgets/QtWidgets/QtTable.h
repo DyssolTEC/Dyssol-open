@@ -21,6 +21,8 @@ public:
 	std::pair<int, int> GetGeometry() const;
 	void SetGeometry(int _rows, int _cols);
 
+	void SetExtendableParsing(bool _extendable);
+
 	QString GetColHeaderItem(int _col) const;
 	QString GetRowHeaderItem(int _row) const;
 	std::vector<QString> GetColHeaderItems(int _startcol) const;
@@ -102,11 +104,14 @@ public slots:
 	void keyPressEvent(QKeyEvent *event) override;
 
 private:
+	bool extendable;
+
 	void Clear();
 	void Copy();
 	void Paste();
 
 signals:
+	void PasteInitiated(int _row, int _col);
 	void DataPasted();
 	void CheckBoxStateChanged(int _row, int _col, QCheckBox* _pCheckBox);
 	void RadioButtonStateChanged(int _row, int _col, QRadioButton* _radioButton);

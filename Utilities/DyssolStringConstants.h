@@ -59,7 +59,15 @@ namespace StrConst
 	const char* const Dyssol_StatusSavingText      = "Flowsheet is saving. <br/>Please wait";
 	const char* const Dyssol_StatusSavingQuestion  = "Terminate saving of the flowsheet?";
 	const char* const Dyssol_AboutDyssolDescr      = "Dyssol: Dynamic Simulation of Solids Processes";
+	const char* const Dyssol_InvalidDataInput	   = "Invalid data input";
+	const char* const Dyssol_NotEnoughTimepoints   = "Not enough timepoints defined for pasted data. \nPlease define more timepoints before inserting additional data.";
 
+	inline std::string Dyssol_DialogTimepointAlreadyExists(const std::string& parameter, double timepoint, double value1, double value2) {
+		return std::string("Data for parameter " + parameter + " at timepoint " + StringFunctions::Double2String(timepoint) + " already defined as " + StringFunctions::Double2String(value1) + ". \nDo you want to replace it with " + StringFunctions::Double2String(value2) + "? \nPlease check your data.");
+	}
+	inline std::string Dyssol_DialogTimepointMerged(const std::string& parameter, double timepoint, double value) {
+		return std::string("Data for parameter " + parameter + " at timepoint " + StringFunctions::Double2String(timepoint) + " already defined as " + StringFunctions::Double2String(value) + ". \nIdentical data points were merged.");
+	}
 
 //////////////////////////////////////////////////////////////////////////
 /// DyssolC
