@@ -535,20 +535,24 @@ void CFlowsheetEditor::PasteParamTable(int _row, int _col)
 	while (!rows.empty() && rows.back().size() == 0)
 		rows.pop_back();
 
+	// proceed based on parameter type
 	switch (param->GetType()) {
 	case EUnitParameter::TIME_DEPENDENT: {
 		auto* paramTD = dynamic_cast<CTDUnitParameter*>(param);
 		std::vector<double> times = paramTD->GetTimes();
+		// existing timepoints that are going to be overwritten are deleted first
 		if (_col == 0) {
 			for (int i = _row; i < times.size() && i < rows.length() + _row; i++) {
 				paramTD->RemoveValue(times[i]);
 			}
 		}
+		// insert data row by row
 		for (int i = 0; i < rows.length(); i++) {
 			QStringList columns = rows[i].split(QRegExp("[\t ]"));
 			while (!columns.empty() && columns.back().size() == 0)
 				columns.pop_back();
 			double time, value;
+			// add new timepoints
 			if (_col == 0) {
 				times = paramTD->GetTimes();
 				if (columns.count() < 2) {
@@ -556,9 +560,11 @@ void CFlowsheetEditor::PasteParamTable(int _row, int _col)
 				}
 				time = columns[0].toDouble();
 				value = columns[1].toDouble();
+				// check if timepoint already exists
 				if (std::find(times.begin(), times.end(), time) != times.end())
 				{
 					double oldValue = paramTD->GetValue(time);
+					// get user input which value to keep
 					if (oldValue != value) {
 						const QMessageBox::StandardButtons buttons = QMessageBox::Yes | QMessageBox::No;
 						const QMessageBox::StandardButton reply = QMessageBox::question(this, StrConst::Dyssol_InvalidDataInput,
@@ -566,6 +572,7 @@ void CFlowsheetEditor::PasteParamTable(int _row, int _col)
 							buttons);
 						if (reply == QMessageBox::No) continue;
 					}
+					// merge timepoints if value is the same
 					else {
 						const QMessageBox::StandardButtons buttons = QMessageBox::Ok;
 						const QMessageBox::StandardButton reply = QMessageBox::information(this, StrConst::Dyssol_InvalidDataInput,
@@ -574,9 +581,11 @@ void CFlowsheetEditor::PasteParamTable(int _row, int _col)
 					}
 				}
 			}
+			// set only values
 			else
 			{
 				int index = i + _row;
+				// check if enough timepoints are defined
 				if (index >= times.size()) {
 					const QMessageBox::StandardButtons buttons = QMessageBox::Ok;
 					const QMessageBox::StandardButton reply = QMessageBox::information(this, StrConst::Dyssol_InvalidDataInput,
@@ -594,6 +603,7 @@ void CFlowsheetEditor::PasteParamTable(int _row, int _col)
 	case EUnitParameter::LIST_DOUBLE: {
 		CListRealUnitParameter* ListParam = dynamic_cast<CListRealUnitParameter*>(param);
 		int ListSize = ListParam->GetValues().size();
+		// insert data row by row
 		for (int i = 0; i < rows.size(); i++) {
 			int index = i + _row;
 			QStringList columns = rows[i].split(QRegExp("[\t ]"));
@@ -607,6 +617,7 @@ void CFlowsheetEditor::PasteParamTable(int _row, int _col)
 	case EUnitParameter::LIST_UINT64: {
 		CListUIntUnitParameter* ListParam = dynamic_cast<CListUIntUnitParameter*>(param);
 		int ListSize = ListParam->GetValues().size();
+		// insert data row by row
 		for (int i = 0; i < rows.size(); i++) {
 			int index = i + _row;
 			QStringList columns = rows[i].split(QRegExp("[\t ]"));
@@ -620,6 +631,7 @@ void CFlowsheetEditor::PasteParamTable(int _row, int _col)
 	case EUnitParameter::LIST_INT64: {
 		CListIntUnitParameter* ListParam = dynamic_cast<CListIntUnitParameter*>(param);
 		int ListSize = ListParam->GetValues().size();
+		// insert data row by row
 		for (int i = 0; i < rows.size(); i++) {
 			int index = i + _row;
 			QStringList columns = rows[i].split(QRegExp("[\t ]"));
