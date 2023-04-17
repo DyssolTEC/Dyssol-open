@@ -3,73 +3,73 @@ name: Linux
 on: [push]
 
 jobs:
-  # build:
-    # name: ${{ matrix.name }}
-    # runs-on: ubuntu-latest
-    # strategy:
-      # matrix:
-        # include:
-          # - name: linux-gcc
-            # os: linux
-            # cxx: g++
-            # cxxflags: ""
-            # linker_flags: ""
-            # build_type: Release
-          # - name: linux-gcc-san
-            # os: linux
-            # cxx: g++
-            # cxxflags: "-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined"
-            # linker_flags: "-fno-omit-frame-pointer -fsanitize=address"
-            # build_type: Debug
-          # - name: linux-clang
-            # os: linux
-            # cxx: clang++
-            # cxxflags: ""
-            # linker_flags: ""
-            # build_type: Release
-          # - name: linux-clang-san
-            # os: linux
-            # cxx: clang++
-            # cxxflags: "-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined"
-            # linker_flags: "-fno-omit-frame-pointer -fsanitize=address"
-            # build_type: Debug
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: linux-gcc
+            os: linux
+            cxx: g++
+            cxxflags: ""
+            linker_flags: ""
+            build_type: Release
+          - name: linux-gcc-san
+            os: linux
+            cxx: g++
+            cxxflags: "-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined"
+            linker_flags: "-fno-omit-frame-pointer -fsanitize=address"
+            build_type: Debug
+          - name: linux-clang
+            os: linux
+            cxx: clang++
+            cxxflags: ""
+            linker_flags: ""
+            build_type: Release
+          - name: linux-clang-san
+            os: linux
+            cxx: clang++
+            cxxflags: "-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined"
+            linker_flags: "-fno-omit-frame-pointer -fsanitize=address"
+            build_type: Debug
 
-    # steps:
-    # - uses: actions/checkout@v3
+    steps:
+    - uses: actions/checkout@v3
 
-    # - name: Install build dependencies
-      # run: sudo add-apt-repository ppa:gladky-anton/sundials && sudo apt-get install build-essential libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev
+    - name: Install build dependencies
+      run: sudo add-apt-repository ppa:gladky-anton/sundials && sudo apt-get install build-essential libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev
 
-    # - name: Create build environment
-      # run: cmake -E make_directory ${{github.workspace}}/build
+    - name: Create build environment
+      run: cmake -E make_directory ${{github.workspace}}/build
 
-    # - name: Create install environment
-      # run: cmake -E make_directory ${{github.workspace}}/install
+    - name: Create install environment
+      run: cmake -E make_directory ${{github.workspace}}/install
 
-    # - name: Configure CMake
-      # shell: bash
-      # working-directory: ${{github.workspace}}/build
-      # run: cmake $GITHUB_WORKSPACE -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="${{ matrix.cxxflags }}" -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.linker_flags }}" -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DBUILD_DOCS=NO
+    - name: Configure CMake
+      shell: bash
+      working-directory: ${{github.workspace}}/build
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="${{ matrix.cxxflags }}" -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.linker_flags }}" -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DBUILD_DOCS=NO
 
-    # - name: Build
-      # working-directory: ${{github.workspace}}/build
-      # shell: bash
-      # run: cmake --build . --parallel $(nproc)
+    - name: Build
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: cmake --build . --parallel $(nproc)
 
-    # - name: Install
-      # working-directory: ${{github.workspace}}/build
-      # shell: bash
-      # run: make install
+    - name: Install
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: make install
 
-    # - name: Test
-      # working-directory: ${{github.workspace}}/build
-      # shell: bash
-      # run: CTEST_OUTPUT_ON_FAILURE=1 make test
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: CTEST_OUTPUT_ON_FAILURE=1 make test
         
   docs:
     name: Docs
     runs-on: ubuntu-latest
-    # needs: build
+    needs: build
     
     steps:
     - uses: actions/checkout@v3
@@ -97,13 +97,13 @@ jobs:
       run: make doc
 
     - name: Install docs
-      # if: ${{ github.ref == 'refs/heads/master' }}
+      if: ${{ github.ref == 'refs/heads/master' }}
       working-directory: ${{github.workspace}}/build
       shell: bash
       run: make install
       
     - name: Deploy docs
-      # if: ${{ github.ref == 'refs/heads/master' }}
+      if: ${{ github.ref == 'refs/heads/master' }}
       uses: JamesIves/github-pages-deploy-action@v4.3.3
       with:
         branch: gh-pages # The branch the action should deploy to.
