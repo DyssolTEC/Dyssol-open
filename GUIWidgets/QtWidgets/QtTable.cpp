@@ -25,9 +25,9 @@ void CQtTable::SetGeometry(int _rows, int _cols)
 	setColumnCount(_cols);
 }
 
-void CQtTable::SetExtendableParsing(bool _extendable)
+void CQtTable::EnablePasting(bool _pasteEnabled)
 {
-	extendable = _extendable;
+	pasteEnabled = _pasteEnabled;
 }
 
 QString CQtTable::GetColHeaderItem(int _col) const
@@ -589,8 +589,9 @@ void CQtTable::Paste()
 		nFirstRow = indexes.at(0).row();
 		nFirstColumn = indexes.at(0).column();
 	}
-	if (extendable) {
-		emit PasteInitiated(nFirstRow, nFirstColumn);
+
+	emit PasteInitiated(nFirstRow, nFirstColumn);
+	if (!pasteEnabled) {
 		return;
 	}
 
@@ -600,8 +601,6 @@ void CQtTable::Paste()
 	QStringList rows = sSelectedText.split(QRegExp(QLatin1String("\n")));
 	while (!rows.empty() && rows.back().size() == 0)
 		rows.pop_back();
-
-
 
 	if (nFirstRow < 0) nFirstRow = 0;
 	int nRowMax = rows.count();

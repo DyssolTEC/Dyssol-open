@@ -3,6 +3,8 @@
 #pragma once
 
 #include "StringFunctions.h"
+#include <sstream>
+#include <algorithm>
 
 namespace StrConst
 {
@@ -65,8 +67,18 @@ namespace StrConst
 	inline std::string Dyssol_DialogTimepointAlreadyExists(const std::string& parameter, double timepoint, double value1, double value2) {
 		return std::string("Data for parameter " + parameter + " at timepoint " + StringFunctions::Double2String(timepoint) + " already defined as " + StringFunctions::Double2String(value1) + ". \nDo you want to replace it with " + StringFunctions::Double2String(value2) + "? \nPlease check your data.");
 	}
-	inline std::string Dyssol_DialogTimepointMerged(const std::string& parameter, double timepoint, double value) {
-		return std::string("Data for parameter " + parameter + " at timepoint " + StringFunctions::Double2String(timepoint) + " already defined as " + StringFunctions::Double2String(value) + ". \nIdentical data points were merged.");
+	inline std::string Dyssol_DialogDuplicateTimepoints(const std::string& parameter, std::vector<double> timepoints) {
+		std::stringstream ss;
+		std::sort(timepoints.begin(), timepoints.end());
+		bool begin = true;
+		for (std::vector<double>::const_iterator itr = timepoints.begin(); itr != timepoints.end(); itr++) {
+			if (!begin) {
+				ss << ", ";
+			}
+			else begin = false;
+			ss << *itr;
+		}
+		return "The following timepoints have duplicates in the data: \n" + ss.str() + "\nDuplicates containing the same data were merged.\nPlease check your data!";
 	}
 
 //////////////////////////////////////////////////////////////////////////

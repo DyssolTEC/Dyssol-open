@@ -314,6 +314,10 @@ bool CTDUnitParameter::IsInBounds() const
 	return true;
 }
 
+bool CTDUnitParameter::ContainsTimePoint(double _time) {
+	return m_values.HasParam(_time);
+}
+
 std::ostream& CTDUnitParameter::ValueToStream(std::ostream& _s)
 {
 	return _s << m_values;

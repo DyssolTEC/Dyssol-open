@@ -14,6 +14,9 @@ class CQtTable : public QTableWidget
 {
 	Q_OBJECT
 
+private:
+	bool pasteEnabled = true;
+
 public:
 	CQtTable(QWidget* parent = nullptr);
 	CQtTable(int rows, int columns, QWidget* parent = nullptr);
@@ -21,7 +24,7 @@ public:
 	std::pair<int, int> GetGeometry() const;
 	void SetGeometry(int _rows, int _cols);
 
-	void SetExtendableParsing(bool _extendable);
+	void EnablePasting(bool _pasteEnabled);
 
 	QString GetColHeaderItem(int _col) const;
 	QString GetRowHeaderItem(int _row) const;
@@ -104,8 +107,6 @@ public slots:
 	void keyPressEvent(QKeyEvent *event) override;
 
 private:
-	bool extendable;
-
 	void Clear();
 	void Copy();
 	void Paste();

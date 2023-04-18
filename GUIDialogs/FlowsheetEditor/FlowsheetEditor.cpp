@@ -13,6 +13,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include <cmath>
+#include <sstream>
 
 CFlowsheetEditor::CFlowsheetEditor(CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, CModelsManager* _modelsManager, QSettings* _settings, QWidget* parent /*= 0 */)
 	: QWidget(parent),
@@ -24,7 +25,7 @@ CFlowsheetEditor::CFlowsheetEditor(CFlowsheet* _pFlowsheet, const CMaterialsData
 	, m_viewer{ new CFlowsheetViewer{ _pFlowsheet, _settings } }
 {
 	ui.setupUi(this);
-	ui.tableListValues->SetExtendableParsing(true);
+	ui.tableListValues->EnablePasting(false);
 }
 
 CFlowsheetEditor::~CFlowsheetEditor()
@@ -522,9 +523,26 @@ void CFlowsheetEditor::UnitParamValueChanged(int _row, int _col)
 		emit DataChanged();
 }
 
+template<typename T>
+void PasteListValues(CListUnitParameter<T>* _param,QStringList _rows, int _row)
+{
+	size_t listSize = _param->GetValues().size();
+	// insert data row by row
+	for (int i = 0; i < _rows.size(); i++) {
+		int index = i + _row;
+		QStringList columns = _rows[i].split(QRegExp("[\t ]"));
+		T value;
+		std::istringstream iss(columns[0].toStdString());
+		iss >> value;
+		if (i >= listSize) {
+			_param->AddValue(value);
+		}
+		else _param->SetValue(index, value);
+	}
+}
+
 void CFlowsheetEditor::PasteParamTable(int _row, int _col)
 {
-
 	if (!m_pModelParams) return;
 
 	auto* param = m_pModelParams->GetParameter(ui.tableUnitParams->GetItemUserData(ui.tableUnitParams->currentRow(), 0).toInt());
@@ -546,6 +564,8 @@ void CFlowsheetEditor::PasteParamTable(int _row, int _col)
 				paramTD->RemoveValue(times[i]);
 			}
 		}
+		std::vector<double> duplicateTimepoints = std::vector<double>();
+		int overwrite = 0;
 		// insert data row by row
 		for (int i = 0; i < rows.length(); i++) {
 			QStringList columns = rows[i].split(QRegExp("[\t ]"));
@@ -554,30 +574,37 @@ void CFlowsheetEditor::PasteParamTable(int _row, int _col)
 			double time, value;
 			// add new timepoints
 			if (_col == 0) {
-				times = paramTD->GetTimes();
 				if (columns.count() < 2) {
 					columns.push_back("0");
 				}
 				time = columns[0].toDouble();
 				value = columns[1].toDouble();
 				// check if timepoint already exists
-				if (std::find(times.begin(), times.end(), time) != times.end())
+				if (paramTD->ContainsTimePoint(time))
 				{
+					if (!VectorContains(duplicateTimepoints, time)) {
+						duplicateTimepoints.push_back(time);
+					}
 					double oldValue = paramTD->GetValue(time);
 					// get user input which value to keep
 					if (oldValue != value) {
-						const QMessageBox::StandardButtons buttons = QMessageBox::Yes | QMessageBox::No;
-						const QMessageBox::StandardButton reply = QMessageBox::question(this, StrConst::Dyssol_InvalidDataInput,
-							QString::fromStdString(StrConst::Dyssol_DialogTimepointAlreadyExists(paramTD->GetName(), time, oldValue, value)),
-							buttons);
-						if (reply == QMessageBox::No) continue;
-					}
-					// merge timepoints if value is the same
-					else {
-						const QMessageBox::StandardButtons buttons = QMessageBox::Ok;
-						const QMessageBox::StandardButton reply = QMessageBox::information(this, StrConst::Dyssol_InvalidDataInput,
-							QString::fromStdString(StrConst::Dyssol_DialogTimepointMerged(paramTD->GetName(), time, value)),
-							buttons);
+						if (overwrite == 0) {
+							bool check = false;
+							QMessageBox::StandardButtons buttons = QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel;
+							QMessageBox messageBox = QMessageBox(this);
+							QCheckBox checkBox = QCheckBox("Use for every duplicate Timepoint.", &messageBox);
+							messageBox.setCheckBox(&checkBox);
+							messageBox.setText(StrConst::Dyssol_InvalidDataInput);
+							messageBox.setInformativeText(QString::fromStdString(StrConst::Dyssol_DialogTimepointAlreadyExists(paramTD->GetName(), time, oldValue, value)));
+							messageBox.setStandardButtons(buttons);
+							int reply = messageBox.exec();
+							if (checkBox.isChecked()) {
+								overwrite = reply == QMessageBox::No ? -1 : reply == QMessageBox::Yes ? 1 : 0;
+							}
+							if (reply == QMessageBox::No) continue;
+							if (reply == QMessageBox::Cancel) break;
+						}
+						if (overwrite == -1) continue;
 					}
 				}
 			}
@@ -598,48 +625,27 @@ void CFlowsheetEditor::PasteParamTable(int _row, int _col)
 			}
 			paramTD->SetValue(time, value);
 		}
+		if (!duplicateTimepoints.empty()) {
+			const QMessageBox::StandardButtons buttons = QMessageBox::Ok;
+			const QMessageBox::StandardButton reply = QMessageBox::information(this, StrConst::Dyssol_InvalidDataInput,
+				QString::fromStdString(StrConst::Dyssol_DialogDuplicateTimepoints(paramTD->GetName(), duplicateTimepoints)),
+				buttons);
+		}
 		break;
 	}
 	case EUnitParameter::LIST_DOUBLE: {
-		CListRealUnitParameter* ListParam = dynamic_cast<CListRealUnitParameter*>(param);
-		int ListSize = ListParam->GetValues().size();
-		// insert data row by row
-		for (int i = 0; i < rows.size(); i++) {
-			int index = i + _row;
-			QStringList columns = rows[i].split(QRegExp("[\t ]"));
-			if (i >= ListSize) {
-				ListParam->AddValue(columns[0].toDouble());
-			}
-			else ListParam->SetValue(index, columns[0].toDouble());
-		}
+		CListRealUnitParameter* listParam = dynamic_cast<CListRealUnitParameter*>(param);
+		PasteListValues(listParam, rows, _row);
 		break;
 	}
 	case EUnitParameter::LIST_UINT64: {
-		CListUIntUnitParameter* ListParam = dynamic_cast<CListUIntUnitParameter*>(param);
-		int ListSize = ListParam->GetValues().size();
-		// insert data row by row
-		for (int i = 0; i < rows.size(); i++) {
-			int index = i + _row;
-			QStringList columns = rows[i].split(QRegExp("[\t ]"));
-			if (i >= ListSize) {
-				ListParam->AddValue(columns[0].toUInt());
-			}
-			else ListParam->SetValue(index, columns[0].toUInt());
-		}
+		CListUIntUnitParameter* listParam = dynamic_cast<CListUIntUnitParameter*>(param);
+		PasteListValues(listParam, rows, _row);
 		break;
 	}
 	case EUnitParameter::LIST_INT64: {
-		CListIntUnitParameter* ListParam = dynamic_cast<CListIntUnitParameter*>(param);
-		int ListSize = ListParam->GetValues().size();
-		// insert data row by row
-		for (int i = 0; i < rows.size(); i++) {
-			int index = i + _row;
-			QStringList columns = rows[i].split(QRegExp("[\t ]"));
-			if (i >= ListSize) {
-				ListParam->AddValue(columns[0].toInt());
-			}
-			else ListParam->SetValue(index, columns[0].toInt());
-		}
+		CListIntUnitParameter* listParam = dynamic_cast<CListIntUnitParameter*>(param);
+		PasteListValues(listParam, rows, _row);
 		break;
 	}
 	default: {
