@@ -166,6 +166,7 @@ enum class EDependencyTypes
 #define STANDARD_ACCELERATION_OF_GRAVITY	9.80665
 #define STANDARD_CONDITION_T				298.15	// standard condition temperature in K
 #define STANDARD_CONDITION_P				101325	// standard condition pressure in Pa
+#define STEFAN_BOLTZMANN_CONSTANT			5.670374419e-8		// W/m^2.K^4
 #define MATH_PI								3.14159265358979323846
 
 // ========== Value basis
