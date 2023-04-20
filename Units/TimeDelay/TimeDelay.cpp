@@ -267,8 +267,8 @@ void CMyDAEModel::CalculateResiduals(double _time, double* _vars, double* _ders,
 		_res[m_iNormT]      = _ders[m_iNormT];
 		_res[m_iNormP]      = _ders[m_iNormP];
 		_res[m_iNormPhases] = _ders[m_iNormPhases];
-		for (size_t i = 0; i < unit->m_phasesNum; ++i) _res[m_iNormPhaseCompounds + i] = _ders[m_iNormPhaseCompounds + i];
-		for (size_t i = 0; i < unit->m_distrsNum; ++i) _res[m_iNormDistr          + i] = _ders[m_iNormDistr          + i];
+		for (size_t i = 0; i < unit->m_phasesNum; ++i) _res[m_iNormPhaseCompounds[i]] = _ders[m_iNormPhaseCompounds[i]];
+		for (size_t i = 0; i < unit->m_distrsNum; ++i) _res[m_iNormDistr         [i]] = _ders[m_iNormDistr         [i]];
 	}
 	// Residuals of the derivatives equal the difference in the respective norms from from the last value of the
 	else
@@ -278,7 +278,7 @@ void CMyDAEModel::CalculateResiduals(double _time, double* _vars, double* _ders,
 		_res[m_iNormT]      = _ders[m_iNormT]      - (normT_update      - _vars[m_iNormT]);
 		_res[m_iNormP]      = _ders[m_iNormP]      - (normP_update      - _vars[m_iNormP]);
 		_res[m_iNormPhases] = _ders[m_iNormPhases] - (normPhases_update - _vars[m_iNormPhases]);
-		for (size_t i = 0; i < unit->m_phasesNum; ++i) _res[m_iNormPhaseCompounds + i] = _ders[m_iNormPhaseCompounds + i] - (normPhaseCompounds_update[i] - _vars[m_iNormPhaseCompounds + i]);
-		for (size_t i = 0; i < unit->m_distrsNum; ++i) _res[m_iNormDistr          + i] = _ders[m_iNormDistr          + i] - (normDistr_update[i]          - _vars[m_iNormDistr          + i]);
+		for (size_t i = 0; i < unit->m_phasesNum; ++i) _res[m_iNormPhaseCompounds[i]] = _ders[m_iNormPhaseCompounds[i]] - (normPhaseCompounds_update[i] - _vars[m_iNormPhaseCompounds[i]]);
+		for (size_t i = 0; i < unit->m_distrsNum; ++i) _res[m_iNormDistr         [i]] = _ders[m_iNormDistr         [i]] - (normDistr_update[i]          - _vars[m_iNormDistr         [i]]);
 	}
 }
