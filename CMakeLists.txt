@@ -212,7 +212,7 @@ IF(BUILD_DOCS)
   SET(DOXYGEN_OUTPUT_DIR ${CMAKE_BINARY_DIR}/doc/doxygen)
   SET(DOXYGEN_OUTPUT_XML_DIR ${DOXYGEN_OUTPUT_DIR}/xml)
   SET(DOXYGEN_INDEX_FILE ${DOXYGEN_OUTPUT_XML_DIR}/index.xml)
-  SET(DOXYFILE_IN ${CMAKE_SOURCE_DIR}/DocumentationSphinx/Doxyfile.in)
+  SET(DOXYFILE_IN ${CMAKE_SOURCE_DIR}/Documentation/Doxyfile.in)
   SET(DOXYFILE_OUT ${CMAKE_BINARY_DIR}/Doxyfile)
 
   # Replace variables inside @@ with the current values
@@ -236,7 +236,7 @@ IF(BUILD_DOCS)
 
   FIND_PACKAGE(Sphinx)
 
-  SET(SPHINX_SOURCE_DIR ${CMAKE_SOURCE_DIR}/DocumentationSphinx/)
+  SET(SPHINX_SOURCE_DIR ${CMAKE_SOURCE_DIR}/Documentation/)
   SET(SPHINX_BUILD ${CMAKE_BINARY_DIR}/doc/sphinx/_build/html)
   SET(SPHINX_INDEX_FILE ${SPHINX_BUILD}/index.html)
   SET(SPHINX_CONFIG_IN ${SPHINX_SOURCE_DIR}/conf.py.in)
@@ -249,7 +249,7 @@ IF(BUILD_DOCS)
                     COMMAND ${SPHINX_EXECUTABLE} -b linkcheck  ${SPHINX_SOURCE_DIR} ${SPHINX_BUILD} # Check links
                     COMMAND ${SPHINX_EXECUTABLE} -b html -Dbreathe_projects.Dyssol=${DOXYGEN_OUTPUT_XML_DIR} ${SPHINX_SOURCE_DIR} ${SPHINX_BUILD}
                     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                    DEPENDS ${CMAKE_SOURCE_DIR}/DocumentationSphinx/index.rst ${DOXYGEN_INDEX_FILE}
+                    DEPENDS ${SPHINX_SOURCE_DIR}/index.rst ${DOXYGEN_INDEX_FILE}
                     MAIN_DEPENDENCY ${SPHINX_SOURCE_DIR}/conf.py
                     COMMENT "Generating documentation with Sphinx"
   )
