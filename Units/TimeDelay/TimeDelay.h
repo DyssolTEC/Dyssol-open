@@ -12,8 +12,8 @@ public:
 	size_t m_iNormT{};				// Norm for differences in temperature
 	size_t m_iNormP{};				// Norm for differences in pressure
 	size_t m_iNormPhases{};			// Norm for differences in phase fractions
-	size_t m_iNormPhaseCompounds{};	// Norm vector for differences in phase compound fractions
-	size_t m_iNormDistr{};			// Norm vector for differences in distributions
+	std::vector<size_t> m_iNormPhaseCompounds{}; // Norm vector for differences in phase compound fractions
+	std::vector<size_t> m_iNormDistr{};			 // Norm vector for differences in distributions
 
 public:
 	void CalculateResiduals(double _time, double* _vars, double* _ders, double* _res, void* _unit) override;
