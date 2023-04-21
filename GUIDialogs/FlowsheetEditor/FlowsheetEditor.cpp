@@ -9,9 +9,8 @@
 #include "ReactionsEditor.h"
 #include "ContainerFunctions.h"
 #include "FlowsheetViewer.h"
+#include "QtUtilities.h"
 #include <QMessageBox>
-#include <QApplication>
-#include <QClipboard>
 #include <cmath>
 #include <sstream>
 
@@ -548,27 +547,29 @@ void CFlowsheetEditor::PasteParamTable(int _row, int _col)
 	auto* param = m_pModelParams->GetParameter(ui.tableUnitParams->GetItemUserData(ui.tableUnitParams->currentRow(), 0).toInt());
 	if (!param) return;
 
-	QString sSelectedText = QApplication::clipboard()->text();
-	QStringList rows = sSelectedText.split(QRegExp(QLatin1String("\n")));
-	while (!rows.empty() && rows.back().size() == 0)
-		rows.pop_back();
+	// parse pasted text
+	const auto data = ParseClipboardAsDoubles();
 
 	// proceed based on parameter type
-	switch (param->GetType()) {
-	case EUnitParameter::TIME_DEPENDENT: {
+	switch (param->GetType())
+	{
+	case EUnitParameter::TIME_DEPENDENT:
+	{
 		auto* paramTD = dynamic_cast<CTDUnitParameter*>(param);
-		std::vector<double> times = paramTD->GetTimes();
-		// existing timepoints that are going to be overwritten are deleted first
-		if (_col == 0) {
-			for (int i = _row; i < times.size() && i < rows.length() + _row; i++) {
+		// existing time points that are going to be overwritten are deleted first
+		if (_col == 0)
+		{
+			const std::vector<double> times = paramTD->GetTimes();
+			for (size_t i = _row; i < times.size() && i < data.size() + _row; ++i)
+			{
 				paramTD->RemoveValue(times[i]);
 			}
 		}
-		std::vector<double> duplicateTimepoints = std::vector<double>();
+		std::vector<double> duplicateTP;
 		int overwrite = 0;
 		// insert data row by row
-		for (int i = 0; i < rows.length(); i++) {
-			QStringList columns = rows[i].split(QRegExp("[\t ]"));
+		for (int i = 0; i < pastedRows.length(); ++i) {
+			QStringList columns = pastedRows[i].split(QRegExp("[\t ]"));
 			while (!columns.empty() && columns.back().size() == 0)
 				columns.pop_back();
 			double time, value;
@@ -582,8 +583,8 @@ void CFlowsheetEditor::PasteParamTable(int _row, int _col)
 				// check if timepoint already exists
 				if (paramTD->ContainsTimePoint(time))
 				{
-					if (!VectorContains(duplicateTimepoints, time)) {
-						duplicateTimepoints.push_back(time);
+					if (!VectorContains(duplicateTP, time)) {
+						duplicateTP.push_back(time);
 					}
 					double oldValue = paramTD->GetValue(time);
 					// get user input which value to keep
@@ -625,32 +626,42 @@ void CFlowsheetEditor::PasteParamTable(int _row, int _col)
 			}
 			paramTD->SetValue(time, value);
 		}
-		if (!duplicateTimepoints.empty()) {
+		if (!duplicateTP.empty()) {
 			const QMessageBox::StandardButtons buttons = QMessageBox::Ok;
 			const QMessageBox::StandardButton reply = QMessageBox::information(this, StrConst::Dyssol_InvalidDataInput,
-				QString::fromStdString(StrConst::Dyssol_DialogDuplicateTimepoints(paramTD->GetName(), duplicateTimepoints)),
+				QString::fromStdString(StrConst::Dyssol_DialogDuplicateTimepoints(paramTD->GetName(), duplicateTP)),
 				buttons);
 		}
 		break;
 	}
 	case EUnitParameter::LIST_DOUBLE: {
 		CListRealUnitParameter* listParam = dynamic_cast<CListRealUnitParameter*>(param);
-		PasteListValues(listParam, rows, _row);
+		PasteListValues(listParam, pastedRows, _row);
 		break;
 	}
 	case EUnitParameter::LIST_UINT64: {
 		CListUIntUnitParameter* listParam = dynamic_cast<CListUIntUnitParameter*>(param);
-		PasteListValues(listParam, rows, _row);
+		PasteListValues(listParam, pastedRows, _row);
 		break;
 	}
 	case EUnitParameter::LIST_INT64: {
 		CListIntUnitParameter* listParam = dynamic_cast<CListIntUnitParameter*>(param);
-		PasteListValues(listParam, rows, _row);
+		PasteListValues(listParam, pastedRows, _row);
 		break;
 	}
-	default: {
-		break;
-	}
+	case EUnitParameter::UNKNOWN:         break;
+	case EUnitParameter::CONSTANT:        break;
+	case EUnitParameter::STRING:          break;
+	case EUnitParameter::CHECKBOX:        break;
+	case EUnitParameter::SOLVER:          break;
+	case EUnitParameter::COMBO:           break;
+	case EUnitParameter::GROUP:           break;
+	case EUnitParameter::COMPOUND:        break;
+	case EUnitParameter::CONSTANT_DOUBLE: break;
+	case EUnitParameter::CONSTANT_INT64:  break;
+	case EUnitParameter::CONSTANT_UINT64: break;
+	case EUnitParameter::REACTION:        break;
+	case EUnitParameter::MDB_COMPOUND:    break;
 	}
 
 	UpdateUnitParamTable();

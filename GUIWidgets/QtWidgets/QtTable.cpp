@@ -1,6 +1,7 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "QtTable.h"
+#include "QtUtilities.h"
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QApplication>
@@ -25,9 +26,9 @@ void CQtTable::SetGeometry(int _rows, int _cols)
 	setColumnCount(_cols);
 }
 
-void CQtTable::EnablePasting(bool _pasteEnabled)
+void CQtTable::EnablePasting(bool _flag)
 {
-	pasteEnabled = _pasteEnabled;
+	m_pasteEnabled = _flag;
 }
 
 QString CQtTable::GetColHeaderItem(int _col) const
@@ -581,45 +582,30 @@ void CQtTable::Copy()
 
 void CQtTable::Paste()
 {
-	QModelIndexList indexes = selectionModel()->selection().indexes();
-	int nFirstRow = 0;
-	int nFirstColumn = 0;
-	if (indexes.count())
+	const QModelIndexList indexes = selectionModel()->selection().indexes();
+	const int iFirstRow = indexes.count() ? indexes.at(0).row()    : 0;
+	const int iFirstCol = indexes.count() ? indexes.at(0).column() : 0;
+
+	emit PasteInitiated(iFirstRow, iFirstCol);
+	if (!m_pasteEnabled) return;
+
+	const bool oldBlock = blockSignals(true);
+
+	const auto data = ParseClipboardAsDoubles();
+	int rowMax = static_cast<int>(data.size());
+	if (rowMax > rowCount() - iFirstRow)
+		rowMax = rowCount() - iFirstRow;
+	for (int i = 0; i < rowMax; ++i)
 	{
-		nFirstRow = indexes.at(0).row();
-		nFirstColumn = indexes.at(0).column();
+		int colMax = static_cast<int>(data[i].size());
+		if (colMax > columnCount() - iFirstCol)
+			colMax = columnCount() - iFirstCol;
+		for (int j = 0; j < colMax; ++j)
+			if (item(i, j + iFirstCol) && item(i, j + iFirstCol)->flags().testFlag(Qt::ItemIsEditable))
+				item(i + iFirstRow, j + iFirstCol)->setText(QString::number(data[i][j]));
 	}
 
-	emit PasteInitiated(nFirstRow, nFirstColumn);
-	if (!pasteEnabled) {
-		return;
-	}
-
-	const bool bOldBlock = blockSignals(true);
-
-	QString sSelectedText = QApplication::clipboard()->text();
-	QStringList rows = sSelectedText.split(QRegExp(QLatin1String("\n")));
-	while (!rows.empty() && rows.back().size() == 0)
-		rows.pop_back();
-
-	if (nFirstRow < 0) nFirstRow = 0;
-	int nRowMax = rows.count();
-	if (nRowMax > rowCount() - nFirstRow)
-		nRowMax = rowCount() - nFirstRow;
-	for (int i = 0; i < nRowMax; ++i)
-	{
-		QStringList columns = rows[i].split(QRegExp("[\t ]"));
-		while (!columns.empty() && columns.back().size() == 0)
-			columns.pop_back();
-		int nColumnMax = columns.count();
-		if (nColumnMax > columnCount() - nFirstColumn)
-			nColumnMax = columnCount() - nFirstColumn;
-		for (int j = 0; j < nColumnMax; ++j)
-			if (item(i, j + nFirstColumn) && item(i, j + nFirstColumn)->flags().testFlag(Qt::ItemIsEditable))
-				item(i + nFirstRow, j + nFirstColumn)->setText(QString::number(columns[j].toDouble()));
-	}
-
-	blockSignals(bOldBlock);
+	blockSignals(oldBlock);
 	emit DataPasted();
-	emit cellChanged(nRowMax - 1 + nFirstRow, rows[nRowMax - 1].split(QRegExp("[\t ]")).count() - 1 + nFirstColumn);
+	emit cellChanged(rowMax - 1 + iFirstRow, static_cast<int>(data[rowMax - 1].size()) - 1 + iFirstCol);
 }
