@@ -14,12 +14,17 @@ class CQtTable : public QTableWidget
 {
 	Q_OBJECT
 
+private:
+	bool m_pasteEnabled{ true };
+
 public:
 	CQtTable(QWidget* parent = nullptr);
 	CQtTable(int rows, int columns, QWidget* parent = nullptr);
 
 	std::pair<int, int> GetGeometry() const;
 	void SetGeometry(int _rows, int _cols);
+
+	void EnablePasting(bool _flag);
 
 	QString GetColHeaderItem(int _col) const;
 	QString GetRowHeaderItem(int _row) const;
@@ -107,6 +112,7 @@ private:
 	void Paste();
 
 signals:
+	void PasteInitiated(int _row, int _col);
 	void DataPasted();
 	void CheckBoxStateChanged(int _row, int _col, QCheckBox* _pCheckBox);
 	void RadioButtonStateChanged(int _row, int _col, QRadioButton* _radioButton);

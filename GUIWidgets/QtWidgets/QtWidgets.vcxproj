@@ -120,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="QtList.h" />
+    <ClInclude Include="QtUtilities.h" />
     <ClInclude Include="SignalBlocker.h" />
   </ItemGroup>
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.props')">

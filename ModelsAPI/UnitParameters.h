@@ -26,7 +26,7 @@ enum class EUnitParameter
 	LIST_INT64            = 14,
 	LIST_UINT64           = 15,
 	MDB_COMPOUND          = 16,
-	PARAM_DEPENDENT		  = 17,
+	PARAM_DEPENDENT       = 17,
 };
 
 // TODO: remove
@@ -242,6 +242,7 @@ public:
 	size_t Size() const;								///< Returns number of defined dependent values.
 	bool IsEmpty() const;								///< Checks whether any dependent value is defined.
 	bool IsInBounds() const override;					///< Checks whether all m_values lay in range [m_valueMin; m_valueMax] and m_params lay in range [m_paramMin; m_paramMax].
+	bool HasParam(double _param) const;		            ///< Checks if a specific parameter is included in data without interpolation.
 
 	// Outputs user-specified values of the parameter to a stream.
 	std::ostream& ValueToStream(std::ostream& _s) override;
