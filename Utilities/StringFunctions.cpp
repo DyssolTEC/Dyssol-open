@@ -266,6 +266,18 @@ namespace StringFunctions
 		return res;
 	}
 
+	std::string ToString(const std::set<double>& _set)
+	{
+		std::ostringstream ss;
+		if (!_set.empty())
+		{
+			for (auto it = _set.begin(); it != std::prev(_set.end(), 1); ++it)
+				ss << *it << ",";
+			ss << *std::prev(_set.end(), 1);
+		}
+		return ss.str();
+	}
+
 	std::string UnifyPath(const std::string& _path)
 	{
 		std::string s = _path;

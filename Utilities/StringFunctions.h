@@ -4,6 +4,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 
 namespace StringFunctions
 {
@@ -64,6 +65,8 @@ namespace StringFunctions
 	template<typename T>
 	std::enable_if_t<std::is_enum_v<T>, T> GetEnumFromStream(std::istream& _is)					// Returns the next value from the stream and advances stream's iterator correspondingly. Version for enum types.
 	{ return static_cast<T>(GetValueFromStream<std::underlying_type_t<T>>(_is)); }
+
+	std::string ToString(const std::set<double>& _set); // Returns a comma separated string representation of the set.
 
 	std::string UnifyPath(const std::string& _path);   // Brings the path to a unified view (slashes, backslashes).
 	std::wstring UnifyPath(const std::wstring& _path); // Brings the path to a unified view (slashes, backslashes).

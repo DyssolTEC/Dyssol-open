@@ -61,25 +61,6 @@ namespace StrConst
 	const char* const Dyssol_StatusSavingText      = "Flowsheet is saving. <br/>Please wait";
 	const char* const Dyssol_StatusSavingQuestion  = "Terminate saving of the flowsheet?";
 	const char* const Dyssol_AboutDyssolDescr      = "Dyssol: Dynamic Simulation of Solids Processes";
-	const char* const Dyssol_InvalidDataInput	   = "Invalid data input";
-	const char* const Dyssol_NotEnoughTimepoints   = "Not enough timepoints defined for pasted data. \nPlease define more timepoints before inserting additional data.";
-
-	inline std::string Dyssol_DialogTimepointAlreadyExists(const std::string& parameter, double timepoint, double value1, double value2) {
-		return std::string("Data for parameter " + parameter + " at timepoint " + StringFunctions::Double2String(timepoint) + " already defined as " + StringFunctions::Double2String(value1) + ". \nDo you want to replace it with " + StringFunctions::Double2String(value2) + "? \nPlease check your data.");
-	}
-	inline std::string Dyssol_DialogDuplicateTimepoints(const std::string& parameter, std::vector<double> timepoints) {
-		std::stringstream ss;
-		std::sort(timepoints.begin(), timepoints.end());
-		bool begin = true;
-		for (std::vector<double>::const_iterator itr = timepoints.begin(); itr != timepoints.end(); itr++) {
-			if (!begin) {
-				ss << ", ";
-			}
-			else begin = false;
-			ss << *itr;
-		}
-		return "The following timepoints have duplicates in the data: \n" + ss.str() + "\nDuplicates containing the same data were merged.\nPlease check your data!";
-	}
 
 //////////////////////////////////////////////////////////////////////////
 /// DyssolC
@@ -615,14 +596,20 @@ namespace StrConst
 //////////////////////////////////////////////////////////////////////////
 /// CFlowsheetEditor
 //////////////////////////////////////////////////////////////////////////
-	const char* const FE_PortTypeInput     = "Input";
-	const char* const FE_PortTypeOutput    = "Output";
-	const char* const FE_UnitParamMinVal   = "Min = ";
-	const char* const FE_UnitParamMaxVal   = "Max = ";
-	const char* const FE_UnitDefaultName   = "Unit";
-	const char* const FE_StreamDefaultName = "Stream";
-	const char* const FE_TDParamMessage    = "Use the table below to set values";
-	const char* const FE_TDRemoveLast      = "At least one time point must remain";
+	const char* const FE_PortTypeInput       = "Input";
+	const char* const FE_PortTypeOutput      = "Output";
+	const char* const FE_UnitParamMinVal     = "Min = ";
+	const char* const FE_UnitParamMaxVal     = "Max = ";
+	const char* const FE_UnitDefaultName     = "Unit";
+	const char* const FE_StreamDefaultName   = "Stream";
+	const char* const FE_TDParamMessage      = "Use the table below to set values";
+	const char* const FE_TDRemoveLast        = "At least one time point must remain";
+	const char* const FE_InvalidClipboard    = "Invalid data pasted";
+	const char* const FE_NotEnoughParameters = "Not enough time points/parameters defined for all pasted data.\nInsert only the data that fits?";
+	inline std::string FE_ParamExists(double param, double val1, double val2) {
+		return std::string("Data at time point/parameter " + StringFunctions::Double2String(param) + " is already defined as " + StringFunctions::Double2String(val1) + ". \nDo you want to replace it with " + StringFunctions::Double2String(val2) + "?"); }
+	inline std::string FE_DuplicateParams(const std::set<double>& params) {
+		return "The following time points/parameters had duplicates: \n" + StringFunctions::ToString(params) + "\nPlease check your data!"; }
 
 //////////////////////////////////////////////////////////////////////////
 /// CFlowsheetViewer

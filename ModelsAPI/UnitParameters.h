@@ -205,7 +205,7 @@ public:
 	size_t Size() const;	                    ///< Returns number of defined time points.
 	bool IsEmpty() const;	                    ///< Checks whether any time point is defined.
 	bool IsInBounds() const override;           ///< Checks whether all m_values lay in range [m_min; m_max].
-	bool ContainsTimePoint(double _time);		///< Checks if a specific time point is included in data without interpolation.
+	bool HasTimePoint(double _time) const;		///< Checks if a specific time point is included in data without interpolation.
 
 	// Outputs user-specified values of the parameter to a stream.
 	std::ostream& ValueToStream(std::ostream& _s) override;

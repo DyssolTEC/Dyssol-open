@@ -3,10 +3,12 @@
 #pragma once
 #include <QApplication>
 #include <QClipboard>
+#include <QMessageBox>
 #include <vector>
 
 /**
  * Parses pasted text as a table of doubles.
+ * Each row contains at least one element.
  */
 inline std::vector<std::vector<double>> ParseClipboardAsDoubles()
 {
@@ -30,4 +32,19 @@ inline std::vector<std::vector<double>> ParseClipboardAsDoubles()
 			res[irow].push_back(data[icol].toDouble());
 	}
 	return res;
+}
+
+inline QMessageBox::StandardButton AskYesNoCancel(QWidget* _parent, const std::string& _title, const std::string& _text)
+{
+	return QMessageBox::question(_parent, _title.c_str(), _text.c_str(), QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+}
+
+inline QMessageBox::StandardButton AskYesAllNoAllCancel(QWidget* _parent, const std::string& _title, const std::string& _text)
+{
+	return QMessageBox::question(_parent, _title.c_str(), _text.c_str(), QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::No | QMessageBox::NoToAll | QMessageBox::Cancel);
+}
+
+inline QMessageBox::StandardButton Notify(QWidget* _parent, const std::string& _title, const std::string& _text)
+{
+	return QMessageBox::information(_parent, _title.c_str(), _text.c_str(), QMessageBox::Ok);
 }

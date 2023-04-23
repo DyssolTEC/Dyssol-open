@@ -314,7 +314,8 @@ bool CTDUnitParameter::IsInBounds() const
 	return true;
 }
 
-bool CTDUnitParameter::ContainsTimePoint(double _time) {
+bool CTDUnitParameter::HasTimePoint(double _time) const
+{
 	return m_values.HasParam(_time);
 }
 
