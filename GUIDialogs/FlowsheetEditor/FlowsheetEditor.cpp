@@ -554,6 +554,7 @@ void CFlowsheetEditor::PasteParamTable(int _row, int _col)
 	// proceed based on parameter type
 	switch (up->GetType())
 	{
+	case EUnitParameter::PARAM_DEPENDENT: [[fallthrough]];
 	case EUnitParameter::TIME_DEPENDENT:
 	{
 		auto* paramTD = dynamic_cast<CTDUnitParameter*>(up);
@@ -576,9 +577,9 @@ void CFlowsheetEditor::PasteParamTable(int _row, int _col)
 				const double param = data[iData][0];
 				const double value = data[iData].size() >= 2 ? data[iData][1] : iData + _row < valuesOld.size() ? valuesOld[iData + _row] : 0.0;
 				// check if time point already exists
-				if (paramTD->HasTimePoint(param))
+				if (paramTD->HasParam(param))
 					duplicates.insert(param);
-				if (paramTD->HasTimePoint(param) && paramTD->GetValue(param) != value)
+				if (paramTD->HasParam(param) && paramTD->GetValue(param) != value)
 				{
 					// ask user which value to keep
 					if (overwrite == QMessageBox::NoButton)

@@ -358,12 +358,12 @@ bool CDependentUnitParameter::IsInBounds() const
 	return true;
 }
 
-bool CTDUnitParameter::HasTimePoint(double _time) const
+bool CDependentUnitParameter::HasParam(double _param) const
 {
-	return m_values.HasParam(_time);
+	return m_data.HasParam(_param);
 }
 
-std::ostream& CTDUnitParameter::ValueToStream(std::ostream& _s)
+std::ostream& CDependentUnitParameter::ValueToStream(std::ostream& _s)
 {
 	return _s << m_data;
 }
