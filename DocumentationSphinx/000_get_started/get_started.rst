@@ -26,8 +26,8 @@ After installation, you can find the following folders and files in the installa
 * **Materials.dmdb**: Default materials database. See also: :ref:`sec.mdb`.
 * **Example flowsheets**: Preconfigured flowsheet examples as ``*.dflw`` files that can be run in GUI mode. See also: :ref:`sec.get_started.files`.
 * **Example scripts**: Preconfigured flowsheet examples as ``*.txt`` scripts for command line mode. Assumes Dyssol is installed in ``C:\Program Files\Dyssol\``. See also: :ref:`sec.get_started.files`, :ref:`sec.cli`. 
-* **Example units**: Source code in C++ and project files for Visual Studio of selected units. See also: :ref:`sec.models_development`, :ref:`sec.classes`.
-* **Example solvers**: Source code in C++ and project files for Visual Studio of selected solvers. See also: :ref:`sec.models_development`, :ref:`sec.classes`.
+* **Example units**: Source code in C++ and project files for Visual Studio of selected units. See also: :ref:`sec.models_development`, :ref:`sec.development.api`.
+* **Example solvers**: Source code in C++ and project files for Visual Studio of selected solvers. See also: :ref:`sec.models_development`, :ref:`sec.development.api`.
 * **Units**: Dynamic libraries with units' models.
 * **Solvers**: Dynamic libraries with solvers' models.
 * **Help**: Additional documentation files as ``*.pdf`` files.
@@ -44,7 +44,7 @@ After installation, you can find the following folders and files in the installa
 Linux
 ^^^^^^^
 
-To use Dyssol on Linux, you need to build it from source, as described in :ref:`sec.for_developers.compilation.linux`.
+To use Dyssol on Linux, you need to build it from source, as described in :ref:`sec.development.compilation.linux`.
 
 |
 
@@ -76,7 +76,7 @@ The following files are used and created by Dyssol:
 Run your first simulation
 -------------------------
 
-Here you can find a detailed guide for creating and running the :ref:`label-screen` process.
+Here you can find a detailed guide for creating and running the screen process.
 
 A flowsheet of this example is shown below with all stream names.
 

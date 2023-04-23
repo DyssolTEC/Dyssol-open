@@ -14,7 +14,10 @@ class CH5Handler;
 // CUnitPort
 //
 
-// Description of the unit port for connecting material streams.
+/**
+ * Description of the unit port.
+ * The main purpose is connecting to material streams.
+ */
 class CUnitPort
 {
 	static const unsigned m_saveVersion{ 1 };	// Current version of the saving procedure.
@@ -28,17 +31,49 @@ private:
 public:
 	CUnitPort(std::string _name, EUnitPort _type);
 
-	std::string GetName() const;				// Returns port's name.
-	void SetName(const std::string& _name);		// Sets port's name.
+	/**
+	 * Returns port's name.
+	 * \return Name of the port.
+	 */
+	std::string GetName() const;
+	/**
+	 * Sets port's name.
+	 * \param _name New name of the port.
+	 */
+	void SetName(const std::string& _name);
 
-	EUnitPort GetType() const;					// Returns port's type.
-	void SetType(EUnitPort _type);				// Sets port's type.
+	/**
+	 * Returns port's type.
+	 * \return Type of the port.
+	 */
+	EUnitPort GetType() const;
+	/**
+	 * Sets port's type.
+	 * \param _type New type of the port.
+	 */
+	void SetType(EUnitPort _type);
 
-	std::string GetStreamKey() const;			// Returns key of the stream, connected to this port.
-	void SetStreamKey(const std::string& _key);	// Sets key of the stream, connected to this port.
+	/**
+	 * Returns key of the stream, connected to this port.
+	 * \return Key of the stream connected to the port.
+	 */
+	std::string GetStreamKey() const;
+	/**
+	 * Sets key of the stream, connected to this port.
+	 * \param _key New key of the stream.
+	 */
+	void SetStreamKey(const std::string& _key);
 
-	CStream* GetStream() const;					// Returns stream, connected to this port.
-	void SetStream(CStream* _stream);			// Sets stream, connected to this port.
+	/**
+	 * Returns stream, connected to this port.
+	 * \return Pointer to the stream, currently connected to this port.
+	 */
+	CStream* GetStream() const;
+	/**
+	 * Sets stream, connected to this port.
+	 * \param _stream Pointer no a new stream.
+	 */
+	void SetStream(CStream* _stream);
 
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;	// Saves data to file.
 	void LoadFromFile(CH5Handler& _h5File, const std::string& _path);		// Loads data from file.
@@ -55,30 +90,72 @@ class CPortsManager
 	std::vector<std::unique_ptr<CUnitPort>> m_ports;	// All defined ports.
 
 public:
-	// Adds a port and returns a pointer to it. If a port with this name already exist, does nothing and return nullptr.
+	/**
+	 * Adds a port and returns a pointer to it. If a port with this name already exist, does nothing and return nullptr.
+	 * \param _name Name of the port. Must be unique. If a port with this name already exist, does nothing.
+	 * \param _type Type of the port.
+	 * \return Pointer to the created port. If a port with this name already exist, returns nullptr.
+	 */
 	CUnitPort* AddPort(const std::string& _name, EUnitPort _type);
-	// Returns a port with the specified name.
+	/**
+	 * Returns a port with the specified name.
+	 * \param _name Name of the port.
+	 * \return const pointer to the port. nullptr if such port does not exist.
+	 */
 	[[nodiscard]] const CUnitPort* GetPort(const std::string& _name) const;
-	// Returns a port with the specified name.
+	/**
+	 * Returns a port with the specified name.
+	 * \param _name Name of the port.
+	 * \return Pointer to the port. nullptr if such port does not exist.
+	 */
 	CUnitPort* GetPort(const std::string& _name);
-	// Returns a port with the specified index.
+	/**
+	 * Returns a port with the specified index.
+	 * \param _index Index of the port.
+	 * \return Const pointer to the port. nullptr if such port does not exist.
+	 */
 	[[nodiscard]] const CUnitPort* GetPort(size_t _index) const;
-	// Returns a port with the specified index.
+	/**
+	 * Returns a port with the specified index.
+	 * \param _index Index of the port.
+	 * \return Pointer to the port. nullptr if such port does not exist.
+	 */
 	CUnitPort* GetPort(size_t _index);
-	// Returns pointers to all defined ports.
+	/**
+	 * Returns pointers to all defined ports.
+	 * \return Pointers to all defined ports.
+	 */
 	std::vector<CUnitPort*> GetAllPorts();
-	// Returns const pointers to all defined ports.
+	/**
+	 * Returns const pointers to all defined ports.
+	 * \return Const pointers to all defined ports.
+	 */
 	std::vector<const CUnitPort*> GetAllPorts() const;
-	// Returns pointers to all defined input ports.
+	/**
+	 * Returns pointers to all defined input ports.
+	 * \return Pointers to all input ports.
+	 */
 	std::vector<CUnitPort*> GetAllInputPorts();
-	// Returns const pointers to all defined input ports.
+	/**
+	 * Returns const pointers to all defined input ports.
+	 * \return Const pointers to all input ports.
+	 */
 	std::vector<const CUnitPort*> GetAllInputPorts() const;
-	// Returns pointers to all defined output ports.
+	/**
+	 * Returns pointers to all defined output ports.
+	 * \return Pointers to all output ports.
+	 */
 	std::vector<CUnitPort*> GetAllOutputPorts();
-	// Returns const pointers to all defined output ports.
+	/**
+	 * Returns const pointers to all defined output ports.
+	 * \return Const pointers to all output ports.
+	 */
 	std::vector<const CUnitPort*> GetAllOutputPorts() const;
 
-	// Returns a number of defined ports.
+	/**
+	 * Returns a number of defined ports.
+	 * \return Number of ports.
+	 */
 	size_t GetPortsNumber() const;
 
 	// Saves data to file.

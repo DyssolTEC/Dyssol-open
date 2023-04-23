@@ -151,7 +151,7 @@ void CUnitDAEModel::CalculateResiduals(double _time, double* _vars, double* _der
 	double sum = 0;
 	for (size_t i = 0; i < unit->m_classesNum; ++i)
 	{
-		sum += _vars[m_iMtotq3 + i] * unit->m_classSize[i] / unit->m_avgDiam[i];
+		sum += _vars[m_iMtotq3[i]] * unit->m_classSize[i] / unit->m_avgDiam[i];
 	}
 	const double varAtot = 6 * sum / suspSolDens;
 	_res[m_iAtot] = ATot - varAtot;
@@ -176,12 +176,12 @@ void CUnitDAEModel::CalculateResiduals(double _time, double* _vars, double* _der
 	}
 
 	// Product (Mtot*q3)
-	const double derMtotq3_0 = -G / unit->m_classSize[0] * _vars[m_iMtotq3 + 0];
-	_res[m_iMtotq3 + 0] = _ders[m_iMtotq3 + 0] - derMtotq3_0;
+	const double derMtotq3_0 = -G / unit->m_classSize[0] * _vars[m_iMtotq3[0]];
+	_res[m_iMtotq3[0]] = _ders[m_iMtotq3[0]] - derMtotq3_0;
 	for (size_t i = 1; i < unit->m_classesNum; ++i)
 	{
-		const double derMtotq3 = -G / unit->m_classSize[i] * (_vars[m_iMtotq3 + i] - _vars[m_iMtotq3 + i - 1] * unit->m_diamRatio[i]);
-		_res[m_iMtotq3 + i] = _ders[m_iMtotq3 + i] - derMtotq3;
+		const double derMtotq3 = -G / unit->m_classSize[i] * (_vars[m_iMtotq3[i]] - _vars[m_iMtotq3[i - 1]] * unit->m_diamRatio[i]);
+		_res[m_iMtotq3[i]] = _ders[m_iMtotq3[i]] - derMtotq3;
 	}
 }
 
@@ -194,7 +194,7 @@ void CUnitDAEModel::ResultsHandler(double _time, double* _vars, double* _ders, v
 	std::vector<double> q3(unit->m_classesNum);
 	for (size_t i = 0; i < unit->m_classesNum; ++i)
 	{
-		q3[i] = _vars[m_iMtotq3 + i] / _vars[m_iMtot];
+		q3[i] = _vars[m_iMtotq3[i]] / _vars[m_iMtot];
 	}
 	const std::vector<double> PSD = Convertq3ToMassFractions(unit->m_sizeGrid, q3);
 

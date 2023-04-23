@@ -12,7 +12,7 @@ public:
 	size_t m_iMtot{};		// Total mass of all particles in the Granulator.
 	size_t m_iMFlowExh{};	// Mass flow of output exhaust gas.
 	size_t m_iG{};			// Growth rate.
-	size_t m_iMtotq3{};		// Product of Mtot and q3
+	std::vector<size_t> m_iMtotq3{}; // Product of Mtot and q3
 
 public:
 	void CalculateResiduals(double _time, double* _vars, double* _ders, double* _res, void* _unit) override;

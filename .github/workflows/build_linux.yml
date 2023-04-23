@@ -49,12 +49,12 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: ${{github.workspace}}/build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="${{ matrix.cxxflags }}" -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.linker_flags }}" -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="${{ matrix.cxxflags }}" -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.linker_flags }}" -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DBUILD_DOCS=NO
 
     - name: Build
       working-directory: ${{github.workspace}}/build
       shell: bash
-      run: cmake --build . --parallel 4
+      run: cmake --build . --parallel $(nproc)
 
     - name: Install
       working-directory: ${{github.workspace}}/build
@@ -74,11 +74,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    - name: Install build dependencies
-      run: sudo add-apt-repository ppa:gladky-anton/sundials && sudo apt-get install build-essential libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev
+    - name: Install build doc dependencies 1
+      run: sudo apt-get install doxygen graphviz
       
-    - name: Install build doc dependencies
-      run: pip install -U sphinx sphinx-rtd-theme
+    - name: Install build doc dependencies 2
+      run: pip install -U sphinx sphinx-rtd-theme breathe
       
     - name: Create build environment
       run: cmake -E make_directory ${{github.workspace}}/build
@@ -89,12 +89,18 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: ${{github.workspace}}/build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DBUILD_BINARIES=NO
 
     - name: Build docs
       working-directory: ${{github.workspace}}/build
       shell: bash
       run: make doc
+
+    - name: Install docs
+      if: ${{ github.ref == 'refs/heads/master' }}
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: make install
       
     - name: Deploy docs
       if: ${{ github.ref == 'refs/heads/master' }}

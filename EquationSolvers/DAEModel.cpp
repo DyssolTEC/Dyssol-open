@@ -32,20 +32,22 @@ size_t CDAEModel::AddDAEVariable(bool _isDifferentiable, double _variableInit, d
 	return m_vVariables.size() - 1;
 }
 
-size_t CDAEModel::AddDAEVariables(bool _isDifferentiable, const std::vector<double>& _variablesInit, double _derivativesInit, double _constraint)
+std::vector<size_t> CDAEModel::AddDAEVariables(bool _isDifferentiable, const std::vector<double>& _variablesInit, double _derivativesInit, double _constraint)
 {
-	if (_variablesInit.empty()) return -1;
+	std::vector<size_t> res;
+	if (_variablesInit.empty()) return res;
 	for (const auto& v : _variablesInit)
-		AddDAEVariable(_isDifferentiable, v, _derivativesInit, _constraint);
-	return m_vVariables.size() - _variablesInit.size();
+		res.push_back(AddDAEVariable(_isDifferentiable, v, _derivativesInit, _constraint));
+	return res;
 }
 
-size_t CDAEModel::AddDAEVariables(bool _isDifferentiable, const std::vector<double>& _variablesInit, const std::vector<double>& _derivativesInit, double _constraint)
+std::vector<size_t> CDAEModel::AddDAEVariables(bool _isDifferentiable, const std::vector<double>& _variablesInit, const std::vector<double>& _derivativesInit, double _constraint)
 {
-	if (_variablesInit.empty() || _variablesInit.size() != _derivativesInit.size()) return -1;
+	std::vector<size_t> res;
+	if (_variablesInit.empty() || _variablesInit.size() != _derivativesInit.size()) return res;
 	for (size_t i = 0; i < _variablesInit.size(); ++i)
-		AddDAEVariable(_isDifferentiable, _variablesInit[i], _derivativesInit[i], _constraint);
-	return m_vVariables.size() - _variablesInit.size();
+		res.push_back(AddDAEVariable(_isDifferentiable, _variablesInit[i], _derivativesInit[i], _constraint));
+	return res;
 }
 
 size_t CDAEModel::GetVariablesNumber() const

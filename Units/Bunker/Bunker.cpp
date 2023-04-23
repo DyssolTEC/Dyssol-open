@@ -272,5 +272,5 @@ void CMyDAEModel::CalculateResiduals(double _time, double* _vars, double* _ders,
 	_res[m_iNormCompounds] = _ders[m_iNormCompounds] - (normCompoundsUpdate - _vars[m_iNormCompounds]);
 
 	for (size_t i = 0; i < unit->m_distrsNum; ++i)
-		_res[m_iNormDistr + i] = _ders[m_iNormDistr + i] - (normDistrUpdate[i] - _vars[m_iNormDistr + i]);
+		_res[m_iNormDistr[i]] = _ders[m_iNormDistr[i]] - (normDistrUpdate[i] - _vars[m_iNormDistr[i]]);
 }

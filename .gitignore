@@ -233,7 +233,6 @@ Dyssol.VC.VC.opendb
 /ExternalLibraries/zlib/
 /ExternalLibraries/graphviz
 /DocumentationSphinx/_build
+/DocumentationSphinx/conf.py
 /install/
-/ExternalLibraries/sundials5
-/ExternalLibraries/sundials6
 /ExternalLibraries/_backup/

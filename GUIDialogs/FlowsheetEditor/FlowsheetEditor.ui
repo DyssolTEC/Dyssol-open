@@ -500,12 +500,7 @@
               </attribute>
               <column>
                <property name="text">
-                <string>Time [s]</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Units</string>
+                <string>Parameter</string>
                </property>
               </column>
               <column>

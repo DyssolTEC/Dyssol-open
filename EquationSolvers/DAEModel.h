@@ -60,21 +60,21 @@ public:
 	 *	\return Index of variable*/
 	size_t AddDAEVariable(bool _isDifferentiable, double _variableInit, double _derivativeInit, double _constraint = 0.0);
 	/**	Add multiple differentiable variables. The number of variables is determined by the length of the vector of variables.
-	 *  Does nothing and returns -1 if the list of variables is empty.
+	 *  Does nothing and returns empty vector if the list of variables is empty.
 	 *	\param _isDifferentiable Set true for differential, false for algebraic
 	 *	\param _variablesInit Initial values for all variables
 	 *	\param _derivativesInit Initial value for all derivatives
 	 *	\param _constraint Constraint for all variables: '0.0' - no constraint; '1.0' - >=0.0; '−1.0' - <=0.0; '2.0' - >0.0; '−2.0' - <0.0
-	 *	\return Index of the first variable*/
-	size_t AddDAEVariables(bool _isDifferentiable, const std::vector<double>& _variablesInit, double _derivativesInit, double _constraint = 0.0);
+	 *	\return Indices of the added variables.*/
+	std::vector<size_t> AddDAEVariables(bool _isDifferentiable, const std::vector<double>& _variablesInit, double _derivativesInit, double _constraint = 0.0);
 	/**	Add multiple differentiable variables. The number of variables is determined by the length of the vector of variables.
-	 *  Does nothing and returns -1 if the list of variables is empty or lengths of vectors are not equal.
+	 *  Does nothing and returns empty vector if the list of variables is empty or lengths of vectors are not equal.
 	 *	\param _isDifferentiable Set true for differential, false for algebraic
 	 *	\param _variablesInit Initial values for all variables
 	 *	\param _derivativesInit Initial values for all derivatives, must have the same length as _variablesInit
 	 *	\param _constraint Constraint for all variables: '0.0' - no constraint; '1.0' - >=0.0; '−1.0' - <=0.0; '2.0' - >0.0; '−2.0' - <0.0
-	 *	\return Index of the first variable*/
-	size_t AddDAEVariables(bool _isDifferentiable, const std::vector<double>& _variablesInit, const std::vector<double>& _derivativesInit, double _constraint = 0.0);
+	 *	\return Indices of the added variables.*/
+	std::vector<size_t> AddDAEVariables(bool _isDifferentiable, const std::vector<double>& _variablesInit, const std::vector<double>& _derivativesInit, double _constraint = 0.0);
 	/**	Get current number of variables.*/
 	size_t GetVariablesNumber() const;
 	/**	Get initial value of variable.
