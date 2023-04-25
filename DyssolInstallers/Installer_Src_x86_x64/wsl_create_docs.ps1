@@ -22,14 +22,9 @@ if (!(Test-Path $src_path\$install_path)) {
 	New-Item -itemType Directory -Path $src_path\$install_path
 }
 
-#install dependencies
-#Write-Host "Install dependencies via WSL"
-#bash -c "pip install -U sphinx sphinx-rtd-theme breathe"
-#"apt-get install doxygen graphviz &&  apt update && apt install python3-pip && 
 # compile docs
 Write-Host "Generating documentation via WSL"
 wsl -e bash -lic "cd $src_path_wsl/$build_path; cmake .. -DCMAKE_INSTALL_PREFIX=../$install_path -DBUILD_BINARIES=NO; make doc; make install"
-#bash -c "cd $src_path_wsl/$build_path && cmake .. -DCMAKE_INSTALL_PREFIX=../$install_path -DBUILD_BINARIES=NO && make doc && make install"
 
 if(Test-Path $src_path\$install_path\share\Dyssol\docs\sphinx\html) {
 	Write-Host "Documentation generated successfully."
