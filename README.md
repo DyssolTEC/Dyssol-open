@@ -33,8 +33,6 @@ Run the provided installer and follow the instructions.
 #### Optional requirements
 - [Doxygen](https://www.doxygen.nl/download.html)
 - [Graphviz](https://graphviz.org/download/), with "add to PATH" option enabled
-Or alternatively
-- [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) with [Ubuntu](https://ubuntu.com/tutorials/install-ubuntu-on-wsl2-on-windows-11-with-gui-support)
 
 ### Build on Windows
 - Make sure all programs and tools from the [list](#Compilation-requirements-on-windows) are installed.
@@ -48,7 +46,7 @@ Or alternatively
 ```powershell
 pip install -U sphinx sphinx-rtd-theme breathe
 ```
-- In Visual Studio Solution Explorer go to `Installers`, right click on the `Installer_Src_x86_x64` project and choose Build. The built `.exe` installer locates in `Dyssol/DyssolInstallers/Installers`. 
+- In Visual Studio Solution Explorer go to `Installers`, right click on the `Installer` project and choose Build. The built `.exe` installer locates in `Dyssol/DyssolInstallers/Installers`. 
 
 Also, other versions of Microsoft Visual Studio can be used, but additional preparations are required:
 - Install build tools for the corresponding Visual Studio.
@@ -63,12 +61,14 @@ Also, other versions of Microsoft Visual Studio can be used, but additional prep
 ### Compilation procedure on Linux
 - Install the required build tools 
 ```sh
+$ cd /path_to_repo
 $ sudo add-apt-repository ppa:gladky-anton/sundials
-$ sudo apt install build-essential libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev
-$ mkdir /path_to_repo/install
-$ mkdir /path_to_repo/build
-$ cd /path_to_repo/build
-$ cmake /path_to_repo -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/path_to_repo/install
+$ sudo apt install build-essential libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev doxygen
+$ pip install -U sphinx sphinx-rtd-theme breathe
+$ mkdir install
+$ mkdir build
+$ cd build
+$ cmake .. -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install
 $ cmake --build . --parallel
 $ make install
 ```
