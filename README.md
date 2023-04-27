@@ -29,19 +29,24 @@ Run the provided installer and follow the instructions.
 - [Python](https://www.python.org/downloads/) 3.8 or higher
 - [Git](https://git-scm.com/downloads)
 - PowerShell 5.0 (usually shipped with Windows)
-- -WSL (https://learn.microsoft.com/de-de/windows/wsl/install)
 
-### Compilation procedure on Windows
-- Make sure all programs and tools from the [list](#Compilation-requirements) are installed.
+#### Optional requirements
+- [Doxygen](https://www.doxygen.nl/download.html)
+- [Graphviz](https://graphviz.org/download/), with "add to PATH" option enabled
+Or alternatively
+- [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) with [Ubuntu](https://ubuntu.com/tutorials/install-ubuntu-on-wsl2-on-windows-11-with-gui-support)
+
+### Build on Windows
+- Make sure all programs and tools from the [list](#Compilation-requirements-on-windows) are installed.
 - Setup Qt Visual Studio Tools extension to point to the installed Qt libraries. In Visual Studio 2019, go to Extensions → Qt VS Tools → Qt Versions → add new Qt version → ... → Navigate in the Qt installation directory to `Qt/5.15.0/msvc2019/bin/qmake.exe` → rename Version to `msvc2019` → OK. Repeat for `Qt/5.15.0/msvc2019_64/bin/qmake.exe` and rename Version to `msvc2019_64`.
 - Compile and build external libraries: zlib, HDF5, SUNDIALS, graphviz. To do this, navigate to `Dyssol/ExternalLibraries/` and execute file `RunAll.bat`. It will start building all the required libraries by executing files `CompileZLib.ps1`, `CompileHDF5.ps1`, `CompileSundials.ps1`, `CompileGraphviz.ps1`. To use the scripts, the following requirements apply: Visual Studio 16 2019, CMake, PowerShell 5.0.
 - Open `Dyssol/Dyssol.sln` with Visual Studio and build the solution.
 
-#### Procedure to generate installers on Windows
-- install required build tools on WSL
-```sh
-$ sudo apt-get install doxygen graphviz
-$ pip install -U sphinx sphinx-rtd-theme breathe
+#### Build documentation and installers on Windows
+- Make sure all [required](#Compilation-requirements-on-windows) and [optional](#Build-documentation-and-installers-on-Windows) programs and tools are installed.
+- Install required python libraries by running in a terminal
+```powershell
+pip install -U sphinx sphinx-rtd-theme breathe
 ```
 - In Visual Studio Solution Explorer go to `Installers`, right click on the `Installer_Src_x86_x64` project and choose Build. The built `.exe` installer locates in `Dyssol/DyssolInstallers/Installers`. 
 

@@ -144,6 +144,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unit_ScreenMultideck", "Uni
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unit_GranulatorSimpleBatch", "Units\GranulatorSimpleBatch\GranulatorSimpleBatch.vcxproj", "{80FB8E0A-CCA8-4AB7-BC79-21E82A141842}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Documentation", "DyssolInstallers\Documentation\Documentation.vcxproj", "{C91712C5-4A46-4703-9857-4E742D247601}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -620,6 +622,14 @@ Global
 		{80FB8E0A-CCA8-4AB7-BC79-21E82A141842}.Release|Win32.Build.0 = Release|Win32
 		{80FB8E0A-CCA8-4AB7-BC79-21E82A141842}.Release|x64.ActiveCfg = Release|x64
 		{80FB8E0A-CCA8-4AB7-BC79-21E82A141842}.Release|x64.Build.0 = Release|x64
+		{C91712C5-4A46-4703-9857-4E742D247601}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C91712C5-4A46-4703-9857-4E742D247601}.Debug|Win32.Build.0 = Debug|Win32
+		{C91712C5-4A46-4703-9857-4E742D247601}.Debug|x64.ActiveCfg = Debug|x64
+		{C91712C5-4A46-4703-9857-4E742D247601}.Debug|x64.Build.0 = Debug|x64
+		{C91712C5-4A46-4703-9857-4E742D247601}.Release|Win32.ActiveCfg = Release|Win32
+		{C91712C5-4A46-4703-9857-4E742D247601}.Release|Win32.Build.0 = Release|Win32
+		{C91712C5-4A46-4703-9857-4E742D247601}.Release|x64.ActiveCfg = Release|x64
+		{C91712C5-4A46-4703-9857-4E742D247601}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -688,9 +698,10 @@ Global
 		{0736DDB9-C29B-4DEA-8E9A-6FEFFED8CFB6} = {241094B3-C6C5-43FA-B884-DDDEEFF788C8}
 		{1C6761A3-DD4E-4978-A4C6-24D3A50C502D} = {DA539701-563C-4DCF-883B-941DE792BC4A}
 		{80FB8E0A-CCA8-4AB7-BC79-21E82A141842} = {DA539701-563C-4DCF-883B-941DE792BC4A}
+		{C91712C5-4A46-4703-9857-4E742D247601} = {FF9F78BB-144A-48EF-87D3-7EEE6C6B4682}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		Qt5Version = msvc2019_64
 		SolutionGuid = {CAC327DA-BA65-4990-BEC0-618347D67688}
+		Qt5Version = msvc2019_64
 	EndGlobalSection
 EndGlobal
