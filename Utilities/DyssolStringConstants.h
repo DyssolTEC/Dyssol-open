@@ -35,7 +35,7 @@ namespace StrConst
 #else
 	const char* const Dyssol_CacheDir              = Dyssol_CacheDirRelease;
 #endif
-	const char* const Dyssol_HelpURL               = "https://flowsheetsimulation.github.io/Dyssol-open/";
+	const char* const Dyssol_HelpURL               = "https://DyssolTEC.github.io/Dyssol-open/";
 	const char* const Dyssol_MainWindowName        = "Dyssol";
 	const char* const Dyssol_MDBWindowName		   = "Materials Database";
 	const char* const Dyssol_FlowsheetTabName      = "Flowsheet";

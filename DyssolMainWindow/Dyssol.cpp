@@ -336,51 +336,51 @@ void Dyssol::CreateMenu()
 	/// help files
 	// Introduction
 	QMenu* menuIntroduction = ui.menuDocumentation->addMenu("Introduction");
-	menuIntroduction->addAction("Get Started"       , this, [&] { OpenHelp("first.html"                    ); });
-	menuIntroduction->addAction("Architecture"      , this, [&] { OpenHelp("simulation.html"               ); });
-	menuIntroduction->addAction("Algorithms"        , this, [&] { OpenHelp("theory.html"                   ); });
-	menuIntroduction->addAction("User Interface"    , this, [&] { OpenHelp("first.html#introduction-to-gui"); });
+	menuIntroduction->addAction("Get Started"       , this, [&] { OpenHelp("000_get_started/get_started.html"); });
+	menuIntroduction->addAction("Architecture"      , this, [&] { OpenHelp("002_theory/brief.html"           ); });
+	menuIntroduction->addAction("Algorithms"        , this, [&] { OpenHelp("002_theory/theory.html"          ); });
+	menuIntroduction->addAction("User Interface"    , this, [&] { OpenHelp("001_ui/gui.html"                 ); });
 
 	// Units
 	QMenu* menuUnits = ui.menuDocumentation->addMenu("Units");
-	menuUnits->addAction("Agglomerator"  , this, [&] { OpenHelp("units.html#agglomerator"); });
-	menuUnits->addAction("Bunker"        , this, [&] { OpenHelp("units.html#bunker"      ); });
-	menuUnits->addAction("Crusher"       , this, [&] { OpenHelp("units.html#crusher"     ); });
-	menuUnits->addAction("Granulator"    , this, [&] { OpenHelp("units.html#granulator"  ); });
-	menuUnits->addAction("Inlet Flow"    , this, [&] { OpenHelp("units.html#inlet-flow"  ); });
-	menuUnits->addAction("Mixer"         , this, [&] { OpenHelp("units.html#mixer"       ); });
-	menuUnits->addAction("Outlet Flow"   , this, [&] { OpenHelp("units.html#outlet-flow" ); });
-	menuUnits->addAction("Screen"        , this, [&] { OpenHelp("units.html#screen"      ); });
-	menuUnits->addAction("Splitter"      , this, [&] { OpenHelp("units.html#splitter"    ); });
-	menuUnits->addAction("Time Delay"    , this, [&] { OpenHelp("units.html#time-delay"  ); });
+	menuUnits->addAction("Agglomerator"  , this, [&] { OpenHelp("003_models/unit_agglomerator.html"); });
+	menuUnits->addAction("Bunker"        , this, [&] { OpenHelp("003_models/unit_bunker.html"      ); });
+	menuUnits->addAction("Crusher"       , this, [&] { OpenHelp("003_models/unit_crusher.html"     ); });
+	menuUnits->addAction("Granulator"    , this, [&] { OpenHelp("003_models/unit_granulator.html"  ); });
+	menuUnits->addAction("Inlet Flow"    , this, [&] { OpenHelp("003_models/unit_inletflow.html"   ); });
+	menuUnits->addAction("Mixer"         , this, [&] { OpenHelp("003_models/unit_mixer.html"       ); });
+	menuUnits->addAction("Outlet Flow"   , this, [&] { OpenHelp("003_models/unit_outletflow.html"  ); });
+	menuUnits->addAction("Screen"        , this, [&] { OpenHelp("003_models/unit_screen.html"      ); });
+	menuUnits->addAction("Splitter"      , this, [&] { OpenHelp("003_models/unit_splitter.html"    ); });
+	menuUnits->addAction("Time Delay"    , this, [&] { OpenHelp("003_models/unit_timedelay.html"   ); });
 
 	// Solvers
 	QMenu* menuSolvers = ui.menuDocumentation->addMenu("Solvers");
-	menuSolvers->addAction("Agglomeration Cell Average", this, [&] { OpenHelp("solver.html#cell-average-solver"); });
-	menuSolvers->addAction("Agglomeration Fixed Pivot" , this, [&] { OpenHelp("solver.html#fixed-pivot-solver" ); });
-	menuSolvers->addAction("Agglomeration FFT"         , this, [&] { OpenHelp("solver.html#fft-solver"         ); });
+	menuSolvers->addAction("Agglomeration Cell Average", this, [&] { OpenHelp("003_models/solver_cellaverage.html"); });
+	menuSolvers->addAction("Agglomeration Fixed Pivot" , this, [&] { OpenHelp("003_models/solver_fixedpivot.html" ); });
+	menuSolvers->addAction("Agglomeration FFT"         , this, [&] { OpenHelp("003_models/solver_fft.html"        ); });
 
 	// Development
 	QMenu* menuDevelopment = ui.menuDocumentation->addMenu("Development");
-	menuDevelopment->addAction("Configuration of VCProject", this, [&] { OpenHelp("developer.html#configuration-of-visual-studio-project-template"); });
-	menuDevelopment->addAction("Units Development"         , this, [&] { OpenHelp("developer.html#unit-development"                               ); });
-	menuDevelopment->addAction("Solvers Development"       , this, [&] { OpenHelp("developer.html#solver-development"                             ); });
+	menuDevelopment->addAction("Configuration of VCProject", this, [&] { OpenHelp("004_development/models_development.html#configuration-of-visual-studio-project-template"); });
+	menuDevelopment->addAction("Units Development"         , this, [&] { OpenHelp("004_development/models_development.html#unit-development"                               ); });
+	menuDevelopment->addAction("Solvers Development"       , this, [&] { OpenHelp("004_development/models_development.html#solver-development"                             ); });
 
 	// Development - Program Interfaces
 	QMenu* menuInterfaces = menuDevelopment->addMenu("Program Interfaces");
-	menuInterfaces->addAction("BaseUnit"            , this, [&] { OpenHelp("class.html#basic-unit"                 ); });
-	menuInterfaces->addAction("Stream"              , this, [&] { OpenHelp("class.html#stream"                     ); });
-	menuInterfaces->addAction("DAESolver"           , this, [&] { OpenHelp("class.html#dae-systems"                ); });
-	menuInterfaces->addAction("ExternalSolver"      , this, [&] { OpenHelp("class.html#external-solver"            ); });
-	menuInterfaces->addAction("TransformMatrix"     , this, [&] { OpenHelp("class.html#transformation-matrix"      ); });
-	menuInterfaces->addAction("MDMatrix"            , this, [&] { OpenHelp("class.html#multidimensional-matrix"    ); });
-	menuInterfaces->addAction("Matrix2D"            , this, [&] { OpenHelp("class.html#two-dimensional-matrix"     ); });
-	menuInterfaces->addAction("PSD Functions"       , this, [&] { OpenHelp("class.html#particle-size-distribution" ); });
-	menuInterfaces->addAction("Predefined Constants", this, [&] { OpenHelp("class.html#list-of-universal-constants"); });
+	menuInterfaces->addAction("BaseUnit"            , this, [&] { OpenHelp("004_development/class_baseunit.html"       ); });
+	menuInterfaces->addAction("Stream"              , this, [&] { OpenHelp("004_development/class_stream.html"         ); });
+	menuInterfaces->addAction("DAESolver"           , this, [&] { OpenHelp("004_development/solver_dae.html"           ); });
+	menuInterfaces->addAction("ExternalSolver"      , this, [&] { OpenHelp("004_development/solver_external.html"      ); });
+	menuInterfaces->addAction("TransformMatrix"     , this, [&] { OpenHelp("004_development/class_transformmatrix.html"); });
+	menuInterfaces->addAction("MDMatrix"            , this, [&] { OpenHelp("004_development/class_densemdmatrix.html"  ); });
+	menuInterfaces->addAction("Matrix2D"            , this, [&] { OpenHelp("004_development/class_matrix2d.html"       ); });
+	menuInterfaces->addAction("PSD Functions"       , this, [&] { OpenHelp("004_development/distr_functions.html"      ); });
+	menuInterfaces->addAction("Predefined Constants", this, [&] { OpenHelp("004_development/constants.html"            ); });
 
 	// Main
-	ui.menuDocumentation->addAction("Command Line Interface", this, [&] { OpenHelp("first.html#configuration-file"  ); });
-	ui.menuDocumentation->addAction("Convergence"           , this, [&] { OpenHelp("theory.html#convergence-methods"); });
+	ui.menuDocumentation->addAction("Command Line Interface", this, [&] { OpenHelp("001_ui/cli.html"                           ); });
+	ui.menuDocumentation->addAction("Convergence"           , this, [&] { OpenHelp("002_theory/theory.html#convergence-methods"); });
 }
 
 void Dyssol::UpdateMenu()
