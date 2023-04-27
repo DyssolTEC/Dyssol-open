@@ -3,17 +3,15 @@
 #include "CommonConstants.iss"
 
 [Files]
-Source: "..\..\Documentation\*.pdf"; DestDir: "{app}\{code:DirHelp}"; Flags: ignoreversion
-Source: "..\..\Documentation\Development\*.pdf"; DestDir: "{app}\{code:DirHelp}\Development"; Flags: ignoreversion
-Source: "..\..\Documentation\Development\Program Interfaces\*.pdf"; DestDir: "{app}\{code:DirHelp}\Development\Program Interfaces"; Flags: ignoreversion
-Source: "..\..\Documentation\Introduction\*.pdf"; DestDir: "{app}\{code:DirHelp}\Introduction"; Flags: ignoreversion
-Source: "..\..\Documentation\Solvers\*.pdf"; DestDir: "{app}\{code:DirHelp}\Solvers"; Flags: ignoreversion
-Source: "..\..\Documentation\Units\*.pdf"; DestDir: "{app}\{code:DirHelp}\Units"; Flags: ignoreversion
+Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\*.html"; DestDir: "{app}\{code:DirHelp}"; Flags: ignoreversion
+Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\.doctrees\*"; DestDir: "{app}\{code:DirHelp}\.doctrees"; Flags: ignoreversion recursesubdirs
+Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\_static\*"; DestDir: "{app}\{code:DirHelp}\_static"; Flags: ignoreversion recursesubdirs
+Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\_images\*"; DestDir: "{app}\{code:DirHelp}\_images"; Flags: ignoreversion recursesubdirs
+Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\000_get_started\*"; DestDir: "{app}\{code:DirHelp}\000_get_started"; Flags: ignoreversion recursesubdirs
+Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\001_ui\*"; DestDir: "{app}\{code:DirHelp}\001_ui"; Flags: ignoreversion recursesubdirs
+Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\002_theory\*"; DestDir: "{app}\{code:DirHelp}\002_theory"; Flags: ignoreversion recursesubdirs
+Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\003_models\*"; DestDir: "{app}\{code:DirHelp}\003_models"; Flags: ignoreversion recursesubdirs
+Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\004_development\*"; DestDir: "{app}\{code:DirHelp}\004_development"; Flags: ignoreversion recursesubdirs
 
 [Dirs]
 Name: "{app}\{code:DirHelp}"; Flags: uninsalwaysuninstall
-Name: "{app}\{code:DirHelp}\Development"; Flags: uninsalwaysuninstall
-Name: "{app}\{code:DirHelp}\Development\Program Interfaces"; Flags: uninsalwaysuninstall
-Name: "{app}\{code:DirHelp}\Introduction"; Flags: uninsalwaysuninstall
-Name: "{app}\{code:DirHelp}\Solvers"; Flags: uninsalwaysuninstall
-Name: "{app}\{code:DirHelp}\Units"; Flags: uninsalwaysuninstall

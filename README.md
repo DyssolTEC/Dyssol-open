@@ -30,12 +30,23 @@ Run the provided installer and follow the instructions.
 - [Git](https://git-scm.com/downloads)
 - PowerShell 5.0 (usually shipped with Windows)
 
-### Compilation procedure on Windows
-- Make sure all programs and tools from the [list](#Compilation-requirements) are installed.
+#### Optional requirements
+- [Doxygen](https://www.doxygen.nl/download.html)
+- [Graphviz](https://graphviz.org/download/), with "add to PATH" option enabled
+
+### Build on Windows
+- Make sure all programs and tools from the [list](#Compilation-requirements-on-windows) are installed.
 - Setup Qt Visual Studio Tools extension to point to the installed Qt libraries. In Visual Studio 2019, go to Extensions → Qt VS Tools → Qt Versions → add new Qt version → ... → Navigate in the Qt installation directory to `Qt/5.15.0/msvc2019/bin/qmake.exe` → rename Version to `msvc2019` → OK. Repeat for `Qt/5.15.0/msvc2019_64/bin/qmake.exe` and rename Version to `msvc2019_64`.
 - Compile and build external libraries: zlib, HDF5, SUNDIALS, graphviz. To do this, navigate to `Dyssol/ExternalLibraries/` and execute file `RunAll.bat`. It will start building all the required libraries by executing files `CompileZLib.ps1`, `CompileHDF5.ps1`, `CompileSundials.ps1`, `CompileGraphviz.ps1`. To use the scripts, the following requirements apply: Visual Studio 16 2019, CMake, PowerShell 5.0.
 - Open `Dyssol/Dyssol.sln` with Visual Studio and build the solution.
-- To generate installers in Solution Explorer, go to `Installers` and right click on the version you want to compile, choose Build. The built `.exe` installer locates in `Dyssol/DyssolInstallers/Installers`.
+
+#### Build documentation and installers on Windows
+- Make sure all [required](#Compilation-requirements-on-windows) and [optional](#Build-documentation-and-installers-on-Windows) programs and tools are installed.
+- Install required python libraries by running in a terminal
+```powershell
+pip install -U sphinx sphinx-rtd-theme breathe
+```
+- In Visual Studio Solution Explorer go to `Installers`, right click on the `Installer` project and choose Build. The built `.exe` installer locates in `Dyssol/DyssolInstallers/Installers`. 
 
 Also, other versions of Microsoft Visual Studio can be used, but additional preparations are required:
 - Install build tools for the corresponding Visual Studio.
@@ -50,12 +61,14 @@ Also, other versions of Microsoft Visual Studio can be used, but additional prep
 ### Compilation procedure on Linux
 - Install the required build tools 
 ```sh
+$ cd /path_to_repo
 $ sudo add-apt-repository ppa:gladky-anton/sundials
-$ sudo apt install build-essential libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev
-$ mkdir /path_to_repo/install
-$ mkdir /path_to_repo/build
-$ cd /path_to_repo/build
-$ cmake /path_to_repo -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/path_to_repo/install
+$ sudo apt install build-essential libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev doxygen
+$ pip install -U sphinx sphinx-rtd-theme breathe
+$ mkdir install
+$ mkdir build
+$ cd build
+$ cmake .. -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install
 $ cmake --build . --parallel
 $ make install
 ```

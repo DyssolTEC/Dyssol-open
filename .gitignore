@@ -232,7 +232,7 @@ Dyssol.VC.VC.opendb
 /ExternalLibraries/hdf5/
 /ExternalLibraries/zlib/
 /ExternalLibraries/graphviz
-/DocumentationSphinx/_build
-/DocumentationSphinx/conf.py
+/Documentation/_build
+/Documentation/conf.py
 /install/
 /ExternalLibraries/_backup/
