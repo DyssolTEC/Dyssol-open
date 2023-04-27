@@ -3,6 +3,8 @@
 #pragma once
 
 #include "StringFunctions.h"
+#include <sstream>
+#include <algorithm>
 
 namespace StrConst
 {
@@ -59,7 +61,6 @@ namespace StrConst
 	const char* const Dyssol_StatusSavingText      = "Flowsheet is saving. <br/>Please wait";
 	const char* const Dyssol_StatusSavingQuestion  = "Terminate saving of the flowsheet?";
 	const char* const Dyssol_AboutDyssolDescr      = "Dyssol: Dynamic Simulation of Solids Processes";
-
 
 //////////////////////////////////////////////////////////////////////////
 /// DyssolC
@@ -596,14 +597,20 @@ namespace StrConst
 //////////////////////////////////////////////////////////////////////////
 /// CFlowsheetEditor
 //////////////////////////////////////////////////////////////////////////
-	const char* const FE_PortTypeInput     = "Input";
-	const char* const FE_PortTypeOutput    = "Output";
-	const char* const FE_UnitParamMinVal   = "Min = ";
-	const char* const FE_UnitParamMaxVal   = "Max = ";
-	const char* const FE_UnitDefaultName   = "Unit";
-	const char* const FE_StreamDefaultName = "Stream";
-	const char* const FE_TDParamMessage    = "Use the table below to set values";
+	const char* const FE_PortTypeInput       = "Input";
+	const char* const FE_PortTypeOutput      = "Output";
+	const char* const FE_UnitParamMinVal     = "Min = ";
+	const char* const FE_UnitParamMaxVal     = "Max = ";
+	const char* const FE_UnitDefaultName     = "Unit";
+	const char* const FE_StreamDefaultName   = "Stream";
+	const char* const FE_TDParamMessage      = "Use the table below to set values";
 	const char* const FE_DRemoveLast	   = "At least one value must remain";
+	const char* const FE_InvalidClipboard    = "Invalid data pasted";
+	const char* const FE_NotEnoughParameters = "Not enough time points/parameters defined for all pasted data.\nInsert only the data that fits?";
+	inline std::string FE_ParamExists(double param, double val1, double val2) {
+		return std::string("Data at time point/parameter " + StringFunctions::Double2String(param) + " is already defined as " + StringFunctions::Double2String(val1) + ". \nDo you want to replace it with " + StringFunctions::Double2String(val2) + "?"); }
+	inline std::string FE_DuplicateParams(const std::set<double>& params) {
+		return "The following time points/parameters had duplicates: \n" + StringFunctions::ToString(params) + "\nPlease check your data!"; }
 
 //////////////////////////////////////////////////////////////////////////
 /// CFlowsheetViewer

@@ -358,6 +358,11 @@ bool CDependentUnitParameter::IsInBounds() const
 	return true;
 }
 
+bool CDependentUnitParameter::HasParam(double _param) const
+{
+	return m_data.HasParam(_param);
+}
+
 std::ostream& CDependentUnitParameter::ValueToStream(std::ostream& _s)
 {
 	return _s << m_data;
