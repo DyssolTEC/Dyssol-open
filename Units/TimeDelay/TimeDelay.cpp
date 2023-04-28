@@ -43,7 +43,7 @@ void CTimeDelay::Initialize(double _time)
 	if (m_timeDelay < 0)
 		RaiseError("Parameter 'Time delay' may not be negative.");
 
-	m_model = static_cast<EModel>(GetComboParameterValue("Model"));
+	m_model = V2E<EModel>(GetComboParameterValue("Model"));
 
 	switch (m_model)
 	{

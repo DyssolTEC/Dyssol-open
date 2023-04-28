@@ -92,7 +92,7 @@ void CScreenMultideck::Simulate(double _time)
 		deck.streamOutF->CopyFromStream(_time, deck.streamIn);
 
 		// if deck is disabled - just propagate stream
-		if (static_cast<EModel>(deck.model->GetValue()) == EModel::None)
+		if (V2E<EModel>(deck.model->GetValue()) == EModel::None)
 		{
 			deck.streamOutC->SetMassFlow(_time, 0.0);
 			continue;
@@ -115,7 +115,7 @@ void CScreenMultideck::Simulate(double _time)
 double CScreenMultideck::CreateTransformMatrix(double _time, const SDeck& _deck)
 {
 	for (const auto& deck : m_decks)
-		switch(static_cast<EModel>(deck.model->GetValue()))
+		switch(V2E<EModel>(deck.model->GetValue()))
 		{
 		case EModel::Plitt:			return CreateTransformMatrixPlitt(_time, _deck);
 		case EModel::Molerus:		return CreateTransformMatrixMolerus(_time, _deck);

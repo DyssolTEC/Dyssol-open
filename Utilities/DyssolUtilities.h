@@ -246,6 +246,21 @@ constexpr E D2E(double d)
 	return static_cast<E>(static_cast<std::underlying_type_t<E>>(d));
 }
 
+/**
+ * \brief Converts numeric value to enumerator identifier.
+ * \details Works for double, int, unsigned and similar types. Call it as
+ * auto eval = V2E<EEnumType>(val).
+ * \tparam E Type of output enum.
+ * \tparam T Type of input value.
+ * \param v Value.
+ * \return Value converted to the enumerator identifier.
+ */
+template<typename E, typename T>
+constexpr E V2E(T v)
+{
+	return static_cast<E>(static_cast<std::underlying_type_t<E>>(v));
+}
+
 std::vector<double> inline CreateDistributionNormal(const std::vector<double>& _x, double _d50, double _sigma)
 {
 	std::vector<double> vRes(_x.size());

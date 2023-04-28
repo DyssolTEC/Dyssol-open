@@ -93,7 +93,7 @@ void CAgglomerator::Initialize(double _time)
 	}
 	/// Set parameters ///
 	m_aggSolver->Initialize(m_sizeGrid, GetConstRealParameterValue("Beta0"),
-		static_cast<CAgglomerationSolver::EKernels>(GetComboParameterValue("Kernel")),
+		V2E<CAgglomerationSolver::EKernels>(GetComboParameterValue("Kernel")),
 		{ static_cast<double>(GetConstUIntParameterValue("Rank")) });
 }
 
