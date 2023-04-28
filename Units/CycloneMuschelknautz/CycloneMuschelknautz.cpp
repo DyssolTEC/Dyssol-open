@@ -110,8 +110,8 @@ void CCycloneMuschelknautz::Initialize(double _time)
 	D           = up_D->GetValue();
 	K_main      = up_K_main->GetValue();
 	eta_adj     = up_eta_adj->GetValue();
-	entry_shape = static_cast<EEntry>(up_entry_shape->GetValue());
-	blade_shape = static_cast<EBlade>(up_blade_shape->GetValue());
+	entry_shape = V2E<EEntry>(up_entry_shape->GetValue());
+	blade_shape = V2E<EBlade>(up_blade_shape->GetValue());
 	plot        = up_plot->IsChecked();
 
 	// Calculation of geometric parameters

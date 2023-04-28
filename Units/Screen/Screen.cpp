@@ -65,7 +65,7 @@ void CScreen::Initialize(double _time)
 	m_transformF.SetDimensions(DISTR_SIZE, (unsigned)m_classesNumber);
 
 	/// Get selected classification model ///
-	m_model = static_cast<EModels>(GetComboParameterValue("Model"));
+	m_model = V2E<EModels>(GetComboParameterValue("Model"));
 }
 
 void CScreen::Simulate(double _time)

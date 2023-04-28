@@ -53,7 +53,7 @@ void CBunker::Initialize(double _time)
 		RaiseError("Solid phase has not been defined.");
 
 	// unit parameters
-	m_outputModel = static_cast<EModel>(m_upModel->GetValue());
+	m_outputModel = V2E<EModel>(m_upModel->GetValue());
 	m_targetMass  = m_upTargetMass->GetValue();
 
 	// Pointers to streams

@@ -63,7 +63,7 @@ void CCrusher::Initialize(double _time)
 	m_compounds = GetAllCompounds();
 
 	/// Get selected crushing model ///
-	m_model = static_cast<EModels>(GetComboParameterValue("Model"));
+	m_model = V2E<EModels>(GetComboParameterValue("Model"));
 
 	/// Model-specific initialization ///
 	switch (m_model)
