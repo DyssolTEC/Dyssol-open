@@ -13,7 +13,7 @@ public:
 	size_t m_iMout{};	// Output mass flow of nuclei
 	size_t m_iMdust{};	// Output dust
 	size_t m_iG{};		// Growth rate
-	size_t m_iq3{};		// PSD
+	std::vector<size_t> m_iq3{}; // PSD
 
 public:
 	void CalculateResiduals(double _time, double* _vars, double* _ders, double* _res, void* _unit) override;

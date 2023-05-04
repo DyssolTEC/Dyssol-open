@@ -82,9 +82,7 @@ void CSimpleGranulator::Initialize(double _time)
 	m_model.m_iMout = m_model.AddDAEVariable(false, 0, 0, 0);							// Output mass flow of nuclei
 	m_model.m_iMdust = m_model.AddDAEVariable(false, 0, 0, 0);							// Output mass flow of dust
 	m_model.m_iG = m_model.AddDAEVariable(false, 1e-8, 0, 0);							// Growth rate
-	for (size_t i = 0; i < m_classesNum; ++i)											// Initial PSD
-		m_model.AddDAEVariable(true, vPSD[i], 0, 1.0);
-	m_model.m_iq3 = m_model.m_iG + 1;
+	m_model.m_iq3 = m_model.AddDAEVariables(true, vPSD, 0, 1.0);						// Initial PSD
 
 	AddStateVariable("Atot", 1);
 	AddStateVariable("Mtot", m_holdup->GetMass(_time));
@@ -136,7 +134,7 @@ void CUnitDAEModel::ResultsHandler(double _time, double* _vars, double* _ders, v
 
 	std::vector<double> temp(unit->m_classesNum, 0);
 	for (size_t i = 0; i < unit->m_classesNum; ++i)
-		temp[i] = _vars[m_iq3 + i] < 0 ? 0 : _vars[m_iq3 + i];
+		temp[i] = _vars[m_iq3[i]] < 0 ? 0 : _vars[m_iq3[i]];
 
 	// calculate and apply transformation matrix
 	const std::vector<double> inDistr = unit->m_holdup->GetDistribution(_time, DISTR_SIZE);
@@ -172,7 +170,7 @@ void CUnitDAEModel::ResultsHandler(double _time, double* _vars, double* _ders, v
 	unit->SetStateVariable("Mdust", _vars[m_iMdust], _time);
 	unit->SetStateVariable("G"    , _vars[m_iG]    , _time);
 	for (size_t i = 0; i < unit->m_classesNum; ++i)
-		unit->SetStateVariable("PSD" + std::to_string(i), _vars[m_iq3 + i], _time);
+		unit->SetStateVariable("PSD" + std::to_string(i), _vars[m_iq3[i]], _time);
 }
 
 void CUnitDAEModel::CalculateResiduals(double _time, double* _vars, double* _ders, double* _res, void* _unit)
@@ -198,7 +196,7 @@ void CUnitDAEModel::CalculateResiduals(double _time, double* _vars, double* _der
 	// Total surface of all particles (ATot)
 	double temp = 0;
 	for (size_t i = 0; i < unit->m_classesNum; ++i)
-		temp += _vars[m_iq3 + i] * unit->m_classSize[i] / unit->m_averDiam[i];
+		temp += _vars[m_iq3[i]] * unit->m_classSize[i] / unit->m_averDiam[i];
 	_res[m_iAtot] = ATot - mTot * 6 * temp / solutSolDens;
 
 	// Total mass of all particles (MTot)
@@ -217,10 +215,10 @@ void CUnitDAEModel::CalculateResiduals(double _time, double* _vars, double* _der
 		_res[m_iG] = 0;
 
 	// PSD (q3)
-	_res[m_iq3 + 0] = _ders[m_iq3 + 0] - 0;
+	_res[m_iq3[0]] = _ders[m_iq3[0]] - 0;
 	for (size_t i = 1; i < unit->m_classesNum; ++i)
 	{
-		const double der = -G / unit->m_classSize[i] * (_vars[m_iq3 + i] - _vars[m_iq3 + i - 1] * unit->m_preCalc[i]) + 1 / mTot * (mInNucl * psd[i] - mOut * _vars[m_iq3 + i]);
-		_res[m_iq3 + i] = _ders[m_iq3 + i] - der;
+		const double der = -G / unit->m_classSize[i] * (_vars[m_iq3[i]] - _vars[m_iq3[i-1]] * unit->m_preCalc[i]) + 1 / mTot * (mInNucl * psd[i] - mOut * _vars[m_iq3[i]]);
+		_res[m_iq3[i]] = _ders[m_iq3[i]] - der;
 	}
 }

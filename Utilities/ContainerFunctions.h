@@ -224,3 +224,21 @@ template<typename T> std::vector<T> VectorDifference(const std::vector<T>& _v1, 
 	std::copy_if(_v1.begin(), _v1.end(), std::back_inserter(res), [&_v2](const T& val) { return !VectorContains(_v2, val); });
 	return res;
 }
+
+/**
+ * \brief Returns the values at the specified indices in the data array.
+ * \details Does not perform any out-of-boundary checks.
+ * \param _data Input array of data.
+ * \param _ind List of indices of data to be extracted to the slice.
+ * \return Vector of data with given indices.
+ */
+inline std::vector<double> Slice(const double* const _data, const std::vector<size_t>& _ind)
+{
+	std::vector<double> res(_ind.size());
+	if (std::adjacent_find(_ind.begin(), _ind.end(), [](size_t i1, size_t i2) { return i2 != i1 + 1; }) == _ind.end())
+		std::copy(_data + _ind.front(), _data + _ind.back() + 1, res.begin());
+	else
+		for (size_t i = 0; i < _ind.size(); ++i)
+			res[i] = _data[i];
+	return res;
+}
