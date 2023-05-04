@@ -4,6 +4,7 @@
 #include "Agglomerator.h"
 #include "DistributionsFunctions.h"
 #include "DyssolUtilities.h"
+#include "ContainerFunctions.h"
 
 extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 {
@@ -68,9 +69,7 @@ void CAgglomerator::Initialize(double _time)
 	std::vector<double> Ninlet = m_holdup->GetPSD(_time, PSD_Number);
 
 	/// Add state variables to a model ///
-	for (size_t i = 0; i < m_classesNum; ++i)	// Initial PSD
-		m_model.AddDAEVariable(true, Ninlet[i], 0);
-	m_model.m_iq0 = 0;
+	m_model.m_iq0 = m_model.AddDAEVariables(true, Ninlet, 0); // Initial PSD
 
 	/// Set tolerances to model ///
 	const auto rtol = GetConstRealParameterValue("Relative tolerance");
@@ -124,7 +123,7 @@ void CUnitDAEModel::ResultsHandler(double _time, double* _vars, double* _ders, v
 	unit->m_holdup->RemoveTimePointsAfter(_time);
 	unit->m_holdup->SetMass(_time, holdupMass);
 
-	unit->m_holdup->SetPSD(_time, PSD_MassFrac, ConvertNumbersToMassFractions(unit->m_sizeGrid, std::vector<double>(_vars + m_iq0, _vars + m_iq0 + unit->m_classesNum)));
+	unit->m_holdup->SetPSD(_time, PSD_MassFrac, ConvertNumbersToMassFractions(unit->m_sizeGrid, Slice(_vars, m_iq0)));
 
 	const double outMass = unit->m_inStream->GetMassFlow(_time); // equal to in mass flow
 	unit->m_outStream->CopyFromHoldup(_time, unit->m_holdup, outMass);
@@ -147,6 +146,6 @@ void CUnitDAEModel::CalculateResiduals(double _time, double* _vars, double* _der
 	for (size_t i = 0; i < unit->m_classesNum; ++i)
 	{
 		const double der = BRate[i] - DRate[i] + Ninlet[i] - _vars[i] / holdupMass * outMass;
-		_res[m_iq0 + i] = _ders[m_iq0 + i] - der;
+		_res[m_iq0[i]] = _ders[m_iq0[i]] - der;
 	}
 }
