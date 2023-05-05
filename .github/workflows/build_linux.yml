@@ -18,9 +18,9 @@ jobs:
           - name: linux-gcc-san
             os: linux
             cxx: g++
-            cxxflags: "-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined"
-            linker_flags: "-fno-omit-frame-pointer -fsanitize=address"
-            build_type: Debug
+            cxxflags: "-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined -fsanitize=leak"
+            linker_flags: "-fno-omit-frame-pointer -fsanitize=address -fsanitize=leak"
+            build_type: RelWithDebInfo
           - name: linux-clang
             os: linux
             cxx: clang++
@@ -30,9 +30,9 @@ jobs:
           - name: linux-clang-san
             os: linux
             cxx: clang++
-            cxxflags: "-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined"
-            linker_flags: "-fno-omit-frame-pointer -fsanitize=address"
-            build_type: Debug
+            cxxflags: "-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined -fsanitize=leak"
+            linker_flags: "-fno-omit-frame-pointer -fsanitize=address -fsanitize=leak"
+            build_type: RelWithDebInfo
 
     steps:
     - uses: actions/checkout@v3
@@ -49,7 +49,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: ${{github.workspace}}/build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="${{ matrix.cxxflags }}" -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.linker_flags }}" -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DBUILD_DOCS=NO
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="${{ matrix.cxxflags }}" -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.linker_flags }}" -DCMAKE_SHARED_LINKER_FLAGS="${{ matrix.linker_flags }}" -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/install -DBUILD_DOCS=NO
 
     - name: Build
       working-directory: ${{github.workspace}}/build
@@ -64,7 +64,7 @@ jobs:
     - name: Test
       working-directory: ${{github.workspace}}/build
       shell: bash
-      run: CTEST_OUTPUT_ON_FAILURE=1 make test
+      run: CTEST_OUTPUT_ON_FAILURE=1 make test ARGS=-j$(nproc)
         
   docs:
     name: Docs
