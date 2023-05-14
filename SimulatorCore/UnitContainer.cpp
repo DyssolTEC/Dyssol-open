@@ -19,6 +19,25 @@ CUnitContainer::CUnitContainer(const std::string& _id, CModelsManager& _modelsMa
 {
 }
 
+CUnitContainer::CUnitContainer(const CUnitContainer& _other)
+	: m_name{ _other.m_name }
+	, m_uniqueID{ _other.m_uniqueID }
+	, m_modelsManager{ _other.m_modelsManager }
+	, m_materialsDB{ _other.m_materialsDB }
+	, m_grid{ _other.m_grid }
+	, m_overall{ _other.m_overall }
+	, m_phases{ _other.m_phases }
+	, m_cache{ _other.m_cache }
+	, m_tolerance{ _other.m_tolerance }
+	, m_thermodynamics{ _other.m_thermodynamics }
+{
+	if (_other.m_model)
+	{
+		SetModel(_other.m_model->GetUniqueID());
+		m_model->CopyUserData(*_other.m_model);
+	}
+}
+
 CUnitContainer::~CUnitContainer()
 {
 	ClearExternalSolvers();

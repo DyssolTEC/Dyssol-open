@@ -57,8 +57,18 @@ class CFlowsheet
 	bool m_topologyModified{ false };	// Indicates whether the flowsheet structure has changed since the last run of the calculation sequence analysis.
 
 public:
-	// Basic constructor
+	/**
+	 * \brief Main constructor.
+	 * \details Sets all required pointers.
+	 * \param _modelsManager Pointer to models manager.
+	 * \param _materialsDB Pointer to materials database.
+	 */
 	CFlowsheet(CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB);
+	CFlowsheet(const CFlowsheet& _other);
+	CFlowsheet(CFlowsheet&& _other) = delete;
+	CFlowsheet& operator=(const CFlowsheet& _other) = delete;
+	CFlowsheet& operator=(CFlowsheet&& _other) = delete;
+	~CFlowsheet() = default;
 
 	// Returns the full name of the file, where the flowsheet is stored.
 	[[nodiscard]] std::filesystem::path GetFileName() const;

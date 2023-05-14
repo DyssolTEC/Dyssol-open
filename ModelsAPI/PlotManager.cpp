@@ -463,6 +463,13 @@ CCurve* CPlot::AddEmptyCurve(double _z)
 // CPlotManager
 //
 
+void CPlotManager::CopyUserData(const CPlotManager& _plots) const
+{
+	if (m_plots.size() != _plots.m_plots.size()) return;
+	for (size_t i = 0; i < m_plots.size(); ++i)
+		*m_plots[i] = *_plots.m_plots[i];
+}
+
 CPlot* CPlotManager::AddPlot(const std::string& _name)
 {
 	if (GetPlot(_name)) return nullptr;

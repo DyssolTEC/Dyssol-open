@@ -91,6 +91,14 @@ class CPortsManager
 
 public:
 	/**
+	 * \internal
+	 * \brief Copies user-defined data from _ports.
+	 * \details Copies information about selected streams. Assumes the corresponding ports structure is the same.
+	 * \param _ports Reference to source ports manager.
+	 */
+	void CopyUserData(const CPortsManager& _ports) const;
+
+	/**
 	 * Adds a port and returns a pointer to it. If a port with this name already exist, does nothing and return nullptr.
 	 * \param _name Name of the port. Must be unique. If a port with this name already exist, does nothing.
 	 * \param _type Type of the port.

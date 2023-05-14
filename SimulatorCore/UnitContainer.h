@@ -42,7 +42,7 @@ public:
 	CUnitContainer(const std::string& _id, CModelsManager& _modelsManager,
 		const CMaterialsDatabase& _materialsDB, const CMultidimensionalGrid& _grid, const std::vector<SOverallDescriptor>& _overall,
 		const std::vector<SPhaseDescriptor>& _phases, const SCacheSettings& _cache, const SToleranceSettings& _tolerance, const SThermodynamicsSettings& _thermodynamics);
-	CUnitContainer(const CUnitContainer& _other)            = delete;
+	CUnitContainer(const CUnitContainer& _other);
 	CUnitContainer(CUnitContainer&& _other)                 = delete;
 	CUnitContainer& operator=(const CUnitContainer& _other) = delete;
 	CUnitContainer& operator=(CUnitContainer&& _other)      = delete;

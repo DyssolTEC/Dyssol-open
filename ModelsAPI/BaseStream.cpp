@@ -35,16 +35,35 @@ CBaseStream::CBaseStream(const std::string& _key, const CMaterialsDatabase* _mat
 }
 
 CBaseStream::CBaseStream(const CBaseStream& _other) :
+	m_name{ _other.m_name },
+	m_key{ _other.m_key },
 	m_materialsDB{ _other.m_materialsDB },
 	m_timePoints{ _other.m_timePoints },
 	m_grid{ _other.m_grid },
-	m_cacheSettings{ _other.m_cacheSettings }
+	m_cacheSettings{ _other.m_cacheSettings },
+	m_toleranceSettings{ _other.m_toleranceSettings },
+	m_thermodynamicsSettings{ _other.m_thermodynamicsSettings }
 {
-	m_key = StringFunctions::GenerateRandomKey();
 	for (const auto& [type, param] : _other.m_overall)
 		m_overall.insert({ type, std::make_unique<CTimeDependentValue>(*param) });
 	for (const auto& [state, phase] : _other.m_phases)
 		m_phases.insert({ state, std::make_unique<CPhase>(*phase) });
+}
+
+CBaseStream::CBaseStream(CBaseStream&& _other) :
+	m_name{ std::move(_other.m_name) },
+	m_key{ std::move(_other.m_key) },
+	m_materialsDB{ _other.m_materialsDB },
+	m_timePoints{ std::move(_other.m_timePoints) },
+	m_grid{ std::move(_other.m_grid) },
+	m_cacheSettings{ std::move(_other.m_cacheSettings) },
+	m_toleranceSettings{ std::move(_other.m_toleranceSettings) },
+	m_thermodynamicsSettings{ std::move(_other.m_thermodynamicsSettings) }
+{
+	for (auto& [type, param] : _other.m_overall)
+		m_overall.insert({ type, std::move(param) });
+	for (auto& [state, phase] : _other.m_phases)
+		m_phases.insert({ state, std::move(phase) });
 }
 
 void CBaseStream::Clear()

@@ -15,6 +15,30 @@ CFlowsheet::CFlowsheet(CModelsManager& _modelsManager, const CMaterialsDatabase&
 	Create();
 }
 
+CFlowsheet::CFlowsheet(const CFlowsheet& _other) :
+	m_materialsDB{ _other.m_materialsDB },
+	m_modelsManager{ _other.m_modelsManager }
+{
+	m_fileName = _other.m_fileName;
+	m_modelsManager = _other.m_modelsManager;
+	m_parameters = _other.m_parameters;
+	m_mainGrid = _other.m_mainGrid;
+	m_overall = _other.m_overall;
+	m_phases = _other.m_phases;
+	m_cacheStreams = _other.m_cacheStreams;
+	m_cacheHoldups = _other.m_cacheHoldups;
+	m_tolerance = _other.m_tolerance;
+	m_thermodynamics = _other.m_thermodynamics;
+	for (const auto& unit : _other.m_units)
+		m_units.emplace_back(new CUnitContainer{ *unit });
+	for (const auto& stream : _other.m_streams)
+		m_streams.emplace_back(new CStream{ *stream });
+	for (const auto& stream : _other.m_streamsI)
+		m_streamsI.emplace_back(new CStream{ *stream });
+	//m_calculationSequence = ;
+	m_topologyModified = _other.m_topologyModified;
+}
+
 std::filesystem::path CFlowsheet::GetFileName() const
 {
 	return m_fileName;

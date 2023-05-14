@@ -112,6 +112,13 @@ public:
 	 */
 	void SetSettings(const CMaterialsDatabase* _materialsDB, const CMultidimensionalGrid& _grid, const std::vector<SOverallDescriptor>* _overall,
 					const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics);
+	/**
+	 * \internal
+	 * \brief Copies user-defined data from _unit.
+	 * \details Copies such data as selected streams, unit parameters, initial holdup data. Assumes the corresponding unit structure is the same.
+	 * \param _unit Reference to source unit.
+	 */
+	void CopyUserData(const CBaseUnit& _unit);
 
 	////////////////////////////////////////////////////////////////////////////////
 	/// Basic unit information

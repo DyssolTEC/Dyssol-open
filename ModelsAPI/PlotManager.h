@@ -188,6 +188,15 @@ class CPlotManager
 	std::vector<std::unique_ptr<CPlot>> m_plotsStored;	// A copy of plots used to store data during cyclic recalculations.
 
 public:
+	// TODO: remove it when Plots will be added in CreateStructure
+	/**
+	 * \internal
+	 * \brief Copies user-defined data from _plots.
+	 * \details Copies information about generated plots. Assumes the corresponding plots structure is the same.
+	 * \param _plots Reference to source plots manager.
+	 */
+	void CopyUserData(const CPlotManager& _plots) const;
+
 	// Adds a new 2D plot with the specified name. If a plot with the given name already exists, does nothing, and returns nullptr.
 	CPlot* AddPlot(const std::string& _name);
 	// Adds a new 2D plot with the specified name and axes labels. If a plot with the given name already exists, does nothing, and returns nullptr.

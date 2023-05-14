@@ -52,9 +52,9 @@ public:
 		const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics);
 	// Copy constructor.
 	CBaseStream(const CBaseStream& _other);
+	CBaseStream(CBaseStream&& _other);
 	virtual ~CBaseStream() = default;
 
-	CBaseStream(CBaseStream&& _other) = delete;
 	CBaseStream& operator=(const CBaseStream& _other) = delete;
 	CBaseStream& operator=(CBaseStream&& _other) = delete;
 
