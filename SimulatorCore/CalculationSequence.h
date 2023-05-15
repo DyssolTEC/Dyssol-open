@@ -40,8 +40,8 @@ private:
 	static const unsigned m_saveVersion{ 2 };	// Current version of the saving procedure.
 
 
-	const std::vector<std::unique_ptr<CUnitContainer>>* m_models{};	// Pointer to a vector of available models.
-	const std::vector<std::shared_ptr<CStream>>* m_streams{};		// Pointer to a vector of available streams.
+	const std::vector<std::unique_ptr<CUnitContainer>>* m_models{};	// Non-owning pointer to a vector of existing models.
+	const std::vector<std::shared_ptr<CStream>>* m_streams{};		// Non-owning pointer to a vector of existing streams.
 
 	std::vector<SPartitionKeys> m_partitions;       // List of defined partitions.
 
@@ -50,9 +50,23 @@ private:
 public:
 	// Sets pointers to all existing models and streams.
 	CCalculationSequence(const std::vector<std::unique_ptr<CUnitContainer>>* _allModels, const std::vector<std::shared_ptr<CStream>>* _allStreams);
+	/**
+	 * Sets pointers to all existing models and streams.
+	 * \param _allModels Pointer to models.
+	 * \param _allStreams Pointer to streams.
+	 */
+	void SetPointers(const std::vector<std::unique_ptr<CUnitContainer>>* _allModels, const std::vector<std::shared_ptr<CStream>>* _allStreams);
 
 	// Clear calculation sequence and all initial tear streams.
 	void Clear();
+	/**
+	 * Returns models keys defined in each partition.
+	 */
+	std::vector<std::vector<std::string>> GetModelsKeys() const;
+	/**
+	 * Returns streams keys defined in each partition.
+	 */
+	std::vector<std::vector<std::string>> GetStreamsKeys() const;
 	// Sets partitions using indices of models and streams for each partition.
 	void SetSequence(const std::vector<std::vector<std::string>>& _modelsKeys, const std::vector<std::vector<std::string>>& _streamsKeys);
 	// Sets new model key to existing model.

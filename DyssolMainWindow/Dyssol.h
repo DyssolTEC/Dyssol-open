@@ -45,7 +45,7 @@ public:
 private:
 	CMaterialsDatabase m_MaterialsDatabase;		// database of materials
 	CModelsManager m_ModelsManager;				// units and solvers manager
-	CFlowsheet m_Flowsheet{ m_ModelsManager, m_MaterialsDatabase };	// flowsheet
+	CFlowsheet m_Flowsheet{ &m_ModelsManager, &m_MaterialsDatabase };	// flowsheet
 	CSimulator m_Simulator;						// simulator
 
 	QSettings* m_pSettings;		// Config file.

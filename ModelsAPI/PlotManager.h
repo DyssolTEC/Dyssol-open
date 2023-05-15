@@ -188,7 +188,6 @@ class CPlotManager
 	std::vector<std::unique_ptr<CPlot>> m_plotsStored;	// A copy of plots used to store data during cyclic recalculations.
 
 public:
-	// TODO: remove it when Plots will be added in CreateStructure
 	/**
 	 * \internal
 	 * \brief Copies user-defined data from _plots.

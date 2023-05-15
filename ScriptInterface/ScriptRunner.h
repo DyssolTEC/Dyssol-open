@@ -18,10 +18,10 @@ namespace ScriptInterface
 /* Executes a script job. */
 class CScriptRunner
 {
-	CMaterialsDatabase m_materialsDatabase{};						// Database of materials.
-	CModelsManager m_modelsManager{};								// Units and solvers manager.
-	CFlowsheet m_flowsheet{ m_modelsManager, m_materialsDatabase };	// Flowsheet.
-	CSimulator m_simulator{};										// Simulator.
+	CMaterialsDatabase m_materialsDatabase{};							// Database of materials.
+	CModelsManager m_modelsManager{};									// Units and solvers manager.
+	CFlowsheet m_flowsheet{ &m_modelsManager, &m_materialsDatabase };	// Flowsheet.
+	CSimulator m_simulator{};											// Simulator.
 
 public:
 	// Executes the job. Returns success flag.

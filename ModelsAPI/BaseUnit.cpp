@@ -27,10 +27,8 @@ void CBaseUnit::CopyUserData(const CBaseUnit& _unit)
 {
 	m_ports.CopyUserData(_unit.m_ports);
 	m_unitParameters.CopyUserData(_unit.m_unitParameters);
-	// TODO: remove it when SV will be added in CreateStructure
 	m_stateVariables.CopyUserData(_unit.m_stateVariables);
 	m_streams.CopyUserData(_unit.m_streams);
-	// TODO: remove it when Plots will be added in CreateStructure
 	m_plots.CopyUserData(_unit.m_plots);
 }
 

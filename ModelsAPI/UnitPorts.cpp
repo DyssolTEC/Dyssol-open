@@ -84,7 +84,7 @@ void CUnitPort::LoadFromFile(CH5Handler& _h5File, const std::string& _path)
 
 void CPortsManager::CopyUserData(const CPortsManager& _ports) const
 {
-	if (m_ports.size() != _ports.m_ports.size())
+	if (m_ports.size() != _ports.m_ports.size()) return;
 	for (size_t i = 0; i < m_ports.size(); ++i)
 		m_ports[i]->SetStreamKey(_ports.m_ports[i]->GetStreamKey());
 }

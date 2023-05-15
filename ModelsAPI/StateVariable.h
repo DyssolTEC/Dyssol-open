@@ -64,7 +64,6 @@ class CStateVariablesManager
 	std::vector<std::unique_ptr<CStateVariable>> m_stateVariables;	// Defined state variables.
 
 public:
-	// TODO: remove it when SV will be added in CreateStructure
 	/**
 	 * \internal
 	 * \brief Copies user-defined data from _stateVariables.

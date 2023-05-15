@@ -8,18 +8,40 @@
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
 
-CFlowsheet::CFlowsheet(CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB) :
-	m_materialsDB{ _materialsDB },
-	m_modelsManager{ _modelsManager }
+CFlowsheet::CFlowsheet(CModelsManager* _modelsManager, const CMaterialsDatabase* _materialsDB)
+	: m_materialsDB{ _materialsDB }
+	, m_modelsManager{ _modelsManager }
 {
 	Create();
 }
 
-CFlowsheet::CFlowsheet(const CFlowsheet& _other) :
-	m_materialsDB{ _other.m_materialsDB },
-	m_modelsManager{ _other.m_modelsManager }
+CFlowsheet::CFlowsheet(const CFlowsheet& _other)
+	: m_fileName{ _other.m_fileName }
+	, m_materialsDB{ _other.m_materialsDB }
+	, m_modelsManager{ _other.m_modelsManager }
+	, m_parameters{ _other.m_parameters }
+	, m_mainGrid{ _other.m_mainGrid }
+	, m_overall{ _other.m_overall }
+	, m_phases{ _other.m_phases }
+	, m_cacheStreams{ _other.m_cacheStreams }
+	, m_cacheHoldups{ _other.m_cacheHoldups }
+	, m_tolerance{ _other.m_tolerance }
+	, m_thermodynamics{ _other.m_thermodynamics }
+	, m_topologyModified{ _other.m_topologyModified }
+{
+	for (const auto& unit : _other.m_units)
+		m_units.emplace_back(new CUnitContainer{ *unit });
+	for (const auto& stream : _other.m_streams)
+		m_streams.emplace_back(new CStream{ *stream });
+	for (const auto& stream : _other.m_streamsI)
+		m_streamsI.emplace_back(new CStream{ *stream });
+	m_calculationSequence.SetSequence(_other.m_calculationSequence.GetModelsKeys(), _other.m_calculationSequence.GetStreamsKeys());
+}
+
+CFlowsheet& CFlowsheet::operator=(const CFlowsheet& _other)
 {
 	m_fileName = _other.m_fileName;
+	m_materialsDB = _other.m_materialsDB;
 	m_modelsManager = _other.m_modelsManager;
 	m_parameters = _other.m_parameters;
 	m_mainGrid = _other.m_mainGrid;
@@ -29,14 +51,18 @@ CFlowsheet::CFlowsheet(const CFlowsheet& _other) :
 	m_cacheHoldups = _other.m_cacheHoldups;
 	m_tolerance = _other.m_tolerance;
 	m_thermodynamics = _other.m_thermodynamics;
+	m_units.clear();
 	for (const auto& unit : _other.m_units)
 		m_units.emplace_back(new CUnitContainer{ *unit });
+	m_streams.clear();
 	for (const auto& stream : _other.m_streams)
 		m_streams.emplace_back(new CStream{ *stream });
+	m_streamsI.clear();
 	for (const auto& stream : _other.m_streamsI)
 		m_streamsI.emplace_back(new CStream{ *stream });
-	//m_calculationSequence = ;
+	m_calculationSequence.SetSequence(_other.m_calculationSequence.GetModelsKeys(), _other.m_calculationSequence.GetStreamsKeys());
 	m_topologyModified = _other.m_topologyModified;
+	return *this;
 }
 
 std::filesystem::path CFlowsheet::GetFileName() const
@@ -95,7 +121,7 @@ size_t CFlowsheet::GetUnitsNumber() const
 CUnitContainer* CFlowsheet::AddUnit(const std::string& _key)
 {
 	const std::string uniqueID = StringFunctions::GenerateUniqueKey(_key, GetAllUnitsKeys());
-	auto* unit = new CUnitContainer(uniqueID, m_modelsManager, m_materialsDB, m_mainGrid, m_overall, m_phases, m_cacheHoldups, m_tolerance, m_thermodynamics);
+	auto* unit = new CUnitContainer(uniqueID, *m_modelsManager, *m_materialsDB, m_mainGrid, m_overall, m_phases, m_cacheHoldups, m_tolerance, m_thermodynamics);
 	m_units.emplace_back(unit);
 	SetTopologyModified(true);
 	return unit;
@@ -203,7 +229,7 @@ size_t CFlowsheet::GetStreamsNumber() const
 CStream* CFlowsheet::AddStream(const std::string& _key)
 {
 	const std::string uniqueID = StringFunctions::GenerateUniqueKey(_key, GetAllStreamsKeys());
-	auto* stream = new CStream(uniqueID, &m_materialsDB, m_mainGrid, &m_overall, &m_phases, &m_cacheStreams, &m_tolerance, &m_thermodynamics);
+	auto* stream = new CStream(uniqueID, m_materialsDB, m_mainGrid, &m_overall, &m_phases, &m_cacheStreams, &m_tolerance, &m_thermodynamics);
 	m_streams.emplace_back(stream);
 	SetTopologyModified(true);
 	return stream;
@@ -617,16 +643,16 @@ std::string CFlowsheet::Initialize()
 	}
 
 	// check compounds
-	if (m_materialsDB.CompoundsNumber() == 0)
+	if (m_materialsDB->CompoundsNumber() == 0)
 		return StrConst::Flow_ErrEmptyMDB;
 	if (GetCompounds().empty())
 		return StrConst::Flow_ErrNoCompounds;
 	for (const auto& key : GetCompounds())
-		if (!m_materialsDB.GetCompound(key))
+		if (!m_materialsDB->GetCompound(key))
 			return StrConst::Flow_ErrWrongCompound(key);
 	for (const auto& unit : m_units)
 		for (const auto& param : unit->GetModel()->GetUnitParametersManager().GetAllCompoundParameters())
-			if (!m_materialsDB.GetCompound(param->GetCompound()))
+			if (!m_materialsDB->GetCompound(param->GetCompound()))
 				return StrConst::Flow_ErrWrongCompoundParam(unit->GetName(), param->GetName(), param->GetCompound());
 
 	// check phases
@@ -679,7 +705,7 @@ void CFlowsheet::SetStreamsToPorts()
 			const size_t index = VectorFind(m_streamsI, [&](auto& s) { return s->GetKey() == port->GetStreamKey(); });
 			if (index < m_streamsI.size() && unit->GetModel()->GetGrid() != m_streamsI[index]->GetGrid()) // separate input stream is needed
 				// create new with proper grid
-				m_streamsI[index] = std::make_shared<CStream>(m_streamsI[index]->GetKey(), &m_materialsDB, unit->GetModel()->GetGrid(), &m_overall, &m_phases, &m_cacheStreams, &m_tolerance, &m_thermodynamics);
+				m_streamsI[index] = std::make_shared<CStream>(m_streamsI[index]->GetKey(), m_materialsDB, unit->GetModel()->GetGrid(), &m_overall, &m_phases, &m_cacheStreams, &m_tolerance, &m_thermodynamics);
 		}
 
 	// set stream pointers to ports

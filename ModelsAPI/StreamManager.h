@@ -55,7 +55,7 @@ public:
 	/**
 	 * \internal
 	 * \brief Copies user-defined data from _streams.
-	 * \details Copies information about configured feeds and holdups. Assumes the corresponding streams and holdups structure is the same.
+	 * \details Copies information about configured and simulated feeds and holdups. Assumes the corresponding streams and holdups structure is the same.
 	 * \param _streams Reference to source streams manager.
 	 */
 	void CopyUserData(const CStreamManager& _streams) const;

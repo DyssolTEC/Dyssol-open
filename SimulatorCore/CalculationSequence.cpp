@@ -14,10 +14,32 @@ CCalculationSequence::CCalculationSequence(const std::vector<std::unique_ptr<CUn
 	m_streams = _allStreams;
 }
 
+void CCalculationSequence::SetPointers(const std::vector<std::unique_ptr<CUnitContainer>>* _allModels, const std::vector<std::shared_ptr<CStream>>* _allStreams)
+{
+	m_models = _allModels;
+	m_streams = _allStreams;
+}
+
 void CCalculationSequence::Clear()
 {
 	m_partitions.clear();
 	m_initialTearStreams.clear();
+}
+
+std::vector<std::vector<std::string>> CCalculationSequence::GetModelsKeys() const
+{
+	auto res = ReservedVector<std::vector<std::string>>(m_partitions.size());
+	for (const auto& p : m_partitions)
+		res.push_back(p.models);
+	return res;
+}
+
+std::vector<std::vector<std::string>> CCalculationSequence::GetStreamsKeys() const
+{
+	auto res = ReservedVector<std::vector<std::string>>(m_partitions.size());
+	for (const auto& p : m_partitions)
+		res.push_back(p.tearStreams);
+	return res;
 }
 
 void CCalculationSequence::SetSequence(const std::vector<std::vector<std::string>>& _modelsKeys, const std::vector<std::vector<std::string>>& _streamsKeys)
