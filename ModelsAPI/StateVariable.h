@@ -64,6 +64,14 @@ class CStateVariablesManager
 	std::vector<std::unique_ptr<CStateVariable>> m_stateVariables;	// Defined state variables.
 
 public:
+	/**
+	 * \internal
+	 * \brief Copies user-defined data from _stateVariables.
+	 * \details Copies information about state variables. Assumes the corresponding state variables structure is the same.
+	 * \param _stateVariables Reference to state variables manager.
+	 */
+	void CopyUserData(const CStateVariablesManager& _stateVariables) const;
+
 	// Adds a new time-dependent state variable and returns a pointer to it. If a state variable with this name already exists, does nothing and returns nullptr.
 	CStateVariable* AddStateVariable(const std::string& _name, double _initValue);
 	// Returns a state variable with the specified index.

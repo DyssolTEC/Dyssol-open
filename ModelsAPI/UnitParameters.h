@@ -470,6 +470,14 @@ class CUnitParametersManager
 	group_map_t m_groups;											///< List of group blocks and corresponding groups, to which parameters belong. Is used to determine activity of parameters.
 
 public:
+	/**
+	 * \internal
+	 * \brief Copies user-defined data from _unitParameters.
+	 * \details Copies information about selected parameters. Assumes the corresponding parameters structure is the same.
+	 * \param _unitParameters Reference to source unit parameters manager.
+	 */
+	void CopyUserData(const CUnitParametersManager& _unitParameters);
+
 	// Returns number of specified unit parameters.
 	size_t ParametersNumber() const;
 	// Returns true if unit parameter with given name already exists.

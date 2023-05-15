@@ -124,6 +124,13 @@ void CStateVariable::AddToHistory(double _time, double _value)
 // CStateVariablesManager
 //
 
+void CStateVariablesManager::CopyUserData(const CStateVariablesManager& _stateVariables) const
+{
+	if (m_stateVariables.size() != _stateVariables.m_stateVariables.size()) return;
+	for (size_t i = 0; i < m_stateVariables.size(); ++i)
+		*m_stateVariables[i] = *_stateVariables.m_stateVariables[i];
+}
+
 CStateVariable* CStateVariablesManager::AddStateVariable(const std::string& _name, double _initValue)
 {
 	if (GetStateVariable(_name)) return nullptr;

@@ -1003,6 +1003,14 @@ void CReactionUnitParameter::LoadFromFile(const CH5Handler& _h5Loader, const std
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// CUnitParametersManager
 
+void CUnitParametersManager::CopyUserData(const CUnitParametersManager& _unitParameters)
+{
+	if (m_parameters.size() != _unitParameters.m_parameters.size()) return;
+	for (size_t i = 0; i < m_parameters.size(); ++i)
+		*m_parameters[i] = *_unitParameters.m_parameters[i];
+	m_groups = _unitParameters.m_groups;
+}
+
 size_t CUnitParametersManager::ParametersNumber() const
 {
 	return m_parameters.size();

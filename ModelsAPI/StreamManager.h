@@ -52,6 +52,14 @@ public:
 	void SetPointers(const CMaterialsDatabase* _materialsDB, const CMultidimensionalGrid* _grid, const std::vector<SOverallDescriptor>* _overall,
 		const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerances, const SThermodynamicsSettings* _thermodynamics);
 
+	/**
+	 * \internal
+	 * \brief Copies user-defined data from _streams.
+	 * \details Copies information about configured and simulated feeds and holdups. Assumes the corresponding streams and holdups structure is the same.
+	 * \param _streams Reference to source streams manager.
+	 */
+	void CopyUserData(const CStreamManager& _streams) const;
+
 	// Is called when initial structure of the unit is configured.
 	void CreateStructure();
 	// Initializes all defines feeds, holdups and streams before starting initialization of the unit.

@@ -18,9 +18,18 @@ void CBaseUnit::SetSettings(const CMaterialsDatabase* _materialsDB, const CMulti
 	m_overall        = _overall;
 	m_phases         = _phases;
 	m_cache          = _cache;
-	m_tolerances      = _tolerance;
+	m_tolerances     = _tolerance;
 	m_thermodynamics = _thermodynamics;
 	m_streams.SetPointers(m_materialsDB, &m_grid, m_overall, m_phases, m_cache, m_tolerances, m_thermodynamics);
+}
+
+void CBaseUnit::CopyUserData(const CBaseUnit& _unit)
+{
+	m_ports.CopyUserData(_unit.m_ports);
+	m_unitParameters.CopyUserData(_unit.m_unitParameters);
+	m_stateVariables.CopyUserData(_unit.m_stateVariables);
+	m_streams.CopyUserData(_unit.m_streams);
+	m_plots.CopyUserData(_unit.m_plots);
 }
 
 std::string CBaseUnit::GetUnitName() const

@@ -106,10 +106,26 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 
 Dyssol::~Dyssol()
 {
-	delete m_pSavingThread;
-	delete m_pLoadingThread;
 	delete m_pLoadingWindow;
 	delete m_pSavingWindow;
+	delete m_pLoadingThread;
+	delete m_pSavingThread;
+
+	delete m_pSettingsEditor;
+	delete m_pDustTesterTab;
+	delete m_pTearStreamsEditor;
+	delete m_pUnitsViewer;
+	delete m_pStreamsViewer;
+	delete m_pSimulatorTab;
+	delete m_pPhasesEditor;
+	delete m_pOptionsEditor;
+	delete m_pHoldupsEditor;
+	delete m_pGridEditor;
+	delete m_pFlowsheetEditor;
+	delete m_pCompoundsManager;
+	delete m_pMaterialsDatabaseTab;
+	delete m_pCalcSequenceEditor;
+	delete m_pModelsManagerTab;
 }
 
 void Dyssol::InitializeConnections() const

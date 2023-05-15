@@ -29,8 +29,8 @@ class CFlowsheet
 	////////////////////////////////////////////////////////////////////////////////
 	// Global structural data and settings
 	//
-	const CMaterialsDatabase& m_materialsDB;	// Reference to a global database of materials.
-	CModelsManager& m_modelsManager;			// Reference to a global models manager.
+	const CMaterialsDatabase* m_materialsDB{};	// Reference to a global database of materials.
+	CModelsManager* m_modelsManager{};			// Reference to a global models manager.
 	// TODO: move it out of the flowsheet and save/load independently.
 	CParametersHolder m_parameters;				// Holder of different flowsheet settings.
 	CMultidimensionalGrid m_mainGrid;			// Global version of distribution grids.
@@ -57,8 +57,23 @@ class CFlowsheet
 	bool m_topologyModified{ false };	// Indicates whether the flowsheet structure has changed since the last run of the calculation sequence analysis.
 
 public:
-	// Basic constructor
-	CFlowsheet(CModelsManager& _modelsManager, const CMaterialsDatabase& _materialsDB);
+	/**
+	 * \brief Default constructor.
+	 * \details Before using, pointers to models manager and materials database must be set.
+	 */
+	CFlowsheet() = default;
+	/**
+	 * \brief Main constructor.
+	 * \details Sets all required pointers.
+	 * \param _modelsManager Pointer to models manager.
+	 * \param _materialsDB Pointer to materials database.
+	 */
+	CFlowsheet(CModelsManager* _modelsManager, const CMaterialsDatabase* _materialsDB);
+	CFlowsheet(const CFlowsheet& _other);
+	CFlowsheet(CFlowsheet&& _other) = delete;
+	CFlowsheet& operator=(const CFlowsheet& _other);
+	CFlowsheet& operator=(CFlowsheet&& _other) = delete;
+	~CFlowsheet() = default;
 
 	// Returns the full name of the file, where the flowsheet is stored.
 	[[nodiscard]] std::filesystem::path GetFileName() const;
