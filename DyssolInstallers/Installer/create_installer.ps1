@@ -5,17 +5,24 @@
 $solution_dir   = $args[0]
 $solution_path  = $args[1]
 $qt_install_dir = $args[2]
+$platforms      = $args[3]
+
+Write-Host $platforms
 
 ### compile projects
 
-Write-Host Compiling Release Win32
-devenv $solution_path /build "Release|Win32"
-Write-Host Compiling Debug Win32
-devenv $solution_path /build "Debug|Win32"
-Write-Host Compiling Release x64
-devenv $solution_path /build "Release|x64"
-Write-Host Compiling Debug x64
-devenv $solution_path /build "Debug|x64"
+if ($platforms -eq "Win32" -Or $platforms -eq "Both" -Or $platforms -eq "") {
+	Write-Host Compiling Release Win32
+	devenv $solution_path /build "Release|Win32"
+	Write-Host Compiling Debug Win32
+	devenv $solution_path /build "Debug|Win32"
+}
+if ($platforms -eq "x64" -Or $platforms -eq "Both" -Or $platforms -eq "") {
+	Write-Host Compiling Release x64
+	devenv $solution_path /build "Release|x64"
+	Write-Host Compiling Debug x64
+	devenv $solution_path /build "Debug|x64"
+}
 Write-Host Compiling Documentation
 devenv $solution_path /build "Release|x64" /Project "Documentation"
 
@@ -52,10 +59,15 @@ if ($is_git_repo -eq $true) {
 }
 
 ### run installer compilation
-
+$command = '"..\Compiler\ISCC" "..\Scripts\Installer_Src_x86_x64.iss" "/dSolutionDir=$solution_dir" "/dQtPath=$qt_install_dir\.."'
 if ($branch) {
-	..\Compiler\ISCC ..\Scripts\Installer_Src_x86_x64.iss "/dSolutionDir=$solution_dir" "/dQtPath=$qt_install_dir\.." "/dMyAppBranch=$branch"
+	$command = $command + ' "/dMyAppBranch=$branch"'
 }
-else {
-	..\Compiler\ISCC ..\Scripts\Installer_Src_x86_x64.iss "/dSolutionDir=$solution_dir" "/dQtPath=$qt_install_dir\.."
+if ($platforms -eq "Win32" -Or $platforms -eq "Both" -Or $platforms -eq "") {
+	$command = $command + ' "/dIsIncludeX32=1"'
 }
+if ($platforms -eq "x64" -Or $platforms -eq "Both" -Or $platforms -eq "") {
+	$command = $command + ' "/dIsIncludeX64=1"'
+}
+
+Invoke-Expression "& $command"
