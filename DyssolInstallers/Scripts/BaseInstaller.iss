@@ -5,6 +5,7 @@
 #define MyAppPublisher "TUHH SPE"
 #define MyAppURL "https://cloud.dynsim-fp.de/index.php/apps/files?dir=%2Fspp1679"
 #define MyAppPublisherURL "https://www.tuhh.de/spe/home.html"
+; #define MyAppBranch # comes as a parameter from running script
 
 #include "QtLibs.iss"
 #include "FlowsheetsExamples.iss"
@@ -28,6 +29,11 @@ DefaultDirName={commonpf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 UninstallDisplayIcon={app}\{#MyAppExeName}
 AppContact=vasyl.skorych@tuhh.de
+#ifdef MyAppBranch
+OutputBaseFilename={#MyAppName} {#MyAppVersion} {#MyAppBranch} setup
+#else
+OutputBaseFilename={#MyAppName} {#MyAppVersion} setup
+#endif
 OutputDir=..\Installers
 LicenseFile=..\..\LICENSE
 SetupIconFile=..\..\DyssolMainWindow\Resources\Icon.ico

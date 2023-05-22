@@ -4,10 +4,12 @@
 #define IsIncludeX64
 #define IsWithSrc
 
-#define MyAppVersion GetStringFileInfo('..\..\x64\Release\Dyssol.exe', 'ProductVersion')
+; #define SolutionDir # comes as a parameter from running script
+; #define QtPath      # comes as a parameter from running script
+
+#define MyAppVersion GetStringFileInfo(SolutionDir+'\x64\Release\Dyssol.exe', 'ProductVersion')
 
 #include "BaseInstaller.iss"
 
 [Setup]
-OutputBaseFilename={#MyAppName} {#MyAppVersion}
 ArchitecturesInstallIn64BitMode=x64
