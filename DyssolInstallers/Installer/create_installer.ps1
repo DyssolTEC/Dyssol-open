@@ -62,7 +62,7 @@ if ($is_git_repo -eq $true) {
 }
 
 ### run installer compilation
-$command = '"..\Compiler\ISCC" "..\Scripts\Installer_Src_x86_x64.iss" "/dSolutionDir=$solution_dir" "/dQtPath=$qt_install_dir\.."'
+$command = '"..\Compiler\ISCC" "..\Scripts\Main.iss" "/dSolutionDir=$solution_dir" "/dQtPath=$qt_install_dir\.."'
 if ($branch) {
 	$command = $command + ' "/dMyAppBranch=$branch"'
 }
