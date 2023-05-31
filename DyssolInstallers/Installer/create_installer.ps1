@@ -6,6 +6,7 @@ $solution_dir   = $args[0]
 $solution_path  = $args[1]
 $qt_install_dir = $args[2]
 $platforms      = $args[3]
+$documentation  = $args[4]
 
 Write-Host $platforms
 
@@ -23,8 +24,10 @@ if ($platforms -eq "x64" -Or $platforms -eq "Both" -Or $platforms -eq "") {
 	Write-Host Compiling Debug x64
 	devenv $solution_path /build "Debug|x64"
 }
-Write-Host Compiling Documentation
-devenv $solution_path /build "Release|x64" /Project "Documentation"
+if ($documentation -eq "true") {
+	Write-Host Compiling Documentation
+	devenv $solution_path /build "Release|x64" /Project "Documentation"
+}
 
 ### get additional version information
 
