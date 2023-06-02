@@ -167,6 +167,11 @@ void CDAEModel::SetUserData( void* _pUserData )
 	m_pUserData = _pUserData;
 }
 
+void* CDAEModel::GetUserData() const
+{
+	return m_pUserData;
+}
+
 void CDAEModel::CalculateResiduals( double _dTime, double* _pVars, double* _pDerivs, double* _pRes, void* _pUserData )
 {
 
