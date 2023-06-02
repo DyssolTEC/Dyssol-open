@@ -448,6 +448,16 @@ std::vector<double> CBaseStream::GetCompoundsFractions(double _time, EPhase _pha
 	return m_phases.at(_phase)->GetCompoundsDistribution(_time);
 }
 
+std::vector<double> CBaseStream::GetCompoundsMasses(double _time) const
+{
+	return MultVector(GetCompoundsFractions(_time), GetMass(_time));
+}
+
+std::vector<double> CBaseStream::GetCompoundsMasses(double _time, EPhase _phase) const
+{
+	return MultVector(GetCompoundsFractions(_time, _phase), GetPhaseMass(_time, _phase));
+}
+
 void CBaseStream::SetCompoundFraction(double _time, const std::string& _compoundKey, EPhase _phase, double _value)
 {
 	if (!HasCompound(_compoundKey) || !HasPhase(_phase)) return;

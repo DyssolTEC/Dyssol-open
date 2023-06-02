@@ -53,6 +53,10 @@ public:
 	double GetCompoundMassFlow(double _time, const std::string& _compoundKey) const;
 	// Returns the molar flow of the compound in the specified phase at the given time point.
 	double GetCompoundMolFlow(double _time, const std::string& _compoundKey, EPhase _phase) const;
+	// Returns mass flows of all defined compounds at the given time point.
+	std::vector<double> GetCompoundsMassFlows(double _time) const;
+	// Returns mass flows of all defined compounds in the specified phase at the given time point.
+	std::vector<double> GetCompoundsMassFlows(double _time, EPhase _phase) const;
 
 	// Returns the mass flow of the specified phase at the given time point.
 	double GetPhaseMassFlow(double _time, EPhase _phase) const;
