@@ -130,6 +130,9 @@ public:
 	/**	Set pointer to user data. This pointer will be returned with functions \a CalculateResiduals and \a ResultsHandler.
 	 *	\param _pUserData Pointer to user data*/
 	void SetUserData( void* _pUserData );
+	/**	Returns a pointer to user data. This pointer is returned with functions \a CalculateResiduals and \a ResultsHandler.
+	 *	\return Pointer to user data.*/
+	void* GetUserData() const;
 
 	// ========== Virtual functions which should be overridden in child classes
 
