@@ -831,6 +831,11 @@ const CMultidimensionalGrid& CFlowsheet::GetGrid() const
 	return m_mainGrid;
 }
 
+const CMaterialsDatabase& CFlowsheet::GetMaterialDatabase() const
+{
+	return *m_materialsDB;
+}
+
 const CParametersHolder* CFlowsheet::GetParameters() const
 {
 	return &m_parameters;
