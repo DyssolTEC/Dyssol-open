@@ -154,6 +154,7 @@ public:
 	void RemoveValue(size_t _index)	{ if (_index < m_values.size()) m_values.erase(m_values.begin() + _index); }
 	// Returns all defined values.
 	[[nodiscard]] std::vector<T> GetValues() const { return m_values; }
+	void SetValues(const std::vector<T>& _values) { m_values = _values; }
 
 	// Returns minimum allowed value.
 	[[nodiscard]] T GetMin() const { return m_min; }
@@ -237,6 +238,7 @@ public:
 
 	std::vector<double> GetParams() const;				///< Returns list of all defined dependent params.
 	std::vector<double> GetValues() const;				///< Returns list of all defined values.
+	void SetValues(const std::vector<double>& _params, const std::vector<double>& _values);		///< Sets new lists of dependent params and values.
 	const CDependentValues& GetDependentData() const;   ///< Returns the dependent data itself.
 
 	size_t Size() const;								///< Returns number of defined dependent values.
