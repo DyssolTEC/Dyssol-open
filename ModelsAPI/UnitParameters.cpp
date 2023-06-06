@@ -332,6 +332,12 @@ std::vector<double> CDependentUnitParameter::GetValues() const
 	return m_data.GetValuesList();
 }
 
+void CDependentUnitParameter::SetValues(const std::vector<double>& _params, const std::vector<double>& _values)
+{
+	m_data.Clear();
+	m_data.SetValues(_params, _values);
+}
+
 const CDependentValues& CDependentUnitParameter::GetDependentData() const
 {
 	return m_data;
