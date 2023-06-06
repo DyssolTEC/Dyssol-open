@@ -8,10 +8,39 @@
 #include "ContainerFunctions.h"
 #include "DyssolStringConstants.h"
 
+CCalculationSequence::CCalculationSequence(const CCalculationSequence& _other)
+	: m_partitions{ _other.m_partitions }
+{
+	m_initialTearStreams.resize(_other.m_initialTearStreams.size());
+	for (size_t i = 0; i < _other.m_initialTearStreams.size(); ++i)
+		for (size_t j = 0; j < _other.m_initialTearStreams[i].size(); ++j)
+		{
+			m_initialTearStreams[i].emplace_back(std::make_unique<CStream>(*_other.m_initialTearStreams[i][j]));
+		}
+}
+
 CCalculationSequence::CCalculationSequence(const std::vector<std::unique_ptr<CUnitContainer>>* _allModels, const std::vector<std::shared_ptr<CStream>>* _allStreams)
 {
 	m_models = _allModels;
 	m_streams = _allStreams;
+}
+
+CCalculationSequence& CCalculationSequence::operator=(const CCalculationSequence& _other)
+{
+	if (this != &_other)
+	{
+		m_partitions = _other.m_partitions;
+		m_initialTearStreams.clear();
+		for (size_t i = 0; i < _other.m_initialTearStreams.size(); ++i)
+		{
+			m_initialTearStreams.emplace_back();
+			for (size_t j = 0; j < _other.m_initialTearStreams[i].size(); ++j)
+			{
+				m_initialTearStreams[i].emplace_back(std::make_unique<CStream>(*_other.m_initialTearStreams[i][j]));
+			}
+		}
+	}
+	return *this;
 }
 
 void CCalculationSequence::SetPointers(const std::vector<std::unique_ptr<CUnitContainer>>* _allModels, const std::vector<std::shared_ptr<CStream>>* _allStreams)

@@ -52,7 +52,7 @@ class CFlowsheet
 	////////////////////////////////////////////////////////////////////////////////
 	// Topology
 	//
-	CCalculationSequence m_calculationSequence{ &m_units, &m_streams }; // Unit simulation sequence.
+	CCalculationSequence m_calculationSequence; // Unit simulation sequence.
 	// TODO: perform the corresponding check in CalculationSequence.
 	bool m_topologyModified{ false };	// Indicates whether the flowsheet structure has changed since the last run of the calculation sequence analysis.
 
