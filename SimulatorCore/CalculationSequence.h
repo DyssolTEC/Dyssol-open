@@ -45,11 +45,14 @@ private:
 
 	std::vector<SPartitionKeys> m_partitions;       // List of defined partitions.
 
-	std::vector<std::vector<std::unique_ptr<CStream>>> m_initialTearStreams;	// Streams needed for initialization of tear streams.
+	std::vector<std::vector<std::unique_ptr<CStream>>> m_initialTearStreams{};	// Streams needed for initialization of tear streams.
 
 public:
+	CCalculationSequence() = default;
+	CCalculationSequence(const CCalculationSequence& _other);
 	// Sets pointers to all existing models and streams.
 	CCalculationSequence(const std::vector<std::unique_ptr<CUnitContainer>>* _allModels, const std::vector<std::shared_ptr<CStream>>* _allStreams);
+	CCalculationSequence& operator=(const CCalculationSequence& _other);
 	/**
 	 * Sets pointers to all existing models and streams.
 	 * \param _allModels Pointer to models.

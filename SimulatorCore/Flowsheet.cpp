@@ -27,6 +27,7 @@ CFlowsheet::CFlowsheet(const CFlowsheet& _other)
 	, m_cacheHoldups{ _other.m_cacheHoldups }
 	, m_tolerance{ _other.m_tolerance }
 	, m_thermodynamics{ _other.m_thermodynamics }
+	, m_calculationSequence{ _other.m_calculationSequence }
 	, m_topologyModified{ _other.m_topologyModified }
 {
 	for (const auto& unit : _other.m_units)
@@ -35,33 +36,39 @@ CFlowsheet::CFlowsheet(const CFlowsheet& _other)
 		m_streams.emplace_back(new CStream{ *stream });
 	for (const auto& stream : _other.m_streamsI)
 		m_streamsI.emplace_back(new CStream{ *stream });
+	m_calculationSequence.SetPointers(&m_units, &m_streams);
 	m_calculationSequence.SetSequence(_other.m_calculationSequence.GetModelsKeys(), _other.m_calculationSequence.GetStreamsKeys());
 }
 
 CFlowsheet& CFlowsheet::operator=(const CFlowsheet& _other)
 {
-	m_fileName = _other.m_fileName;
-	m_materialsDB = _other.m_materialsDB;
-	m_modelsManager = _other.m_modelsManager;
-	m_parameters = _other.m_parameters;
-	m_mainGrid = _other.m_mainGrid;
-	m_overall = _other.m_overall;
-	m_phases = _other.m_phases;
-	m_cacheStreams = _other.m_cacheStreams;
-	m_cacheHoldups = _other.m_cacheHoldups;
-	m_tolerance = _other.m_tolerance;
-	m_thermodynamics = _other.m_thermodynamics;
-	m_units.clear();
-	for (const auto& unit : _other.m_units)
-		m_units.emplace_back(new CUnitContainer{ *unit });
-	m_streams.clear();
-	for (const auto& stream : _other.m_streams)
-		m_streams.emplace_back(new CStream{ *stream });
-	m_streamsI.clear();
-	for (const auto& stream : _other.m_streamsI)
-		m_streamsI.emplace_back(new CStream{ *stream });
-	m_calculationSequence.SetSequence(_other.m_calculationSequence.GetModelsKeys(), _other.m_calculationSequence.GetStreamsKeys());
-	m_topologyModified = _other.m_topologyModified;
+	if (this != &_other)
+	{
+		m_fileName = _other.m_fileName;
+		m_materialsDB = _other.m_materialsDB;
+		m_modelsManager = _other.m_modelsManager;
+		m_parameters = _other.m_parameters;
+		m_mainGrid = _other.m_mainGrid;
+		m_overall = _other.m_overall;
+		m_phases = _other.m_phases;
+		m_cacheStreams = _other.m_cacheStreams;
+		m_cacheHoldups = _other.m_cacheHoldups;
+		m_tolerance = _other.m_tolerance;
+		m_thermodynamics = _other.m_thermodynamics;
+		m_calculationSequence = _other.m_calculationSequence;
+		m_units.clear();
+		for (const auto& unit : _other.m_units)
+			m_units.emplace_back(new CUnitContainer{ *unit });
+		m_streams.clear();
+		for (const auto& stream : _other.m_streams)
+			m_streams.emplace_back(new CStream{ *stream });
+		m_streamsI.clear();
+		for (const auto& stream : _other.m_streamsI)
+			m_streamsI.emplace_back(new CStream{ *stream });
+		m_calculationSequence.SetPointers(&m_units, &m_streams);
+		m_calculationSequence.SetSequence(_other.m_calculationSequence.GetModelsKeys(), _other.m_calculationSequence.GetStreamsKeys());
+		m_topologyModified = _other.m_topologyModified;
+	}
 	return *this;
 }
 
@@ -77,6 +84,7 @@ void CFlowsheet::Create()
 	// TODO: remove when added by user
 	m_overall.emplace_back(SOverallDescriptor{ EOverall::OVERALL_TEMPERATURE, "Temperature" , "K" });
 	m_overall.emplace_back(SOverallDescriptor{ EOverall::OVERALL_PRESSURE, "Pressure" , "Pa" });
+	m_calculationSequence.SetPointers(&m_units, &m_streams);
 }
 
 void CFlowsheet::Clear()
@@ -121,7 +129,7 @@ size_t CFlowsheet::GetUnitsNumber() const
 CUnitContainer* CFlowsheet::AddUnit(const std::string& _key)
 {
 	const std::string uniqueID = StringFunctions::GenerateUniqueKey(_key, GetAllUnitsKeys());
-	auto* unit = new CUnitContainer(uniqueID, *m_modelsManager, *m_materialsDB, m_mainGrid, m_overall, m_phases, m_cacheHoldups, m_tolerance, m_thermodynamics);
+	auto* unit = new CUnitContainer(uniqueID, m_modelsManager, m_materialsDB, &m_mainGrid, &m_overall, &m_phases, &m_cacheHoldups, &m_tolerance, &m_thermodynamics);
 	m_units.emplace_back(unit);
 	SetTopologyModified(true);
 	return unit;
