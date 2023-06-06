@@ -478,7 +478,7 @@ public:
 	 * \details Copies information about selected parameters. Assumes the corresponding parameters structure is the same.
 	 * \param _unitParameters Reference to source unit parameters manager.
 	 */
-	void CopyUserData(const CUnitParametersManager& _unitParameters);
+	void CopyUserData(const CUnitParametersManager& _other);
 
 	// Returns number of specified unit parameters.
 	size_t ParametersNumber() const;
