@@ -74,6 +74,9 @@ if ($platforms -eq "Win32" -Or $platforms -eq "Both" -Or $platforms -eq "") {
 if ($platforms -eq "x64" -Or $platforms -eq "Both" -Or $platforms -eq "") {
 	$command = $command + ' "/dIsIncludeX64=1"'
 }
+if ($documentation -eq "true") {
+	$command = $command + ' "/dIsDocs=1"'
+}
 if ($sdk -eq "true") {
 	$command = $command + ' "/dIsWithSDK=1"'
 }
