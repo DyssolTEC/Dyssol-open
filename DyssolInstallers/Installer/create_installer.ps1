@@ -7,6 +7,7 @@ $solution_path  = $args[1]
 $qt_install_dir = $args[2]
 $platforms      = $args[3]
 $documentation  = $args[4]
+$sdk_type       = $args[5]
 
 Write-Host $platforms
 
@@ -71,6 +72,9 @@ if ($platforms -eq "Win32" -Or $platforms -eq "Both" -Or $platforms -eq "") {
 }
 if ($platforms -eq "x64" -Or $platforms -eq "Both" -Or $platforms -eq "") {
 	$command = $command + ' "/dIsIncludeX64=1"'
+}
+if ($sdk_type -eq "Sources") {
+	$command = $command + ' "/dIsWithSrc=1"'
 }
 
 Invoke-Expression "& $command"

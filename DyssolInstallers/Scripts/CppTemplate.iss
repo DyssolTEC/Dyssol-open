@@ -31,18 +31,18 @@
 ; Projects
 #sub CppProjectsFileEntry
   #ifdef IsWithSrc
-Source: "..\..\{#CppProjects[I]}\*.vcxproj"; DestDir: "{app}\{code:DirCppTemplate}\{#CppProjects[I]}"; Flags: ignoreversion
-Source: "..\..\{#CppProjects[I]}\*.h"; DestDir: "{app}\{code:DirCppTemplate}\{#CppProjects[I]}"; Flags: ignoreversion
-Source: "..\..\{#CppProjects[I]}\*.cpp"; DestDir: "{app}\{code:DirCppTemplate}\{#CppProjects[I]}"; Flags: ignoreversion
-  #else
-Source: "..\..\{#CppProjects[I]}\*.h"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirNoSrcInclude}"; Flags: ignoreversion
-    #ifdef IsIncludeX32
-Source: "..\..\Win32\Debug\{#CppProjects[I]}*.lib"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirNoSrcLib}\{code:DirNoSrcLibDebug}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "..\..\{#CppProjects[I]}\*.vcxproj";          DestDir: "{app}\{code:DirCppTemplate}\{#CppProjects[I]}";                            Flags: ignoreversion
+Source: "..\..\{#CppProjects[I]}\*.h";                DestDir: "{app}\{code:DirCppTemplate}\{#CppProjects[I]}";                            Flags: ignoreversion
+Source: "..\..\{#CppProjects[I]}\*.cpp";              DestDir: "{app}\{code:DirCppTemplate}\{#CppProjects[I]}";                            Flags: ignoreversion
+  #else                                                                                                                                    
+Source: "..\..\{#CppProjects[I]}\*.h";                DestDir: "{app}\{code:DirCppTemplate}\{code:DirNoSrcInclude}";                       Flags: ignoreversion
+    #ifdef IsIncludeX32                                                                                                                    
+Source: "..\..\Win32\Debug\{#CppProjects[I]}*.lib";   DestDir: "{app}\{code:DirCppTemplate}\{code:DirNoSrcLib}\{code:DirNoSrcLibDebug}";   Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "..\..\Win32\Release\{#CppProjects[I]}*.lib"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirNoSrcLib}\{code:DirNoSrcLibRelease}"; Flags: ignoreversion; Check: not Is64BitInstallMode
     #endif
     #ifdef IsIncludeX64
-Source: "..\..\x64\Debug\{#CppProjects[I]}*.lib"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirNoSrcLib}\{code:DirNoSrcLibDebug}"; Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "..\..\x64\Release\{#CppProjects[I]}*.lib"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirNoSrcLib}\{code:DirNoSrcLibRelease}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "..\..\x64\Debug\{#CppProjects[I]}*.lib";     DestDir: "{app}\{code:DirCppTemplate}\{code:DirNoSrcLib}\{code:DirNoSrcLibDebug}";   Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "..\..\x64\Release\{#CppProjects[I]}*.lib";   DestDir: "{app}\{code:DirCppTemplate}\{code:DirNoSrcLib}\{code:DirNoSrcLibRelease}"; Flags: ignoreversion; Check: Is64BitInstallMode
     #endif
   #endif
 #endsub
@@ -52,10 +52,10 @@ Source: "..\..\x64\Release\{#CppProjects[I]}*.lib"; DestDir: "{app}\{code:DirCpp
 #sub ExternalLibsFileEntry
 Source: "..\..\ExternalLibraries\{#ExternalLibs[I]}\include\*"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirExternalLibs}\{#ExternalLibs[I]}\include"; Flags: ignoreversion createallsubdirs recursesubdirs
   #ifdef IsIncludeX32
-Source: "..\..\ExternalLibraries\{#ExternalLibs[I]}\lib32\*"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirExternalLibs}\{#ExternalLibs[I]}\lib32"; Flags: ignoreversion createallsubdirs recursesubdirs; Check: not Is64BitInstallMode
+Source: "..\..\ExternalLibraries\{#ExternalLibs[I]}\lib32\*";   DestDir: "{app}\{code:DirCppTemplate}\{code:DirExternalLibs}\{#ExternalLibs[I]}\lib32";   Flags: ignoreversion createallsubdirs recursesubdirs; Check: not Is64BitInstallMode
   #endif
   #ifdef IsIncludeX64
-Source: "..\..\ExternalLibraries\{#ExternalLibs[I]}\lib64\*"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirExternalLibs}\{#ExternalLibs[I]}\lib64"; Flags: ignoreversion createallsubdirs recursesubdirs; Check: Is64BitInstallMode
+Source: "..\..\ExternalLibraries\{#ExternalLibs[I]}\lib64\*";   DestDir: "{app}\{code:DirCppTemplate}\{code:DirExternalLibs}\{#ExternalLibs[I]}\lib64";   Flags: ignoreversion createallsubdirs recursesubdirs; Check: Is64BitInstallMode
   #endif
 #endsub
 #for {I = 0; I < DimOf(ExternalLibs); I++} ExternalLibsFileEntry
@@ -63,33 +63,33 @@ Source: "..\..\ExternalLibraries\{#ExternalLibs[I]}\lib64\*"; DestDir: "{app}\{c
 ; Solvers templates
 #sub SolverTemplatesFileEntry
 Source: "..\..\Solvers\Templates\{#SolverTemplates[I]}\*.vcxproj"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirSolverTemplates}\{#SolverTemplates[I]}"; Flags: ignoreversion
-Source: "..\..\Solvers\Templates\{#SolverTemplates[I]}\*.h"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirSolverTemplates}\{#SolverTemplates[I]}"; Flags: ignoreversion
-Source: "..\..\Solvers\Templates\{#SolverTemplates[I]}\*.cpp"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirSolverTemplates}\{#SolverTemplates[I]}"; Flags: ignoreversion
+Source: "..\..\Solvers\Templates\{#SolverTemplates[I]}\*.h";       DestDir: "{app}\{code:DirCppTemplate}\{code:DirSolverTemplates}\{#SolverTemplates[I]}"; Flags: ignoreversion
+Source: "..\..\Solvers\Templates\{#SolverTemplates[I]}\*.cpp";     DestDir: "{app}\{code:DirCppTemplate}\{code:DirSolverTemplates}\{#SolverTemplates[I]}"; Flags: ignoreversion
 #endsub
 #for {I = 0; I < DimOf(SolverTemplates); I++} SolverTemplatesFileEntry
 
 ; Units templates
 #sub UnitTemplatesFileEntry
 Source: "..\..\Units\Templates\{#UnitTemplates[I]}\*.vcxproj"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirUnitTemplates}\{#UnitTemplates[I]}"; Flags: ignoreversion
-Source: "..\..\Units\Templates\{#UnitTemplates[I]}\*.h"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirUnitTemplates}\{#UnitTemplates[I]}"; Flags: ignoreversion
-Source: "..\..\Units\Templates\{#UnitTemplates[I]}\*.cpp"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirUnitTemplates}\{#UnitTemplates[I]}"; Flags: ignoreversion
+Source: "..\..\Units\Templates\{#UnitTemplates[I]}\*.h";       DestDir: "{app}\{code:DirCppTemplate}\{code:DirUnitTemplates}\{#UnitTemplates[I]}"; Flags: ignoreversion
+Source: "..\..\Units\Templates\{#UnitTemplates[I]}\*.cpp";     DestDir: "{app}\{code:DirCppTemplate}\{code:DirUnitTemplates}\{#UnitTemplates[I]}"; Flags: ignoreversion
 #endsub
 #for {I = 0; I < DimOf(UnitTemplates); I++} UnitTemplatesFileEntry
 
 ; Property sheets
-Source: "..\..\PropertySheets\*"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirPropertySheets}"; Flags: ignoreversion createallsubdirs recursesubdirs
+Source: "..\..\PropertySheets\*";                                         DestDir: "{app}\{code:DirCppTemplate}\{code:DirPropertySheets}"; Flags: ignoreversion createallsubdirs recursesubdirs
 #ifndef IsWithSrc
-Source: "..\Data\VCProject\PropertySheets\CommonDebugStaticLibs.props"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirPropertySheets}"; Flags: ignoreversion
-Source: "..\Data\VCProject\PropertySheets\CommonReleaseStaticLibs.props"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirPropertySheets}"; Flags: ignoreversion
+Source: "..\Data\VCProject\PropertySheets\CommonDebugSDK.props";   DestDir: "{app}\{code:DirCppTemplate}\{code:DirPropertySheets}"; Flags: ignoreversion
+Source: "..\Data\VCProject\PropertySheets\CommonReleaseSDK.props"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirPropertySheets}"; Flags: ignoreversion
 #endif
 
 ; Solution files
-Source: "..\Data\VCProject\ModelsAPI.vcxproj.user"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirMainProj}"; Flags: ignoreversion
+Source: "..\Data\VCProject\ModelsAPI.vcxproj.user"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirMainProj}";               Flags: ignoreversion
 #ifdef IsWithSrc
-Source: "..\Data\VCProject\Dyssol_Src.sln"; DestDir: "{app}\{code:DirCppTemplate}"; DestName: "{code:FileSolution}"; Flags: ignoreversion
-#else
-Source: "..\..\ModelsAPI\*.vcxproj"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirMainProj}"; Flags: ignoreversion
-Source: "..\Data\VCProject\Dyssol_NoSrc.sln"; DestDir: "{app}\{code:DirCppTemplate}"; DestName: "{code:FileSolution}"; Flags: ignoreversion
+Source: "..\Data\VCProject\Dyssol_Src.sln";         DestDir: "{app}\{code:DirCppTemplate}"; DestName: "{code:FileSolution}"; Flags: ignoreversion
+#else                                               
+Source: "..\..\ModelsAPI\*.vcxproj";                DestDir: "{app}\{code:DirCppTemplate}\{code:DirMainProj}";               Flags: ignoreversion
+Source: "..\Data\VCProject\Dyssol_NoSrc.sln";       DestDir: "{app}\{code:DirCppTemplate}"; DestName: "{code:FileSolution}"; Flags: ignoreversion
 #endif
 
 ; Binaries
@@ -101,15 +101,15 @@ Source: "..\..\ExternalLibraries\graphviz\bin64\*"; DestDir: "{app}\{code:DirCpp
 #endif
 
 [Dirs]
-Name: "{app}\{code:DirCppTemplate}"; Flags: uninsalwaysuninstall
-Name: "{app}\{code:DirCppTemplate}\{code:DirExternalLibs}"; Flags: uninsalwaysuninstall
-Name: "{app}\{code:DirCppTemplate}\{code:DirMainProj}"; Flags: uninsalwaysuninstall
-Name: "{app}\{code:DirCppTemplate}\{code:DirSolversProjects}"; Flags: uninsalwaysuninstall
-Name: "{app}\{code:DirCppTemplate}\{code:DirUnitsProjects}"; Flags: uninsalwaysuninstall
-#ifndef IsWithSrc
-Name: "{app}\{code:DirCppTemplate}\{code:DirNoSrcInclude}"; Flags: uninsalwaysuninstall
-Name: "{app}\{code:DirCppTemplate}\{code:DirNoSrcLib}"; Flags: uninsalwaysuninstall
-Name: "{app}\{code:DirCppTemplate}\{code:DirNoSrcLib}\{code:DirNoSrcLibDebug}"; Flags: uninsalwaysuninstall
+Name: "{app}\{code:DirCppTemplate}";                                              Flags: uninsalwaysuninstall
+Name: "{app}\{code:DirCppTemplate}\{code:DirExternalLibs}";                       Flags: uninsalwaysuninstall
+Name: "{app}\{code:DirCppTemplate}\{code:DirMainProj}";                           Flags: uninsalwaysuninstall
+Name: "{app}\{code:DirCppTemplate}\{code:DirSolversProjects}";                    Flags: uninsalwaysuninstall
+Name: "{app}\{code:DirCppTemplate}\{code:DirUnitsProjects}";                      Flags: uninsalwaysuninstall
+#ifndef IsWithSrc                                                                 
+Name: "{app}\{code:DirCppTemplate}\{code:DirNoSrcInclude}";                       Flags: uninsalwaysuninstall
+Name: "{app}\{code:DirCppTemplate}\{code:DirNoSrcLib}";                           Flags: uninsalwaysuninstall
+Name: "{app}\{code:DirCppTemplate}\{code:DirNoSrcLib}\{code:DirNoSrcLibDebug}";   Flags: uninsalwaysuninstall
 Name: "{app}\{code:DirCppTemplate}\{code:DirNoSrcLib}\{code:DirNoSrcLibRelease}"; Flags: uninsalwaysuninstall
 #endif
 

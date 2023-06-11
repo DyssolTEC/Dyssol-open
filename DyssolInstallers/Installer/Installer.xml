@@ -25,4 +25,12 @@
     Category="General"
     DisplayName="Documentation"
     Description="Build installer with documentation."/>
+	<EnumProperty
+    Name="InstallerSDKLibs"
+    Category="General"
+    DisplayName="SDKLibs"
+    Description="Select what type of SDK libraries to include into Models Creator.">
+    <EnumValue Name="Precompiled" DisplayName="Precompiled" Description="Models Creator with precompiled SDK libraries."/>
+    <EnumValue Name="Sources"     DisplayName="Sources"     Description="Models Creator with source files of SDK libraries."/>
+  </EnumProperty>
 </Rule>

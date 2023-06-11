@@ -19,7 +19,7 @@
 ; #define IsDocs
 ; #define IsIncludeX32
 ; #define IsIncludeX64
-#define IsWithSrc
+; #define IsWithSrc
 
 #include "QtLibs.iss"
 #include "FlowsheetsExamples.iss"
