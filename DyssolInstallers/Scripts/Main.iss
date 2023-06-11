@@ -20,6 +20,7 @@
 ; #define IsIncludeX32
 ; #define IsIncludeX64
 ; #define IsWithSrc
+; #define IsWithSDK
 
 #include "QtLibs.iss"
 #include "FlowsheetsExamples.iss"
@@ -28,7 +29,9 @@
 #include "HelpFiles.iss"
 #include "Solvers.iss"
 #include "Units.iss"
+#ifdef IsWithSDK
 #include "CppTemplate.iss"
+#endif
 
 [Setup]
 AppId={{F12AB44E-589E-413D-A6CA-6A2EE5620776}
@@ -64,13 +67,13 @@ ShowLanguageDialog=auto
 PrivilegesRequired=poweruser
 UsedUserAreasWarning=no
 #ifdef IsIncludeX64
-#ifdef IsIncludeX32
+  #ifdef IsIncludeX32
 ArchitecturesAllowed=x86 x64
 ArchitecturesInstallIn64BitMode=x64
-#else
+  #else
 ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
-#endif
+  #endif
 #else
 ArchitecturesAllowed=x86 x64
 #endif
@@ -84,13 +87,17 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 #ifdef IsIncludeX32
 Source: "..\..\Win32\Release\{#MyAppExeName}"      ; DestDir: "{app}"                                         ; Flags: ignoreversion; Check: not Is64BitInstallMode
+  #ifdef IsWithSDK
 Source: "..\..\Win32\Debug\{#MyAppExeName}"        ; DestDir: "{app}\{code:DirCppTemplate}\{code:DirDebugExe}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+  #endif
 Source: "..\..\Win32\Release\DyssolC.exe"          ; DestDir: "{app}"                                         ; Flags: ignoreversion; Check: not Is64BitInstallMode
 Source: "..\..\ExternalLibraries\graphviz\bin32\*" ; DestDir: "{app}"                                         ; Flags: ignoreversion; Check: not Is64BitInstallMode
 #endif
 #ifdef IsIncludeX64
 Source: "..\..\x64\Release\{#MyAppExeName}"        ; DestDir: "{app}"                                         ; Flags: ignoreversion; Check: Is64BitInstallMode
+  #ifdef IsWithSDK
 Source: "..\..\x64\Debug\{#MyAppExeName}"          ; DestDir: "{app}\{code:DirCppTemplate}\{code:DirDebugExe}"; Flags: ignoreversion; Check: Is64BitInstallMode
+  #endif
 Source: "..\..\x64\Release\DyssolC.exe"            ; DestDir: "{app}"                                         ; Flags: ignoreversion; Check: Is64BitInstallMode
 Source: "..\..\ExternalLibraries\graphviz\bin64\*" ; DestDir: "{app}"                                         ; Flags: ignoreversion; Check: Is64BitInstallMode
 #endif
@@ -168,7 +175,9 @@ begin
   if CurStep = ssPostInstall then
   begin
     UpdateConfigIni();
+#ifdef IsWithSDK
     UpdateProjFiles();
+#endif
   end;
 end;
 

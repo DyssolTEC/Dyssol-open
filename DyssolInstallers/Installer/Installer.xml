@@ -25,7 +25,12 @@
     Category="General"
     DisplayName="Documentation"
     Description="Build installer with documentation."/>
-	<EnumProperty
+  <BoolProperty
+    Name="InstallerSDK"
+    Category="General"
+    DisplayName="ModelsCreator"
+    Description="Build installer with Models Creator SDK."/>
+  <EnumProperty
     Name="InstallerSDKLibs"
     Category="General"
     DisplayName="SDKLibs"

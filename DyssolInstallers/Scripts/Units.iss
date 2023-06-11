@@ -25,16 +25,22 @@
 [Files]
 #sub UnitsDllFileEntry
 #ifdef IsIncludeX32
-Source: "..\..\Win32\Release\Unit_{#UnitsDll[I]}.dll"; DestDir: "{app}\{code:DirUnitsDll}"; Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "..\..\Win32\Debug\Unit_{#UnitsDll[I]}.dll"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirUnitsDebugDll}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "..\..\Win32\Release\Unit_{#UnitsDll[I]}.dll"; DestDir: "{app}\{code:DirUnitsDll}";                            Flags: ignoreversion; Check: not Is64BitInstallMode
+  #ifdef IsWithSDK
+Source: "..\..\Win32\Debug\Unit_{#UnitsDll[I]}.dll";   DestDir: "{app}\{code:DirCppTemplate}\{code:DirUnitsDebugDll}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+  #endif
 #endif
 #ifdef IsIncludeX64
-Source: "..\..\x64\Release\Unit_{#UnitsDll[I]}.dll"; DestDir: "{app}\{code:DirUnitsDll}"; Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "..\..\x64\Debug\Unit_{#UnitsDll[I]}.dll"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirUnitsDebugDll}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "..\..\x64\Release\Unit_{#UnitsDll[I]}.dll";   DestDir: "{app}\{code:DirUnitsDll}";                            Flags: ignoreversion; Check: Is64BitInstallMode
+  #ifdef IsWithSDK
+Source: "..\..\x64\Debug\Unit_{#UnitsDll[I]}.dll";     DestDir: "{app}\{code:DirCppTemplate}\{code:DirUnitsDebugDll}"; Flags: ignoreversion; Check: Is64BitInstallMode
+  #endif
 #endif
 #endsub
 #for {I = 0; I < DimOf(UnitsDll); I++} UnitsDllFileEntry
 
 [Dirs]
-Name: "{app}\{code:DirUnitsDll}"; Flags: uninsalwaysuninstall
+Name: "{app}\{code:DirUnitsDll}";                            Flags: uninsalwaysuninstall
+#ifdef IsWithSDK
 Name: "{app}\{code:DirCppTemplate}\{code:DirUnitsDebugDll}"; Flags: uninsalwaysuninstall
+#endif

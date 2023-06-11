@@ -3,6 +3,7 @@
   <PropertyGroup Label="InstallerBuildSettings" Condition="'$(Configuration)|$(Platform)'=='Release|x64' OR '$(Configuration)|$(Platform)'=='Debug|x64' OR '$(Configuration)|$(Platform)'=='Release|Win32' OR '$(Configuration)|$(Platform)'=='Debug|Win32'">
     <InstallerPlatforms>Both</InstallerPlatforms>
     <InstallerDocumentation>true</InstallerDocumentation>
+    <InstallerSDK>true</InstallerSDK>
     <InstallerSDKLibs>Precompiled</InstallerSDKLibs>
   </PropertyGroup>
 </Project>
