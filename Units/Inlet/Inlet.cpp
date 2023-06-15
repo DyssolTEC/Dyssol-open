@@ -13,6 +13,7 @@ void CInlet::CreateBasicInfo()
 	SetUnitName("InletFlow");
 	SetAuthorName("SPE TUHH");
 	SetUniqueID("C55E0B290D8944C0832689B391867977");
+	SetHelpLink("003_models/unit_inletflow.html");
 }
 
 void CInlet::CreateStructure()

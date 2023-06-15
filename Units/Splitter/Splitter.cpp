@@ -13,6 +13,7 @@ void CSplitter::CreateBasicInfo()
 	SetUnitName("Splitter");
 	SetAuthorName("SPE TUHH");
 	SetUniqueID("85C77D52955242DCA863D43336A90B51");
+	SetHelpLink("003_models/unit_splitter.html");
 }
 
 void CSplitter::CreateStructure()

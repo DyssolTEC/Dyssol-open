@@ -17,6 +17,7 @@ void CScreen::CreateBasicInfo()
 	SetUnitName("Screen");
 	SetAuthorName("SPE TUHH");
 	SetUniqueID("F231006AE5AA46C6978B2DB563F31119");
+	SetHelpLink("003_models/unit_screen.html");
 }
 
 void CScreen::CreateStructure()

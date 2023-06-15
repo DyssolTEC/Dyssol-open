@@ -2,6 +2,7 @@
 
 #include "DDTable.h"
 #include "ContainerFunctions.h"
+#include "StringFunctions.h"
 #include <QHeaderView>
 
 CDDTable::CDDTable( QWidget *parent, Qt::WindowFlags flags ) : QWidget(parent, flags)
@@ -50,11 +51,24 @@ void CDDTable::SetHeaders()
 	if (m_pData.empty()) return;
 
 	m_pTable->setHorizontalHeaderItem( 0, new QTableWidgetItem("Time [s]") );
+	m_pTable->horizontalHeaderItem(0)->setToolTip("Time point");
+	m_pTable->horizontalHeaderItem(0)->setWhatsThis("Time point");
 	for (int i = 0; i < static_cast<int>(m_pData.size()); ++i)
 	{
 		if( m_pTable->columnCount() < i+2 )
 			m_pTable->insertColumn( i+2 );
 		m_pTable->setHorizontalHeaderItem( i+1, new QTableWidgetItem( QString::fromUtf8( (m_pData[i]->GetName() + " ["  + m_pData[i]->GetUnits() + "]").c_str()) ) );
+		// HACK: nasty. have to distinguish between overall and phases in a better way
+		if (StringFunctions::StartsWith(m_pData.front()->GetName(), "Mass"))
+		{
+			m_pTable->horizontalHeaderItem(i + 1)->setToolTip(QString::fromStdString(m_pData[i]->GetName()) + " of material at the corresponding time point");
+			m_pTable->horizontalHeaderItem(i + 1)->setWhatsThis(QString::fromStdString(m_pData[i]->GetName()) + " of material at the corresponding time point");
+		}
+		else
+		{
+			m_pTable->horizontalHeaderItem(i + 1)->setToolTip(QString::fromStdString("Mass fraction (0..1) of phase " + m_pData[i]->GetName()) + " at the corresponding time point");
+			m_pTable->horizontalHeaderItem(i + 1)->setWhatsThis(QString::fromStdString("Mass fraction (0..1) of phase " + m_pData[i]->GetName()) + " at the corresponding time point");
+		}
 	}
 }
 

@@ -4,13 +4,14 @@
 
 #include "ui_SimulatorTab.h"
 #include "ProgressThread.h"
+#include "QtDialog.h"
 #include <QTimer>
 #include <QElapsedTimer>
 
 class CSimulator;
 class CFlowsheet;
 
-class CSimulatorTab : public QWidget
+class CSimulatorTab : public CQtDialog
 {
 	Q_OBJECT
 
@@ -37,7 +38,7 @@ class CSimulatorTab : public QWidget
 	QTimer m_logTimer;				    // Interrupt timer to update simulation log.
 
 public:
-	CSimulatorTab(CFlowsheet* _pFlowsheet, CSimulator* _pSimulator, QWidget* _parent = nullptr);
+	CSimulatorTab(CFlowsheet* _pFlowsheet, CSimulator* _pSimulator, CModelsManager* _modelsManager, QWidget* _parent = nullptr);
 	CSimulatorTab(const CSimulatorTab&)            = delete;
 	CSimulatorTab(CSimulatorTab&&)                 = delete;
 	CSimulatorTab& operator=(const CSimulatorTab&) = delete;

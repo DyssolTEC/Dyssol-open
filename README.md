@@ -70,6 +70,7 @@ $ mkdir build
 $ cd build
 $ cmake .. -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install
 $ cmake --build . --parallel
+$ make doc
 $ make install
 ```
 - The compiled executable file and all the units' libraries will appear in `/path_to_repo/install`

@@ -28,6 +28,11 @@ std::string CBaseSolver::GetUniqueID() const
 	return m_uniqueID;
 }
 
+std::string CBaseSolver::GetHelpLink() const
+{
+	return m_helpLink;
+}
+
 void CBaseSolver::SetName(const std::string& _name)
 {
 	m_name = _name;
@@ -46,6 +51,11 @@ void CBaseSolver::SetVersion(size_t _version)
 void CBaseSolver::SetUniqueID(const std::string& _id)
 {
 	m_uniqueID = _id;
+}
+
+void CBaseSolver::SetHelpLink(const std::string& _helpLink)
+{
+	m_helpLink = _helpLink;
 }
 
 void CBaseSolver::Initialize()

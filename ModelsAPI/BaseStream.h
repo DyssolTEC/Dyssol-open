@@ -178,6 +178,10 @@ public:
 	std::vector<double> GetCompoundsFractions(double _time) const;
 	// Returns mass fraction of all defined compounds in the specified phase at the given time point.
 	std::vector<double> GetCompoundsFractions(double _time, EPhase _phase) const;
+	// Returns masses of all defined compounds at the given time point.
+	std::vector<double> GetCompoundsMasses(double _time) const;
+	// Returns masses of all defined compounds in the specified phase at the given time point.
+	std::vector<double> GetCompoundsMasses(double _time, EPhase _phase) const;
 
 	// Sets the mass fraction of the compound in the specified phase at the given time point.
 	void SetCompoundFraction(double _time, const std::string& _compoundKey, EPhase _phase, double _value);

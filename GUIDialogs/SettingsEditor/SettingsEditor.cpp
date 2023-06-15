@@ -6,15 +6,17 @@
 #include <QDesktopServices>
 #include <QFileDialog>
 
-CSettingsEditor::CSettingsEditor(QSettings* _pSettings, QWidget* parent)
-	: QDialog(parent),
-	m_pSettings(_pSettings)
+CSettingsEditor::CSettingsEditor(QSettings* _pSettings, CModelsManager* _modelsManager, QWidget* _parent)
+	: CQtDialog{ _modelsManager, _parent }
+	, m_pSettings{ _pSettings }
 {
 	ui.setupUi(this);
 	setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 	ui.labelWarningCachePath->setVisible(false);
 	ui.labelWarning->setVisible(false);
 	m_currCachePath = m_pSettings->value(StrConst::Dyssol_ConfigCachePath).toString();
+
+	SetHelpLink("001_ui/gui.html#sec-gui-menu-tools-settings");
 }
 
 void CSettingsEditor::InitializeConnections() const

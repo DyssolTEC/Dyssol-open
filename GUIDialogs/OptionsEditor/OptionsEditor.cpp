@@ -5,17 +5,19 @@
 #include "ParametersHolder.h"
 #include "DyssolUtilities.h"
 
-COptionsEditor::COptionsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pMaterialsDB, QWidget* parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
-	: QDialog(parent, flags),
-	m_pFlowsheet(_pFlowsheet),
-	m_pParams(m_pFlowsheet->GetParameters()),
-	m_materialsDB(_pMaterialsDB)
+COptionsEditor::COptionsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pMaterialsDB, CModelsManager* _modelsManager, QWidget* _parent, Qt::WindowFlags _flags)
+	: CQtDialog{ _modelsManager, _parent, _flags }
+	, m_pFlowsheet{ _pFlowsheet }
+	, m_pParams{ m_pFlowsheet->GetParameters() }
+	, m_materialsDB{ _pMaterialsDB }
 {
 	ui.setupUi(this);
 	ui.labelWarningStreams->setVisible(false);
 	ui.labelWarningHoldups->setVisible(false);
 	ui.labelWarningInternal->setVisible(false);
 	ui.labelWarningWindow->setVisible(false);
+
+	SetHelpLink("001_ui/gui.html#sec-gui-menu-setup-options");
 }
 
 void COptionsEditor::InitializeConnections() const

@@ -3,13 +3,14 @@
 #pragma once
 
 #include "ui_OptionsEditor.h"
+#include "QtDialog.h"
 #include <QMessageBox>
 
 class CFlowsheet;
 class CMaterialsDatabase;
 class CParametersHolder;
 
-class COptionsEditor : public QDialog
+class COptionsEditor : public CQtDialog
 {
 	Q_OBJECT
 
@@ -22,7 +23,7 @@ class COptionsEditor : public QDialog
 	unsigned m_cacheWindowSizeBeforeEdit; // stores old the value of cacheWindowSize for undo
 
 public:
-	COptionsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pMaterialsDB, QWidget* parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
+	COptionsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pMaterialsDB, CModelsManager* _modelsManager, QWidget* _parent = nullptr, Qt::WindowFlags _flags = Qt::WindowFlags());
 
 	void InitializeConnections() const;
 

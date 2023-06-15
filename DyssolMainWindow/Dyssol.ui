@@ -46,7 +46,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menuBar">
+  <widget class="CQtTooltipMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -56,6 +56,12 @@
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
+    <property name="toolTip">
+     <string>File operations</string>
+    </property>
+    <property name="whatsThis">
+     <string>Standard file operations</string>
+    </property>
     <property name="title">
      <string>File</string>
     </property>
@@ -69,6 +75,12 @@
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuTools">
+    <property name="toolTip">
+     <string>Tools and settings</string>
+    </property>
+    <property name="whatsThis">
+     <string>Program-wide settings and tools</string>
+    </property>
     <property name="title">
      <string>Tools</string>
     </property>
@@ -78,10 +90,22 @@
     <addaction name="actionSettingsEditor"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
+    <property name="toolTip">
+     <string>Documentation and help</string>
+    </property>
+    <property name="whatsThis">
+     <string>Access to help information and documentation</string>
+    </property>
     <property name="title">
      <string>Help</string>
     </property>
     <widget class="QMenu" name="menuDocumentation">
+     <property name="toolTip">
+      <string>Open help</string>
+     </property>
+     <property name="whatsThis">
+      <string>Access to various help information</string>
+     </property>
      <property name="title">
       <string>Documentation</string>
      </property>
@@ -91,6 +115,12 @@
     <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuFlowsheet">
+    <property name="toolTip">
+     <string>Flowsheet setup</string>
+    </property>
+    <property name="whatsThis">
+     <string>Required and optional settings of the flowsheet</string>
+    </property>
     <property name="title">
      <string>Setup</string>
     </property>
@@ -104,6 +134,12 @@
     <addaction name="actionRecycleStreams"/>
    </widget>
    <widget class="QMenu" name="menuModules">
+    <property name="toolTip">
+     <string>Modules</string>
+    </property>
+    <property name="whatsThis">
+     <string>Additional features for flowsheet analysis</string>
+    </property>
     <property name="title">
      <string>Modules</string>
     </property>
@@ -119,6 +155,12 @@
    <property name="text">
     <string>Open flowsheet...</string>
    </property>
+   <property name="toolTip">
+    <string>Open existing flowsheet</string>
+   </property>
+   <property name="whatsThis">
+    <string>Open existing flowsheet from disk</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
    </property>
@@ -128,7 +170,10 @@
     <string>Models Manager</string>
    </property>
    <property name="toolTip">
-    <string>Models manager</string>
+    <string>Open models manager</string>
+   </property>
+   <property name="whatsThis">
+    <string>Configure paths to available models</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+U</string>
@@ -138,6 +183,12 @@
    <property name="text">
     <string>Save flowsheet</string>
    </property>
+   <property name="toolTip">
+    <string>Save flowsheet</string>
+   </property>
+   <property name="whatsThis">
+    <string>Save current flowsheet to the same file</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
    </property>
@@ -145,6 +196,12 @@
   <action name="actionHoldupsEditor">
    <property name="text">
     <string>Holdups</string>
+   </property>
+   <property name="toolTip">
+    <string>Open holdups and inlet streams editor</string>
+   </property>
+   <property name="whatsThis">
+    <string>Configure materials in inlet streams and holdups</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+H</string>
@@ -155,7 +212,10 @@
     <string>Compounds</string>
    </property>
    <property name="toolTip">
-    <string>Used compounds manager</string>
+    <string>Open compounds editor</string>
+   </property>
+   <property name="whatsThis">
+    <string>Select active compunds</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+C</string>
@@ -165,6 +225,12 @@
    <property name="text">
     <string>Distributions Grids</string>
    </property>
+   <property name="toolTip">
+    <string>Open distribution grid editor</string>
+   </property>
+   <property name="whatsThis">
+    <string>Select distributed parameters and configure their grids</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+Shift+G</string>
    </property>
@@ -172,6 +238,12 @@
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
+   </property>
+   <property name="toolTip">
+    <string>Exit Dyssol</string>
+   </property>
+   <property name="whatsThis">
+    <string>Close current flowsheet and exit the program</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+Shift+Q</string>
@@ -181,6 +253,12 @@
    <property name="text">
     <string>Save flowsheet as...</string>
    </property>
+   <property name="toolTip">
+    <string>Save flowsheet as</string>
+   </property>
+   <property name="whatsThis">
+    <string>Save current flowsheet to another file</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
    </property>
@@ -188,6 +266,12 @@
   <action name="actionOptionsEditor">
    <property name="text">
     <string>Options</string>
+   </property>
+   <property name="toolTip">
+    <string>Open simulation options</string>
+   </property>
+   <property name="whatsThis">
+    <string>Configure different simulation options</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+O</string>
@@ -197,6 +281,12 @@
    <property name="text">
     <string>New flowsheet...</string>
    </property>
+   <property name="toolTip">
+    <string>Create new flowsheet</string>
+   </property>
+   <property name="whatsThis">
+    <string>Close current flowsheet and create a new empty one</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
    </property>
@@ -205,6 +295,12 @@
    <property name="text">
     <string>Phases</string>
    </property>
+   <property name="toolTip">
+    <string>Open phases editor</string>
+   </property>
+   <property name="whatsThis">
+    <string>Select active phases</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+Shift+P</string>
    </property>
@@ -212,6 +308,12 @@
   <action name="actionCalcSequencerEditor">
    <property name="text">
     <string>Calculation Sequence</string>
+   </property>
+   <property name="toolTip">
+    <string>Open calculation sequence editor</string>
+   </property>
+   <property name="whatsThis">
+    <string>Manually configure calculation sequence tear streams</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+Q</string>
@@ -286,6 +388,12 @@
    <property name="text">
     <string>About Dyssol</string>
    </property>
+   <property name="toolTip">
+    <string>Open information about Dyssol</string>
+   </property>
+   <property name="whatsThis">
+    <string>Access to information about version, license, contributors, 3rd-party tools</string>
+   </property>
   </action>
   <action name="actionConvergence">
    <property name="text">
@@ -324,6 +432,12 @@
    <property name="text">
     <string>Materials Database</string>
    </property>
+   <property name="toolTip">
+    <string>Open materials database</string>
+   </property>
+   <property name="whatsThis">
+    <string>Configure parameters of materials</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+Shift+M</string>
    </property>
@@ -332,6 +446,12 @@
    <property name="text">
     <string>Recycle Streams</string>
    </property>
+   <property name="toolTip">
+    <string>Open recycle streams editor</string>
+   </property>
+   <property name="whatsThis">
+    <string>Manually configure initial material parameters in tear streams</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+Shift+R</string>
    </property>
@@ -339,6 +459,12 @@
   <action name="actionDustFormationTester">
    <property name="text">
     <string>Dust Formation Tendency</string>
+   </property>
+   <property name="toolTip">
+    <string>Open dust formation tendency tester</string>
+   </property>
+   <property name="whatsThis">
+    <string>Analyze dust formation tendency in streams</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+D</string>
@@ -353,10 +479,22 @@
    <property name="text">
     <string>Save as script file...</string>
    </property>
+   <property name="toolTip">
+    <string>Save flowsheet as a script file </string>
+   </property>
+   <property name="whatsThis">
+    <string>Save current flowsheet as a script file for command line interface</string>
+   </property>
   </action>
   <action name="actionSettingsEditor">
    <property name="text">
     <string>Settings</string>
+   </property>
+   <property name="toolTip">
+    <string>Open program-wide settings</string>
+   </property>
+   <property name="whatsThis">
+    <string>Change program-wide settings</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+A</string>
@@ -377,6 +515,13 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>CQtTooltipMenuBar</class>
+   <extends>QMenuBar</extends>
+   <header>QtTooltipMenuBar.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="Resources.qrc"/>
  </resources>

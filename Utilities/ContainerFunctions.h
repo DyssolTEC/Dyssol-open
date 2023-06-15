@@ -129,6 +129,29 @@ void AddVectors(const std::vector<T>& _vec1, const std::vector<T>& _vec2, std::v
 		_res = _vec2;
 }
 
+// Adds two equally sized vectors element-wise and returns the result.
+template<typename T>
+std::vector<T> AddVectors(const std::vector<T>& _vec1, const std::vector<T>& _vec2)
+{
+	std::vector<T> res(_vec1.size());
+	if (_vec1.size() == _vec2.size())
+		std::transform(_vec1.begin(), _vec1.end(), _vec2.begin(), res.begin(), std::plus<>());
+	else if (!_vec1.empty() && _vec2.empty())
+		res = _vec1;
+	else if (_vec1.empty() && !_vec2.empty())
+		res = _vec2;
+	return res;
+}
+
+// Multiplies all values of the vector with value and returns the result.
+template<typename T>
+std::vector<T> MultVector(const std::vector<T>& _vec, const T& _val)
+{
+	std::vector<T> res(_vec.size());
+	std::transform(_vec.begin(), _vec.end(), res.begin(), [&](const T& el) { return el * _val; });
+	return res;
+}
+
 // Checks whether the map contains a specified key.
 template<typename K, typename V>
 bool MapContainsKey(const std::map<K, V>& _map, K _key)

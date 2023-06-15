@@ -16,6 +16,7 @@ void CAgglomerationFixedPivot::CreateBasicInfo()
 	SetAuthorName("Lusine Shahmuradyan / Robin Ahrens");
 	SetUniqueID("79E30F5FF8584FD2B773755F538FD8B2");
 	SetVersion(3);
+	SetHelpLink("003_models/solver_fixedpivot.html");
 }
 
 void CAgglomerationFixedPivot::Initialize()

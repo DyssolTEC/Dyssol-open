@@ -17,6 +17,7 @@ void CAgglomerator::CreateBasicInfo()
 	SetUnitName("Agglomerator");
 	SetAuthorName("SPE TUHH");
 	SetUniqueID("9F37215AA74D4B1699B7EC648F366219");
+	SetHelpLink("003_models/unit_agglomerator.html");
 }
 
 void CAgglomerator::CreateStructure()

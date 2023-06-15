@@ -32,6 +32,16 @@
 
 class CStatusWindow;
 
+/**
+ * A helper class to provide main window with functionality to show help files.
+ */
+class CMainWindowHelpHelper : public CQtDialog
+{
+public:
+	CMainWindowHelpHelper(CModelsManager* _modelsManager, QWidget* _parent = nullptr)
+		: CQtDialog{ _modelsManager, _parent } {}
+};
+
 //////////////////////////////////////////////////////////////////////////
 /// Main Dyssol GUI class
 //////////////////////////////////////////////////////////////////////////
@@ -51,6 +61,7 @@ private:
 	QSettings* m_pSettings;		// Config file.
 	QString m_sSettingsPath;	// Path to store settings and temporary data, where config file and caches are stored.
 
+	CMainWindowHelpHelper* m_helpHelper{}; // Fake window to provide main window with functionality to show help files.
 	CCalculationSequenceEditor* m_pCalcSequenceEditor;
 	CMaterialsDatabaseTab *m_pMaterialsDatabaseTab;
 	CCompoundsManager *m_pCompoundsManager;
@@ -128,7 +139,6 @@ private slots:
 	void SavingFinished();	// saving process is finished
 	void LoadingFinished();	// loading process is finished
 
-	void OpenHelp(const QString& _link) const;	// Opens help file.
 	void ShowAboutDialog();				// open about dialog
 
 	void SlotSaveAndReopen();

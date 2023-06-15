@@ -22,26 +22,26 @@ class CUnitContainer
 
 	CBaseUnit* m_model{ nullptr };		// Pointer to a contained model.
 
-	CModelsManager& m_modelsManager;	// A holder of all accessible models.
+	CModelsManager* m_modelsManager{};	// A holder of all accessible models.
 
 	////////////////////////////////////////////////////////////////////////////////
 	// References to flowsheet structural data and settings
 	//
 
 	// TODO: gather them in some global structure.
-	const CMaterialsDatabase& m_materialsDB;			// Reference to a database of materials.
-	const CMultidimensionalGrid& m_grid;				// Reference to the main distributions grid.
-	const std::vector<SOverallDescriptor>& m_overall;	// Reference to overall properties.
-	const std::vector<SPhaseDescriptor>& m_phases;		// Reference to phases.
-	const SCacheSettings& m_cache;						// Reference to cache settings.
-	const SToleranceSettings& m_tolerance;				// Reference to tolerance settings.
-	const SThermodynamicsSettings& m_thermodynamics;	// Reference to thermodynamics settings.
+	const CMaterialsDatabase* m_materialsDB{};			// Reference to a database of materials.
+	const CMultidimensionalGrid* m_grid{};				// Reference to the main distributions grid.
+	const std::vector<SOverallDescriptor>* m_overall{};	// Reference to overall properties.
+	const std::vector<SPhaseDescriptor>* m_phases{};	// Reference to phases.
+	const SCacheSettings* m_cache{};					// Reference to cache settings.
+	const SToleranceSettings* m_tolerance{};			// Reference to tolerance settings.
+	const SThermodynamicsSettings* m_thermodynamics{};	// Reference to thermodynamics settings.
 
 public:
 	// Basic constructor.
-	CUnitContainer(const std::string& _id, CModelsManager& _modelsManager,
-		const CMaterialsDatabase& _materialsDB, const CMultidimensionalGrid& _grid, const std::vector<SOverallDescriptor>& _overall,
-		const std::vector<SPhaseDescriptor>& _phases, const SCacheSettings& _cache, const SToleranceSettings& _tolerance, const SThermodynamicsSettings& _thermodynamics);
+	CUnitContainer(const std::string& _id, CModelsManager* _modelsManager,
+		const CMaterialsDatabase* _materialsDB, const CMultidimensionalGrid* _grid, const std::vector<SOverallDescriptor>* _overall,
+		const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics);
 	CUnitContainer(const CUnitContainer& _other);
 	CUnitContainer(CUnitContainer&& _other)                 = delete;
 	CUnitContainer& operator=(const CUnitContainer& _other) = delete;

@@ -6,14 +6,16 @@
 #include "Stream.h"
 #include "MaterialsDatabase.h"
 
-CDustFormationTesterTab::CDustFormationTesterTab(const CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, QWidget *parent)
-	: QDialog(parent),
-	m_pFlowsheet(_pFlowsheet),
-	m_matrialsDB{ _matrialsDB }
+CDustFormationTesterTab::CDustFormationTesterTab(const CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, CModelsManager* _modelsManager, QWidget *_parent)
+	: CQtDialog{ _modelsManager, _parent }
+	, m_pFlowsheet{ _pFlowsheet }
+	, m_matrialsDB{ _matrialsDB }
 {
 	ui.setupUi(this);
 	ui.tableWidgetData->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 	setWindowFlags(windowFlags() | Qt::WindowMaximizeButtonHint | Qt::WindowMinimizeButtonHint);
+
+	SetHelpLink("");
 }
 
 void CDustFormationTesterTab::InitializeConnections()

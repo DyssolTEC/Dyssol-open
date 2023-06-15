@@ -105,8 +105,10 @@
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
   </PropertyGroup>
   <ItemGroup>
+    <ClCompile Include="QtDialog.cpp" />
     <ClCompile Include="QtList.cpp" />
     <ClCompile Include="QtTable.cpp" />
+    <ClCompile Include="QtTooltipMenuBar.cpp" />
     <ClCompile Include="QtTree.cpp" />
     <ClCompile Include="SignalBlocker.cpp" />
   </ItemGroup>
@@ -120,6 +122,8 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="QtList.h" />
+    <QtMoc Include="QtTooltipMenuBar.h" />
+    <QtMoc Include="QtDialog.h" />
     <ClInclude Include="QtUtilities.h" />
     <ClInclude Include="SignalBlocker.h" />
   </ItemGroup>

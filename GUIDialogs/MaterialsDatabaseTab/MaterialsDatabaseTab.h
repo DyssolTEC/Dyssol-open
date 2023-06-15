@@ -4,9 +4,10 @@
 
 #include "ui_MaterialsDatabaseTab.h"
 #include "MaterialsDatabase.h"
+#include "QtDialog.h"
 #include <QSettings>
 
-class CMaterialsDatabaseTab : public QDialog
+class CMaterialsDatabaseTab : public CQtDialog
 {
 	Q_OBJECT
 
@@ -22,7 +23,7 @@ private:
 	bool m_bMaterialsDatabaseChanged=false;
 
 public:
-	CMaterialsDatabaseTab(CMaterialsDatabase *_pMaterialsDatabase, QSettings* _pSettings, QWidget *parent = nullptr);
+	CMaterialsDatabaseTab(CMaterialsDatabase* _pMaterialsDatabase, CModelsManager* _modelsManager, QSettings* _pSettings, QWidget* _parent = nullptr);
 
 	void InitializeConnections();
 

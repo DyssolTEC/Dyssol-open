@@ -1,166 +1,201 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CTearStreamsEditorClass</class>
- <widget class="QDialog" name="CTearStreamsEditorClass">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>1024</width>
-    <height>640</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>Initial values of tear streams</string>
-  </property>
-  <property name="windowIcon">
-   <iconset resource="../../DyssolMainWindow/Resources.qrc">
-    <normaloff>:/Icons/WinIcon</normaloff>:/Icons/WinIcon</iconset>
-  </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,1,3">
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QGroupBox" name="groupBoxMode">
-       <property name="title">
-        <string>Mode</string>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <property name="spacing">
-         <number>6</number>
-        </property>
-        <property name="leftMargin">
-         <number>9</number>
-        </property>
-        <property name="topMargin">
-         <number>9</number>
-        </property>
-        <property name="rightMargin">
-         <number>9</number>
-        </property>
-        <property name="bottomMargin">
-         <number>9</number>
-        </property>
-        <item>
-         <widget class="QRadioButton" name="radioButtonAuto">
-          <property name="text">
-           <string>Auto</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="radioButtonUser">
-          <property name="text">
-           <string>User defined</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButtonClearAll">
-       <property name="text">
-        <string>Clear all initial values</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
+  <class>CTearStreamsEditorClass</class>
+  <widget class="QDialog" name="CTearStreamsEditorClass">
+    <property name="geometry">
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>1024</width>
+        <height>640</height>
+      </rect>
+    </property>
+    <property name="windowTitle">
+      <string>Initial values of tear streams</string>
+    </property>
+    <property name="windowIcon">
+      <iconset resource="../../DyssolMainWindow/Resources.qrc">
+        <normaloff>:/Icons/WinIcon</normaloff>:/Icons/WinIcon</iconset>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,1,3">
+      <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+            <widget class="QGroupBox" name="groupBoxMode">
+              <property name="title">
+                <string>Mode</string>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout">
+                <property name="spacing">
+                  <number>6</number>
+                </property>
+                <property name="leftMargin">
+                  <number>9</number>
+                </property>
+                <property name="topMargin">
+                  <number>9</number>
+                </property>
+                <property name="rightMargin">
+                  <number>9</number>
+                </property>
+                <property name="bottomMargin">
+                  <number>9</number>
+                </property>
+                <item>
+                  <widget class="QRadioButton" name="radioButtonAuto">
+                    <property name="text">
+                      <string>Auto</string>
+                    </property>
+                    <property name="toolTip">
+                      <string>Calculate initial values automatically</string>
+                    </property>
+                    
+                    <property name="whatsThis">
+                      <string>Calculate initial values automatically</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QRadioButton" name="radioButtonUser">
+                    <property name="text">
+                      <string>User defined</string>
+                    </property>
+                    <property name="toolTip">
+                      <string>Set initial values manually</string>
+                    </property>
+                    
+                    <property name="whatsThis">
+                      <string>Set initial values manually</string>
+                    </property>
+                  </widget>
+                </item>
+              </layout>
+            </widget>
+          </item>
+          <item>
+            <widget class="QPushButton" name="pushButtonClearAll">
+              <property name="text">
+                <string>Clear all initial values</string>
+              </property>
+              <property name="toolTip">
+                <string>Remove all current initial values</string>
+              </property>
+              
+              <property name="whatsThis">
+                <string>Remove all current initial values</string>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <spacer name="horizontalSpacer">
+              <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+                <size>
+                  <width>40</width>
+                  <height>20</height>
+                </size>
+              </property>
+            </spacer>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+            <widget class="QGroupBox" name="groupBoxPartitions">
+              <property name="title">
+                <string>Partitions</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_2">
+                <item>
+                  <widget class="CQtTable" name="tablePartitions">
+                    <property name="editTriggers">
+                      <set>QAbstractItemView::NoEditTriggers</set>
+                    </property>
+                    <property name="selectionMode">
+                      <enum>QAbstractItemView::SingleSelection</enum>
+                    </property>
+                    <property name="selectionBehavior">
+                      <enum>QAbstractItemView::SelectRows</enum>
+                    </property>
+                    <attribute name="horizontalHeaderVisible">
+                      <bool>false</bool>
+                    </attribute>
+                    <attribute name="horizontalHeaderStretchLastSection">
+                      <bool>true</bool>
+                    </attribute>
+                    <property name="toolTip">
+                      <string>List of partitions</string>
+                    </property>
+                    
+                    <property name="whatsThis">
+                      <string>List of partitions</string>
+                    </property>
+                  </widget>
+                </item>
+              </layout>
+            </widget>
+          </item>
+          <item>
+            <widget class="QGroupBox" name="groupBoxStreams">
+              <property name="title">
+                <string>Tear streams</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout">
+                <item>
+                  <widget class="CQtTable" name="tableStreams">
+                    <property name="editTriggers">
+                      <set>QAbstractItemView::NoEditTriggers</set>
+                    </property>
+                    <property name="selectionMode">
+                      <enum>QAbstractItemView::SingleSelection</enum>
+                    </property>
+                    <property name="selectionBehavior">
+                      <enum>QAbstractItemView::SelectRows</enum>
+                    </property>
+                    <attribute name="horizontalHeaderVisible">
+                      <bool>false</bool>
+                    </attribute>
+                    <attribute name="horizontalHeaderStretchLastSection">
+                      <bool>true</bool>
+                    </attribute>
+                    <property name="toolTip">
+                      <string>List of tear streams</string>
+                    </property>
+                    
+                    <property name="whatsThis">
+                      <string>List of tear streams</string>
+                    </property>
+                  </widget>
+                </item>
+              </layout>
+            </widget>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <widget class="CBasicStreamEditor" name="widgetStreamsEditor" native="true" />
+      </item>
     </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QGroupBox" name="groupBoxPartitions">
-       <property name="title">
-        <string>Partitions</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
-         <widget class="CQtTable" name="tablePartitions">
-          <property name="editTriggers">
-           <set>QAbstractItemView::NoEditTriggers</set>
-          </property>
-          <property name="selectionMode">
-           <enum>QAbstractItemView::SingleSelection</enum>
-          </property>
-          <property name="selectionBehavior">
-           <enum>QAbstractItemView::SelectRows</enum>
-          </property>
-          <attribute name="horizontalHeaderVisible">
-           <bool>false</bool>
-          </attribute>
-          <attribute name="horizontalHeaderStretchLastSection">
-           <bool>true</bool>
-          </attribute>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="groupBoxStreams">
-       <property name="title">
-        <string>Tear streams</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="CQtTable" name="tableStreams">
-          <property name="editTriggers">
-           <set>QAbstractItemView::NoEditTriggers</set>
-          </property>
-          <property name="selectionMode">
-           <enum>QAbstractItemView::SingleSelection</enum>
-          </property>
-          <property name="selectionBehavior">
-           <enum>QAbstractItemView::SelectRows</enum>
-          </property>
-          <attribute name="horizontalHeaderVisible">
-           <bool>false</bool>
-          </attribute>
-          <attribute name="horizontalHeaderStretchLastSection">
-           <bool>true</bool>
-          </attribute>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="CBasicStreamEditor" name="widgetStreamsEditor" native="true"/>
-   </item>
-  </layout>
- </widget>
- <layoutdefault spacing="6" margin="11"/>
- <customwidgets>
-  <customwidget>
-   <class>CBasicStreamEditor</class>
-   <extends>QWidget</extends>
-   <header>BasicStreamEditor.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>CQtTable</class>
-   <extends>QTableWidget</extends>
-   <header>QtTable.h</header>
-  </customwidget>
- </customwidgets>
- <resources>
-  <include location="../../DyssolMainWindow/Resources.qrc"/>
- </resources>
- <connections/>
+  </widget>
+  <layoutdefault spacing="6" margin="11" />
+  <customwidgets>
+    <customwidget>
+      <class>CBasicStreamEditor</class>
+      <extends>QWidget</extends>
+      <header>BasicStreamEditor.h</header>
+      <container>1</container>
+    </customwidget>
+    <customwidget>
+      <class>CQtTable</class>
+      <extends>QTableWidget</extends>
+      <header>QtTable.h</header>
+    </customwidget>
+  </customwidgets>
+  <resources>
+    <include location="../../DyssolMainWindow/Resources.qrc" />
+  </resources>
+  <connections />
 </ui>

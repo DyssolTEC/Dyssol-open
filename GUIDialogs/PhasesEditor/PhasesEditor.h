@@ -3,12 +3,12 @@
 #pragma once
 
 #include "ui_PhasesEditor.h"
-#include <QDialog>
+#include "QtDialog.h"
 #include <QComboBox>
 
 class CFlowsheet;
 
-class CPhasesEditor : public QDialog
+class CPhasesEditor : public CQtDialog
 {
 	Q_OBJECT
 
@@ -17,7 +17,7 @@ private:
 	std::vector<QComboBox*> m_vCombos;
 
 public:
-	CPhasesEditor( CFlowsheet* _pFlowsheet, QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags() );
+	CPhasesEditor(CFlowsheet* _pFlowsheet, CModelsManager* _modelsManager, QWidget* _parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 	~CPhasesEditor();
 
 	void InitializeConnections();

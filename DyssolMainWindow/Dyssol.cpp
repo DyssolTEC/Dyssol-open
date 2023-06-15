@@ -14,7 +14,7 @@
 #include <QDesktopServices>
 #include <filesystem>
 #include <fstream>
-
+#include <QWhatsThis>
 
 //////////////////////////////////////////////////////////////////////////
 /// Dyssol
@@ -64,28 +64,39 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	// configure cache parameters
 	SetupCache();
 
+	// create help class for showing help files in main window
+	m_helpHelper = new CMainWindowHelpHelper(&m_ModelsManager, this);
+
 	// create dialogs and windows
 	m_pModelsManagerTab     = new CModulesManagerTab(&m_ModelsManager, m_pSettings, this);
-	m_pCalcSequenceEditor   = new CCalculationSequenceEditor(&m_Flowsheet, this);
-	m_pMaterialsDatabaseTab = new CMaterialsDatabaseTab(&m_MaterialsDatabase, m_pSettings, this);
-	m_pCompoundsManager     = new CCompoundsManager(&m_Flowsheet, &m_MaterialsDatabase, this);
+	m_pCalcSequenceEditor   = new CCalculationSequenceEditor(&m_Flowsheet, &m_ModelsManager, this);
+	m_pMaterialsDatabaseTab = new CMaterialsDatabaseTab(&m_MaterialsDatabase, &m_ModelsManager, m_pSettings, this);
+	m_pCompoundsManager     = new CCompoundsManager(&m_Flowsheet, &m_MaterialsDatabase, &m_ModelsManager, this);
 	m_pFlowsheetEditor      = new CFlowsheetEditor(&m_Flowsheet, &m_MaterialsDatabase, &m_ModelsManager, m_pSettings, this);
-	m_pGridEditor           = new CGridEditor(&m_Flowsheet, m_MaterialsDatabase, this);
-	m_pHoldupsEditor        = new CHoldupsEditor(&m_Flowsheet, &m_MaterialsDatabase, this);
-	m_pOptionsEditor        = new COptionsEditor(&m_Flowsheet, &m_MaterialsDatabase, this);
-	m_pPhasesEditor         = new CPhasesEditor(&m_Flowsheet, this);
-	m_pSimulatorTab         = new CSimulatorTab(&m_Flowsheet, &m_Simulator, this);
-	m_pStreamsViewer        = new CStreamsViewer(&m_Flowsheet, &m_MaterialsDatabase, this);
-	m_pUnitsViewer          = new CUnitsViewer(&m_Flowsheet, &m_MaterialsDatabase, this);
-	m_pTearStreamsEditor    = new CTearStreamsEditor(&m_Flowsheet, &m_MaterialsDatabase, this);
-	m_pDustTesterTab		= new CDustFormationTesterTab(&m_Flowsheet, &m_MaterialsDatabase, this);
-	m_pSettingsEditor		= new CSettingsEditor(m_pSettings, this);
+	m_pGridEditor           = new CGridEditor(&m_Flowsheet, m_MaterialsDatabase, &m_ModelsManager, this);
+	m_pHoldupsEditor        = new CHoldupsEditor(&m_Flowsheet, &m_MaterialsDatabase, &m_ModelsManager, this);
+	m_pOptionsEditor        = new COptionsEditor(&m_Flowsheet, &m_MaterialsDatabase, &m_ModelsManager, this);
+	m_pPhasesEditor         = new CPhasesEditor(&m_Flowsheet, &m_ModelsManager, this);
+	m_pSimulatorTab         = new CSimulatorTab(&m_Flowsheet, &m_Simulator, &m_ModelsManager, this);
+	m_pStreamsViewer        = new CStreamsViewer(&m_Flowsheet, &m_MaterialsDatabase, &m_ModelsManager, this);
+	m_pUnitsViewer          = new CUnitsViewer(&m_Flowsheet, &m_MaterialsDatabase, &m_ModelsManager, this);
+	m_pTearStreamsEditor    = new CTearStreamsEditor(&m_Flowsheet, &m_MaterialsDatabase, &m_ModelsManager, this);
+	m_pDustTesterTab		= new CDustFormationTesterTab(&m_Flowsheet, &m_MaterialsDatabase, &m_ModelsManager, this);
+	m_pSettingsEditor		= new CSettingsEditor(m_pSettings, &m_ModelsManager, this);
 
 	// setup main window: add tabs to mainTabWidget
-	ui.mainTabWidget->addTab(m_pFlowsheetEditor, StrConst::Dyssol_FlowsheetTabName);
-	ui.mainTabWidget->addTab(m_pSimulatorTab, StrConst::Dyssol_SimulatorTabName);
-	ui.mainTabWidget->addTab(m_pStreamsViewer, StrConst::Dyssol_StreamsTabName);
-	ui.mainTabWidget->addTab(m_pUnitsViewer, StrConst::Dyssol_UnitsTabName);
+	int tab = ui.mainTabWidget->addTab(m_pFlowsheetEditor, StrConst::Dyssol_FlowsheetTabName);
+	ui.mainTabWidget->setTabToolTip(tab, "Flowsheet creation tab");
+	ui.mainTabWidget->setTabWhatsThis(tab, "Create flowsheet structure and specify unit parameters");
+	tab = ui.mainTabWidget->addTab(m_pSimulatorTab, StrConst::Dyssol_SimulatorTabName);
+	ui.mainTabWidget->setTabToolTip(tab, "Simulator tab");
+	ui.mainTabWidget->setTabWhatsThis(tab, "Set simulation time, run simulation and see logs and reports");
+	tab = ui.mainTabWidget->addTab(m_pStreamsViewer, StrConst::Dyssol_StreamsTabName);
+	ui.mainTabWidget->setTabToolTip(tab, "Stream analysis tab");
+	ui.mainTabWidget->setTabWhatsThis(tab, "See analysis of streams after simulation");
+	tab = ui.mainTabWidget->addTab(m_pUnitsViewer, StrConst::Dyssol_UnitsTabName);
+	ui.mainTabWidget->setTabToolTip(tab, "Unit analysis tab");
+	ui.mainTabWidget->setTabWhatsThis(tab, "See analysis of units after simulation");
 	ui.mainTabWidget->setStyleSheet("QTabBar::tab { min-width: 100px; }");
 
 	// status modal windows
@@ -337,6 +348,13 @@ void Dyssol::ClearCache()
 
 void Dyssol::CreateMenu()
 {
+	/// enable tooltips in menus
+	ui.menuFile->setToolTipsVisible(true);
+	ui.menuFlowsheet->setToolTipsVisible(true);
+	ui.menuModules->setToolTipsVisible(true);
+	ui.menuTools->setToolTipsVisible(true);
+	ui.menuHelp->setToolTipsVisible(true);
+
 	/// recent files
 	for (size_t i = 0; i < MAX_RECENT_FILES; ++i)
 	{
@@ -349,54 +367,62 @@ void Dyssol::CreateMenu()
 	}
 	ui.menuFile->insertSeparator(ui.actionExit);
 
+	const auto AddHelpAction = [&](QMenu* _menu, const QString& _text, const QString& _link, const QString& _tooltip)
+	{
+		_menu->setToolTipsVisible(true);
+		QAction* action = _menu->addAction(_text, [this, _link] { m_helpHelper->OpenHelp(_link); });
+		action->setToolTip(_tooltip);
+		action->setWhatsThis(_tooltip);
+	};
+
 	/// help files
 	// Introduction
 	QMenu* menuIntroduction = ui.menuDocumentation->addMenu("Introduction");
-	menuIntroduction->addAction("Get Started"       , this, [&] { OpenHelp("000_get_started/get_started.html"); });
-	menuIntroduction->addAction("Architecture"      , this, [&] { OpenHelp("002_theory/brief.html"           ); });
-	menuIntroduction->addAction("Algorithms"        , this, [&] { OpenHelp("002_theory/theory.html"          ); });
-	menuIntroduction->addAction("User Interface"    , this, [&] { OpenHelp("001_ui/gui.html"                 ); });
+	AddHelpAction(menuIntroduction, "Get Started"   , "000_get_started/get_started.html", "Overview of the first steps required to use Dyssol");
+	AddHelpAction(menuIntroduction, "Architecture"  , "002_theory/brief.html"           , "Overview of the Dyssol's architecture and used methods");
+	AddHelpAction(menuIntroduction, "Algorithms"    , "002_theory/theory.html"          , "Overview of simulation algorithms");
+	AddHelpAction(menuIntroduction, "User Interface", "001_ui/gui.html"                 , "Overview of the graphical user interface");
 
 	// Units
 	QMenu* menuUnits = ui.menuDocumentation->addMenu("Units");
-	menuUnits->addAction("Agglomerator"  , this, [&] { OpenHelp("003_models/unit_agglomerator.html"); });
-	menuUnits->addAction("Bunker"        , this, [&] { OpenHelp("003_models/unit_bunker.html"      ); });
-	menuUnits->addAction("Crusher"       , this, [&] { OpenHelp("003_models/unit_crusher.html"     ); });
-	menuUnits->addAction("Granulator"    , this, [&] { OpenHelp("003_models/unit_granulator.html"  ); });
-	menuUnits->addAction("Inlet Flow"    , this, [&] { OpenHelp("003_models/unit_inletflow.html"   ); });
-	menuUnits->addAction("Mixer"         , this, [&] { OpenHelp("003_models/unit_mixer.html"       ); });
-	menuUnits->addAction("Outlet Flow"   , this, [&] { OpenHelp("003_models/unit_outletflow.html"  ); });
-	menuUnits->addAction("Screen"        , this, [&] { OpenHelp("003_models/unit_screen.html"      ); });
-	menuUnits->addAction("Splitter"      , this, [&] { OpenHelp("003_models/unit_splitter.html"    ); });
-	menuUnits->addAction("Time Delay"    , this, [&] { OpenHelp("003_models/unit_timedelay.html"   ); });
+	AddHelpAction(menuUnits, "Agglomerator", "003_models/unit_agglomerator.html", "Agglomerator model");
+	AddHelpAction(menuUnits, "Bunker"      , "003_models/unit_bunker.html"      , "Bunker model");
+	AddHelpAction(menuUnits, "Crusher"     , "003_models/unit_crusher.html"     , "Crusher model");
+	AddHelpAction(menuUnits, "Granulator"  , "003_models/unit_granulator.html"  , "Granulator model");
+	AddHelpAction(menuUnits, "Inlet Flow"  , "003_models/unit_inletflow.html"   , "Inlet flow model");
+	AddHelpAction(menuUnits, "Mixer"       , "003_models/unit_mixer.html"       , "Mixer model");
+	AddHelpAction(menuUnits, "Outlet Flow" , "003_models/unit_outletflow.html"  , "Outlet flow model");
+	AddHelpAction(menuUnits, "Screen"      , "003_models/unit_screen.html"      , "Screen model");
+	AddHelpAction(menuUnits, "Splitter"    , "003_models/unit_splitter.html"    , "Splitter model");
+	AddHelpAction(menuUnits, "Time Delay"  , "003_models/unit_timedelay.html"   , "Time delay model");
 
 	// Solvers
 	QMenu* menuSolvers = ui.menuDocumentation->addMenu("Solvers");
-	menuSolvers->addAction("Agglomeration Cell Average", this, [&] { OpenHelp("003_models/solver_cellaverage.html"); });
-	menuSolvers->addAction("Agglomeration Fixed Pivot" , this, [&] { OpenHelp("003_models/solver_fixedpivot.html" ); });
-	menuSolvers->addAction("Agglomeration FFT"         , this, [&] { OpenHelp("003_models/solver_fft.html"        ); });
+	AddHelpAction(menuSolvers, "Agglomeration Cell Average", "003_models/solver_cellaverage.html", "Cell average agglomeration solver");
+	AddHelpAction(menuSolvers, "Agglomeration Fixed Pivot" , "003_models/solver_fixedpivot.html" , "Fixed pivot agglomeration solver");
+	AddHelpAction(menuSolvers, "Agglomeration FFT"         , "003_models/solver_fft.html"        , "FFT agglomeration solver");
 
 	// Development
 	QMenu* menuDevelopment = ui.menuDocumentation->addMenu("Development");
-	menuDevelopment->addAction("Configuration of ModelsCreatorSDK", this, [&] { OpenHelp("004_development/models_development.html#configuration-of-visual-studio-project-template"); });
-	menuDevelopment->addAction("Units Development"                , this, [&] { OpenHelp("004_development/models_development.html#unit-development"                               ); });
-	menuDevelopment->addAction("Solvers Development"              , this, [&] { OpenHelp("004_development/models_development.html#solver-development"                             ); });
+	AddHelpAction(menuDevelopment, "Configuration of Models Creator project", "004_development/models_development.html#configuration-of-visual-studio-project-template", "Configuration of Visual Studio project template");
+	AddHelpAction(menuDevelopment, "Units Development"                      , "004_development/models_development.html#unit-development"                               , "Introduction to models development");
+	AddHelpAction(menuDevelopment, "Solvers Development"                    , "004_development/models_development.html#solver-development"                             , "Introduction to solvers development");
 
 	// Development - Program Interfaces
 	QMenu* menuInterfaces = menuDevelopment->addMenu("Program Interfaces");
-	menuInterfaces->addAction("BaseUnit"            , this, [&] { OpenHelp("004_development/class_baseunit.html"       ); });
-	menuInterfaces->addAction("Stream"              , this, [&] { OpenHelp("004_development/class_stream.html"         ); });
-	menuInterfaces->addAction("DAESolver"           , this, [&] { OpenHelp("004_development/solver_dae.html"           ); });
-	menuInterfaces->addAction("ExternalSolver"      , this, [&] { OpenHelp("004_development/solver_external.html"      ); });
-	menuInterfaces->addAction("TransformMatrix"     , this, [&] { OpenHelp("004_development/class_transformmatrix.html"); });
-	menuInterfaces->addAction("MDMatrix"            , this, [&] { OpenHelp("004_development/class_densemdmatrix.html"  ); });
-	menuInterfaces->addAction("Matrix2D"            , this, [&] { OpenHelp("004_development/class_matrix2d.html"       ); });
-	menuInterfaces->addAction("PSD Functions"       , this, [&] { OpenHelp("004_development/distr_functions.html"      ); });
-	menuInterfaces->addAction("Predefined Constants", this, [&] { OpenHelp("004_development/constants.html"            ); });
+	AddHelpAction(menuInterfaces, "BaseUnit"            , "004_development/class_baseunit.html"       , "API of CBaseUnit class");
+	AddHelpAction(menuInterfaces, "Stream"              , "004_development/class_stream.html"         , "API of CStream class");
+	AddHelpAction(menuInterfaces, "DAESolver"           , "004_development/solver_dae.html"           , "API of built-in solvers");
+	AddHelpAction(menuInterfaces, "ExternalSolver"      , "004_development/solver_external.html"      , "API of agglomeration solvers");
+	AddHelpAction(menuInterfaces, "TransformMatrix"     , "004_development/class_transformmatrix.html", "API of CTransformMatrix class");
+	AddHelpAction(menuInterfaces, "MDMatrix"            , "004_development/class_densemdmatrix.html"  , "API of CDenseMDMatrix class");
+	AddHelpAction(menuInterfaces, "Matrix2D"            , "004_development/class_matrix2d.html"       , "API of CMatrix2D class");
+	AddHelpAction(menuInterfaces, "PSD Functions"       , "004_development/distr_functions.html"      , "API of functions to work with distributions");
+	AddHelpAction(menuInterfaces, "Predefined Constants", "004_development/constants.html"            , "List of constants");
 
 	// Main
-	ui.menuDocumentation->addAction("Command Line Interface", this, [&] { OpenHelp("001_ui/cli.html"                           ); });
-	ui.menuDocumentation->addAction("Convergence"           , this, [&] { OpenHelp("002_theory/theory.html#convergence-methods"); });
+	AddHelpAction(ui.menuDocumentation, "Command Line Interface", "001_ui/cli.html"                           , "Overview of the command line interface");
+	AddHelpAction(ui.menuDocumentation, "Convergence"           , "002_theory/theory.html#convergence-methods", "Information about convergence methods");
 }
 
 void Dyssol::UpdateMenu()
@@ -409,6 +435,8 @@ void Dyssol::UpdateMenu()
 		QString displayText = tr("&%1 %2").arg(i + 1).arg(displayFileName);
 		m_vRecentFilesActions[i]->setText(displayText);
 		m_vRecentFilesActions[i]->setData(filesList[i]);
+		m_vRecentFilesActions[i]->setToolTip(QString::fromStdWString(cleanFileName));
+		m_vRecentFilesActions[i]->setWhatsThis(tr("Load previously opened file %2").arg(QString::fromStdWString(cleanFileName)));
 		m_vRecentFilesActions[i]->setVisible(true);
 	}
 	// hide empty
@@ -636,11 +664,6 @@ void Dyssol::LoadingFinished()
 
 	if (!m_pLoadingThread->IsSuccess())
 		QMessageBox::warning(this, StrConst::Dyssol_MainWindowName, "Unable to load the selected file\n" + m_pLoadingThread->GetFileName());
-}
-
-void Dyssol::OpenHelp(const QString& _link) const
-{
-	QDesktopServices::openUrl(QUrl(StrConst::Dyssol_HelpURL + _link));
 }
 
 void Dyssol::ShowAboutDialog()

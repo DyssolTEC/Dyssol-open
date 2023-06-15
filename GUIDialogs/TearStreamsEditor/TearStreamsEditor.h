@@ -3,11 +3,12 @@
 #pragma once
 
 #include "ui_TearStreamsEditor.h"
+#include "QtDialog.h"
 
 class CCalculationSequence;
 class CParametersHolder;
 
-class CTearStreamsEditor : public QDialog
+class CTearStreamsEditor : public CQtDialog
 {
 	Q_OBJECT
 private:
@@ -17,7 +18,7 @@ private:
 	const CCalculationSequence* m_pSequence; // Pointer to the calculation sequence.
 
 public:
-	CTearStreamsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, QWidget *parent = Q_NULLPTR);
+	CTearStreamsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, CModelsManager* _modelsManager, QWidget* _parent = nullptr);
 
 	void InitializeConnections();
 	void UpdateWholeView();

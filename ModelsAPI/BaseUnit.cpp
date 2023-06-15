@@ -52,6 +52,11 @@ std::string CBaseUnit::GetUniqueID() const
 	return m_uniqueID;
 }
 
+std::string CBaseUnit::GetHelpLink() const
+{
+	return m_helpLink;
+}
+
 void CBaseUnit::SetUnitName(const std::string& _name)
 {
 	m_unitName = _name;
@@ -70,6 +75,11 @@ void CBaseUnit::SetVersion(size_t _version)
 void CBaseUnit::SetUniqueID(const std::string& _id)
 {
 	m_uniqueID = _id;
+}
+
+void CBaseUnit::SetHelpLink(const std::string& _helpLink)
+{
+	m_helpLink = _helpLink;
 }
 
 const CPortsManager& CBaseUnit::GetPortsManager() const

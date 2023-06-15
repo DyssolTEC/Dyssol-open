@@ -14,6 +14,7 @@ void CCrusher::CreateBasicInfo()
 	SetUnitName("Crusher");
 	SetAuthorName("SPE TUHH");
 	SetUniqueID("4E2C9FB3BFA44B8E829AC393042F2BE3");
+	SetHelpLink("003_models/unit_crusher.html");
 }
 
 void CCrusher::CreateStructure()

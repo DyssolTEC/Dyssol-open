@@ -3,11 +3,12 @@
 #pragma once
 
 #include "ui_CalculationSequenceEditor.h"
+#include "QtDialog.h"
 
 class CCalculationSequence;
 class CFlowsheet;
 
-class CCalculationSequenceEditor: public QDialog
+class CCalculationSequenceEditor: public CQtDialog
 {
 	Q_OBJECT
 
@@ -26,7 +27,7 @@ class CCalculationSequenceEditor: public QDialog
 	CCalculationSequence* m_pSequence; // Pointer to the calculation sequence.
 
 public:
-	CCalculationSequenceEditor(CFlowsheet* _pFlowsheet, QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
+	CCalculationSequenceEditor(CFlowsheet* _pFlowsheet, CModelsManager* _modelsManager, QWidget* _parent = nullptr, Qt::WindowFlags _flags = Qt::WindowFlags());
 
 	void InitializeConnections() const;
 

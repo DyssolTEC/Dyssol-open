@@ -1,154 +1,184 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CModulesManagerClass</class>
- <widget class="QDialog" name="CModulesManagerClass">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>1200</width>
-    <height>800</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>Models manager</string>
-  </property>
-  <property name="windowIcon">
-   <iconset resource="../../DyssolMainWindow/Resources.qrc">
-    <normaloff>:/Icons/WinIcon</normaloff>:/Icons/WinIcon</iconset>
-  </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1,3">
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
-     <item>
-      <widget class="CQtTable" name="tableDirs">
-       <property name="selectionBehavior">
-        <enum>QAbstractItemView::SelectRows</enum>
-       </property>
-       <column>
-        <property name="text">
-         <string>Path</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Activity</string>
-        </property>
-       </column>
-      </widget>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_10">
-       <item>
-        <widget class="QPushButton" name="buttonAddDir">
-         <property name="toolTip">
-          <string>Add directory</string>
-         </property>
-         <property name="text">
-          <string>+</string>
-         </property>
+  <class>CModulesManagerClass</class>
+  <widget class="QDialog" name="CModulesManagerClass">
+    <property name="geometry">
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>1200</width>
+        <height>800</height>
+      </rect>
+    </property>
+    <property name="windowTitle">
+      <string>Models manager</string>
+    </property>
+    <property name="windowIcon">
+      <iconset resource="../../DyssolMainWindow/Resources.qrc">
+        <normaloff>:/Icons/WinIcon</normaloff>:/Icons/WinIcon</iconset>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1,3">
+      <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+            <widget class="CQtTable" name="tableDirs">
+              <property name="selectionBehavior">
+                <enum>QAbstractItemView::SelectRows</enum>
+              </property>
+              <column>
+                <property name="text">
+                  <string>Path</string>
+                </property>
+              </column>
+              <column>
+                <property name="text">
+                  <string>Activity</string>
+                </property>
+              </column>
+              <property name="toolTip">
+                <string>List of directories containing models</string>
+              </property>
+              
+              <property name="whatsThis">
+                <string>List of directories containing models</string>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <layout class="QVBoxLayout" name="verticalLayout_10">
+              <item>
+                <widget class="QPushButton" name="buttonAddDir">
+                  <property name="toolTip">
+                    <string>Add directory</string>
+                  </property>
+                  <property name="text">
+                    <string>+</string>
+                  </property>
+                  
+                  <property name="whatsThis">
+                    <string>Add directory</string>
+                  </property>
+                </widget>
+              </item>
+              <item>
+                <widget class="QPushButton" name="buttonRemDir">
+                  <property name="toolTip">
+                    <string>Remove the selected directory</string>
+                  </property>
+                  <property name="text">
+                    <string>-</string>
+                  </property>
+                  
+                  <property name="whatsThis">
+                    <string>Remove the selected directory</string>
+                  </property>
+                </widget>
+              </item>
+              <item>
+                <widget class="QPushButton" name="buttonUpDir">
+                  <property name="toolTip">
+                    <string>Move the selected directory upwards</string>
+                  </property>
+                  <property name="text">
+                    <string>▲</string>
+                  </property>
+                  
+                  <property name="whatsThis">
+                    <string>Move the selected directory upwards</string>
+                  </property>
+                </widget>
+              </item>
+              <item>
+                <widget class="QPushButton" name="buttonDownDir">
+                  <property name="toolTip">
+                    <string>Move the selected directory downwards</string>
+                  </property>
+                  <property name="text">
+                    <string>▼</string>
+                  </property>
+                  
+                  <property name="whatsThis">
+                    <string>Move the selected directory downwards</string>
+                  </property>
+                </widget>
+              </item>
+            </layout>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <widget class="CQtTable" name="tableModels">
+          <property name="alternatingRowColors">
+            <bool>true</bool>
+          </property>
+          <property name="sortingEnabled">
+            <bool>true</bool>
+          </property>
+          <attribute name="horizontalHeaderCascadingSectionResizes">
+            <bool>true</bool>
+          </attribute>
+          <attribute name="horizontalHeaderStretchLastSection">
+            <bool>true</bool>
+          </attribute>
+          <column>
+            <property name="text">
+              <string>Name</string>
+            </property>
+          </column>
+          <column>
+            <property name="text">
+              <string>Location</string>
+            </property>
+          </column>
+          <column>
+            <property name="text">
+              <string>Type</string>
+            </property>
+          </column>
+          <column>
+            <property name="text">
+              <string>Version</string>
+            </property>
+          </column>
+          <column>
+            <property name="text">
+              <string>Author</string>
+            </property>
+          </column>
+          <column>
+            <property name="text">
+              <string>Created</string>
+            </property>
+          </column>
+          <property name="toolTip">
+            <string>List of available models</string>
+          </property>
+          
+          <property name="whatsThis">
+            <string>List of available models</string>
+          </property>
         </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="buttonRemDir">
-         <property name="toolTip">
-          <string>Remove directory</string>
-         </property>
-         <property name="text">
-          <string>-</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="buttonUpDir">
-         <property name="toolTip">
-          <string>Move directory upwards</string>
-         </property>
-         <property name="text">
-          <string>▲</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="buttonDownDir">
-         <property name="toolTip">
-          <string>Move directory downwards</string>
-         </property>
-         <property name="text">
-          <string>▼</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
+      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="CQtTable" name="tableModels">
-     <property name="alternatingRowColors">
-      <bool>true</bool>
-     </property>
-     <property name="sortingEnabled">
-      <bool>true</bool>
-     </property>
-     <attribute name="horizontalHeaderCascadingSectionResizes">
-      <bool>true</bool>
-     </attribute>
-     <attribute name="horizontalHeaderStretchLastSection">
-      <bool>true</bool>
-     </attribute>
-     <column>
-      <property name="text">
-       <string>Name</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Location</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Type</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Version</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Author</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Created</string>
-      </property>
-     </column>
-    </widget>
-   </item>
-  </layout>
- </widget>
- <customwidgets>
-  <customwidget>
-   <class>CQtTable</class>
-   <extends>QTableWidget</extends>
-   <header location="global">QtTable.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
- <tabstops>
-  <tabstop>tableDirs</tabstop>
-  <tabstop>buttonAddDir</tabstop>
-  <tabstop>buttonRemDir</tabstop>
-  <tabstop>buttonUpDir</tabstop>
-  <tabstop>buttonDownDir</tabstop>
-  <tabstop>tableModels</tabstop>
- </tabstops>
- <resources>
-  <include location="../../DyssolMainWindow/Resources.qrc"/>
- </resources>
- <connections/>
+  </widget>
+  <customwidgets>
+    <customwidget>
+      <class>CQtTable</class>
+      <extends>QTableWidget</extends>
+      <header location="global">QtTable.h</header>
+      <container>1</container>
+    </customwidget>
+  </customwidgets>
+  <tabstops>
+    <tabstop>tableDirs</tabstop>
+    <tabstop>buttonAddDir</tabstop>
+    <tabstop>buttonRemDir</tabstop>
+    <tabstop>buttonUpDir</tabstop>
+    <tabstop>buttonDownDir</tabstop>
+    <tabstop>tableModels</tabstop>
+  </tabstops>
+  <resources>
+    <include location="../../DyssolMainWindow/Resources.qrc" />
+  </resources>
+  <connections />
 </ui>

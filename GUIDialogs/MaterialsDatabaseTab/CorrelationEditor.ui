@@ -1,208 +1,243 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CCorrelationEditor</class>
- <widget class="QWidget" name="CCorrelationEditor">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>355</width>
-    <height>207</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>CCorrelationEditor</string>
-  </property>
-  <property name="windowIcon">
-   <iconset resource="../../DyssolMainWindow/Resources.qrc">
-    <normaloff>:/Icons/WinIcon</normaloff>:/Icons/WinIcon</iconset>
-  </property>
-  <layout class="QGridLayout" name="gridLayout" columnstretch="1,0,0,0">
-   <item row="0" column="1">
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="title">
-      <string>Pressure [Pa]</string>
-     </property>
-     <layout class="QFormLayout" name="formLayout_2">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>Min</string>
-        </property>
-       </widget>
-      </item>
+  <class>CCorrelationEditor</class>
+  <widget class="QWidget" name="CCorrelationEditor">
+    <property name="geometry">
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>355</width>
+        <height>207</height>
+      </rect>
+    </property>
+    <property name="windowTitle">
+      <string>CCorrelationEditor</string>
+    </property>
+    <property name="windowIcon">
+      <iconset resource="../../DyssolMainWindow/Resources.qrc">
+        <normaloff>:/Icons/WinIcon</normaloff>:/Icons/WinIcon</iconset>
+    </property>
+    <layout class="QGridLayout" name="gridLayout" columnstretch="1,0,0,0">
       <item row="0" column="1">
-       <widget class="QLineEdit" name="linePMin"/>
+        <widget class="QGroupBox" name="groupBox_2">
+          <property name="title">
+            <string>Pressure [Pa]</string>
+          </property>
+          <layout class="QFormLayout" name="formLayout_2">
+            <item row="0" column="0">
+              <widget class="QLabel" name="label_3">
+                <property name="text">
+                  <string>Min</string>
+                </property>
+              </widget>
+            </item>
+            <item row="0" column="1">
+              <widget class="QLineEdit" name="linePMin" />
+            </item>
+            <item row="1" column="0">
+              <widget class="QLabel" name="label_4">
+                <property name="text">
+                  <string>Max</string>
+                </property>
+              </widget>
+            </item>
+            <item row="1" column="1">
+              <widget class="QLineEdit" name="linePMax" />
+            </item>
+          </layout>
+          <property name="toolTip">
+            <string>Pressure range of the correlation</string>
+          </property>
+          
+          <property name="whatsThis">
+            <string>Pressure range of the correlation</string>
+          </property>
+        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Max</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="linePMax"/>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBox">
-     <property name="title">
-      <string>Temperature [K]</string>
-     </property>
-     <layout class="QFormLayout" name="formLayout">
       <item row="0" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Min</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="lineTMin"/>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Max</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="lineTMax"/>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="0" column="2">
-    <widget class="QGroupBox" name="groupBox_3">
-     <property name="title">
-      <string>Correlation type</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QComboBox" name="comboType"/>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+        <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+            <string>Temperature [K]</string>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
+          <layout class="QFormLayout" name="formLayout">
+            <item row="0" column="0">
+              <widget class="QLabel" name="label">
+                <property name="text">
+                  <string>Min</string>
+                </property>
+              </widget>
+            </item>
+            <item row="0" column="1">
+              <widget class="QLineEdit" name="lineTMin" />
+            </item>
+            <item row="1" column="0">
+              <widget class="QLabel" name="label_2">
+                <property name="text">
+                  <string>Max</string>
+                </property>
+              </widget>
+            </item>
+            <item row="1" column="1">
+              <widget class="QLineEdit" name="lineTMax" />
+            </item>
+          </layout>
+          <property name="toolTip">
+            <string>Temperature range of the correlation</string>
           </property>
-         </spacer>
-        </item>
-       </layout>
+          
+          <property name="whatsThis">
+            <string>Temperature range of the correlation</string>
+          </property>
+        </widget>
       </item>
-      <item>
-       <widget class="QLabel" name="labelEquation">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>Equation</string>
-        </property>
-        <property name="textFormat">
-         <enum>Qt::RichText</enum>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
+      <item row="0" column="2">
+        <widget class="QGroupBox" name="groupBox_3">
+          <property name="title">
+            <string>Correlation type</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+              <layout class="QHBoxLayout" name="horizontalLayout">
+                <item>
+                  <widget class="QComboBox" name="comboType" />
+                </item>
+                <item>
+                  <spacer name="horizontalSpacer">
+                    <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                      <size>
+                        <width>40</width>
+                        <height>20</height>
+                      </size>
+                    </property>
+                  </spacer>
+                </item>
+              </layout>
+            </item>
+            <item>
+              <widget class="QLabel" name="labelEquation">
+                <property name="font">
+                  <font>
+                    <pointsize>10</pointsize>
+                  </font>
+                </property>
+                <property name="text">
+                  <string>Equation</string>
+                </property>
+                <property name="textFormat">
+                  <enum>Qt::RichText</enum>
+                </property>
+                <property name="wordWrap">
+                  <bool>true</bool>
+                </property>
+              </widget>
+            </item>
+          </layout>
+          <property name="toolTip">
+            <string>Correlation function</string>
+          </property>
+          
+          <property name="whatsThis">
+            <string>Correlation function</string>
+          </property>
+        </widget>
       </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="0" colspan="4">
-    <widget class="QGroupBox" name="groupBoxTable">
-     <property name="title">
-      <string>Values</string>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="CQtTable" name="tableParams">
-        <attribute name="horizontalHeaderVisible">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="verticalHeaderCascadingSectionResizes">
-         <bool>true</bool>
-        </attribute>
-        <row>
-         <property name="text">
-          <string>Param</string>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string>Value</string>
-         </property>
-        </row>
-        <column>
-         <property name="text">
-          <string>a</string>
-         </property>
-        </column>
-       </widget>
+      <item row="1" column="0" colspan="4">
+        <widget class="QGroupBox" name="groupBoxTable">
+          <property name="title">
+            <string>Values</string>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+              <widget class="CQtTable" name="tableParams">
+                <attribute name="horizontalHeaderVisible">
+                  <bool>false</bool>
+                </attribute>
+                <attribute name="verticalHeaderCascadingSectionResizes">
+                  <bool>true</bool>
+                </attribute>
+                <row>
+                  <property name="text">
+                    <string>Param</string>
+                  </property>
+                </row>
+                <row>
+                  <property name="text">
+                    <string>Value</string>
+                  </property>
+                </row>
+                <column>
+                  <property name="text">
+                    <string>a</string>
+                  </property>
+                </column>
+                <property name="toolTip">
+                  <string>Correlation parameters</string>
+                </property>
+                
+                <property name="whatsThis">
+                  <string>Correlation parameters</string>
+                </property>
+              </widget>
+            </item>
+          </layout>
+        </widget>
       </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="0" column="3">
-    <layout class="QVBoxLayout" name="verticalLayout_2">
-     <item>
-      <widget class="QToolButton" name="toolButtonInfo">
-       <property name="text">
-        <string>i</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
+      <item row="0" column="3">
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+            <widget class="QToolButton" name="toolButtonInfo">
+              <property name="text">
+                <string>i</string>
+              </property>
+              <property name="toolTip">
+                <string>User-defined information about the correlation</string>
+              </property>
+              
+              <property name="whatsThis">
+                <string>User-defined information about the correlation</string>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <spacer name="verticalSpacer">
+              <property name="orientation">
+                <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+                <size>
+                  <width>20</width>
+                  <height>40</height>
+                </size>
+              </property>
+            </spacer>
+          </item>
+        </layout>
+      </item>
     </layout>
-   </item>
-  </layout>
- </widget>
- <layoutdefault spacing="6" margin="11"/>
- <customwidgets>
-  <customwidget>
-   <class>CQtTable</class>
-   <extends>QTableWidget</extends>
-   <header location="global">QtTable.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
- <tabstops>
-  <tabstop>lineTMin</tabstop>
-  <tabstop>lineTMax</tabstop>
-  <tabstop>linePMin</tabstop>
-  <tabstop>linePMax</tabstop>
-  <tabstop>comboType</tabstop>
-  <tabstop>toolButtonInfo</tabstop>
-  <tabstop>tableParams</tabstop>
- </tabstops>
- <resources>
-  <include location="../../DyssolMainWindow/Resources.qrc"/>
- </resources>
- <connections/>
+  </widget>
+  <layoutdefault spacing="6" margin="11" />
+  <customwidgets>
+    <customwidget>
+      <class>CQtTable</class>
+      <extends>QTableWidget</extends>
+      <header location="global">QtTable.h</header>
+      <container>1</container>
+    </customwidget>
+  </customwidgets>
+  <tabstops>
+    <tabstop>lineTMin</tabstop>
+    <tabstop>lineTMax</tabstop>
+    <tabstop>linePMin</tabstop>
+    <tabstop>linePMax</tabstop>
+    <tabstop>comboType</tabstop>
+    <tabstop>toolButtonInfo</tabstop>
+    <tabstop>tableParams</tabstop>
+  </tabstops>
+  <resources>
+    <include location="../../DyssolMainWindow/Resources.qrc" />
+  </resources>
+  <connections />
 </ui>

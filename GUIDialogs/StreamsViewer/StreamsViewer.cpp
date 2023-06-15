@@ -5,13 +5,15 @@
 #include "Flowsheet.h"
 #include "Stream.h"
 
-CStreamsViewer::CStreamsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, QWidget* _parent /*= nullptr*/, Qt::WindowFlags flags /*= {} */) :
-	QWidget(_parent, flags),
-	m_pFlowsheet{ _pFlowsheet },
-	m_pViewer{ new CBasicStreamsViewer(_pFlowsheet, _materialsDB, this) }
+CStreamsViewer::CStreamsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, CModelsManager* _modelsManager, QWidget* _parent, Qt::WindowFlags _flags)
+	: CQtDialog{ _modelsManager, _parent, _flags }
+	, m_pFlowsheet{ _pFlowsheet }
+	, m_pViewer{ new CBasicStreamsViewer(_pFlowsheet, _materialsDB, this) }
 {
 	ui.setupUi(this);
 	ui.horizontalLayout->addWidget(m_pViewer);
+
+	SetHelpLink("001_ui/gui.html#sec-gui-tabs-streams");
 }
 
 void CStreamsViewer::InitializeConnections() const

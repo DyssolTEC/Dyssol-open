@@ -4,9 +4,9 @@
 #include "BaseUnit.h"
 #include "DyssolStringConstants.h"
 
-CUnitContainer::CUnitContainer(const std::string& _id, CModelsManager& _modelsManager,
-	const CMaterialsDatabase& _materialsDB, const CMultidimensionalGrid& _grid, const std::vector<SOverallDescriptor>& _overall,
-	const std::vector<SPhaseDescriptor>& _phases, const SCacheSettings& _cache, const SToleranceSettings& _tolerance, const SThermodynamicsSettings& _thermodynamics) :
+CUnitContainer::CUnitContainer(const std::string& _id, CModelsManager* _modelsManager,
+	const CMaterialsDatabase* _materialsDB, const CMultidimensionalGrid* _grid, const std::vector<SOverallDescriptor>* _overall,
+	const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics) :
 	m_uniqueID{ _id.empty() ? StringFunctions::GenerateRandomKey() : _id },
 	m_modelsManager{ _modelsManager },
 	m_materialsDB{ _materialsDB },
@@ -41,7 +41,7 @@ CUnitContainer::CUnitContainer(const CUnitContainer& _other)
 CUnitContainer::~CUnitContainer()
 {
 	ClearExternalSolvers();
-	m_modelsManager.FreeUnit(m_model);
+	m_modelsManager->FreeUnit(m_model);
 }
 
 std::string CUnitContainer::GetName() const
@@ -67,11 +67,11 @@ void CUnitContainer::SetKey(const std::string& _id)
 void CUnitContainer::SetModel(const std::string& _uniqueID)
 {
 	if (m_model && m_model->GetUniqueID() == _uniqueID) return;
-	m_modelsManager.FreeUnit(m_model);
-	m_model = m_modelsManager.InstantiateUnit(_uniqueID);
+	m_modelsManager->FreeUnit(m_model);
+	m_model = m_modelsManager->InstantiateUnit(_uniqueID);
 	if (m_model)
 	{
-		m_model->SetSettings(&m_materialsDB, m_grid, &m_overall, &m_phases, &m_cache, &m_tolerance, &m_thermodynamics);
+		m_model->SetSettings(m_materialsDB, *m_grid, m_overall, m_phases, m_cache, m_tolerance, m_thermodynamics);
 		// TODO: catch exceptions from Add-functions
 		m_model->DoCreateStructure();
 	}
@@ -99,7 +99,7 @@ std::string CUnitContainer::InitializeExternalSolvers() const
 			return StrConst::Flow_ErrSolverKeyEmpty(parameter->GetName(), m_name);
 		}
 
-		CBaseSolver* solver = m_modelsManager.InstantiateSolver(parameter->GetKey());
+		CBaseSolver* solver = m_modelsManager->InstantiateSolver(parameter->GetKey());
 		if (!solver)
 		{
 			ClearExternalSolvers();
@@ -116,7 +116,7 @@ void CUnitContainer::ClearExternalSolvers() const
 {
 	if (!m_model) return;
 	for (auto& parameter : m_model->GetUnitParametersManager().GetAllSolverParameters())
-		m_modelsManager.FreeSolver(parameter->GetSolver());
+		m_modelsManager->FreeSolver(parameter->GetSolver());
 }
 
 void CUnitContainer::SaveToFile(CH5Handler& _h5File, const std::string& _path) const

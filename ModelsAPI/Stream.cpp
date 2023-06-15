@@ -100,6 +100,16 @@ double CStream::GetCompoundMolFlow(double _time, const std::string& _compoundKey
 	return GetCompoundMol(_time, _compoundKey, _phase);
 }
 
+std::vector<double> CStream::GetCompoundsMassFlows(double _time) const
+{
+	return GetCompoundsMasses(_time);
+}
+
+std::vector<double> CStream::GetCompoundsMassFlows(double _time, EPhase _phase) const
+{
+	return GetCompoundsMasses(_time, _phase);
+}
+
 double CStream::GetPhaseMassFlow(double _time, EPhase _phase) const
 {
 	return GetPhaseMass(_time, _phase);

@@ -3,9 +3,10 @@
 #pragma once
 
 #include "ui_SettingsEditor.h"
+#include "QtDialog.h"
 #include <QSettings>
 
-class CSettingsEditor : public QDialog
+class CSettingsEditor : public CQtDialog
 {
 	Q_OBJECT
 
@@ -15,7 +16,7 @@ class CSettingsEditor : public QDialog
 	QString m_currCachePath; // Currently used cache path.
 
 public:
-	CSettingsEditor(QSettings* _pSettings, QWidget* parent = nullptr);
+	CSettingsEditor(QSettings* _pSettings, CModelsManager* _modelsManager, QWidget* _parent = nullptr);
 
 	void InitializeConnections() const;
 

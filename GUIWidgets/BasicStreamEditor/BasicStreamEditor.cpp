@@ -19,11 +19,13 @@ CBasicStreamEditor::CBasicStreamEditor(QWidget *parent)
 	m_pFlowsheet = nullptr;
 
 	m_pDDTableMTP = new CDDTable(ui.mainTabWidget);
-	ui.mainTabWidget->insertTab(0, m_pDDTableMTP, "MTP");
+	const int iTabOverall = ui.mainTabWidget->insertTab(0, m_pDDTableMTP, "MTP");
+	ui.mainTabWidget->setTabToolTip(iTabOverall, "Overall holdup/stream properties");
 
 	m_pDDTablePhase = new CDDTable(ui.mainTabWidget);
 	m_pDDTablePhase->SetNormalizationCheck(true);
-	ui.mainTabWidget->insertTab(1, m_pDDTablePhase, "Phase fractions");
+	const int iTabPhases = ui.mainTabWidget->insertTab(1, m_pDDTablePhase, "Phase fractions");
+	ui.mainTabWidget->setTabToolTip(iTabPhases, "Phase fractions in the holdup/stream");
 
 	UpdateTabs();
 
@@ -119,7 +121,8 @@ void CBasicStreamEditor::UpdateTabs()
 		{
 			CMDMTable *pMDMTable = new CMDMTable(ui.mainTabWidget);
 			m_vMDMTablePhases.push_back(pMDMTable);
-			ui.mainTabWidget->insertTab(index + 2, pMDMTable, QString::fromStdString(phase.name));
+			const int iTab = ui.mainTabWidget->insertTab(index + 2, pMDMTable, QString::fromStdString(phase.name));
+			ui.mainTabWidget->setTabToolTip(iTab, "Compound fractions in the " + QString::fromStdString(phase.name) + " phase");
 			connect(pMDMTable, SIGNAL(DataChanged()), this, SLOT(ChangeData()));
 			++index;
 		}
@@ -139,7 +142,10 @@ void CBasicStreamEditor::UpdateTabs()
 
 	const size_t iSolid = VectorFind(phases, [&](const auto& p) { return p.state == EPhase::SOLID; });
 	if (iSolid != static_cast<size_t>(-1))
-		ui.mainTabWidget->insertTab(static_cast<int>(m_pFlowsheet->GetPhasesNumber()) + 2, m_pSolidDistrEditor, QString::fromStdString(phases[iSolid].name));
+	{
+		const int iTab = ui.mainTabWidget->insertTab(static_cast<int>(m_pFlowsheet->GetPhasesNumber()) + 2, m_pSolidDistrEditor, QString::fromStdString(phases[iSolid].name));
+		ui.mainTabWidget->setTabToolTip(iTab, "Compound fractions and distributed properties in the " + QString::fromStdString(phases[iSolid].name) + " phase");
+	}
 
 	if (iOldTab < ui.mainTabWidget->count())
 		ui.mainTabWidget->setCurrentIndex(iOldTab);
