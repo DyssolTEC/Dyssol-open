@@ -23,9 +23,9 @@ The development of modules for Dyssol can be done in three following steps:
 Configuration of Visual Studio project template
 ===============================================
 
-1.	Open directory where Dyssol has been installed (for example ``C:\Program Files (x86)\Dyssol``) and copy folder ``VCProject`` to the desired location on your hard drive (further as ``<PathToSolution>``).
+1.	Open directory where Dyssol has been installed (for example ``C:\Program Files (x86)\Dyssol``) and copy folder ``ModelsCreatorSDK`` to the desired location on your hard drive (further as ``<PathToSolution>``).
 
-2.	Open the copied folder ``VCProject`` and run file ``Dyssol.sln`` to open solution in Microsoft Visual Studio, which should be previously installed. 
+2.	Open the copied folder ``ModelsCreatorSDK`` and run file ``Dyssol.sln`` to open solution in Microsoft Visual Studio, which should be previously installed. 
 
 3.	Select startup project: 
 
@@ -37,7 +37,7 @@ Configuration of Visual Studio project template
 	
 	- Set combo box Configuration in the top of the window to position Debug, and provide the property Command with the path to debug version of executable, which is located at 
 	
-		``<PathToSolution>\VCProject\ExecutableDebug\Dyssol.exe``
+		``<PathToSolution>\ModelsCreatorSDK\ExecutableDebug\Dyssol.exe``
 	
 	- Set combo box *Configuration* in the top of the window to position *Release*, and provide the property *Command* with the path to release version of executable, which is located in the directory where Dyssol has been installed: 
 	
@@ -63,7 +63,7 @@ You must do the following in order to develop your new solver (plese refer to :r
 
 	1.	Install Microsoft Visual Studio 2015 (Community). 
 	
-	2.	Configure template project ``VCProject``.
+	2.	Configure template project ``ModelsCreatorSDK``.
 
 There are 4 different pre-defined templates of units available:
 
@@ -82,19 +82,19 @@ Please also refer to :ref:`label-baseUnit` for detailed informaiton on functions
 Add new unit to the template project
 ------------------------------------
 
-1.	Copy the desired template of the unit from ``<PathToSolution>\VCProject\UnitsTemplates`` to the folder ``Units`` in solution (``<PathToSolution>\VCProject\Units``).
+1.	Copy the desired template of the unit from ``<PathToSolution>\ModelsCreatorSDK\UnitsTemplates`` to the folder ``Units`` in solution (``<PathToSolution>\ModelsCreatorSDK\Units``).
 
 2.	Rename template’s folder according to the name of your new unit (further ``<MyUnitFolder>``). The name can be chosen freely.
 
 3.	Rename project files in template’s folder (``*.vcxproj``, ``*.vcxproj.filters``) according to the name of your new unit.
 
-4.	Run the solution file (``<PathToSolution>\VCProject\Dyssol.sln``) to open it in Visual Studio.
+4.	Run the solution file (``<PathToSolution>\ModelsCreatorSDK\Dyssol.sln``) to open it in Visual Studio.
 
-5.	Add project with your new unit to the solution. To do this, select in Visual Studio *File → Add → Existing Project* and specify path to the project file (``<PathToSolution>\VCProject\Units\<MyUnitFolder>\<*.vcxproj>``).
+5.	Add project with your new unit to the solution. To do this, select in Visual Studio *File → Add → Existing Project* and specify path to the project file (``<PathToSolution>\ModelsCreatorSDK\Units\<MyUnitFolder>\<*.vcxproj>``).
 
 6.	Rename added project in Visual Studio according to the name of your unit. 
 
-Now you can implement functionality of your new unit. To build your solution press :kbd:`F7`, to run it in debug mode press :kbd:`F5`. Files with new units will be placed to ``<PathToSolution>\VCProject\Debug``.
+Now you can implement functionality of your new unit. To build your solution press :kbd:`F7`, to run it in debug mode press :kbd:`F5`. Files with new units will be placed to ``<PathToSolution>\ModelsCreatorSDK\Debug``.
 
 As debug versions of compiled and built units contain a lot of additional information, which is used by Visual Studio to perform debugging, their calculation efficiency can be dramatically low. Thus, for the simulation purposes, units should be built in *Release* mode.
 
@@ -103,9 +103,9 @@ As debug versions of compiled and built units contain a lot of additional inform
 Configure Dyssol to work with implemented units
 -----------------------------------------------
 
-1.	Build your units in *Release* mode. To do this, open your solution in Visual Studio (run file ``<PathToSolution>\VCProject.sln``), switch *Solution configuration* combo box from the toolbox of Visual Studio from *Debug* to *Release* and build the project (press :kbd:`F7` or choose *Build → Build project* in program menu).
+1.	Build your units in *Release* mode. To do this, open your solution in Visual Studio (run file ``<PathToSolution>\ModelsCreatorSDK.sln``), switch *Solution configuration* combo box from the toolbox of Visual Studio from *Debug* to *Release* and build the project (press :kbd:`F7` or choose *Build → Build project* in program menu).
 
-2.	Configure Dyssol by adding the path to new units: run Dyssol, choose *Tools → Models Manager* and add path to your models (``<PathToSolution>\VCProject\Release``).
+2.	Configure Dyssol by adding the path to new units: run Dyssol, choose *Tools → Models Manager* and add path to your models (``<PathToSolution>\ModelsCreatorSDK\Release``).
 
 Now, all newly developed units will be available in Dyssol.
 
@@ -113,11 +113,11 @@ In general, usual configuration of *Models Manager* should include following pat
 
 	-	``<InstallationPath>\Units``: list of standard units;
 
-	-	``<PathToSolution>\VCProject\UnitsDebugLibs``: debug versions of standard units;
+	-	``<PathToSolution>\ModelsCreatorSDK\UnitsDebugLibs``: debug versions of standard units;
 
-	-	``<PathToSolution>\VCProject\Debug``: debug versions of developed units;
+	-	``<PathToSolution>\ModelsCreatorSDK\Debug``: debug versions of developed units;
 
-	-	``<PathToSolution>\VCProject\Release``: release versions of developed units.
+	-	``<PathToSolution>\ModelsCreatorSDK\Release``: release versions of developed units.
 
 |
 
@@ -196,13 +196,13 @@ Now you want to develop a new steady-state model of splitter with one input stre
 
 You need the following steps:
 
-1. Copy the directory with the template unit ``<PathToSolution>\VCProject\UnitsTemplates\SteadyStateUnit`` to the directory for new units ``<PathToSolution>\VCProject\Units\``.
+1. Copy the directory with the template unit ``<PathToSolution>\ModelsCreatorSDK\UnitsTemplates\SteadyStateUnit`` to the directory for new units ``<PathToSolution>\ModelsCreatorSDK\Units\``.
 
 2. Rename the copied template’s directory ``SteadyStateUnit`` to ``MySplitter``. Open the directory ``MySplitter`` and rename file ``SteadyState.vcxproj`` to ``MySplitter.vcxproj``.
 
-3. Open the template solution ``<PathToSolution>\VCProject\Dyssol.sln`` in Visual Studio.
+3. Open the template solution ``<PathToSolution>\ModelsCreatorSDK\Dyssol.sln`` in Visual Studio.
 
-4. Add project with your new unit to the solution: select in Visual Studio *File → Add → Existing Project* and specify path to the project file ``<PathToSolution>\VCProject\Units\MySplitter\MySplitter.vcxproj``.
+4. Add project with your new unit to the solution: select in Visual Studio *File → Add → Existing Project* and specify path to the project file ``<PathToSolution>\ModelsCreatorSDK\Units\MySplitter\MySplitter.vcxproj``.
 
 5. Rename added project in Visual Studio from ``UnitT_SteadyState`` to ``Unit_MySplitter``.
 
@@ -480,13 +480,13 @@ To complete the simulation, you need to solve the following implicit equation sy
 
 Now you need the following steps:
 
-1. Copy the directory with the template unit ``<PathToSolution>\VCProject\UnitsTemplates\SteadyStateWithNLSolver\`` to the directory for new units ``<PathToSolution>\VCProject\Units\``. Rename the folder to ``AirClassifierTemplate`` and the file ``SteadyStateWithNLSolver.vcxproj`` to ``AirClassifier.vcxproj``.
+1. Copy the directory with the template unit ``<PathToSolution>\ModelsCreatorSDK\UnitsTemplates\SteadyStateWithNLSolver\`` to the directory for new units ``<PathToSolution>\ModelsCreatorSDK\Units\``. Rename the folder to ``AirClassifierTemplate`` and the file ``SteadyStateWithNLSolver.vcxproj`` to ``AirClassifier.vcxproj``.
 
-2. Along with this application example, you obtain a pre-configured template folder of the air classifier unit ``...\Task8\AirClassifierTemplate\``, in which you find the source file ``Unit.cpp`` and header file ``Unit.h``. Copy the contents of them to the corresponding ``Unit.cpp`` and ``Unit.h`` files in your template folder ``<PathToSolution>\VCProject\Units\AirClassifierTemplate\``.
+2. Along with this application example, you obtain a pre-configured template folder of the air classifier unit ``...\Task8\AirClassifierTemplate\``, in which you find the source file ``Unit.cpp`` and header file ``Unit.h``. Copy the contents of them to the corresponding ``Unit.cpp`` and ``Unit.h`` files in your template folder ``<PathToSolution>\ModelsCreatorSDK\Units\AirClassifierTemplate\``.
 
-3. Open the template solution ``<PathToSolution>\VCProject\Dyssol.sln`` in Visual Studio.
+3. Open the template solution ``<PathToSolution>\ModelsCreatorSDK\Dyssol.sln`` in Visual Studio.
 
-4. Add project with your new unit to the solution: select *File → Add → Existing Project* and specify path to the project file ``<PathToSolution>\VCProject\Units\AirClassifierTemplate\``. Rename the unit to ``Unit_AirClassifier``.
+4. Add project with your new unit to the solution: select *File → Add → Existing Project* and specify path to the project file ``<PathToSolution>\ModelsCreatorSDK\Units\AirClassifierTemplate\``. Rename the unit to ``Unit_AirClassifier``.
 
 5. Open ``Unit_AirClassifier`` → ``Unit.cpp`` in the Visual Studio’s and extend the unit with the following functionality:
 
@@ -874,13 +874,13 @@ You will learn to implement a simple dynamic unit (however without any physical 
 
 Do the following steps:
 
-1. Copy a directory with the template unit ``<PathToSolution>\VCProject\UnitsTemplates\DynamicUnit`` to the directory for new units ``<PathToSolution>\VCProject\Units\``.
+1. Copy a directory with the template unit ``<PathToSolution>\ModelsCreatorSDK\UnitsTemplates\DynamicUnit`` to the directory for new units ``<PathToSolution>\ModelsCreatorSDK\Units\``.
 
 2. Rename the copied template’s directory ``DynamicUnit`` to ``Basics``. Open the directory ``Basics`` and rename the file `Dynamic.vcxproj`` to ``Basics.vcxproj``.
 
 3. Open the template solution (``<PathToSolution>\Dyssol.sln``) in Visual Studio.
 
-4. Add project with your new unit to the solution: select in Visual Studio *File → Add → Existing Project* and specify path to the project file ``<PathToSolution>\VCProject\Units\Basics\Basics.vcxproj``.
+4. Add project with your new unit to the solution: select in Visual Studio *File → Add → Existing Project* and specify path to the project file ``<PathToSolution>\ModelsCreatorSDK\Units\Basics\Basics.vcxproj``.
 
 5. Rename added project in Visual Studio from ``UnitT_Dynamic`` to ``Unit_Basics``.
 
@@ -1304,13 +1304,13 @@ To complete the simulation, you need to solve the following dynamic equation sys
 	
 Now you need the following steps:
 
-1. Copy the directory with the template unit ``<PathToSolution>\VCProject\UnitsTemplates\DynamicWithDAESolver\`` to the directory for new units ``<PathToSolution>\VCProject\Units\``. Rename the folder to ``ScreenTemplate`` and the file ``DynamicWithDAESolver.vcxproj`` to ``Screen.vcxproj``.
+1. Copy the directory with the template unit ``<PathToSolution>\ModelsCreatorSDK\UnitsTemplates\DynamicWithDAESolver\`` to the directory for new units ``<PathToSolution>\ModelsCreatorSDK\Units\``. Rename the folder to ``ScreenTemplate`` and the file ``DynamicWithDAESolver.vcxproj`` to ``Screen.vcxproj``.
 
-2. Along with this application example, you obtain a pre-configured template folder of the air classifier unit ``...\Task7\ScreenTemplate\``, in which you find the source file ``Unit.cpp`` and header file ``Unit.h``. Copy the contents of them to the corresponding ``Unit.cpp`` and ``Unit.h`` files in your template folder ``<PathToSolution>\VCProject\Units\ScreenTemplate\``.
+2. Along with this application example, you obtain a pre-configured template folder of the air classifier unit ``...\Task7\ScreenTemplate\``, in which you find the source file ``Unit.cpp`` and header file ``Unit.h``. Copy the contents of them to the corresponding ``Unit.cpp`` and ``Unit.h`` files in your template folder ``<PathToSolution>\ModelsCreatorSDK\Units\ScreenTemplate\``.
 
-3. Open the template solution ``<PathToSolution>\VCProject\Dyssol.sln`` in Visual Studio.
+3. Open the template solution ``<PathToSolution>\ModelsCreatorSDK\Dyssol.sln`` in Visual Studio.
 
-4. Add project with your new unit to the solution: select *File → Add → Existing Project* and specify path to the project file ``<PathToSolution>\VCProject\Units\ScreenTemplate\``. Rename the unit to ``Unit_Screen``.
+4. Add project with your new unit to the solution: select *File → Add → Existing Project* and specify path to the project file ``<PathToSolution>\ModelsCreatorSDK\Units\ScreenTemplate\``. Rename the unit to ``Unit_Screen``.
 
 5. Open ``Unit_AirClassifier`` → ``Unit.cpp`` and extend the unit with the following functionality:
 
@@ -1631,7 +1631,7 @@ You must do the following in order to develop your new solver (plese refer to :r
 
 	1.	Install Microsoft Visual Studio 2015 (Community). 
 	
-	2.	Configure template project ``VCProject``.
+	2.	Configure template project ``ModelsCreatorSDK``.
 
 After builiding your own new solvers, the functionality of them can be applied in all units by adding them as :ref:`unit parameters <label-unitParameters>`. 
 
@@ -1654,7 +1654,7 @@ Please notice that in the current version of Dyssol, only :ref:`label-agg-solver
 Add new solver to the template project
 --------------------------------------
 
-1.	Copy the desired template of the unit from ``<PathToSolution>\VCProject\SolversTemplates`` to the folder ``Solvers`` in solution (``<PathToSolution>\VCProject\Solvers``).
+1.	Copy the desired template of the unit from ``<PathToSolution>\ModelsCreatorSDK\SolversTemplates`` to the folder ``Solvers`` in solution (``<PathToSolution>\ModelsCreatorSDK\Solvers``).
 
 2.	Rename template’s folder according to the name of your new solver (further ``<MySolverFolder>``). The name can be chosen freely.
 
@@ -1662,13 +1662,13 @@ Add new solver to the template project
 
 4.	Run the solution file (``<PathToSolution>\Dyssol.sln``) to open it in Visual Studio.
 
-5.	Add project with your new solver to the solution. To do this, select in Visual Studio *File → Add → Existing Project* and specify path to the project file: ``<PathToSolution>\VCProject\Solvers\<MySolverFolder>\<*.vcxproj>``.
+5.	Add project with your new solver to the solution. To do this, select in Visual Studio *File → Add → Existing Project* and specify path to the project file: ``<PathToSolution>\ModelsCreatorSDK\Solvers\<MySolverFolder>\<*.vcxproj>``.
 
 6.	Rename added project in Visual Studio according to the name of your solver. 
 
 Now you can implement functionality of your new solver. The list of available functions depends on type of selected solver. 
 
-To build your solution press :kbd:`F7`, to run it in debug mode press :kbd:`F5`. Files with new solvers will be placed to ``<PathToSolution>\VCProject\Debug``.
+To build your solution press :kbd:`F7`, to run it in debug mode press :kbd:`F5`. Files with new solvers will be placed to ``<PathToSolution>\ModelsCreatorSDK\Debug``.
 
 As debug versions of compiled and built solvers contain a lot of additional information, which is used by Visual Studio to perform debugging, their calculation efficiency can be dramatically low. Thus, for the simulation purposes, solvers should be built in *Release* mode.
 
@@ -1677,9 +1677,9 @@ As debug versions of compiled and built solvers contain a lot of additional info
 Configure Dyssol to work with implemented solvers
 -------------------------------------------------
 
-1.	Build your solvers in *Release* mode. To do this, open your solution in Visual Studio (run file ``<PathToSolution>\VCProject.sln``), switch *Solution* configuration combo box from the toolbox of Visual Studio from *Debug* to *Release* and build the project (press F7 or choose *Build → Build project* in program menu).
+1.	Build your solvers in *Release* mode. To do this, open your solution in Visual Studio (run file ``<PathToSolution>\ModelsCreatorSDK.sln``), switch *Solution* configuration combo box from the toolbox of Visual Studio from *Debug* to *Release* and build the project (press F7 or choose *Build → Build project* in program menu).
 
-2.	Configure Dyssol by adding the path to new solvers: run Dyssol, choose *Tools → Options → Model manager* and add path to your solvers (``<PathToSolution>\VCProject\Release``).
+2.	Configure Dyssol by adding the path to new solvers: run Dyssol, choose *Tools → Options → Model manager* and add path to your solvers (``<PathToSolution>\ModelsCreatorSDK\Release``).
 
 Now all new developed units will be available in Dyssol.
 
@@ -1687,11 +1687,11 @@ In general, usual configuration of *Model manager* should include following path
 
 	-	``<InstallationPath>\Solvers\``: list of standard solvers;
 	
-	-	``<PathToSolution>\VCProject\SolversDebugLibs\``: debug versions of standard solvers;
+	-	``<PathToSolution>\ModelsCreatorSDK\SolversDebugLibs\``: debug versions of standard solvers;
 	
-	-	``<PathToSolution>\VCProject\Debug\``: debug versions of developed solvers;
+	-	``<PathToSolution>\ModelsCreatorSDK\Debug\``: debug versions of developed solvers;
 	
-	-	``<PathToSolution>\VCProject\Release\``: release versions of developed solvers.
+	-	``<PathToSolution>\ModelsCreatorSDK\Release\``: release versions of developed solvers.
 
 |
 

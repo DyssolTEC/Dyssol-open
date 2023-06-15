@@ -28,13 +28,13 @@
   <BoolProperty
     Name="InstallerSDK"
     Category="General"
-    DisplayName="ModelsCreator"
+    DisplayName="SDK"
     Description="Build installer with Models Creator SDK."/>
   <EnumProperty
     Name="InstallerSDKLibs"
     Category="General"
     DisplayName="SDKLibs"
-    Description="Select what type of SDK libraries to include into Models Creator.">
+    Description="Select what type of libraries to include into Models Creator SDK.">
     <EnumValue Name="Precompiled" DisplayName="Precompiled" Description="Models Creator with precompiled SDK libraries."/>
     <EnumValue Name="Sources"     DisplayName="Sources"     Description="Models Creator with source files of SDK libraries."/>
   </EnumProperty>

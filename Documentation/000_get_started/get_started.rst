@@ -31,7 +31,7 @@ After installation, you can find the following folders and files in the installa
 * **Units**: Dynamic libraries with units' models.
 * **Solvers**: Dynamic libraries with solvers' models.
 * **Help**: Additional documentation files as ``*.pdf`` files.
-* **VCProject**: Template Microsoft Visual Studio project for development of new models. See also: :ref:`sec.models_development`.
+* **ModelsCreatorSDK**: Template Microsoft Visual Studio project for development of new models. See also: :ref:`sec.models_development`.
 * **Licenses**: Licenses of used libraries and tools. 
 * **LICENSE**: Dyssol license agreement.
 * **unins000.exe**, **unins000.dat**: Dyssol uninstaller.

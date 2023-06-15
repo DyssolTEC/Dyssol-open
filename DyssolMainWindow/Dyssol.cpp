@@ -378,9 +378,9 @@ void Dyssol::CreateMenu()
 
 	// Development
 	QMenu* menuDevelopment = ui.menuDocumentation->addMenu("Development");
-	menuDevelopment->addAction("Configuration of VCProject", this, [&] { OpenHelp("004_development/models_development.html#configuration-of-visual-studio-project-template"); });
-	menuDevelopment->addAction("Units Development"         , this, [&] { OpenHelp("004_development/models_development.html#unit-development"                               ); });
-	menuDevelopment->addAction("Solvers Development"       , this, [&] { OpenHelp("004_development/models_development.html#solver-development"                             ); });
+	menuDevelopment->addAction("Configuration of ModelsCreatorSDK", this, [&] { OpenHelp("004_development/models_development.html#configuration-of-visual-studio-project-template"); });
+	menuDevelopment->addAction("Units Development"                , this, [&] { OpenHelp("004_development/models_development.html#unit-development"                               ); });
+	menuDevelopment->addAction("Solvers Development"              , this, [&] { OpenHelp("004_development/models_development.html#solver-development"                             ); });
 
 	// Development - Program Interfaces
 	QMenu* menuInterfaces = menuDevelopment->addMenu("Program Interfaces");

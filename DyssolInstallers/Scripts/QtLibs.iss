@@ -22,15 +22,15 @@
 [Files]
 #sub QtLibsFileEntry
 #ifdef IsIncludeX32
-Source: "{#QtPath32}\bin\{#QtLibs[I]}.dll";  DestDir: "{app}";                                          Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "{#QtPath32}\bin\{#QtLibs[I]}.dll";  DestDir: "{app}";                                            Flags: ignoreversion; Check: not Is64BitInstallMode
   #ifdef IsWithSDK
-Source: "{#QtPath32}\bin\{#QtLibs[I]}d.dll"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirDebugExe}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "{#QtPath32}\bin\{#QtLibs[I]}d.dll"; DestDir: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}"; Flags: ignoreversion; Check: not Is64BitInstallMode
   #endif
 #endif
 #ifdef IsIncludeX64
-Source: "{#QtPath64}\bin\{#QtLibs[I]}.dll";  DestDir: "{app}";                                          Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "{#QtPath64}\bin\{#QtLibs[I]}.dll";  DestDir: "{app}";                                            Flags: ignoreversion; Check: Is64BitInstallMode
   #ifdef IsWithSDK
-Source: "{#QtPath64}\bin\{#QtLibs[I]}d.dll"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirDebugExe}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "{#QtPath64}\bin\{#QtLibs[I]}d.dll"; DestDir: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}"; Flags: ignoreversion; Check: Is64BitInstallMode
   #endif
 #endif
 #endsub
@@ -38,15 +38,15 @@ Source: "{#QtPath64}\bin\{#QtLibs[I]}d.dll"; DestDir: "{app}\{code:DirCppTemplat
 
 #sub QtLibsPlatformsFileEntry
 #ifdef IsIncludeX32
-Source: "{#QtPath32}\plugins\platforms\{#QtLibsPlatforms[I]}.dll";  DestDir: "{app}\{code:DirQtPlatforms}";                                          Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "{#QtPath32}\plugins\platforms\{#QtLibsPlatforms[I]}.dll";  DestDir: "{app}\{code:DirQtPlatforms}";                                            Flags: ignoreversion; Check: not Is64BitInstallMode
   #ifdef IsWithSDK
-Source: "{#QtPath32}\plugins\platforms\{#QtLibsPlatforms[I]}d.dll"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirDebugExe}\{code:DirQtPlatforms}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "{#QtPath32}\plugins\platforms\{#QtLibsPlatforms[I]}d.dll"; DestDir: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}\{code:DirQtPlatforms}"; Flags: ignoreversion; Check: not Is64BitInstallMode
   #endif
 #endif
 #ifdef IsIncludeX64
-Source: "{#QtPath64}\plugins\platforms\{#QtLibsPlatforms[I]}.dll";  DestDir: "{app}\{code:DirQtPlatforms}";                                          Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "{#QtPath64}\plugins\platforms\{#QtLibsPlatforms[I]}.dll";  DestDir: "{app}\{code:DirQtPlatforms}";                                            Flags: ignoreversion; Check: Is64BitInstallMode
   #ifdef IsWithSDK
-Source: "{#QtPath64}\plugins\platforms\{#QtLibsPlatforms[I]}d.dll"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirDebugExe}\{code:DirQtPlatforms}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "{#QtPath64}\plugins\platforms\{#QtLibsPlatforms[I]}d.dll"; DestDir: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}\{code:DirQtPlatforms}"; Flags: ignoreversion; Check: Is64BitInstallMode
   #endif
 #endif
 #endsub
@@ -54,25 +54,25 @@ Source: "{#QtPath64}\plugins\platforms\{#QtLibsPlatforms[I]}d.dll"; DestDir: "{a
 
 #sub QtLibsStylesFileEntry
 #ifdef IsIncludeX32
-Source: "{#QtPath32}\plugins\styles\{#QtLibsStyles[I]}.dll";  DestDir: "{app}\{code:DirQtStyles}";                                          Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "{#QtPath32}\plugins\styles\{#QtLibsStyles[I]}.dll";  DestDir: "{app}\{code:DirQtStyles}";                                            Flags: ignoreversion; Check: not Is64BitInstallMode
   #ifdef IsWithSDK
-Source: "{#QtPath32}\plugins\styles\{#QtLibsStyles[I]}d.dll"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirDebugExe}\{code:DirQtStyles}"; Flags: ignoreversion; Check: not Is64BitInstallMode
+Source: "{#QtPath32}\plugins\styles\{#QtLibsStyles[I]}d.dll"; DestDir: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}\{code:DirQtStyles}"; Flags: ignoreversion; Check: not Is64BitInstallMode
   #endif
 #endif
 #ifdef IsIncludeX64
-Source: "{#QtPath64}\plugins\styles\{#QtLibsStyles[I]}.dll";  DestDir: "{app}\{code:DirQtStyles}";                                          Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "{#QtPath64}\plugins\styles\{#QtLibsStyles[I]}.dll";  DestDir: "{app}\{code:DirQtStyles}";                                            Flags: ignoreversion; Check: Is64BitInstallMode
   #ifdef IsWithSDK
-Source: "{#QtPath64}\plugins\styles\{#QtLibsStyles[I]}d.dll"; DestDir: "{app}\{code:DirCppTemplate}\{code:DirDebugExe}\{code:DirQtStyles}"; Flags: ignoreversion; Check: Is64BitInstallMode
+Source: "{#QtPath64}\plugins\styles\{#QtLibsStyles[I]}d.dll"; DestDir: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}\{code:DirQtStyles}"; Flags: ignoreversion; Check: Is64BitInstallMode
   #endif
 #endif
 #endsub
 #for {I = 0; I < DimOf(QtLibsStyles); I++} QtLibsStylesFileEntry
 
 [Dirs]
-Name: "{app}\{code:DirQtPlatforms}";                                          Flags: uninsalwaysuninstall
-Name: "{app}\{code:DirQtStyles}";                                             Flags: uninsalwaysuninstall
+Name: "{app}\{code:DirQtPlatforms}";                                            Flags: uninsalwaysuninstall
+Name: "{app}\{code:DirQtStyles}";                                               Flags: uninsalwaysuninstall
 #ifdef IsWithSDK
-Name: "{app}\{code:DirCppTemplate}\{code:DirDebugExe}";                       Flags: uninsalwaysuninstall
-Name: "{app}\{code:DirCppTemplate}\{code:DirDebugExe}\{code:DirQtPlatforms}"; Flags: uninsalwaysuninstall
-Name: "{app}\{code:DirCppTemplate}\{code:DirDebugExe}\{code:DirQtStyles}";    Flags: uninsalwaysuninstall
+Name: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}";                       Flags: uninsalwaysuninstall
+Name: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}\{code:DirQtPlatforms}"; Flags: uninsalwaysuninstall
+Name: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}\{code:DirQtStyles}";    Flags: uninsalwaysuninstall
 #endif

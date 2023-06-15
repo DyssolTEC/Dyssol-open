@@ -51,7 +51,7 @@ pip install -U sphinx sphinx-rtd-theme breathe
 Also, other versions of Microsoft Visual Studio can be used, but additional preparations are required:
 - Install build tools for the corresponding Visual Studio.
 - Configure all *.ps1 scripts to use the required version of Visual Studio build tools before running `Dyssol/ExternalLibraries/RunAll.bat`.
-- If the Models Creator tool is required, files associated with it may need to be updated. They to be found in `Dyssol/DyssolInstallers/Data/VCProject/`.
+- If the Models Creator SDK tool is required, files associated with it may need to be updated. They to be found in `Dyssol/DyssolInstallers/Data/ModelsCreatorSDK/`.
 
 ## Linux
 ### Compilation requirements on Linux
@@ -109,7 +109,7 @@ $ make install
 - Solvers – libraries of developed solvers
 - styles - Qt libraries to support GUI
 - Units – libraries of developed units
-- VCProject – Models Creator tool: template project for Microsoft Visual Studio 
+- ModelsCreatorSDK – Models Creator tool: template project for Microsoft Visual Studio 
 - Dyssol.exe – main executable of Dyssol
 - DyssolC.exe – command-line utility
 - ExampleConfigFile.txt – example configuration file for command-line utility
