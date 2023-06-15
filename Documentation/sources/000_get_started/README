@@ -1,0 +1,7 @@
+1. Resize Dyssol window
+1.1. Size main window: 1200x700
+1.2. Size holdups editor: 800x600
+1.2. Resizer: http://www.brianapps.net/sizer/
+2. Make screenshots and put them into '...\Documentation\sources\000_get_started\screenshots' directory, replacing existing ones
+3. Run ...\Documentation\sources\000_get_started\export_svg_to_png.bat
+4. Copy obtained png to '...\Documentation\static\images\000_get_started\', replacing existing ones
