@@ -117,9 +117,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unit_CrusherPBMTM", "Units\CrusherPBMTM\CrusherPBMTM.vcxproj", "{CD80DD88-6ED5-4FB3-9811-4B0383CEA0EA}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Installer", "DyssolInstallers\Installer\Installer.vcxproj", "{EB21EED3-2835-4018-8BEE-B5172E3F0041}"
-	ProjectSection(ProjectDependencies) = postProject
-		{C91712C5-4A46-4703-9857-4E742D247601} = {C91712C5-4A46-4703-9857-4E742D247601}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SettingsEditor", "GUIDialogs\SettingsEditor\SettingsEditor.vcxproj", "{AA695107-B3DF-4383-BB70-483C28E3D81A}"
 EndProject
