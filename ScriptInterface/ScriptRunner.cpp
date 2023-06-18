@@ -2,6 +2,7 @@
 
 #include "ScriptRunner.h"
 #include "ScriptJob.h"
+#include "SaveLoadManager.h"
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
 #include <sstream>
@@ -72,8 +73,8 @@ bool CScriptRunner::LoadFiles(const CScriptJob& _job)
 	{
 		const auto srcFile = fs::absolute(_job.GetValue<fs::path>(EScriptKeys::SOURCE_FILE)).make_preferred();
 		PrintMessage(DyssolC_LoadFlowsheet(srcFile.string()));
-		CH5Handler fileHandler;
-		if (!m_flowsheet.LoadFromFile(fileHandler, srcFile))
+		CSaveLoadManager loader{ &m_flowsheet };
+		if (!loader.LoadFromFile(srcFile))
 			return PrintMessage(DyssolC_ErrorLoad());
 	}
 
@@ -485,9 +486,8 @@ bool CScriptRunner::RunSimulation(const CScriptJob& _job)
 	const auto dstFile = fs::absolute(_job.HasKey(EScriptKeys::RESULT_FILE) ? _job.GetValue<fs::path>(EScriptKeys::RESULT_FILE) : _job.GetValue<fs::path>(EScriptKeys::SOURCE_FILE)).make_preferred();
 	fs::create_directories(dstFile.parent_path());
 	PrintMessage(DyssolC_SaveFlowsheet(dstFile.string()));
-	CH5Handler fileHandler;
-	const bool saved = m_flowsheet.SaveToFile(fileHandler, dstFile);
-	if (!saved)
+	CSaveLoadManager saver{ &m_flowsheet };
+	if (!saver.SaveToFile(dstFile))
 		return PrintMessage(DyssolC_ErrorSave());
 
 	return true;

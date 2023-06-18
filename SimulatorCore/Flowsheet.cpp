@@ -72,6 +72,11 @@ CFlowsheet& CFlowsheet::operator=(const CFlowsheet& _other)
 	return *this;
 }
 
+void CFlowsheet::SetFileName(const std::filesystem::path& _path)
+{
+	m_fileName = _path;
+}
+
 std::filesystem::path CFlowsheet::GetFileName() const
 {
 	return m_fileName;
@@ -854,39 +859,31 @@ CParametersHolder* CFlowsheet::GetParameters()
 	return &m_parameters;
 }
 
-bool CFlowsheet::SaveToFile(CH5Handler& _h5File, const std::filesystem::path& _fileName)
+bool CFlowsheet::SaveToFile(CH5Handler& _h5File, const std::string& _path)
 {
-	if (_fileName.empty()) return false;
-
-	_h5File.Create(_fileName, m_parameters.fileSingleFlag);
-
-	if (!_h5File.IsValid()) return false;
-
-	const std::string root = "/";
-
 	// current version of save procedure
-	_h5File.WriteAttribute(root, StrConst::H5AttrSaveVersion, m_saveVersion);
+	_h5File.WriteAttribute(_path, StrConst::H5AttrSaveVersion, m_saveVersion);
 
 	// units
-	_h5File.WriteAttribute(root, StrConst::Flow_H5AttrUnitsNum, static_cast<int>(m_units.size()));
-	const std::string unitsGroup = _h5File.CreateGroup(root, StrConst::Flow_H5GroupUnits);
+	_h5File.WriteAttribute(_path, StrConst::Flow_H5AttrUnitsNum, static_cast<int>(m_units.size()));
+	const std::string unitsGroup = _h5File.CreateGroup(_path, StrConst::Flow_H5GroupUnits);
 	for (size_t i = 0; i < m_units.size(); ++i)
 		m_units[i]->SaveToFile(_h5File, _h5File.CreateGroup(unitsGroup, StrConst::Flow_H5GroupUnitName + std::to_string(i)));
 
 	// streams
-	_h5File.WriteAttribute(root, StrConst::Flow_H5AttrStreamsNum, static_cast<int>(m_streams.size()));
-	const std::string streamsGroup = _h5File.CreateGroup(root, StrConst::Flow_H5GroupStreams);
+	_h5File.WriteAttribute(_path, StrConst::Flow_H5AttrStreamsNum, static_cast<int>(m_streams.size()));
+	const std::string streamsGroup = _h5File.CreateGroup(_path, StrConst::Flow_H5GroupStreams);
 	for (size_t i = 0; i < m_streams.size(); ++i)
 		m_streams[i]->SaveToFile(_h5File, _h5File.CreateGroup(streamsGroup, StrConst::Flow_H5GroupStreamName + std::to_string(i)));
 
 	// calculation sequence
-	m_calculationSequence.SaveToFile(_h5File, _h5File.CreateGroup(root, StrConst::Flow_H5GroupCalcSeq));
+	m_calculationSequence.SaveToFile(_h5File, _h5File.CreateGroup(_path, StrConst::Flow_H5GroupCalcSeq));
 
 	// distributions grid
-	m_mainGrid.SaveToFile(_h5File, _h5File.CreateGroup(root, StrConst::H5GroupDistrGrid));
+	m_mainGrid.SaveToFile(_h5File, _h5File.CreateGroup(_path, StrConst::H5GroupDistrGrid));
 
 	// overall properties
-	const std::string overallGroup = _h5File.CreateGroup(root, StrConst::Flow_H5GroupOveralls);
+	const std::string overallGroup = _h5File.CreateGroup(_path, StrConst::Flow_H5GroupOveralls);
 	_h5File.WriteAttribute(overallGroup, StrConst::Flow_H5AttrOverallsNum, static_cast<int>(m_overall.size()));
 	for (size_t i = 0; i < m_overall.size(); ++i)
 	{
@@ -897,7 +894,7 @@ bool CFlowsheet::SaveToFile(CH5Handler& _h5File, const std::filesystem::path& _f
 	}
 
 	// phases
-	const std::string phasesGroup = _h5File.CreateGroup(root, StrConst::Flow_H5GroupPhases);
+	const std::string phasesGroup = _h5File.CreateGroup(_path, StrConst::Flow_H5GroupPhases);
 	_h5File.WriteAttribute(phasesGroup, StrConst::Flow_H5AttrPhasesNum, static_cast<int>(m_phases.size()));
 	for (size_t i = 0; i < m_phases.size(); ++i)
 	{
@@ -907,52 +904,40 @@ bool CFlowsheet::SaveToFile(CH5Handler& _h5File, const std::filesystem::path& _f
 	}
 
 	// parameters
-	m_parameters.SaveToFile(_h5File, _h5File.CreateGroup(root, StrConst::Flow_H5GroupOptions));
-
-	_h5File.Close();
-	m_fileName = _fileName;
+	m_parameters.SaveToFile(_h5File, _h5File.CreateGroup(_path, StrConst::Flow_H5GroupOptions));
 
 	return true;
 }
 
-bool CFlowsheet::LoadFromFile(CH5Handler& _h5File, const std::filesystem::path& _fileName)
+bool CFlowsheet::LoadFromFile(CH5Handler& _h5File, const std::string& _path)
 {
-	if (_fileName.empty()) return false;
-
-	_h5File.Open(_fileName);
-
-	if (!_h5File.IsValid()) return false;
-
 	Clear();
 
-	const std::string root = "/";
-
 	// version of save procedure
-	const int version = _h5File.ReadAttribute(root, StrConst::H5AttrSaveVersion);
+	const int version = _h5File.ReadAttribute(_path, StrConst::H5AttrSaveVersion);
 	if (version < 4)
 	{
-		m_fileName = _fileName;
-		return LoadFromFile_v3(_h5File, root);
+		return LoadFromFile_v3(_h5File, _path);
 	}
 
 	// parameters
-	m_parameters.LoadFromFile(_h5File, root + StrConst::Flow_H5GroupOptions);
+	m_parameters.LoadFromFile(_h5File, _path + "/" + StrConst::Flow_H5GroupOptions);
 	UpdateToleranceSettings();		// needed to fill global tolerance structure with possibly updated data
 	UpdateCacheSettings();			// needed to fill global cache structure with possibly updated data
 	UpdateThermodynamicsSettings();	// needed to fill global thermodynamics structure with possibly updated data
 
 	// distributions grid
-	m_mainGrid.LoadFromFile(_h5File, root + StrConst::H5GroupDistrGrid);
+	m_mainGrid.LoadFromFile(_h5File, _path + "/" + StrConst::H5GroupDistrGrid);
 	if (version < 5)
 	{
 		// replace compound names with keys
 		std::vector<std::string> keys;
-		_h5File.ReadData(root, StrConst::Flow_H5Compounds, keys);
+		_h5File.ReadData(_path + "/", StrConst::Flow_H5Compounds, keys);
 		m_mainGrid.GetGridDimensionSymbolic(DISTR_COMPOUNDS)->SetGrid(keys);
 	}
 
 	// overall properties
-	const std::string overallsGroup = root + StrConst::Flow_H5GroupOveralls;
+	const std::string overallsGroup = _path + "/" + StrConst::Flow_H5GroupOveralls;
 	const int nOverallProperties = _h5File.ReadAttribute(overallsGroup, StrConst::Flow_H5AttrOverallsNum);
 	m_overall.resize(nOverallProperties);
 	for (size_t i = 0; i < m_overall.size(); ++i)
@@ -966,7 +951,7 @@ bool CFlowsheet::LoadFromFile(CH5Handler& _h5File, const std::filesystem::path& 
 	}
 
 	// phases
-	const std::string phasesGroup = root + StrConst::Flow_H5GroupPhases;
+	const std::string phasesGroup = _path + "/" + StrConst::Flow_H5GroupPhases;
 	const int nPhases = _h5File.ReadAttribute(phasesGroup, StrConst::Flow_H5AttrPhasesNum);
 	m_phases.resize(nPhases);
 	for (size_t i = 0; i < m_phases.size(); ++i)
@@ -979,21 +964,20 @@ bool CFlowsheet::LoadFromFile(CH5Handler& _h5File, const std::filesystem::path& 
 	}
 
 	// streams
-	const size_t nStreams = static_cast<size_t>(_h5File.ReadAttribute(root, StrConst::Flow_H5AttrStreamsNum));
+	const size_t nStreams = static_cast<size_t>(_h5File.ReadAttribute(_path + "/", StrConst::Flow_H5AttrStreamsNum));
 	for (size_t i = 0; i < nStreams; ++i)
-		AddStream()->LoadFromFile(_h5File, root + StrConst::Flow_H5GroupStreams + "/" + StrConst::Flow_H5GroupStreamName + std::to_string(i));
+		AddStream()->LoadFromFile(_h5File, _path + "/" + StrConst::Flow_H5GroupStreams + "/" + StrConst::Flow_H5GroupStreamName + std::to_string(i));
 
 	// models
-	const size_t nUnits = static_cast<size_t>(_h5File.ReadAttribute(root, StrConst::Flow_H5AttrUnitsNum));
+	const size_t nUnits = static_cast<size_t>(_h5File.ReadAttribute(_path + "/", StrConst::Flow_H5AttrUnitsNum));
 	for (size_t i = 0; i < nUnits; ++i)
-		AddUnit()->LoadFromFile(_h5File, root + StrConst::Flow_H5GroupUnits + "/" + StrConst::Flow_H5GroupUnitName + std::to_string(i));
+		AddUnit()->LoadFromFile(_h5File, _path + "/" + StrConst::Flow_H5GroupUnits + "/" + StrConst::Flow_H5GroupUnitName + std::to_string(i));
 
 	// calculation sequence
-	m_calculationSequence.LoadFromFile(_h5File, root + StrConst::Flow_H5GroupCalcSeq);
+	m_calculationSequence.LoadFromFile(_h5File, _path + "/" + StrConst::Flow_H5GroupCalcSeq);
 
-	_h5File.Close();
 	SetTopologyModified(false);
-	m_fileName = _fileName;
+
 	return true;
 }
 
@@ -1059,7 +1043,6 @@ bool CFlowsheet::LoadFromFile_v3(CH5Handler& _h5File, const std::string& _path)
 	// calculation sequence
 	m_calculationSequence.LoadFromFile(_h5File, root + StrConst::Flow_H5GroupCalcSeq);
 
-	_h5File.Close();
 	SetTopologyModified(false);
 	return true;
 }
