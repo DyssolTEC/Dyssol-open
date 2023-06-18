@@ -24,6 +24,7 @@
     <ClInclude Include="LogUpdater.h" />
     <ClInclude Include="ModelsManager.h" />
     <ClInclude Include="ParametersHolder.h" />
+    <ClInclude Include="SaveLoadManager.h" />
     <ClInclude Include="Simulator.h" />
     <ClInclude Include="SimulatorLog.h" />
     <ClInclude Include="Topology.h" />
@@ -34,6 +35,7 @@
     <ClCompile Include="Flowsheet.cpp" />
     <ClCompile Include="ModelsManager.cpp" />
     <ClCompile Include="ParametersHolder.cpp" />
+    <ClCompile Include="SaveLoadManager.cpp" />
     <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="SimulatorLog.cpp" />
     <ClCompile Include="Topology.cpp" />

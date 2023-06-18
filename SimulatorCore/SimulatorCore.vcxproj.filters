@@ -42,6 +42,9 @@
     <ClInclude Include="LogUpdater.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SaveLoadManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simulator.cpp">
@@ -66,6 +69,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Flowsheet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SaveLoadManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -3,49 +3,47 @@
 #include "SaveLoadThread.h"
 #include "Flowsheet.h"
 
-CSaveLoadThread::CSaveLoadThread(CFlowsheet* _pFlowsheet, bool _bSaver, QObject* parent /*= nullptr*/)
-	: CBasicThread(parent),
-	m_pFlowsheet{ _pFlowsheet },
-	m_bSuccess{ false },
-	m_bSaverFlag{ _bSaver },
-	m_blocked{ false }
+CSaveLoadThread::CSaveLoadThread(CFlowsheet* _flowsheet, bool _saver, QObject* _parent /*= nullptr*/)
+	: CBasicThread{ _parent }
+	, m_fileHandler{ _flowsheet }
+	, m_isSaver{ _saver }
 {
 }
 
-void CSaveLoadThread::SetFileName(const QString &_sFileName)
+void CSaveLoadThread::SetFileName(const QString& _fileName)
 {
-	m_sFileName = _sFileName;
+	m_fileName = _fileName;
 }
 
 QString CSaveLoadThread::GetFileName() const
 {
-	return m_sFileName;
+	return m_fileName;
 }
 
 QString CSaveLoadThread::GetFinalFileName() const
 {
-	return QString::fromStdWString(m_fileHandler.FileName().wstring());
+	return QString::fromStdWString(m_fileHandler.GetFileName().wstring());
 }
 
 bool CSaveLoadThread::IsSuccess() const
 {
-	return m_bSuccess;
+	return m_isSuccess;
 }
 
 void CSaveLoadThread::Block()
 {
-	m_blocked = true;
+	m_isBlocked = true;
 }
 
 void CSaveLoadThread::StartTask()
 {
-	if (!m_blocked)
-		if (m_bSaverFlag)
-			m_bSuccess = m_pFlowsheet->SaveToFile(m_fileHandler, m_sFileName.toStdWString());
+	if (!m_isBlocked)
+		if (m_isSaver)
+			m_isSuccess = m_fileHandler.SaveToFile(m_fileName.toStdWString());
 		else
-			m_bSuccess = m_pFlowsheet->LoadFromFile(m_fileHandler, m_sFileName.toStdWString());
+			m_isSuccess = m_fileHandler.LoadFromFile(m_fileName.toStdWString());
 	else
-		m_bSuccess = false;
+		m_isSuccess = false;
 	emit Finished();
 }
 

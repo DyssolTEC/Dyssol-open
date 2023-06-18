@@ -75,7 +75,15 @@ public:
 	CFlowsheet& operator=(CFlowsheet&& _other) = delete;
 	~CFlowsheet() = default;
 
-	// Returns the full name of the file, where the flowsheet is stored.
+	/**
+	 * Sets full name of the file, where the flowsheet is stored.
+	 * \param _path Full path to the file.
+	 */
+	void SetFileName(const std::filesystem::path& _path);
+	/**
+	 * Returns the full name of the file, where the flowsheet is stored.
+	 * \return Full path to the file.
+	 */
 	[[nodiscard]] std::filesystem::path GetFileName() const;
 
 	// Makes initial preparations of the flowsheet structure.
@@ -257,14 +265,25 @@ public:
 	// File I/O
 	//
 
-	// Saves the flowsheet into the HDF5 file.
-	bool SaveToFile(CH5Handler& _h5File, const std::filesystem::path& _fileName);
-	// Loads the flowsheet from the HDF5 file.
-	bool LoadFromFile(CH5Handler& _h5File, const std::filesystem::path& _fileName);
+	/**
+	 * Saves the flowsheet into the HDF5 file.
+	 * \param _h5File HDF5 file handler.
+	 * \param _path The path in the HDF5 file to be used for saving.
+	 * \return Operation success flag.
+	 */
+	bool SaveToFile(CH5Handler& _h5File, const std::string& _path);
+	/**
+	 * Loads the flowsheet from the HDF5 file.
+	 * \param _h5File HDF5 file handler.
+	 * \param _path The path in the HDF5 file to be used for loading.
+	 * \return Operation success flag.
+	 */
+	bool LoadFromFile(CH5Handler& _h5File, const std::string& _path);
+
+private:
 	// Loads the flowsheet from the HDF5 file. A compatibility version.
 	bool LoadFromFile_v3(CH5Handler& _h5File, const std::string& _path);
 
-private:
 	// Returns a pointer to a stream with the specified unique key from the given vector. If no such stream defined, returns nullptr.
 	static CStream* DoGetStream(const std::string& _key, const std::vector<std::shared_ptr<CStream>>& _streams);
 
