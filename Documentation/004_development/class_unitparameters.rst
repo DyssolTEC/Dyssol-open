@@ -11,6 +11,7 @@ Unit parameters
 	class_upconstreal
 	class_upconstint
 	class_upconstuint
+	class_updependent
 	class_uptd
 	class_upstring
 	class_upcheckbox

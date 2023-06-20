@@ -936,12 +936,13 @@ std::vector<size_t> CBaseUnit::GetDistributionsClasses() const
 
 EGridEntry CBaseUnit::GetDistributionGridType(EDistrTypes _distribution) const
 {
-	if (!m_grid.HasDimension(_distribution)) return static_cast<EGridEntry>(-1);
+	if (!m_grid.HasDimension(_distribution)) return EGridEntry::GRID_UNDEFINED;
 	return m_grid.GetGridDimension(_distribution)->GridType();
 }
 
 size_t CBaseUnit::GetClassesNumber(EDistrTypes _distribution) const
 {
+	if (!m_grid.HasDimension(_distribution)) return 0;
 	return m_grid.GetGridDimension(_distribution)->ClassesNumber();
 }
 

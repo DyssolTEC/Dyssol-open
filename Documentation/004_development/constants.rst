@@ -1,9 +1,12 @@
 .. _sec.development.api.constants:
 
-List of universal constants
-===========================
+List of constants
+=================
 
-In Dyssol, some universal constants have been defined, which you may use directly in your code.
+Universal constants
+-------------------
+
+In Dyssol, certain universal constants are pre-defined and available for direct utilization in the code.
 
 +------------------------------------------+----------------------------------------+--------------------+
 |  Define                                  |   Typical value                        |   Unit             |
@@ -31,4 +34,10 @@ In Dyssol, some universal constants have been defined, which you may use directl
     :project: dyssol_models_api
 
 .. doxygenenum:: EPhase
+    :project: dyssol_models_api
+	
+.. doxygenenum:: EDistrTypes
+    :project: dyssol_models_api
+	
+.. doxygenenum:: EGridEntry
     :project: dyssol_models_api

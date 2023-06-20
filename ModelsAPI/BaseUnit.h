@@ -615,33 +615,32 @@ public:
 
 	/**
 	 * \brief Groups the specified unit parameters.
-	 * \details Allows to hide groups of parameters depending on the selected value of a combobox unit parameter.
+	 * \details Allows to hide some parameters depending on the selected value of a combobox unit parameter.
 	 * The parameter, its value and all the adding parameters must already exist. If something does not exist, logic_error exception is thrown.
 	 * \param _unitParamNameSelector Name of the target combobox unit parameter.
-	 * \param _unitParamSelectedValueName Selected value of of the target combobox unit parameter.
-	 * \param _groupedParamNames Names of other unit parameters that will be shown if \p _unitParamValueName is selected.
+	 * \param _unitParamSelectedValueName Selected value of the target combobox unit parameter.
+	 * \param _groupedParamNames Names of other unit parameters that will be shown if \p _unitParamSelectedValueName is selected.
 	 */
 	void AddParametersToGroup(const std::string& _unitParamNameSelector, const std::string& _unitParamSelectedValueName, const std::vector<std::string>& _groupedParamNames);
 	/**
 	 * \brief Groups the specified unit parameters.
-	 * \details Allows to hide groups of parameters depending on the selected value of a combobox unit parameter.
+	 * \details Allows to hide some parameters depending on the selected value of a combobox unit parameter.
 	 * The parameter, its value and all the adding parameters must already exist. If something does not exist, logic_error exception is thrown.
-	 * \param _selector Target combobox unit parameter.
-	 * \param _selectedValue Selected value of of the target combobox unit parameter.
-	 * \param _groupedParams Other unit parameters that will be shown if \p _unitParamValueName is selected.
+	 * \param _selector Pointer to the target combobox unit parameter.
+	 * \param _selectedValue Selected value of the target combobox unit parameter.
+	 * \param _groupedParams Other unit parameters that will be shown if \p _selectedValue is selected.
 	 */
 	void AddParametersToGroup(const CComboUnitParameter* _selector, size_t _selectedValue, const std::vector<CBaseUnitParameter*>& _groupedParams);
 	/**
 	 * \brief Groups the specified unit parameters.
-	 * \details Allows to hide groups of parameters depending on the selected value of a combobox unit parameter.
+	 * \details Allows to hide some parameters depending on the selected value of a combobox unit parameter.
 	 * The parameter, its value and all the adding parameters must already exist. If something does not exist, logic_error exception is thrown.
-	 * \param _selector Target combobox unit parameter.
-	 * \param _selectedValue Selected value of of the target combobox unit parameter.
-	 * \param _groupedParams Other unit parameters that will be shown if \p _unitParamValueName is selected.
+	 * \param _selector Pointer to the target combobox unit parameter.
+	 * \param _selectedValue Selected value of the target combobox unit parameter.
+	 * \param _groupedParams Other unit parameters that will be shown if \p _selectedValue is selected.
 	 */
 	template <typename T, typename = std::enable_if_t<std::is_enum_v<T>>>
 	void AddParametersToGroup(const CComboUnitParameter* _selector, T _selectedValue, const std::vector<CBaseUnitParameter*>& _groupedParams);
-
 
 	/**
 	 * \brief Returns value of the real constant unit parameter.
@@ -1191,80 +1190,126 @@ public:
 	// Distributed properties
 	//
 
-	// Updates grids of distributed parameters and compounds.
+	// Updates grids of distributed properties and compounds.
 	void SetGrid(const CMultidimensionalGrid& _grid);
 
 	/**
-	 * Returns the number of defined distributed parameters.
+	 * \brief Returns number of defined distributed properties of the solid phase.
+	 * \return Number of distributed properties.
 	 */
 	size_t GetDistributionsNumber() const;
 	/**
-	 * Returns all defined distributed parameters.
+	 * \brief Returns types of all defined distributed properties of the solid phase.
+	 * \return Types of all distributed properties.
 	 */
 	std::vector<EDistrTypes> GetDistributionsTypes() const;
 	/**
-	 * Returns numbers of classes of all defined distributed parameters.
+	 * \brief Returns numbers of classes of all defined distributed properties of the solid phase.
+	 * \return Number of classes of all distributed properties.
 	 */
 	std::vector<size_t> GetDistributionsClasses() const;
 	/**
-	 * Returns grid type (GRID_NUMERIC, GRID_SYMBOLIC) of the given distributed parameter. Returns -1 if the given distributed parameter is not defined.
+	 * \brief Returns type of grid entries of the given distributed property of the solid phase.
+	 * \details Returns EGridEntry::GRID_UNDEFINED if the given distributed property is not defined.
+	 * \param _distribution Type of the distributed property.
+	 * \return Type of the grid entries.
 	 */
 	EGridEntry GetDistributionGridType(EDistrTypes _distribution) const;
 
 	/**
-	 * Returns the number of classes defined for the specified distributed parameter.
+	 * \brief Returns number of classes defined for the specified distributed property of the solid phase.
+	 * \details Returns 0 if the given distributed property is not defined.
+	 * \param _distribution Type of the distributed property.
+	 * \return Number of classes.
 	 */
 	size_t GetClassesNumber(EDistrTypes _distribution) const;
 	/**
-	 * Returns a continuous or discrete numeric grid defined for the specified distributed parameter.
+	 * \brief Returns a numeric grid defined for the specified distributed property of the solid phase.
+	 * \details Returns an empty vector if the distribution is not of numeric type.
+	 * \param _distribution Type of the distributed property.
+	 * \return Numeric grid.
 	 */
 	std::vector<double> GetNumericGrid(EDistrTypes _distribution) const;
 	/**
-	 * Returns a symbolic discrete grid defined for the specified distributed parameter.
+	 * \brief Returns a symbolic grid defined for the specified distributed property of the solid phase.
+	 * \details Returns empty vector if the distribution is not of symbolic type.
+	 * \param _distribution Type of the distributed property.
+	 * \return Symbolic grid.
 	 */
 	std::vector<std::string> GetSymbolicGrid(EDistrTypes _distribution) const;
 	/**
-	 * Returns the sizes of classes defined in the grid of the specified distributed parameter.
+	 * \brief Returns the sizes of classes defined in the grid of the specified distributed property of the solid phase.
+	 * \details Returns an empty vector if the distribution is not of numeric type.
+	 * \param _distribution Type of the distributed property.
+	 * \return Sizes of classes.
 	 */
 	std::vector<double> GetClassesSizes(EDistrTypes _distribution) const;
 	/**
-	 * Returns the mean values of classes defined in the grid of the specified distributed parameter.
+	 * \brief Returns the mean values of classes defined in the grid of the specified distributed property of the solid phase.
+	 * \details Returns an empty vector if the distribution is not of numeric type.
+	 * \param _distribution Type of the distributed property.
+	 * \return Mean values of classes.
 	 */
 	std::vector<double> GetClassesMeans(EDistrTypes _distribution) const;
 
 	/**
-	 * Returns a grid defined for the particle size distribution in terms of particle diameters.
+	 * \brief Returns a grid defined for the particle size distribution in terms of particle diameters.
+	 * \details Returns an empty vector if EDistrTypes::DISTR_SIZE distribution has not been defined.
+	 * \return Particle size grid as diameters.
 	 */
 	std::vector<double> GetPSDGridDiameters() const;
 	/**
-	 * Returns a grid defined for the particle size distribution in terms of particle surfaces.
+	 * \brief Returns a grid defined for the particle size distribution in terms of particle surfaces.
+	 * \details Returns an empty vector if EDistrTypes::DISTR_SIZE distribution has not been defined.
+	 * \return Particle size grid as surfaces.
 	 */
 	std::vector<double> GetPSDGridSurfaces() const;
 	/**
-	 * Returns a grid defined for the particle size distribution in terms of particle volumes.
+	 * \brief Returns a grid defined for the particle size distribution in terms of particle volumes.
+	 * \details Returns an empty vector if EDistrTypes::DISTR_SIZE distribution has not been defined.
+	 * \return Particle size grid as volumes.
 	 */
 	std::vector<double> GetPSDGridVolumes() const;
 	/**
-	 * Returns the mean values of classes defined in the grid of the particle size distribution in terms of particle diameters.
+	 * \brief Returns mean values of classes defined for the particle size distribution in terms of particle diameters.
+	 * \details Returns an empty vector if EDistrTypes::DISTR_SIZE distribution has not been defined.
+	 * \return Particle mean diameters.
 	 */
 	std::vector<double> GetPSDMeanDiameters() const;
 	/**
-	 * Returns the mean values of classes defined in the grid of the particle size distribution in terms of particle surfaces.
+	 * \brief Returns mean values of classes defined for the particle size distribution in terms of particle surfaces.
+	 * \details Returns an empty vector if EDistrTypes::DISTR_SIZE distribution has not been defined.
+	 * \return Particle mean surfaces.
 	 */
 	std::vector<double> GetPSDMeanSurfaces() const;
 	/**
-	 * Returns the mean values of classes defined in the grid of the particle size distribution in terms of particle volumes.
+	 * \brief Returns mean values of classes defined for the particle size distribution in terms of particle volumes.
+	 * \details Returns an empty vector if EDistrTypes::DISTR_SIZE distribution has not been defined.
+	 * \return Particle mean volumes.
 	 */
 	std::vector<double> GetPSDMeanVolumes() const;
 
 	/**
-	 * Checks if the specified distributed parameter is defined.
+	 * \brief Checks if the specified distributed property is defined.
+	 * \param _distribution Type of the distributed property.
+	 * \return Whether the distributed property is defined.
 	 */
 	bool IsDistributionDefined(EDistrTypes _distribution) const;
 
 	// TODO: return by value.
 	/**
-	 * Calculates a transformation matrix needed to obtain the output distribution from the input one.
+	 * \brief Calculates a transformation matrix needed to obtain the output distribution from the input one.
+	 * \details Calculates a transformation matrix for one-dimensional distribution according to input and output distributions.
+	 * Obtained matrix can be applied to the stream instead of direct setting of distribution to retain secondary dimensions in multidimensional distribution.
+	 * Following algorithm is applied to setup transformation matrix:
+	 * 1. Go through the classes of source and target distributions from left to right.
+	 * 2. The most left not empty class of the input distribution proceeds to the most left not empty class of the output distribution.
+	 * 3. Transition to the next class of the input distribution is performed if the current class is completely transferred to the output distribution.
+	 * 4. Transition to the next class of the output distribution is performed if the current class is already full.
+	 * \param _distribution Type of the distributed property.
+	 * \param _inValue Input distribution.
+	 * \param _outValue Output distribution.
+	 * \param _matrix Resulting transformation matrix.
 	 */
 	static void CalculateTM(EDistrTypes _distribution, const std::vector<double>& _inValue, const std::vector<double>& _outValue, CTransformMatrix& _matrix);
 
