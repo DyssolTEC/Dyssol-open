@@ -58,25 +58,28 @@ enum class EExtrapolationMethod : uint32_t
 //======== SOLID DISTRIBUTIONS DATABASE [0; 50] ===============
 #define DISTRIBUTIONS_NUMBER 15
 
+/**
+ * Types of distributed parameters of the solid phase.
+ */
 enum EDistrTypes : uint32_t
 {
-	DISTR_COMPOUNDS		  = 0,
-	DISTR_SIZE			  = 1,
-	DISTR_PART_POROSITY	  = 2,
-	DISTR_FORM_FACTOR	  = 3,
-	DISTR_COLOR			  = 4,
-	DISTR_MOISTURE		  = 5,
-	DISTR_USER_DEFINED_01 = 20,
-	DISTR_USER_DEFINED_02 = 21,
-	DISTR_USER_DEFINED_03 = 22,
-	DISTR_USER_DEFINED_04 = 23,
-	DISTR_USER_DEFINED_05 = 24,
-	DISTR_USER_DEFINED_06 = 25,
-	DISTR_USER_DEFINED_07 = 26,
-	DISTR_USER_DEFINED_08 = 27,
-	DISTR_USER_DEFINED_09 = 28,
-	DISTR_USER_DEFINED_10 = 29,
-	DISTR_UNDEFINED		  = 31
+	DISTR_COMPOUNDS		  = 0,  ///< Distribution by compounds.
+	DISTR_SIZE			  = 1,	///< Distribution by particle size.
+	DISTR_PART_POROSITY	  = 2,	///< Distribution by porosity.
+	DISTR_FORM_FACTOR	  = 3,	///< Distribution by form factor.
+	DISTR_COLOR			  = 4,	///< Distribution by color.
+	DISTR_MOISTURE		  = 5,	///< Distribution by moisture.
+	DISTR_USER_DEFINED_01 = 20,	///< User-defined distribution.
+	DISTR_USER_DEFINED_02 = 21,	///< User-defined distribution.
+	DISTR_USER_DEFINED_03 = 22,	///< User-defined distribution.
+	DISTR_USER_DEFINED_04 = 23,	///< User-defined distribution.
+	DISTR_USER_DEFINED_05 = 24,	///< User-defined distribution.
+	DISTR_USER_DEFINED_06 = 25,	///< User-defined distribution.
+	DISTR_USER_DEFINED_07 = 26,	///< User-defined distribution.
+	DISTR_USER_DEFINED_08 = 27,	///< User-defined distribution.
+	DISTR_USER_DEFINED_09 = 28,	///< User-defined distribution.
+	DISTR_USER_DEFINED_10 = 29,	///< User-defined distribution.
+	DISTR_UNDEFINED		  = 31,	///< Type is undefined.
 };
 
 #define DISTR_NAMES { "Compounds", "Size", "Particle porosity", "Form factor", "Color", "Moisture", "Distribution 1", "Distribution 2", "Distribution 3", "Distribution 4", "Distribution 5", "Distribution 6", "Distribution 7", "Distribution 8", "Distribution 9", "Distribution 10" }
@@ -96,11 +99,14 @@ inline int GetDistributionTypeIndex(EDistrTypes _nType)
 #define MTP_TEMPERATURE	1
 #define MTP_PRESSURE	2
 
-// ========== TYPES OF GRIDS ENTRIES
+/**
+ * Types of grid entries of distributed parameters of the solid phase.
+ */
 enum class EGridEntry : uint32_t
 {
-	GRID_NUMERIC	= 0,
-	GRID_SYMBOLIC	= 2,
+	GRID_NUMERIC	= 0,  ///< Numeric grid.
+	GRID_SYMBOLIC	= 2,  ///< Symbolic grid.
+	GRID_UNDEFINED  = 15, ///< Type is undefined.
 };
 
 // ========== TYPES OF GRID FUNCTIONAL DISTRIBUTIONS
@@ -112,7 +118,7 @@ enum class EGridFunction : uint32_t
 	GRID_FUN_LOGARITHMIC_S2L = 3,
 	GRID_FUN_GEOMETRIC_L2S	 = 4,
 	GRID_FUN_LOGARITHMIC_L2S = 5,
-	GRID_FUN_UNDEFINED		 = 15
+	GRID_FUN_UNDEFINED		 = 15,
 };
 
 // ========== TYPES OF SOLVING STRATEGIES FOR NLSOLVER
@@ -195,7 +201,9 @@ enum class EPSDGridType : unsigned
 	VOLUME = 1
 };
 
-// Identifiers of phase types.
+/**
+ * Identifiers of phase types.
+ */
 enum class EPhase : uint32_t
 {
 	UNDEFINED = 0, ///< Type is undefined.
