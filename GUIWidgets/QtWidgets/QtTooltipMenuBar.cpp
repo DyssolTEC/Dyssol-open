@@ -14,7 +14,8 @@ bool CQtTooltipMenuBar::event(QEvent* _event)
 	if (_event->type() == QEvent::ToolTip)
 	{
 		const QHelpEvent* help = dynamic_cast<QHelpEvent*>(_event);
-		const QMenu* menu = help ? actionAt(help->pos())->menu() : nullptr;
+		const QAction* action = help ? actionAt(help->pos()) : nullptr;
+		const QMenu* menu = action ? action->menu() : nullptr;
 		if (menu)
 		{
 			QToolTip::showText(help->globalPos(), menu->toolTip(), this);
