@@ -13,7 +13,7 @@ CAboutWindow::CAboutWindow(QWidget* parent)	: QDialog(parent)
 
 	m_headerProgramName = "Dyssol: Dynamic Simulation of Solids Processes";
 	m_headerTeamName = "Dyssol Development Team";
-	m_headerUpdatesLink = "https://github.com/FlowsheetSimulation/Dyssol-open/releases";
+	m_headerUpdatesLink = "https://github.com/DyssolTEC/Dyssol-open/releases";
 
 	m_mainDevelopers = { "Vasyl Skorych", "Maksym Dosta", "Moritz Buchholz" };
 	m_otherDevelopers = { "Anton Gladky", "Illia Bereza", "Lusine Shahmuradyan", "Robin Ahrens", "Xiye Zhou" };

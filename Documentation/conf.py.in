@@ -100,7 +100,7 @@ html_theme_options = {
     'includehidden': False,
     'titles_only': False,    
 }
-github_url = 'https://github.com/FlowsheetSimulation/Dyssol-open'
+github_url = 'https://github.com/DyssolTEC/Dyssol-open'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

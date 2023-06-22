@@ -17,7 +17,7 @@ Installation
 Windows
 ^^^^^^^
 
-The latest Windows installer is available on `GitHub <https://github.com/FlowsheetSimulation/Dyssol-open/releases>`_. Download it, run and follow the instructions.
+The latest Windows installer is available on `GitHub <https://github.com/DyssolTEC/Dyssol-open/releases>`_. Download it, run and follow the instructions.
 
 After installation, you can find the following folders and files in the installation directory, by default ``C:\Program Files\Dyssol\``:
 
