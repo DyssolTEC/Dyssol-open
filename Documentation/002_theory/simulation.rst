@@ -78,7 +78,7 @@ Following methods are applied in Dyssol for simulation. Click the corresponding 
 
 - :ref:`label-extrapolation` to initialize each time window.
 
-- :ref:`label-convergence` to initialize each iteration of WRM.
+- :ref:`sec.theory.convergence` to initialize each iteration of WRM.
 
 .. seealso:: V. Skorych et al., Novel system for dynamic flowsheet simulation of solids processes, 2017.
 

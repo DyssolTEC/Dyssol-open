@@ -370,7 +370,11 @@ public:
 	// Unit parameters
 	//
 
-	// Returns a const reference to unit parameters manager.
+	/**
+	 * \brief Returns a const reference to unit parameters manager.
+	 * \details Can be used for centralized access to unit parameters.
+	 * \return Const reference to unit parameters manager.
+	 */
 	const CUnitParametersManager& GetUnitParametersManager() const;
 	// Returns a reference to unit parameters manager.
 	CUnitParametersManager& GetUnitParametersManager();
@@ -785,7 +789,11 @@ public:
 	// State variables
 	//
 
-	// Returns a const reference to state variables manager.
+	/**
+	 * \brief Returns a const reference to state variables manager.
+	 * \details Can be used for centralized access to state variables.
+	 * \return Const reference to state variables manager.
+	 */
 	const CStateVariablesManager& GetStateVariablesManager() const;
 	// Returns a reference to state variables manager.
 	CStateVariablesManager& GetStateVariablesManager();
