@@ -1,5 +1,10 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
+/**
+\file DyssolDefines.h
+\details This definition is needed for Doxygen to properly generate documentation.
+*/
+
 #pragma once
 
 #include <cstdint>
@@ -59,7 +64,7 @@ enum class EExtrapolationMethod : uint32_t
 #define DISTRIBUTIONS_NUMBER 15
 
 /**
- * Types of distributed parameters of the solid phase.
+ * \brief Types of distributed parameters of the solid phase.
  */
 enum EDistrTypes : uint32_t
 {
@@ -100,7 +105,7 @@ inline int GetDistributionTypeIndex(EDistrTypes _nType)
 #define MTP_PRESSURE	2
 
 /**
- * Types of grid entries of distributed parameters of the solid phase.
+ * \brief Types of grid entries of distributed parameters of the solid phase.
  */
 enum class EGridEntry : uint32_t
 {
@@ -202,7 +207,7 @@ enum class EPSDGridType : unsigned
 };
 
 /**
- * Identifiers of phase types.
+ * \brief Identifiers of phase types.
  */
 enum class EPhase : uint32_t
 {
@@ -233,7 +238,7 @@ enum class EOverall : uint32_t
 };
 
 /**
- * Types of unit ports.
+ * \brief Types of unit ports.
  */
 enum class EUnitPort : uint32_t
 {

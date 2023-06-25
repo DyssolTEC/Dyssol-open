@@ -193,7 +193,7 @@ The implemented methods for extrapolation include nearest-neighbor, linear and s
 
 |
 
-.. _label-convergence:
+.. _sec.theory.convergence:
 
 Convergence methods
 """""""""""""""""""

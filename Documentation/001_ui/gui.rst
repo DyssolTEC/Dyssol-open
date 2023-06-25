@@ -208,14 +208,14 @@ General options:
 	:alt: setup_options_general.png
 	:align: center
 
-1. Absolute and relative tolerances for :ref:`convergence calculation<label-convergence>`
+1. Absolute and relative tolerances for :ref:`convergence calculation<sec.theory.convergence>`
 2. Minimal significant fraction of multidimensional distributed properties
 3. Remove excessive time points from streams during the simulation
 4. Also remove time points from holdups and internal streams
 5. Temperature limits of the lookup table for calculating stream mixtures
 6. Number of temperature intervals of the lookup table for calculating stream mixtures 
 
-Options for :ref:`label-waveRelax`, :ref:`label-extrapolation` and :ref:`label-convergence`: 
+Options for :ref:`label-waveRelax`, :ref:`label-extrapolation` and :ref:`sec.theory.convergence`: 
 
 .. image:: ../static/images/001_ui/setup_options_convergence.png
 	:width: 324px
@@ -230,7 +230,7 @@ Options for :ref:`label-waveRelax`, :ref:`label-extrapolation` and :ref:`label-c
 6. Upper critical limit of iterations before resizing the window
 7. Lower critical limit of iterations before resizing the window
 8. Upper critical limit of iterations before resizing the window, for the first time window
-9. Settings for :ref:`label-convergence`
+9. Settings for :ref:`sec.theory.convergence`
 10. Settings for :ref:`label-extrapolation`
 
 Additional options:
