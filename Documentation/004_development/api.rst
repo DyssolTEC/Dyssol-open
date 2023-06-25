@@ -21,6 +21,7 @@ All functions, classes, their member variables and methods, needed to develop ne
 	class_statevariablesmanager
 	class_statevariable
 	class_plot
+	class_mixtureenthalpylookup
 	class_transformmatrix
 	class_densemdmatrix
 	class_matrix2d

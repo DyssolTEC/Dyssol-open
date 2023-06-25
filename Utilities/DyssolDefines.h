@@ -63,6 +63,7 @@ enum class EExtrapolationMethod : uint32_t
 //======== SOLID DISTRIBUTIONS DATABASE [0; 50] ===============
 #define DISTRIBUTIONS_NUMBER 15
 
+// TODO: make enum class
 /**
  * \brief Types of distributed parameters of the solid phase.
  */
@@ -175,9 +176,9 @@ enum class EDependencyTypes
 #define MOLAR_GAS_CONSTANT					8.314459848
 #define SPEED_OF_LIGHT_IN_VACUUM			2.9979245811e+8
 #define STANDARD_ACCELERATION_OF_GRAVITY	9.80665
-#define STANDARD_CONDITION_T				298.15	// standard condition temperature in K
-#define STANDARD_CONDITION_P				101325	// standard condition pressure in Pa
-#define STEFAN_BOLTZMANN_CONSTANT			5.670374419e-8		// W/m^2.K^4
+#define STANDARD_CONDITION_T				298.15	               ///< Standard condition temperature [K].
+#define STANDARD_CONDITION_P				101325	               ///< Standard condition pressure [Pa].
+#define STEFAN_BOLTZMANN_CONSTANT			5.670374419e-8		   // W/m^2.K^4
 #define MATH_PI								3.14159265358979323846
 
 // ========== Value basis

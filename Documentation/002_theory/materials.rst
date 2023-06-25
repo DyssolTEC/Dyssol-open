@@ -88,12 +88,30 @@ Dependent parameters in Dyssol consist of:
 
 |
 
+.. _sec.mdb.interactions:
+
+Interaction properties
+----------------------
+
+List of interaction properties:
+
+	- Interface tension
+	
+	- User defined properties
+	
+|
+
 .. _sec.mdb.correlations:
+
+Correlations
+------------
+
+|
 
 Correlation search
 """"""""""""""""""
 
-The algorithm for calculating :abbr:`TPD (Temperature- and/or pressure-dependent)` properties is shown as follows.
+The algorithm for calculating :abbr:`TPD (Temperature- and/or pressure-dependent)` and interaction properties is shown as follows.
 
 .. image:: ../static/images/002_theory/correlation.png
    :width: 600px

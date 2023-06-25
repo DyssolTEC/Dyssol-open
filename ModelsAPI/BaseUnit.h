@@ -22,10 +22,26 @@
 // TODO: move it somewhere
 ////////////////////////////////////////////////////////////////////////////////
 /// Deprecated defines for compatibility
+///
+/**
+* \private
+*/
 #define m_sUnitName		GetNameRef()
+/**
+* \private
+*/
 #define m_sAuthorName	GetAuthorRef()
+/**
+* \private
+*/
 #define m_dUnitVersion	GetVersionRef()
+/**
+* \private
+*/
 #define m_sUniqueID		GetKeyRef()
+/**
+* \private
+*/
 #define m_pMaterialsDB	GetMaterialsDBRef()
 
 class CStream;
@@ -34,7 +50,7 @@ class CStream;
 
 /**
  * \brief Basic class for dynamic and steady-state models.
- * \details Basically, it describes a mathematical model. A somewhat misleading name of the class is kept for compatibility reasons.
+ * \details It describes a mathematical model. A somewhat misleading name of the class is kept for compatibility reasons.
  */
 class CBaseUnit
 {
@@ -45,11 +61,31 @@ protected:
 	// Basic unit information
 	//
 
-	std::string m_unitName{};	// Name of the unit.
-	std::string m_uniqueID{};	// Unique identifier of the unit.
-	std::string m_authorName{};	// Name of the unit's author.
-	std::string m_helpLink{};	// Link to help file for unit.
-	size_t m_version{ 0 };		// Version of the unit.
+	/**
+	 * \private
+	 * Name of the unit.
+	 */
+	std::string m_unitName{};
+	/**
+	 * \private
+	 * Unique identifier of the unit.
+	 */
+	std::string m_uniqueID{};
+	/**
+	 * \private
+	 * Name of the unit's author.
+	 */
+	std::string m_authorName{};
+	/**
+	 * \private
+	 * Link to help file for unit.
+	 */
+	std::string m_helpLink{};
+	/**
+	 * \private
+	 * Version of the unit.
+	 */
+	size_t m_version{ 0 };
 
 private:
 	////////////////////////////////////////////////////////////////////////////////
@@ -101,7 +137,7 @@ public:
 	virtual ~CBaseUnit()                           = default;
 
 	/**
-	 * \internal
+	 * \private
 	 * \brief Sets pointers and values of all required data.
 	 * \param _materialsDB Pointer to global materials database.
 	 * \param _grid Const reference to global multidimensional grid.
@@ -114,7 +150,7 @@ public:
 	void SetSettings(const CMaterialsDatabase* _materialsDB, const CMultidimensionalGrid& _grid, const std::vector<SOverallDescriptor>* _overall,
 					const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics);
 	/**
-	 * \internal
+	 * \private
 	 * \brief Copies user-defined data from _unit.
 	 * \details Copies such data as selected streams, unit parameters, initial holdup data. Assumes the corresponding unit structure is the same.
 	 * \param _unit Reference to source unit.
@@ -194,7 +230,10 @@ public:
 	 * \return Const reference to ports manager.
 	 */
 	const CPortsManager& GetPortsManager() const;
-	// Returns a reference to ports manager.
+	/**
+	 * \private
+	 * Returns a reference to ports manager.
+	 */
 	CPortsManager& GetPortsManager();
 
 	/**
@@ -232,9 +271,15 @@ public:
 	// Internal feeds, holdups and streams
 	//
 
-	// Returns a const reference to streams manager.
+	/**
+	 * \private
+	 * Returns a const reference to streams manager.
+	 */
 	const CStreamManager& GetStreamsManager() const;
-	// Returns a reference to streams manager.
+	/**
+	 * \private
+	 * Returns a reference to streams manager.
+	 */
 	CStreamManager& GetStreamsManager();
 
 	/**
@@ -363,7 +408,10 @@ public:
 	 */
 	void RemoveStream(const std::string& _name);
 
-	// Sets up the stream structure (MD dimensions, phases, materials, etc.) the same as it is configured in the unit. Removes all existing data.
+	/**
+	 * \private
+	 * Sets up the stream structure (MD dimensions, phases, materials, etc.) the same as it is configured in the unit. Removes all existing data.
+	 */
 	void SetupStream(CBaseStream* _stream) const;
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -376,7 +424,10 @@ public:
 	 * \return Const reference to unit parameters manager.
 	 */
 	const CUnitParametersManager& GetUnitParametersManager() const;
-	// Returns a reference to unit parameters manager.
+	/**
+	 * \private
+	 * Returns a reference to unit parameters manager.
+	 */
 	CUnitParametersManager& GetUnitParametersManager();
 
 	/**
@@ -604,7 +655,7 @@ public:
 	 */
 	CSolverUnitParameter* AddSolverAgglomeration(const std::string& _name, const std::string& _description);
 	/**
-	 * \internal
+	 * \private
 	 * \brief Adds a new PBM solver unit parameter to the unit.
 	 * \details Should be used in the CBaseUnit::CreateStructure() function.
 	 * Adds the possibility to choose one of the available PBM solvers of this type.
@@ -769,7 +820,7 @@ public:
 	 */
 	CAgglomerationSolver* GetSolverAgglomeration(const CSolverUnitParameter* _param) const;
 	/**
-	 * \internal
+	 * \private
 	 * \brief Returns value of the PBM solver unit parameter.
 	 * \details Throws logic_error exception if a unit parameter with the given name and type does not exist.
 	 * \param _name Name of the unit parameter.
@@ -777,7 +828,7 @@ public:
 	 */
 	CPBMSolver* GetSolverPBM(const std::string& _name) const;
 	/**
-	 * \internal
+	 * \private
 	 * \brief Returns value of the PBM solver unit parameter.
 	 * \details Throws logic_error exception if the provided pointer to the unit parameter is of the wrong type.
 	 * \param _param Pointer to the PBM solver unit parameter.
@@ -795,7 +846,10 @@ public:
 	 * \return Const reference to state variables manager.
 	 */
 	const CStateVariablesManager& GetStateVariablesManager() const;
-	// Returns a reference to state variables manager.
+	/**
+	 * \private
+	 * Returns a reference to state variables manager.
+	 */
 	CStateVariablesManager& GetStateVariablesManager();
 
 	/**
@@ -836,9 +890,15 @@ public:
 	// Plots
 	//
 
-	// Returns a const reference to plots manager.
+	/**
+	 * \private
+	 * Returns a const reference to plots manager.
+	 */
 	const CPlotManager& GetPlotsManager() const;
-	// Returns a reference to plots manager.
+	/**
+	 * \private
+	 * Returns a reference to plots manager.
+	 */
 	CPlotManager& GetPlotsManager();
 
 	/**
@@ -1058,7 +1118,7 @@ public:
 	std::vector<double> GetStreamsTimePointsClosed(double _timeBeg, double _timeEnd, const std::vector<CStream*>& _srteams) const;
 
 	/**
-	 * \internal
+	 * \private
 	 * \brief Removes time points within the specified interval [timeBeg; timeEnd) that are closer together than the step.
 	 * \param _timeBeg Begin of the time interval.
 	 * \param _timeEnd End of the time interval.
@@ -1070,9 +1130,15 @@ public:
 	// Compounds
 	//
 
-	// Adds a compound with the specified unique key to all feeds, holdups and streams in the unit, if it does not exist yet.
+	/**
+	 * \private
+	 * Adds a compound with the specified unique key to all feeds, holdups and streams in the unit, if it does not exist yet.
+	 */
 	void AddCompound(const std::string& _compoundKey);
-	// Removes a compound with the specified unique key from all feeds, holdups and streams in the unit.
+	/**
+	 * \private
+	 * Removes a compound with the specified unique key from all feeds, holdups and streams in the unit.
+	 */
 	void RemoveCompound(const std::string& _compoundKey);
 
 	/**
@@ -1150,18 +1216,30 @@ public:
 	// Overall properties
 	//
 
-	// Adds new overall property to all feeds, holdups and streams in the unit, if it does not exist yet.
+	/**
+	 * \private
+	 * Adds new overall property to all feeds, holdups and streams in the unit, if it does not exist yet.
+	 */
 	void AddOverallProperty(EOverall _property, const std::string& _name, const std::string& _units);
-	// Removes an overall property from all feeds, holdups and streams in the unit.
+	/**
+	 * \private
+	 * Removes an overall property from all feeds, holdups and streams in the unit.
+	 */
 	void RemoveOverallProperty(EOverall _property);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Phases
 	//
 
-	// Adds the specified phase to all feeds, holdups and streams in the unit, if it does not exist yet.
+	/**
+	 * \private
+	 * Adds the specified phase to all feeds, holdups and streams in the unit, if it does not exist yet.
+	 */
 	void AddPhase(EPhase _phase, const std::string& _name);
-	// Removes the specified phase from all feeds, holdups and streams in the unit.
+	/**
+	 * \private
+	 * Removes the specified phase from all feeds, holdups and streams in the unit.
+	 */
 	void RemovePhase(EPhase _phase);
 
 	/**
@@ -1198,7 +1276,10 @@ public:
 	// Distributed properties
 	//
 
-	// Updates grids of distributed properties and compounds.
+	/**
+	 * \private
+	 * Updates grids of distributed properties and compounds.
+	 */
 	void SetGrid(const CMultidimensionalGrid& _grid);
 
 	/**
@@ -1325,32 +1406,57 @@ public:
 	// Global flowsheet data and settings
 	//
 
-	// Returns a pointer to the current materials database.
+	/**
+	 * \private
+	 * Returns a pointer to the current materials database.
+	 */
 	const CMaterialsDatabase* GetMaterialsDatabase() const;
 
-	// Returns current grid of distributed parameters.
+	/**
+	 * \private
+	 * Returns current grid of distributed parameters.
+	 */
 	const CMultidimensionalGrid& GetGrid() const;
 
-	// Returns current tolerance settings.
+	/**
+	 * \private
+	 * Returns current tolerance settings.
+	 */
 	SToleranceSettings GetToleranceSettings() const;
 	/**
-	 * Returns the global absolute tolerance.
+	 * \brief Returns global absolute tolerance.
+	 * \details See also: \verbatim embed:rst:inline :ref:`sec.theory.convergence` \endverbatim
+	 * \return Absolute tolerance.
 	 */
 	double GetAbsTolerance() const;
 	/**
-	 * Returns the global relative tolerance.
+	 * \brief Returns global relative tolerance.
+	 * \details See also: \verbatim embed:rst:inline :ref:`sec.theory.convergence` \endverbatim
+	 * \return Relative tolerance.
 	 */
 	double GetRelTolerance() const;
-	// Returns current thermodynamics settings.
+	/**
+	 * \private
+	 * Returns current thermodynamics settings.
+	 */
 	SThermodynamicsSettings GetThermodynamicsSettings() const;
 
-	// Updates tolerance settings in all units and streams.
+	/**
+	 * \private
+	 * Updates tolerance settings in all units and streams.
+	 */
 	void UpdateToleranceSettings();
 
-	// Updates cache settings in all streams.
+	/**
+	 * \private
+	 * Updates cache settings in all streams.
+	 */
 	void UpdateCacheSettings();
 
-	// Updates thermodynamics settings in all streams.
+	/**
+	 * \private
+	 * Updates thermodynamics settings in all streams.
+	 */
 	void UpdateThermodynamicsSettings();
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -1358,28 +1464,54 @@ public:
 	//
 
 	/**
-	 * Returns the value of the constant physical property (CRITICAL_TEMPERATURE, MOLAR_MASS, etc) of the specified compound.
+	 * \brief Returns the value of the constant physical property of the specified compound.
+	 * \details Gets data directly from the materials database.
+	 * See also: \verbatim embed:rst:inline :ref:`sec.mdb.const` \endverbatim
+	 * \param _compoundKey Unique key of the compound.
+	 * \param _property Identifier of the constant material property.
+	 * \return Property value.
 	 */
 	double GetCompoundProperty(const std::string& _compoundKey, ECompoundConstProperties _property) const;
 	/**
-	 * Returns the value of the temperature/pressure-dependent physical property (DENSITY, ENTHALPY, etc) of the specified compound with the given temperature [K] and pressure [Pa].
+	 * \brief Returns the value of the temperature/pressure-dependent physical property of the specified compound.
+	 * \details Gets data directly from the materials database and calculates them for the given temperature [K] and pressure [Pa].
+	 * See also: \verbatim embed:rst:inline :ref:`sec.mdb.tpd` \endverbatim
+	 * \param _compoundKey Unique key of the compound.
+	 * \param _property Identifier of the temperature/pressure-dependent material property.
+	 * \param _temperature Temperature [K] for which the property should be calculated.
+	 * \param _pressure Pressure [Pa] for which the property should be calculated.
+	 * \return Property value.
 	 */
 	double GetCompoundProperty(const std::string& _compoundKey, ECompoundTPProperties _property, double _temperature = STANDARD_CONDITION_T, double _pressure = STANDARD_CONDITION_P) const;
 	/**
-	 * Returns the value of the interaction physical property (INTERFACE_TENSION, etc) between the specified compounds with the given specified temperature [K] and pressure [Pa].
+	 * \brief Returns the value of the interaction physical property between the specified compounds.
+	 * \details Gets data directly from the materials database and calculates them for the given temperature [K] and pressure [Pa].
+	 * See also: \verbatim embed:rst:inline :ref:`sec.mdb.interactions` \endverbatim
+	 * \param _compoundKey1 Unique key of the first compound.
+	 * \param _compoundKey2 Unique key of the second compound.
+	 * \param _property Identifier of the temperature/pressure-dependent material property.
+	 * \param _temperature Temperature [K] for which the property should be calculated.
+	 * \param _pressure Pressure [Pa] for which the property should be calculated.
+	 * \return Property value.
 	 */
 	double GetCompoundProperty(const std::string& _compoundKey1, const std::string& _compoundKey2, EInteractionProperties _property, double _temperature = STANDARD_CONDITION_T, double _pressure = STANDARD_CONDITION_P) const;
 
 	/**
-	 * Checks if a constant physical property with the specified key is present in the materials database.
+	 * \brief Checks if a constant physical property with the specified key is present in the materials database.
+	 * \param _property Identifier of the constant material property.
+	 * \return Whether the property is defined.
 	 */
 	bool IsPropertyDefined(ECompoundConstProperties _property) const;
 	/**
-	 * Checks if a temperature/pressure-dependent physical property with the specified key is present in the materials database.
+	 * \brief Checks if a temperature/pressure-dependent physical property with the specified key is present in the materials database.
+	 * \param _property Identifier of the temperature/pressure-dependent material property.
+	 * \return Whether the property is defined.
 	 */
 	bool IsPropertyDefined(ECompoundTPProperties _property) const;
 	/**
-	 * Checks if an interaction physical property with the specified key is present in the materials database.
+	 * \brief Checks if an interaction physical property with the specified key is present in the materials database.
+	 * \param _property Identifier of the temperature/pressure-dependent material property.
+	 * \return Whether the property is defined.
 	 */
 	bool IsPropertyDefined(EInteractionProperties _property) const;
 
@@ -1387,20 +1519,38 @@ public:
 	// Thermodynamics
 	//
 
-	// Returns a pointer to enthalpy calculator.
+	/**
+	 * \brief Returns a pointer to a unit-specific enthalpy calculator.
+	 * \return Pointer to an enthalpy calculator.
+	 */
 	[[nodiscard]] CMixtureEnthalpyLookup* GetEnthalpyCalculator() const;
 
 	/**
-	 * Calculates enthalpy of the mixture of all defined compounds for the given temperature and compound fractions using a lookup table.
+	 * \brief Calculates enthalpy of the mixture for the given temperature.
+	 * \details Calculates enthalpy of the mixture of all defined compounds for the given temperature and compound fractions using a lookup table.
+	 * Uses the values of enthalpy defined in the materials database.
+	 * \param _temperature Temperature [K].
+	 * \param _fractions Mass fraction of all defined compounds.
+	 * \return Enthalpy [J/kg].
 	 */
 	[[nodiscard]] double CalculateEnthalpyFromTemperature(double _temperature, const std::vector<double>& _fractions) const;
 	/**
-	 * Calculates temperature of the mixture of all defined compounds for the given enthalpy and compound fractions using a lookup table.
+	 * \brief Calculates temperature of the mixture for the given enthalpy.
+	 * \details Calculates temperature of the mixture of all defined compounds for the given enthalpy and compound fractions using a lookup table.
+	 * Uses the values of enthalpy defined in the materials database.
+	 * \param _enthalpy Enthalpy [J/kg].
+	 * \param _fractions Mass fraction of all defined compounds.
+	 * \return Temperature [K].
 	 */
 	[[nodiscard]] double CalculateTemperatureFromEnthalpy(double _enthalpy, const std::vector<double>& _fractions) const;
 
 	/**
-	 * Performs a heat exchange between two streams at the specified time point with a specified efficiency (0..1].
+	 * \brief Performs a heat exchange between two streams.
+	 * \details Performs a heat exchange between two streams at the specified time point with a specified efficiency.
+	 * \param _time Time point for which heat exchange is done.
+	 * \param _stream1 Pointer to the first stream.
+	 * \param _stream2 Pointer to the second stream.
+	 * \param _efficiency Heat exchange efficiency (0..1].
 	 */
 	void HeatExchange(double _time, CBaseStream* _stream1, CBaseStream* _stream2, double _efficiency) const;
 
@@ -1409,74 +1559,119 @@ public:
 	//
 
 	/**
-	 * Sets an error state of the unit, prints the message to the simulation log, and requests to stop simulation.
+	 * \brief Sets an error state of the unit, prints the message to the simulation log, and requests to stop simulation.
+	 * \param _message Message to show in the simulation log.
 	 */
 	void RaiseError(const std::string& _message = "");
 	/**
-	 * Sets a warning state of the unit, and prints the message to the simulation log.
+	 * \brief Sets a warning state of the unit, and prints the message to the simulation log.
+	 * \param _message Message to show in the simulation log.
 	 */
 	void RaiseWarning(const std::string& _message = "");
 	/**
-	 * Prints the message to the simulation log.
+	 * \brief Prints the message to the simulation log.
+	 * \param _message Message to show in the simulation log.
 	 */
 	void ShowInfo(const std::string& _message);
 
 	/**
-	 * Checks if an error state is requested.
+	 * \brief Checks if an error state is requested.
+	 * \return Whether an error has occurred.
 	 */
 	bool HasError() const;
 	/**
-	 * Checks if a warning state is requested.
+	 * \brief Checks if a warning state is requested.
+	 * \return Whether a warning has occurred.
 	 */
 	bool HasWarning() const;
 	/**
-	 * Checks if an info output is requested.
+	 * \brief Checks if an info output is requested.
+	 * \return Whether an info output is requested.
 	 */
 	bool HasInfo() const;
 
 	/**
-	 * Returns a textual description of the last error.
+	 * \brief Returns a textual description of the last error.
+	 * \return Actual error message.
 	 */
 	std::string GetErrorMessage() const;
 	/**
-	 * Returns a textual description of the last warning.
+	 * \brief Returns a textual description of the last warning.
+	 * \return Actual warning message.
 	 */
 	std::string GetWarningMessage() const;
 	/**
-	 * Returns a textual description of the last info.
+	 * \brief Returns a textual description of the last info.
+	 * \return Actual info message.
 	 */
 	std::string GetInfoMessage() const;
 
-	// Clears an error state.
+	/**
+	 * \private
+	 * Clears an error state.
+	 */
 	void ClearError();
-	// Clears a warning state.
+	/**
+	 * \private
+	 * Clears a warning state.
+	 */
 	void ClearWarning();
-	// Clears an info state.
+	/**
+	 * \private
+	 * Clears an info state.
+	 */
 	void ClearInfo();
 
-	// Returns a textual description of the last error if any and clears the error state.
+	/**
+	 * \private
+	 * Returns a textual description of the last error if any and clears the error state.
+	 */
 	std::string PopErrorMessage();
-	// Returns a textual description of the last warning if any and clears the warning state.
+	/**
+	 * \private
+	 * Returns a textual description of the last warning if any and clears the warning state.
+	 */
 	std::string PopWarningMessage();
-	// Returns a textual description of the last info if any and clears the info state.
+	/**
+	 * \private
+	 * Returns a textual description of the last info if any and clears the info state.
+	 */
 	std::string PopInfoMessage();
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Simulation-time operations
 	//
 
-	// Setup the structure of the unit (ports, unit parameters, holdups, internal streams).
+	/**
+	 * \private
+	 * Setup the structure of the unit (ports, unit parameters, holdups, internal streams).
+	 */
 	void DoCreateStructure();
-	// Performs initialization of unit before starting the simulation.
+	/**
+	 * \private
+	 * Performs initialization of unit before starting the simulation.
+	 */
 	void DoInitializeUnit();
-	// Performs finalization of unit after the simulation is finished.
+	/**
+	 * \private
+	 * Performs finalization of unit after the simulation is finished.
+	 */
 	void DoFinalizeUnit();
-	// Stores current state of the unit on specified time interval.
+	/**
+	 * \private
+	 * Stores current state of the unit on specified time interval.
+	 */
 	void DoSaveStateUnit(double _timeBeg, double _timeEnd);
-	// Restores previously saved state of the unit.
+	/**
+	 * \private
+	 * Restores previously saved state of the unit.
+	 */
 	void DoLoadStateUnit();
 
-	// Removes all data produced during simulation.
+	/**
+	 * \private
+	 * Removes all data produced during simulation.
+	 */
 	void ClearSimulationResults();
 
 	////////////////////////////////////////////////////////////////////////////////
@@ -1484,35 +1679,56 @@ public:
 	//
 
 	/**
-	 * Setup basic parameters of the unit (name, author, key, version).
+	 * \brief Setup basic parameters of the unit (name, author, key, version).
+	 * \details This function must be defined in each unit.
+	 * No information on the flowsheet structure and connected streams is available at this point.
 	 */
 	virtual void CreateBasicInfo() = 0;
 	/**
-	 * Setup the structure of the unit (ports, unit parameters, holdups, internal streams).
+	 * \brief Setup the structure of the unit (ports, unit parameters, holdups, internal streams).
+	 * \details This function must be defined in each unit. Here, all GUI-relevant parts of the unit are described.
+	 * No information on the flowsheet structure and connected streams is available at this point.
 	 */
 	virtual void CreateStructure() = 0;
 	/**
-	 * Initialize unit for at time point 0 before starting the simulation.
+	 * \brief Initialize unit for at time point 0 before starting the simulation.
+	 * \details This function can be defined in each unit. It is called once for each simulation.
+	 * Here, some additional objects can be initialized (for example holdups, material streams or state variables).
 	 */
 	virtual void Initialize(double _time) {}
 	/**
-	 * Calculate the unit on the given time point.
+	 * \brief Calculate the unit on the given time point.
+	 * \details This function must be defined in each steady-state unit.
+	 * Is called by the simulator iteratively for all time points for which this unit should be calculated. Should implement all main calculations of the model.
+	 * \param _time Time point for which the model is calculated.
 	 */
 	virtual void Simulate(double _time) {}
 	/**
-	 * Calculate the unit on the given time interval.
+	 * \brief Calculate the unit on the given time interval.
+	 * \details This function must be defined in each dynamic unit.
+	 * Is called by the simulator iteratively for all time points for which this unit should be calculated. Should implement all main calculations of the model.
+	 * \param _timeBeg Start of the time interval for which the model is calculated.
+	 * \param _timeEnd End of the time interval for which the model is calculated.
 	 */
 	virtual void Simulate(double _timeBeg, double _timeEnd) {}
 	/**
-	 * Is called once at the end of the simulation to finalize the unit.
+	 * \brief Finalize the unit after the calculation finishes.
+	 * \details This function can be defined in each unit. It is called once at the end of the simulation.
+	 * Here, closing and cleaning operations can be performed.
 	 */
 	virtual void Finalize() {}
 	/**
+	 * \brief Save the current state of the unit.
+	 * \details This function can be defined in each unit.
 	 * Save the current state of all time-dependent parameters for a possible restart of the simulation from this time point.
+	 * For flowsheets with recycled streams, it is called when the convergence on the current time window is reached.
 	 */
 	virtual void SaveState() {}
 	/**
-	 * Load the stored state of all time-dependent parameters before a restart of the simulation from that time point.
+	 * \brief Load the stored state of the unit.
+	 * \details This function can be defined in each unit.
+	 * Load the current state of all time-dependent parameters before a restart of the simulation from that time point.
+	 * For flowsheets with recycled streams, it is called each time before the Simulate() function
 	 */
 	virtual void LoadState() {}
 
@@ -1520,119 +1736,282 @@ public:
 	// Saving/loading
 	//
 
-	// Saves unit to HDF5 file.
+	/**
+	 * \private
+	 * Saves unit to HDF5 file.
+	 */
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path);
-	// Loads unit from HDF5 file.
+	/**
+	 * \private
+	 * Loads unit from HDF5 file.
+	 */
 	void LoadFromFile(CH5Handler& _h5File, const std::string& _path);
-	// Loads unit from HDF5 file. A compatibility version.
+	/**
+	 * \private
+	 * Loads unit from HDF5 file. A compatibility version.
+	 */
 	void LoadFromFile_v2(const CH5Handler& _h5File, const std::string& _path);
-	// Loads unit from HDF5 file. A compatibility version.
+	/**
+	 * \private
+	 * Loads unit from HDF5 file. A compatibility version.
+	 */
 	void LoadFromFile_v1(const CH5Handler& _h5File, const std::string& _path);
 
 private:
-	// Clears enthalpy calculator.
+	/**
+	 * \private
+	 * Clears enthalpy calculator.
+	 */
 	void ClearEnthalpyCalculator() const;
 
 public:
 	// TODO: move it somewhere
 	////////////////////////////////////////////////////////////////////////////////
 	// Deprecated functions
+
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! m_sUnitName is deprecated. Use SetUnitName(const std::string&) instead.")]]
 	std::string& GetNameRef();
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! m_sAuthorName is deprecated. Use SetAuthorName(const std::string&) instead.")]]
 	std::string& GetAuthorRef();
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! m_dUnitVersion is deprecated. Use SetVersion(size_t) instead.")]]
 	size_t& GetVersionRef();
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! m_sUniqueID is deprecated. Use SetUniqueID(const std::string&) instead.")]]
 	std::string& GetKeyRef();
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! m_pMaterialsDB is deprecated. Use GetMaterialsDatabase() instead.")]]
 	const CMaterialsDatabase* GetMaterialsDBRef() const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! SetDynamicUnit(bool) is deprecated and not needed anymore.")]]
 	static void SetDynamicUnit(bool _flag) {}
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! AddPort(const std::string&, EPortType) is deprecated. Use AddPort(const std::string&, EUnitPort) instead.")]]
 	unsigned AddPort(const std::string& _name, unsigned _type);
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetPortStream(unsigned) is deprecated. Use GetPortStream(const std::string&) or CUnitPort::GetStream() instead.")]]
 	CStream* GetPortStream(unsigned _index) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! AddFeed(const std::string&, const std::string&) is deprecated. Use AddFeed(const std::string&) instead.")]]
 	CStream* AddFeed(const std::string& _name, const std::string& _key);
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! AddHoldup(const std::string&, const std::string&) is deprecated. Use AddHoldup(const std::string&) instead.")]]
 	CHoldup* AddHoldup(const std::string& _name, const std::string& _key);
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! AddMaterialStream(const std::string&, const std::string&) is deprecated. Use AddStream(const std::string&) instead.")]]
 	CStream* AddMaterialStream(const std::string& _name, const std::string& key = "");
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetMaterialStream(const std::string&) is deprecated. Use GetStream(const std::string&) instead.")]]
 	CStream* GetMaterialStream(const std::string& _name);
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! AddConstParameter(const std::string&, double, double, double, const std::string&, const std::string&) is deprecated. Use AddConstRealParameter(const std::string&, double, const std::string&, const std::string& _description, double, double), AddConstIntParameter(const std::string&, int64_t, const std::string&, const std::string& _description, int64_t, int64_t), or AddConstUIntParameter(const std::string&, uint64_t, const std::string&, const std::string& _description, uint64_t, uint64_t) instead.")]]
 	void AddConstParameter(const std::string& _name, double _minValue, double _maxValue, double _initValue, const std::string& _units, const std::string& _description);
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! AddTDParameter(const std::string&, double, double, double, const std::string&, const std::string&) is deprecated. Use AddTDParameter(const std::string&, double, const std::string&, const std::string&, double, double) instead.")]]
 	void AddTDParameter(const std::string& _name, double _minValue, double _maxValue, double _initValue, const std::string& _units, const std::string& _description);
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! AddGroupParameter(const std::string&, size_t, sonct std::vector<size_t>&, const std::vector<std::string>&, const std::string&) is deprecated. Use AddComboParameter(const std::string&, size_t, const std::vector<size_t>&, const std::vector<std::string>&, const std::string&) instead.")]]
 	void AddGroupParameter(const std::string& _name, size_t _initValue, const std::vector<size_t>& _values, const std::vector<std::string>& _valuesNames, const std::string& _description);
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetConstParameterValue(const std::string&) is deprecated. Use GetConstRealParameterValue(const std::string&), GetConstIntParameterValue(const std::string&), or GetConstUIntParameterValue(const std::string&) instead.")]]
 	double GetConstParameterValue(const std::string& _name) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetGroupParameterValue(const std::string&) is deprecated. Use GetComboParameterValue(const std::string&) instead.")]]
 	size_t GetGroupParameterValue(const std::string& _name) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! AddStateVariable(const std::string&, double, bool) is deprecated. Use AddStateVariable(const std::string&, double) instead.")]]
 	unsigned AddStateVariable(const std::string& _name, double _initValue, bool _saveHistory);
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! SetStateVariable(unsigned, double) is deprecated. Use SetStateVariable(const std::string&, double, double) or SetStateVariable(const std::string&, double) instead.")]]
 	void SetStateVariable(unsigned _index, double _value);
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! SaveStateVariables(double) is deprecated. Use SetStateVariable(const std::string&, double, double) instead when setting a value.")]]
 	void SaveStateVariables(double _time);
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! AddPointOnCurve(const std::string&, const std::string&, const std::vector<double>&, const std::vector<double>&) is deprecated. Use AddPointsOnCurve(const std::string&, const std::string&, const std::vector<double>&, const std::vector<double>&) instead.")]]
 	void AddPointOnCurve(const std::string& _plotName, const std::string& _curveName, const std::vector<double>& _x, const std::vector<double>& _y);
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! AddPointOnCurve(const std::string&, _valueZ, const std::vector<double>&, const std::vector<double>&) is deprecated. Use AddPointsOnCurve(const std::string&, _valueZ, const std::vector<double>&, const std::vector<double>&) instead.")]]
 	void AddPointOnCurve(const std::string& _plotName, double _valueZ, const std::vector<double>& _x, const std::vector<double>& _y);
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetPlotsNumber() is deprecated. Use GetPlotsManager().GetPlotsNumber() instead.")]]
 	unsigned GetPlotsNumber() const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetCurvesNumber(size_t) is deprecated. Use GetPlotsManager().GetPlot(const std::string&)->GetCurvesNumber() instead.")]]
 	unsigned GetCurvesNumber(size_t _iPlot) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetPlotName(size_t) is deprecated. Use GetPlotsManager().GetPlot(const std::string&)->GetName() instead.")]]
 	std::string GetPlotName(size_t _iPlot) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetPlotXAxisName(unsigned) is deprecated. Use GetPlotsManager().GetPlot(const std::string&)->GetLabelX() instead.")]]
 	std::string GetPlotXAxisName(unsigned _iPlot) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetPlotYAxisName(unsigned) is deprecated. Use GetPlotsManager().GetPlot(const std::string&)->GetLabelY() instead.")]]
 	std::string GetPlotYAxisName(unsigned _iPlot) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetPlotZAxisName(unsigned) is deprecated. Use GetPlotsManager().GetPlot(const std::string&)->GetLabelZ() instead.")]]
 	std::string GetPlotZAxisName(unsigned _iPlot) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetCurveName(unsigned, unsigned) is deprecated. Use GetPlotsManager().GetPlot(const std::string&)->GetCurve(const std::string&)->GetName() or GetPlotsManager().GetPlot(const std::string&)->GetCurve(double)->GetName() instead.")]]
 	std::string GetCurveName(unsigned _iPlot, unsigned _iCurve) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetCurveX(unsigned, unsigned) is deprecated. Use GetPlotsManager().GetPlot(const std::string&)->GetCurve(const std::string&)->GetXValues() or GetPlotsManager().GetPlot(const std::string&)->GetCurve(double)->GetXValues() instead.")]]
 	std::vector<double> GetCurveX(unsigned _iPlot, unsigned _iCurve) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetCurveY(unsigned, unsigned) is deprecated. Use GetPlotsManager().GetPlot(const std::string&)->GetCurve(const std::string&)->GetYValues() or GetPlotsManager().GetPlot(const std::string&)->GetCurve(double)->GetYValues() instead.")]]
 	std::vector<double> GetCurveY(unsigned _iPlot, unsigned _iCurve) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetCurveZ(size_t, size_t) is deprecated. Use GetPlotsManager().GetPlot(const std::string&)->GetCurve(const std::string&)->GetZValue() or GetPlotsManager().GetPlot(const std::string&)->GetCurve(double)->GetZValue() instead.")]]
 	double GetCurveZ(size_t _iPlot, size_t _iCurve) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! IsPlot2D(unsigned) is deprecated. Use GetPlotsManager().GetPlot(const std::string&)->Is2D() instead.")]]
 	bool IsPlot2D(unsigned _iPlot);
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetAllDefinedTimePoints(double, double, bool, bool) is deprecated. Use GetAllTimePoints(double, double) or GetAllTimePointsClosed(double, double) instead.")]]
 	std::vector<double> GetAllDefinedTimePoints(double _timeBeg, double _timeEnd, bool _forceStartBoundary = false, bool _forceEndBoundary = false) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetAllInputTimePoints(double, double, bool, bool) is deprecated. Use GetInputTimePoints(double, double) or GetInputTimePointsClosed(double, double) instead.")]]
 	std::vector<double> GetAllInputTimePoints(double _timeBeg, double _timeEnd, bool _forceStartBoundary = false, bool _forceEndBoundary = false) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetAllStreamsTimePoints(const std::vector<CStream*>&, double, double) is deprecated. Use GetStreamsTimePoints(double, double, const std::vector<CStream*>&) or GetStreamsTimePointsClosed(double, double, const std::vector<CStream*>&) instead.")]]
 	std::vector<double> GetAllStreamsTimePoints(const std::vector<CStream*>& _srteams, double _timeBeg, double _timeEnd) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetCompoundsList() is deprecated. Use GetAllCompounds() instead.")]]
 	std::vector<std::string> GetCompoundsList() const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetCompoundsNames() is deprecated. Use GetAllCompoundsNames(), GetCompoundName(const std::string&) or GetCompoundName(size_t) instead.")]]
 	std::vector<std::string> GetCompoundsNames() const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! IsCompoundKeyDefined(const std::string&) is deprecated. Use IsCompoundDefined(const std::string&) instead.")]]
 	bool IsCompoundKeyDefined(const std::string& _compoundKey) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetPhaseIndex(EPhaseTypes) is deprecated. Access phases by their type.")]]
 	unsigned GetPhaseIndex(unsigned _soa) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetPhaseSOA(unsigned) is deprecated. Use GetPhaseType(size_t) instead.")]]
 	unsigned GetPhaseSOA(unsigned _index) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! IsPhaseDefined(EPhaseTypes) is deprecated. Use IsPhaseDefined(EPhase) instead.")]]
 	bool IsPhaseDefined(unsigned _soa) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetCompoundConstant(const std::string&, ECompoundConstProperties) is deprecated. Use GetCompoundProperty(const std::string&, ECompoundConstProperties) instead.")]]
 	double GetCompoundConstant(const std::string& _compoundKey, unsigned _property) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetCompoundTPDProp(const std::string&, ECompoundTPProperties) is deprecated. Use GetCompoundProperty(const std::string&, ECompoundTPProperties, double, double) instead.")]]
 	double GetCompoundTPDProp(const std::string& _compoundKey, unsigned _property, double _temperature, double _pressure) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! GetCompoundsInteractionProp(const std::string&, const std::string&, EInteractionProperties, double, double) is deprecated. Use GetCompoundProperty(const std::string&, const std::string&, EInteractionProperties, double, double) instead.")]]
 	double GetCompoundsInteractionProp(const std::string& _compoundKey1, const std::string& _compoundKey2, unsigned _property, double _temperature = STANDARD_CONDITION_T, double _pressure = STANDARD_CONDITION_P) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! CalcTemperatureFromProperty(ECompoundTPProperties, const std::vector<double>&, double) is deprecated. Use CalculateTemperatureFromEnthalpy(double, const std::vector<double>&) or CMixtureLookup class instead.")]]
 	double CalcTemperatureFromProperty(ECompoundTPProperties _property, const std::vector<double>& _fractions, double _value) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! CalcPressureFromProperty(ECompoundTPProperties, const std::vector<double>&, double) is deprecated. Use CMixtureLookup class instead.")]]
 	double CalcPressureFromProperty(ECompoundTPProperties _property, const std::vector<double>& _fractions, double _value) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! HeatExchange(CMaterialStream*, CMaterialStream*, double, double) is deprecated. Use HeatExchange(double, CBaseStream*, CBaseStream*, double) instead.")]]
 	void HeatExchange(CStream* _stream1, CStream* _stream2, double _time, double _efficiency) const;
+	/**
+	 * \private
+	 */
 	[[deprecated("WARNING! CheckError() is deprecated. Use HasError() instead.")]]
 	bool CheckError() const;
 private:
