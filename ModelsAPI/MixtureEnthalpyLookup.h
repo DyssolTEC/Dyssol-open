@@ -7,7 +7,9 @@
 
 class CMaterialsDatabase;
 
-/* Bidirectional lookup table to find the correspondence between temperature and enthalpy of a mixture of materials. */
+/**
+ * Bidirectional lookup table to find the correspondence between temperature and enthalpy of a mixture of materials.
+ */
 class CMixtureEnthalpyLookup
 {
 	SInterval m_limits{ DEFAULT_ENTHALPY_MIN_T, DEFAULT_ENTHALPY_MAX_T };	// Temperature limits.

@@ -23,12 +23,14 @@ In Dyssol, certain universal constants are pre-defined and available for direct 
 +------------------------------------------+----------------------------------------+--------------------+
 |   ``STANDARD_ACCELERATION_OF_GRAVITY``   |   :math:`9.80665`                      |   [m/s :math:`^2`] |
 +------------------------------------------+----------------------------------------+--------------------+
-|   ``STANDARD_CONDITION_T``               |   :math:`298.15`                       |   [K]              |
-+------------------------------------------+----------------------------------------+--------------------+
-|   ``STANDARD_CONDITION_P``               |   :math:`101\,325`                     |   [Pa]             |
-+------------------------------------------+----------------------------------------+--------------------+
 |   ``MATH_PI``                            |   :math:`3.14159265358979323846`       |   [-]              |
 +------------------------------------------+----------------------------------------+--------------------+
+
+.. doxygendefine:: STANDARD_CONDITION_T
+   :project: dyssol_models_api
+   
+.. doxygendefine:: STANDARD_CONDITION_P
+   :project: dyssol_models_api
 
 .. doxygenenum:: EUnitPort
     :project: dyssol_models_api
@@ -40,4 +42,13 @@ In Dyssol, certain universal constants are pre-defined and available for direct 
     :project: dyssol_models_api
 	
 .. doxygenenum:: EGridEntry
+    :project: dyssol_models_api
+	
+.. doxygenenum:: ECompoundConstProperties
+    :project: dyssol_models_api
+	
+.. doxygenenum:: ECompoundTPProperties
+    :project: dyssol_models_api
+	
+.. doxygenenum:: EInteractionProperties
     :project: dyssol_models_api

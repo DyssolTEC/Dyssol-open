@@ -83,44 +83,46 @@ namespace MDBDescriptors
 
 
 //////////////////////////////////////////////////////////////////////////
-/// Constant properties of pure compounds [100 .. 199]
+// Constant properties of pure compounds [100 .. 199]
 
-// Identifiers of constant material properties
 // TODO: make enum class
 // TODO: rename enum
+/**
+ * Identifiers of constant material properties.
+ */
 enum ECompoundConstProperties : unsigned
 {
-	CONST_PROP_NO_PROERTY                        = 100,
-	CRITICAL_PRESSURE                            = 107,
-	CRITICAL_TEMPERATURE                         = 108,
-	HEAT_OF_FUSION_AT_NORMAL_FREEZING_POINT      = 114,
-	HEAT_OF_VAPORIZATION_AT_NORMAL_BOILING_POINT = 115,
-	MOLAR_MASS                                   = 121,
-	NORMAL_BOILING_POINT                         = 122,
-	NORMAL_FREEZING_POINT                        = 123,
-	STANDARD_FORMATION_ENTHALPY                  = 131,
-	BOND_WORK_INDEX								 = 132,
-	SOA_AT_NORMAL_CONDITIONS                     = 141,
-	CONST_PROP_USER_DEFINED_01                   = 150,
-	CONST_PROP_USER_DEFINED_02                   = 151,
-	CONST_PROP_USER_DEFINED_03                   = 152,
-	CONST_PROP_USER_DEFINED_04                   = 153,
-	CONST_PROP_USER_DEFINED_05                   = 154,
-	CONST_PROP_USER_DEFINED_06                   = 155,
-	CONST_PROP_USER_DEFINED_07                   = 156,
-	CONST_PROP_USER_DEFINED_08                   = 157,
-	CONST_PROP_USER_DEFINED_09                   = 158,
-	CONST_PROP_USER_DEFINED_10                   = 159,
-	CONST_PROP_USER_DEFINED_11                   = 160,
-	CONST_PROP_USER_DEFINED_12                   = 161,
-	CONST_PROP_USER_DEFINED_13                   = 162,
-	CONST_PROP_USER_DEFINED_14                   = 163,
-	CONST_PROP_USER_DEFINED_15                   = 164,
-	CONST_PROP_USER_DEFINED_16                   = 165,
-	CONST_PROP_USER_DEFINED_17                   = 166,
-	CONST_PROP_USER_DEFINED_18                   = 167,
-	CONST_PROP_USER_DEFINED_19                   = 168,
-	CONST_PROP_USER_DEFINED_20                   = 169,
+	CONST_PROP_NO_PROERTY                        = 100, ///< Undefined.
+	CRITICAL_PRESSURE                            = 107,	///< Critical pressure [Pa].
+	CRITICAL_TEMPERATURE                         = 108,	///< Critical temperature [K].
+	HEAT_OF_FUSION_AT_NORMAL_FREEZING_POINT      = 114,	///< Heat of fusion at normal freezing point [J/mol].
+	HEAT_OF_VAPORIZATION_AT_NORMAL_BOILING_POINT = 115,	///< Heat of vaporization at normal freezing point [J/mol].
+	MOLAR_MASS                                   = 121,	///< Molar mass [kg/mol].
+	NORMAL_BOILING_POINT                         = 122,	///< Normal boiling point [K].
+	NORMAL_FREEZING_POINT                        = 123,	///< Normal freezing point [K].
+	STANDARD_FORMATION_ENTHALPY                  = 131,	///< Standard enthalpy of formation [J/mol].
+	BOND_WORK_INDEX								 = 132,	///< Bond work index [kWh/t].
+	SOA_AT_NORMAL_CONDITIONS                     = 141,	///< State of aggregation at normal conditions [-].
+	CONST_PROP_USER_DEFINED_01                   = 150,	///< User-defined constant property.
+	CONST_PROP_USER_DEFINED_02                   = 151,	///< User-defined constant property.
+	CONST_PROP_USER_DEFINED_03                   = 152,	///< User-defined constant property.
+	CONST_PROP_USER_DEFINED_04                   = 153,	///< User-defined constant property.
+	CONST_PROP_USER_DEFINED_05                   = 154,	///< User-defined constant property.
+	CONST_PROP_USER_DEFINED_06                   = 155,	///< User-defined constant property.
+	CONST_PROP_USER_DEFINED_07                   = 156,	///< User-defined constant property.
+	CONST_PROP_USER_DEFINED_08                   = 157,	///< User-defined constant property.
+	CONST_PROP_USER_DEFINED_09                   = 158,	///< User-defined constant property.
+	CONST_PROP_USER_DEFINED_10                   = 159,	///< User-defined constant property.
+	CONST_PROP_USER_DEFINED_11                   = 160,	///< User-defined constant property.
+	CONST_PROP_USER_DEFINED_12                   = 161,	///< User-defined constant property.
+	CONST_PROP_USER_DEFINED_13                   = 162,	///< User-defined constant property.
+	CONST_PROP_USER_DEFINED_14                   = 163,	///< User-defined constant property.
+	CONST_PROP_USER_DEFINED_15                   = 164,	///< User-defined constant property.
+	CONST_PROP_USER_DEFINED_16                   = 165,	///< User-defined constant property.
+	CONST_PROP_USER_DEFINED_17                   = 166,	///< User-defined constant property.
+	CONST_PROP_USER_DEFINED_18                   = 167,	///< User-defined constant property.
+	CONST_PROP_USER_DEFINED_19                   = 168,	///< User-defined constant property.
+	CONST_PROP_USER_DEFINED_20                   = 169,	///< User-defined constant property.
 };
 
 namespace MDBDescriptors
@@ -170,42 +172,44 @@ namespace MDBDescriptors
 
 
 //////////////////////////////////////////////////////////////////////////
-/// Temperature/pressure-dependent properties of pure compounds [200 .. 299]
+// Temperature/pressure-dependent properties of pure compounds [200 .. 299]
 
-// Identifiers of temperature/pressure-dependent properties
 // TODO: make enum class
 // TODO: rename enum
+/**
+ * Identifiers of temperature/pressure-dependent properties.
+ */
 enum ECompoundTPProperties : unsigned
 {
-	TP_PROP_NO_PROERTY           = 200,
-	HEAT_CAPACITY_CP             = 207,
-	ENTHALPY                     = 208,
-	THERMAL_CONDUCTIVITY         = 222,
-	EQUILIBRIUM_MOISTURE_CONTENT = 223,
-	VAPOR_PRESSURE               = 224,
-	VISCOSITY                    = 226,
-	DENSITY                      = 234,
-	PERMITTIVITY                 = 235,
-	TP_PROP_USER_DEFINED_01      = 250,
-	TP_PROP_USER_DEFINED_02      = 251,
-	TP_PROP_USER_DEFINED_03      = 252,
-	TP_PROP_USER_DEFINED_04      = 253,
-	TP_PROP_USER_DEFINED_05      = 254,
-	TP_PROP_USER_DEFINED_06      = 255,
-	TP_PROP_USER_DEFINED_07      = 256,
-	TP_PROP_USER_DEFINED_08      = 257,
-	TP_PROP_USER_DEFINED_09      = 258,
-	TP_PROP_USER_DEFINED_10      = 259,
-	TP_PROP_USER_DEFINED_11      = 260,
-	TP_PROP_USER_DEFINED_12      = 261,
-	TP_PROP_USER_DEFINED_13      = 262,
-	TP_PROP_USER_DEFINED_14      = 263,
-	TP_PROP_USER_DEFINED_15      = 264,
-	TP_PROP_USER_DEFINED_16      = 265,
-	TP_PROP_USER_DEFINED_17      = 266,
-	TP_PROP_USER_DEFINED_18      = 267,
-	TP_PROP_USER_DEFINED_19      = 268,
-	TP_PROP_USER_DEFINED_20      = 269,
+	TP_PROP_NO_PROERTY           = 200, ///< Undefined.
+	HEAT_CAPACITY_CP             = 207, ///< Heat capacity [J/(kg·K)].
+	ENTHALPY                     = 208,	///< Enthalpy [J/kg].
+	THERMAL_CONDUCTIVITY         = 222,	///< Thermal conductivity [W/(m·K)].
+	EQUILIBRIUM_MOISTURE_CONTENT = 223,	///< Equilibrium moisture content [kg/kg].
+	VAPOR_PRESSURE               = 224,	///< Vapor pressure [Pa].
+	VISCOSITY                    = 226,	///< Dynamic viscosity [Pa·s].
+	DENSITY                      = 234,	///< Density [kg/m<sup>3</sup>].
+	PERMITTIVITY                 = 235,	///< Permittivity [F/m].
+	TP_PROP_USER_DEFINED_01      = 250,	///< User-defined dependent property.
+	TP_PROP_USER_DEFINED_02      = 251,	///< User-defined dependent property.
+	TP_PROP_USER_DEFINED_03      = 252,	///< User-defined dependent property.
+	TP_PROP_USER_DEFINED_04      = 253,	///< User-defined dependent property.
+	TP_PROP_USER_DEFINED_05      = 254,	///< User-defined dependent property.
+	TP_PROP_USER_DEFINED_06      = 255,	///< User-defined dependent property.
+	TP_PROP_USER_DEFINED_07      = 256,	///< User-defined dependent property.
+	TP_PROP_USER_DEFINED_08      = 257,	///< User-defined dependent property.
+	TP_PROP_USER_DEFINED_09      = 258,	///< User-defined dependent property.
+	TP_PROP_USER_DEFINED_10      = 259,	///< User-defined dependent property.
+	TP_PROP_USER_DEFINED_11      = 260,	///< User-defined dependent property.
+	TP_PROP_USER_DEFINED_12      = 261,	///< User-defined dependent property.
+	TP_PROP_USER_DEFINED_13      = 262,	///< User-defined dependent property.
+	TP_PROP_USER_DEFINED_14      = 263,	///< User-defined dependent property.
+	TP_PROP_USER_DEFINED_15      = 264,	///< User-defined dependent property.
+	TP_PROP_USER_DEFINED_16      = 265,	///< User-defined dependent property.
+	TP_PROP_USER_DEFINED_17      = 266,	///< User-defined dependent property.
+	TP_PROP_USER_DEFINED_18      = 267,	///< User-defined dependent property.
+	TP_PROP_USER_DEFINED_19      = 268,	///< User-defined dependent property.
+	TP_PROP_USER_DEFINED_20      = 269,	///< User-defined dependent property.
 };
 
 namespace MDBDescriptors
@@ -238,35 +242,37 @@ namespace MDBDescriptors
 
 
 //////////////////////////////////////////////////////////////////////////
-/// Interactions properties between two pure compounds [300 .. 399]
+// Interactions properties between two pure compounds [300 .. 399]
 
-// Identifiers of properties, defined for interaction of two compounds
 // TODO: make enum class
 // TODO: rename enum
+/**
+ * Identifiers of properties, defined for interaction of two compounds.
+ */
 enum EInteractionProperties : unsigned
 {
-	INT_PROP_NO_PROERTY      = 300,
-	INTERFACE_TENSION        = 303,
-	INT_PROP_USER_DEFINED_01 = 350,
-	INT_PROP_USER_DEFINED_02 = 351,
-	INT_PROP_USER_DEFINED_03 = 352,
-	INT_PROP_USER_DEFINED_04 = 353,
-	INT_PROP_USER_DEFINED_05 = 354,
-	INT_PROP_USER_DEFINED_06 = 355,
-	INT_PROP_USER_DEFINED_07 = 356,
-	INT_PROP_USER_DEFINED_08 = 357,
-	INT_PROP_USER_DEFINED_09 = 358,
-	INT_PROP_USER_DEFINED_10 = 359,
-	INT_PROP_USER_DEFINED_11 = 360,
-	INT_PROP_USER_DEFINED_12 = 361,
-	INT_PROP_USER_DEFINED_13 = 362,
-	INT_PROP_USER_DEFINED_14 = 363,
-	INT_PROP_USER_DEFINED_15 = 364,
-	INT_PROP_USER_DEFINED_16 = 365,
-	INT_PROP_USER_DEFINED_17 = 366,
-	INT_PROP_USER_DEFINED_18 = 367,
-	INT_PROP_USER_DEFINED_19 = 368,
-	INT_PROP_USER_DEFINED_20 = 369,
+	INT_PROP_NO_PROERTY      = 300, ///< Undefined.
+	INTERFACE_TENSION        = 303, ///< Interface tension [N/m].
+	INT_PROP_USER_DEFINED_01 = 350,	///< User-defined interaction property.
+	INT_PROP_USER_DEFINED_02 = 351,	///< User-defined interaction property.
+	INT_PROP_USER_DEFINED_03 = 352,	///< User-defined interaction property.
+	INT_PROP_USER_DEFINED_04 = 353,	///< User-defined interaction property.
+	INT_PROP_USER_DEFINED_05 = 354,	///< User-defined interaction property.
+	INT_PROP_USER_DEFINED_06 = 355,	///< User-defined interaction property.
+	INT_PROP_USER_DEFINED_07 = 356,	///< User-defined interaction property.
+	INT_PROP_USER_DEFINED_08 = 357,	///< User-defined interaction property.
+	INT_PROP_USER_DEFINED_09 = 358,	///< User-defined interaction property.
+	INT_PROP_USER_DEFINED_10 = 359,	///< User-defined interaction property.
+	INT_PROP_USER_DEFINED_11 = 360,	///< User-defined interaction property.
+	INT_PROP_USER_DEFINED_12 = 361,	///< User-defined interaction property.
+	INT_PROP_USER_DEFINED_13 = 362,	///< User-defined interaction property.
+	INT_PROP_USER_DEFINED_14 = 363,	///< User-defined interaction property.
+	INT_PROP_USER_DEFINED_15 = 364,	///< User-defined interaction property.
+	INT_PROP_USER_DEFINED_16 = 365,	///< User-defined interaction property.
+	INT_PROP_USER_DEFINED_17 = 366,	///< User-defined interaction property.
+	INT_PROP_USER_DEFINED_18 = 367,	///< User-defined interaction property.
+	INT_PROP_USER_DEFINED_19 = 368,	///< User-defined interaction property.
+	INT_PROP_USER_DEFINED_20 = 369,	///< User-defined interaction property.
 };
 
 namespace MDBDescriptors

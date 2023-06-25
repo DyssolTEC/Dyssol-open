@@ -136,3 +136,4 @@ html_favicon = './static/images/logo.png'
 breathe_projects = {
     "dyssol_models_api": "@DOXYGEN_OUTPUT_XML_DIR@",
 }
+breathe_show_define_initializer = True
