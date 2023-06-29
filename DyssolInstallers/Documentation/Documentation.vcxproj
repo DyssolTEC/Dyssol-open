@@ -40,7 +40,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32' OR '$(Configuration)|$(Platform)'=='Release|Win32' OR '$(Configuration)|$(Platform)'=='Debug|x64' OR '$(Configuration)|$(Platform)'=='Release|x64'">
     <CustomBuildStep>
-      <Command>Script.bat $(SolutionDir) $(SolutionPath)</Command>
+      <Command>Script.bat $(SolutionDir)</Command>
       <Message>Building documentation...</Message>
       <Outputs>Fake</Outputs>
     </CustomBuildStep>

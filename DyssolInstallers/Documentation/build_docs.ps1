@@ -1,7 +1,9 @@
-# variables
-$src_path = "..\.."
-$install_path = "$($src_path)\install\windows"
-$build_path = "$($src_path)\build\windows"
+# read arguments
+$solution_dir = $args[0]
+
+# set variables
+$install_path = "$($solution_dir)\install\windows"
+$build_path = "$($solution_dir)\build\windows"
 
 # switch to x64 powershell if it is x86 now
 if ($env:PROCESSOR_ARCHITEW6432 -eq "AMD64") {
@@ -22,6 +24,6 @@ if (!(Test-Path $install_path)) {
 
 # compile docs
 Set-Location $build_path
-cmake $src_path -DCMAKE_INSTALL_PREFIX="$($install_path)" -DBUILD_BINARIES=NO
+cmake $solution_dir -D CMAKE_INSTALL_PREFIX="$($install_path)" -D BUILD_BINARIES=NO -D BUILD_TESTS=NO --fresh
 cmake --build . --parallel --target doc
 cmake --build . --parallel --target INSTALL
