@@ -608,7 +608,11 @@ void CSolidDistributionsEditor::FunctionalCalled() const
 	if (m_pDistributor->exec() == QDialog::Rejected)
 		return;
 
-	const std::vector<double> vRes = m_pDistributor->GetDistribution();
+	std::vector<double> vRes;
+	if (dim == DISTR_SIZE)
+		vRes = ConvertDistribution(EPSDTypes::PSD_MassFrac, ChosenPSDType(), m_pGrid->GetNumericGrid(dim), m_pDistributor->GetDistribution());
+	else
+		vRes = m_pDistributor->GetDistribution();
 
 	QSignalBlocker blocker(ui.tableWidget);
 	if (flag1)

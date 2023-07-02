@@ -245,7 +245,7 @@ std::vector<double> inline ConvertNumbersToQ2(const std::vector<double>& _grid, 
 {
 	if (_number.empty()) return {};
 	if (_grid.size() != _number.size() + 1) return {};
-	const double PI = 3.14159265358979323846;
+	constexpr double PI = 3.14159265358979323846;
 	std::vector<double> Q2(_number.size());
 	Q2[0] = _number[0] * PI * pow((_grid[0] + _grid[1]) / 2, 2);
 	for (size_t i = 1; i < _number.size(); ++i)
@@ -274,6 +274,165 @@ std::vector<double> inline ConvertNumbersToMassFractions(const std::vector<doubl
 {
 	return Convertq0ToMassFractions(_grid, ConvertNumbersToq0(_grid, _number));
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<double> inline Convertq0ToQ2(const std::vector<double>& _grid, const std::vector<double>& _q0)
+{
+	return Convertq2ToQ2(_grid, Convertq0Toq2(_grid, _q0));
+}
+
+std::vector<double> inline Convertq0ToQ3(const std::vector<double>& _grid, const std::vector<double>& _q0)
+{
+	return Convertq3ToQ3(_grid, Convertq0Toq3(_grid, _q0));
+}
+
+std::vector<double> inline Convertq2ToQ0(const std::vector<double>& _grid, const std::vector<double>& _q2)
+{
+	return Convertq0ToQ0(_grid, Convertq2Toq0(_grid, _q2));
+}
+
+std::vector<double> inline Convertq2ToQ3(const std::vector<double>& _grid, const std::vector<double>& _q2)
+{
+	return Convertq3ToQ3(_grid, Convertq2Toq3(_grid, _q2));
+}
+
+std::vector<double> inline Convertq3ToQ0(const std::vector<double>& _grid, const std::vector<double>& _q3)
+{
+	return Convertq0ToQ0(_grid, Convertq3Toq0(_grid, _q3));
+}
+
+std::vector<double> inline Convertq3ToQ2(const std::vector<double>& _grid, const std::vector<double>& _q3)
+{
+	return Convertq2ToQ2(_grid, Convertq3Toq2(_grid, _q3));
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<double> inline ConvertQ0Toq2(const std::vector<double>& _grid, const std::vector<double>& _Q0)
+{
+	return Convertq0Toq2(_grid, ConvertQ0Toq0(_grid, _Q0));
+}
+
+std::vector<double> inline ConvertQ0Toq3(const std::vector<double>& _grid, const std::vector<double>& _Q0)
+{
+	return Convertq0Toq3(_grid, ConvertQ0Toq0(_grid, _Q0));
+}
+
+std::vector<double> inline ConvertQ2Toq0(const std::vector<double>& _grid, const std::vector<double>& _Q2)
+{
+	return Convertq2Toq0(_grid, ConvertQ2Toq2(_grid, _Q2));
+}
+
+std::vector<double> inline ConvertQ2Toq3(const std::vector<double>& _grid, const std::vector<double>& _Q2)
+{
+	return Convertq2Toq3(_grid, ConvertQ2Toq2(_grid, _Q2));
+}
+
+std::vector<double> inline ConvertQ3Toq0(const std::vector<double>& _grid, const std::vector<double>& _Q3)
+{
+	return Convertq3Toq0(_grid, ConvertQ3Toq3(_grid, _Q3));
+}
+
+std::vector<double> inline ConvertQ3Toq2(const std::vector<double>& _grid, const std::vector<double>& _Q3)
+{
+	return Convertq3Toq2(_grid, ConvertQ3Toq3(_grid, _Q3));
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<double> inline ConvertQ0ToQ2(const std::vector<double>& _grid, const std::vector<double>& _Q0)
+{
+	return ConvertMassFractionsToQ2(_grid, ConvertQ0ToMassFractions(_grid, _Q0));
+}
+
+std::vector<double> inline ConvertQ0ToQ3(const std::vector<double>& _grid, const std::vector<double>& _Q0)
+{
+	return ConvertMassFractionsToQ3(ConvertQ0ToMassFractions(_grid, _Q0));
+}
+
+std::vector<double> inline ConvertQ2ToQ0(const std::vector<double>& _grid, const std::vector<double>& _Q2)
+{
+	return ConvertMassFractionsToQ0(_grid, ConvertQ2ToMassFractions(_grid, _Q2));
+}
+
+std::vector<double> inline ConvertQ2ToQ3(const std::vector<double>& _grid, const std::vector<double>& _Q2)
+{
+	return ConvertMassFractionsToQ3(ConvertQ2ToMassFractions(_grid, _Q2));
+}
+
+std::vector<double> inline ConvertQ3ToQ0(const std::vector<double>& _grid, const std::vector<double>& _Q0)
+{
+	return ConvertMassFractionsToQ0(_grid, ConvertQ0ToMassFractions(_grid, _Q0));
+}
+
+std::vector<double> inline ConvertQ3ToQ2(const std::vector<double>& _grid, const std::vector<double>& _Q3)
+{
+	return ConvertMassFractionsToQ2(_grid, ConvertQ3ToMassFractions(_Q3));
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Assumes unity density and unity total mass.
+ */
+std::vector<double> inline ConvertMassFractionsToNumbers(const std::vector<double>& _grid, const std::vector<double>& _massFrac)
+{
+	constexpr double PI = 3.14159265358979323846;
+	std::vector res(_massFrac.size(), 0.0);
+	for (size_t i = 0; i < _massFrac.size(); ++i)
+		res[i] = 6 * _massFrac[i] / (PI * pow(_grid[i + 1] - _grid[i], 3));
+	return res;
+}
+
+/**
+ * Assumes unity density and unity total mass.
+ */
+std::vector<double> inline Convertq0ToNumbers(const std::vector<double>& _grid, const std::vector<double>& _q0)
+{
+	return ConvertMassFractionsToNumbers(_grid, Convertq0ToMassFractions(_grid, _q0));
+}
+
+/**
+ * Assumes unity density and unity total mass.
+ */
+std::vector<double> inline Convertq2ToNumbers(const std::vector<double>& _grid, const std::vector<double>& _q2)
+{
+	return ConvertMassFractionsToNumbers(_grid, Convertq2ToMassFractions(_grid, _q2));
+}
+
+/**
+ * Assumes unity density and unity total mass.
+ */
+std::vector<double> inline Convertq3ToNumbers(const std::vector<double>& _grid, const std::vector<double>& _q3)
+{
+	return ConvertMassFractionsToNumbers(_grid, Convertq3ToMassFractions(_grid, _q3));
+}
+
+/**
+ * Assumes unity density and unity total mass.
+ */
+std::vector<double> inline ConvertQ0ToNumbers(const std::vector<double>& _grid, const std::vector<double>& _Q0)
+{
+	return ConvertMassFractionsToNumbers(_grid, ConvertQ0ToMassFractions(_grid, _Q0));
+}
+
+/**
+ * Assumes unity density and unity total mass.
+ */
+std::vector<double> inline ConvertQ2ToNumbers(const std::vector<double>& _grid, const std::vector<double>& _Q2)
+{
+	return ConvertMassFractionsToNumbers(_grid, ConvertQ2ToMassFractions(_grid, _Q2));
+}
+
+/**
+ * Assumes unity density and unity total mass.
+ */
+std::vector<double> inline ConvertQ3ToNumbers(const std::vector<double>& _grid, const std::vector<double>& _Q3)
+{
+	return ConvertMassFractionsToNumbers(_grid, ConvertQ3ToMassFractions(_Q3));
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
