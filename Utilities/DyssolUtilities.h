@@ -261,57 +261,310 @@ constexpr E V2E(T v)
 	return static_cast<E>(static_cast<std::underlying_type_t<E>>(v));
 }
 
+/**
+ * Returns normally distributed probability density function.
+ * \param _x Distribution parameter.
+ * \param _d50 Mean value.
+ * \param _sigma Standard deviation.
+ * \return Distribution.
+ */
 std::vector<double> inline CreateDistributionNormal(const std::vector<double>& _x, double _d50, double _sigma)
 {
-	std::vector<double> vRes(_x.size());
+	std::vector<double> res(_x.size());
 	const double dA = 1 / (_sigma * std::sqrt(2 * MATH_PI));
 	for (size_t i = 0; i < _x.size(); ++i)
-		vRes[i] = dA * std::exp(-std::pow(_x[i] - _d50, 2) / (2 * _sigma * _sigma));
-	return vRes;
+		res[i] = dA * std::exp(-std::pow(_x[i] - _d50, 2) / (2 * _sigma * _sigma));
+	return res;
 }
 
+/**
+ * Returns log-normally distributed probability density function.
+ * \param _x Distribution parameter.
+ * \param _d50 Mean value.
+ * \param _deviation Standard deviation.
+ * \return Distribution.
+ */
 std::vector<double> inline CreateDistributionLogNormal(const std::vector<double>& _x, double _d50, double _deviation)
 {
-	std::vector<double> vRes(_x.size());
-	if (_deviation == 0) return vRes;
+	std::vector<double> res(_x.size());
+	if (_deviation == 0.0) return res;
 	const double dA = 1 / (_deviation * std::sqrt(2 * MATH_PI));
 	for (size_t i = 0; i < _x.size(); ++i)
-		vRes[i] = dA / _x[i] * std::exp(-std::pow((std::log(_x[i]) - std::log(_d50)), 2) / (2 * _deviation * _deviation));
-	return vRes;
+		res[i] = dA / _x[i] * std::exp(-std::pow(std::log(_x[i]) - std::log(_d50), 2) / (2 * _deviation * _deviation));
+	return res;
 }
 
+/**
+ * Returns Rosin-Rammler-Sperling-Bennett distributed probability density function.
+ * \param _x Distribution parameter.
+ * \param _d63 Scale.
+ * \param _dispersion Shape.
+ * \return Distribution.
+ */
 std::vector<double> inline CreateDistributionRRSB(const std::vector<double>& _x, double _d63, double _dispersion)
 {
-	std::vector<double> vRes(_x.size());
-	if (_d63 == 0) return vRes;
+	std::vector<double> res(_x.size());
+	if (_d63 == 0.0) return res;
 	for (size_t i = 0; i < _x.size(); ++i)
-		vRes[i] = 1 - std::exp(-std::pow(_x[i] / _d63, _dispersion));
-	return ConvertQ3ToMassFractions(vRes);
+		res[i] = 1 - std::exp(-std::pow(_x[i] / _d63, _dispersion));
+	res = ConvertQ3ToMassFractions(res);
+	return res;
 }
 
+/**
+ * Returns Gates-Gaudin-Schumann distributed probability density function.
+ * \param _x Distribution parameter.
+ * \param _dmax Scale.
+ * \param _dispersion Shape.
+ * \return Distribution.
+ */
 std::vector<double> inline CreateDistributionGGS(const std::vector<double>& _x, double _dmax, double _dispersion)
 {
-	std::vector<double> vRes(_x.size());
-	if (_dmax == 0) return vRes;
+	std::vector<double> res(_x.size());
+	if (_dmax == 0.0) return res;
 	for (size_t i = 0; i < _x.size(); ++i)
 		if (_x[i] <= _dmax)
-			vRes[i] = std::pow(_x[i] / _dmax, _dispersion);
+			res[i] = std::pow(_x[i] / _dmax, _dispersion);
 		else
-			vRes[i] = 1.;
-	return ConvertQ3ToMassFractions(vRes);
+			res[i] = 1.;
+	res = ConvertQ3ToMassFractions(res);
+	return res;
 }
 
-std::vector<double> inline CreateDistribution(EDistrFunction _distr, const std::vector<double>& _x, double _param1, double _param2)
+/**
+ * Returns given probability density function.
+ * \param _type Distribution function.
+ * \param _x Distribution parameter.
+ * \param _param1 Parameter of the distribution function.
+ * \param _param2 Parameter of the distribution function.
+ * \return Distribution.
+ */
+std::vector<double> inline CreateDistribution(EDistrFunction _type, const std::vector<double>& _x, double _param1, double _param2)
 {
-	switch (_distr)
+	switch (_type)
 	{
-	case EDistrFunction::Manual:    return std::vector<double>(_x.size(), 0);
+	case EDistrFunction::Manual:    return std::vector(_x.size(), 0.0);
 	case EDistrFunction::Normal:    return CreateDistributionNormal(_x, _param1, _param2);
 	case EDistrFunction::RRSB:      return CreateDistributionRRSB(_x, _param1, _param2);
 	case EDistrFunction::GGS:       return CreateDistributionGGS(_x, _param1, _param2);
 	case EDistrFunction::LogNormal: return CreateDistributionLogNormal(_x, _param1, _param2);
 	}
-	return std::vector<double>(_x.size(), 0);
+	return std::vector(_x.size(), 0.0);
+}
+
+/**
+ * \brief Converts q0 distribution to another one.
+ * \details If output distributions is EPSDTypes::PSD_Number, unity density and unity total mass is assumed.
+ * \param _type Output distribution type.
+ * \param _grid Distribution grid.
+ * \param _distr Input q0 distribution.
+ * \return Converted distribution.
+ */
+std::vector<double> inline Convertq0Distribution(EPSDTypes _type, const std::vector<double>& _grid, const std::vector<double>& _distr)
+{
+	switch (_type)
+	{
+	case PSD_q3:       return Convertq0Toq3(_grid, _distr);
+	case PSD_Q3:       return Convertq0ToQ3(_grid, _distr);
+	case PSD_q0:       return _distr;
+	case PSD_Q0:       return Convertq0ToQ0 (_grid, _distr);
+	case PSD_MassFrac: return Convertq0ToMassFractions(_grid, _distr);
+	case PSD_Number:   return Convertq0ToNumbers(_grid, _distr);
+	case PSD_q2:       return Convertq0Toq2(_grid, _distr);
+	case PSD_Q2:       return Convertq0ToQ2(_grid, _distr);
+	}
+	return _distr;
+}
+
+/**
+ * \brief Converts q2 distribution to another one.
+ * \details If output distributions is EPSDTypes::PSD_Number, unity density and unity total mass is assumed.
+ * \param _type Output distribution type.
+ * \param _grid Distribution grid.
+ * \param _distr Input q2 distribution.
+ * \return Converted distribution.
+ */
+std::vector<double> inline Convertq2Distribution(EPSDTypes _type, const std::vector<double>& _grid, const std::vector<double>& _distr)
+{
+	switch (_type)
+	{
+	case PSD_q3:       return Convertq2Toq3(_grid, _distr);
+	case PSD_Q3:       return Convertq2ToQ3(_grid, _distr);
+	case PSD_q0:       return Convertq2Toq0(_grid, _distr);
+	case PSD_Q0:       return Convertq2ToQ0(_grid, _distr);
+	case PSD_MassFrac: return Convertq2ToMassFractions(_grid, _distr);
+	case PSD_Number:   return Convertq2ToNumbers(_grid, _distr);
+	case PSD_q2:       return _distr;
+	case PSD_Q2:       return Convertq2ToQ2(_grid, _distr);
+	}
+	return _distr;
+}
+
+/**
+ * \brief Converts q3 distribution to another one.
+ * \details If output distributions is EPSDTypes::PSD_Number, unity density and unity total mass is assumed.
+ * \param _type Output distribution type.
+ * \param _grid Distribution grid.
+ * \param _distr Input q3 distribution.
+ * \return Converted distribution.
+ */
+std::vector<double> inline Convertq3Distribution(EPSDTypes _type, const std::vector<double>& _grid, const std::vector<double>& _distr)
+{
+	switch (_type)
+	{
+	case PSD_q3:       return _distr;
+	case PSD_Q3:       return Convertq3ToQ3(_grid, _distr);
+	case PSD_q0:       return Convertq3Toq0(_grid, _distr);
+	case PSD_Q0:       return Convertq3ToQ0(_grid, _distr);
+	case PSD_MassFrac: return Convertq3ToMassFractions(_grid, _distr);
+	case PSD_Number:   return Convertq3ToNumbers(_grid, _distr);
+	case PSD_q2:       return Convertq3Toq2(_grid, _distr);
+	case PSD_Q2:       return Convertq3ToQ2(_grid, _distr);
+	}
+	return _distr;
+}
+
+/**
+ * \brief Converts Q0 distribution to another one.
+ * \details If output distributions is EPSDTypes::PSD_Number, unity density and unity total mass is assumed.
+ * \param _type Output distribution type.
+ * \param _grid Distribution grid.
+ * \param _distr Input Q0 distribution.
+ * \return Converted distribution.
+ */
+std::vector<double> inline ConvertQ0Distribution(EPSDTypes _type, const std::vector<double>& _grid, const std::vector<double>& _distr)
+{
+	switch (_type)
+	{
+	case PSD_q3:       return ConvertQ0Toq3(_grid, _distr);
+	case PSD_Q3:       return ConvertQ0ToQ3(_grid, _distr);
+	case PSD_q0:       return ConvertQ0Toq0(_grid, _distr);
+	case PSD_Q0:       return _distr;
+	case PSD_MassFrac: return ConvertQ0ToMassFractions(_grid, _distr);
+	case PSD_Number:   return ConvertQ0ToNumbers(_grid, _distr);
+	case PSD_q2:       return ConvertQ0Toq2(_grid, _distr);
+	case PSD_Q2:       return ConvertQ0ToQ2(_grid, _distr);
+	}
+	return _distr;
+}
+
+/**
+ * \brief Converts Q2 distribution to another one.
+ * \details If output distributions is EPSDTypes::PSD_Number, unity density and unity total mass is assumed.
+ * \param _type Output distribution type.
+ * \param _grid Distribution grid.
+ * \param _distr Input Q2 distribution.
+ * \return Converted distribution.
+ */
+std::vector<double> inline ConvertQ2Distribution(EPSDTypes _type, const std::vector<double>& _grid, const std::vector<double>& _distr)
+{
+	switch (_type)
+	{
+	case PSD_q3:       return ConvertQ2Toq3(_grid, _distr);
+	case PSD_Q3:       return ConvertQ2ToQ3(_grid, _distr);
+	case PSD_q0:       return ConvertQ2Toq0(_grid, _distr);
+	case PSD_Q0:       return ConvertQ2ToQ0(_grid, _distr);
+	case PSD_MassFrac: return ConvertQ2ToMassFractions(_grid, _distr);
+	case PSD_Number:   return ConvertQ2ToNumbers(_grid, _distr);
+	case PSD_q2:       return ConvertQ2Toq2(_grid, _distr);
+	case PSD_Q2:       return _distr;
+	}
+	return _distr;
+}
+
+/**
+ * \brief Converts Q3 distribution to another one.
+ * \details If output distributions is EPSDTypes::PSD_Number, unity density and unity total mass is assumed.
+ * \param _type Output distribution type.
+ * \param _grid Distribution grid.
+ * \param _distr Input Q3 distribution.
+ * \return Converted distribution.
+ */
+std::vector<double> inline ConvertQ3Distribution(EPSDTypes _type, const std::vector<double>& _grid, const std::vector<double>& _distr)
+{
+	switch (_type)
+	{
+	case PSD_q3:       return ConvertQ3Toq3(_grid, _distr);
+	case PSD_Q3:       return _distr;
+	case PSD_q0:       return ConvertQ3Toq0(_grid, _distr);
+	case PSD_Q0:       return ConvertQ3ToQ0(_grid, _distr);
+	case PSD_MassFrac: return ConvertQ3ToMassFractions(_distr);
+	case PSD_Number:   return ConvertQ3ToNumbers(_grid, _distr);
+	case PSD_q2:       return ConvertQ3Toq2(_grid, _distr);
+	case PSD_Q2:       return ConvertQ3ToQ2(_grid, _distr);
+	}
+	return _distr;
+}
+
+/**
+ * \brief Converts mass fractions distribution to another one.
+ * \details If output distributions is EPSDTypes::PSD_Number, unity density and unity total mass is assumed.
+ * \param _type Output distribution type.
+ * \param _grid Distribution grid.
+ * \param _distr Input mass fractions distribution.
+ * \return Converted distribution.
+ */
+std::vector<double> inline ConvertMassFractionsDistribution(EPSDTypes _type, const std::vector<double>& _grid, const std::vector<double>& _distr)
+{
+	switch (_type)
+	{
+	case PSD_q3:       return ConvertMassFractionsToq3(_grid, _distr);
+	case PSD_Q3:       return ConvertMassFractionsToQ3(_distr);
+	case PSD_q0:       return ConvertMassFractionsToq0(_grid, _distr);
+	case PSD_Q0:       return ConvertMassFractionsToQ0(_grid, _distr);
+	case PSD_MassFrac: return _distr;
+	case PSD_Number:   return ConvertMassFractionsToNumbers(_grid, _distr);
+	case PSD_q2:       return ConvertMassFractionsToq2(_grid, _distr);
+	case PSD_Q2:       return ConvertMassFractionsToQ2(_grid, _distr);
+	}
+	return _distr;
+}
+
+/**
+ * \brief Converts numbers distribution to another one.
+ * \param _type Output distribution type.
+ * \param _grid Distribution grid.
+ * \param _distr Input numbers distribution.
+ * \return Converted distribution.
+ */
+std::vector<double> inline ConvertNumbersDistribution(EPSDTypes _type, const std::vector<double>& _grid, const std::vector<double>& _distr)
+{
+	switch (_type)
+	{
+	case PSD_q3:       return ConvertNumbersToq3(_grid, _distr);
+	case PSD_Q3:       return ConvertNumbersToQ3(_grid, _distr);
+	case PSD_q0:       return ConvertNumbersToq0(_grid, _distr);
+	case PSD_Q0:       return ConvertNumbersToQ0(_grid, _distr);
+	case PSD_MassFrac: return ConvertNumbersToMassFractions(_grid, _distr);
+	case PSD_Number:   return _distr;
+	case PSD_q2:       return ConvertNumbersToq2(_grid, _distr);
+	case PSD_Q2:       return ConvertNumbersToQ2(_grid, _distr);
+	}
+	return _distr;
+}
+
+/**
+ * \brief Converts distribution of one type to another one.
+ * \param _typeI Input distribution type.
+ * \param _typeO Output distribution type.
+ * \param _grid Distribution grid.
+ * \param _distr Input distribution.
+ * \return Converted distribution.
+ */
+std::vector<double> inline ConvertDistribution(EPSDTypes _typeI, EPSDTypes _typeO, const std::vector<double>& _grid, const std::vector<double>& _distr)
+{
+	switch (_typeI)
+	{
+	case PSD_q3:       return Convertq3Distribution           (_typeO, _grid, _distr);
+	case PSD_Q3:       return ConvertQ3Distribution           (_typeO, _grid, _distr);
+	case PSD_q0:       return Convertq0Distribution           (_typeO, _grid, _distr);
+	case PSD_Q0:       return ConvertQ0Distribution           (_typeO, _grid, _distr);
+	case PSD_MassFrac: return ConvertMassFractionsDistribution(_typeO, _grid, _distr);
+	case PSD_Number:   return ConvertNumbersDistribution      (_typeO, _grid, _distr);
+	case PSD_q2:       return Convertq2Distribution           (_typeO, _grid, _distr);
+	case PSD_Q2:       return ConvertQ2Distribution           (_typeO, _grid, _distr);
+	}
+	return _distr;
 }
 
 // Creates an equidistant distribution grid according to the given function and parameters.

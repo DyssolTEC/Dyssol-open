@@ -453,7 +453,12 @@ bool CScriptRunner::SetupHoldupsDistributions(const CScriptJob& _job)
 		// create functional distributions
 		if (!manual)
 			for (auto& value : values)
-				value = CreateDistribution(fun, means, value[0], value[1]);
+			{
+				if (distr == DISTR_SIZE)
+					value = ConvertDistribution(EPSDTypes::PSD_MassFrac, psd, grid.GetNumericGrid(distr), CreateDistribution(fun, means, value[0], value[1]));
+				else
+					value = CreateDistribution(fun, means, value[0], value[1]);
+			}
 		// set values
 		for (size_t i = 0; i < times.size(); ++i)
 			if (distr == DISTR_SIZE)	holdup->SetPSD(times[i], psd, key, values[i], mean);
