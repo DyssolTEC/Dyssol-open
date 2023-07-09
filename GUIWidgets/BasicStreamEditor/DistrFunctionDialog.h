@@ -15,7 +15,7 @@ private:
 
 	double m_dParam1;
 	double m_dParam2;
-	std::vector<double> m_vSizes;
+	std::vector<double> m_grid; // grid of distributed value
 	std::vector<double> m_vDistr;
 	EDistrFunction m_distrFun;
 	const CMultidimensionalGrid* m_pGrid;
