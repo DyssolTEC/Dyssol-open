@@ -425,11 +425,11 @@ bool CScriptRunner::SetupHoldupsDistributions(const CScriptJob& _job)
 		const auto psd = static_cast<EPSDTypes>(entry.psdType.key);							// PSD type
 		const bool manual = fun == EDistrFunction::Manual;									// whether manual distribution defined
 		const size_t len = entry.values.size();												// length of the values vector
-		const auto grid = holdup->GetGrid();												// distributions grid
-		if (!grid.HasDimension(distr))
+		const auto gridDescr = holdup->GetGrid();											// descriptor of the distributions grid
+		if (!gridDescr.HasDimension(distr))
 			return PrintMessage(DyssolC_ErrorNoDistribution(StrKey(EScriptKeys::HOLDUP_DISTRIBUTION), unit->GetName(), entry.holdup.name, entry.holdup.index, entry.distrType.name, entry.distrType.key));
-		const size_t classes = grid.GetGridDimension(distr)->ClassesNumber();				// number of classes in the distribution
-		const auto means = distr != DISTR_SIZE ? grid.GetGridDimensionNumeric(distr)->GetClassesMeans() : grid.GetPSDMeans(mean); // mean valued for the PSD grid
+		const size_t classes = gridDescr.GetGridDimension(distr)->ClassesNumber();			// number of classes in the distribution
+		const auto grid = distr != DISTR_SIZE ? gridDescr.GetGridDimensionNumeric(distr)->Grid() : gridDescr.GetPSDGrid(mean); // current grid
 		const bool hasTime = manual && len % (classes + 1) == 0 || !manual && len % 3 == 0;	// whether time is defined
 		const bool mix = entry.compound == "MIXTURE";										// whether the distribution is defined for the total mixture of for a single compound
 		// check the number of passed arguments
@@ -455,9 +455,9 @@ bool CScriptRunner::SetupHoldupsDistributions(const CScriptJob& _job)
 			for (auto& value : values)
 			{
 				if (distr == DISTR_SIZE)
-					value = ConvertDistribution(EPSDTypes::PSD_MassFrac, psd, grid.GetNumericGrid(distr), CreateDistribution(fun, means, value[0], value[1]));
+					value = ConvertDistribution(EPSDTypes::PSD_MassFrac, psd, grid, Normalized(CreateDistribution(fun, grid, value[0], value[1])));
 				else
-					value = CreateDistribution(fun, means, value[0], value[1]);
+					value = Normalized(CreateDistribution(fun, grid, value[0], value[1]));
 			}
 		// set values
 		for (size_t i = 0; i < times.size(); ++i)

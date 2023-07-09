@@ -41,9 +41,9 @@ void CDistrFunctionDialog::SetDistributionsGrid(const CMultidimensionalGrid* _pG
 	m_pGrid = _pGrid;
 	m_PSDGridType = _nPSDGridType;
 	if (m_nDimType != DISTR_SIZE)
-		m_vSizes = _pGrid->GetGridDimensionNumeric(_nType)->GetClassesMeans();
+		m_grid = _pGrid->GetGridDimensionNumeric(_nType)->Grid();
 	else
-		m_vSizes = _pGrid->GetPSDMeans(_nPSDGridType);
+		m_grid = _pGrid->GetPSDGrid(_nPSDGridType);
 }
 
 std::vector<double> CDistrFunctionDialog::GetDistribution() const
@@ -150,7 +150,7 @@ void CDistrFunctionDialog::OKClicked()
 		break;
 	}
 
-	m_vDistr = CreateDistribution(m_distrFun, m_vSizes, m_dParam1, m_dParam2);
+	m_vDistr = CreateDistribution(m_distrFun, m_grid, m_dParam1, m_dParam2);
 	Normalize(m_vDistr);
 
 	QDialog::accept();
