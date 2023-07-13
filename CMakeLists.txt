@@ -1,6 +1,7 @@
 # Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information.
 # Copyright (c) 2021, Anton Gladky <Anton.Gladky@iart.tu-freiberg.de>, IART, Technical University Bergakademie Freiberg
 
+# TODO: option to disable shared libs
 
 cmake_minimum_required(VERSION 3.1.0)
 
@@ -9,6 +10,7 @@ set (SOVERSION 1.0)
 
 OPTION(BUILD_BINARIES "Whether to build binary files" ON)
 OPTION(BUILD_DOCS "Whether to build documentation" ON)
+OPTION(BUILD_TESTS "Whether to build tests" ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -114,8 +116,11 @@ IF(BUILD_BINARIES)
 
   SET(INSTALL_DOCS_PATH  ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/Dyssol/docs)
 
-  ##################################################
-  ### Testing 
+ENDIF(BUILD_BINARIES)
+
+##################################################
+### Testing 
+IF(BUILD_TESTS)
 
   ENABLE_TESTING()
 
@@ -152,24 +157,38 @@ IF(BUILD_BINARIES)
     SET(CURRENT_TEST ${test})
     CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/tests/${CURRENT_TEST}/script.txt" "${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/script.txt")
 
-    ADD_TEST(NAME ${CURRENT_TEST}_run
-            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-            COMMAND ${CMAKE_BINDIR}/DyssolC --script=${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/script.txt
-    )
+    IF(WIN32)
+      ADD_TEST(NAME ${CURRENT_TEST}_run
+              WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+              COMMAND ${CMAKE_SOURCE_DIR}/${CMAKE_GENERATOR_PLATFORM}/${CMAKE_BUILD_TYPE}/DyssolC --script=${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/script.txt
+      )
+    ELSE()
+      ADD_TEST(NAME ${CURRENT_TEST}_run
+              WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+              COMMAND ${CMAKE_BINDIR}/DyssolC --script=${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/script.txt
+      )
+    ENDIF(WIN32)
 
     IF(NOT CMAKE_BUILD_TYPE MATCHES Debug)
       FILE(READ ${CMAKE_SOURCE_DIR}/tests/${CURRENT_TEST}/tolerance TOLERANCE)
 
-      ADD_TEST(NAME ${CURRENT_TEST}_diff
-              COMMAND python3 ${CMAKE_SOURCE_DIR}/tests/compare.py "${CMAKE_SOURCE_DIR}/tests/${CURRENT_TEST}/ideal.res" "${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res" -t ${TOLERANCE}
-      )
+      IF(WIN32)
+        ADD_TEST(NAME ${CURRENT_TEST}_diff
+                COMMAND python  ${CMAKE_SOURCE_DIR}/tests/compare.py "${CMAKE_SOURCE_DIR}/tests/${CURRENT_TEST}/ideal.res" "${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res" -t ${TOLERANCE}
+        )
+      ELSE()
+        ADD_TEST(NAME ${CURRENT_TEST}_diff
+                COMMAND python3 ${CMAKE_SOURCE_DIR}/tests/compare.py "${CMAKE_SOURCE_DIR}/tests/${CURRENT_TEST}/ideal.res" "${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res" -t ${TOLERANCE}
+        )
+      ENDIF(WIN32)
+      
       # _diff tests can only be run when the _run test is done
       SET_TESTS_PROPERTIES(${CURRENT_TEST}_diff PROPERTIES DEPENDS ${CURRENT_TEST}_run)
     ENDIF(NOT CMAKE_BUILD_TYPE MATCHES Debug)
 
   ENDFOREACH(test ${TESTS})
 
-ENDIF()
+ENDIF(BUILD_TESTS)
 
 ##################################################
 ### Documentation 
@@ -196,8 +215,8 @@ IF(BUILD_DOCS)
     "ModelsAPI/TransformMatrix"
     "ModelsAPI/UnitParameters"
     "ModelsAPI/UnitPorts"
-	"BaseSolvers/AgglomerationSolver"
-	"BaseSolvers/BaseSolver"
+    "BaseSolvers/AgglomerationSolver"
+    "BaseSolvers/BaseSolver"
     "Utilities/DyssolDefines"
   )
 
@@ -264,4 +283,4 @@ IF(BUILD_DOCS)
           DESTINATION ${INSTALL_DOCS_PATH}/sphinx/
   )
 
-ENDIF()
+ENDIF(BUILD_DOCS)

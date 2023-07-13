@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Rule Name="Linux_Build_Settings"
+    DisplayName="Tests Build Settings"
+    PageTemplate="generic"
+    Description="Tests Build Settings"
+    Order="8"
+    xmlns="http://schemas.microsoft.com/build/2009/properties">
+  <Rule.DataSource>
+    <DataSource Persistence="UserFile" Label="TestsBuildSettings" HasConfigurationCondition="true"/>
+  </Rule.DataSource>
+  <Rule.Categories>
+    <Category Name="General" DisplayName="General"/>
+  </Rule.Categories>
+  <BoolProperty
+    Name="TestsPreBuild"
+    Category="General"
+    DisplayName="Pre-build"
+    Description="Build binary files before running tests."/>
+</Rule>
