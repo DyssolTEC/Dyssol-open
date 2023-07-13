@@ -146,6 +146,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unit_GranulatorSimpleBatch"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Documentation", "DyssolInstallers\Documentation\Documentation.vcxproj", "{C91712C5-4A46-4703-9857-4E742D247601}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tests", "DyssolInstallers\Tests\Tests.vcxproj", "{9E33ACE6-5DDA-400C-8242-6BE0B8569221}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -626,6 +628,10 @@ Global
 		{C91712C5-4A46-4703-9857-4E742D247601}.Debug|x64.ActiveCfg = Debug|x64
 		{C91712C5-4A46-4703-9857-4E742D247601}.Release|Win32.ActiveCfg = Release|Win32
 		{C91712C5-4A46-4703-9857-4E742D247601}.Release|x64.ActiveCfg = Release|x64
+		{9E33ACE6-5DDA-400C-8242-6BE0B8569221}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9E33ACE6-5DDA-400C-8242-6BE0B8569221}.Debug|x64.ActiveCfg = Debug|x64
+		{9E33ACE6-5DDA-400C-8242-6BE0B8569221}.Release|Win32.ActiveCfg = Release|Win32
+		{9E33ACE6-5DDA-400C-8242-6BE0B8569221}.Release|x64.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -695,6 +701,7 @@ Global
 		{1C6761A3-DD4E-4978-A4C6-24D3A50C502D} = {DA539701-563C-4DCF-883B-941DE792BC4A}
 		{80FB8E0A-CCA8-4AB7-BC79-21E82A141842} = {DA539701-563C-4DCF-883B-941DE792BC4A}
 		{C91712C5-4A46-4703-9857-4E742D247601} = {FF9F78BB-144A-48EF-87D3-7EEE6C6B4682}
+		{9E33ACE6-5DDA-400C-8242-6BE0B8569221} = {FF9F78BB-144A-48EF-87D3-7EEE6C6B4682}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CAC327DA-BA65-4990-BEC0-618347D67688}
