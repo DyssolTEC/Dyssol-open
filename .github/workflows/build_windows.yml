@@ -1,18 +1,23 @@
+# Copyright (c) 2023, DyssolTEC. All rights reserved. This file is part of Dyssol. See LICENSE file for license information.
+
+# A workflow for testing on Windows
+
 name: Windows
 
 on: [push]
 
 env:
-  # Path to the solution file relative to the root of the project.
+  # Path to the solution/project files relative to the root of the project.
   SOLUTION_FILE_PATH: .
+  SOLUTION_FILE_NAME: Dyssol.sln
+  TESTS_PROJECT_PATH: ./DyssolInstallers/Tests/
+  DOCS_PROJECT_PATH:  ./DyssolInstallers/Documentation/
 
   # Configuration type to build.
-  # You can convert this to a build matrix if you need coverage of multiple configuration types.
-  # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
   BUILD_PLATFORM: x64
-  
-  # Versions
+
+  # Versions.
   QT_VERSION: 5.15.2
   QT_VS_VERSION: msvc2019_64
   QT_VS_ADDIN_VERSION: 2.7.2
@@ -23,11 +28,12 @@ env:
 
 jobs:
   build:
-    runs-on: windows-2019
+    runs-on: windows-latest
 
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1
 
@@ -41,11 +47,11 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
-        # If cached, only install essential build tools and set environmental variables
+        # If cached, only install essential build tools and set environmental variables.
         cache: ${{steps.cache-qt.outputs.cache-hit}}
-        # Version of Qt to install
+        # Version of Qt to install.
         version: ${{env.QT_VERSION}}
-        # Architecture for Windows/Android
+        # Architecture.
         arch: win64_${{env.QT_VS_VERSION}}
         # Directory to install.
         dir: ${{github.workspace}}/ExternalLibraries/qt
@@ -63,7 +69,8 @@ jobs:
       if: steps.cache-qt-ms-build-tools.outputs.cache-hit != 'true'
       working-directory: ${{github.workspace}}
       # Get additional project files to build Qt solution with MSBuild. This work is usually done in Visual Studio with Qt VS Tools extension.
-      # Download the extension and extract requited files.
+      # Also, it installs them to %LOCALAPPDATA%\QtMsBuild, so they can not be used by other Windows users.
+      # Download the extension and extract requited files to the project directory.
       run: |
         Invoke-WebRequest -Uri https://ftp.fau.de/qtproject/archive/vsaddin/${{env.QT_VS_ADDIN_VERSION}}/qt-vsaddin-msvc2019-${{env.QT_VS_ADDIN_VERSION}}.vsix -MaximumRetryCount 10 -RetryIntervalSec 30 -OutFile vspackage.vsix 
         Expand-Archive vspackage.vsix -DestinationPath ${{github.workspace}}/ExternalLibraries/qtvsaddin
@@ -79,7 +86,7 @@ jobs:
       if: steps.cache-zlib.outputs.cache-hit != 'true'
       working-directory: ${{github.workspace}}/ExternalLibraries
       shell: pwsh
-      # Run the script to build the third-party tool
+      # Run the script to build zlib.
       run: .\CompileZLib.ps1
 
     - name: Cache SUNDIALS
@@ -93,7 +100,7 @@ jobs:
       if: steps.cache-sundials.outputs.cache-hit != 'true'
       working-directory: ${{github.workspace}}/ExternalLibraries
       shell: pwsh
-      # Run the script to build the third-party tool
+      # Run the script to build sundials.
       run: .\CompileSundials.ps1
 
     - name: Cache HDF5
@@ -107,7 +114,7 @@ jobs:
       if: steps.cache-hdf5.outputs.cache-hit != 'true'
       working-directory: ${{github.workspace}}/ExternalLibraries
       shell: pwsh
-      # Run the script to build the third-party tool
+      # Run the script to build hdf5.
       run: .\CompileHDF5.ps1
 
     - name: Cache Graphviz
@@ -121,7 +128,7 @@ jobs:
       if: steps.cache-graphviz.outputs.cache-hit != 'true'
       working-directory: ${{github.workspace}}/ExternalLibraries
       shell: pwsh
-      # Run the script to build the third-party tool
+      # Run the script to build graphviz.
       run: .\CompileGraphviz.ps1
 
     - name: Build
@@ -129,7 +136,60 @@ jobs:
       env:
         QtToolsPath: ${{env.Qt5_DIR}}/bin
         QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
-      # Add additional options to the MSBuild command line here (like platform or verbosity level).
-      # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
+      # Add additional options to the MSBuild command line here: see https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference.
+      run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
+
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-artifact
+        path: |
+          ${{github.workspace}}/${{env.BUILD_PLATFORM}}/${{env.BUILD_CONFIGURATION}}/*.exe
+          ${{github.workspace}}/${{env.BUILD_PLATFORM}}/${{env.BUILD_CONFIGURATION}}/*.dll
+
+  tests:
+    runs-on: windows-latest
+    needs: build
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1
+
+    - name: Download Build Artifact    
+      uses: actions/download-artifact@v3
+      with:
+        name: build-artifact
+        path: ${{github.workspace}}/${{env.BUILD_PLATFORM}}/${{env.BUILD_CONFIGURATION}}
+
+    - name: Run Tests
+      working-directory: ${{github.workspace}}
+      # Add additional options to the MSBuild command line here: see https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference.
+      run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:TestsPreBuild=false ${{env.TESTS_PROJECT_PATH}}
+
+  docs:
+    name: docs
+    runs-on: windows-latest
+    needs: build
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Install Requirements
       run: |
-        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} ${{env.SOLUTION_FILE_PATH}}
+        choco install graphviz doxygen.install
+        pip install -U sphinx sphinx-rtd-theme breathe
+
+    - name: Build Docs
+      working-directory: ${{github.workspace}}
+      # Add additional options to the MSBuild command line here: see https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference.
+      run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ ${{env.DOCS_PROJECT_PATH}}
+
+    # - name: Upload Docs Artifact
+      # uses: actions/upload-artifact@v3
+      # with:
+        # name: docs-artifact
+        # path: ${{github.workspace}}/install
