@@ -471,7 +471,7 @@ void CQtPlot::DrawCurves(QPainter* _painter)
 	{
 		if (m_vpCurves.at(i)->bVisibility)
 		{
-			QPointF* pPoints = new QPointF[m_vpCurves.at(i)->points.size()];
+			std::vector<QPointF> pPoints(m_vpCurves.at(i)->points.size());
 			int nNumPoints = 0;
 			for (int j = 0; j < m_vpCurves.at(i)->points.size(); ++j)
 			{
@@ -490,12 +490,12 @@ void CQtPlot::DrawCurves(QPainter* _painter)
 			if (m_vpCurves.at(i)->bLinesVisibility)
 			{
 				_painter->setPen(QPen(m_vpCurves.at(i)->color, m_vpCurves.at(i)->nLineWidth, Qt::SolidLine));
-				_painter->drawPolyline(pPoints, nNumPoints);
+				_painter->drawPolyline(pPoints.data(), nNumPoints);
 			}
 			else
 			{
 				_painter->setPen(QPen(m_vpCurves.at(i)->color, m_vpCurves.at(i)->nLineWidth * 2, Qt::SolidLine, Qt::RoundCap));
-				_painter->drawPoints(pPoints, nNumPoints);
+				_painter->drawPoints(pPoints.data(), nNumPoints);
 			}
 		}
 	}
