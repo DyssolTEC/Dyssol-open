@@ -481,6 +481,9 @@ void CQtPlot::DrawCurves(QPainter* _painter)
 				double dY = m_vpCurves.at(i)->points.at(j).y() - m_dMinY;
 				double y = m_paintRect.bottom() - (dY * (m_paintRect.height() - 1) / (m_dSpanY() != 0.0 ? m_dSpanY() : 0.001));
 
+				if (std::isinf(x) || std::isnan(x)) x = 0.0;
+				if (std::isinf(y) || std::isnan(y)) y = 0.0;
+
 				pPoints[nNumPoints] = QPointF(x, y);
 				nNumPoints++;
 			}

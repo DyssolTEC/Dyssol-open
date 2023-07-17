@@ -104,41 +104,53 @@ double CCorrelation::GetValue(double _dT, double _dP) const
 	if (!IsTInInterval(_dT)) _dT = _dT < m_TInterval.min ? m_TInterval.min : m_TInterval.max;
 	if (!IsPInInterval(_dP)) _dP = _dP < m_PInterval.min ? m_PInterval.min : m_PInterval.max;
 
+	double res = 0.0;
+
 	switch (m_nType)
 	{
 	case ECorrelationTypes::LIST_OF_T_VALUES:
-		return m_valuesList.GetValue(_dT);
+		res = m_valuesList.GetValue(_dT);
+		break;
 	case ECorrelationTypes::LIST_OF_P_VALUES:
-		return m_valuesList.GetValue(_dP);
+		res = m_valuesList.GetValue(_dP);
+		break;
 	case ECorrelationTypes::CONSTANT:
-		return m_vParameters[0];
+		res = m_vParameters[0];
+		break;
 	case ECorrelationTypes::LINEAR:
-		return _dT*m_vParameters[0] + _dP*m_vParameters[1] + m_vParameters[2];
+		res = _dT*m_vParameters[0] + _dP*m_vParameters[1] + m_vParameters[2];
+		break;
 	case ECorrelationTypes::EXPONENT_1:
 		if (m_vParameters[6] * _dT + m_vParameters[7] != 0)
-			return m_vParameters[0] * std::pow(m_vParameters[1], m_vParameters[2] + m_vParameters[3] * _dT + (m_vParameters[4] * _dT + m_vParameters[5]) / (m_vParameters[6] * _dT + m_vParameters[7])) + m_vParameters[8];
+			res = m_vParameters[0] * std::pow(m_vParameters[1], m_vParameters[2] + m_vParameters[3] * _dT + (m_vParameters[4] * _dT + m_vParameters[5]) / (m_vParameters[6] * _dT + m_vParameters[7])) + m_vParameters[8];
 		break;
 	case ECorrelationTypes::POW_1:
-		return m_vParameters[0] * std::pow(_dT, m_vParameters[1]);
+		res = m_vParameters[0] * std::pow(_dT, m_vParameters[1]);
+		break;
 	case ECorrelationTypes::POLYNOMIAL_1:
-		return m_vParameters[0] + m_vParameters[1] * _dT + m_vParameters[2] * std::pow(_dT, 2) + m_vParameters[3] * std::pow(_dT, 3) + m_vParameters[4] * std::pow(_dT, 4) + m_vParameters[5] * std::pow(_dT, 5) + m_vParameters[6] * std::pow(_dT, 6) + m_vParameters[7] * std::pow(_dT, 7);
+		res = m_vParameters[0] + m_vParameters[1] * _dT + m_vParameters[2] * std::pow(_dT, 2) + m_vParameters[3] * std::pow(_dT, 3) + m_vParameters[4] * std::pow(_dT, 4) + m_vParameters[5] * std::pow(_dT, 5) + m_vParameters[6] * std::pow(_dT, 6) + m_vParameters[7] * std::pow(_dT, 7);
+		break;
 	case ECorrelationTypes::POLYNOMIAL_CP:
 		if (_dT != 0)
-			return m_vParameters[0] + m_vParameters[1] * _dT + m_vParameters[2] * std::pow(_dT, 2.) + m_vParameters[3] * std::pow(_dT, 3.) + m_vParameters[4] / std::pow(_dT, 2.);
+			res = m_vParameters[0] + m_vParameters[1] * _dT + m_vParameters[2] * std::pow(_dT, 2.) + m_vParameters[3] * std::pow(_dT, 3.) + m_vParameters[4] / std::pow(_dT, 2.);
 		break;
 	case ECorrelationTypes::POLYNOMIAL_H:
 		if (_dT != 0)
-			return m_vParameters[0] * _dT + m_vParameters[1] * std::pow(_dT, 2.) / 2. + m_vParameters[2] * std::pow(_dT, 3.) / 3. + m_vParameters[3] * std::pow(_dT, 4.) / 4. - m_vParameters[4] / _dT + m_vParameters[5] - m_vParameters[6];
+			res = m_vParameters[0] * _dT + m_vParameters[1] * std::pow(_dT, 2.) / 2. + m_vParameters[2] * std::pow(_dT, 3.) / 3. + m_vParameters[3] * std::pow(_dT, 4.) / 4. - m_vParameters[4] / _dT + m_vParameters[5] - m_vParameters[6];
 		break;
 	case ECorrelationTypes::POLYNOMIAL_S:
 		if (_dT != 0)
-			return m_vParameters[0] * std::log(_dT) + m_vParameters[1] * _dT + m_vParameters[2] * std::pow(_dT, 2.) / 2. + m_vParameters[3] * std::pow(_dT, 3.) / 3. - m_vParameters[4] / (2 * std::pow(_dT, 2.)) + m_vParameters[5];
+			res = m_vParameters[0] * std::log(_dT) + m_vParameters[1] * _dT + m_vParameters[2] * std::pow(_dT, 2.) / 2. + m_vParameters[3] * std::pow(_dT, 3.) / 3. - m_vParameters[4] / (2 * std::pow(_dT, 2.)) + m_vParameters[5];
 		break;
 	case ECorrelationTypes::SUTHERLAND:
-		return m_vParameters[0] * (m_vParameters[1] + m_vParameters[2]) / (_dT + m_vParameters[2]) * pow(_dT / m_vParameters[1], 3. / 2.);
+		res = m_vParameters[0] * (m_vParameters[1] + m_vParameters[2]) / (_dT + m_vParameters[2]) * pow(_dT / m_vParameters[1], 3. / 2.);
+		break;
 	}
 
-	return 0;
+	if (std::isinf(res) || std::isnan(res))
+		res = 0.0;
+
+	return res;
 }
 
 bool CCorrelation::IsTInInterval(double _dT) const
