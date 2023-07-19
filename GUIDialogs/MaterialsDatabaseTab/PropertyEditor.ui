@@ -44,45 +44,45 @@
                 <property name="text">
                   <string>T [K]:</string>
                 </property>
-              </widget>
+              <property name="toolTip"><string>Temperature value</string></property><property name="whatsThis"><string>Temperature value</string></property></widget>
             </item>
             <item>
               <widget class="QLineEdit" name="lineCalcT">
                 <property name="toolTip">
-                  <string>Temperature</string>
+                  <string>Temperature value</string>
                 </property>
-              </widget>
+              <property name="whatsThis"><string>Temperature value</string></property></widget>
             </item>
             <item>
               <widget class="QLabel" name="label_5">
                 <property name="text">
                   <string>P [Pa]:</string>
                 </property>
-              </widget>
+              <property name="toolTip"><string>Pressure value</string></property><property name="whatsThis"><string>Pressure value</string></property></widget>
             </item>
             <item>
               <widget class="QLineEdit" name="lineCalcP">
                 <property name="toolTip">
-                  <string>Pressure</string>
+                  <string>Pressure value</string>
                 </property>
-              </widget>
+              <property name="whatsThis"><string>Pressure value</string></property></widget>
             </item>
             <item>
               <widget class="QLabel" name="labelPropertyName">
                 <property name="text">
                   <string>Property:</string>
                 </property>
-              </widget>
+              <property name="toolTip"><string>Calculated parameter value</string></property><property name="whatsThis"><string>Calculated parameter value</string></property></widget>
             </item>
             <item>
               <widget class="QLineEdit" name="lineCalcVal">
                 <property name="toolTip">
-                  <string>Calculated value for specified temperature and pressure</string>
+                  <string>Calculated parameter value</string>
                 </property>
                 <property name="readOnly">
                   <bool>true</bool>
                 </property>
-              </widget>
+              <property name="whatsThis"><string>Calculated parameter value</string></property></widget>
             </item>
             <item>
               <spacer name="verticalSpacer">
@@ -103,7 +103,7 @@
           </property>
           
           <property name="whatsThis">
-            <string>Property calculator</string>
+            <string>Calculation of property values by given parameters</string>
           </property>
         </widget>
       </item>
@@ -126,11 +126,11 @@
                           <bool>true</bool>
                         </property>
                         <property name="toolTip">
-                          <string>First correlation parameter</string>
+                          <string>Parameter for X axis</string>
                         </property>
                         
                         <property name="whatsThis">
-                          <string>First correlation parameter</string>
+                          <string>Parameter for X axis</string>
                         </property>
                       </widget>
                     </item>
@@ -140,11 +140,11 @@
                           <string>Pressure</string>
                         </property>
                         <property name="toolTip">
-                          <string>First correlation parameter</string>
+                          <string>Parameter for X axis</string>
                         </property>
                         
                         <property name="whatsThis">
-                          <string>First correlation parameter</string>
+                          <string>Parameter for X axis</string>
                         </property>
                       </widget>
                     </item>
@@ -167,22 +167,22 @@
                           <string>P [Pa]:</string>
                         </property>
                         <property name="toolTip">
-                          <string>Second correlation parameter</string>
+                          <string>Value of the second correlation parameter</string>
                         </property>
                         
                         <property name="whatsThis">
-                          <string>Second correlation parameter</string>
+                          <string>Value of the second correlation parameter</string>
                         </property>
                       </widget>
                     </item>
                     <item>
                       <widget class="QLineEdit" name="linePlotValue">
                         <property name="toolTip">
-                          <string>Second correlation parameter</string>
+                          <string>Value of the second correlation parameter</string>
                         </property>
                         
                         <property name="whatsThis">
-                          <string>Second correlation parameter</string>
+                          <string>Value of the second correlation parameter</string>
                         </property>
                       </widget>
                     </item>
@@ -202,7 +202,7 @@
               </layout>
             </item>
           </layout>
-        </widget>
+        <property name="toolTip"><string>Visual representation of configured correlations</string></property><property name="whatsThis"><string>Visual representation of configured correlations</string></property></widget>
       </item>
       <item row="0" column="0" colspan="2">
         <widget class="QGroupBox" name="groupBox_3">
@@ -228,11 +228,11 @@
                   <bool>true</bool>
                 </attribute>
                 <property name="toolTip">
-                  <string>List of correlations defining values of a temperature-/pressure-dependent compound property</string>
+                  <string>List of correlations defining the selected temperature-/pressure-dependent compound property</string>
                 </property>
                 
                 <property name="whatsThis">
-                  <string>List of correlations defining values of a temperature-/pressure-dependent compound property</string>
+                  <string>List of correlations defining the selected temperature-/pressure-dependent compound property</string>
                 </property>
               </widget>
             </item>
@@ -270,11 +270,11 @@
                       <string>+</string>
                     </property>
                     <property name="toolTip">
-                      <string>Add correlation</string>
+                      <string>Add new correlation</string>
                     </property>
                     
                     <property name="whatsThis">
-                      <string>Add correlation</string>
+                      <string>Add new correlation</string>
                     </property>
                   </widget>
                 </item>
@@ -297,11 +297,11 @@
                       <string>-</string>
                     </property>
                     <property name="toolTip">
-                      <string>Remove the selected correlation</string>
+                      <string>Remove selected correlation</string>
                     </property>
                     
                     <property name="whatsThis">
-                      <string>Remove the selected correlation</string>
+                      <string>Remove selected correlation</string>
                     </property>
                   </widget>
                 </item>
@@ -324,11 +324,11 @@
                       <string>▲</string>
                     </property>
                     <property name="toolTip">
-                      <string>Move the selected correlation upwards</string>
+                      <string>Move selected correlation upwards in the list</string>
                     </property>
                     
                     <property name="whatsThis">
-                      <string>Move the selected correlation upwards</string>
+                      <string>Move selected correlation upwards in the list</string>
                     </property>
                   </widget>
                 </item>
@@ -351,11 +351,11 @@
                       <string>▼</string>
                     </property>
                     <property name="toolTip">
-                      <string>Move the selected correlation downwards</string>
+                      <string>Move selected correlation downwards in the list</string>
                     </property>
                     
                     <property name="whatsThis">
-                      <string>Move the selected correlation downwards</string>
+                      <string>Move selected correlation downwards in the list</string>
                     </property>
                   </widget>
                 </item>

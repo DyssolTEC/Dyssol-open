@@ -36,11 +36,11 @@
                 </property>
               </column>
               <property name="toolTip">
-                <string>List of directories containing models</string>
+                <string>List of directories with Dyssol models</string>
               </property>
               
               <property name="whatsThis">
-                <string>List of directories containing models</string>
+                <string>List of directories with Dyssol models</string>
               </property>
             </widget>
           </item>
@@ -49,28 +49,28 @@
               <item>
                 <widget class="QPushButton" name="buttonAddDir">
                   <property name="toolTip">
-                    <string>Add directory</string>
+                    <string>Add directory with Dyssol model</string>
                   </property>
                   <property name="text">
                     <string>+</string>
                   </property>
                   
                   <property name="whatsThis">
-                    <string>Add directory</string>
+                    <string>Add directory with Dyssol model</string>
                   </property>
                 </widget>
               </item>
               <item>
                 <widget class="QPushButton" name="buttonRemDir">
                   <property name="toolTip">
-                    <string>Remove the selected directory</string>
+                    <string>Remove selected directory</string>
                   </property>
                   <property name="text">
                     <string>-</string>
                   </property>
                   
                   <property name="whatsThis">
-                    <string>Remove the selected directory</string>
+                    <string>Remove selected directory</string>
                   </property>
                 </widget>
               </item>

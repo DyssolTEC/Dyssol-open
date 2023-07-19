@@ -51,7 +51,7 @@
                     </property>
                     
                     <property name="whatsThis">
-                      <string>Calculate initial values automatically</string>
+                      <string>Calculate initial values automatically based on results of the previous simulations</string>
                     </property>
                   </widget>
                 </item>
@@ -166,7 +166,7 @@
                     </property>
                     
                     <property name="whatsThis">
-                      <string>List of tear streams</string>
+                      <string>List of tear streams in the selected partition</string>
                     </property>
                   </widget>
                 </item>

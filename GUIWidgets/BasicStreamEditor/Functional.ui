@@ -36,7 +36,7 @@
               </property>
               
               <property name="whatsThis">
-                <string>Function type</string>
+                <string>Distribution function type</string>
               </property>
             </widget>
           </item>
@@ -47,7 +47,7 @@
               </property>
               
               <property name="whatsThis">
-                <string>Function type</string>
+                <string>Distribution function type</string>
               </property>
             </widget>
           </item>
@@ -65,7 +65,7 @@
               </property>
               
               <property name="whatsThis">
-                <string>Parameters of the functional distribution</string>
+                <string>Parameters of the selected functional distribution</string>
               </property>
             </widget>
           </item>
@@ -76,7 +76,7 @@
               </property>
               
               <property name="whatsThis">
-                <string>Parameters of the functional distribution</string>
+                <string>Parameters of the selected functional distribution</string>
               </property>
             </widget>
           </item>
@@ -97,7 +97,7 @@
               </property>
               
               <property name="whatsThis">
-                <string>Parameters of the functional distribution</string>
+                <string>Parameters of the selected functional distribution</string>
               </property>
             </widget>
           </item>
@@ -108,7 +108,7 @@
               </property>
               
               <property name="whatsThis">
-                <string>Parameters of the functional distribution</string>
+                <string>Parameters of the selected functional distribution</string>
               </property>
             </widget>
           </item>

@@ -49,11 +49,11 @@
                       <bool>false</bool>
                     </property>
                     <property name="toolTip">
-                      <string>Open application-wide configuration file</string>
+                      <string>Open the application-wide configuration file</string>
                     </property>
                     
                     <property name="whatsThis">
-                      <string>Open application-wide configuration file</string>
+                      <string>Open the application-wide configuration file</string>
                     </property>
                   </widget>
                 </item>

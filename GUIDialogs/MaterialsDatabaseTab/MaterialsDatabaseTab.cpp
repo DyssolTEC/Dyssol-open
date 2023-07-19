@@ -864,6 +864,8 @@ void CMaterialsDatabaseTab::AddCheckBoxOnTable(CQtTable* _pTable, const int _iRo
 		connect(pCheckBox, &QCheckBox::stateChanged, this, [=] { PropertyConstFlagChanged(_iRow); });
 	else if(_pTable == ui.tableInterProperties)
 		connect(pCheckBox, &QCheckBox::stateChanged, this, [=] { InteractionConstFlagChanged(_iRow); });
+	pCheckBox->setToolTip("Treat property as a constant");
+	pCheckBox->setWhatsThis("Treat property as a constant");
 }
 
 void CMaterialsDatabaseTab::AddToolButtonOnTable(CQtTable* _pTable, int _iRow, int _iCol)
@@ -873,6 +875,8 @@ void CMaterialsDatabaseTab::AddToolButtonOnTable(CQtTable* _pTable, int _iRow, i
 		connect(pToolButton, &QToolButton::clicked, this, [=] { PropertyInfoClicked(_iRow); });
 	else if (_pTable == ui.tableInterProperties)
 		connect(pToolButton, &QToolButton::clicked, this, [=] { InteractionInfoClicked(_iRow); });
+	pToolButton->setToolTip("User-defined description");
+	pToolButton->setWhatsThis("User-defined description");
 }
 
 CCompound* CMaterialsDatabaseTab::GetSelectedCompound(const int _row /*= -1*/) const
