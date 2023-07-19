@@ -163,7 +163,7 @@
                         <bool>true</bool>
                       </attribute>
                       <property name="toolTip">
-                        <string>Available compounds </string>
+                        <string>Available compounds</string>
                       </property>
                       
                       <property name="whatsThis">

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>DyssolClass</class>
  <widget class="QMainWindow" name="DyssolClass">
@@ -37,7 +37,7 @@
        <bool>true</bool>
       </property>
       <property name="toolTip">
-       <string/>
+       <string />
       </property>
       <property name="currentIndex">
        <number>-1</number>
@@ -65,14 +65,14 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionNewFlowsheet"/>
-    <addaction name="actionOpenFlowsheet"/>
-    <addaction name="actionSaveFlowsheet"/>
-    <addaction name="actionSaveFlowsheetAs"/>
-    <addaction name="separator"/>
-    <addaction name="actionSaveScript"/>
-    <addaction name="separator"/>
-    <addaction name="actionExit"/>
+    <addaction name="actionNewFlowsheet" />
+    <addaction name="actionOpenFlowsheet" />
+    <addaction name="actionSaveFlowsheet" />
+    <addaction name="actionSaveFlowsheetAs" />
+    <addaction name="separator" />
+    <addaction name="actionSaveScript" />
+    <addaction name="separator" />
+    <addaction name="actionExit" />
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="toolTip">
@@ -84,10 +84,10 @@
     <property name="title">
      <string>Tools</string>
     </property>
-    <addaction name="actionModelsManager"/>
-    <addaction name="actionCompoundsEditor"/>
-    <addaction name="separator"/>
-    <addaction name="actionSettingsEditor"/>
+    <addaction name="actionModelsManager" />
+    <addaction name="actionCompoundsEditor" />
+    <addaction name="separator" />
+    <addaction name="actionSettingsEditor" />
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="toolTip">
@@ -110,9 +110,9 @@
       <string>Documentation</string>
      </property>
     </widget>
-    <addaction name="menuDocumentation"/>
-    <addaction name="separator"/>
-    <addaction name="actionAbout"/>
+    <addaction name="menuDocumentation" />
+    <addaction name="separator" />
+    <addaction name="actionAbout" />
    </widget>
    <widget class="QMenu" name="menuFlowsheet">
     <property name="toolTip">
@@ -124,14 +124,14 @@
     <property name="title">
      <string>Setup</string>
     </property>
-    <addaction name="actionCompoundsManager"/>
-    <addaction name="actionPhasesEditor"/>
-    <addaction name="actionGridEditor"/>
-    <addaction name="actionHoldupsEditor"/>
-    <addaction name="actionOptionsEditor"/>
-    <addaction name="separator"/>
-    <addaction name="actionCalcSequencerEditor"/>
-    <addaction name="actionRecycleStreams"/>
+    <addaction name="actionCompoundsManager" />
+    <addaction name="actionPhasesEditor" />
+    <addaction name="actionGridEditor" />
+    <addaction name="actionHoldupsEditor" />
+    <addaction name="actionOptionsEditor" />
+    <addaction name="separator" />
+    <addaction name="actionCalcSequencerEditor" />
+    <addaction name="actionRecycleStreams" />
    </widget>
    <widget class="QMenu" name="menuModules">
     <property name="toolTip">
@@ -143,13 +143,13 @@
     <property name="title">
      <string>Modules</string>
     </property>
-    <addaction name="actionDustFormationTester"/>
+    <addaction name="actionDustFormationTester" />
    </widget>
-   <addaction name="menuFile"/>
-   <addaction name="menuFlowsheet"/>
-   <addaction name="menuModules"/>
-   <addaction name="menuTools"/>
-   <addaction name="menuHelp"/>
+   <addaction name="menuFile" />
+   <addaction name="menuFlowsheet" />
+   <addaction name="menuModules" />
+   <addaction name="menuTools" />
+   <addaction name="menuHelp" />
   </widget>
   <action name="actionOpenFlowsheet">
    <property name="text">
@@ -215,7 +215,7 @@
     <string>Open compounds editor</string>
    </property>
    <property name="whatsThis">
-    <string>Select active compunds</string>
+    <string>Select active compounds</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+C</string>
@@ -480,7 +480,7 @@
     <string>Save as script file...</string>
    </property>
    <property name="toolTip">
-    <string>Save flowsheet as a script file </string>
+    <string>Save flowsheet as a script file</string>
    </property>
    <property name="whatsThis">
     <string>Save current flowsheet as a script file for command line interface</string>
@@ -514,7 +514,7 @@
    </property>
   </action>
  </widget>
- <layoutdefault spacing="6" margin="11"/>
+ <layoutdefault spacing="6" margin="11" />
  <customwidgets>
   <customwidget>
    <class>CQtTooltipMenuBar</class>
@@ -523,7 +523,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="Resources.qrc"/>
+  <include location="Resources.qrc" />
  </resources>
  <connections>
   <connection>

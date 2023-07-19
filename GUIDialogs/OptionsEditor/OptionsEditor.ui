@@ -86,7 +86,7 @@
                             <property name="text">
                               <string>Relative tolerance</string>
                             </property>
-                          </widget>
+                          <property name="toolTip"><string>Global relative calculation tolerance</string></property><property name="whatsThis"><string>Global relative calculation tolerance</string></property></widget>
                         </item>
                         <item>
                           <widget class="QLineEdit" name="lineEditRTol">
@@ -96,7 +96,7 @@
                                 <verstretch>0</verstretch>
                               </sizepolicy>
                             </property>
-                          </widget>
+                          <property name="toolTip"><string>Global relative calculation tolerance</string></property><property name="whatsThis"><string>Global relative calculation tolerance</string></property></widget>
                         </item>
                       </layout>
                     </item>
@@ -113,7 +113,7 @@
                             <property name="text">
                               <string>Absolute tolerance</string>
                             </property>
-                          </widget>
+                          <property name="toolTip"><string>Global absolute calculation tolerance</string></property><property name="whatsThis"><string>Global absolute calculation tolerance</string></property></widget>
                         </item>
                         <item>
                           <widget class="QLineEdit" name="lineEditATol">
@@ -123,7 +123,7 @@
                                 <verstretch>0</verstretch>
                               </sizepolicy>
                             </property>
-                          </widget>
+                          <property name="toolTip"><string>Global absolute calculation tolerance</string></property><property name="whatsThis"><string>Global absolute calculation tolerance</string></property></widget>
                         </item>
                       </layout>
                     </item>
@@ -156,7 +156,7 @@
                             <property name="text">
                               <string>Minimal fraction</string>
                             </property>
-                          </widget>
+                          <property name="toolTip"><string>Minimal significant fraction of multidimensional distributed properties</string></property><property name="whatsThis"><string>Minimal significant fraction of multidimensional distributed properties</string></property></widget>
                         </item>
                         <item>
                           <widget class="QLineEdit" name="lineEditMinFraction">
@@ -166,17 +166,17 @@
                                 <verstretch>0</verstretch>
                               </sizepolicy>
                             </property>
-                          </widget>
+                          <property name="toolTip"><string>Minimal significant fraction of multidimensional distributed properties</string></property><property name="whatsThis"><string>Minimal significant fraction of multidimensional distributed properties</string></property></widget>
                         </item>
                       </layout>
                     </item>
                   </layout>
                   <property name="toolTip">
-                    <string>Minimal significant fraction of multidimensional distributed properties</string>
+                    <string>Settings for multidimensional matrices</string>
                   </property>
                   
                   <property name="whatsThis">
-                    <string>Minimal significant fraction of multidimensional distributed properties</string>
+                    <string>Settings for multidimensional matrices</string>
                   </property>
                 </widget>
               </item>
@@ -200,22 +200,22 @@
                               <string>Save time step hint [s]</string>
                             </property>
                             <property name="toolTip">
-                              <string>Remove excessive timepoints for streams during the simulation</string>
+                              <string>Remove excessive time points for streams after the simulation is finished</string>
                             </property>
                             
                             <property name="whatsThis">
-                              <string>Remove excessive timepoints for streams during the simulation</string>
+                              <string>Remove excessive time points for streams after the simulation is finished</string>
                             </property>
                           </widget>
                         </item>
                         <item>
                           <widget class="QLineEdit" name="lineEditSaveTimeStep">
                             <property name="toolTip">
-                              <string>Remove excessive timepoints for streams during the simulation</string>
+                              <string>Remove excessive time points for streams after the simulation is finished</string>
                             </property>
                             
                             <property name="whatsThis">
-                              <string>Remove excessive timepoints for streams during the simulation</string>
+                              <string>Remove excessive time points for streams after the simulation is finished</string>
                             </property>
                           </widget>
                         </item>
@@ -241,13 +241,13 @@
               <item>
                 <widget class="QGroupBox" name="groupBoxTemperature">
                   <property name="toolTip">
-                    <string>Settings for calculating the temperature of mixtures</string>
+                    <string>Settings for calculation of thermal properties</string>
                   </property>
                   <property name="statusTip">
                     <string>Settings for calculating the temperature of mixtures</string>
                   </property>
                   <property name="whatsThis">
-                    <string>Settings for calculating the temperature of mixtures</string>
+                    <string>Settings for calculation of thermal properties</string>
                   </property>
                   <property name="title">
                     <string>Temperature</string>
@@ -265,22 +265,22 @@
                           <string>Min temperature [K]</string>
                         </property>
                         <property name="toolTip">
-                          <string>Temperature limits of the lookup table for calculationg stream mixtures</string>
+                          <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
                         </property>
                         
                         <property name="whatsThis">
-                          <string>Temperature limits of the lookup table for calculationg stream mixtures</string>
+                          <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
                         </property>
                       </widget>
                     </item>
                     <item row="0" column="1">
                       <widget class="QLineEdit" name="lineEditTMin">
                         <property name="toolTip">
-                          <string>Temperature limits of the lookup table for calculationg stream mixtures</string>
+                          <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
                         </property>
                         
                         <property name="whatsThis">
-                          <string>Temperature limits of the lookup table for calculationg stream mixtures</string>
+                          <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
                         </property>
                       </widget>
                     </item>
@@ -290,22 +290,22 @@
                           <string>Max temperature [K]</string>
                         </property>
                         <property name="toolTip">
-                          <string>Temperature limits of the lookup table for calculationg stream mixtures</string>
+                          <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
                         </property>
                         
                         <property name="whatsThis">
-                          <string>Temperature limits of the lookup table for calculationg stream mixtures</string>
+                          <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
                         </property>
                       </widget>
                     </item>
                     <item row="1" column="1">
                       <widget class="QLineEdit" name="lineEditTMax">
                         <property name="toolTip">
-                          <string>Temperature limits of the lookup table for calculationg stream mixtures</string>
+                          <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
                         </property>
                         
                         <property name="whatsThis">
-                          <string>Temperature limits of the lookup table for calculationg stream mixtures</string>
+                          <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
                         </property>
                       </widget>
                     </item>
@@ -315,22 +315,22 @@
                           <string>Temperature intervals</string>
                         </property>
                         <property name="toolTip">
-                          <string>Number of temperature intervals of the lookup table for calculationg stream mixtures</string>
+                          <string>Number of temperature intervals of the lookup table for calculating temperature of stream mixtures</string>
                         </property>
                         
                         <property name="whatsThis">
-                          <string>Number of temperature intervals of the lookup table for calculationg stream mixtures</string>
+                          <string>Number of temperature intervals of the lookup table for calculating temperature of stream mixtures</string>
                         </property>
                       </widget>
                     </item>
                     <item row="2" column="1">
                       <widget class="QLineEdit" name="lineEditTIntervals">
                         <property name="toolTip">
-                          <string>Number of temperature intervals of the lookup table for calculationg stream mixtures</string>
+                          <string>Number of temperature intervals of the lookup table for calculating temperature of stream mixtures</string>
                         </property>
                         
                         <property name="whatsThis">
-                          <string>Number of temperature intervals of the lookup table for calculationg stream mixtures</string>
+                          <string>Number of temperature intervals of the lookup table for calculating temperature of stream mixtures</string>
                         </property>
                       </widget>
                     </item>
@@ -387,7 +387,7 @@
                             </property>
                             
                             <property name="whatsThis">
-                              <string>Initial size of the time window</string>
+                              <string>Initial size of the time window of the waveform relaxation method</string>
                             </property>
                           </widget>
                         </item>
@@ -404,7 +404,7 @@
                             </property>
                             
                             <property name="whatsThis">
-                              <string>Initial size of the time window</string>
+                              <string>Initial size of the time window of the waveform relaxation method</string>
                             </property>
                           </widget>
                         </item>
@@ -428,7 +428,7 @@
                             </property>
                             
                             <property name="whatsThis">
-                              <string>Minimum allowed size of the time window</string>
+                              <string>Minimum allowed size of the time window of the waveform relaxation method</string>
                             </property>
                           </widget>
                         </item>
@@ -445,7 +445,7 @@
                             </property>
                             
                             <property name="whatsThis">
-                              <string>Minimum allowed size of the time window</string>
+                              <string>Minimum allowed size of the time window of the waveform relaxation method</string>
                             </property>
                           </widget>
                         </item>
@@ -469,7 +469,7 @@
                             </property>
                             
                             <property name="whatsThis">
-                              <string>Maximum allowed size of the time window</string>
+                              <string>Maximum allowed size of the time window of the waveform relaxation method</string>
                             </property>
                           </widget>
                         </item>
@@ -486,7 +486,7 @@
                             </property>
                             
                             <property name="whatsThis">
-                              <string>Maximum allowed size of the time window</string>
+                              <string>Maximum allowed size of the time window of the waveform relaxation method</string>
                             </property>
                           </widget>
                         </item>
@@ -510,7 +510,7 @@
                             </property>
                             
                             <property name="whatsThis">
-                              <string>Allowed number of iterations before stop</string>
+                              <string>Allowed number of iterations before stopping waveform relaxation calculations</string>
                             </property>
                           </widget>
                         </item>
@@ -527,7 +527,7 @@
                             </property>
                             
                             <property name="whatsThis">
-                              <string>Allowed number of iterations before stop</string>
+                              <string>Allowed number of iterations before stopping waveform relaxation calculations</string>
                             </property>
                           </widget>
                         </item>
@@ -551,7 +551,7 @@
                             </property>
                             
                             <property name="whatsThis">
-                              <string>Time window resizing factor</string>
+                              <string>Time window resizing factor for the waveform relaxation method</string>
                             </property>
                           </widget>
                         </item>
@@ -568,7 +568,7 @@
                             </property>
                             
                             <property name="whatsThis">
-                              <string>Time window resizing factor</string>
+                              <string>Time window resizing factor for the waveform relaxation method</string>
                             </property>
                           </widget>
                         </item>
@@ -588,11 +588,11 @@
                               <string>Iterations upper limit</string>
                             </property>
                             <property name="toolTip">
-                              <string>Upper critical limit of iterations before resizing the time window</string>
+                              <string>Max number of iterations in the current window before decreasing its size</string>
                             </property>
                             
                             <property name="whatsThis">
-                              <string>Upper critical limit of iterations before resizing the time window</string>
+                              <string>Max number of iterations in the current window before decreasing its size</string>
                             </property>
                           </widget>
                         </item>
@@ -605,11 +605,11 @@
                               </sizepolicy>
                             </property>
                             <property name="toolTip">
-                              <string>Upper critical limit of iterations before resizing the time window</string>
+                              <string>Max number of iterations in the current window before decreasing its size</string>
                             </property>
                             
                             <property name="whatsThis">
-                              <string>Upper critical limit of iterations before resizing the time window</string>
+                              <string>Max number of iterations in the current window before decreasing its size</string>
                             </property>
                           </widget>
                         </item>
@@ -629,11 +629,11 @@
                               <string>Iterations lower limit</string>
                             </property>
                             <property name="toolTip">
-                              <string>Lower critical limit of iterations before resizing the time window</string>
+                              <string>Min number of iterations in the current window before increasing the size of the next one</string>
                             </property>
                             
                             <property name="whatsThis">
-                              <string>Lower critical limit of iterations before resizing the time window</string>
+                              <string>Min number of iterations in the current window before increasing the size of the next one</string>
                             </property>
                           </widget>
                         </item>
@@ -646,11 +646,11 @@
                               </sizepolicy>
                             </property>
                             <property name="toolTip">
-                              <string>Lower critical limit of iterations before resizing the time window</string>
+                              <string>Min number of iterations in the current window before increasing the size of the next one</string>
                             </property>
                             
                             <property name="whatsThis">
-                              <string>Lower critical limit of iterations before resizing the time window</string>
+                              <string>Min number of iterations in the current window before increasing the size of the next one</string>
                             </property>
                           </widget>
                         </item>
@@ -670,11 +670,11 @@
                               <string>Iterations upper limit (1st window)</string>
                             </property>
                             <property name="toolTip">
-                              <string>Upper critical limit of iterations before resizing the time window for the first time window</string>
+                              <string>Max number of iterations in the first window before decreasing its size</string>
                             </property>
                             
                             <property name="whatsThis">
-                              <string>Upper critical limit of iterations before resizing the time window for the first time window</string>
+                              <string>Max number of iterations in the first window before decreasing its size</string>
                             </property>
                           </widget>
                         </item>
@@ -687,18 +687,18 @@
                               </sizepolicy>
                             </property>
                             <property name="toolTip">
-                              <string>Upper critical limit of iterations before resizing the time window for the first time window</string>
+                              <string>Max number of iterations in the first window before decreasing its size</string>
                             </property>
                             
                             <property name="whatsThis">
-                              <string>Upper critical limit of iterations before resizing the time window for the first time window</string>
+                              <string>Max number of iterations in the first window before decreasing its size</string>
                             </property>
                           </widget>
                         </item>
                       </layout>
                     </item>
                   </layout>
-                </widget>
+                <property name="toolTip"><string>Settings for waveform relaxation method</string></property><property name="whatsThis"><string>Settings for waveform relaxation method</string></property></widget>
               </item>
               <item>
                 <widget class="QGroupBox" name="groupBox_4">
@@ -719,7 +719,7 @@
                             <property name="text">
                               <string>Method</string>
                             </property>
-                          </widget>
+                          <property name="toolTip"><string>Selected convergence method</string></property><property name="whatsThis"><string>Selected convergence method</string></property></widget>
                         </item>
                         <item>
                           <widget class="QComboBox" name="comboBoxConvMethod">
@@ -744,7 +744,7 @@
                                 <string>Steffensen's method</string>
                               </property>
                             </item>
-                          </widget>
+                          <property name="toolTip"><string>Selected convergence method</string></property><property name="whatsThis"><string>Selected convergence method</string></property></widget>
                         </item>
                       </layout>
                     </item>
@@ -777,7 +777,7 @@
                                     <property name="text">
                                       <string>Relaxation parameter (0;1]</string>
                                     </property>
-                                  </widget>
+                                  <property name="toolTip"><string>Relaxation parameter of the Direct Substitution convergence method</string></property><property name="whatsThis"><string>Relaxation parameter of the Direct Substitution convergence method</string></property></widget>
                                 </item>
                                 <item>
                                   <widget class="QLineEdit" name="lineEditRelaxParam">
@@ -787,7 +787,7 @@
                                         <verstretch>0</verstretch>
                                       </sizepolicy>
                                     </property>
-                                  </widget>
+                                  <property name="toolTip"><string>Relaxation parameter of the Direct Substitution convergence method</string></property><property name="whatsThis"><string>Relaxation parameter of the Direct Substitution convergence method</string></property></widget>
                                 </item>
                               </layout>
                             </item>
@@ -817,7 +817,7 @@
                                     <property name="text">
                                       <string>Acceleration parameter limit (-5;1)</string>
                                     </property>
-                                  </widget>
+                                  <property name="toolTip"><string>Acceleration parameter limit for the Wegstein's convergence method</string></property><property name="whatsThis"><string>Acceleration parameter limit for the Wegstein's convergence method</string></property></widget>
                                 </item>
                                 <item>
                                   <widget class="QLineEdit" name="lineEditAccelParam">
@@ -827,7 +827,7 @@
                                         <verstretch>0</verstretch>
                                       </sizepolicy>
                                     </property>
-                                  </widget>
+                                  <property name="toolTip"><string>Acceleration parameter limit for the Wegstein's convergence method</string></property><property name="whatsThis"><string>Acceleration parameter limit for the Wegstein's convergence method</string></property></widget>
                                 </item>
                               </layout>
                             </item>
@@ -865,7 +865,7 @@
                             <property name="text">
                               <string>Extrapolation method</string>
                             </property>
-                          </widget>
+                          <property name="toolTip"><string>Selected extrapolation method</string></property><property name="whatsThis"><string>Selected extrapolation method</string></property></widget>
                         </item>
                         <item>
                           <widget class="QComboBox" name="comboBoxExtrapMethod">
@@ -890,7 +890,7 @@
                                 <string>Nearest neighbor extrapolation</string>
                               </property>
                             </item>
-                          </widget>
+                          <property name="toolTip"><string>Selected extrapolation method</string></property><property name="whatsThis"><string>Selected extrapolation method</string></property></widget>
                         </item>
                       </layout>
                     </item>
@@ -905,7 +905,7 @@
                 </widget>
               </item>
             </layout>
-          <attribute name="toolTip"><string>Convergence method options</string></attribute><attribute name="whatsThis"><string>Options for Waveform relaxation method, Data extrapolation and Convergence methods:</string></attribute></widget>
+          <attribute name="toolTip"><string>Convergence options</string></attribute><attribute name="whatsThis"><string>Options for waveform relaxation, data extrapolation and convergence methods</string></attribute></widget>
           <widget class="QWidget" name="tabService">
             <attribute name="title">
               <string>Service</string>
@@ -923,11 +923,11 @@
                           <string>Enable cache for material streams</string>
                         </property>
                         <property name="toolTip">
-                          <string>Cache streams data on disk during simulation</string>
+                          <string>Cache time-dependent data of streams on disk during the simulation</string>
                         </property>
                         
                         <property name="whatsThis">
-                          <string>Cache streams data on disk during simulation</string>
+                          <string>Cache time-dependent data of streams on disk during the simulation</string>
                         </property>
                       </widget>
                     </item>
@@ -948,11 +948,11 @@
 (can significantly reduce performance)</string>
                         </property>
                         <property name="toolTip">
-                          <string>Cache streams data on disk during simulation</string>
+                          <string>Cache time-dependent data of holdups on disk during the simulation</string>
                         </property>
                         
                         <property name="whatsThis">
-                          <string>Cache streams data on disk during simulation</string>
+                          <string>Cache time-dependent data of holdups on disk during the simulation</string>
                         </property>
                       </widget>
                     </item>
@@ -973,11 +973,11 @@
 (can significantly reduce performance)</string>
                         </property>
                         <property name="toolTip">
-                          <string>Cache internal streams data on disk during simulation</string>
+                          <string>Cache time-dependent data of internal and service streams on disk during the simulation</string>
                         </property>
                         
                         <property name="whatsThis">
-                          <string>Cache internal streams data on disk during simulation</string>
+                          <string>Cache time-dependent data of internal and service streams on disk during the simulation</string>
                         </property>
                       </widget>
                     </item>
@@ -1043,7 +1043,7 @@
                       </widget>
                     </item>
                   </layout>
-                </widget>
+                <property name="toolTip"><string>Settings for data caching</string></property><property name="whatsThis"><string>Settings for data caching</string></property></widget>
               </item>
               <item>
                 <widget class="QGroupBox" name="groupBoxApp">
@@ -1057,16 +1057,16 @@
                           <string>Split output file into chunks (2Gb each) upon save</string>
                         </property>
                         <property name="toolTip">
-                          <string>Split result *.dflw file into 2GB files</string>
+                          <string>Split result file into files up to 2 GB in size</string>
                         </property>
                         
                         <property name="whatsThis">
-                          <string>Split result *.dflw file into 2GB files</string>
+                          <string>Split result file into files up to 2 GB in size</string>
                         </property>
                       </widget>
                     </item>
                   </layout>
-                </widget>
+                <property name="toolTip"><string>Settings for data saving</string></property><property name="whatsThis"><string>Settings for data saving</string></property></widget>
               </item>
               <item>
                 <spacer name="verticalSpacer_2">
@@ -1082,7 +1082,7 @@
                 </spacer>
               </item>
             </layout>
-          <attribute name="toolTip"><string>Service Options</string></attribute><attribute name="whatsThis"><string>Additional options for caching and saving </string></attribute></widget>
+          <attribute name="toolTip"><string>Service options</string></attribute><attribute name="whatsThis"><string>Additional options for caching and saving</string></attribute></widget>
         </widget>
       </item>
       <item>

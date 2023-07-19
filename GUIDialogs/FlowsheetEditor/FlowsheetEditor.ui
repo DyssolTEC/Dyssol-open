@@ -41,13 +41,13 @@
                     </sizepolicy>
                   </property>
                   <property name="toolTip">
-                    <string>Add new unit to flowsheet</string>
+                    <string>Add a new unit to the flowsheet</string>
                   </property>
                   <property name="statusTip">
                     <string>Add new unit to the flowsheet</string>
                   </property>
                   <property name="whatsThis">
-                    <string>Add new unit to flowsheet</string>
+                    <string>Add a new unit to the flowsheet</string>
                   </property>
                   <property name="text">
                     <string>+</string>
@@ -63,13 +63,13 @@
                     </sizepolicy>
                   </property>
                   <property name="toolTip">
-                    <string>Remove the selected unit from flowsheet</string>
+                    <string>Remove selected unit from the flowsheet</string>
                   </property>
                   <property name="statusTip">
                     <string>Remove the selected unit from the flowsheet</string>
                   </property>
                   <property name="whatsThis">
-                    <string>Remove the selected unit from flowsheet</string>
+                    <string>Remove selected unit from the flowsheet</string>
                   </property>
                   <property name="text">
                     <string>-</string>
@@ -85,13 +85,13 @@
                     </sizepolicy>
                   </property>
                   <property name="toolTip">
-                    <string>Move the selected unit upwards</string>
+                    <string>Move selected unit upwards in the list</string>
                   </property>
                   <property name="statusTip">
                     <string>Move the selected unit upwards in the units sequence</string>
                   </property>
                   <property name="whatsThis">
-                    <string>Move the selected unit upwards</string>
+                    <string>Move selected unit upwards in the list</string>
                   </property>
                   <property name="text">
                     <string>▲</string>
@@ -107,13 +107,13 @@
                     </sizepolicy>
                   </property>
                   <property name="toolTip">
-                    <string>Move the selected unit downwards</string>
+                    <string>Move selected unit downwards in the list</string>
                   </property>
                   <property name="statusTip">
                     <string>Move the selected unit downwards in the units sequence</string>
                   </property>
                   <property name="whatsThis">
-                    <string>Move the selected unit downwards</string>
+                    <string>Move selected unit downwards in the list</string>
                   </property>
                   <property name="text">
                     <string>▼</string>
@@ -139,11 +139,11 @@
                 </property>
               </column>
               <property name="toolTip">
-                <string>List of units in flowsheet</string>
+                <string>List of units on the flowsheet</string>
               </property>
               
               <property name="whatsThis">
-                <string>List of units in flowsheet</string>
+                <string>List of units on the flowsheet</string>
               </property>
             </widget>
           </item>
@@ -178,13 +178,13 @@
                     </sizepolicy>
                   </property>
                   <property name="toolTip">
-                    <string>Add new stream to flowsheet</string>
+                    <string>Add a new stream to the flowsheet</string>
                   </property>
                   <property name="statusTip">
                     <string>Add new material stream to the flowsheet</string>
                   </property>
                   <property name="whatsThis">
-                    <string>Add new stream to flowsheet</string>
+                    <string>Add a new stream to the flowsheet</string>
                   </property>
                   <property name="text">
                     <string>+</string>
@@ -200,13 +200,13 @@
                     </sizepolicy>
                   </property>
                   <property name="toolTip">
-                    <string>Remove the selected stream from flowsheet</string>
+                    <string>Remove selected stream from the flowsheet</string>
                   </property>
                   <property name="statusTip">
                     <string>Remove the selected material stream from the flowsheet</string>
                   </property>
                   <property name="whatsThis">
-                    <string>Remove the selected stream from flowsheet</string>
+                    <string>Remove selected stream from the flowsheet</string>
                   </property>
                   <property name="text">
                     <string>-</string>
@@ -222,13 +222,13 @@
                     </sizepolicy>
                   </property>
                   <property name="toolTip">
-                    <string>Move the selected stream upwards</string>
+                    <string>Move selected stream upwards in the list</string>
                   </property>
                   <property name="statusTip">
                     <string>Move the selected material stream upwards in the streams sequence</string>
                   </property>
                   <property name="whatsThis">
-                    <string>Move the selected stream upwards</string>
+                    <string>Move selected stream upwards in the list</string>
                   </property>
                   <property name="text">
                     <string>▲</string>
@@ -244,13 +244,13 @@
                     </sizepolicy>
                   </property>
                   <property name="toolTip">
-                    <string>Move the selected stream downwards</string>
+                    <string>Move selected stream downwards in the list</string>
                   </property>
                   <property name="statusTip">
                     <string>Move the selected material stream downwards in the streams sequence</string>
                   </property>
                   <property name="whatsThis">
-                    <string>Move the selected stream downwards</string>
+                    <string>Move selected stream downwards in the list</string>
                   </property>
                   <property name="text">
                     <string>▼</string>
@@ -276,11 +276,11 @@
                 </property>
               </column>
               <property name="toolTip">
-                <string>List of streams in flowsheet</string>
+                <string>List of streams on the flowsheet</string>
               </property>
               
               <property name="whatsThis">
-                <string>List of streams in flowsheet</string>
+                <string>List of streams on the flowsheet</string>
               </property>
             </widget>
           </item>
@@ -296,11 +296,11 @@
                     <string>Model</string>
                   </property>
                   <property name="toolTip">
-                    <string>Model selection for selected unit</string>
+                    <string>Model selection for the chosen unit</string>
                   </property>
                   
                   <property name="whatsThis">
-                    <string>Model selection for selected unit</string>
+                    <string>Model selection for the chosen unit</string>
                   </property>
                 </widget>
               </item>
@@ -322,11 +322,11 @@
                     <bool>true</bool>
                   </property>
                   <property name="toolTip">
-                    <string>Model selection for selected unit</string>
+                    <string>Model selection for the chosen unit</string>
                   </property>
                   
                   <property name="whatsThis">
-                    <string>Model selection for selected unit</string>
+                    <string>Model selection for the chosen unit</string>
                   </property>
                 </widget>
               </item>
@@ -411,7 +411,7 @@
                     </property>
                     
                     <property name="whatsThis">
-                      <string>List of ports of the selected unit</string>
+                      <string>List of ports of the selected unit to connect streams</string>
                     </property>
                   </widget>
                 </item>
@@ -424,11 +424,11 @@
                 <string>Show flowsheet</string>
               </property>
               <property name="toolTip">
-                <string>Show scheme of the current flowsheet</string>
+                <string>Show visual representation of the current flowsheet</string>
               </property>
               
               <property name="whatsThis">
-                <string>Show scheme of the current flowsheet</string>
+                <string>Show visual representation of the current flowsheet</string>
               </property>
             </widget>
           </item>
@@ -488,11 +488,11 @@
                         </property>
                       </column>
                       <property name="toolTip">
-                        <string>List of user-defined parameters of the selected unit</string>
+                        <string>List of model parameters </string>
                       </property>
                       
                       <property name="whatsThis">
-                        <string>List of user-defined parameters of the selected unit</string>
+                        <string>List of user-defined model parameters of the selected unit</string>
                       </property>
                     </widget>
                   </item>
@@ -514,11 +514,11 @@
                         </size>
                       </property>
                       <property name="toolTip">
-                        <string>Description of selected unit parameter</string>
+                        <string>Description of the selected model parameter</string>
                       </property>
                       
                       <property name="whatsThis">
-                        <string>Description of selected unit parameter</string>
+                        <string>Description of the selected model parameter</string>
                       </property>
                     </widget>
                   </item>
@@ -565,11 +565,11 @@
                               </property>
                             </column>
                             <property name="toolTip">
-                              <string>Values of time-dependent unit parameter</string>
+                              <string>Time-dependent values of the selected model parameter</string>
                             </property>
                             
                             <property name="whatsThis">
-                              <string>Values of time-dependent unit parameter</string>
+                              <string>Time-dependent values of the selected model parameter</string>
                             </property>
                           </widget>
                         </item>
@@ -584,13 +584,13 @@
                                   </sizepolicy>
                                 </property>
                                 <property name="toolTip">
-                                  <string>Add time point to time-dependent unit parameter</string>
+                                  <string>Add time point to the time-dependent model parameter</string>
                                 </property>
                                 <property name="statusTip">
                                   <string>Add new item to the selected unit parameter</string>
                                 </property>
                                 <property name="whatsThis">
-                                  <string>Add time point to time-dependent unit parameter</string>
+                                  <string>Add time point to the time-dependent model parameter</string>
                                 </property>
                                 <property name="text">
                                   <string>+</string>
@@ -606,13 +606,13 @@
                                   </sizepolicy>
                                 </property>
                                 <property name="toolTip">
-                                  <string>Remove the selected time point from time-dependent unit parameter</string>
+                                  <string>Remove selected time point from the time-dependent model parameter</string>
                                 </property>
                                 <property name="statusTip">
                                   <string>Remove the selected item from the selected unit parameter</string>
                                 </property>
                                 <property name="whatsThis">
-                                  <string>Remove the selected time point from time-dependent unit parameter</string>
+                                  <string>Remove selected time point from the time-dependent model parameter</string>
                                 </property>
                                 <property name="text">
                                   <string>-</string>

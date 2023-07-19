@@ -26,7 +26,7 @@
           <item>
             <widget class="QPushButton" name="buttonNew">
               <property name="toolTip">
-                <string>Standard operations with materials database file</string>
+                <string>Create new empty database</string>
               </property>
               <property name="text">
                 <string>New</string>
@@ -36,14 +36,14 @@
               </property>
               
               <property name="whatsThis">
-                <string>Standard operations with materials database file</string>
+                <string>Create new empty database</string>
               </property>
             </widget>
           </item>
           <item>
             <widget class="QPushButton" name="buttonLoad">
               <property name="toolTip">
-                <string>Standard operations with materials database file</string>
+                <string>Load database from file</string>
               </property>
               <property name="text">
                 <string>Load</string>
@@ -53,14 +53,14 @@
               </property>
               
               <property name="whatsThis">
-                <string>Standard operations with materials database file</string>
+                <string>Load database from file</string>
               </property>
             </widget>
           </item>
           <item>
             <widget class="QPushButton" name="buttonSave">
               <property name="toolTip">
-                <string>Standard operations with materials database file</string>
+                <string>Save database to current file</string>
               </property>
               <property name="text">
                 <string>Save</string>
@@ -70,14 +70,14 @@
               </property>
               
               <property name="whatsThis">
-                <string>Standard operations with materials database file</string>
+                <string>Save database to current file</string>
               </property>
             </widget>
           </item>
           <item>
             <widget class="QPushButton" name="buttonSaveAs">
               <property name="toolTip">
-                <string>Standard operations with materials database file</string>
+                <string>Save database to a new file</string>
               </property>
               <property name="text">
                 <string>Save as</string>
@@ -87,7 +87,7 @@
               </property>
               
               <property name="whatsThis">
-                <string>Standard operations with materials database file</string>
+                <string>Save database to a new file</string>
               </property>
             </widget>
           </item>
@@ -149,7 +149,7 @@
                           </size>
                         </property>
                         <property name="toolTip">
-                          <string>List of compounds</string>
+                          <string>List of available compounds</string>
                         </property>
                         <property name="selectionMode">
                           <enum>QAbstractItemView::SingleSelection</enum>
@@ -169,7 +169,7 @@
                         </column>
                         
                         <property name="whatsThis">
-                          <string>List of compounds</string>
+                          <string>List of available compounds</string>
                         </property>
                       </widget>
                     </item>
@@ -198,13 +198,13 @@
                               </font>
                             </property>
                             <property name="toolTip">
-                              <string>Add compound</string>
+                              <string>Add new compound</string>
                             </property>
                             <property name="statusTip">
                               <string>Add new compound</string>
                             </property>
                             <property name="whatsThis">
-                              <string>Add compound</string>
+                              <string>Add new compound</string>
                             </property>
                             <property name="text">
                               <string>+</string>
@@ -241,13 +241,13 @@
                               </font>
                             </property>
                             <property name="toolTip">
-                              <string>Remove the selected compound</string>
+                              <string>Remove selected compound</string>
                             </property>
                             <property name="statusTip">
                               <string>Remove selected compound</string>
                             </property>
                             <property name="whatsThis">
-                              <string>Remove the selected compound</string>
+                              <string>Remove selected compound</string>
                             </property>
                             <property name="text">
                               <string>-</string>
@@ -284,13 +284,13 @@
                               </font>
                             </property>
                             <property name="toolTip">
-                              <string>Create a copy of the selected compound</string>
+                              <string>Create a copy of selected compound</string>
                             </property>
                             <property name="statusTip">
                               <string>Make a copy of selected compound</string>
                             </property>
                             <property name="whatsThis">
-                              <string>Create a copy of the selected compound</string>
+                              <string>Create a copy of selected compound</string>
                             </property>
                             <property name="text">
                               <string>❐</string>
@@ -323,13 +323,13 @@
                               </font>
                             </property>
                             <property name="toolTip">
-                              <string>Move the selected compound upwards</string>
+                              <string>Move selected compound upwards in the list</string>
                             </property>
                             <property name="statusTip">
                               <string>Move selected compound upwards</string>
                             </property>
                             <property name="whatsThis">
-                              <string>Move the selected compound upwards</string>
+                              <string>Move selected compound upwards in the list</string>
                             </property>
                             <property name="text">
                               <string>▲</string>
@@ -362,13 +362,13 @@
                               </font>
                             </property>
                             <property name="toolTip">
-                              <string>Move the selected compound downwards</string>
+                              <string>Move selected compound downwards in the list</string>
                             </property>
                             <property name="statusTip">
                               <string>Move selected compound downwards</string>
                             </property>
                             <property name="whatsThis">
-                              <string>Move the selected compound downwards</string>
+                              <string>Move selected compound downwards in the list</string>
                             </property>
                             <property name="text">
                               <string>▼</string>
@@ -452,11 +452,11 @@
                           </property>
                         </column>
                         <property name="toolTip">
-                          <string>List of compound properties</string>
+                          <string>List of properties of the selected compound</string>
                         </property>
                         
                         <property name="whatsThis">
-                          <string>List of compound properties</string>
+                          <string>List of properties of the selected compound</string>
                         </property>
                       </widget>
                     </item>
@@ -475,11 +475,11 @@
                           </size>
                         </property>
                         <property name="toolTip">
-                          <string>Property description</string>
+                          <string>Description of the selected property</string>
                         </property>
                         
                         <property name="whatsThis">
-                          <string>Property description</string>
+                          <string>Description of the selected property</string>
                         </property>
                       </widget>
                     </item>
@@ -551,13 +551,13 @@
                               </font>
                             </property>
                             <property name="toolTip">
-                              <string>Remove the selected user-defined compound property</string>
+                              <string>Remove selected user-defined compound property</string>
                             </property>
                             <property name="statusTip">
                               <string>Remove selected property</string>
                             </property>
                             <property name="whatsThis">
-                              <string>Remove the selected user-defined compound property</string>
+                              <string>Remove selected user-defined compound property</string>
                             </property>
                             <property name="text">
                               <string>-</string>
@@ -630,13 +630,13 @@
                               </font>
                             </property>
                             <property name="toolTip">
-                              <string>Edit the selected user-defined compound property</string>
+                              <string>Edit selected user-defined compound property</string>
                             </property>
                             <property name="statusTip">
                               <string>Edit selected property</string>
                             </property>
                             <property name="whatsThis">
-                              <string>Edit the selected user-defined compound property</string>
+                              <string>Edit selected user-defined compound property</string>
                             </property>
                             <property name="text">
                               <string>✎</string>
@@ -672,7 +672,7 @@
                 </widget>
               </item>
             </layout>
-          <attribute name="toolTip"><string>Compound properties</string></attribute><attribute name="whatsThis"><string>Configure or check compound properties</string></attribute></widget>
+          <attribute name="toolTip"><string>Compound properties</string></attribute><attribute name="whatsThis"><string>Configure or examine compound properties</string></attribute></widget>
           <widget class="QWidget" name="tabInteractions">
             <property name="toolTip">
               <string />
@@ -705,7 +705,7 @@
                                     <height>16777215</height>
                                   </size>
                                 </property>
-                              </widget>
+                              <property name="toolTip"><string>List of available compounds</string></property><property name="whatsThis"><string>List of available compounds</string></property></widget>
                             </item>
                             <item>
                               <widget class="QListWidget" name="listCompounds2">
@@ -721,10 +721,10 @@
                                     <height>16777215</height>
                                   </size>
                                 </property>
-                              </widget>
+                              <property name="toolTip"><string>List of available compounds</string></property><property name="whatsThis"><string>List of available compounds</string></property></widget>
                             </item>
                           </layout>
-                        </widget>
+                        <property name="toolTip"><string>List of available compounds</string></property><property name="whatsThis"><string>List of available compounds</string></property></widget>
                       </item>
                       <item>
                         <widget class="QGroupBox" name="groupBox_3">
@@ -756,7 +756,7 @@
                                       </font>
                                     </property>
                                     <property name="toolTip">
-                                      <string>Current compound 1</string>
+                                      <string>First selected compound</string>
                                     </property>
                                     <property name="autoFillBackground">
                                       <bool>false</bool>
@@ -773,7 +773,7 @@
                                     <property name="clearButtonEnabled">
                                       <bool>false</bool>
                                     </property>
-                                  </widget>
+                                  <property name="whatsThis"><string>First selected compound</string></property></widget>
                                 </item>
                                 <item>
                                   <widget class="QLabel" name="label_6">
@@ -791,7 +791,7 @@
                                       </font>
                                     </property>
                                     <property name="toolTip">
-                                      <string>Current compound 2</string>
+                                      <string>Second selected compound</string>
                                     </property>
                                     <property name="text">
                                       <string>Compound 2</string>
@@ -805,7 +805,7 @@
                                     <property name="readOnly">
                                       <bool>true</bool>
                                     </property>
-                                  </widget>
+                                  <property name="whatsThis"><string>Second selected compound</string></property></widget>
                                 </item>
                                 <item>
                                   <spacer name="horizontalSpacer_2">
@@ -872,7 +872,7 @@
                                     <string />
                                   </property>
                                 </column>
-                              </widget>
+                              <property name="toolTip"><string>List of properties of the selected pair of compounds</string></property><property name="whatsThis"><string>List of properties of the selected pair of compounds</string></property></widget>
                             </item>
                             <item>
                               <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -899,13 +899,13 @@
                                       </font>
                                     </property>
                                     <property name="toolTip">
-                                      <string>Add new property</string>
+                                      <string>Add a user-defined interaction property</string>
                                     </property>
                                     <property name="statusTip">
                                       <string>Add new property</string>
                                     </property>
                                     <property name="whatsThis">
-                                      <string>Add new property</string>
+                                      <string>Add a user-defined interaction property</string>
                                     </property>
                                     <property name="text">
                                       <string>+</string>
@@ -942,13 +942,13 @@
                                       </font>
                                     </property>
                                     <property name="toolTip">
-                                      <string>Remove selected property</string>
+                                      <string>Remove selected user-defined interaction property</string>
                                     </property>
                                     <property name="statusTip">
                                       <string>Remove selected property</string>
                                     </property>
                                     <property name="whatsThis">
-                                      <string>Remove selected property</string>
+                                      <string>Remove selected user-defined interaction property</string>
                                     </property>
                                     <property name="text">
                                       <string>-</string>
@@ -985,13 +985,13 @@
                                       </font>
                                     </property>
                                     <property name="toolTip">
-                                      <string>Make a copy of selected property</string>
+                                      <string>Create a copy of selected interaction property</string>
                                     </property>
                                     <property name="statusTip">
                                       <string>Make a copy of selected property</string>
                                     </property>
                                     <property name="whatsThis">
-                                      <string>Make a copy of selected property</string>
+                                      <string>Create a copy of selected interaction property</string>
                                     </property>
                                     <property name="text">
                                       <string>❐</string>
@@ -1021,13 +1021,13 @@
                                       </font>
                                     </property>
                                     <property name="toolTip">
-                                      <string>Edit selected property</string>
+                                      <string>Edit selected user-defined interaction property</string>
                                     </property>
                                     <property name="statusTip">
                                       <string>Edit selected property</string>
                                     </property>
                                     <property name="whatsThis">
-                                      <string>Edit selected property</string>
+                                      <string>Edit selected user-defined interaction property</string>
                                     </property>
                                     <property name="text">
                                       <string>✎</string>
@@ -1067,7 +1067,7 @@
                 </layout>
               </item>
             </layout>
-          <attribute name="toolTip"><string>Interactions between compounds</string></attribute><attribute name="whatsThis"><string>Configure or check interactions between compounds</string></attribute></widget>
+          <attribute name="toolTip"><string>Interactions between compounds</string></attribute><attribute name="whatsThis"><string>Configure or examine interactions between compounds</string></attribute></widget>
         </widget>
       </item>
     </layout>

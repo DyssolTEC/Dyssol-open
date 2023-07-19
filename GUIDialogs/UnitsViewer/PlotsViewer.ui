@@ -52,14 +52,14 @@
        <property name="tickInterval">
         <number>1</number>
        </property>
-      <property name="toolTip"><string>Navigate through all time points in the selected stream</string></property><property name="whatsThis"><string>Navigate through all time points in the selected stream</string></property></widget>
+      <property name="toolTip"><string>Navigate through all curves in the selected plot</string></property><property name="whatsThis"><string>Navigate through all curves in the selected plot</string></property></widget>
      </item>
      <item>
       <widget class="QLabel" name="labelZName">
        <property name="text">
         <string>Z param</string>
        </property>
-      </widget>
+      <property name="toolTip"><string>Current plot parameter value</string></property><property name="whatsThis"><string>Current plot parameter value</string></property></widget>
      </item>
      <item>
       <widget class="QLabel" name="labelZValue">
@@ -72,7 +72,7 @@
        <property name="text">
         <string>0</string>
        </property>
-      </widget>
+      <property name="toolTip"><string>Current plot parameter value</string></property><property name="whatsThis"><string>Current plot parameter value</string></property></widget>
      </item>
     </layout>
    </item>

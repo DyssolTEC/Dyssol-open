@@ -107,7 +107,7 @@
                     </widget>
                   </item>
                 </layout>
-              </widget>
+              <property name="toolTip"><string>List of holdups of the selected unit</string></property><property name="whatsThis"><string>List of holdups of the selected unit</string></property></widget>
               <widget class="QWidget" name="pageStateVariables">
                 <property name="geometry">
                   <rect>
@@ -185,21 +185,21 @@
                     <number>0</number>
                   </property>
                   <item>
-                    <widget class="QListWidget" name="listWidgetPlots" />
+                    <widget class="QListWidget" name="listWidgetPlots"><property name="toolTip"><string>List of plots in the selected unit</string></property><property name="whatsThis"><string>List of plots in the selected unit</string></property></widget>
                   </item>
                   <item>
                     <widget class="QLabel" name="label_2">
                       <property name="text">
                         <string>Curves</string>
                       </property>
-                    </widget>
+                    <property name="toolTip"><string>List of curves in the selected plot</string></property><property name="whatsThis"><string>List of curves in the selected plot</string></property></widget>
                   </item>
                   <item>
                     <widget class="QListWidget" name="listWidgetCurves">
                       <property name="selectionMode">
                         <enum>QAbstractItemView::ExtendedSelection</enum>
                       </property>
-                    </widget>
+                    <property name="toolTip"><string>List of curves in the selected plot</string></property><property name="whatsThis"><string>List of curves in the selected plot</string></property></widget>
                   </item>
                 </layout>
                 <property name="toolTip">

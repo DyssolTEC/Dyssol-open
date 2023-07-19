@@ -436,11 +436,11 @@
                             <string>Apply</string>
                           </property>
                           <property name="toolTip">
-                            <string>Apply all changes made</string>
+                            <string>Apply all changes made to distributed parameters</string>
                           </property>
                           
                           <property name="whatsThis">
-                            <string>Apply all changes made</string>
+                            <string>Apply all changes made to distributed parameters</string>
                           </property>
                         </widget>
                       </item>

@@ -47,11 +47,11 @@
                 <string>Parameter:</string>
               </property>
               <property name="toolTip">
-                <string>Choose stream parameter</string>
+                <string>Stream parameter to display</string>
               </property>
               
               <property name="whatsThis">
-                <string>Choose stream parameter</string>
+                <string>Stream parameter to display</string>
               </property>
             </widget>
           </item>
@@ -70,11 +70,11 @@
                 </size>
               </property>
               <property name="toolTip">
-                <string>Choose stream parameter</string>
+                <string>Stream parameter to display</string>
               </property>
               
               <property name="whatsThis">
-                <string>Choose stream parameter</string>
+                <string>Stream parameter to display</string>
               </property>
             </widget>
           </item>
@@ -86,7 +86,7 @@
               <property name="text">
                 <string>Rows:</string>
               </property>
-            </widget>
+            <property name="toolTip"><string>Distributed parameter to show</string></property><property name="whatsThis"><string>Distributed parameter to show</string></property></widget>
           </item>
           <item>
             <widget class="QComboBox" name="comboBoxDim1">
@@ -96,14 +96,14 @@
                   <height>0</height>
                 </size>
               </property>
-            </widget>
+            <property name="toolTip"><string>Distributed parameter to show</string></property><property name="whatsThis"><string>Distributed parameter to show</string></property></widget>
           </item>
           <item>
             <widget class="QLabel" name="labelDim2">
               <property name="text">
                 <string>Columns:</string>
               </property>
-            </widget>
+            <property name="toolTip"><string>Distributed parameter to show</string></property><property name="whatsThis"><string>Distributed parameter to show</string></property></widget>
           </item>
           <item>
             <widget class="QComboBox" name="comboBoxDim2">
@@ -116,7 +116,7 @@
                   <height>0</height>
                 </size>
               </property>
-            </widget>
+            <property name="toolTip"><string>Distributed parameter to show</string></property><property name="whatsThis"><string>Distributed parameter to show</string></property></widget>
           </item>
           <item>
             <widget class="QLabel" name="labelCompounds">
@@ -124,11 +124,11 @@
                 <string>Compound:</string>
               </property>
               <property name="toolTip">
-                <string>Choose specific compound or total mixture</string>
+                <string>Show distribution for a specific compound or for a total mixture</string>
               </property>
               
               <property name="whatsThis">
-                <string>Choose specific compound or total mixture</string>
+                <string>Show distribution for a specific compound or for a total mixture</string>
               </property>
             </widget>
           </item>
@@ -141,11 +141,11 @@
                 </size>
               </property>
               <property name="toolTip">
-                <string>Choose specific compound or total mixture</string>
+                <string>Show distribution for a specific compound or for a total mixture</string>
               </property>
               
               <property name="whatsThis">
-                <string>Choose specific compound or total mixture</string>
+                <string>Show distribution for a specific compound or for a total mixture</string>
               </property>
             </widget>
           </item>
@@ -155,11 +155,11 @@
                 <string>PSD type:</string>
               </property>
               <property name="toolTip">
-                <string>PSD type for particle size distribution</string>
+                <string>Type of PSD representation</string>
               </property>
               
               <property name="whatsThis">
-                <string>PSD type for particle size distribution</string>
+                <string>Type of PSD representation</string>
               </property>
             </widget>
           </item>
@@ -172,11 +172,11 @@
                 </size>
               </property>
               <property name="toolTip">
-                <string>PSD type for particle size distribution</string>
+                <string>Type of PSD representation</string>
               </property>
               
               <property name="whatsThis">
-                <string>PSD type for particle size distribution</string>
+                <string>Type of PSD representation</string>
               </property>
             </widget>
           </item>
@@ -186,11 +186,11 @@
                 <string>PSD grid:</string>
               </property>
               <property name="toolTip">
-                <string>PSD grid type for particle size distribution</string>
+                <string>Type of PSD grid</string>
               </property>
               
               <property name="whatsThis">
-                <string>PSD grid type for particle size distribution</string>
+                <string>Type of PSD grid</string>
               </property>
             </widget>
           </item>
@@ -203,11 +203,11 @@
                 </size>
               </property>
               <property name="toolTip">
-                <string>PSD grid type for particle size distribution</string>
+                <string>Type of PSD grid</string>
               </property>
               
               <property name="whatsThis">
-                <string>PSD grid type for particle size distribution</string>
+                <string>Type of PSD grid</string>
               </property>
             </widget>
           </item>
@@ -230,11 +230,11 @@
                 <string>Timepoints: </string>
               </property>
               <property name="toolTip">
-                <string>Number of time points in the selected stream</string>
+                <string>Number of unique time points in the selected streams</string>
               </property>
               
               <property name="whatsThis">
-                <string>Number of time points in the selected stream</string>
+                <string>Number of unique time points in the selected streams</string>
               </property>
             </widget>
           </item>
@@ -250,11 +250,11 @@
                 <string>0</string>
               </property>
               <property name="toolTip">
-                <string>Number of time points in the selected stream</string>
+                <string>Number of unique time points in the selected streams</string>
               </property>
               
               <property name="whatsThis">
-                <string>Number of time points in the selected stream</string>
+                <string>Number of unique time points in the selected streams</string>
               </property>
             </widget>
           </item>
@@ -269,11 +269,11 @@
                   <string>Time</string>
                 </property>
                 <property name="toolTip">
-                  <string>Navigate through all time points in the selected stream</string>
+                  <string>Navigate through all time points in the selected streams</string>
                 </property>
                 
                 <property name="whatsThis">
-                  <string>Navigate through all time points in the selected stream</string>
+                  <string>Navigate through all time points in the selected streams</string>
                 </property>
               </widget>
             </item>
@@ -283,11 +283,11 @@
                   <string>▕◀</string>
                 </property>
                 <property name="toolTip">
-                  <string>Navigate through all time points in the selected stream</string>
+                  <string>Go to the previous time point</string>
                 </property>
                 
                 <property name="whatsThis">
-                  <string>Navigate through all time points in the selected stream</string>
+                  <string>Go to the previous time point</string>
                 </property>
               </widget>
             </item>
@@ -309,11 +309,11 @@
                   <number>1</number>
                 </property>
                 <property name="toolTip">
-                  <string>Navigate through all time points in the selected stream</string>
+                  <string>Navigate through all time points in the selected streams</string>
                 </property>
                 
                 <property name="whatsThis">
-                  <string>Navigate through all time points in the selected stream</string>
+                  <string>Navigate through all time points in the selected streams</string>
                 </property>
               </widget>
             </item>
@@ -323,11 +323,11 @@
                   <string>▶▏</string>
                 </property>
                 <property name="toolTip">
-                  <string>Navigate through all time points in the selected stream</string>
+                  <string>Go to the next time point</string>
                 </property>
                 
                 <property name="whatsThis">
-                  <string>Navigate through all time points in the selected stream</string>
+                  <string>Go to the next time point</string>
                 </property>
               </widget>
             </item>
@@ -364,12 +364,12 @@
             <attribute name="title">
               <string>Table view</string>
             </attribute>
-          <attribute name="toolTip"><string>Table view of simulation results</string></attribute><attribute name="whatsThis"><string>Show selected results in table form</string></attribute></widget>
+          <attribute name="toolTip"><string>Table representation of the simulation results</string></attribute><attribute name="whatsThis"><string>Table representation of the simulation results</string></attribute></widget>
           <widget class="QtPlot::CQtPlot" name="tabPlot">
             <attribute name="title">
               <string>Plot view</string>
             </attribute>
-          <attribute name="toolTip"><string>Plots for simulation results</string></attribute><attribute name="whatsThis"><string>Visualize results of simulation in plot form</string></attribute></widget>
+          <attribute name="toolTip"><string>Plot representation of the simulation results</string></attribute><attribute name="whatsThis"><string>Plot representation of the simulation results</string></attribute></widget>
           <property name="toolTip">
             <string>Simulation results</string>
           </property>

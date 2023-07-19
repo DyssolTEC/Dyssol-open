@@ -29,28 +29,28 @@
                 <property name="text">
                   <string>Min</string>
                 </property>
-              </widget>
+              <property name="toolTip"><string>Pressure limits of the correlation</string></property><property name="whatsThis"><string>Pressure limits of the correlation</string></property></widget>
             </item>
             <item row="0" column="1">
-              <widget class="QLineEdit" name="linePMin" />
+              <widget class="QLineEdit" name="linePMin"><property name="toolTip"><string>Pressure limits of the correlation</string></property><property name="whatsThis"><string>Pressure limits of the correlation</string></property></widget>
             </item>
             <item row="1" column="0">
               <widget class="QLabel" name="label_4">
                 <property name="text">
                   <string>Max</string>
                 </property>
-              </widget>
+              <property name="toolTip"><string>Pressure limits of the correlation</string></property><property name="whatsThis"><string>Pressure limits of the correlation</string></property></widget>
             </item>
             <item row="1" column="1">
-              <widget class="QLineEdit" name="linePMax" />
+              <widget class="QLineEdit" name="linePMax"><property name="toolTip"><string>Pressure limits of the correlation</string></property><property name="whatsThis"><string>Pressure limits of the correlation</string></property></widget>
             </item>
           </layout>
           <property name="toolTip">
-            <string>Pressure range of the correlation</string>
+            <string>Pressure limits of the correlation</string>
           </property>
           
           <property name="whatsThis">
-            <string>Pressure range of the correlation</string>
+            <string>Pressure limits of the correlation</string>
           </property>
         </widget>
       </item>
@@ -65,28 +65,28 @@
                 <property name="text">
                   <string>Min</string>
                 </property>
-              </widget>
+              <property name="toolTip"><string>Temperature limits of the correlation</string></property><property name="whatsThis"><string>Temperature limits of the correlation</string></property></widget>
             </item>
             <item row="0" column="1">
-              <widget class="QLineEdit" name="lineTMin" />
+              <widget class="QLineEdit" name="lineTMin"><property name="toolTip"><string>Temperature limits of the correlation</string></property><property name="whatsThis"><string>Temperature limits of the correlation</string></property></widget>
             </item>
             <item row="1" column="0">
               <widget class="QLabel" name="label_2">
                 <property name="text">
                   <string>Max</string>
                 </property>
-              </widget>
+              <property name="toolTip"><string>Temperature limits of the correlation</string></property><property name="whatsThis"><string>Temperature limits of the correlation</string></property></widget>
             </item>
             <item row="1" column="1">
-              <widget class="QLineEdit" name="lineTMax" />
+              <widget class="QLineEdit" name="lineTMax"><property name="toolTip"><string>Temperature limits of the correlation</string></property><property name="whatsThis"><string>Temperature limits of the correlation</string></property></widget>
             </item>
           </layout>
           <property name="toolTip">
-            <string>Temperature range of the correlation</string>
+            <string>Temperature limits of the correlation</string>
           </property>
           
           <property name="whatsThis">
-            <string>Temperature range of the correlation</string>
+            <string>Temperature limits of the correlation</string>
           </property>
         </widget>
       </item>
@@ -99,7 +99,7 @@
             <item>
               <layout class="QHBoxLayout" name="horizontalLayout">
                 <item>
-                  <widget class="QComboBox" name="comboType" />
+                  <widget class="QComboBox" name="comboType"><property name="toolTip"><string>Correlation function</string></property><property name="whatsThis"><string>Correlation function</string></property></widget>
                 </item>
                 <item>
                   <spacer name="horizontalSpacer">
@@ -132,7 +132,7 @@
                 <property name="wordWrap">
                   <bool>true</bool>
                 </property>
-              </widget>
+              <property name="toolTip"><string>Correlation function</string></property><property name="whatsThis"><string>Correlation function</string></property></widget>
             </item>
           </layout>
           <property name="toolTip">
@@ -183,7 +183,7 @@
               </widget>
             </item>
           </layout>
-        </widget>
+        <property name="toolTip"><string>Correlation parameters</string></property><property name="whatsThis"><string>Correlation parameters</string></property></widget>
       </item>
       <item row="0" column="3">
         <layout class="QVBoxLayout" name="verticalLayout_2">

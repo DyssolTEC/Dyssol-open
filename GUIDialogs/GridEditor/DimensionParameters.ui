@@ -108,7 +108,7 @@
                 <string>Function to define grid</string>
               </property>
               <property name="whatsThis">
-                <string>Choose distribution grid function: equidistant, goemetric, logarithmic, manual</string>
+                <string>Choose distribution grid function: equidistant, geometric, logarithmic, manual</string>
               </property>
               <property name="text">
                 <string>Grid</string>
@@ -169,7 +169,7 @@
                 <string>Function to define grid</string>
               </property>
               <property name="whatsThis">
-                <string>Choose distribution grid function: equidistant, goemetric, logarithmic, manual</string>
+                <string>Choose distribution grid function: equidistant, geometric, logarithmic, manual</string>
               </property>
             </widget>
           </item>
