@@ -41,7 +41,8 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	const QString localConfigFile  = QString{ "./" } + StrConst::Dyssol_ConfigFileName;
 
 #ifdef _MSC_VER
-	const QString currConfigFile = QFile::exists(globalConfigFile) ? globalConfigFile : localConfigFile;
+	const QString currConfigFile = QFile::exists(globalConfigFile) || (!QFile::exists(globalConfigFile) && !FileSystem::IsWriteProtected(FileSystem::FilePath(m_sSettingsPath.toStdWString()))) ?
+		globalConfigFile : localConfigFile;
 #else
 	const QString currConfigFile = QFile::exists(localConfigFile) ? localConfigFile : globalConfigFile;
 
