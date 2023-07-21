@@ -170,7 +170,6 @@ jobs:
       run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:TestsPreBuild=false ${{env.TESTS_PROJECT_PATH}}
 
   docs:
-    name: docs
     runs-on: windows-latest
     needs: build
 
@@ -190,9 +189,15 @@ jobs:
       working-directory: ${{github.workspace}}
       # Add additional options to the MSBuild command line here: see https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference.
       run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ ${{env.DOCS_PROJECT_PATH}}
-
-    # - name: Upload Docs Artifact
-      # uses: actions/upload-artifact@v3
-      # with:
-        # name: docs-artifact
-        # path: ${{github.workspace}}/install
+        
+  cleanup:
+    runs-on: windows-latest
+    needs: [build, tests]
+    if: ${{always()}}
+    
+    steps:
+    - name: Delete Build Artifact
+      uses: geekyeggo/delete-artifact@v2
+      with:
+        name: build-artifact
+        failOnError: false
