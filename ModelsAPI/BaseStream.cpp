@@ -1362,22 +1362,32 @@ bool CBaseStream::AreEqual(double _time, const CBaseStream& _stream1, const CBas
 
 	// overall parameters
 	for (const auto& [key, param] : _stream1.m_overall)
+	{
 		if (!Same(param->GetValue(_time), _stream2.m_overall.at(key)->GetValue(_time)))
+		{
 			return false;
+		}
+	}
 
 	// phases
 	for (const auto& [key, param] : _stream1.m_phases)
 	{
 		if (!Same(param->GetFraction(_time), _stream2.m_phases.at(key)->GetFraction(_time)))
+		{
 			return false;
+		}
 
 		const auto distr1 = param->MDDistr()->GetDistribution(_time);
 		const auto distr2 = _stream2.m_phases.at(key)->MDDistr()->GetDistribution(_time);
 		const double* arr1 = distr1.GetDataPtr();
 		const double* arr2 = distr2.GetDataPtr();
 		for (size_t i = 0; i < distr1.GetDataLength(); ++i)
-			if (std::fabs(arr1[i] - arr2[i]) > std::fabs(arr1[i]) * _stream1.m_toleranceSettings.toleranceRel + _stream1.m_toleranceSettings.toleranceAbs)
+		{
+			if (!Same(arr1[i], arr2[i]))
+			{
 				return false;
+			}
+		}
 	}
 
 	return true;

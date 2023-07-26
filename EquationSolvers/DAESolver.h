@@ -73,6 +73,14 @@ public:
 	*	\retval true No errors occurred. */
 	bool Calculate(realtype _timeBeg, realtype _timeEnd);
 
+	/** Calculates and applies corrected initial conditions.
+	*	\retval true No errors occurred. */
+	bool CalculateInitialConditions();
+	/** Integrates the problem until the given time point.
+	*	\param _time Final time of integration.
+	*	\retval true No errors occurred. */
+	bool IntegrateUntil(realtype _time);
+
 	/** Save current state of solver.
 	*	Should be called during saving of unit. */
 	void SaveState();

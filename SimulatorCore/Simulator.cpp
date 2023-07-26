@@ -105,7 +105,7 @@ void CSimulator::SimulateUnitsWithRecycles(const CCalculationSequence::SPartitio
 	m_iWindowNumber = 0;
 	m_dTWStart = 0;
 	m_dTWLength = m_pParams->initTimeWindow;
-	m_dTWEnd = m_dTWStart + m_dTWLength;
+	m_dTWEnd = std::min(m_dTWStart + m_dTWLength, static_cast<double>(m_pParams->endSimulationTime));
 	double dTWStartPrev = 0;					// start time of the previous time window
 
 	// create and initialize structure of buffer streams
@@ -128,10 +128,6 @@ void CSimulator::SimulateUnitsWithRecycles(const CCalculationSequence::SPartitio
 			RaiseError(StrConst::Sim_ErrMaxTWIterations);
 		if (m_nCurrentStatus == ESimulatorStatus::SIMULATOR_SHOULD_BE_STOPPED)
 			break;
-
-		// adjust time window
-		if (m_dTWEnd > m_pParams->endSimulationTime)
-			m_dTWEnd = m_pParams->endSimulationTime;
 
 		// write log
 		m_log.WriteInfo(StrConst::Sim_InfoRecycleStreamCalculating(m_iWindowNumber, m_iTWIterationFull, m_dTWStart, m_dTWEnd), true);
@@ -177,7 +173,7 @@ void CSimulator::SimulateUnitsWithRecycles(const CCalculationSequence::SPartitio
 				((m_dTWStart != 0) && (m_iTWIterationCurr > m_pParams->itersUpperLimit)))		// for other windows
 			{
 				m_dTWLength /= m_pParams->magnificationRatio;
-				m_dTWEnd = m_dTWStart + m_dTWLength;
+				m_dTWEnd = std::min(m_dTWStart + m_dTWLength, static_cast<double>(m_pParams->endSimulationTime));
 				m_iTWIterationCurr = 0;
 			}
 
@@ -210,7 +206,7 @@ void CSimulator::SimulateUnitsWithRecycles(const CCalculationSequence::SPartitio
 			m_iWindowNumber++;
 			dTWStartPrev = m_dTWStart;
 			m_dTWStart = m_dTWEnd;
-			m_dTWEnd += m_dTWLength;
+			m_dTWEnd = std::min(m_dTWEnd + m_dTWLength, static_cast<double>(m_pParams->endSimulationTime));
 
 			// make prediction
 			ApplyExtrapolationMethod(vRecycles, dTWStartPrev, m_dTWStart, m_dTWEnd);
@@ -346,28 +342,31 @@ void CSimulator::InitializeUnit(CUnitContainer& _unit, double _t)
 bool CSimulator::CheckConvergence(const std::vector<CStream*>& _vStreams1, const std::vector<CStream*>& _vStreams2, double _t1, double _t2) const
 {
 	for (size_t i = 0; i < _vStreams1.size(); ++i)
+	{
 		if (!CompareStreams(*_vStreams1[i], *_vStreams2[i], _t1, _t2))
+		{
 			return false;
+		}
+	}
 	return true;
 }
 
 bool CSimulator::CompareStreams(const CStream& _str1, const CStream& _str2, double _t1, double _t2) const
 {
 	// get all time points
-	std::vector<double> vTimePoints = VectorsUnionSorted(_str1.GetTimePoints(_t1, _t2), _str2.GetTimePoints(_t1, _t2));
-	if (vTimePoints.empty())
+	std::vector<double> timePoints = VectorsUnionSorted(_str1.GetTimePoints(_t1, _t2), _str2.GetTimePoints(_t1, _t2));
+	if (timePoints.empty())
 		return true;
 
 	// remove the first time point as it was analyzed on the previous time window
-	if (vTimePoints.front() != 0)
-		vTimePoints.erase(vTimePoints.begin());
+	if (timePoints.front() != 0.0)
+		timePoints.erase(timePoints.begin());
 
 	// compare
-	for (auto t : vTimePoints)
-		if (!CBaseStream::AreEqual(t, _str1, _str2))
-			return false;
-
-	return true;
+	return std::all_of(timePoints.begin(), timePoints.end(), [&](double t)
+	{
+		return CStream::AreEqual(t, _str1, _str2);
+	});
 }
 
 void CSimulator::RaiseError(const std::string& _sError)

@@ -53,26 +53,17 @@ bool CDAESolver::SetModel(CDAEModel* _model)
 
 bool CDAESolver::Calculate(realtype _time)
 {
-	int res;
-
 	if (_time == 0.0)
 	{
-		res = IDACalcIC(m_solverMem.idamem, IDA_YA_YDP_INIT, 0.001);
-		if (res != IDA_SUCCESS)
-			return WriteError("IDA", "IDACalcIC", "Cannot calculate initial conditions.");
-		m_model->HandleResults(0, N_VGetArrayPointer(m_solverMem.vars), N_VGetArrayPointer(m_solverMem.ders));
+		const bool success = CalculateInitialConditions();
+		if (!success)
+			return false;
 	}
 	else
 	{
-		res = IDASetStopTime(m_solverMem.idamem, _time);
-		if (res != IDA_SUCCESS)
-			return WriteError("IDA", "IDASetStopTime", "Cannot set stop time.");
-		do
-		{
-			res = IDASolve(m_solverMem.idamem, _time, &m_timeLast, m_solverMem.vars, m_solverMem.ders, IDA_ONE_STEP);
-			if (res < 0)
-				return WriteError("IDA", "IDASolve", "Cannot integrate.");
-		} while (res != IDA_TSTOP_RETURN);
+		const int res = IDASolve(m_solverMem.idamem, _time, &m_timeLast, m_solverMem.vars, m_solverMem.ders, IDA_NORMAL);
+		if (res < 0)
+			return WriteError("IDA", "IDASolve", "Cannot integrate.");
 		m_model->HandleResults(m_timeLast, N_VGetArrayPointer(m_solverMem.vars), N_VGetArrayPointer(m_solverMem.ders));
 	}
 
@@ -88,39 +79,82 @@ bool CDAESolver::Calculate(realtype _timeBeg, realtype _timeEnd)
 
 	if (_timeBeg == 0.0)
 	{
-		res = IDACalcIC(m_solverMem.idamem, IDA_YA_YDP_INIT, 0.001);
-		if (res != IDA_SUCCESS)
-			return WriteError("IDA", "IDACalcIC", "Cannot calculate initial conditions.");
-
-		const N_Vector consistVars = N_VNew_Serial(static_cast<sunindextype>(m_model->GetVariablesNumber()) MAYBE_COMMA_CONTEXT(m_solverMem));
-		const N_Vector consistDers = N_VNew_Serial(static_cast<sunindextype>(m_model->GetVariablesNumber()) MAYBE_COMMA_CONTEXT(m_solverMem));
-		res = IDAGetConsistentIC(m_solverMem.idamem, consistVars, consistDers);
-		if (res != IDA_SUCCESS)
-			return WriteError("IDA", "IDAGetConsistentIC", "Cannot obtain consistent initial conditions.");
-		m_model->HandleResults(0, N_VGetArrayPointer(consistVars), N_VGetArrayPointer(consistDers));
-		N_VDestroy_Serial(consistVars);
-		N_VDestroy_Serial(consistDers);
+		const bool success = CalculateInitialConditions();
+		if (!success)
+			return false;
 	}
 
-	realtype step = (_timeEnd - _timeBeg) / 2.0;
-	if (m_maxStep != 0.0 && step > m_maxStep)
-		step = m_maxStep;
-	res = IDASetMaxStep(m_solverMem.idamem, step);
+	const auto interval = _timeEnd - _timeBeg; // current calculation time interval
+	auto allowedStep = interval / 2.0;         // allowed integration step - half of the time interval
+	if (m_maxStep != 0.0 && allowedStep > m_maxStep)
+		allowedStep = m_maxStep;
+
+	res = IDASetMaxStep(m_solverMem.idamem, allowedStep);
 	if (res != IDA_SUCCESS)
 		return WriteError("IDA", "IDASetMaxStep", "Cannot set maximum absolute step size");
 
-	res = IDASetStopTime(m_solverMem.idamem, _timeEnd);
+	/* Get current integration step.*/
+	realtype currStep;
+	res = IDAGetCurrentStep(m_solverMem.idamem, &currStep);
+	if (res != IDA_SUCCESS)
+		return WriteError("IDA", "IDAGetCurrentStep", "Cannot read current time step.");
+
+	/* The value set by IDASetMaxStep will be applied only *after* next call to IDASolve.
+	 * Therefore, if the previous time window was larger then the current one,
+	 * the next call of IDASolve may use large step and jump over the whole interval.
+	 * To ensure that at least one time point is generated inside the interval,
+	 * we solve it with two calls to IDASolve, with half of a time interval each. */
+	if (currStep < interval)
+	{
+		if (!IntegrateUntil(_timeEnd))
+			return false;
+	}
+	else
+	{
+		if (!IntegrateUntil(_timeBeg + allowedStep))
+			return false;
+		if (!IntegrateUntil(_timeEnd))
+			return false;
+	}
+
+	return true;
+}
+
+bool CDAESolver::CalculateInitialConditions()
+{
+	int res = IDACalcIC(m_solverMem.idamem, IDA_YA_YDP_INIT, 0.001);
+	if (res != IDA_SUCCESS)
+		return WriteError("IDA", "IDACalcIC", "Cannot calculate initial conditions.");
+
+	const N_Vector consistVars = N_VNew_Serial(static_cast<sunindextype>(m_model->GetVariablesNumber()) MAYBE_COMMA_CONTEXT(m_solverMem));
+	const N_Vector consistDers = N_VNew_Serial(static_cast<sunindextype>(m_model->GetVariablesNumber()) MAYBE_COMMA_CONTEXT(m_solverMem));
+
+	res = IDAGetConsistentIC(m_solverMem.idamem, consistVars, consistDers);
+	if (res != IDA_SUCCESS)
+		return WriteError("IDA", "IDAGetConsistentIC", "Cannot obtain consistent initial conditions.");
+	m_model->HandleResults(0.0, N_VGetArrayPointer(consistVars), N_VGetArrayPointer(consistDers));
+
+	N_VDestroy_Serial(consistVars);
+	N_VDestroy_Serial(consistDers);
+
+	return true;
+}
+
+bool CDAESolver::IntegrateUntil(realtype _time)
+{
+	/* set integration limit */
+	int res = IDASetStopTime(m_solverMem.idamem, _time);
 	if (res != IDA_SUCCESS)
 		return WriteError("IDA", "IDASetStopTime", "Cannot set integration stop time");
-
+	/* integrate */
 	do
 	{
-		res = IDASolve(m_solverMem.idamem, _timeEnd, &m_timeLast, m_solverMem.vars, m_solverMem.ders, IDA_ONE_STEP);
+		/* _time here is not a stop criterion, it only gives the direction of integration. */
+		res = IDASolve(m_solverMem.idamem, _time, &m_timeLast, m_solverMem.vars, m_solverMem.ders, IDA_ONE_STEP);
 		if (res < 0)
 			return WriteError("IDA", "IDASolve", "Cannot integrate.");
 		m_model->HandleResults(m_timeLast, N_VGetArrayPointer(m_solverMem.vars), N_VGetArrayPointer(m_solverMem.ders));
 	} while (res != IDA_TSTOP_RETURN);
-
 	return true;
 }
 
