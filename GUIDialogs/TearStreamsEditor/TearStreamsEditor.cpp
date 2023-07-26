@@ -5,6 +5,7 @@
 #include "Stream.h"
 #include "ParametersHolder.h"
 #include "DyssolStringConstants.h"
+#include "SignalBlocker.h"
 #include <QMessageBox>
 
 CTearStreamsEditor::CTearStreamsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, CModelsManager* _modelsManager, QWidget* _parent)
@@ -22,8 +23,8 @@ CTearStreamsEditor::CTearStreamsEditor(CFlowsheet* _pFlowsheet, CMaterialsDataba
 
 void CTearStreamsEditor::InitializeConnections()
 {
-	connect(ui.radioButtonAuto,		&QRadioButton::toggled,					this, &CTearStreamsEditor::SetEditable);
-	connect(ui.radioButtonUser,		&QRadioButton::toggled,					this, &CTearStreamsEditor::SetEditable);
+	connect(ui.radioButtonAuto,		&QRadioButton::toggled,					this, &CTearStreamsEditor::ModeChanged);
+	connect(ui.radioButtonUser,		&QRadioButton::toggled,					this, &CTearStreamsEditor::ModeChanged);
 	connect(ui.pushButtonClearAll,	&QRadioButton::clicked,					this, &CTearStreamsEditor::ClearAllStreams);
 	connect(ui.tablePartitions,		&QTableWidget::itemSelectionChanged,	this, &CTearStreamsEditor::UpdateStreamsList);
 	connect(ui.tableStreams,		&QTableWidget::itemSelectionChanged,	this, &CTearStreamsEditor::NewStreamSelected);
@@ -34,7 +35,7 @@ void CTearStreamsEditor::setVisible(bool _bVisible)
 {
 	if (_bVisible && !this->isVisible())
 		UpdateWholeView();
-	QWidget::setVisible(_bVisible);
+	CQtDialog::setVisible(_bVisible);
 }
 
 void CTearStreamsEditor::UpdateWholeView()
@@ -86,15 +87,17 @@ void CTearStreamsEditor::UpdateStreamsList()
 	NewStreamSelected();
 }
 
-void CTearStreamsEditor::UpdateMode()
+void CTearStreamsEditor::UpdateMode() const
 {
+	[[maybe_unused]] CSignalBlocker blocker{ ui.radioButtonAuto, ui.radioButtonUser };
 	if (m_pFlowsheet->GetParameters()->initializeTearStreamsAutoFlag)
 		ui.radioButtonAuto->setChecked(true);
 	else
 		ui.radioButtonUser->setChecked(true);
+	SetEditable();
 }
 
-void CTearStreamsEditor::NewStreamSelected()
+void CTearStreamsEditor::NewStreamSelected() const
 {
 	CBaseStream* pSelectedStream = nullptr;
 	const int iPartition = ui.tablePartitions->currentRow();
@@ -107,9 +110,6 @@ void CTearStreamsEditor::NewStreamSelected()
 
 	}
 	ui.widgetStreamsEditor->SetStream(pSelectedStream);
-
-	// TODO: remove if CBasicStreamEditor::m_pSolidDistrEditor will always present
-	SetEditable();
 }
 
 void CTearStreamsEditor::ClearAllStreams()
@@ -132,15 +132,16 @@ void CTearStreamsEditor::ClearAllStreams()
 	}
 }
 
-void CTearStreamsEditor::SetEditable()
+void CTearStreamsEditor::ModeChanged() const
 {
-	const bool bEnable = ui.radioButtonUser->isChecked();
-	// TODO: put back if CBasicStreamEditor::m_pSolidDistrEditor will always present
-	//if (bEnable != m_pFlowsheet->m_pParams->initializeTearStreamsAutoFlag)
-	//	return;
+	const bool manual = ui.radioButtonUser->isChecked();
+	m_pFlowsheet->GetParameters()->InitializeTearStreamsAutoFlag(!manual);
+	SetEditable();
+}
 
-	m_pFlowsheet->GetParameters()->InitializeTearStreamsAutoFlag(!bEnable);
-
-	ui.pushButtonClearAll->setEnabled(bEnable);
-	ui.widgetStreamsEditor->SetEditable(bEnable);
+void CTearStreamsEditor::SetEditable() const
+{
+	const bool enabled = !m_pFlowsheet->GetParameters()->initializeTearStreamsAutoFlag;
+	ui.pushButtonClearAll->setEnabled(enabled);
+	ui.widgetStreamsEditor->SetEditable(enabled);
 }

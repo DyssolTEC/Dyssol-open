@@ -29,11 +29,12 @@ private slots:
 private:
 	void UpdatePartitionsList();	// Update list of partitions.
 	void UpdateStreamsList();		// Update list of tear streams within selected partition.
-	void UpdateMode();				// Update selected mode (Auto/User).
+	void UpdateMode() const;				// Update selected mode (Auto/User).
 
-	void NewStreamSelected();		// User selected new tear stream.
+	void NewStreamSelected() const;		// User selected new tear stream.
 	void ClearAllStreams();			// Remove all time points from all recycle streams.
-	void SetEditable();				// Turn on/off edit possibility according to selected mode (Auto/User).
+	void ModeChanged() const;				// Called when a new mode (Auto/User) selected.
+	void SetEditable() const;				// Turn on/off edit possibility according to selected mode (Auto/User).
 
 signals:
 	void DataChanged();				// Some information in stream have been changed.
