@@ -41,9 +41,10 @@ Run the provided installer and follow the instructions.
 - Open `Dyssol/Dyssol.sln` with Visual Studio and build the solution.
 
 #### Build documentation and installers on Windows
-- Make sure all [required](#Compilation-requirements-on-windows) and [optional](#Build-documentation-and-installers-on-Windows) programs and tools are installed.
+- Make sure all [required](#Compilation-requirements-on-windows) and [optional](#Optional-requirements) programs and tools are installed.
 - Install required python libraries by running in a terminal
 ```powershell
+py -m ensurepip --upgrade
 pip install -U sphinx sphinx-rtd-theme breathe
 ```
 - In Visual Studio Solution Explorer go to `Installers`, right click on the `Installer` project and choose Build. The built `.exe` installer locates in `Dyssol/DyssolInstallers/Installers`. 
@@ -61,17 +62,18 @@ Also, other versions of Microsoft Visual Studio can be used, but additional prep
 ### Compilation procedure on Linux
 - Install the required build tools 
 ```sh
-$ cd /path_to_repo
-$ sudo add-apt-repository ppa:gladky-anton/sundials
-$ sudo apt install build-essential libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev doxygen
-$ pip install -U sphinx sphinx-rtd-theme breathe
-$ mkdir install
-$ mkdir build
-$ cd build
-$ cmake .. -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install
-$ cmake --build . --parallel
-$ make doc
-$ make install
+cd /path_to_repo
+sudo add-apt-repository ppa:gladky-anton/sundials
+sudo apt install build-essential cmake libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev doxygen
+py -m ensurepip --upgrade
+pip install -U sphinx sphinx-rtd-theme breathe
+mkdir install
+mkdir build
+cd build
+cmake .. -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install
+cmake --build . --parallel
+make doc
+make install
 ```
 - The compiled executable file and all the units' libraries will appear in `/path_to_repo/install`
 
