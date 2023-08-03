@@ -725,8 +725,18 @@ public:
 	std::vector<const CSolverUnitParameter*> GetAllSolverParameters() const;
 	// Returns pointers to all specified solver unit parameters.
 	std::vector<CSolverUnitParameter*> GetAllSolverParameters();
-	// Returns a sorted list of time points form given interval defined in all unit parameters.
-	std::vector<double> GetAllTimePoints(double _tBeg, double _tEnd) const;
+	/**
+	 * Returns a sorted list of time points defined in all unit parameters.
+	 * \return Sorted vector of time points.
+	 */
+	[[nodiscard]] std::vector<double> GetAllTimePoints() const;
+	/**
+	 * Returns a sorted list of time points form the given interval defined in all unit parameters.
+	 * \param _tBeg Begin of the time interval.
+	 * \param _tEnd End of the time interval.
+	 * \return Sorted vector of time points.
+	 */
+	[[nodiscard]] std::vector<double> GetAllTimePoints(double _tBeg, double _tEnd) const;
 
 	// Adds the list of _parameters by their indices to existing _group of existing _block. If _block, _group or some of parameters do not exist, does nothing.
 	void AddParametersToGroup(size_t _block, size_t _group, const std::vector<size_t>& _parameters);

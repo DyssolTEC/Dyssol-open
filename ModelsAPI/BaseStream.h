@@ -351,8 +351,19 @@ public:
 	 * The stream will contain the union of time points from both streams.*/
 	void Add(double _timeBeg, double _timeEnd, const CBaseStream& _source);
 
-	// Checks whether all values in the streams at the given time point are equal accurate to the specified tolerances.
+	/**
+	 * Tests whether all values in the streams at the given time point are equal up to the tolerances.
+	 * \retval true Streams are equal.
+	 * \retval false Streams are not equal.
+	 */
 	static bool AreEqual(double _time, const CBaseStream& _stream1, const CBaseStream& _stream2);
+
+	/**
+	 * Tests whether all values in the stream at the given time points are equal up to the tolerances.
+	 * \retval true Streams are equal.
+	 * \retval false Streams are not equal.
+	 */
+	static bool AreEqual(double _time1, double _time2, const CBaseStream& _stream);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Thermodynamics

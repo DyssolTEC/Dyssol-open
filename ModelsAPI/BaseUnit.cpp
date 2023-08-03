@@ -733,6 +733,11 @@ void CBaseUnit::CopyPortToStream(double _timeBeg, double _timeEnd, const std::st
 	CopyPortToStream(_timeBeg, _timeEnd, port, _stream);
 }
 
+std::vector<double> CBaseUnit::GetAllTimePoints() const
+{
+	return VectorsUnionSorted(GetInputTimePoints(), m_unitParameters.GetAllTimePoints());
+}
+
 std::vector<double> CBaseUnit::GetAllTimePoints(double _timeBeg, double _timeEnd) const
 {
 	return VectorsUnionSorted(GetInputTimePoints(_timeBeg, _timeEnd), m_unitParameters.GetAllTimePoints(_timeBeg, _timeEnd));
@@ -741,6 +746,14 @@ std::vector<double> CBaseUnit::GetAllTimePoints(double _timeBeg, double _timeEnd
 std::vector<double> CBaseUnit::GetAllTimePointsClosed(double _timeBeg, double _timeEnd) const
 {
 	return CloseInterval(GetAllTimePoints(_timeBeg, _timeEnd), _timeBeg, _timeEnd);
+}
+
+std::vector<double> CBaseUnit::GetInputTimePoints() const
+{
+	std::vector<double> res;
+	for (const auto& port : m_ports.GetAllInputPorts())
+		res = VectorsUnionSorted(res, port->GetStream()->GetAllTimePoints());
+	return res;
 }
 
 std::vector<double> CBaseUnit::GetInputTimePoints(double _timeBeg, double _timeEnd) const
@@ -756,17 +769,25 @@ std::vector<double> CBaseUnit::GetInputTimePointsClosed(double _timeBeg, double 
 	return CloseInterval(GetInputTimePoints(_timeBeg, _timeEnd), _timeBeg, _timeEnd);
 }
 
-std::vector<double> CBaseUnit::GetStreamsTimePoints(double _timeBeg, double _timeEnd, const std::vector<CStream*>& _srteams) const
+std::vector<double> CBaseUnit::GetStreamsTimePoints(const std::vector<CStream*>& _streams) const
 {
 	std::vector<double> res;
-	for (const auto& srteam : _srteams)
-		res = VectorsUnionSorted(res, srteam->GetTimePoints(_timeBeg, _timeEnd));
+	for (const auto& stream : _streams)
+		res = VectorsUnionSorted(res, stream->GetAllTimePoints());
 	return res;
 }
 
-std::vector<double> CBaseUnit::GetStreamsTimePointsClosed(double _timeBeg, double _timeEnd, const std::vector<CStream*>& _srteams) const
+std::vector<double> CBaseUnit::GetStreamsTimePoints(double _timeBeg, double _timeEnd, const std::vector<CStream*>& _streams) const
 {
-	return CloseInterval(GetStreamsTimePoints(_timeBeg, _timeEnd, _srteams), _timeBeg, _timeEnd);
+	std::vector<double> res;
+	for (const auto& stream : _streams)
+		res = VectorsUnionSorted(res, stream->GetTimePoints(_timeBeg, _timeEnd));
+	return res;
+}
+
+std::vector<double> CBaseUnit::GetStreamsTimePointsClosed(double _timeBeg, double _timeEnd, const std::vector<CStream*>& _streams) const
+{
+	return CloseInterval(GetStreamsTimePoints(_timeBeg, _timeEnd, _streams), _timeBeg, _timeEnd);
 }
 
 void CBaseUnit::ReduceTimePoints(double _timeBeg, double _timeEnd, double _step)
