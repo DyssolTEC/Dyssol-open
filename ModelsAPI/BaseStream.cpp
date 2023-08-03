@@ -1395,6 +1395,46 @@ bool CBaseStream::AreEqual(double _time, const CBaseStream& _stream1, const CBas
 	return true;
 }
 
+bool CBaseStream::AreEqual(double _time1, double _time2, const CBaseStream& _stream)
+{
+	const auto& Same = [&](double _v1, double _v2)
+	{
+		return std::fabs(_v1 - _v2) < std::fabs(_v1) * _stream.m_toleranceSettings.toleranceRel + _stream.m_toleranceSettings.toleranceAbs;
+	};
+
+	// overall parameters
+	for (const auto& [key, param] : _stream.m_overall)
+	{
+		if (!Same(param->GetValue(_time1), param->GetValue(_time2)))
+		{
+			return false;
+		}
+	}
+
+	// phases
+	for (const auto& [key, param] : _stream.m_phases)
+	{
+		if (!Same(param->GetFraction(_time1), param->GetFraction(_time2)))
+		{
+			return false;
+		}
+
+		const auto distr1 = param->MDDistr()->GetDistribution(_time1);
+		const auto distr2 = param->MDDistr()->GetDistribution(_time2);
+		const double* arr1 = distr1.GetDataPtr();
+		const double* arr2 = distr2.GetDataPtr();
+		for (size_t i = 0; i < distr1.GetDataLength(); ++i)
+		{
+			if (!Same(arr1[i], arr2[i]))
+			{
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
 CMixtureEnthalpyLookup* CBaseStream::GetEnthalpyCalculator() const
 {
 	// lazy initialization

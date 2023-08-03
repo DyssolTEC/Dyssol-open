@@ -1076,9 +1076,15 @@ public:
 	//
 
 	/**
+	 * \brief Returns all time points at which input streams and time-dependent parameters are defined.
+	 * \return Sorted vector of time points.
+	 */
+	std::vector<double> GetAllTimePoints() const;
+	/**
 	 * \brief Returns all time points in the specified time interval at which input streams and time-dependent parameters are defined.
 	 * \param _timeBeg Begin of the time interval.
 	 * \param _timeEnd End of the time interval.
+	 * \return Sorted vector of time points.
 	 */
 	std::vector<double> GetAllTimePoints(double _timeBeg, double _timeEnd) const;
 	/**
@@ -1086,12 +1092,19 @@ public:
 	 * \details Boundary time points are unconditionally included into result.
 	 * \param _timeBeg Begin of the time interval.
 	 * \param _timeEnd End of the time interval.
+	 * \return Sorted vector of time points.
 	 */
 	std::vector<double> GetAllTimePointsClosed(double _timeBeg, double _timeEnd) const;
+	/**
+	 * \brief Returns all time points at which input streams are defined.
+	 * \return Sorted vector of time points.
+	 */
+	std::vector<double> GetInputTimePoints() const;
 	/**
 	 * \brief Returns all time points in the specified time interval at which input streams are defined.
 	 * \param _timeBeg Begin of the time interval.
 	 * \param _timeEnd End of the time interval.
+	 * \return Sorted vector of time points.
 	 */
 	std::vector<double> GetInputTimePoints(double _timeBeg, double _timeEnd) const;
 	/**
@@ -1099,23 +1112,32 @@ public:
 	 * \details Boundary time points are unconditionally included into result.
 	 * \param _timeBeg Begin of the time interval.
 	 * \param _timeEnd End of the time interval.
+	 * \return Sorted vector of time points.
 	 */
 	std::vector<double> GetInputTimePointsClosed(double _timeBeg, double _timeEnd) const;
+	/**
+	 * \brief Returns all time points at which given streams are defined.
+	 * \param _streams List of streams.
+	 * \return Sorted vector of time points.
+	 */
+	std::vector<double> GetStreamsTimePoints(const std::vector<CStream*>& _streams) const;
 	/**
 	 * \brief Returns all time points in the specified time interval at which given streams are defined.
 	 * \param _timeBeg Begin of the time interval.
 	 * \param _timeEnd End of the time interval.
-	 * \param _srteams List of streams.
+	 * \param _streams List of streams.
+	 * \return Sorted vector of time points.
 	 */
-	std::vector<double> GetStreamsTimePoints(double _timeBeg, double _timeEnd, const std::vector<CStream*>& _srteams) const;
+	std::vector<double> GetStreamsTimePoints(double _timeBeg, double _timeEnd, const std::vector<CStream*>& _streams) const;
 	/**
 	 * \brief Returns all time points in the specified time interval at which given streams are defined.
 	 * \details Boundary time points are unconditionally included into result.
 	 * \param _timeBeg Begin of the time interval.
 	 * \param _timeEnd End of the time interval.
-	 * \param _srteams List of streams.
+	 * \param _streams List of streams.
+	 * \return Sorted vector of time points.
 	 */
-	std::vector<double> GetStreamsTimePointsClosed(double _timeBeg, double _timeEnd, const std::vector<CStream*>& _srteams) const;
+	std::vector<double> GetStreamsTimePointsClosed(double _timeBeg, double _timeEnd, const std::vector<CStream*>& _streams) const;
 
 	/**
 	 * \private

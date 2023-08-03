@@ -1721,6 +1721,15 @@ std::vector<CSolverUnitParameter*> CUnitParametersManager::GetAllSolverParameter
 	return res;
 }
 
+std::vector<double> CUnitParametersManager::GetAllTimePoints() const
+{
+	std::vector<double> res;
+	for (const auto& p : m_parameters)
+		if (p->GetType() == EUnitParameter::TIME_DEPENDENT)
+			res = VectorsUnionSorted(res, dynamic_cast<const CTDUnitParameter*>(p.get())->GetParams());
+	return res;
+}
+
 std::vector<double> CUnitParametersManager::GetAllTimePoints(double _tBeg, double _tEnd) const
 {
 	std::set<double> res;
