@@ -265,3 +265,15 @@ inline std::vector<double> Slice(const double* const _data, const std::vector<si
 			res[i] = _data[i];
 	return res;
 }
+
+/**
+ * \brief Returns the values at the specified indices in the data vector.
+ * \details Does not perform any out-of-boundary checks.
+ * \param _data Input vector of data.
+ * \param _ind List of indices of data to be extracted to the slice.
+ * \return Vector of data with given indices.
+ */
+inline std::vector<double> Slice(const std::vector<double>& _data, const std::vector<size_t>& _ind)
+{
+	return Slice(_data.data(), _ind);
+}
