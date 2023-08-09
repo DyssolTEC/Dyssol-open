@@ -38,4 +38,9 @@ private:
 	void SetLicense() const;
 	void SetContributors() const;
 	void SetThirdParties() const;
+
+	/**
+	 * Returns text decorated as a clickable link to show in the text browser.
+	 */
+	static QString MakeLink(const QString& _text, const QString& _url);
 };
