@@ -737,3 +737,89 @@ inline std::vector<double> CloseInterval(const std::vector<double>& _v, double _
 	CloseInterval(res, _l, _r);
 	return res;
 }
+
+/**
+ * \brief Returns the values of the vector clamped from the left.
+ * \details For each element, if (el < _min) el = _min.
+ * \param _data Input vector of data.
+ * \param _min Minimum allowed value.
+ * \return Vector of clamped data.
+ */
+template <typename T>
+std::vector<T> ClampL(const std::vector<T>& _data, T _min)
+{
+	std::vector res{ _data };
+	std::for_each(res.begin(), res.end(), [&_min](T& v) { v = std::max(_min, v); });
+	return res;
+}
+
+/**
+ * \brief Returns the values of the vector clamped from the right.
+ * \details For each element, if (el > _max) el = _max.
+ * \param _data Input vector of data.
+ * \param _max Maximum allowed value.
+ * \return Vector of clamped data.
+ */
+template <typename T>
+std::vector<T> ClampR(const std::vector<T>& _data, T _max)
+{
+	std::vector res{ _data };
+	std::for_each(res.begin(), res.end(), [&_max](T& v) { v = std::min(_max, v); });
+	return res;
+}
+
+/**
+ * \brief Returns the values of the vector clamped from both sides.
+ * \details For each element, if (el < _min) el = _min, if (el > _max) el = _max.
+ * \param _data Input vector of data.
+ * \param _min Minimum allowed value.
+ * \param _max Maximum allowed value.
+ * \return Vector of clamped data.
+ */
+template <typename T>
+std::vector<T> Clamp(const std::vector<T>& _data, T _min, T _max)
+{
+	std::vector res{ _data };
+	std::for_each(res.begin(), res.end(), [&_min, &_max](T& v) { v = std::clamp(v, _min, _max); });
+	return res;
+}
+
+/**
+ * \brief Returns the value clamped from the left.
+ * \details if (v < _min) v = _min.
+ * \param _value Input vector of data.
+ * \param _min Minimum allowed value.
+ * \return Clamped value.
+ */
+template <typename T>
+T ClampL(const T& _value, T _min)
+{
+	return std::max(_min, _value);
+}
+
+/**
+ * \brief Returns the value clamped from the right.
+ * \details if (v > _max) v = _max.
+ * \param _value Input value.
+ * \param _max Maximum allowed value.
+ * \return Clamped value.
+ */
+template <typename T>
+T ClampR(const T& _value, T _max)
+{
+	return std::min(_max, _value);
+}
+
+/**
+ * \brief Returns the value clamped from both sides.
+ * \details if (v < _min) v = _min, if (v > _max) v = _max.
+ * \param _value Input value.
+ * \param _min Minimum allowed value.
+ * \param _max Maximum allowed value.
+ * \return Clamped value.
+ */
+template <typename T>
+T Clamp(const T& _value, T _min, T _max)
+{
+	return std::clamp(_value, _min, _max);
+}
