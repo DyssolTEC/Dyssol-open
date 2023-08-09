@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "AboutWindow.h"
 #include "DyssolSystemDefines.h"
@@ -12,20 +14,36 @@ CAboutWindow::CAboutWindow(QWidget* parent)	: QDialog(parent)
 	ui.setupUi(this);
 
 	m_headerProgramName = "Dyssol: Dynamic Simulation of Solids Processes";
-	m_headerTeamName = "Dyssol Development Team";
+	m_headerTeamName = MakeLink("DyssolTEC GmbH", "https://www.dyssoltec.com/") + " and contributors";
 	m_headerUpdatesLink = "https://github.com/DyssolTEC/Dyssol-open/releases";
 
-	m_mainDevelopers = { "Vasyl Skorych", "Maksym Dosta", "Moritz Buchholz" };
-	m_otherDevelopers = { "Anton Gladky", "Illia Bereza", "Lusine Shahmuradyan", "Robin Ahrens", "Xiye Zhou" };
+	m_mainDevelopers = { "Vasyl Skorych" };
+	m_otherDevelopers = {
+		"Anton Gladky",
+		"Christian Eichler",
+		"Illia Bereza",
+		"Lea Rieck",
+		"Lusine Shahmuradyan",
+		"Maksym Dosta",
+		"Moritz Buchholz",
+		"Robin Ahrens",
+		"Sarra Daknou",
+		"Xiye Zhou",
+		"Yuliia Tykhonova"
+	};
 
 	m_libraries = {
-		{ "Qt"        , "http://www.qt.io/"                            , "Copyright 2020, The Qt Company"                                                        , "LGPL v3 license"     , "https://doc.qt.io/qt-5/lgpl.html"                           },
-		{ "zlib"      ,	"http://www.zlib.net/"                         , "Copyright 2017, Jean-loup Gailly and Mark Adler"                                       , "zlib license"        , "https://www.zlib.net/zlib_license.html"                     },
-		{ "HDF5"      ,	"https://www.hdfgroup.org/solutions/hdf5/"     , "Copyright 2018, The HDF Group"                                                         , "BSD-like license"    , "https://support.hdfgroup.org/ftp/HDF5/releases/COPYING"     },
-		{ "SUNDIALS"  ,	"https://computing.llnl.gov/projects/sundials/", "Copyright 2019, Lawrence Livermore National Security and Southern Methodist University", "BSD-3-Clause license", "https://computing.llnl.gov/projects/sundials/license"       },
-		{ "KISS FFT"  ,	"https://github.com/mborgerding/kissfft"       , "Copyright 2010, Mark Borgerding"                                                       , "BSD-3-Clause license", "https://github.com/mborgerding/kissfft/blob/master/COPYING" },
-		{ "Inno Setup",	"http://www.jrsoftware.org/isinfo.php"         , "Copyright 2020, Jordan Russell"                                                        , "Modified BSD license", "https://jrsoftware.org/files/is/license.txt"                },
-		{ "Graphviz"  ,	"https://graphviz.org/"                        , "Copyright 2021, Graphviz contributors"                                                 , "CPL v1.0 license"    , "https://graphviz.org/license/"                              },
+		{ "Breathe"         , "https://www.breathe-doc.org/"                 , "Copyright 2009, Michael Jones"                                                         , "Modified BSD license", "https://github.com/breathe-doc/breathe/blob/main/LICENSE"           },
+		{ "Doxygen"         , "https://www.doxygen.nl"                       , "Copyright 1997, Dimitri van Heesch"                                                    , "GPL license"         , "https://github.com/doxygen/doxygen/blob/master/LICENSE"             },
+		{ "Graphviz"        , "https://graphviz.org/"                        , "Copyright 2021, Graphviz contributors"                                                 , "CPL v1.0 license"    , "https://graphviz.org/license/"                                      },
+		{ "HDF5"            , "https://www.hdfgroup.org/solutions/hdf5/"     , "Copyright 2018, The HDF Group"                                                         , "BSD-like license"    , "https://support.hdfgroup.org/ftp/HDF5/releases/COPYING"             },
+		{ "Inno Setup"      , "http://www.jrsoftware.org/isinfo.php"         , "Copyright 2020, Jordan Russell"                                                        , "Modified BSD license", "https://jrsoftware.org/files/is/license.txt"                        },
+		{ "KISS FFT"        , "https://github.com/mborgerding/kissfft"       , "Copyright 2010, Mark Borgerding"                                                       , "BSD-3-Clause license", "https://github.com/mborgerding/kissfft/blob/master/COPYING"         },
+		{ "Qt"              , "http://www.qt.io/"                            , "Copyright 2020, The Qt Company"                                                        , "LGPL v3 license"     , "https://doc.qt.io/qt-5/lgpl.html"                                   },
+		{ "Sphinx"          , "https://www.sphinx-doc.org/en/master/"        , "Copyright 2007, Sphinx team"                                                           , "BSD-2-Clause license", "https://github.com/sphinx-doc/sphinx/blob/master/LICENSE"           },
+		{ "sphinx_rtd_theme", "https://sphinx-rtd-theme.readthedocs.io"      , "Copyright 2013, Dave Snider, Read the Docs, Inc. & contributors"                       , "MIT license"         , "https://github.com/readthedocs/sphinx_rtd_theme/blob/master/LICENSE"},
+		{ "SUNDIALS"        , "https://computing.llnl.gov/projects/sundials/", "Copyright 2019, Lawrence Livermore National Security and Southern Methodist University", "BSD-3-Clause license", "https://computing.llnl.gov/projects/sundials/license"               },
+		{ "zlib"            , "http://www.zlib.net/"                         , "Copyright 2017, Jean-loup Gailly and Mark Adler"                                       , "zlib license"        , "https://www.zlib.net/zlib_license.html"                             },
 	};
 
 	SetHeaderText();
@@ -53,7 +71,7 @@ void CAboutWindow::SetHeaderText() const
 		"Models Creator: " + VISUAL_STUDIO_VERSION + " (" + ARCHITECTURE + ") <br/>"
 		"<br/>"
 #endif
-		"Check for updates <a href=\"" + m_headerUpdatesLink + "\"><span style=\"text-decoration: underline; color:#0000ff;\">here</span></a><br/>"
+		"Check for updates " + MakeLink("here", m_headerUpdatesLink) + "<br/>"
 	);
 
 	ui.labelText->setText(description);
@@ -78,11 +96,11 @@ void CAboutWindow::SetContributors() const
 	};
 
 	QString text;
-	text.append(StyledString("Development Team:"));
+	text.append(StyledString("Main developer:"));
 	for (const auto& name : m_mainDevelopers)
 		text.append(StyledString("- " + name));
 	text.append(StyledString("<br />"));
-	text.append(StyledString("Other contributors:"));
+	text.append(StyledString("Other developers and contributors:"));
 	for (const auto& name : m_otherDevelopers)
 		text.append(StyledString("- " + name));
 
@@ -98,14 +116,17 @@ void CAboutWindow::SetThirdParties() const
 	for (const auto& lib : m_libraries)
 		text.append(
 			"<p style=\"margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">"
-			"<a href=\"" + lib.link + "\">"
-			"<span style=\"text-decoration: underline; color:#0000ff;\">" + lib.name + "</span></a><br />"
+			+ MakeLink(lib.name, lib.link) + "<br />"
 			+ lib.text + "<br />"
-			"<a href=\"" + lib.licenseLink + "\">"
-			"<span style=\" text-decoration: underline; color:#0000ff;\">" + lib.licenseName + "</span></a></p>");
+			+ MakeLink(lib.licenseName, lib.licenseLink) + "</p>");
 
 	ui.textBrowserLibraries->setHtml(text);
 	QTextCursor textCursor = ui.textBrowserLibraries->textCursor();
 	textCursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor, 1);
 	ui.textBrowserLibraries->setTextCursor(textCursor);
+}
+
+QString CAboutWindow::MakeLink(const QString& _text, const QString& _url)
+{
+	return "<a href=\"" + _url + "\"><span style=\" text-decoration: underline; color:#0000ff;\">" + _text + "</span></a>";
 }
