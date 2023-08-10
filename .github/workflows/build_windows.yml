@@ -28,7 +28,7 @@ env:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-2019
 
     steps:
     - name: Checkout
@@ -148,7 +148,7 @@ jobs:
           ${{github.workspace}}/${{env.BUILD_PLATFORM}}/${{env.BUILD_CONFIGURATION}}/*.dll
 
   tests:
-    runs-on: windows-latest
+    runs-on: windows-2019
     needs: build
 
     steps:
@@ -170,7 +170,7 @@ jobs:
       run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:TestsPreBuild=false ${{env.TESTS_PROJECT_PATH}}
 
   docs:
-    runs-on: windows-latest
+    runs-on: windows-2019
     needs: build
 
     steps:
@@ -191,7 +191,7 @@ jobs:
       run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ ${{env.DOCS_PROJECT_PATH}}
         
   cleanup:
-    runs-on: windows-latest
+    runs-on: windows-2019
     needs: [build, tests]
     if: ${{always()}}
     
