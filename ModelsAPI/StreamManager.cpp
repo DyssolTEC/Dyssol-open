@@ -21,10 +21,10 @@ void CStreamManager::SetPointers(const CMaterialsDatabase* _materialsDB, const C
 
 void CStreamManager::CopyUserData(const CStreamManager& _streams) const
 {
-	if (m_feedsInit.size() != _streams.m_feedsInit.size()) return;
-	if (m_feedsWork.size() != _streams.m_feedsWork.size()) return;
-	if (m_holdupsInit.size() != _streams.m_holdupsInit.size()) return;
-	if (m_holdupsWork.size() != _streams.m_holdupsWork.size()) return;
+	if (m_feedsInit.size() > _streams.m_feedsInit.size()) return;
+	if (m_feedsWork.size() > _streams.m_feedsWork.size()) return;
+	if (m_holdupsInit.size() > _streams.m_holdupsInit.size()) return;
+	if (m_holdupsWork.size() > _streams.m_holdupsWork.size()) return;
 	for (size_t i = 0; i < m_feedsInit.size(); ++i)
 		m_feedsInit[i]->CopyFromStream(0.0, _streams.m_feedsInit[i]->GetLastTimePoint(), _streams.m_feedsInit[i].get());
 	for (size_t i = 0; i < m_feedsWork.size(); ++i)
