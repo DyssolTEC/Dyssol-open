@@ -455,6 +455,7 @@ void CMultidimensionalGrid::SaveToFile(const CH5Handler& _h5File, const std::str
 		{
 		case EGridEntry::GRID_NUMERIC:	dynamic_cast<CGridDimensionNumeric*> (m_grids[i].get())->SaveToFile(_h5File, _h5File.CreateGroup(_path, StrConst::DGrid_H5GroupName + std::to_string(i)));  break;
 		case EGridEntry::GRID_SYMBOLIC: dynamic_cast<CGridDimensionSymbolic*>(m_grids[i].get())->SaveToFile(_h5File, _h5File.CreateGroup(_path, StrConst::DGrid_H5GroupName + std::to_string(i)));  break;
+		case EGridEntry::GRID_UNDEFINED: break;
 		}
 }
 
@@ -486,6 +487,7 @@ void CMultidimensionalGrid::LoadFromFile(const CH5Handler& _h5File, const std::s
 		{
 		case EGridEntry::GRID_NUMERIC:	AddNumericDimension ()->LoadFromFile(_h5File, _path + "/" + StrConst::DGrid_H5GroupName + std::to_string(i)); break;
 		case EGridEntry::GRID_SYMBOLIC:	AddSymbolicDimension()->LoadFromFile(_h5File, _path + "/" + StrConst::DGrid_H5GroupName + std::to_string(i)); break;
+		case EGridEntry::GRID_UNDEFINED: break;
 		}
 }
 
