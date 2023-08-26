@@ -1,4 +1,6 @@
-# Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information.
+# Copyright (c) 2020, Dyssol Development Team. All rights reserved. 
+# Copyright (c) 2023, DyssolTEC GmbH. All rights reserved. 
+# This file is part of Dyssol. See LICENSE file for license information.
 
 ################################################################################
 ### Initializing
@@ -12,11 +14,11 @@ if (-not (Get-Command Expand-7Zip -ErrorAction Ignore)) {
 ################################################################################
 ### Paths
 
-$ZLIB_VERSION = "1.2.13"
-$ZLIB_DOWNLOAD_ADDRESS = "http://www.zlib.net/zlib-$ZLIB_VERSION.tar.gz"
+$ZLIB_VERSION = "1.3"
 $ZLIB_NAME = "zlib-$ZLIB_VERSION"
 $ZLIB_TAR_NAME = "$ZLIB_NAME.tar"
 $ZLIB_ZIP_NAME = "$ZLIB_TAR_NAME.gz"
+$ZLIB_DOWNLOAD_ADDRESS = "https://github.com/madler/zlib/releases/download/v$ZLIB_VERSION/$ZLIB_ZIP_NAME"
 $ZLIB_INSTALL_PATH = "$CURRENT_PATH\zlib"
 $ZLIB_SRC_PATH = "$CURRENT_PATH\$ZLIB_NAME"
 $ZLIB_BUILD_PATH = "$ZLIB_SRC_PATH\build"
