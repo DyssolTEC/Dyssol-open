@@ -469,6 +469,8 @@ std::vector<std::string> CSolidDistributionsEditor::GetHeaders(EDistrTypes _dist
 	}
 	case EGridEntry::GRID_SYMBOLIC:
 		return m_pGrid->GetSymbolicGrid(_distr);
+	case EGridEntry::GRID_UNDEFINED:
+		return {};
 	}
 	return {};
 }
