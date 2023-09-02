@@ -4,6 +4,7 @@
 
 #include <string>
 #include <vector>
+#include <cstdint>
 
 constexpr auto DEFAULT_CHUNK_SIZE  = 100;
 constexpr auto MAX_CACHE_FILE_SIZE = 1024 * 1024 * 2000;

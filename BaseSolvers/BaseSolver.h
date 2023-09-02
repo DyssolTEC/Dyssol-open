@@ -4,6 +4,7 @@
 
 #include "DyssolHelperDefines.h"
 #include <string>
+#include <cstdint>
 
 #ifdef _MSC_VER
 	#if defined(DLL_EXPORT)
