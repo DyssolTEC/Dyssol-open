@@ -5,12 +5,12 @@ stages:
 .compile_template: &compile_definition
   stage: build
   script:
-    - apt-get update && apt-get install -y cmake ccache build-essential libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev clang
+    - apt-get update && apt-get install -y cmake ccache build-essential libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev clang doxygen python3-sphinx python3-sphinx-rtd-theme python3-breathe
     - export PATH="/usr/lib/ccache:$PATH"
     - export CCACHE_BASEDIR="$PWD"
     - export CCACHE_DIR="$PWD/ccache"
     - ccache -s
-    - mkdir build && cd build && cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_VERBOSE_MAKEFILE=ON  -DCMAKE_CXX_FLAGS="$CXXFLAGS" -DCMAKE_INSTALL_PREFIX=../install .. && make && make install
+    - mkdir build && cd build && cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_VERBOSE_MAKEFILE=ON  -DCMAKE_CXX_FLAGS="$CXXFLAGS" -DCMAKE_INSTALL_PREFIX=../install .. && make && make doc && make install
     - CTEST_OUTPUT_ON_FAILURE=1 make test
     - ccache -s
 
