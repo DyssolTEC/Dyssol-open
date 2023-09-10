@@ -1,9 +1,11 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "StringFunctions.h"
 #include "BaseCacheHandler.h"
+#include "DyssolFilesystem.h"
 #include <fstream>
-#include <filesystem>
 
 namespace fs = std::filesystem;
 

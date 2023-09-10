@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 #include "BaseSolver.h"
@@ -51,7 +53,7 @@ public:
 	/// <param name="_beta0">Size independent agglomeration rate</param>
 	/// <param name="_kernel">Type of the agglomeration kernel</param>
 	/// <param name="_parameters">Additional parameters</param>
-	void Initialize(const d_vect_t& _grid, double _beta0, EKernels _kernel, const d_vect_t& _parameters = {});
+	void Initialize(const d_vect_t& _grid, double _beta0, EKernels _kernel, const d_vect_t& _parameters = d_vect_t());
 	/// <summary>
 	/// Sets all required parameters and calls Initialize()
 	/// </summary>
@@ -59,7 +61,7 @@ public:
 	/// <param name="_beta0">Size independent agglomeration rate</param>
 	/// <param name="_kernel">Function of the agglomeration kernel</param>
 	/// <param name="_parameters">Additional parameters</param>
-	void Initialize(const d_vect_t& _grid, double _beta0, const std::function<kernel_t>& _kernel, const d_vect_t& _parameters = {});
+	void Initialize(const d_vect_t& _grid, double _beta0, const std::function<kernel_t>& _kernel, const d_vect_t& _parameters = d_vect_t());
 
 	/// <summary>
 	/// Actual initialization of the solver.

@@ -47,6 +47,12 @@ add_executable(DyssolGUI ${DyssolGUIsrc})
 target_compile_definitions(DyssolGUI PRIVATE INSTALL_DOCS_PATH="${INSTALL_DOCS_PATH}")
 target_compile_definitions(DyssolGUI PRIVATE INSTALL_CONFIG_PATH="${INSTALL_CONFIG_PATH}")
 
-
 TARGET_LINK_LIBRARIES(DyssolGUI Qt5::Widgets libdyssol_shared)
+# link filesystem or experimantal/filesystem for gcc
+IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+  IF (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 8.0)
+    TARGET_LINK_LIBRARIES(DyssolGUI -lstdc++fs)
+  ENDIF()
+ENDIF()
+
 INSTALL(TARGETS DyssolGUI DESTINATION ${CMAKE_INSTALL_BINDIR})

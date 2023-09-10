@@ -1,4 +1,6 @@
-/* Copyright (c) 2021, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2021, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 /*
  * Main defines of the script interface.
@@ -28,7 +30,7 @@
 #include "ScriptTypes.h"
 #include "ContainerFunctions.h"
 #include "DyssolHelperDefines.h"
-#include <filesystem>
+#include "DyssolFilesystem.h"
 #include <variant>
 
 namespace ScriptInterface
