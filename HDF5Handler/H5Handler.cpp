@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "H5Handler.h"
 #include "PacketTable.h"
@@ -181,7 +183,8 @@ void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatas
 
 	Group h5Group(m_ph5File->openGroup(_sPath));
 	DataSpace h5Dataspace(1, &size);
-	VarLenType h5Varlentype(PredType::NATIVE_DOUBLE);
+	auto itemtype = H5::PredType::NATIVE_DOUBLE;
+	auto h5Varlentype = H5::VarLenType(&itemtype);
 	DataSet h5Dataset = h5Group.createDataSet(_sDatasetName, h5Varlentype, h5Dataspace);
 
 	auto* buffer = new hvl_t[static_cast<size_t>(size)];
@@ -307,7 +310,8 @@ void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatase
 		Group h5Group(m_ph5File->openGroup(_sPath));
 		DataSet h5Dataset = h5Group.openDataSet(_sDatasetName);
 		DataSpace h5Dataspace = h5Dataset.getSpace();
-		VarLenType h5Varlentype(PredType::NATIVE_DOUBLE);
+		auto itemtype = H5::PredType::NATIVE_DOUBLE;
+		auto h5Varlentype = H5::VarLenType(&itemtype);
 		const auto nRows = static_cast<size_t>(h5Dataspace.getSimpleExtentNpoints());
 
 		if (nRows != 0)

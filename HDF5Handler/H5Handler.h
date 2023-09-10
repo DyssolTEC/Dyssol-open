@@ -1,12 +1,14 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
 #include "DyssolTypes.h"
 #include <vector>
 #include "H5Cpp.h"
+#include "DyssolFilesystem.h"
 #include <regex>
-#include <filesystem>
 
 
 /**

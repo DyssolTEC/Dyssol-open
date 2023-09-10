@@ -6,4 +6,3 @@ Basic unit
 .. doxygenclass:: CBaseUnit
 	:project: dyssol_models_api
 	:members:
-	:allow-dot-graphs:

@@ -1,11 +1,13 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
 #include "BaseSolver.h"
+#include "DyssolFilesystem.h"
 #include <map>
 #include <vector>
-#include <filesystem>
 
 #ifdef _MSC_VER
 #define NOMINMAX

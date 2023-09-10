@@ -6,4 +6,3 @@ Unit port
 .. doxygenclass:: CUnitPort
    :project: dyssol_models_api
    :members:
-   :allow-dot-graphs:

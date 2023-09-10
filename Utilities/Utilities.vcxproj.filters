@@ -63,6 +63,9 @@
     <ClInclude Include="ContainerFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DyssolFilesystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FileSystem.cpp">

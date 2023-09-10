@@ -119,6 +119,7 @@
   <ItemGroup>
     <ClInclude Include="BuildVersion.h" />
     <ClInclude Include="ContainerFunctions.h" />
+    <ClInclude Include="DyssolFilesystem.h" />
     <ClInclude Include="DyssolHelperDefines.h" />
     <ClInclude Include="DyssolStringConstants.h" />
     <ClInclude Include="DyssolSystemDefines.h" />
