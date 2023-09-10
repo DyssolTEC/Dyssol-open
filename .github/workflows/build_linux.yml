@@ -74,11 +74,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    - name: Install build doc dependencies 1
-      run: sudo apt-get install doxygen graphviz
-      
-    - name: Install build doc dependencies 2
-      run: pip install -U sphinx sphinx-rtd-theme breathe
+    - name: Install build doc dependencies
+      run: sudo apt-get install doxygen graphviz python3-sphinx python3-sphinx-rtd-theme python3-breathe
       
     - name: Create build environment
       run: cmake -E make_directory ${{github.workspace}}/build
