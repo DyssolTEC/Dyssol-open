@@ -5,8 +5,8 @@
 
 cmake_minimum_required(VERSION 3.1.0)
 
-set (VERSION 1.1.1)
-set (SOVERSION 1.0)
+set (VERSION 1.2.0)
+set (SOVERSION 1.2)
 
 OPTION(BUILD_BINARIES "Whether to build binary files" ON)
 OPTION(BUILD_DOCS "Whether to build documentation" ON)
