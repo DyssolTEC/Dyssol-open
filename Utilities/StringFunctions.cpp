@@ -50,7 +50,7 @@ namespace StringFunctions
 	{
 		std::ostringstream os;
 		if (_precision != static_cast<size_t>(-1))
-			os << setiosflags(std::ios::fixed) << std::setprecision(_precision);
+			os << std::setiosflags(std::ios::fixed) << std::setprecision(_precision);
 		os << _v;
 		return os.str();
 	}

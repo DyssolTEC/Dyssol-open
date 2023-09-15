@@ -50,6 +50,16 @@
 #define VISUAL_STUDIO_VERSION	"Visual Studio 2022 17.1"
 #elif (_MSC_VER == 1932)
 #define VISUAL_STUDIO_VERSION	"Visual Studio 2022 17.2"
+#elif (_MSC_VER == 1933)
+#define VISUAL_STUDIO_VERSION	"Visual Studio 2022 17.3"
+#elif (_MSC_VER == 1934)
+#define VISUAL_STUDIO_VERSION	"Visual Studio 2022 17.4"
+#elif (_MSC_VER == 1935)
+#define VISUAL_STUDIO_VERSION	"Visual Studio 2022 17.5"
+#elif (_MSC_VER == 1936)
+#define VISUAL_STUDIO_VERSION	"Visual Studio 2022 17.6"
+#elif (_MSC_VER == 1937)
+#define VISUAL_STUDIO_VERSION	"Visual Studio 2022 17.7"
 #else
 #define VISUAL_STUDIO_VERSION	"Unknown"
 #endif
