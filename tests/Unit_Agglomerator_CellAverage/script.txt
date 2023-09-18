@@ -5,11 +5,11 @@ MODELS_PATH               ${CMAKE_BINARY_DIR}/Solvers
 MODELS_PATH               ${CMAKE_SOURCE_DIR}/${CMAKE_GENERATOR_PLATFORM}/${CMAKE_BUILD_TYPE}
 MATERIALS_DATABASE        ${CMAKE_SOURCE_DIR}/Materials.dmdb
 EXPORT_FILE               ${CMAKE_BINARY_DIR}/tests/${CURRENT_TEST}/real.res
-EXPORT_SIGNIFICANCE_LIMIT 1e-06
+EXPORT_SIGNIFICANCE_LIMIT 1e-6
 
 SIMULATION_TIME    72000
-RELATIVE_TOLERANCE 1e-08
-ABSOLUTE_TOLERANCE 1e-08
+RELATIVE_TOLERANCE 1e-8
+ABSOLUTE_TOLERANCE 1e-8
 
 COMPOUNDS         "Urea" 
 PHASES            "Phase solid" SOLID 
@@ -27,8 +27,8 @@ UNIT_PARAMETER "Agglomerator" "Step" 500
 UNIT_PARAMETER "Agglomerator" "Solver" B1C8328850C34E27BE4D338AEE39B2B4
 UNIT_PARAMETER "Agglomerator" "Kernel" 3
 UNIT_PARAMETER "Agglomerator" "Rank" 3
-UNIT_PARAMETER "Agglomerator" "Relative tolerance" 1e-08
-UNIT_PARAMETER "Agglomerator" "Absolute tolerance" 1e-08
+UNIT_PARAMETER "Agglomerator" "Relative tolerance" 1e-8
+UNIT_PARAMETER "Agglomerator" "Absolute tolerance" 1e-8
 
 HOLDUP_OVERALL      "Feed" "InputMaterial" 0 0.003 300 100000
 HOLDUP_OVERALL      "Agglomerator" "Holdup" 0 20 300 100000
