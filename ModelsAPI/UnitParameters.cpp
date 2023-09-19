@@ -1038,7 +1038,7 @@ void CUnitParametersManager::CopyUserData(const CUnitParametersManager& _other)
 			case EUnitParameter::SOLVER         : Assign<CSolverUnitParameter     >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
 			case EUnitParameter::COMBO          : Assign<CComboUnitParameter      >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
 			case EUnitParameter::GROUP          : Assign<CComboUnitParameter      >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
-			case EUnitParameter::COMPOUND       : Assign<CComboUnitParameter      >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
+			case EUnitParameter::COMPOUND       : Assign<CCompoundUnitParameter   >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
 			case EUnitParameter::CONSTANT_DOUBLE: Assign<CConstRealUnitParameter  >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
 			case EUnitParameter::CONSTANT_INT64 : Assign<CConstIntUnitParameter   >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
 			case EUnitParameter::CONSTANT_UINT64: Assign<CConstUIntUnitParameter  >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
