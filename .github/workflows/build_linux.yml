@@ -1,3 +1,7 @@
+# Copyright (c) 2023, DyssolTEC. All rights reserved. This file is part of Dyssol. See LICENSE file for license information.
+
+# A workflow for testing on Windows
+
 name: Linux
 
 on: [push]
@@ -75,7 +79,7 @@ jobs:
     - uses: actions/checkout@v3
     
     - name: Install build doc dependencies
-      run: sudo apt-get install doxygen graphviz python3-sphinx python3-sphinx-rtd-theme python3-breathe
+      run: sudo apt-get install doxygen graphviz python3-sphinx python3-sphinx-rtd-theme python3-breathe texlive-latex-extra
       
     - name: Create build environment
       run: cmake -E make_directory ${{github.workspace}}/build
