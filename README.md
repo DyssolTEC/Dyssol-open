@@ -35,11 +35,6 @@ To install, run the [installer](https://github.com/DyssolTEC/Dyssol-open/release
 - [Git](https://git-scm.com/download/win)
 - PowerShell 5.0 (usually shipped with Windows)
 
-### Optional requirements on Windows
-
-- [Doxygen](https://www.doxygen.nl/download.html)
-- [Graphviz](https://graphviz.org/download/), with "add to PATH" option enabled
-
 ### Build on Windows
 
 - Make sure all programs and tools from the [list](#compilation-requirements-on-windows) are installed.
@@ -49,7 +44,9 @@ To install, run the [installer](https://github.com/DyssolTEC/Dyssol-open/release
 
 ### Build documentation and installers on Windows
 
-- Make sure all [required](#compilation-requirements-on-windows) and [optional](#optional-requirements-on-windows) programs and tools are installed.
+- Install [Doxygen](https://www.doxygen.nl/download.html).
+- Install [Graphviz](https://graphviz.org/download/), with "add to PATH" option enabled
+- Install [MikTeX](https://miktex.org/download) with packages: amscls, anyfontsize, preview, zhmetrics. With default installation, MikTeX will install the packages on-the-fly during the first build of the documentation (user confirmation may be required).
 - Install required python libraries by running in terminal
 ```powershell
 py -m ensurepip --upgrade
@@ -76,7 +73,7 @@ Also, other versions of Microsoft Visual Studio can be used, but additional prep
 ```sh
 cd /path_to_repo
 sudo add-apt-repository ppa:gladky-anton/sundials
-sudo apt install build-essential cmake libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev doxygen python3-sphinx python3-sphinx-rtd-theme python3-breathe
+sudo apt install build-essential cmake libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev doxygen python3-sphinx python3-sphinx-rtd-theme python3-breathe texlive-latex-extra
 mkdir install
 mkdir build
 cd build
@@ -89,7 +86,7 @@ make install
 #### Debian 12 
 ```sh
 cd /path_to_repo
-sudo apt install build-essential cmake libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev doxygen python3-sphinx python3-sphinx-rtd-theme python3-breathe
+sudo apt install build-essential cmake libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev doxygen python3-sphinx python3-sphinx-rtd-theme python3-breathe texlive-latex-extra
 mkdir install
 mkdir build
 cd build
