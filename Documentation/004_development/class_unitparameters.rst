@@ -5,6 +5,7 @@ Unit parameters
 
 .. toctree::
 	:maxdepth: 2
+	:titlesonly:
 
 	class_upbase
 	class_upconst

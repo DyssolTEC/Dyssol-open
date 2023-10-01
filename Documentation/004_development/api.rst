@@ -7,6 +7,7 @@ All functions, classes, their member variables and methods, needed to develop ne
 
 .. toctree::
 	:maxdepth: 2
+	:titlesonly:
 
 	class_baseunit
 	class_stream
