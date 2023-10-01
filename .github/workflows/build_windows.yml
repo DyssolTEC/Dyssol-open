@@ -205,7 +205,6 @@ jobs:
       run: Add-Content $env:GITHUB_PATH "C:\Program Files\MiKTeX\miktex\bin\x64"
       
     - name: Configure MiKTeX
-      if: steps.cache-miktex.outputs.cache-hit != 'true'
       run: |
         initexmf --admin --verbose --set-config-value=[MPM]AutoInstall=1
         miktex --admin --verbose packages update-package-database
