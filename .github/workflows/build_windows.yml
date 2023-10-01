@@ -204,7 +204,6 @@ jobs:
         choco install miktex.install --version ${{env.MIKTEX_VERSION}} -y
         & 'C:\Program Files\MiKTeX\miktex\bin\x64\latex' --version
         echo "C:\Program Files\MiKTeX\miktex\bin\x64" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-        latex --version
         Add-Content $env:GITHUB_PATH "C:\Program Files\MiKTeX\miktex\bin\x64"
         latex --version
         initexmf --admin --verbose --set-config-value=[MPM]AutoInstall=1
