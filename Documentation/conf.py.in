@@ -52,7 +52,10 @@ release = 'latest'
 extensions = []
 extensions.append('sphinx.ext.autodoc')
 extensions.append('sphinx.ext.githubpages')
-extensions.append('sphinx.ext.mathjax')
+if CompareVersions("@SPHINX_VERSION@", "1.4.0") != -1:
+    extensions.append('sphinx.ext.imgmath')
+else:
+    extensions.append('sphinx.ext.mathjax')
 extensions.append('sphinx_rtd_theme')
 extensions.append('breathe')
 if CompareVersions("@SPHINX_VERSION@", "2.4.0") != -1:
@@ -149,3 +152,10 @@ breathe_projects = {
     "dyssol_models_api": "@DOXYGEN_OUTPUT_XML_DIR@",
 }
 breathe_show_define_initializer = True
+
+# imgmath
+if CompareVersions("@SPHINX_VERSION@", "1.4.0") != -1:
+    imgmath_image_format = 'svg'
+    imgmath_embed = True
+    imgmath_use_preview = True
+    imgmath_font_size = 14
