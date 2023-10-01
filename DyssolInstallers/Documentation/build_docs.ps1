@@ -14,6 +14,9 @@ if ($env:PROCESSOR_ARCHITEW6432 -eq "AMD64") {
 	exit $lastexitcode
 }
 
+# remove old install directory
+Remove-Item -Recurse -Force $install_path
+
 # create build and install directories
 if (!(Test-Path $build_path)) {
 	New-Item -itemType Directory -Path $build_path
