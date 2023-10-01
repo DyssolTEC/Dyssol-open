@@ -190,10 +190,11 @@ jobs:
       run: pip install -U sphinx sphinx-rtd-theme breathe
         
     - name: Install MiKTeX
+      shell: pwsh
       run: |
-        choco install miktex --no-progress
+        choco install miktex
         echo "C:\Program Files\MiKTeX\miktex\bin\x64" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8
-        export PATH="C:\Program Files\MiKTeX\miktex\bin\x64:$PATH"
+        refreshenv
         initexmf --admin --verbose --set-config-value=[MPM]AutoInstall=1
         miktex --admin --verbose packages update-package-database
         miktex --admin --verbose packages update
