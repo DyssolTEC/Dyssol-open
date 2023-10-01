@@ -190,17 +190,17 @@ jobs:
       run: pip install -U sphinx sphinx-rtd-theme breathe
         
     - name: Install MiKTeX
-        run: |
-          choco install miktex --no-progress
-          echo "C:\Program Files\MiKTeX\miktex\bin\x64" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8
-          initexmf --admin --verbose --set-config-value=[MPM]AutoInstall=1
-          miktex --admin --verbose packages update-package-database
-          miktex --admin --verbose packages update
-          miktex --admin --verbose packages install amscls, anyfontsize, preview, zhmetrics
-          miktex --admin --verbose fndb refresh
-          initexmf --admin --verbose --update-fndb
-          initexmf --admin --verbose --mklinks --force
-          updmap --admin
+      run: |
+        choco install miktex --no-progress
+        echo "C:\Program Files\MiKTeX\miktex\bin\x64" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8
+        initexmf --admin --verbose --set-config-value=[MPM]AutoInstall=1
+        miktex --admin --verbose packages update-package-database
+        miktex --admin --verbose packages update
+        miktex --admin --verbose packages install amscls, anyfontsize, preview, zhmetrics
+        miktex --admin --verbose fndb refresh
+        initexmf --admin --verbose --update-fndb
+        initexmf --admin --verbose --mklinks --force
+        updmap --admin
 
     - name: Build Docs
       working-directory: ${{github.workspace}}
