@@ -25,6 +25,7 @@ env:
   SUNDIALS_VERSION: 6.4.1
   HDF5_VERSION: 1.12.2
   GRAPHVIZ_VERSION: 7.0.4
+  MIKTEX_VERSION: 23.5
 
 jobs:
   build:
@@ -180,10 +181,39 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1
 
-    - name: Install Requirements
+    - name: Install Graphviz
+      run: choco install graphviz
+        
+    - name: Install Doxygen
+      run: choco install doxygen.install
+        
+    - name: Install Sphinx
+      run: pip install -U sphinx sphinx-rtd-theme breathe
+        
+    - name: Cache MiKTeX
+      id: cache-miktex
+      uses: actions/cache@v3
+      with:
+        path: C:/Program Files/MiKTeX
+        key: ${{runner.os}}-MiKTeXCache-${{env.MIKTEX_VERSION}}
+        
+    - name: Install MiKTeX
+      if: steps.cache-miktex.outputs.cache-hit != 'true'
+      run: choco install miktex.install --version ${{env.MIKTEX_VERSION}} -y
+        
+    - name: Add MiKTeX to PATH
+      run: Add-Content $env:GITHUB_PATH "C:\Program Files\MiKTeX\miktex\bin\x64"
+      
+    - name: Configure MiKTeX
       run: |
-        choco install graphviz doxygen.install
-        pip install -U sphinx sphinx-rtd-theme breathe
+        initexmf --admin --verbose --set-config-value=[MPM]AutoInstall=1
+        miktex --admin --verbose packages update-package-database
+        miktex --admin --verbose packages update
+        miktex --admin --verbose packages install amscls, anyfontsize, preview, zhmetrics
+        miktex --admin --verbose fndb refresh
+        initexmf --admin --verbose --update-fndb
+        initexmf --admin --verbose --mklinks --force
+        updmap --admin
 
     - name: Build Docs
       working-directory: ${{github.workspace}}
