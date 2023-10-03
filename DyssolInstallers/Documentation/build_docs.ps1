@@ -15,7 +15,7 @@ if ($env:PROCESSOR_ARCHITEW6432 -eq "AMD64") {
 }
 
 # remove old install directory
-Remove-Item -Recurse -Force $install_path
+Remove-Item -Recurse -Force $install_path -ErrorAction Ignore
 
 # create build and install directories
 if (!(Test-Path $build_path)) {
