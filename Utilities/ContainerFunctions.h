@@ -258,6 +258,7 @@ template<typename T> std::vector<T> VectorDifference(const std::vector<T>& _v1, 
 inline std::vector<double> Slice(const double* const _data, const std::vector<size_t>& _ind)
 {
 	std::vector<double> res(_ind.size());
+	if (_ind.empty()) return res;
 	if (std::adjacent_find(_ind.begin(), _ind.end(), [](size_t i1, size_t i2) { return i2 != i1 + 1; }) == _ind.end())
 		std::copy(_data + _ind.front(), _data + _ind.back() + 1, res.begin());
 	else
