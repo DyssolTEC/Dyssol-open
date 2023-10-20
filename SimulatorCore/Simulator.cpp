@@ -505,7 +505,7 @@ void CSimulator::ReduceData(const CCalculationSequence::SPartition& _partition, 
 		for (auto* model : _partition.models)
 			if (model->GetModel()->GetStreamsManager().GetFeedsInit().empty()) // TODO: proper check for feed unit
 			{
-				for (auto& p : model->GetModel()->GetPortsManager().GetAllOutputPorts())
+				for (auto& p : model->GetModel()->GetPortsManager().GetAllInputPorts())
 					p->GetStream()->ReduceTimePoints(dStart, _t2, m_pParams->saveTimeStep);
 				if (m_pParams->saveTimeStepFlagHoldups)
 					model->GetModel()->ReduceTimePoints(dStart, _t2, m_pParams->saveTimeStep);
