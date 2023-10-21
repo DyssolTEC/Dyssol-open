@@ -3,7 +3,7 @@
 #include "ParametersHolder.h"
 #include "DyssolStringConstants.h"
 
-const unsigned CParametersHolder::m_cnSaveVersion = 5;
+const unsigned CParametersHolder::m_cnSaveVersion = 6;
 
 CParametersHolder::CParametersHolder()
 {
