@@ -25,15 +25,15 @@
 #define	DEFAULT_WEGSTEIN_ACCEL_PARAM		-0.5
 #define DEFAULT_RELAXATION_PARAM			1
 
+// Initial tolerances
+#define DEFAULT_A_TOL	1e-6
+#define DEFAULT_R_TOL	1e-3
+
 // Cache
 #define DEFAULT_CACHE_FLAG_STREAMS		true
 #define DEFAULT_CACHE_FLAG_HOLDUPS		false
 #define DEFAULT_CACHE_FLAG_INTERNAL		false
 #define DEFAULT_CACHE_WINDOW			100
-
-// Initial tolerances
-#define DEFAULT_A_TOL	1e-6
-#define DEFAULT_R_TOL	1e-3
 
 // Initial minimal fraction
 #define DEFAULT_MIN_FRACTION	0
