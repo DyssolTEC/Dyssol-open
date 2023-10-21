@@ -1395,11 +1395,11 @@ bool CBaseStream::AreEqual(double _time, const CBaseStream& _stream1, const CBas
 	return true;
 }
 
-bool CBaseStream::AreEqual(double _time1, double _time2, const CBaseStream& _stream)
+bool CBaseStream::AreEqual(double _time1, double _time2, const CBaseStream& _stream, double _absTol, double _relTol)
 {
 	const auto& Same = [&](double _v1, double _v2)
 	{
-		return std::fabs(_v1 - _v2) < std::fabs(_v1) * _stream.m_toleranceSettings.toleranceRel + _stream.m_toleranceSettings.toleranceAbs;
+		return std::fabs(_v1 - _v2) < std::fabs(_v1) * _relTol + _absTol;
 	};
 
 	// overall parameters
@@ -1433,6 +1433,11 @@ bool CBaseStream::AreEqual(double _time1, double _time2, const CBaseStream& _str
 	}
 
 	return true;
+}
+
+bool CBaseStream::AreEqual(double _time1, double _time2, const CBaseStream& _stream)
+{
+	return AreEqual(_time1, _time2, _stream, _stream.m_toleranceSettings.toleranceAbs, _stream.m_toleranceSettings.toleranceRel);
 }
 
 CMixtureEnthalpyLookup* CBaseStream::GetEnthalpyCalculator() const
