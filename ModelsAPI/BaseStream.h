@@ -363,6 +363,7 @@ public:
 	 * \retval true Streams are equal.
 	 * \retval false Streams are not equal.
 	 */
+	static bool AreEqual(double _time1, double _time2, const CBaseStream& _stream, double _absTol, double _relTol);
 	static bool AreEqual(double _time1, double _time2, const CBaseStream& _stream);
 
 	////////////////////////////////////////////////////////////////////////////////
