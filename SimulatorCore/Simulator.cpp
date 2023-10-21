@@ -36,6 +36,12 @@ ESimulatorStatus CSimulator::GetCurrentStatus() const
 	return m_nCurrentStatus;
 }
 
+CSimulator::SPartitionStatus CSimulator::GetCurrentPartitionStatus() const
+{
+	if (m_iCurrentPartition >= m_partitionsStatus.size()) return {};
+	return m_partitionsStatus[m_iCurrentPartition];
+}
+
 void CSimulator::Simulate()
 {
 	m_nCurrentStatus = ESimulatorStatus::SIMULATOR_RUNNED;
@@ -43,6 +49,7 @@ void CSimulator::Simulate()
 	// Prepare
 	SetupConvergenceMethod();
 	ClearLogState();
+	InitializePartitionsStatus();
 
 	// Clear initialization flags
 	m_vInitialized.clear();
@@ -57,20 +64,20 @@ void CSimulator::Simulate()
 	m_pFlowsheet->GetCalculationSequence()->CopyInitToTearStreams(m_pParams->initTimeWindow);
 
 	// Simulate all units
-	for (const auto& partition : m_pSequence->Partitions())
+	const auto partitions = m_pSequence->Partitions();
+	// TODO: work only with partition index, when getting a partition data by index will be a fast operation
+	for (size_t iPart = 0; iPart < partitions.size(); ++iPart)
 	{
-		if (partition.tearStreams.empty())	// step without cycles
-		{
-			SimulateUnits(partition, 0, m_pParams->endSimulationTime);		// simulation on time interval itself
-			ReduceData(partition, 0, m_pParams->endSimulationTime);
-		}
-		else															// step with recycles
-			SimulateUnitsWithRecycles(partition);								// waveform relaxation on time interval
+		m_iCurrentPartition = iPart;
+		SimulateUntilEndSimulationTime(iPart, partitions[iPart]);
 
 		if (m_nCurrentStatus == ESimulatorStatus::SIMULATOR_SHOULD_BE_STOPPED) break;
 
+		// remove excessive data
+		ReduceData(partitions[iPart], 0, m_pParams->endSimulationTime);
+
 		// Finalize all units within partition
-		for (auto& model : partition.models)
+		for (auto& model : partitions[iPart].models)
 		{
 			m_log.WriteInfo(StrConst::Sim_InfoUnitFinalization(model->GetName(), model->GetModel()->GetUnitName()));
 			model->GetModel()->DoFinalizeUnit();
@@ -87,94 +94,122 @@ void CSimulator::Simulate()
 		m_pFlowsheet->GetCalculationSequence()->CopyTearToInitStreams(m_pParams->initTimeWindow);
 	}
 
+	// remove buffer streams
+	for (size_t i = 0; i < m_partitionsStatus.size(); ++i)
+		for (size_t j = 0; j < m_partitionsStatus[i].vRecyclesPrev.size(); ++j)
+		{
+			delete m_partitionsStatus[i].vRecyclesPrev[j];
+			delete m_partitionsStatus[i].vRecyclesPrevPrev[j];
+		}
+
 	m_nCurrentStatus = ESimulatorStatus::SIMULATOR_IDLE;
 }
 
-void CSimulator::SimulateUnitsWithRecycles(const CCalculationSequence::SPartition& _partition)
+void CSimulator::InitializePartitionsStatus()
+{
+	m_partitionsStatus.clear();
+	for (const auto& partition : m_pSequence->Partitions())
+	{
+		SPartitionStatus& status = m_partitionsStatus.emplace_back();
+
+		// create and initialize structure of buffer streams
+		const std::vector<CStream*>& vRecycles = partition.tearStreams;
+		status.vRecyclesPrev = std::vector<CStream*>(vRecycles.size());			// previous state of recycles
+		status.vRecyclesPrevPrev = std::vector<CStream*>(vRecycles.size());		// pre-previous state of recycles
+		for (size_t i = 0; i < vRecycles.size(); ++i)
+		{
+			status.vRecyclesPrev[i] = new CStream(*vRecycles[i]);
+			status.vRecyclesPrev[i]->RemoveAllTimePoints();
+			status.vRecyclesPrevPrev[i] = new CStream(*vRecycles[i]);
+			status.vRecyclesPrevPrev[i]->RemoveAllTimePoints();
+		}
+	}
+}
+
+void CSimulator::SimulateUntilEndSimulationTime(size_t _iPartition, const CCalculationSequence::SPartition& _partition)
+{
+	if (_partition.tearStreams.empty())	// step without cycles
+		SimulateUnits(_partition, 0, m_pParams->endSimulationTime);		// simulation on time interval itself
+	else															// step with recycles
+		SimulateUnitsWithRecycles(_iPartition, _partition, 0, m_pParams->endSimulationTime);		// waveform relaxation on time interval
+}
+
+void CSimulator::SimulateUnitsWithRecycles(size_t _iPartition, const CCalculationSequence::SPartition& _partition, double _t1, double _t2)
 {
 	const std::vector<CStream*>& vRecycles = _partition.tearStreams;
 
-	// check whether initial values were set to recycle streams
-	bool bTearStreamsFromInit = false; // will be true if data from m_vvInitTearStreams were used to initialize tear streams
-	for (auto recycle : vRecycles)
-		bTearStreamsFromInit |= !recycle->GetTimePoints(0, m_pParams->initTimeWindow).empty();
-
 	// initialize simulation's parameters
-	m_iTWIterationFull = 0;
-	m_iTWIterationCurr = 0;
-	m_iWindowNumber = 0;
-	m_dTWStart = 0;
-	m_dTWLength = m_pParams->initTimeWindow;
-	m_dTWEnd = std::min(m_dTWStart + m_dTWLength, static_cast<double>(m_pParams->endSimulationTime));
-	double dTWStartPrev = 0;					// start time of the previous time window
+	SPartitionStatus& partVars = m_partitionsStatus[_iPartition];
 
-	// create and initialize structure of buffer streams
-	std::vector<CStream*> vRecyclesPrev(vRecycles.size());			// previous state of recycles
-	std::vector<CStream*> vRecyclesPrevPrev(vRecycles.size());		// pre-previous state of recycles
-	for (size_t i = 0; i < vRecycles.size(); ++i)
+	if (_t1 == 0)
 	{
-		vRecyclesPrev[i] = new CStream(*vRecycles[i]);
-		vRecyclesPrev[i]->RemoveAllTimePoints();
-		vRecyclesPrevPrev[i] = new CStream(*vRecycles[i]);
-		vRecyclesPrevPrev[i]->RemoveAllTimePoints();
+		// check whether initial values were set to recycle streams
+		partVars.bTearStreamsFromInit = false; // will be true if data from m_vvInitTearStreams were used to initialize tear streams
+		for (auto recycle : vRecycles)
+			partVars.bTearStreamsFromInit |= !recycle->GetTimePoints(0, m_pParams->initTimeWindow).empty();
+
+		partVars.dTWLength = m_pParams->initTimeWindow;
 	}
 
+	partVars.dTWStart = _t1;
+	partVars.dTWEnd = std::min(partVars.dTWStart + partVars.dTWLength, _t2);
+
 	// main calculation sequence
-	while (m_dTWStart < m_pParams->endSimulationTime)
+	while (partVars.dTWStart < _t2)
 	{
-		if (m_dTWLength < m_pParams->minTimeWindow)
+		if (partVars.dTWLength < m_pParams->minTimeWindow)
 			RaiseError(StrConst::Sim_ErrMinTWLength);
-		if (m_iTWIterationFull == m_pParams->maxItersNumber)
+		if (partVars.iTWIterationFull == m_pParams->maxItersNumber)
 			RaiseError(StrConst::Sim_ErrMaxTWIterations);
 		if (m_nCurrentStatus == ESimulatorStatus::SIMULATOR_SHOULD_BE_STOPPED)
 			break;
 
 		// write log
-		m_log.WriteInfo(StrConst::Sim_InfoRecycleStreamCalculating(m_iWindowNumber, m_iTWIterationFull, m_dTWStart, m_dTWEnd), true);
+		m_log.WriteInfo(StrConst::Sim_InfoRecycleStreamCalculating(partVars.iWindowNumber, partVars.iTWIterationFull, partVars.dTWStart, partVars.dTWEnd), true);
 
 		// save copies of streams
 		for (size_t j = 0; j < vRecycles.size(); ++j)
 		{
-			vRecyclesPrevPrev[j]->CopyFromStream(dTWStartPrev, m_dTWEnd, vRecyclesPrev[j]);
-			vRecyclesPrev[j]->CopyFromStream(dTWStartPrev, m_dTWEnd, vRecycles[j]);
+			partVars.vRecyclesPrevPrev[j]->CopyFromStream(partVars.dTWStartPrev, partVars.dTWEnd, partVars.vRecyclesPrev[j]);
+			partVars.vRecyclesPrev[j]->CopyFromStream(partVars.dTWStartPrev, partVars.dTWEnd, vRecycles[j]);
 		}
 
 		// simulation itself
-		SimulateUnits(_partition, m_dTWStart, m_dTWEnd);
+		SimulateUnits(_partition, partVars.dTWStart, partVars.dTWEnd);
 
-		m_iTWIterationFull++;
-		m_iTWIterationCurr++;
+		partVars.iTWIterationFull++;
+		partVars.iTWIterationCurr++;
 
 		// check convergence
-		if (!CheckConvergence(vRecycles, vRecyclesPrev, m_dTWStart, m_dTWEnd))
+		if (!CheckConvergence(vRecycles, partVars.vRecyclesPrev, partVars.dTWStart, partVars.dTWEnd))
 		{
 			// cannot converge with automatic defined initial conditions in tear streams. set defaults and try again
-			if (m_dTWStart == 0 && m_iTWIterationCurr > m_pParams->iters1stUpperLimit && m_pParams->initializeTearStreamsAutoFlag && bTearStreamsFromInit)
+			if (partVars.dTWStart == 0 && partVars.iTWIterationCurr > m_pParams->iters1stUpperLimit && m_pParams->initializeTearStreamsAutoFlag && partVars.bTearStreamsFromInit)
 			{
 				m_log.WriteInfo(StrConst::Sim_InfoFalseInitTearStreams, true);					// warn the user
-				for (auto& stream : vRecycles)			stream->RemoveAllTimePoints();			// clear recycle streams
-				for (auto& stream : vRecyclesPrev)		stream->RemoveAllTimePoints();			// clear previous state of recycles
-				for (auto& stream : vRecyclesPrevPrev)	stream->RemoveAllTimePoints();			// clear pre-previous state of recycles
+				for (auto& stream : vRecycles)					stream->RemoveAllTimePoints();			// clear recycle streams
+				for (auto& stream : partVars.vRecyclesPrev)		stream->RemoveAllTimePoints();			// clear previous state of recycles
+				for (auto& stream : partVars.vRecyclesPrevPrev)	stream->RemoveAllTimePoints();			// clear pre-previous state of recycles
 				for (auto& stream : vRecycles)													// make sure, there is at least one time point in the stream
 					if (stream->GetAllTimePoints().empty())
 						stream->AddTimePoint(0.0);
-				bTearStreamsFromInit = false;													// turn off the control flag to prevent a repeated reset
-				m_iTWIterationFull = 0;															// reset iteration number
-				m_iTWIterationCurr = 0;															// reset iteration number
+				partVars.bTearStreamsFromInit = false;											// turn off the control flag to prevent a repeated reset
+				partVars.iTWIterationFull = 0;													// reset iteration number
+				partVars.iTWIterationCurr = 0;													// reset iteration number
 				continue;																		// repeat calculations
 			}
 
 			// apply chosen convergence method
-			if (m_iTWIterationFull > 2)
-				ApplyConvergenceMethod(vRecycles, vRecyclesPrev, vRecyclesPrevPrev, m_dTWStart, m_dTWEnd);
+			if (partVars.iTWIterationFull > 2)
+				ApplyConvergenceMethod(vRecycles, partVars.vRecyclesPrev, partVars.vRecyclesPrevPrev, partVars.dTWStart, partVars.dTWEnd);
 
 			// reduce time window if necessary
-			if (((m_dTWStart == 0) && (m_iTWIterationCurr > m_pParams->iters1stUpperLimit)) ||	// for the first window
-				((m_dTWStart != 0) && (m_iTWIterationCurr > m_pParams->itersUpperLimit)))		// for other windows
+			if (((partVars.dTWStart == 0) && (partVars.iTWIterationCurr > m_pParams->iters1stUpperLimit)) ||	// for the first window
+				((partVars.dTWStart != 0) && (partVars.iTWIterationCurr > m_pParams->itersUpperLimit)))		// for other windows
 			{
-				m_dTWLength /= m_pParams->magnificationRatio;
-				m_dTWEnd = std::min(m_dTWStart + m_dTWLength, static_cast<double>(m_pParams->endSimulationTime));
-				m_iTWIterationCurr = 0;
+				partVars.dTWLength /= m_pParams->magnificationRatio;
+				partVars.dTWEnd = std::min(partVars.dTWStart + partVars.dTWLength, _t2);
+				partVars.iTWIterationCurr = 0;
 			}
 
 			continue; // repeat calculations on time window
@@ -182,56 +217,41 @@ void CSimulator::SimulateUnitsWithRecycles(const CCalculationSequence::SPartitio
 
 		// first time window && converged in the first iteration -> proper initial values -> no parameters have been changed from the previous run ->
 		// use old initial values instead of calculated ones to maintain the consistency of the results in consecutive simulations of the same flowsheet
-		if (m_dTWStart == 0 && m_iTWIterationFull == 1)
+		if (partVars.dTWStart == 0 && partVars.iTWIterationFull == 1)
 			for (size_t i = 0; i < vRecycles.size(); ++i)
-				vRecycles[i]->CopyFromStream(dTWStartPrev, m_dTWEnd, vRecyclesPrev[i]);
+				vRecycles[i]->CopyFromStream(partVars.dTWStartPrev, partVars.dTWEnd, partVars.vRecyclesPrev[i]);
 
 		// save units state
 		for (auto& model : _partition.models)
-			model->GetModel()->DoSaveStateUnit(m_dTWStart, m_dTWEnd);
+			model->GetModel()->DoSaveStateUnit(partVars.dTWStart, partVars.dTWEnd);
 
-		if (m_dTWEnd < m_pParams->endSimulationTime)
+		if (partVars.dTWEnd < _t2)
 		{
 			// recalculate time window if necessary
-			if (m_iTWIterationCurr < m_pParams->itersLowerLimit)
-				m_dTWLength *= m_pParams->magnificationRatio;	// increase time window
-			else if (m_iTWIterationCurr > m_pParams->itersUpperLimit)
-				m_dTWLength /= m_pParams->magnificationRatio;	// decrease time window
-			if (m_dTWLength > m_pParams->maxTimeWindow)
-				m_dTWLength = m_pParams->maxTimeWindow;			// set maximum time window
+			if (partVars.iTWIterationCurr < m_pParams->itersLowerLimit)
+				partVars.dTWLength *= m_pParams->magnificationRatio;	// increase time window
+			else if (partVars.iTWIterationCurr > m_pParams->itersUpperLimit)
+				partVars.dTWLength /= m_pParams->magnificationRatio;	// decrease time window
+			if (partVars.dTWLength > m_pParams->maxTimeWindow)
+				partVars.dTWLength = m_pParams->maxTimeWindow;			// set maximum time window
 
 			// setup simulation's parameters and move to the next time window
-			m_iTWIterationCurr = 0;
-			m_iTWIterationFull = 0;
-			m_iWindowNumber++;
-			dTWStartPrev = m_dTWStart;
-			m_dTWStart = m_dTWEnd;
-			m_dTWEnd = std::min(m_dTWEnd + m_dTWLength, static_cast<double>(m_pParams->endSimulationTime));
+			partVars.iTWIterationCurr = 0;
+			partVars.iTWIterationFull = 0;
+			partVars.iWindowNumber++;
+			partVars.dTWStartPrev = partVars.dTWStart;
+			partVars.dTWStart = partVars.dTWEnd;
+			partVars.dTWEnd = std::min(partVars.dTWEnd + partVars.dTWLength, _t2);
 
 			// make prediction
-			ApplyExtrapolationMethod(vRecycles, dTWStartPrev, m_dTWStart, m_dTWEnd);
-
-			// remove excessive data
-			ReduceData(_partition, dTWStartPrev, m_dTWStart);
+			ApplyExtrapolationMethod(vRecycles, partVars.dTWStartPrev, partVars.dTWStart, partVars.dTWEnd);
 		}
 		else
 		{
-			// remove excessive data
-			ReduceData(_partition, m_dTWStart, m_dTWEnd);
-
 			// finish simulation of the partition
 			break;
 		}
 	}
-
-	// remove buffer streams
-	for (size_t i = 0; i < vRecycles.size(); ++i)
-	{
-		delete vRecyclesPrev[i];
-		delete vRecyclesPrevPrev[i];
-	}
-	vRecyclesPrev.clear();
-	vRecyclesPrevPrev.clear();
 }
 
 void CSimulator::SimulateUnits(const CCalculationSequence::SPartition& _partition, double _t1, double _t2)
@@ -241,7 +261,7 @@ void CSimulator::SimulateUnits(const CCalculationSequence::SPartition& _partitio
 		// current model
 		m_unitName = model->GetName();
 
-		// copy input streams to output streams and convert grids if necessary
+		// copy output streams to input streams and convert grids if necessary
 		m_pFlowsheet->PrepareInputStreams(model, _t1, _t2);
 
 		// initialize unit if not yet initialized
@@ -377,17 +397,12 @@ void CSimulator::RaiseError(const std::string& _sError)
 
 void CSimulator::ClearLogState()
 {
-	m_dTWStart = 0;
-	m_dTWEnd = 0;
-	m_iTWIterationFull = 0;
-	m_iWindowNumber = 0;
 	m_unitName.clear();
 	m_log.Clear();
 }
 
 void CSimulator::ApplyExtrapolationMethod(const std::vector<CStream*>& _streams, double _t1, double _t2, double _tExtra) const
 {
-	if (_t2 >= m_pParams->endSimulationTime) return;
 	switch (static_cast<EExtrapolationMethod>(m_pParams->extrapolationMethod))
 	{
 	case EExtrapolationMethod::LINEAR:	for (auto& str : _streams) str->Extrapolate(_tExtra, _t1, _t2);						break;

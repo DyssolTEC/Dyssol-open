@@ -25,6 +25,21 @@ class CSimulator
 	friend class CSimulatorTab;
 
 private:
+	struct SPartitionStatus
+	{
+		double dTWStart{ 0 };				// Current time window start.
+		double dTWStartPrev{ 0 };			// Start time of the previous time window.
+		double dTWEnd{ 0 };					// Current time window end.
+		double dTWLength{ 0 };				// Current time window length.
+		unsigned iTWIterationFull{ 0 };		// Iteration number within a current time window [m_dTWStart .. ]. Does not reset if the size of current TW is reduced.
+		unsigned iTWIterationCurr{ 0 };		// Iteration number within a current time window [m_dTWStart .. m_dTWEnd]. Reset if the size of current TW is reduced.
+		unsigned iWindowNumber{ 0 };		// Current time window within a partition.
+		bool bTearStreamsFromInit{ false };
+
+		std::vector<CStream*> vRecyclesPrev{};			// previous state of recycles
+		std::vector<CStream*> vRecyclesPrevPrev{};		// pre-previous state of recycles
+	};
+
 	CFlowsheet* m_pFlowsheet;
 	const CCalculationSequence* m_pSequence; // Calculation sequence.
 	CParametersHolder* m_pParams;
@@ -34,12 +49,9 @@ private:
 	/// Data for logging
 	CSimulatorLog m_log;				// Log itself.
 	CLogUpdater m_logUpdater{ &m_log };	// Log updater.
-	double m_dTWStart;					// Current time window start.
-	double m_dTWEnd;					// Current time window end.
-	double m_dTWLength;					// Current time window length.
-	unsigned m_iTWIterationFull;		// Iteration number within a current time window [m_dTWStart .. ]. Does not reset if the size of current TW is reduced.
-	unsigned m_iTWIterationCurr;		// Iteration number within a current time window [m_dTWStart .. m_dTWEnd]. Reset if the size of current TW is reduced.
-	unsigned m_iWindowNumber;			// Current time window within a partition.
+	// TODO: join m_partitionsStatus, m_iCurrentPartition, m_unitName into a simulation status variable
+	std::vector<SPartitionStatus> m_partitionsStatus{};
+	size_t m_iCurrentPartition{};
 	std::string m_unitName;				// Name of the currently calculated unit.
 
 	//// parameters of convergence methods
@@ -56,12 +68,19 @@ public:
 	// Returns current status of the simulator.
 	ESimulatorStatus GetCurrentStatus() const;
 
+	// Returns information about currently calculated partition.
+	SPartitionStatus GetCurrentPartitionStatus() const;
+
 	/// Perform simulation.
 	void Simulate();
 
 private:
+	/// Initialize status for each partition.
+	void InitializePartitionsStatus();
+	/// Perform simulation partition until end simulation time
+	void SimulateUntilEndSimulationTime(size_t _iPartition, const CCalculationSequence::SPartition& _partition);
 	/// Performs simulation of a given partition with waveform relaxation method.
-	void SimulateUnitsWithRecycles(const CCalculationSequence::SPartition& _partition);
+	void SimulateUnitsWithRecycles(size_t _iPartition, const CCalculationSequence::SPartition& _partition, double _t1, double _t2);
 	/// Simulate all units of a given partition on specified time interval.
 	void SimulateUnits(const CCalculationSequence::SPartition& _partition, double _t1, double _t2);
 	/// Simulate specified steady-state or dynamic unit on a given time or interval.

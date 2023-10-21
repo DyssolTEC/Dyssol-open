@@ -186,11 +186,12 @@ void CSimulatorTab::UpdateLog() const
 	}
 	ui.textBrowserLog->setTextColor(QColor(Qt::black));
 
-	ui.tableLog->SetItemNotEditable(EStatTable::TIME_WIN_START,   0, m_pSimulator->m_dTWStart);
-	ui.tableLog->SetItemNotEditable(EStatTable::TIME_WIN_END,     0, m_pSimulator->m_dTWEnd);
-	ui.tableLog->SetItemNotEditable(EStatTable::TIME_WIN_LENGTH,  0, m_pSimulator->m_dTWLength);
-	ui.tableLog->SetItemNotEditable(EStatTable::ITERATION_NUMBER, 0, m_pSimulator->m_iTWIterationFull);
-	ui.tableLog->SetItemNotEditable(EStatTable::WINDOW_NUMBER,    0, m_pSimulator->m_iWindowNumber);
+	const auto status = m_pSimulator->GetCurrentPartitionStatus();
+	ui.tableLog->SetItemNotEditable(EStatTable::TIME_WIN_START,   0, status.dTWStart);
+	ui.tableLog->SetItemNotEditable(EStatTable::TIME_WIN_END,     0, status.dTWEnd);
+	ui.tableLog->SetItemNotEditable(EStatTable::TIME_WIN_LENGTH,  0, status.dTWLength);
+	ui.tableLog->SetItemNotEditable(EStatTable::ITERATION_NUMBER, 0, status.iTWIterationFull);
+	ui.tableLog->SetItemNotEditable(EStatTable::WINDOW_NUMBER,    0, status.iWindowNumber);
 	ui.tableLog->SetItemNotEditable(EStatTable::UNIT_NAME,        0, m_pSimulator->m_unitName);
 	ui.tableLog->SetItemNotEditable(EStatTable::ELAPSED_TIME,     0, QDateTime::fromTime_t(m_simulationTimer.elapsed() / 1000).toUTC().toString("hh:mm:ss"));
 }
