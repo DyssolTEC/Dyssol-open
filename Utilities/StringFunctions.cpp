@@ -245,6 +245,15 @@ namespace StringFunctions
 		return true;
 	}
 
+	// HACK: Default read operator for double sometimes miss-interprets doubles in format Xe-0Y. stod is used to overcome the problem.
+	template <>
+	double GetValueFromStream<double>(std::istream& _is)
+	{
+		if (const std::string str = GetValueFromStream<std::string>(_is); !str.empty())
+			return std::stod(str);
+		return {};
+	}
+
 	template <>
 	std::string GetValueFromStream<std::string>(std::istream& _is)
 	{
@@ -257,7 +266,10 @@ namespace StringFunctions
 	std::vector<double> GetValueFromStream<std::vector<double>>(std::istream& _is)
 	{
 		std::vector<double> res;
-		std::copy(std::istream_iterator<double>{ _is }, std::istream_iterator<double>{}, std::back_inserter(res));
+		// HACK: Default read operator for double sometimes miss-interprets doubles in format Xe-0Y -> the following does not work
+		//std::copy(std::istream_iterator<double>{ _is }, std::istream_iterator<double>{}, std::back_inserter(res));
+		while (!_is.eof() && _is.rdbuf()->in_avail() != 0)
+			res.push_back(GetValueFromStream<double>(_is));
 		return res;
 	}
 

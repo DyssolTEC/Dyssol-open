@@ -60,6 +60,7 @@ namespace StringFunctions
 	std::string GetRestOfLine(std::istream& _is);												// Returns the full string until the end-of-line without trailing whitespaces.
 	template<typename T> T GetValueFromStream(std::istream& _is) { T v{}; _is >> v; return v; }	// Returns the next value from the stream and advances stream's iterator correspondingly.
 	template<> bool GetValueFromStream(std::istream& _is);										// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for bool type.
+	template<> double GetValueFromStream(std::istream& _is);									// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for double type.
 	template<> std::string GetValueFromStream(std::istream& _is);								// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for string type.
 	template<> std::vector<double> GetValueFromStream(std::istream& _is);						// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for vector<double>.
 	template<> std::vector<std::string> GetValueFromStream(std::istream& _is);					// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for vector<string>.
