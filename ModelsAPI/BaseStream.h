@@ -242,38 +242,109 @@ public:
 	// Overall parameters
 	//
 
-	// Adds new overall property to the stream, if it does not exist yet and returns a pointer to it or already existing property.
+	/**
+	* \brief Adds new overall property to the stream, if it does not exist yet and returns a pointer to it or already existing property.
+	* \details
+	* \param _property Identifier of time-dependent overall property.
+	* \param _name Name of the property.
+	* \param _units Units of measurement.
+	* \return Pointer to the added overall property or already existing property.
+	*/
 	CTimeDependentValue* AddOverallProperty(EOverall _property, const std::string& _name, const std::string& _units);
-	// Removes an overall property from the stream, if it does exist.
+	/**
+	* \brief Removes an overall property from the stream, if it does exist.
+	* \details
+	* \param _property Identifier of time-dependent overall property.
+	*/
 	void RemoveOverallProperty(EOverall _property);
 	// TODO: maybe remove
-	// Returns a pointer to an overall property or nullptr if such property doesn't exist
+	/**
+	* \private
+	* Returns a pointer to an overall property or nullptr if such property doesn't exist.
+	*/
 	CTimeDependentValue* GetOverallProperty(EOverall _property);
 	// TODO: maybe remove
-	// Returns a pointer to an overall property or nullptr if such property doesn't exist
+	/**
+	* \brief Returns a const pointer to an overall property or nullptr if such property doesn't exist.
+	* \details
+	* \param _property Identifier of time-dependent overall property.
+	* \return Const pointer to the overall property or nullptr if such property doesn't exist.
+	*/
 	const CTimeDependentValue* GetOverallProperty(EOverall _property) const;
 
-	// Returns a value of the specified overall property at the given time point. Returns default value if such overall property has not been defined.
+	/**
+	* \brief Returns a value of the specified overall property at the given time point. Returns default value if such overall property has not been defined.
+	* \details
+	* \param _time The given time point.
+	* \param _property Identifier of time-dependent overall property.
+	* \return Value of the specified overall property at the given time point or default value.
+	*/
 	double GetOverallProperty(double _time, EOverall _property) const;
-	// Returns a value of the overall mass at the given time point.
+	/**
+	* \brief Returns a value of the overall mass at the given time point. If such time point has not been defined, interpolation of data will be done.
+	* \details
+	* \param _time The given time point.
+	* \return Value of the overall mass at the given time point (\f$m\f$ in [kg], total mass of the holdup).
+	*/
 	double GetMass(double _time) const;
-	// Returns a value of the overall temperature at the given time point. Returns standard condition temperature if temperature overall property has not been defined.
+	/**
+	* \brief Returns a value of the overall temperature in [K] at the given time point. Returns standard condition temperature if temperature overall property has not been defined.
+	* \details
+	* \param _time The given time point.
+	* \return Value of the overall temperature at the given time point or standard condition temperature.
+	*/
 	double GetTemperature(double _time) const;
-	// Returns a value of the overall pressure at the given time point. Returns standard condition pressure if pressure overall property has not been defined.
+	/**
+	* \brief Returns a value of the overall pressure in [Pa] at the given time point. Returns standard condition pressure if pressure overall property has not been defined.
+	* \details
+	* \param _time The given time point.
+	* \return Value of the overall pressure at the given time point or standard condition pressure.
+	*/
 	double GetPressure(double _time) const;
 
-	// Sets a value of the specified overall property at the given time point if such property exists.
+	/**
+	* \brief Sets a value of the specified overall property at the given time point if such property exists.
+	* \details
+	* \param _time The given time point.
+	* \param _property Identifier of time-dependent overall property.
+	* \param _value Value of the specified overall property.
+	*/
 	void SetOverallProperty(double _time, EOverall _property, double _value);
-	// Sets a value of the overall mass at the given time point.
+	/**
+	* \brief Sets a value of the overall mass at the given time point.
+	* \details
+	* \param _time The given time point.
+	* \param _value Value of the overall mass.
+	*/
 	void SetMass(double _time, double _value);
-	// Sets a value of the overall temperature at the given time point if such property exists.
+	/**
+	* \brief Sets a value of the overall temperature in [K] at the given time point if such property exists.
+	* \details
+	* \param _time The given time point.
+	* \param _value Value of the overall temperature.
+	*/
 	void SetTemperature(double _time, double _value);
-	// Sets a value of the overall pressure at the given time point if such property exists.
+	/**
+	* \brief Sets a value of the overall pressure in [Pa] at the given time point if such property exists.
+	* \details
+	* \param _time The given time point.
+	* \param _value Value of the overall pressure.
+	*/
 	void SetPressure(double _time, double _value);
 
-	// Returns a value of the overall amount of substance at the given time point.
+	/**
+	* \brief Returns a value of the overall amount of substance \f$\sum_{i}\frac{m \cdot w_i}{M_i}\f$ in [mol] at the given time point.
+	* \details With \f$w_i\f$ mass fraction of the phase \f$i\f$, and \f$M_i\f$ molar mass of the phase \f$i\f$.
+	* \param _time The given time point.
+	* \return Value of the overall amount of substance.
+	*/
 	double GetMol(double _time) const;
-	// Sets a value of the overall amount of substance at the given time point.
+	/**
+	* \brief Sets a value of the overall amount of substance in [mol] at the given time point.
+	* \details
+	* \param _time The given time point.
+	* \param _value Value of the overall amount of substance.
+	*/
 	void SetMol(double _time, double _value);
 
 	////////////////////////////////////////////////////////////////////////////////

@@ -219,23 +219,25 @@ enum class EPhase : uint32_t
 	GAS       = 3, ///< Gas phase.
 };
 
-// Identifiers of time-dependent overall parameters.
+/**
+* \brief Identifiers of time-dependent overall parameters.
+*/
 enum class EOverall : uint32_t
 {
 	// TODO: rename when corresponding defines are removed
-	OVERALL_MASS,
-	OVERALL_TEMPERATURE,
-	OVERALL_PRESSURE,
-	OVERALL_USER_DEFINED_01 = 201,
-	OVERALL_USER_DEFINED_02 = 202,
-	OVERALL_USER_DEFINED_03 = 203,
-	OVERALL_USER_DEFINED_04 = 204,
-	OVERALL_USER_DEFINED_05 = 205,
-	OVERALL_USER_DEFINED_06 = 206,
-	OVERALL_USER_DEFINED_07 = 207,
-	OVERALL_USER_DEFINED_08 = 208,
-	OVERALL_USER_DEFINED_09 = 209,
-	OVERALL_USER_DEFINED_10 = 210,
+	OVERALL_MASS,					///< Overall mass.
+	OVERALL_TEMPERATURE,			///< Overall temperature.
+	OVERALL_PRESSURE,				///< Overall pressure.
+	OVERALL_USER_DEFINED_01 = 201,	///< User-defined overall.
+	OVERALL_USER_DEFINED_02 = 202,	///< User-defined overall.
+	OVERALL_USER_DEFINED_03 = 203,	///< User-defined overall.
+	OVERALL_USER_DEFINED_04 = 204,	///< User-defined overall.
+	OVERALL_USER_DEFINED_05 = 205,	///< User-defined overall.
+	OVERALL_USER_DEFINED_06 = 206,	///< User-defined overall.
+	OVERALL_USER_DEFINED_07 = 207,	///< User-defined overall.
+	OVERALL_USER_DEFINED_08 = 208,	///< User-defined overall.
+	OVERALL_USER_DEFINED_09 = 209,	///< User-defined overall.
+	OVERALL_USER_DEFINED_10 = 210,	///< User-defined overall.
 };
 
 /**

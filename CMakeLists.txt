@@ -223,6 +223,7 @@ IF(BUILD_DOCS)
     "ModelsAPI/TransformMatrix"
     "ModelsAPI/UnitParameters"
     "ModelsAPI/UnitPorts"
+    "ModelsAPI/TimeDependentValue"
     "BaseSolvers/AgglomerationSolver"
     "BaseSolvers/BaseSolver"
     "Utilities/DyssolDefines"

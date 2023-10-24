@@ -52,3 +52,6 @@ In Dyssol, certain universal constants are pre-defined and available for direct 
 	
 .. doxygenenum:: EInteractionProperties
     :project: dyssol_models_api
+
+.. doxygenenum:: EOverall
+    :project: dyssol_models_api
