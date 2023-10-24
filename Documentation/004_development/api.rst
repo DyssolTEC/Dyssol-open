@@ -10,6 +10,7 @@ All functions, classes, their member variables and methods, needed to develop ne
 	:titlesonly:
 
 	class_baseunit
+	class_basestream
 	class_stream
 	class_holdup
 	class_portsmanager
