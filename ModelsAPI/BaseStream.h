@@ -155,6 +155,11 @@ public:
 	// Time points
 	//
 
+	/**
+	* \brief Adds a new time point _time if it doesn't already exist and fills it with the data of existing previous time point.
+	* \details
+	* \param _time New time point.
+	*/
 	void AddTimePoint(double _time);
 	/**
 	* \brief Adds a new temp point _timeDst if it doesn't already exist and fills it with the data of existing time point _timeSrc.
