@@ -5,6 +5,9 @@
 #include "DyssolTypes.h"
 #include "H5Handler.h"
 
+/**
+* \brief Class for time-dependent value.
+*/
 class CTimeDependentValue
 {
 	inline static const double m_eps{ 16 * std::numeric_limits<double>::epsilon() };
