@@ -19,7 +19,10 @@ class CBaseStream;
 class CStream;
 class CHoldup;
 
-/* Base class for material flow description.*/
+/**
+ * \brief Basic class for material flow description.
+ * \details
+ */
 class CBaseStream
 {
 	static const unsigned m_saveVersion{ 3 }; // Current version of the saving procedure.
@@ -58,63 +61,176 @@ public:
 	CBaseStream& operator=(const CBaseStream& _other) = delete;
 	CBaseStream& operator=(CBaseStream&& _other) = delete;
 
-	// Removes all existing data from the stream.
+	/**
+	* \private
+	* \brief Removes all existing data from the stream.
+	* \details
+	*/
 	void Clear();
 
-	// Sets up the stream structure (MD dimensions, phases, materials, etc.) the same as an in the given stream. Removes all existing data.
+	/**
+	* \private
+	* \brief Sets up the stream structure (MD dimensions, phases, materials, etc.) the same as an in the given stream.
+	* \details Removes all existing data.
+	* \param _other Pointer to source stream.
+	*/
 	void SetupStructure(const CBaseStream* _other);
 
-	// Checks whether both streams have the same overall properties.
+	/**
+	* \private
+	* \brief Checks whether both streams have the same overall properties.
+	* \details
+	* \param _stream1 Reference to first stream.
+	* \param _stream2 Reference to second stream.
+	* \return Whether both streams have the same overall properties.
+	*/
 	static bool HaveSameOverall(const CBaseStream& _stream1, const CBaseStream& _stream2);
-	// Checks whether both streams have the same phases.
+	/**
+	* \private
+	* \brief Checks whether both streams have the same phases.
+	* \details
+	* \param _stream1 Reference to first stream.
+	* \param _stream2 Reference to second stream.
+	* \return Whether both streams have the same phases.
+	*/
 	static bool HaveSamePhases(const CBaseStream& _stream1, const CBaseStream& _stream2);
-	// Checks whether both streams have the same solids distribution grids.
+	/**
+	* \private
+	* \brief Checks whether both streams have the same solids distribution grids.
+	* \details
+	* \param _stream1 Reference to first stream.
+	* \param _stream2 Reference to second stream.
+	* \return Whether both streams have the same solids distribution grids.
+	*/
 	static bool HaveSameGrids(const CBaseStream& _stream1, const CBaseStream& _stream2);
-	// Checks whether both streams have the same overall properties and phases.
+	/**
+	* \private
+	* \brief Checks whether both streams have the same overall properties and phases.
+	* \details
+	* \param _stream1 Reference to first stream.
+	* \param _stream2 Reference to second stream.
+	* \return Whether both streams have the same overall properties and phases.
+	*/
 	static bool HaveSameOverallAndPhases(const CBaseStream& _stream1, const CBaseStream& _stream2);
-	// Checks whether both streams have the same overall properties, phases and grids.
+	/**
+	* \private
+	* \brief Checks whether both streams have the same overall properties, phases and grids.
+	* \details
+	* \param _stream1 Reference to first stream.
+	* \param _stream2 Reference to second stream.
+	* \return Whether both streams have the same overall properties, phases and grids.
+	*/
 	static bool HaveSameStructure(const CBaseStream& _stream1, const CBaseStream& _stream2);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Basic stream properties
 	//
 
-	// Returns name of the stream.
+	/**
+	* \brief Returns the name of the stream.
+	* \details
+	* \return Name of the stream.
+	*/
 	std::string GetName() const;
-	// Sets new name of the stream.
+	/**
+	* \brief Sets new name of the stream.
+	* \details
+	* \param _name New name of the stream.
+	*/
 	void SetName(const std::string& _name);
-	// Returns unique key of the stream.
+	/**
+	* \brief Returns unique key of the stream.
+	* \details
+	* \return Unique key of the stream.
+	*/
 	std::string GetKey() const;
-	// Sets new unique key of the stream.
+	/**
+	* \brief Sets new unique key of the stream.
+	* \details
+	* \param _key New unique key of the stream.
+	*/
 	void SetKey(const std::string& _key);
 
 	////////////////////////////////////////////////////////////////////////////////
 	// Time points
 	//
 
-	// Adds a new temp point _time if it doesn't already exist.
 	void AddTimePoint(double _time);
-	// Adds a new temp point _timeDst if it doesn't already exist and fills it with the data of existing time point _timeSrc.
+	/**
+	* \brief Adds a new temp point _timeDst if it doesn't already exist and fills it with the data of existing time point _timeSrc.
+	* \details
+	* \param _timeDst New time point.
+	* \param _timeSrc Source time point.
+	*/
 	void CopyTimePoint(double _timeDst, double _timeSrc);
-	// Removes the specified time point if it does already exist.
+	/**
+	* \brief Removes the specified time point if it does already exist.
+	* \details
+	* \param _time Time point of the stream.
+	*/
 	void RemoveTimePoint(double _time);
-	// Removes all existing time points in the specified interval, including or excluding boundaries.
+	/**
+	* \brief Removes all existing time points in the specified interval, including or excluding boundaries.
+	* \details
+	* \param _timeBeg Start time point of the interval.
+	* \param _timeEnd End time point of the interval.
+	* \param _inclusive Inclusive flag. Default value is true (Specified interval includes boundaries).
+	*/
 	void RemoveTimePoints(double _timeBeg, double _timeEnd, bool _inclusive = true);
-	// Removes all existing time points after the specified one, inclusive or exclusive _time.
+	/**
+	* \brief Removes all existing time points after the specified one, inclusive or exclusive _time.
+	* \details
+	* \param _time Start time point of the interval.
+	* \param _inclusive Inclusive flag. Default value is false (Specified interval includes star time point).
+	*/
 	void RemoveTimePointsAfter(double _time, bool _inclusive = false);
-	// Removes all existing time points.
+	/**
+	* \brief Removes all existing time points.
+	* \details
+	*/
 	void RemoveAllTimePoints();
-	// Removes time points within the specified interval [timeBeg; timeEnd) that are closer together than step.
+	/**
+	* \brief Removes time points within the specified interval [timeBeg; timeEnd) that are closer together than step.
+	* \details
+	* \param _timeBeg Start time point of the interval.
+	* \param _timeEnd End time point of the interval.
+	* \param _step Specified step.
+	*/
 	void ReduceTimePoints(double _timeBeg, double _timeEnd, double _step);
-	// Returns all defined time points.
+	/**
+	* \brief Returns all defined time points.
+	* \details
+	* \return All time points which are defined in the stream.
+	*/
 	std::vector<double> GetAllTimePoints() const;
-	// Returns all defined time points in the specified time interval.
+	/**
+	* \brief Returns all defined time points in the specified time interval.
+	* \details
+	* \param _timeBeg Start time point of the interval.
+	* \param _timeEnd End time point of the interval.
+	* \return All time points which are defined in the stream for the time interval.
+	*/
 	std::vector<double> GetTimePoints(double _timeBeg, double _timeEnd) const;
-	// Returns all defined time points in the specified closed time interval, boundaries are unconditionally included into result.
+	/**
+	* \brief Returns all defined time points in the specified closed time interval, boundaries are unconditionally included into result.
+	* \details
+	* \param _timeBeg Start time point of the interval.
+	* \param _timeEnd End time point of the interval.
+	* \return All time points which are defined in the stream for the time interval.
+	*/
 	std::vector<double> GetTimePointsClosed(double _timeBeg, double _timeEnd) const;
-	// Returns the last (largest) defined time point.
+	/**
+	* \brief Returns the last (largest) defined time point, or zero if no time points have been defined.
+	* \details
+	* \return Last defined time point in the stream.
+	*/
 	double GetLastTimePoint() const;
-	// Returns the nearest time point before _time, or zero if such time can not be found.
+	/**
+	* \brief Returns the nearest time point before _time, or zero if such time can not be found.
+	* \details
+	* \param _time The specified time point.
+	* \return The nearest time point before _time.
+	*/
 	double GetPreviousTimePoint(double _time) const;
 
 	////////////////////////////////////////////////////////////////////////////////

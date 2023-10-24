@@ -218,6 +218,7 @@ IF(BUILD_DOCS)
     "ModelsAPI/MixtureEnthalpyLookup"
     "ModelsAPI/PlotManager"
     "ModelsAPI/StateVariable"
+    "ModelsAPI/BaseStream"
     "ModelsAPI/Stream"
     "ModelsAPI/TransformMatrix"
     "ModelsAPI/UnitParameters"
