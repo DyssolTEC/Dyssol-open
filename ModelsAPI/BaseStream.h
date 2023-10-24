@@ -351,42 +351,142 @@ public:
 	// Compounds
 	//
 
-	// Adds a compound with the specified unique key to the stream.
+	/**
+	* \private
+	* \brief Adds a compound with the specified unique key to the stream.
+	* \details
+	* \param _compoundKey Unique key for new compound.
+	*/
 	void AddCompound(const std::string& _compoundKey);
-	// Removes a compound with the specified unique key from the stream.
+	/**
+	* \private
+	* \brief Removes a compound with the specified unique key from the stream.
+	* \details
+	* \param _compoundKey Unique key of the compound.
+	*/
 	void RemoveCompound(const std::string& _compoundKey);
-	// Returns all defined materials.
+	/**
+	* \brief Returns all defined materials.
+	* \details
+	* \return List of all defined materials.
+	*/
 	std::vector<std::string> GetAllCompounds() const;
 
-	// Returns the mass fraction of the compound in the total mixture at the given time point.
+	/**
+	* \brief Returns the mass fraction of the compound in the total mixture at the given time point.
+	* \details \f$f_i = \sum_{i} w_i \cdot f_{i}\f$, with \f$f_i\f$ the mass fraction of compound \f$i\f$, and \f$w_i\f$ the mass fraction of phase \f$i\f$.
+	* \param _time The specified time point.
+	* \param _compoundKey Unique key of the compound.
+	* \return The total mass fraction of the compound at the given time point.
+	*/
 	double GetCompoundFraction(double _time, const std::string& _compoundKey) const;
-	// Returns the mass fraction of the compound in the specified phase at the given time point.
+	/**
+	* \brief Returns the mass fraction of the compound in the specified phase at the given time point.
+	* \details \f$f_{i,j}\f$, mass fraction of compound \f$j\f$ in phase \f$i\f$.
+	* \param _time The specified time point.
+	* \param _compoundKey Unique key of the compound.
+	* \param _phase The specified phase type.
+	* \return The mass fraction of the compound in the specified phase at the given time point.
+	*/
 	double GetCompoundFraction(double _time, const std::string& _compoundKey, EPhase _phase) const;
-	// Returns the mass of the compound in the total mixture at the given time point.
+	/**
+	* \brief Returns the mass of the compound in the total mixture at the given time point.
+	* \details \f$m_i = f_i \cdot m\f$, with \f$m_i\f$ the mass of compound \f$i\f$, \f$f_i\f$ the mass fraction of compound \f$i\f$, and \f$m\f$ the total mass of the holdup.
+	* \param _time The specified time point.
+	* \param _compoundKey Unique key of the compound.
+	* \return The mass of the compound in the total mixture at the given time point.
+	*/
 	double GetCompoundMass(double _time, const std::string& _compoundKey) const;
-	// Returns the mass of the compound in the specified phase at the given time point.
+	/**
+	* \brief Returns the mass of the compound in the specified phase at the given time point.
+	* \details \f$m_{i,j} = w_i \cdot f_{i,j} \cdot m\f$, with \f$m_{i,j}\f$ the mass of compound \f$j\f$ in phase \f$i\f$, \f$w_i\f$ the mass fraction of phase \f$i\f$,\f$f_{i,j}\f$ the mass fraction of compound \f$j\f$ in phase \f$i\f$, and \f$m\f$ the total mass of the holdup.
+	* \param _time The specified time point.
+	* \param _compoundKey Unique key of the compound.
+	* \param _phase The specified phase type.
+	* \return The mass of the compound in the total mixture at the given time point.
+	*/
 	double GetCompoundMass(double _time, const std::string& _compoundKey, EPhase _phase) const;
-	// Returns mass fraction of all defined compounds at the given time point.
+	/**
+	* \brief Returns mass fraction of all defined compounds at the given time point.
+	* \details
+	* \param _time The specified time point.
+	* \return Mass fraction of all defined compounds at the given time point
+	*/
 	std::vector<double> GetCompoundsFractions(double _time) const;
-	// Returns mass fraction of all defined compounds in the specified phase at the given time point.
+	/**
+	* \brief Returns mass fraction of all defined compounds in the specified phase at the given time point.
+	* \details
+	* \param _time The specified time point.
+	* \param _phase The specified phase type.
+	* \return Mass fraction of all defined compounds in the specified phase at the given time point.
+	*/
 	std::vector<double> GetCompoundsFractions(double _time, EPhase _phase) const;
-	// Returns masses of all defined compounds at the given time point.
+	/**
+	* \brief Returns masses of all defined compounds at the given time point.
+	* \details
+	* \param _time The specified time point.
+	* \return Masses of all defined compounds at the given time point.
+	*/
 	std::vector<double> GetCompoundsMasses(double _time) const;
-	// Returns masses of all defined compounds in the specified phase at the given time point.
+	/**
+	* \brief Returns masses of all defined compounds in the specified phase at the given time point.
+	* \details
+	* \param _time The specified time point.
+	* \param _phase The specified phase type.
+	* \return Masses of all defined compounds in the specified phase at the given time point.
+	*/
 	std::vector<double> GetCompoundsMasses(double _time, EPhase _phase) const;
 
-	// Sets the mass fraction of the compound in the specified phase at the given time point.
+	/**
+	* \brief Sets the mass fraction of the compound in the specified phase at the given time point.
+	* \details
+	* \param _time The specified time point.
+	* \param _compoundKey Unique key of the compound.
+	* \param _phase The specified phase type.
+	* \param _value Value of the mass fraction of the compound in the specified phase at the given time point.
+	*/
 	void SetCompoundFraction(double _time, const std::string& _compoundKey, EPhase _phase, double _value);
-	// Sets mass fraction of all defined compounds in all defined phases at the given time point.
+	/**
+	* \brief Sets mass fraction of all defined compounds in all defined phases at the given time point.
+	* \details
+	* \param _time The specified time point.
+	* \param _value List of mass fractions of all defined compounds in all defined phases at the given time point.
+	*/
 	void SetCompoundsFractions(double _time, const std::vector<double>& _value);
-	// Sets mass fraction of all defined compounds in the specified phase at the given time point.
+	/**
+	* \brief Sets mass fraction of all defined compounds in the specified phase at the given time point.
+	* \details
+	* \param _time The specified time point.
+	* \param _phase The specified phase type.
+	* \param _value List of mass fraction of all defined compounds in the specified phase at the given time point.
+	*/
 	void SetCompoundsFractions(double _time, EPhase _phase, const std::vector<double>& _value);
 
-	// Returns the molar fraction of the compound in the specified phase at the given time point.
+	/**
+	* \brief Returns the molar fraction of the compound in the specified phase at the given time point.
+	* \details \f$f_i^{mol} = f_{i,j} \cdot \frac{M_i}{M_j}\f$, with \f$f_i^{mol}\f$ mole fraction of compound \f$i\f$, \f$f_{i,j}\f$ mass fraction of compound \f$j\f$ in phase \f$i\f$, \f$M_i\f$ molar mass of phase \f$i\f$, and \f$M_j\f$ molar mass of compound \f$j\f$.
+	* \param _time The specified time point.
+	* \param _compoundKey Unique key of the compound.
+	* \param _phase The specified phase type.
+	* \return The molar fraction of the compound in the specified phase at the given time point.
+	*/
 	double GetCompoundMolFraction(double _time, const std::string& _compoundKey, EPhase _phase) const;
-	// Returns the amount of substance of the compound in the specified phase at the given time point.
+	/**
+	* \brief Returns the amount of substance of the compound in the specified phase at the given time point.
+	* \details \f$n_{i,j}^{mol} = \frac{m_{i,j}}{M_j}\f$, with \f$n_{i,j}^{mol}\f$ amount of substance of compound \f$j\f$ in phase \f$i\f$, \f$m_{i,j}\f$ the mass of compound \f$j\f$ in phase \f$i\f$, and \f$M_j\f$ molar mass of compound \f$j\f$.
+	* \param _time The specified time point.
+	* \param _compoundKey Unique key of the compound.
+	* \param _phase The specified phase type.
+	* \return The amount of substance of the compound in the specified phase at the given time point.
+	*/
 	double GetCompoundMol(double _time, const std::string& _compoundKey, EPhase _phase) const;
-	// Sets the molar fraction of the compound in the specified phase at the given time point.
+	/**
+	* \brief Sets the molar fraction of the compound in the specified phase at the given time point.
+	* \details \f$f_{i, j} = \f$\p _value\f$\cdot M_j \cdot \frac{n_i}{m_i}\f$, with \f$f_{i, j}\f$ mass fraction of compound \f$j\f$ in phase \f$i\f$, \f$M_j\f$ the molar mass of compound \f$j\f$, \f$n_i\f$ the amount of substance in phase \f$i\f$, and \f$m_i\f$ the mass of phase \f$i\f$.
+	* \param _time The specified time point.
+	* \param _phase The specified phase type.
+	* \param _value Value of molar fraction of the compound in the specified phase at the given time point.
+	*/
 	void SetCompoundMolFraction(double _time, const std::string& _compoundKey, EPhase _phase, double _value);
 
 	////////////////////////////////////////////////////////////////////////////////
