@@ -741,47 +741,162 @@ public:
 	// Distributed properties of the solid phase
 	//
 
-	// Returns the mass fraction of a solid material at the specified multidimensional coordinates given for all defined dimensions.
+	/**
+	* \brief Returns the mass fraction of a solid material at the specified multidimensional coordinates given for all defined dimensions.
+	* \details
+	* \param _time Target time point.
+	* \param _coords Multidimensional coordinates.
+	* \return Mass fraction value of a solid material.
+	*/
 	double GetFraction(double _time, const std::vector<size_t>& _coords) const;
-	// Sets the mass fraction of a solid material at the specified multidimensional coordinates given for all defined dimensions.
+	/**
+	* \brief Sets the mass fraction of a solid material at the specified multidimensional coordinates given for all defined dimensions.
+	* \details
+	* \param _time Target time point.
+	* \param _coords Multidimensional coordinates.
+	* \param _value Mass fraction value of a solid material.
+	*/
 	void SetFraction(double _time, const std::vector<size_t>& _coords, double _value);
 
-	// Returns the one-dimensional distribution of a solid material over the specified parameter for the given time point.
+	/**
+	* \brief Returns the one-dimensional distribution of a solid material over the specified parameter for the given time point.
+	* \details
+	* \param _time Target time point.
+	* \param _distribution Type of distributed parameter of the solid phase.
+	* \return One-dimensional distribution of a solid material.
+	*/
 	std::vector<double> GetDistribution(double _time, EDistrTypes _distribution) const;
-	// Returns the two-dimensional distribution of a solid material over the specified parameters for the given time point.
+	/**
+	* \brief Returns the two-dimensional distribution of a solid material over the specified parameters for the given time point.
+	* \details
+	* \param _time Target time point.
+	* \param _distribution1 First distributed parameter type of the solid phase.
+	* \param _distribution2 Second distributed parameter type of the solid phase.
+	* \return Two-dimensional distribution of a solid material.
+	*/
 	CMatrix2D GetDistribution(double _time, EDistrTypes _distribution1, EDistrTypes _distribution2) const;
-	// Returns the multi-dimensional distribution of a solid material over the specified parameters for the given time point.
+	/**
+	* \brief Returns the multi-dimensional distribution of a solid material over the specified parameters for the given time point.
+	* \details
+	* \param _time Target time point.
+	* \param _distributions List of distributed parameter types of the solid phase.
+	* \return Multi-dimensional distribution of a solid material.
+	*/
 	CDenseMDMatrix GetDistribution(double _time, const std::vector<EDistrTypes>& _distributions) const;
-	// Returns the one-dimensional distribution of a solid material over the specified parameter for the given compound and time point.
+	/**
+	* \brief Returns the one-dimensional distribution of a solid material over the specified parameter for the given compound and time point.
+	* \details Input dimensions should not include distribution by compounds (\p DISTR_COMPOUNDS). If specified compound has not been defined in the stream, nothing will be done.
+	* \param _time Target time point.
+	* \param _distribution Type of distributed parameter of the solid phase.
+	* \param _compoundKey Unique key of the compound.
+	* \return One-dimensional distribution of a solid material.
+	*/
 	std::vector<double> GetDistribution(double _time, EDistrTypes _distribution, const std::string& _compoundKey) const;
-	// Returns the two-dimensional distribution of a solid material over the specified parameters for the given compound and time point.
+	/**
+	* \brief Returns the two-dimensional distribution of a solid material over the specified parameters for the given compound and time point.
+	* \details Input dimensions should not include distribution by compounds (\p DISTR_COMPOUNDS). If specified compound has not been defined in the stream, nothing will be done.
+	* \param _time Target time point.
+	* \param _distribution1 First distributed parameter type of the solid phase.
+	* \param _distribution2 Second distributed parameter type of the solid phase.
+	* \param _compoundKey Unique key of the compound.
+	* \return Two-dimensional distribution of a solid material.
+	*/
 	CMatrix2D GetDistribution(double _time, EDistrTypes _distribution1, EDistrTypes _distribution2, const std::string& _compoundKey) const;
-	// Returns the multi-dimensional distribution of a solid material over the specified parameters for the given compound and time point.
+	/**
+	* \brief Returns the multi-dimensional distribution of a solid material over the specified parameters for the given compound and time point.
+	* \details Input dimensions should not include distribution by compounds (\p DISTR_COMPOUNDS). If specified compound has not been defined in the stream, nothing will be done.
+	* \param _time Target time point.
+	* \param _distributions List of distributed parameter types of the solid phase.
+	* \param _compoundKey Unique key of the compound.
+	* \return Multi-dimensional distribution of a solid material.
+	*/
 	CDenseMDMatrix GetDistribution(double _time, const std::vector<EDistrTypes>& _distributions, const std::string& _compoundKey) const;
 
-	// Sets the one-dimensional distribution of a solid material over the specified parameter for the given time point.
+	/**
+	* \brief Sets the one-dimensional distribution of a solid material over the specified parameter for the given time point.
+	* \details If such dimension doesn't exist, nothing will be done.
+	* \param _time Target time point.
+	* \param _distribution Type of distributed parameter of the solid phase.
+	* \param _value List of one-dimensional distribution of a solid material.
+	*/
 	void SetDistribution(double _time, EDistrTypes _distribution, const std::vector<double>& _value);
-	// Sets the two-dimensional distribution of a solid material over the specified parameter for the given time point.
+	/**
+	* \brief Sets the two-dimensional distribution of a solid material over the specified parameter for the given time point.
+	* \details If such dimensions don't exist, nothing will be done.
+	* \param _time Target time point.
+	* \param _distribution1 First distributed parameter type of the solid phase.
+	* \param _distribution2 Second distributed parameter type of the solid phase.
+	* \param _value Two-dimensional distribution of a solid material.
+	*/
 	void SetDistribution(double _time, EDistrTypes _distribution1, EDistrTypes _distribution2, const CMatrix2D& _value);
-	// Sets the multi-dimensional distribution of a solid material over the specified parameter for the given time point.
+	/**
+	* \brief Sets the multi-dimensional distribution of a solid material over the specified parameter for the given time point.
+	* \details If such dimensions, which are specified in \p _value, don't exist, nothing will be done.
+	* \param _time Target time point.
+	* \param _value Multi-dimensional distribution of a solid material.
+	*/
 	void SetDistribution(double _time, const CDenseMDMatrix& _value);
-	// Sets the one-dimensional distribution of a solid material over the specified parameter for the given compound and time point.
+	/**
+	* \brief Sets the one-dimensional distribution of a solid material over the specified parameter for the given compound and time point.
+	* \details If such compound or dimension doesn't exist, nothing will be done. Input dimensions should not include distribution by compounds (\p DISTR_COMPOUNDS).
+	* \param _time Target time point.
+	* \param _distribution Type of distributed parameter of the solid phase.
+	* \param _compoundKey Unique key of the compound.
+	* \param _value List of one-dimensional distribution of a solid material.
+	*/
 	void SetDistribution(double _time, EDistrTypes _distribution, const std::string& _compoundKey, const std::vector<double>& _value);
-	// Sets the two-dimensional distribution of a solid material over the specified parameters for the given compound and time point.
+	/**
+	* \brief Sets the two-dimensional distribution of a solid material over the specified parameters for the given compound and time point.
+	* \details If such time point, compound or dimensions don't exist, nothing will be done. Input dimensions should not include distribution by compounds (\p DISTR_COMPOUNDS).
+	* \param _time Target time point.
+	* \param _distribution1 First distributed parameter type of the solid phase.
+	* \param _distribution2 Second distributed parameter type of the solid phase.
+	* \param _compoundKey Unique key of the compound.
+	* \param _value Two-dimensional distribution of a solid material.
+	*/
 	void SetDistribution(double _time, EDistrTypes _distribution1, EDistrTypes _distribution2, const std::string& _compoundKey, const CMatrix2D& _value);
-	// Sets the multi-dimensional distribution of a solid material over the specified parameters for the given compound and time point.
+	/**
+	* \brief Sets the multi-dimensional distribution of a solid material over the specified parameters for the given compound and time point.
+	* \details If such compound or dimensions, which are specified in \p _value, don't exist, nothing will be done. Input dimensions should not include distribution by compounds (\p DISTR_COMPOUNDS).
+	* \param _time Target time point.
+	* \param _compoundKey Unique key of the compound.
+	* \param _value Multi-dimensional distribution of a solid material.
+	*/
 	void SetDistribution(double _time, const std::string& _compoundKey, const CDenseMDMatrix& _value);
 
-	// Applies the movement matrix to transform the multidimensional distributed parameters of a solid material for the given time point.
+	/**
+	* \brief Applies the movement matrix to transform the multidimensional distributed parameters of a solid material for the given time point.
+	* \details
+	* \param _time Target time point.
+	* \param _matrix Movement matrix.
+	*/
 	void ApplyTM(double _time, const CTransformMatrix& _matrix);
-	// Applies the movement matrix to transform the multidimensional distributed parameters of a solid material for the given compound and time point.
+	/**
+	* \brief Applies the movement matrix to transform the multidimensional distributed parameters of a solid material for the given compound and time point.
+	* \details Dimensions of transformation matrix should not include distribution by compounds (\p DISTR_COMPOUNDS).
+	* \param _time Target time point.
+	* \param _compoundKey Unique key of the compound.
+	* \param _matrix Movement matrix.
+	*/
 	void ApplyTM(double _time, const std::string& _compoundKey, const CTransformMatrix& _matrix);
 
-	// Normalizes data in the solids distribution matrix for the given time point.
+	/**
+	* \brief Normalizes data in the solids distribution matrix for the given time point.
+	* \details If time has not been defined, nothing will be done.
+	* \param _time Target time point.
+	*/
 	void Normalize(double _time);
-	// Normalizes data in the solids distribution matrix for the given time interval.
+	/**
+	* \brief Normalizes data in the solids distribution matrix for the given time interval.
+	* \details
+	* \param _timeBeg Begin of the time interval.
+	* \param _timeEnd End of the time interval.
+	*/
 	void Normalize(double _timeBeg, double _timeEnd);
-	// Normalizes data in the solids distribution matrix for all time points.
+	/**
+	* \brief Normalizes data in the solids distribution matrix for all time points.
+	* \details
+	*/
 	void Normalize();
 
 	////////////////////////////////////////////////////////////////////////////////
