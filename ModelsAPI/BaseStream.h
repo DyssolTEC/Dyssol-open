@@ -484,6 +484,7 @@ public:
 	* \brief Sets the molar fraction of the compound in the specified phase at the given time point.
 	* \details \f$f_{i, j} = \f$\p _value\f$\cdot M_j \cdot \frac{n_i}{m_i}\f$, with \f$f_{i, j}\f$ mass fraction of compound \f$j\f$ in phase \f$i\f$, \f$M_j\f$ the molar mass of compound \f$j\f$, \f$n_i\f$ the amount of substance in phase \f$i\f$, and \f$m_i\f$ the mass of phase \f$i\f$.
 	* \param _time The specified time point.
+	* \param _compoundKey Unique key of the compound.
 	* \param _phase The specified phase type.
 	* \param _value Value of molar fraction of the compound in the specified phase at the given time point.
 	*/
