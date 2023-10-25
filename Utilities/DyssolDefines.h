@@ -134,16 +134,23 @@ enum class ENLSolverStrategy : uint32_t
 };
 
 // ========== PSD TYPES
+/**
+* \brief Identifiers of PSD types.
+*/
 enum EPSDTypes
 {
-	PSD_q3       = 0,
-	PSD_Q3       = 1,
-	PSD_q0       = 2,
-	PSD_Q0       = 3,
-	PSD_MassFrac = 4,
-	PSD_Number   = 5,
-	PSD_q2       = 6,
-	PSD_Q2       = 7
+	PSD_q3       = 0, ///< Mass-related density distribution: \f$q_{3,i} = w_i / \Delta d_i\f$.
+	PSD_Q3       = 1, ///< Mass-related cumulative distribution: \f$Q_{3,0} = w_0\f$, \f$Q_{3,i} = Q_{3,i-1} + w_i\f$.
+	PSD_q0       = 2, ///< Number-related density distribution: \f$q_{0,i} = \frac{N_i}{N_{tot} \cdot \Delta d_i}\f$.
+	PSD_Q0       = 3, ///< Number-related cumulative distribution: \f$Q_{0,i} = Q_{0,i-1} + q_{0,i} \cdot \Delta d_i\f$.
+	PSD_MassFrac = 4, ///< Size distribution in the form of mass fractions with the total sum of 1.
+	PSD_Number   = 5, ///< Number-related distribution of particles depends on several conditions.
+					  ///< Three cases of calculation can be distinguished:
+					  ///< -# If only one compound is specified: \f$N_i = \frac{m_i}{\rho \frac{\pi}{6} d_i^3}\f$.
+					  ///< -# For several compounds: \f$N_i = \sum_j \frac{M_{tot} \cdot w_{i,j}}{\frac{\pi \cdot d_i^3}{6} \cdot \rho_j}\f$.
+					  ///< -# If distribution by particle porosity has been defined: \f$N_i = \sum_j N_{i,j}\f$, with \f$N_{i, j} = \sum_k \frac{ M_{tot} \cdot w_{i,j,k} }{\frac{ \pi \cdot d_i ^ 3 }{6} \cdot \rho_j \cdot(1 - \varepsilon_k)}\f$.
+	PSD_q2       = 6, ///< Surface-area-related density distribution: \f$q_{2,i} = \frac{Q_{2,i} - Q_{2,i-1}}{\Delta d_i}\f$.
+	PSD_Q2       = 7  ///< Surface-area-related cumulative distribution: \f$Q_{2,i} = \frac{\sum_{j=0}^i N_j \pi d_j^2}{\sum_j N_j \pi d_j^2}\f$.
 };
 
 // ========== For lookup table creation
@@ -201,10 +208,13 @@ enum class EDistrFunction : unsigned
 	LogNormal = 4
 };
 
+/**
+* \brief Identifiers of grid units types.
+*/
 enum class EPSDGridType : unsigned
 {
-	DIAMETER = 0,
-	VOLUME = 1
+	DIAMETER = 0, ///< Grid units type for diameter in [m].
+	VOLUME = 1	  ///< Grid units type for volume in [m<sup>3</sup>].
 };
 
 /**

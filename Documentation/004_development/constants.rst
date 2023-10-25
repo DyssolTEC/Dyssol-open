@@ -55,3 +55,55 @@ In Dyssol, certain universal constants are pre-defined and available for direct 
 
 .. doxygenenum:: EOverall
     :project: dyssol_models_api
+
+.. doxygenenum:: EPSDTypes
+    :project: dyssol_models_api
+
+.. Note:: Notations:
+
+	:math:`i` – index of size classes
+
+	:math:`j` – index of compounds
+
+	:math:`k` – index of porosities
+
+	:math:`d_i` – particle diameter of class :math:`i`
+
+	:math:`\Delta d_i` – size of the class :math:`i`
+
+	:math:`m_i` – mass of particles of class :math:`i`
+
+	:math:`M_{tot}` – total mass of particles
+
+	:math:`N_i` – number of particles of class :math:`i`
+
+	:math:`N_{i,j}` – number of particles of compound :math:`j` with size class :math:`i`
+
+	:math:`N_{tot}` – total number of particles
+
+	:math:`w_i` – mass fraction of particles of class :math:`i`
+
+	:math:`w_{i,j}` – mass fraction of particles of compound :math:`j` with size class :math:`i`
+
+	:math:`w_{i,j,k}` – mass fraction of particles of compound :math:`j` with size class :math:`i` and porosity :math:`k`
+
+	:math:`\rho_j` – density of compound :math:`j`
+
+	:math:`\varepsilon_k` – porosity of class :math:`k`
+
+	:math:`q_0` – number-related density distribution
+
+	:math:`Q_0` – number-related cumulative distribution
+
+	:math:`q_2` – surface-area-related density distribution
+
+	:math:`Q_2` – surface-area-related cumulative distribution
+
+	:math:`q_3` – mass-related density distribution
+
+	:math:`Q_3` – mass-related cumulative distribution
+
+|
+
+.. doxygenenum:: EPSDGridType
+    :project: dyssol_models_api
