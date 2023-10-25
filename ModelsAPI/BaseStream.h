@@ -688,15 +688,53 @@ public:
 	// Material database
 	//
 
-	// Returns the value of the constant physical property (CRITICAL_TEMPERATURE, MOLAR_MASS, etc) of the specified compound.
+	/**
+	* \brief Returns the value of the constant physical property (CRITICAL_TEMPERATURE, MOLAR_MASS, etc) of the specified compound.
+	* \details These properties are stored in \verbatim embed:rst:inline :ref:`material database <label-materialDataDetailed>` \endverbatim
+	* \param _compoundKey Unique key of the compound.
+	* \param _property Identifier of constant material property.
+	* \return Value of the constant physical property of the specified compound.
+	*/
 	double GetCompoundProperty(const std::string& _compoundKey, ECompoundConstProperties _property) const;
-	// Returns the value of the temperature/pressure-dependent physical property (DENSITY, ENTHALPY, etc) of the specified compound with the given temperature [K] and pressure [Pa].
+	/**
+	* \brief Returns the value of the temperature/pressure-dependent physical property (DENSITY, ENTHALPY, etc) of the specified compound with the given temperature [K] and pressure [Pa].
+	* \details
+	* \param _compoundKey Unique key of the compound.
+	* \param _property Identifier of temperature/pressure-dependent property.
+	* \param _temperature Value of temperature in [K].
+	* \param _pressure Value of pressure in [Pa].
+	* \return Value of the temperature/pressure-dependent physical property of the specified compound with the given temperature and pressure.
+	*/
 	double GetCompoundProperty(const std::string& _compoundKey, ECompoundTPProperties _property, double _temperature, double _pressure) const;
-	// Returns the value of the temperature/pressure-dependent physical property (DENSITY, ENTHALPY, etc) of the specified compound at temperature and pressure at the given time point.
+	/**
+	* \brief Returns the value of the temperature/pressure-dependent physical property (DENSITY, ENTHALPY, etc) of the specified compound at temperature and pressure at the given time point.
+	* \details Refer to function CBaseStream::GetCompoundProperty(const std::string&, ECompoundTPProperties, double, double) const.
+	* \param _time The specified time point.
+	* \param _compoundKey Unique key of the compound.
+	* \param _property Identifier of temperature/pressure-dependent property.
+	* \return Value of the temperature/pressure-dependent physical property of the specified compound at temperature and pressure at the given time point.
+	*/
 	double GetCompoundProperty(double _time, const std::string& _compoundKey, ECompoundTPProperties _property) const;
-	// Returns the value of the interaction physical property (INTERFACE_TENSION, etc) between the specified compounds with the given specified temperature [K] and pressure [Pa].
+	/**
+	* \brief Returns the value of the interaction physical property (INTERFACE_TENSION, etc) between the specified compounds with the given specified temperature [K] and pressure [Pa].
+	* \details These properties are stored in the \verbatim embed:rst:inline :ref:`material database <label-materialDataDetailed>` \endverbatim
+	* \param _compoundKey1 Unique key of the first compound.
+	* \param _compoundKey2 Unique key of the second compound.
+	* \param _property Identifier of property, defined for interaction of two compounds.
+	* \param _temperature Value of temperature in [K].
+	* \param _pressure Value of pressure in [Pa].
+	* \return Value of the interaction physical property between the specified compounds with the given specified temperature and pressure.
+	*/
 	double GetCompoundProperty(const std::string& _compoundKey1, const std::string& _compoundKey2, EInteractionProperties _property, double _temperature, double _pressure) const;
-	// Returns the value of the interaction physical property (INTERFACE_TENSION, etc) between the specified compounds at temperature and pressure at the given time point.
+	/**
+	* \brief Returns the value of the interaction physical property (INTERFACE_TENSION, etc) between the specified compounds at temperature and pressure at the given time point.
+	* \details Refer to function CBaseStream::GetCompoundProperty(const std::string&, const std::string&, EInteractionProperties, double, double) const.
+	* \param _time The specified time point.
+	* \param _compoundKey1 Unique key of the first compound.
+	* \param _compoundKey2 Unique key of the second compound.
+	* \param _property Identifier of property, defined for interaction of two compounds.
+	* \return Value of the interaction physical property between the specified compounds at temperature and pressure at the given time point.
+	*/
 	double GetCompoundProperty(double _time, const std::string& _compoundKey1, const std::string& _compoundKey2, EInteractionProperties _property) const;
 
 	////////////////////////////////////////////////////////////////////////////////
