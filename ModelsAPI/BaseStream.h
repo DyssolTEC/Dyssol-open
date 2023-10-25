@@ -494,43 +494,156 @@ public:
 	// Phases
 	//
 
-	// Adds the specified phase to the stream, if it does not exist yet and returns a pointer to it or already existing phase.
+	/**
+	* \private
+	* \brief Adds the specified phase to the stream, if it does not exist yet and returns a pointer to it or already existing phase.
+	* \details
+	* \param _phase Type of new phase.
+	* \param _name Name of new phase.
+	* \return Pointer to the added phase or already existing phase.
+	*/
 	CPhase* AddPhase(EPhase _phase, const std::string& _name);
-	// Removes the specified phase from the stream.
+	/**
+	* \private
+	* \brief Removes the specified phase from the stream.
+	* \details
+	* \param _phase Type of the specified phase in the stream.
+	*/
 	void RemovePhase(EPhase _phase);
 	// TODO: maybe remove
-	// Returns a pointer to a phase or nullptr if such phase doesn't exist
+	/**
+	* \private
+	* Returns a pointer to a phase or nullptr if such phase doesn't exist.
+	*/
 	CPhase* GetPhase(EPhase _phase);
 	// TODO: maybe remove
-	// Returns a pointer to a phase or nullptr if such phase doesn't exist
+	/**
+	* \brief Returns a const pointer to a phase or nullptr if such phase doesn't exist.
+	* \details
+	* \param _phase Type of the specified phase in the stream.
+	* \return Const pointer to a phase or nullptr if such phase doesn't exist.
+	*/
 	const CPhase* GetPhase(EPhase _phase) const;
 	// TODO: remove this.
-	// Removes all defined phases.
+	/**
+	* \private
+	* \brief Removes all defined phases.
+	* \details
+	*/
 	void ClearPhases();
 
-	// Returns the mass fraction of the specified phase at the given time point.
+	/**
+	* \brief Returns the mass fraction of the specified phase at the given time point.
+	* \details
+	* \param _time The specified time point.
+	* \param _phase The specified phase type.
+	* \return The mass fraction of the specified phase at the given time point.
+	*/
 	double GetPhaseFraction(double _time, EPhase _phase) const;
-	// Returns the mass of the specified phase at the given time point.
+	/**
+	* \brief Returns the mass of the specified phase at the given time point.
+	* \details \f$m_i = m \cdot w_i\f$, with \f$m_i\f$ the mass of phase \f$i\f$, \f$w_i\f$ the mass fraction of phase \f$i\f$, and \f$m\f$ the total mass of the holdup.
+	* \param _time The specified time point.
+	* \param _phase The specified phase type.
+	* \return The mass of the specified phase at the given time point.
+	*/
 	double GetPhaseMass(double _time, EPhase _phase) const;
-	// Returns the value of the overall property of the specified phase at the given time point.
+	/**
+	* \brief Returns the value of the overall property of the specified phase at the given time point.
+	* \details
+	* \param _time The specified time point.
+	* \param _phase The specified phase type.
+	* \param _property Identifier of time-dependent overall property.
+	* \return Value of the overall property of the specified phase at the given time point.
+	*/
 	double GetPhaseProperty(double _time, EPhase _phase, EOverall _property) const;
-	// Returns the value of the constant physical property (MOLAR_MASS) of the specified phase at the given time point.
+	/**
+	* \brief Returns the value of the constant physical property (MOLAR_MASS) of the specified phase at the given time point.
+	* \details For \p MOLAR_MASS: \f$\frac{1}{M_i} = \sum_j {\frac{f_{i,j}}{M_j}}\f$, with \f$M_i\f$ the molar mass of phase \f$i\f$, \f$f_{i,j}\f$ the mass fraction of compound \f$j\f$ in phase \f$i\f$,\f$M_j\f$ the molar mass of compound \f$j\f$.
+	* For other const material properties: \f$v_i = \sum_j f_{i,j} \cdot v_j\f$, with \f$v_i\f$ the const physical property of phase \f$i\f$, \f$f_{i,j}\f$ the mass fraction of compound \f$j\f$ in phase \f$i\f$, \f$v_i\f$ the value of the specified const \p _property of compound \f$j\f$.
+	* \param _time The specified time point.
+	* \param _phase The specified phase type.
+	* \param _property Identifier of constant material property.
+	* \return Value of the constant physical property of the specified phase at the given time point.
+	*/
 	double GetPhaseProperty(double _time, EPhase _phase, ECompoundConstProperties _property) const;
-	// Returns the value of the temperature/pressure-dependent physical property (DENSITY, ENTHALPY, etc) of the specified phase at the given time point.
+	/**
+	* \brief Returns the value of the temperature/pressure-dependent physical property (DENSITY, ENTHALPY, etc) of the specified phase at the given time point.
+	* \details Available properties are:
+	* - \p DENSITY:
+	*	- For solid phase: is calculated by \f$\rho = \sum_{i,j} \rho_i (1 - \varepsilon_j) f_{i,j}\f$, with \f$\varepsilon_j\f$ the porosity in interval \f$j\f$, and \f$f_{i,j}\f$ the mass fraction of compound \f$i\f$ with porosity \f$j\f$.
+	*	- For liquid and vapor phase: is calculated by \f$\frac{1}{\rho} = \sum_i \frac{w_i}{\rho_i}\f$, with \f$w_i\f$ the mass fraction of compound \f$i\f$ in \p _phase.
+	* - \p HEAT_CAPACITY_CP: is calculated by \f$C_p = \sum_i w_i \cdot C_{p,i}\f$, with \f$C_{p,i}\f$ the heat capacity of compound \f$i\f$, and \f$w_i\f$ the mass fraction of compound \f$i\f$ in \p _phase.
+	* - \p VAPOR_PRESSURE: is calculated by \f$P_v = \min_{i} (P_v)_i\f$, with \f$(P_v)_i\f$ vapor pressure of compound \f$i\f$.
+	* - \p VISCOSITY:
+	*	- For solid phase: is calculated by \f$\eta = \sum\limits_i w_i \eta_i\f$, with \f$\eta_i\f$ the viscosity of compound \f$i\f$, and \f$w_i\f$ the mass fraction of compound \f$i\f$.
+	*	- For liquid phase: is calculated by \f$\ln \eta = \sum_i w_i \ln \eta_i\f$, with \f$\eta_i\f$ the viscosity of compound \f$i\f$, and \f$w_i\f$ the mass fraction of compound \f$i\f$ in \p _phase.
+	*	- For vapor phase: \f$\eta = \frac{\sum_i x_i \sqrt{M_i} \eta_i}{\sum_i x_i \sqrt{M_i}}\f$, with \f$\eta_i\f$ the viscosity of compound \f$i\f$, \f$w_i\f$ the mass fraction of compound \f$i\f$ in \p _phase, and \f$x_i\f$ the mole fraction of compound \f$i\f$ in \p _phase.
+	* - \p THERMAL_CONDUCTIVITY:
+	*	- For solid phase: is calculated by \f$\lambda = \sum_i w_i \lambda_i\f$, with \f$\lambda_i\f$ the thermal conductivity of compound \f$i\f$.
+	*	- For liquid phase: is calculated by \f$\lambda = \frac{1}{\sqrt{\sum_i x_i \lambda_i^{-2}}}\f$, with \f$\lambda_i\f$ the thermal conductivity of compound \f$i\f$.
+	*	- For vapor phase: is calculated by \f$\lambda = \sum_i \frac{x_i \lambda_i}{\sum_j x_j F_{i,j}}\f$, \f$F_{i,j} = \frac{(1 + \sqrt{\lambda_i^4 / \lambda_j} \sqrt{M_j / M_i})^2}{\sqrt{8(1 + M_i / M_j)}}\f$. With \f$M_i\f$ the molar mass of compound \f$i\f$.
+	* - \p PERMITTIVITY: is calculated by \f$\varepsilon = \sum_i w_i \varepsilon_i\f$, with \f$\varepsilon_i\f$ the permittivity of compound \f$i\f$, and \f$w_i\f$ the mass fraction of compound \f$i\f$ in \p _phase.
+	* - \p ENTHALPY: is calculated by \f$H = \sum_i w_i H_i\f$, with \f$H_i\f$ the enthalpy of compound \f$i\f$, and \f$w_i\f$ the mass fraction of compound \f$i\f$ in \p _phase.
+	* - \p EQUILIBRIUM_MOISTURE_CONTENT: is calculated by \f$M = \sum_i w_i M_i\f$, with \f$M_i\f$ the equilibrium moisture content of compound \f$i\f$, and \f$w_i\f$ the mass fraction of compound \f$i\f$ in \p _phase.
+	* - \p TP_PROP_USER_DEFINED_XX: is calculated by \f$Y = \sum_i w_i Y_i\f$, with \f$Y_i\f$ the property value of compound \f$i\f$, and \f$w_i\f$ the mass fraction of compound \f$i\f$ in \p _phase.
+	* \param _time The specified time point.
+	* \param _phase The specified phase type.
+	* \param _property Identifier of temperature/pressure-dependent property.
+	* \return Value of the temperature/pressure-dependent physical property of the specified phase at the given time point.
+	*/
 	double GetPhaseProperty(double _time, EPhase _phase, ECompoundTPProperties _property) const;
 
-	// Sets the mass fraction of the specified phase at the given time point.
+	/**
+	* \brief Sets the mass fraction of the specified phase at the given time point.
+	* \details
+	* \param _time The specified time point.
+	* \param _phase The specified phase type.
+	* \param _value The mass fraction value of the specified phase.
+	*/
 	void SetPhaseFraction(double _time, EPhase _phase, double _value);
-	// Sets the mass of the specified phase at the given time point. Total mass of the stream is correspondingly adjusted, masses of other phases remain the same.
+	/**
+	* \brief Sets the mass of the specified phase at the given time point.
+	* \details Total mass of the stream is correspondingly adjusted, masses of other phases remain the same. If there is no specified phase in the holdup, the value will not be set.
+	* Input parameter \p _value is the mass of one defined phase: \f$m_i =\f$ \p _value and \f$w_i = m_i / m\f$. Meanwhile, the total mass \f$m\f$ changes due to assignment for \f$m_i\f$: \f$m = m_{old} + (\f$ \p _value \f$- m_{i,old})\f$. Here \f$m_i\f$ stands for the mass of phase \f$i\f$, \f$w_i\f$ for the mass fraction of phase \f$i\f$, and \f$m\f$ for the total mass of the holdup.
+	* \param _time The specified time point.
+	* \param _phase The specified phase type.
+	* \param _value The mass value of the specified phase.
+	*/
 	void SetPhaseMass(double _time, EPhase _phase, double _value);
 
-	// Returns the mass fraction of the specified phase at the given time point.
+	/**
+	* \brief Returns the molar fraction of the specified phase at the given time point.
+	* \details \f$x_i = \frac{n_i}{N}\f$, with \f$x_i\f$ the molar fraction of phase \f$i\f$, \f$n_i\f$ the amount of substance of phase \f$i\f$, and \f$N\f$ the value of the overall amount of substance.
+	* \param _time The specified time point.
+	* \param _value The mass value of the specified phase.
+	* \return The molar fraction of the specified phase at the given time point.
+	*/
 	double GetPhaseMolFraction(double _time, EPhase _phase) const;
-	// Returns the amount of substance of the specified phase at the given time point.
+	/**
+	* \brief Returns the amount of substance of the specified phase at the given time point.
+	* \details \f$n_i = \sum_j n_{i,j}^{mol}\f$, with \f$n_i\f$ the amount of substance of phase \f$i\f$, \f$n_{i,j}^{mol}\f$ the amount of substance of compound \f$j\f$ in phase \f$i\f$.
+	* \param _time The specified time point.
+	* \param _phase The specified phase type.
+	* \return The amount of substance of the specified phase at the given time point.
+	*/
 	double GetPhaseMol(double _time, EPhase _phase) const;
-	// Sets the molar fraction of the specified phase at the given time point.
+	/**
+	* \brief Sets the molar fraction of the specified phase at the given time point.
+	* \details Input parameter \p _value is the molar fraction of one defined phase: \f$f_i =\f$ \p _value \f$\cdot \frac{f_i}{x_i}\f$, with \f$f_i\f$ the mass fraction of phase \f$i\f$, and \f$x_i\f$ the molar fraction of phase \f$i\f$.
+	* \param _time The specified time point.
+	* \param _phase The specified phase type.
+	* \param _value The molar fraction of the specified phase.
+	*/
 	void SetPhaseMolFraction(double _time, EPhase _phase, double _value);
-	// Sets the amount of substance of the specified phase at the given time point. Total mass of the stream is correspondingly adjusted, masses of other phases remain the same.
+	/**
+	* \brief Sets the amount of substance of the specified phase at the given time point.
+	* \details Total mass of the stream is correspondingly adjusted, masses of other phases remain the same.
+	* Input parameter \p _value is the amount of substance of one defined phase: \f$m_i = \f$\p _value \f$\cdot \frac{m_i}{n_i}\f$, with \f$m_i\f$ the mass of phase \f$i\f$, and \f$n_i\f$ the amount of substance of phase \f$i\f$.
+	* \param _time The specified time point.
+	* \param _phase The specified phase type.
+	* \param _value The amount of substance of the specified phase.
+	*/
 	void SetPhaseMol(double _time, EPhase _phase, double _value);
 
 	////////////////////////////////////////////////////////////////////////////////
