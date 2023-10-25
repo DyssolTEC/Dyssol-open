@@ -650,14 +650,38 @@ public:
 	// Properties of the total mixture
 	//
 
-	// Returns the value of the property of the total mixture in the stream at the given time point.
+	/**
+	* \brief Returns the value of the property of the total mixture in the stream at the given time point.
+	* \details Refer to function CBaseStream::GetOverallProperty(double, EOverall) const.
+	* \param _time The specified time point.
+	* \param _property Identifier of time-dependent overall property.
+	* \return Value of the property of the total mixture in the stream at the given time point.
+	*/
 	double GetMixtureProperty(double _time, EOverall _property) const;
-	// Returns the value of the constant physical property (MOLAR_MASS) of the total mixture in the stream at the given time point.
+	/**
+	* \brief Returns the value of the constant physical property (MOLAR_MASS) of the total mixture in the stream at the given time point.
+	* \details \f$V = \sum_i v_i \cdot w_i\f$, with \f$V\f$ the value of the const physical property of the total mixture, \f$v_i\f$ the value of the const physical property of phase \f$i\f$, and \f$w_i\f$ the mass fraction of phase \f$i\f$.
+	* \param _time The specified time point.
+	* \param _property Identifier of constant material property.
+	* \return Value of the constant physical property of the total mixture in the stream at the given time point.
+	*/
 	double GetMixtureProperty(double _time, ECompoundConstProperties _property) const;
-	// Returns the value of the temperature/pressure-dependent physical property (DENSITY, ENTHALPY, etc) of the total mixture in the stream at the given time point.
+	/**
+	* \brief Returns the value of the temperature/pressure-dependent physical property (DENSITY, ENTHALPY, etc) of the total mixture in the stream at the given time point.
+	* \details \f$V = \sum_i v_i \cdot w_i\f$, with \f$V\f$ the value of the temperature/pressure-dependent physical property of the total mixture, \f$v_i\f$ the value of the temperature/pressure-dependent physical property of phase \f$i\f$, and \f$w_i\f$ the mass fraction of phase \f$i\f$.
+	* \param _time The specified time point.
+	* \param _property Identifier of temperature/pressure-dependent property.
+	* \return Value of the temperature/pressure-dependent physical property of the total mixture in the stream at the given time point.
+	*/
 	double GetMixtureProperty(double _time, ECompoundTPProperties _property) const;
 
-	// Sets the value of the property of the total mixture in the stream at the given time point.
+	/**
+	* \brief Sets the value of the property of the total mixture in the stream at the given time point.
+	* \details Refer to function CBaseStream::SetOverallProperty(double, EOverall, double).
+	* \param _time The specified time point.
+	* \param _property Identifier of time-dependent overall property.
+	* \param _value Value of the property of the total mixture in the stream at the given time point.
+	*/
 	void SetMixtureProperty(double _time, EOverall _property, double _value);
 
 	////////////////////////////////////////////////////////////////////////////////
