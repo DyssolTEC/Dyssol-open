@@ -903,18 +903,55 @@ public:
 	// Particle size distributions
 	//
 
-	// Returns the specified type of the PSD of a total mixture of all solid materials for the given time point.
+	/**
+	* \brief Returns the specified type of the PSD of a total mixture of all solid materials for the given time point.
+	* \details Refer to function CBaseStream::GetPSD(double, EPSDTypes, const std::vector<std::string>&, EPSDGridType) const.
+	* \param _time Target time point.
+	* \param _type Identifier of PSD type.
+	* \param _grid Identifier of grid units type.
+	* \return Particle size distribution.
+	*/
 	std::vector<double> GetPSD(double _time, EPSDTypes _type, EPSDGridType _grid = EPSDGridType::DIAMETER) const;
-	// Returns the specified type of the PSD of a selected compound for the given time point.
+	/**
+	* \brief Returns the specified type of the PSD of a selected compound for the given time point.
+	* \details Refer to function CBaseStream::GetPSD(double, EPSDTypes, const std::vector<std::string>&, EPSDGridType) const.
+	* \param _time Target time point.
+	* \param _type Identifier of PSD type.
+	* \param _compoundKey Unique key of the compound.
+	* \param _grid Identifier of grid units type.
+	* \return Particle size distribution.
+	*/
 	std::vector<double> GetPSD(double _time, EPSDTypes _type, const std::string& _compoundKey, EPSDGridType _grid = EPSDGridType::DIAMETER) const;
-	// Returns the specified type of the PSD of a mixture of selected compounds for the given time point. If the list of compounds is empty, the whole mixture is considered.
+	/**
+	* \brief Returns the specified type of the PSD of a mixture of selected compounds for the given time point. If the list of compounds is empty, the whole mixture is considered.
+	* \details
+	* \param _time Target time point.
+	* \param _type Identifier of PSD type.
+	* \param _compoundKeys Unique keys of the compounds.
+	* \param _grid Identifier of grid units type.
+	* \return Particle size distribution.
+	*/
 	std::vector<double> GetPSD(double _time, EPSDTypes _type, const std::vector<std::string>& _compoundKeys, EPSDGridType _grid = EPSDGridType::DIAMETER) const;
-
-	/* Sets the specified type of the PSD of a total mixture of all solid materials for the given time point.
-	 * For number-related PSD, the distribution is normalized and the total particle mass remains unchanged.*/
+	/**
+	* \brief Sets the specified type of the PSD of a total mixture of all solid materials for the given time point.
+	* \details For number-related PSD, the distribution is normalized and the total particle mass remains unchanged.
+	* Refer to function CBaseStream::SetPSD(double, EPSDTypes, const std::string&, const std::vector<double>&, EPSDGridType).
+	* \param _time Target time point.
+	* \param _type Identifier of PSD type.
+	* \param _value Partical size distribution.
+	* \param _grid Identifier of grid units type.
+	*/
 	void SetPSD(double _time, EPSDTypes _type, const std::vector<double>& _value, EPSDGridType _grid = EPSDGridType::DIAMETER);
-	/* Sets the specified type of the PSD of a selected compound for the given time point.
-	 * For number-related PSD, the distribution is normalized and the total particle mass remains unchanged. If the compound key if empty, the whole mixture is considered.*/
+	 /**
+	 * \brief Sets the specified type of the PSD of a selected compound for the given time point.
+	 * \details For number-related PSD, the distribution is normalized and the total particle mass remains unchanged. If the compound key if empty, the whole mixture is considered.
+	 * As mass fractions are used to store data, PSD will be converted using functions \p Convertq0ToMassFractions(), \p ConvertQ0ToMassFractions(), \p Convertq2ToMassFractions(), \p ConvertQ2ToMassFractions(), \p Convertq3ToMassFractions(), \p ConvertQ3ToMassFractions(), \p ConvertNumbersToMassFractions(), for detailed explanation about those functions please refer to section \verbatim embed:rst:inline :ref:`sec.development.api.distr_functions` \endverbatim
+	 * \param _time Target time point.
+	 * \param _type Identifier of PSD type.
+	 * \param _compoundKey Unique key of the compound.
+	 * \param _value Partical size distribution.
+	 * \param _grid Identifier of grid units type.
+	 */
 	void SetPSD(double _time, EPSDTypes _type, const std::string& _compoundKey, const std::vector<double>& _value, EPSDGridType _grid = EPSDGridType::DIAMETER);
 
 	////////////////////////////////////////////////////////////////////////////////
