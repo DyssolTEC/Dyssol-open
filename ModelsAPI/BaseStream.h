@@ -1044,37 +1044,103 @@ public:
 	// Other
 	//
 
-	// Returns current grid of distributed parameters.
+	/**
+	* \private
+	* \brief Returns current grid of distributed parameters.
+	* \details
+	* \return Const reference to current multidimensional grid.
+	*/
 	const CMultidimensionalGrid& GetGrid() const;
 
 	// TODO: remove, initialize MDB in constructor
-	// Sets pointer to the used materials database.
+	/**
+	* \private
+	* \brief Sets pointer to the used materials database.
+	* \details
+	* \param _database Const pointer to the materials database.
+	*/
 	void SetMaterialsDatabasePtr(const CMaterialsDatabase* _database);
 
-	// Sets grids of distributed parameters.
+	/**
+	* \private
+	* \brief Sets grids of distributed parameters.
+	* \details
+	* \param _grid Const reference to the multidimensional grid.
+	*/
 	void SetGrid(const CMultidimensionalGrid& _grid);
 
-	// Sets new cache settings.
+	/**
+	* \private
+	* \brief Sets new cache settings.
+	* \details
+	* \param _settings Const reference to the cache settings.
+	*/
 	void SetCacheSettings(const SCacheSettings& _settings);
 
-	// Sets tolerance settings.
+	/**
+	* \private
+	* \brief Sets tolerance settings.
+	* \details
+	* \param _settings Const reference to the tolerance settings.
+	*/
 	void SetToleranceSettings(const SToleranceSettings& _settings);
 
-	// Sets thermodynamics settings.
+	/**
+	* \private
+	* \brief Sets thermodynamics settings.
+	* \details
+	* \param _settings Const reference to the thermodynamics settings.
+	*/
 	void SetThermodynamicsSettings(const SThermodynamicsSettings& _settings);
 
-	// Performs nearest-neighbor extrapolation of all stream data.
+	/**
+	* \brief Performs nearest-neighbor extrapolation of all stream data.
+	* \details
+	* \param _timeExtra Time point to extrapolate.
+	* \param _time Source time point.
+	*/
 	void Extrapolate(double _timeExtra, double _time);
-	// Performs linear extrapolation of all stream data.
+	/**
+	* \brief Performs linear extrapolation of all stream data.
+	* \details
+	* \param _timeExtra Time point to extrapolate.
+	* \param _time1 Begin of the source time interval.
+	* \param _time2 End of the source time interval.
+	*/
 	void Extrapolate(double _timeExtra, double _time1, double _time2);
-	// Performs cubic spline extrapolation of all stream data.
+	/**
+	* \brief Performs cubic spline extrapolation of all stream data.
+	* \details
+	* \param _timeExtra Time point to extrapolate.
+	* \param _time1 Fisrt source time point.
+	* \param _time2 Second source time point.
+	* \param _time3 Third source time point.
+	*/
 	void Extrapolate(double _timeExtra, double _time1, double _time2, double _time3);
 
-	// Saves data to file.
+	/**
+	* \private
+	* \brief Saves data to file.
+	* \details
+	* \param _h5File Reference to the file handler.
+	* \param _path Path to data.
+	*/
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path);
-	// Loads data from file.
+	/**
+	* \private
+	* \brief Loads data from file.
+	* \details
+	* \param _h5File Reference to the file handler.
+	* \param _path Path to data.
+	*/
 	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
-	// Loads data from file of an older version.
+	/**
+	* \private
+	* \brief Loads data from file of an older version.
+	* \details
+	* \param _h5File Reference to the file handler.
+	* \param _path Path to data.
+	*/
 	void LoadFromFile_v1(const CH5Handler& _h5File, const std::string& _path);
 
 protected:
