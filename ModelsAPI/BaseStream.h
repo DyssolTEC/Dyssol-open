@@ -958,31 +958,58 @@ public:
 	// Interactions with other streams
 	//
 
-	// Copies all stream data at the given time point. All data after the time point are removed from the stream.
+	/**
+	* \brief Copies all stream data at the given time point.
+	* \details All data after the time point are removed from the destination stream.
+	* \param _time Time point to copy.
+	* \param _source Source stream.
+	*/
 	void Copy(double _time, const CBaseStream& _source);
-	// Copies all stream data at the given time interval. All data after the end time point are removed from the stream.
+	/**
+	* \brief Copies all stream data at the given time interval.
+	* \details All data after the end time point are removed from the destination stream.
+	* \param _timeBeg Begin of the time interval to copy.
+	* \param _timeEnd End of the time interval to copy.
+	* \param _source Source stream.
+	*/
 	void Copy(double _timeBeg, double _timeEnd, const CBaseStream& _source);
-	// Copies all stream data to the given time point from another time point of source stream. All data after the time point are removed from the stream.
+	/**
+	* \brief Copies all stream data to the given time point from another time point of source stream.
+	* \details All data after the time point are removed from the destination stream.
+	* \param _timeDst Time point of the destination stream to copy.
+	* \param _source Source stream.
+	* \param _timeSrc Time point of the source stream to copy.
+	*/
 	void Copy(double _timeDst, const CBaseStream& _source, double _timeSrc);
 
-	// Mixes the specified stream with the current stream at the given time point. Can be applied only for streams with the same structure (MD dimensions, phases, materials, etc.).
+	/**
+	* \brief Mixes the specified stream with the current stream at the given time point.
+	* \details Can be applied only for streams with the same structure (MD dimensions, phases, materials, etc.).
+	* \param _time Time point to copy.
+	* \param _source Source stream.
+	*/
 	void Add(double _time, const CBaseStream& _source);
-	/* Mixes the specified stream with the current stream at the given time interval. Can be applied only for streams with the same structure (MD dimensions, phases, materials, etc.).
-	 * The stream will contain the union of time points from both streams.*/
+	/**
+	* \brief Mixes the specified stream with the current stream at the given time interval.
+	* \details Can be applied only for streams with the same structure (MD dimensions, phases, materials, etc.). The stream will contain the union of time points from both streams.
+	* \param _timeBeg Begin of the time interval to copy.
+	* \param _timeEnd End of the time interval to copy.
+	* \param _source Source stream.
+	*/
 	void Add(double _timeBeg, double _timeEnd, const CBaseStream& _source);
 
 	/**
-	 * Tests whether all values in the streams at the given time point are equal up to the tolerances.
-	 * \retval true Streams are equal.
-	 * \retval false Streams are not equal.
-	 */
+	* Tests whether all values in the streams at the given time point are equal up to the tolerances.
+	* \retval true Streams are equal.
+	* \retval false Streams are not equal.
+	*/
 	static bool AreEqual(double _time, const CBaseStream& _stream1, const CBaseStream& _stream2);
 
 	/**
-	 * Tests whether all values in the stream at the given time points are equal up to the tolerances.
-	 * \retval true Streams are equal.
-	 * \retval false Streams are not equal.
-	 */
+	* Tests whether all values in the stream at the given time points are equal up to the tolerances.
+	* \retval true Streams are equal.
+	* \retval false Streams are not equal.
+	*/
 	static bool AreEqual(double _time1, double _time2, const CBaseStream& _stream, double _absTol, double _relTol);
 	static bool AreEqual(double _time1, double _time2, const CBaseStream& _stream);
 
