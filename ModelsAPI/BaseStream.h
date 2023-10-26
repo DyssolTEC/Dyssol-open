@@ -1145,19 +1145,92 @@ public:
 
 protected:
 	using mix_type = std::tuple<std::map<EOverall, double>, std::map<EPhase, double>, std::map<EPhase, CDenseMDMatrix>>;
-	// Calculates the mixture of two streams. Does not perform any checks.
+	/**
+	* \private
+	* \brief Calculates the mixture of two streams.
+	* \details Does not perform any checks.
+	* \param _time1 Target time point of the first stream.
+	* \param _stream1 Const reference to the first stream.
+	* \param _mass1 Overall mass of the first stream.
+	* \param _time2 Target time point of the second stream.
+	* \param _stream2 Const reference to the second stream.
+	* \param _mass2 Overall mass of the second stream.
+	* \return Calculated mixture.
+	*/
 	static mix_type CalculateMix(double _time1, const CBaseStream& _stream1, double _mass1, double _time2, const CBaseStream& _stream2, double _mass2);
-	// Calculates the pressure of the mixture of two streams. Does not perform any checks.
+	/**
+	* \private
+	* \brief Calculates the pressure of the mixture of two streams.
+	* \details Does not perform any checks.
+	* \param _time1 Target time point of the first stream.
+	* \param _stream1 Const reference to the first stream.
+	* \param _time2 Target time point of the second stream.
+	* \param _stream2 Const reference to the second stream.
+	* \return Calculated pressure.
+	*/
 	static double CalculateMixPressure(double _time1, const CBaseStream& _stream1, double _time2, const CBaseStream& _stream2);
-	// Calculates the temperature of the mixture of two streams. Does not perform any checks.
+	/**
+	* \private
+	* \brief Calculates the temperature of the mixture of two streams.
+	* \details Does not perform any checks.
+	* \param _time1 Target time point of the first stream.
+	* \param _stream1 Const reference to the first stream.
+	* \param _mass1 Overall mass of the first stream.
+	* \param _time2 Target time point of the second stream.
+	* \param _stream2 Const reference to the second stream.
+	* \param _mass2 Overall mass of the second stream.
+	* \return Calculated temperature.
+	*/
 	static double CalculateMixTemperature(double _time1, const CBaseStream& _stream1, double _mass1, double _time2, const CBaseStream& _stream2, double _mass2);
-	// Calculates the general overall property of the mixture of two streams. Does not perform any checks.
+	/**
+	* \private
+	* \brief Calculates the general overall property of the mixture of two streams.
+	* \details Does not perform any checks.
+	* \param _time1 Target time point of the first stream.
+	* \param _stream1 Const reference to the first stream.
+	* \param _mass1 Overall mass of the first stream.
+	* \param _time2 Target time point of the second stream.
+	* \param _stream2 Const reference to the second stream.
+	* \param _mass2 Overall mass of the second stream.
+	* \param _property Identifier of time-dependent overall parameter that needs to be calculated.
+	* \return Calculated overall property.
+	*/
 	static double CalculateMixOverall(double _time1, const CBaseStream& _stream1, double _mass1, double _time2, const CBaseStream& _stream2, double _mass2, EOverall _property);
-	// Calculates the phase fractions of the mixture of two streams for the given phase. Does not perform any checks.
+	/**
+	* \private
+	* \brief Calculates the phase fractions of the mixture of two streams for the given phase.
+	* \details Does not perform any checks.
+	* \param _time1 Target time point of the first stream.
+	* \param _stream1 Const reference to the first stream.
+	* \param _mass1 Overall mass of the first stream.
+	* \param _time2 Target time point of the second stream.
+	* \param _stream2 Const reference to the second stream.
+	* \param _mass2 Overall mass of the second stream.
+	* \param _phase Identifier of phase type.
+	* \return Calculated phase fraction.
+	*/
 	static double CalculateMixPhaseFractions(double _time1, const CBaseStream& _stream1, double _mass1, double _time2, const CBaseStream& _stream2, double _mass2, EPhase _phase);
-	// Calculates the multidimensional distributions of the mixture of two streams for the given phase. Does not perform any checks.
+	/**
+	* \private
+	* \brief Calculates the multidimensional distributions of the mixture of two streams for the given phase.
+	* \details Does not perform any checks.
+	* \param _time1 Target time point of the first stream.
+	* \param _stream1 Const reference to the first stream.
+	* \param _mass1 Overall mass of the first stream.
+	* \param _time2 Target time point of the second stream.
+	* \param _stream2 Const reference to the second stream.
+	* \param _mass2 Overall mass of the second stream.
+	* \param _phase Identifier of phase type.
+	* \return Calculated multidimensional distribution.
+	*/
 	static CDenseMDMatrix CalculateMixDistribution(double _time1, const CBaseStream& _stream1, double _mass1, double _time2, const CBaseStream& _stream2, double _mass2, EPhase _phase);
-	// Sets the result of mixing two streams into this stream at the given time point.
+	/**
+	* \private
+	* \brief Sets the result of mixing two streams into this stream at the given time point.
+	* \details
+	* \param _time Target time point.
+	* \param _data Mixture of two streams.
+	*/
 	void SetMix(double _time, const mix_type& _data);
 
 private:
