@@ -1032,14 +1032,14 @@ public:
 
 	/**
 	* \brief Calculates enthalpy of the stream mixture for the temperature at the given time point using a lookup table.
-	* \details
+	* \details See also: \verbatim embed:rst:inline :ref:`sec.development.api.thermodynamics` \endverbatim
 	* \param _time Target time point.
 	* \return Calculated value of enthalpy.
 	*/
 	[[nodiscard]] double CalculateEnthalpyFromTemperature(double _time) const;
 	/**
 	* \brief Calculates temperature of the stream mixture for the enthalpy at the given time point using a lookup table.
-	* \details
+	* \details See also: \verbatim embed:rst:inline :ref:`sec.development.api.thermodynamics` \endverbatim
 	* \param _time Target time point.
 	* \return Calculated value of temperature.
 	*/
