@@ -121,7 +121,7 @@ void CPlotsViewer::UpdateSliderLabelName()
 
 void CPlotsViewer::UpdateSliderPosFromSelectedIndex()
 {
-	//if(!m_pModel) return;
+	if(!m_pModel) return;
 	//if(m_iPlot == -1) return;
 	//if(m_pModel->IsPlot2D(m_iPlot))	return;
 
