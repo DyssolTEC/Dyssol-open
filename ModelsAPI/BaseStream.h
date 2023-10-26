@@ -1234,32 +1234,90 @@ protected:
 	void SetMix(double _time, const mix_type& _data);
 
 private:
-	// Inserts the new time into the list of time points, it it does not exist yet.
+	/**
+	* \private
+	* \brief Inserts the new time into the list of time points, it it does not exist yet.
+	* \details
+	* \param _time New time point that needs to be inserted.
+	*/
 	void InsertTimePoint(double _time);
-	// Checks whether the given time point exists.
+	/**
+	* \private
+	* \brief Checks whether the given time point exists.
+	* \details
+	* \param _time Time point.
+	* \return Whether the given time point exists.
+	*/
 	bool HasTime(double _time) const;
 
-	// Checks whether the specified overall property is defined in the stream.
+	/**
+	* \private
+	* \brief Checks whether the specified overall property is defined in the stream.
+	* \details
+	* \param _property Identifier of time-dependent overall parameter.
+	* \return Whether the specified overall property is defined in the stream.
+	*/
 	bool HasOverallProperty(EOverall _property) const;
 
-	// Checks whether the specified compound is defined in the stream.
+	/**
+	* \private
+	* \brief Checks whether the specified compound is defined in the stream.
+	* \details
+	* \param _compoundKey Unique key of the compound.
+	* \return Whether the specified compound is defined in the stream.
+	*/
 	bool HasCompound(const std::string& _compoundKey) const;
-	// Checks whether all the specified compounds are defined in the stream.
+	/**
+	* \private
+	* \brief Checks whether all the specified compounds are defined in the stream.
+	* \details
+	* \param _compoundKeys Unique keys of the compounds.
+	* \return Whether all the specified compounds are defined in the stream.
+	*/
 	bool HasCompounds(const std::vector<std::string>& _compoundKeys) const;
-	// Returns index of the compound.
+	/**
+	* \private
+	* \brief Returns index of the compound.
+	* \details
+	* \param _compoundKey Unique key of the compound.
+	* \return Index of the existing compound.
+	*/
 	size_t CompoundIndex(const std::string& _compoundKey) const;
 
-	// Checks whether the specified phase is defined in the stream.
+	/**
+	* \private
+	* \brief Checks whether the specified phase is defined in the stream.
+	* \details
+	* \param _phase Identifier of phase type.
+	* \return Whether the specified phase is defined in the stream.
+	*/
 	bool HasPhase(EPhase _phase) const;
 
-	/* Calculates the PSD of the stream in mass fractions for the selected compounds. If the list of components is empty, calculates the PSD for the entire mixture.
-	 * Takes into account porosity, if specified. All checks of parameters, phases, grids availability, etc. must be executed by the calling code.*/
+	/**
+	* \private
+	* \brief Calculates the PSD of the stream in mass fractions for the selected compounds.
+	* \details If the list of components is empty, calculates the PSD for the entire mixture. Takes into account porosity, if specified. All checks of parameters, phases, grids availability, etc. must be executed by the calling code.
+	* \param _time Target time point.
+	* \param _compoundKeys Unique keys of the compounds.
+	* \return Calculated PSD in mass fractions.
+	*/
 	std::vector<double> GetPSDMassFraction(double _time, const std::vector<std::string>& _compoundKeys) const;
-	/* Calculates the number particle distribution of the stream for the selected compounds. If the list of components is empty, calculates the PSD for the entire mixture.
-	 * Takes into account porosity, if specified. All checks of parameters, phases, grids availability, etc. must be executed by the calling code.*/
+	/**
+	* \private
+	* \brief Calculates the number particle distribution of the stream for the selected compounds.
+	* \details If the list of components is empty, calculates the PSD for the entire mixture. Takes into account porosity, if specified. All checks of parameters, phases, grids availability, etc. must be executed by the calling code.
+	* \param _time Target time point.
+	* \param _compoundKeys Unique keys of the compounds.
+	* \param _grid Unique keys of the compounds.
+	* \return Calculated number particle distribution.
+	*/
 	std::vector<double> GetPSDNumber(double _time, const std::vector<std::string>& _compoundKeys, EPSDGridType _grid) const;
 
-	// Clears enthalpy calculator.
+	/**
+	* \private
+	* \brief Clears enthalpy calculator.
+	* \details
+	*/
 	void ClearEnthalpyCalculator();
 
 	// TODO: move it somewhere
