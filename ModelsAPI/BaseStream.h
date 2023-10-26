@@ -80,8 +80,8 @@ public:
 	* \private
 	* \brief Checks whether both streams have the same overall properties.
 	* \details
-	* \param _stream1 Reference to first stream.
-	* \param _stream2 Reference to second stream.
+	* \param _stream1 Const reference to first stream.
+	* \param _stream2 Const reference to second stream.
 	* \return Whether both streams have the same overall properties.
 	*/
 	static bool HaveSameOverall(const CBaseStream& _stream1, const CBaseStream& _stream2);
@@ -89,8 +89,8 @@ public:
 	* \private
 	* \brief Checks whether both streams have the same phases.
 	* \details
-	* \param _stream1 Reference to first stream.
-	* \param _stream2 Reference to second stream.
+	* \param _stream1 Const reference to first stream.
+	* \param _stream2 Const reference to second stream.
 	* \return Whether both streams have the same phases.
 	*/
 	static bool HaveSamePhases(const CBaseStream& _stream1, const CBaseStream& _stream2);
@@ -98,8 +98,8 @@ public:
 	* \private
 	* \brief Checks whether both streams have the same solids distribution grids.
 	* \details
-	* \param _stream1 Reference to first stream.
-	* \param _stream2 Reference to second stream.
+	* \param _stream1 Const reference to first stream.
+	* \param _stream2 Const reference to second stream.
 	* \return Whether both streams have the same solids distribution grids.
 	*/
 	static bool HaveSameGrids(const CBaseStream& _stream1, const CBaseStream& _stream2);
@@ -107,8 +107,8 @@ public:
 	* \private
 	* \brief Checks whether both streams have the same overall properties and phases.
 	* \details
-	* \param _stream1 Reference to first stream.
-	* \param _stream2 Reference to second stream.
+	* \param _stream1 Const reference to first stream.
+	* \param _stream2 Const reference to second stream.
 	* \return Whether both streams have the same overall properties and phases.
 	*/
 	static bool HaveSameOverallAndPhases(const CBaseStream& _stream1, const CBaseStream& _stream2);
@@ -116,8 +116,8 @@ public:
 	* \private
 	* \brief Checks whether both streams have the same overall properties, phases and grids.
 	* \details
-	* \param _stream1 Reference to first stream.
-	* \param _stream2 Reference to second stream.
+	* \param _stream1 Const reference to first stream.
+	* \param _stream2 Const reference to second stream.
 	* \return Whether both streams have the same overall properties, phases and grids.
 	*/
 	static bool HaveSameStructure(const CBaseStream& _stream1, const CBaseStream& _stream2);
@@ -156,14 +156,14 @@ public:
 	//
 
 	/**
-	* \brief Adds a new time point _time if it doesn't already exist and fills it with the data of existing previous time point.
-	* \details
+	* \brief Adds a new time point \p _time.
+	* \details If it doesn't already exist and fills it with the data of existing previous time point.
 	* \param _time New time point.
 	*/
 	void AddTimePoint(double _time);
 	/**
-	* \brief Adds a new temp point _timeDst if it doesn't already exist and fills it with the data of existing time point _timeSrc.
-	* \details
+	* \brief Adds a new temp point \p _timeDst.
+	* \details If it doesn't already exist and fills it with the data of existing time point \p _timeSrc.
 	* \param _timeDst New time point.
 	* \param _timeSrc Source time point.
 	*/
@@ -171,22 +171,22 @@ public:
 	/**
 	* \brief Removes the specified time point if it does already exist.
 	* \details
-	* \param _time Time point of the stream.
+	* \param _time Time point that needs to be removed.
 	*/
 	void RemoveTimePoint(double _time);
 	/**
-	* \brief Removes all existing time points in the specified interval, including or excluding boundaries.
+	* \brief Removes all existing time points in the specified interval, including (\p _inclusive = true) or excluding (\p _inclusive = false) boundaries.
 	* \details
-	* \param _timeBeg Start time point of the interval.
-	* \param _timeEnd End time point of the interval.
-	* \param _inclusive Inclusive flag. Default value is true (Specified interval includes boundaries).
+	* \param _timeBeg Begin of the time interval.
+	* \param _timeEnd End of the time interval.
+	* \param _inclusive Inclusive flag.
 	*/
 	void RemoveTimePoints(double _timeBeg, double _timeEnd, bool _inclusive = true);
 	/**
-	* \brief Removes all existing time points after the specified one, inclusive or exclusive _time.
+	* \brief Removes all existing time points after the specified one, inclusive (\p _inclusive = true) or exclusive (\p _inclusive = false) \p _time.
 	* \details
-	* \param _time Start time point of the interval.
-	* \param _inclusive Inclusive flag. Default value is false (Specified interval includes star time point).
+	* \param _time Begin of the time interval.
+	* \param _inclusive Inclusive flag.
 	*/
 	void RemoveTimePointsAfter(double _time, bool _inclusive = false);
 	/**
@@ -195,11 +195,11 @@ public:
 	*/
 	void RemoveAllTimePoints();
 	/**
-	* \brief Removes time points within the specified interval [timeBeg; timeEnd) that are closer together than step.
+	* \brief Removes time points within the specified interval [\p _timeBeg; \p _timeEnd) that are closer together than step.
 	* \details
-	* \param _timeBeg Start time point of the interval.
-	* \param _timeEnd End time point of the interval.
-	* \param _step Specified step.
+	* \param _timeBeg Begin of the time interval.
+	* \param _timeEnd End of the time interval.
+	* \param _step Required step.
 	*/
 	void ReduceTimePoints(double _timeBeg, double _timeEnd, double _step);
 	/**
@@ -211,16 +211,16 @@ public:
 	/**
 	* \brief Returns all defined time points in the specified time interval.
 	* \details
-	* \param _timeBeg Start time point of the interval.
-	* \param _timeEnd End time point of the interval.
+	* \param _timeBeg Begin of the time interval.
+	* \param _timeEnd End of the time interval.
 	* \return All time points which are defined in the stream for the time interval.
 	*/
 	std::vector<double> GetTimePoints(double _timeBeg, double _timeEnd) const;
 	/**
 	* \brief Returns all defined time points in the specified closed time interval, boundaries are unconditionally included into result.
 	* \details
-	* \param _timeBeg Start time point of the interval.
-	* \param _timeEnd End time point of the interval.
+	* \param _timeBeg Begin of the time interval.
+	* \param _timeEnd End of the time interval.
 	* \return All time points which are defined in the stream for the time interval.
 	*/
 	std::vector<double> GetTimePointsClosed(double _timeBeg, double _timeEnd) const;
@@ -231,10 +231,10 @@ public:
 	*/
 	double GetLastTimePoint() const;
 	/**
-	* \brief Returns the nearest time point before _time, or zero if such time can not be found.
+	* \brief Returns the nearest time point before \p _time, or zero if such time can not be found.
 	* \details
-	* \param _time The specified time point.
-	* \return The nearest time point before _time.
+	* \param _time Last time point.
+	* \return Previous time point.
 	*/
 	double GetPreviousTimePoint(double _time) const;
 
@@ -243,8 +243,8 @@ public:
 	//
 
 	/**
-	* \brief Adds new overall property to the stream, if it does not exist yet and returns a pointer to it or already existing property.
-	* \details
+	* \brief Adds new overall property to the stream.
+	* \details If it does not exist yet and returns a pointer to it or already existing property.
 	* \param _property Identifier of time-dependent overall property.
 	* \param _name Name of the property.
 	* \param _units Units of measurement.
@@ -273,31 +273,31 @@ public:
 	const CTimeDependentValue* GetOverallProperty(EOverall _property) const;
 
 	/**
-	* \brief Returns a value of the specified overall property at the given time point. Returns default value if such overall property has not been defined.
-	* \details
-	* \param _time The given time point.
+	* \brief Returns a value of the specified overall property at the given time point.
+	* \details Returns default value if such overall property has not been defined.
+	* \param _time Target time point.
 	* \param _property Identifier of time-dependent overall property.
 	* \return Value of the specified overall property at the given time point or default value.
 	*/
 	double GetOverallProperty(double _time, EOverall _property) const;
 	/**
-	* \brief Returns a value of the overall mass at the given time point. If such time point has not been defined, interpolation of data will be done.
-	* \details
-	* \param _time The given time point.
-	* \return Value of the overall mass at the given time point (\f$m\f$ in [kg], total mass of the holdup).
+	* \brief Returns a value of the overall mass in [kg] at the given time point.
+	* \details If such time point has not been defined, interpolation of data will be done.
+	* \param _time Target time point.
+	* \return Value of the overall mass at the given time point.
 	*/
 	double GetMass(double _time) const;
 	/**
-	* \brief Returns a value of the overall temperature in [K] at the given time point. Returns standard condition temperature if temperature overall property has not been defined.
-	* \details
-	* \param _time The given time point.
+	* \brief Returns a value of the overall temperature in [K] at the given time point.
+	* \details Returns standard condition temperature if temperature overall property has not been defined.
+	* \param _time Target time point.
 	* \return Value of the overall temperature at the given time point or standard condition temperature.
 	*/
 	double GetTemperature(double _time) const;
 	/**
-	* \brief Returns a value of the overall pressure in [Pa] at the given time point. Returns standard condition pressure if pressure overall property has not been defined.
-	* \details
-	* \param _time The given time point.
+	* \brief Returns a value of the overall pressure in [Pa] at the given time point.
+	* \details Returns standard condition pressure if pressure overall property has not been defined.
+	* \param _time Target time point.
 	* \return Value of the overall pressure at the given time point or standard condition pressure.
 	*/
 	double GetPressure(double _time) const;
@@ -305,44 +305,44 @@ public:
 	/**
 	* \brief Sets a value of the specified overall property at the given time point if such property exists.
 	* \details
-	* \param _time The given time point.
+	* \param _time Target time point.
 	* \param _property Identifier of time-dependent overall property.
 	* \param _value Value of the specified overall property.
 	*/
 	void SetOverallProperty(double _time, EOverall _property, double _value);
 	/**
-	* \brief Sets a value of the overall mass at the given time point.
+	* \brief Sets a value of the overall mass in [kg] at the given time point.
 	* \details
-	* \param _time The given time point.
+	* \param _time Target time point.
 	* \param _value Value of the overall mass.
 	*/
 	void SetMass(double _time, double _value);
 	/**
 	* \brief Sets a value of the overall temperature in [K] at the given time point if such property exists.
 	* \details
-	* \param _time The given time point.
+	* \param _time Target time point.
 	* \param _value Value of the overall temperature.
 	*/
 	void SetTemperature(double _time, double _value);
 	/**
 	* \brief Sets a value of the overall pressure in [Pa] at the given time point if such property exists.
 	* \details
-	* \param _time The given time point.
+	* \param _time Target time point.
 	* \param _value Value of the overall pressure.
 	*/
 	void SetPressure(double _time, double _value);
 
 	/**
-	* \brief Returns a value of the overall amount of substance \f$\sum_{i}\frac{m \cdot w_i}{M_i}\f$ in [mol] at the given time point.
-	* \details With \f$w_i\f$ mass fraction of the phase \f$i\f$, and \f$M_i\f$ molar mass of the phase \f$i\f$.
-	* \param _time The given time point.
+	* \brief Returns a value of the overall amount of substance in [mol] at the given time point.
+	* \details \f$\sum_i \frac{m \cdot w_i}{M_i}\f$, with \f$m\f$ overall mass of the holdup, \f$w_i\f$ mass fraction of the phase \f$i\f$, and \f$M_i\f$ molar mass of the phase \f$i\f$.
+	* \param _time Target time point.
 	* \return Value of the overall amount of substance.
 	*/
 	double GetMol(double _time) const;
 	/**
 	* \brief Sets a value of the overall amount of substance in [mol] at the given time point.
-	* \details
-	* \param _time The given time point.
+	* \details Input parameter \p _value is a mole amount and this should be converted to mass \f$m\f$. \f$m = \f$\p _value \f$\cdot \sum_i M_i \cdot w_i\f$, with \f$w_i\f$ mass fraction of the phase \f$i\f$, and \f$M_i\f$ molar mass of the phase \f$i\f$.
+	* \param _time Target time point.
 	* \param _value Value of the overall amount of substance.
 	*/
 	void SetMol(double _time, double _value);
@@ -374,119 +374,119 @@ public:
 
 	/**
 	* \brief Returns the mass fraction of the compound in the total mixture at the given time point.
-	* \details \f$f_i = \sum_{i} w_i \cdot f_{i}\f$, with \f$f_i\f$ the mass fraction of compound \f$i\f$, and \f$w_i\f$ the mass fraction of phase \f$i\f$.
-	* \param _time The specified time point.
+	* \details \f$f_i = \sum_{i} w_i \cdot f_i\f$, with \f$f_i\f$ mass fraction of compound \f$i\f$, and \f$w_i\f$ mass fraction of phase \f$i\f$.
+	* \param _time Target time point.
 	* \param _compoundKey Unique key of the compound.
-	* \return The total mass fraction of the compound at the given time point.
+	* \return Mass fraction of the compound.
 	*/
 	double GetCompoundFraction(double _time, const std::string& _compoundKey) const;
 	/**
 	* \brief Returns the mass fraction of the compound in the specified phase at the given time point.
-	* \details \f$f_{i,j}\f$, mass fraction of compound \f$j\f$ in phase \f$i\f$.
-	* \param _time The specified time point.
+	* \details
+	* \param _time Target time point.
 	* \param _compoundKey Unique key of the compound.
-	* \param _phase The specified phase type.
-	* \return The mass fraction of the compound in the specified phase at the given time point.
+	* \param _phase Identifier of phase type.
+	* \return Mass fraction of the compound.
 	*/
 	double GetCompoundFraction(double _time, const std::string& _compoundKey, EPhase _phase) const;
 	/**
 	* \brief Returns the mass of the compound in the total mixture at the given time point.
-	* \details \f$m_i = f_i \cdot m\f$, with \f$m_i\f$ the mass of compound \f$i\f$, \f$f_i\f$ the mass fraction of compound \f$i\f$, and \f$m\f$ the total mass of the holdup.
-	* \param _time The specified time point.
+	* \details \f$m_i = f_i \cdot m\f$, with \f$m_i\f$ mass of compound \f$i\f$, \f$f_i\f$ mass fraction of compound \f$i\f$, and \f$m\f$ total mass of the holdup.
+	* \param _time Target time point.
 	* \param _compoundKey Unique key of the compound.
-	* \return The mass of the compound in the total mixture at the given time point.
+	* \return Mass of the compound.
 	*/
 	double GetCompoundMass(double _time, const std::string& _compoundKey) const;
 	/**
 	* \brief Returns the mass of the compound in the specified phase at the given time point.
-	* \details \f$m_{i,j} = w_i \cdot f_{i,j} \cdot m\f$, with \f$m_{i,j}\f$ the mass of compound \f$j\f$ in phase \f$i\f$, \f$w_i\f$ the mass fraction of phase \f$i\f$,\f$f_{i,j}\f$ the mass fraction of compound \f$j\f$ in phase \f$i\f$, and \f$m\f$ the total mass of the holdup.
-	* \param _time The specified time point.
+	* \details \f$m_{i,j} = w_i \cdot f_{i,j} \cdot m\f$, with \f$m_{i,j}\f$ mass of compound \f$j\f$ in phase \f$i\f$, \f$w_i\f$ mass fraction of phase \f$i\f$,\f$f_{i,j}\f$ mass fraction of compound \f$j\f$ in phase \f$i\f$, and \f$m\f$ total mass of the holdup.
+	* \param _time Target time point.
 	* \param _compoundKey Unique key of the compound.
-	* \param _phase The specified phase type.
-	* \return The mass of the compound in the total mixture at the given time point.
+	* \param _phase Identifier of phase type.
+	* \return Mass of the compound.
 	*/
 	double GetCompoundMass(double _time, const std::string& _compoundKey, EPhase _phase) const;
 	/**
 	* \brief Returns mass fraction of all defined compounds at the given time point.
 	* \details
-	* \param _time The specified time point.
-	* \return Mass fraction of all defined compounds at the given time point
+	* \param _time Target time point.
+	* \return Mass fraction of all defined compounds.
 	*/
 	std::vector<double> GetCompoundsFractions(double _time) const;
 	/**
 	* \brief Returns mass fraction of all defined compounds in the specified phase at the given time point.
 	* \details
-	* \param _time The specified time point.
-	* \param _phase The specified phase type.
-	* \return Mass fraction of all defined compounds in the specified phase at the given time point.
+	* \param _time Target time point.
+	* \param _phase Identifier of phase type.
+	* \return Mass fraction of all defined compounds.
 	*/
 	std::vector<double> GetCompoundsFractions(double _time, EPhase _phase) const;
 	/**
 	* \brief Returns masses of all defined compounds at the given time point.
 	* \details
-	* \param _time The specified time point.
-	* \return Masses of all defined compounds at the given time point.
+	* \param _time Target time point.
+	* \return Masses of all defined compounds.
 	*/
 	std::vector<double> GetCompoundsMasses(double _time) const;
 	/**
 	* \brief Returns masses of all defined compounds in the specified phase at the given time point.
 	* \details
-	* \param _time The specified time point.
-	* \param _phase The specified phase type.
-	* \return Masses of all defined compounds in the specified phase at the given time point.
+	* \param _time Target time point.
+	* \param _phase Identifier of phase type.
+	* \return Masses of all defined compounds.
 	*/
 	std::vector<double> GetCompoundsMasses(double _time, EPhase _phase) const;
 
 	/**
 	* \brief Sets the mass fraction of the compound in the specified phase at the given time point.
 	* \details
-	* \param _time The specified time point.
+	* \param _time Target time point.
 	* \param _compoundKey Unique key of the compound.
-	* \param _phase The specified phase type.
-	* \param _value Value of the mass fraction of the compound in the specified phase at the given time point.
+	* \param _phase Identifier of phase type.
+	* \param _value Value of the mass fraction of the compound.
 	*/
 	void SetCompoundFraction(double _time, const std::string& _compoundKey, EPhase _phase, double _value);
 	/**
 	* \brief Sets mass fraction of all defined compounds in all defined phases at the given time point.
 	* \details
-	* \param _time The specified time point.
-	* \param _value List of mass fractions of all defined compounds in all defined phases at the given time point.
+	* \param _time Target time point.
+	* \param _value List of mass fractions of all defined compounds.
 	*/
 	void SetCompoundsFractions(double _time, const std::vector<double>& _value);
 	/**
 	* \brief Sets mass fraction of all defined compounds in the specified phase at the given time point.
 	* \details
-	* \param _time The specified time point.
-	* \param _phase The specified phase type.
-	* \param _value List of mass fraction of all defined compounds in the specified phase at the given time point.
+	* \param _time Target time point.
+	* \param _phase Identifier of phase type.
+	* \param _value List of mass fraction of all defined compounds.
 	*/
 	void SetCompoundsFractions(double _time, EPhase _phase, const std::vector<double>& _value);
 
 	/**
 	* \brief Returns the molar fraction of the compound in the specified phase at the given time point.
-	* \details \f$f_i^{mol} = f_{i,j} \cdot \frac{M_i}{M_j}\f$, with \f$f_i^{mol}\f$ mole fraction of compound \f$i\f$, \f$f_{i,j}\f$ mass fraction of compound \f$j\f$ in phase \f$i\f$, \f$M_i\f$ molar mass of phase \f$i\f$, and \f$M_j\f$ molar mass of compound \f$j\f$.
-	* \param _time The specified time point.
+	* \details \f$f_{i,j}^{mol} = f_{i,j} \cdot \frac{M_i}{M_j}\f$, with \f$f_{i,j}^{mol}\f$ mole fraction of compound \f$j\f$ in phase \f$i\f$, \f$f_{i,j}\f$ mass fraction of compound \f$j\f$ in phase \f$i\f$, \f$M_i\f$ molar mass of phase \f$i\f$, and \f$M_j\f$ molar mass of compound \f$j\f$.
+	* \param _time Target time point.
 	* \param _compoundKey Unique key of the compound.
-	* \param _phase The specified phase type.
-	* \return The molar fraction of the compound in the specified phase at the given time point.
+	* \param _phase Identifier of phase type.
+	* \return Molar fraction of the compound.
 	*/
 	double GetCompoundMolFraction(double _time, const std::string& _compoundKey, EPhase _phase) const;
 	/**
 	* \brief Returns the amount of substance of the compound in the specified phase at the given time point.
-	* \details \f$n_{i,j}^{mol} = \frac{m_{i,j}}{M_j}\f$, with \f$n_{i,j}^{mol}\f$ amount of substance of compound \f$j\f$ in phase \f$i\f$, \f$m_{i,j}\f$ the mass of compound \f$j\f$ in phase \f$i\f$, and \f$M_j\f$ molar mass of compound \f$j\f$.
-	* \param _time The specified time point.
+	* \details \f$n_{i,j} = w_i \cdot f_{i,j} \cdot \frac{m}{M_j}\f$, with \f$n_{i,j}\f$ amount of substance of compound \f$j\f$ in phase \f$i\f$, \f$w_i\f$ mass fraction of phase \f$i\f$, \f$f_{i,j}\f$ mass fraction of compound \f$j\f$ in phase \f$i\f$, \f$m\f$ total mass of the holdup, and \f$M_j\f$ molar mass of compound \f$j\f$.
+	* \param _time Target time point.
 	* \param _compoundKey Unique key of the compound.
-	* \param _phase The specified phase type.
-	* \return The amount of substance of the compound in the specified phase at the given time point.
+	* \param _phase Identifier of phase type.
+	* \return Amount of substance of the compound.
 	*/
 	double GetCompoundMol(double _time, const std::string& _compoundKey, EPhase _phase) const;
 	/**
 	* \brief Sets the molar fraction of the compound in the specified phase at the given time point.
-	* \details \f$f_{i, j} = \f$\p _value\f$\cdot M_j \cdot \frac{n_i}{m_i}\f$, with \f$f_{i, j}\f$ mass fraction of compound \f$j\f$ in phase \f$i\f$, \f$M_j\f$ the molar mass of compound \f$j\f$, \f$n_i\f$ the amount of substance in phase \f$i\f$, and \f$m_i\f$ the mass of phase \f$i\f$.
-	* \param _time The specified time point.
+	* \details \f$f_{i, j} = \f$\p _value\f$\cdot M_j \cdot \sum_j \frac{f_{i,j}}{M_j}\f$, with \f$f_{i, j}\f$ mass fraction of compound \f$j\f$ in phase \f$i\f$, \f$M_j\f$ molar mass of compound \f$j\f$, and \f$f_{i,j}\f$ mass fraction of compound \f$j\f$ in phase \f$i\f$.
+	* \param _time Target time point.
 	* \param _compoundKey Unique key of the compound.
-	* \param _phase The specified phase type.
-	* \param _value Value of molar fraction of the compound in the specified phase at the given time point.
+	* \param _phase Identifier of phase type.
+	* \param _value Value of molar fraction of the compound.
 	*/
 	void SetCompoundMolFraction(double _time, const std::string& _compoundKey, EPhase _phase, double _value);
 
@@ -496,9 +496,9 @@ public:
 
 	/**
 	* \private
-	* \brief Adds the specified phase to the stream, if it does not exist yet and returns a pointer to it or already existing phase.
-	* \details
-	* \param _phase Type of new phase.
+	* \brief Adds the specified phase to the stream.
+	* \details If it does not exist yet and returns a pointer to it or already existing phase.
+	* \param _phase Identifier of phase type.
 	* \param _name Name of new phase.
 	* \return Pointer to the added phase or already existing phase.
 	*/
@@ -507,7 +507,7 @@ public:
 	* \private
 	* \brief Removes the specified phase from the stream.
 	* \details
-	* \param _phase Type of the specified phase in the stream.
+	* \param _phase Indentifier of phase type.
 	*/
 	void RemovePhase(EPhase _phase);
 	// TODO: maybe remove
@@ -520,7 +520,7 @@ public:
 	/**
 	* \brief Returns a const pointer to a phase or nullptr if such phase doesn't exist.
 	* \details
-	* \param _phase Type of the specified phase in the stream.
+	* \param _phase Indentifier of phase type.
 	* \return Const pointer to a phase or nullptr if such phase doesn't exist.
 	*/
 	const CPhase* GetPhase(EPhase _phase) const;
@@ -535,114 +535,119 @@ public:
 	/**
 	* \brief Returns the mass fraction of the specified phase at the given time point.
 	* \details
-	* \param _time The specified time point.
-	* \param _phase The specified phase type.
-	* \return The mass fraction of the specified phase at the given time point.
+	* \param _time Target time point.
+	* \param _phase Indentifier of phase type.
+	* \return Mass fraction of the specified phase.
 	*/
 	double GetPhaseFraction(double _time, EPhase _phase) const;
 	/**
 	* \brief Returns the mass of the specified phase at the given time point.
-	* \details \f$m_i = m \cdot w_i\f$, with \f$m_i\f$ the mass of phase \f$i\f$, \f$w_i\f$ the mass fraction of phase \f$i\f$, and \f$m\f$ the total mass of the holdup.
-	* \param _time The specified time point.
-	* \param _phase The specified phase type.
-	* \return The mass of the specified phase at the given time point.
+	* \details \f$m_i = m \cdot w_i\f$, with \f$m_i\f$ mass of phase \f$i\f$, \f$w_i\f$ mass fraction of phase \f$i\f$, and \f$m\f$ total mass of the holdup.
+	* \param _time Target time point.
+	* \param _phase Indentifier of phase type.
+	* \return Mass of the specified phase.
 	*/
 	double GetPhaseMass(double _time, EPhase _phase) const;
 	/**
 	* \brief Returns the value of the overall property of the specified phase at the given time point.
 	* \details
-	* \param _time The specified time point.
-	* \param _phase The specified phase type.
+	* \param _time Target time point.
+	* \param _phase Indentifier of phase type.
 	* \param _property Identifier of time-dependent overall property.
-	* \return Value of the overall property of the specified phase at the given time point.
+	* \return Value of the overall property.
 	*/
 	double GetPhaseProperty(double _time, EPhase _phase, EOverall _property) const;
 	/**
-	* \brief Returns the value of the constant physical property (MOLAR_MASS) of the specified phase at the given time point.
-	* \details For \p MOLAR_MASS: \f$\frac{1}{M_i} = \sum_j {\frac{f_{i,j}}{M_j}}\f$, with \f$M_i\f$ the molar mass of phase \f$i\f$, \f$f_{i,j}\f$ the mass fraction of compound \f$j\f$ in phase \f$i\f$,\f$M_j\f$ the molar mass of compound \f$j\f$.
-	* For other const material properties: \f$v_i = \sum_j f_{i,j} \cdot v_j\f$, with \f$v_i\f$ the const physical property of phase \f$i\f$, \f$f_{i,j}\f$ the mass fraction of compound \f$j\f$ in phase \f$i\f$, \f$v_i\f$ the value of the specified const \p _property of compound \f$j\f$.
-	* \param _time The specified time point.
-	* \param _phase The specified phase type.
+	* \brief Returns the value of the constant physical property (ECompoundConstProperties::MOLAR_MASS) of the specified phase at the given time point.
+	* \details
+	* - For ECompoundConstProperties::MOLAR_MASS: \f$\frac{1}{M_i} = \sum_j {\frac{f_{i,j}}{M_j}}\f$, with \f$M_i\f$ molar mass of phase \f$i\f$, \f$f_{i,j}\f$ mass fraction of compound \f$j\f$ in phase \f$i\f$,\f$M_j\f$ molar mass of compound \f$j\f$.
+	* - For other const material properties: \f$v_i = \sum_j f_{i,j} \cdot v_j\f$, with \f$v_i\f$ const physical property of phase \f$i\f$, \f$f_{i,j}\f$ mass fraction of compound \f$j\f$ in phase \f$i\f$, \f$v_i\f$ value of the specified const \p _property of compound \f$j\f$.
+	* .
+	* See also: \verbatim embed:rst:inline :ref:`sec.mdb.const` \endverbatim
+	* \param _time Target time point.
+	* \param _phase Indentifier of phase type.
 	* \param _property Identifier of constant material property.
-	* \return Value of the constant physical property of the specified phase at the given time point.
+	* \return Value of the constant physical property.
 	*/
 	double GetPhaseProperty(double _time, EPhase _phase, ECompoundConstProperties _property) const;
 	/**
-	* \brief Returns the value of the temperature/pressure-dependent physical property (DENSITY, ENTHALPY, etc) of the specified phase at the given time point.
+	* \brief Returns the value of the temperature/pressure-dependent physical property (ECompoundTPProperties::DENSITY, ECompoundTPProperties::ENTHALPY, etc) of the specified phase at the given time point.
 	* \details Available properties are:
-	* - \p DENSITY:
-	*	- For solid phase: is calculated by \f$\rho = \sum_{i,j} \rho_i (1 - \varepsilon_j) f_{i,j}\f$, with \f$\varepsilon_j\f$ the porosity in interval \f$j\f$, and \f$f_{i,j}\f$ the mass fraction of compound \f$i\f$ with porosity \f$j\f$.
-	*	- For liquid and vapor phase: is calculated by \f$\frac{1}{\rho} = \sum_i \frac{w_i}{\rho_i}\f$, with \f$w_i\f$ the mass fraction of compound \f$i\f$ in \p _phase.
-	* - \p HEAT_CAPACITY_CP: is calculated by \f$C_p = \sum_i w_i \cdot C_{p,i}\f$, with \f$C_{p,i}\f$ the heat capacity of compound \f$i\f$, and \f$w_i\f$ the mass fraction of compound \f$i\f$ in \p _phase.
-	* - \p VAPOR_PRESSURE: is calculated by \f$P_v = \min_{i} (P_v)_i\f$, with \f$(P_v)_i\f$ vapor pressure of compound \f$i\f$.
-	* - \p VISCOSITY:
-	*	- For solid phase: is calculated by \f$\eta = \sum\limits_i w_i \eta_i\f$, with \f$\eta_i\f$ the viscosity of compound \f$i\f$, and \f$w_i\f$ the mass fraction of compound \f$i\f$.
-	*	- For liquid phase: is calculated by \f$\ln \eta = \sum_i w_i \ln \eta_i\f$, with \f$\eta_i\f$ the viscosity of compound \f$i\f$, and \f$w_i\f$ the mass fraction of compound \f$i\f$ in \p _phase.
-	*	- For vapor phase: \f$\eta = \frac{\sum_i x_i \sqrt{M_i} \eta_i}{\sum_i x_i \sqrt{M_i}}\f$, with \f$\eta_i\f$ the viscosity of compound \f$i\f$, \f$w_i\f$ the mass fraction of compound \f$i\f$ in \p _phase, and \f$x_i\f$ the mole fraction of compound \f$i\f$ in \p _phase.
-	* - \p THERMAL_CONDUCTIVITY:
-	*	- For solid phase: is calculated by \f$\lambda = \sum_i w_i \lambda_i\f$, with \f$\lambda_i\f$ the thermal conductivity of compound \f$i\f$.
-	*	- For liquid phase: is calculated by \f$\lambda = \frac{1}{\sqrt{\sum_i x_i \lambda_i^{-2}}}\f$, with \f$\lambda_i\f$ the thermal conductivity of compound \f$i\f$.
+	* - ECompoundTPProperties::DENSITY:
+	*	- For solid phase: is calculated by \f$\rho = \sum_{i,j} \rho_i (1 - \varepsilon_j) f_{i,j}\f$, with \f$\varepsilon_j\f$ porosity in interval \f$j\f$, and \f$f_{i,j}\f$ mass fraction of compound \f$i\f$ with porosity \f$j\f$.
+	*	- For liquid and vapor phase: is calculated by \f$\frac{1}{\rho} = \sum_i \frac{w_i}{\rho_i}\f$, with \f$w_i\f$ mass fraction of compound \f$i\f$ in \p _phase.
+	* - ECompoundTPProperties::HEAT_CAPACITY_CP: is calculated by \f$C_p = \sum_i w_i \cdot C_{p,i}\f$, with \f$C_{p,i}\f$ heat capacity of compound \f$i\f$, and \f$w_i\f$ mass fraction of compound \f$i\f$ in \p _phase.
+	* - ECompoundTPProperties::VAPOR_PRESSURE: is calculated by \f$P_v = \min_{i} (P_v)_i\f$, with \f$(P_v)_i\f$ vapor pressure of compound \f$i\f$.
+	* - ECompoundTPProperties::VISCOSITY:
+	*	- For solid phase: is calculated by \f$\eta = \sum\limits_i w_i \eta_i\f$, with \f$\eta_i\f$ viscosity of compound \f$i\f$, and \f$w_i\f$ mass fraction of compound \f$i\f$.
+	*	- For liquid phase: is calculated by \f$\ln \eta = \sum_i w_i \ln \eta_i\f$, with \f$\eta_i\f$ viscosity of compound \f$i\f$, and \f$w_i\f$ mass fraction of compound \f$i\f$ in \p _phase.
+	*	- For vapor phase: \f$\eta = \frac{\sum_i x_i \sqrt{M_i} \eta_i}{\sum_i x_i \sqrt{M_i}}\f$, with \f$\eta_i\f$ viscosity of compound \f$i\f$, \f$w_i\f$ mass fraction of compound \f$i\f$ in \p _phase, and \f$x_i\f$ the mole fraction of compound \f$i\f$ in \p _phase.
+	* - ECompoundTPProperties::THERMAL_CONDUCTIVITY:
+	*	- For solid phase: is calculated by \f$\lambda = \sum_i w_i \lambda_i\f$, with \f$\lambda_i\f$ thermal conductivity of compound \f$i\f$.
+	*	- For liquid phase: is calculated by \f$\lambda = \frac{1}{\sqrt{\sum_i x_i \lambda_i^{-2}}}\f$, with \f$\lambda_i\f$ thermal conductivity of compound \f$i\f$.
 	*	- For vapor phase: is calculated by \f$\lambda = \sum_i \frac{x_i \lambda_i}{\sum_j x_j F_{i,j}}\f$, \f$F_{i,j} = \frac{(1 + \sqrt{\lambda_i^4 / \lambda_j} \sqrt{M_j / M_i})^2}{\sqrt{8(1 + M_i / M_j)}}\f$. With \f$M_i\f$ the molar mass of compound \f$i\f$.
-	* - \p PERMITTIVITY: is calculated by \f$\varepsilon = \sum_i w_i \varepsilon_i\f$, with \f$\varepsilon_i\f$ the permittivity of compound \f$i\f$, and \f$w_i\f$ the mass fraction of compound \f$i\f$ in \p _phase.
-	* - \p ENTHALPY: is calculated by \f$H = \sum_i w_i H_i\f$, with \f$H_i\f$ the enthalpy of compound \f$i\f$, and \f$w_i\f$ the mass fraction of compound \f$i\f$ in \p _phase.
-	* - \p EQUILIBRIUM_MOISTURE_CONTENT: is calculated by \f$M = \sum_i w_i M_i\f$, with \f$M_i\f$ the equilibrium moisture content of compound \f$i\f$, and \f$w_i\f$ the mass fraction of compound \f$i\f$ in \p _phase.
-	* - \p TP_PROP_USER_DEFINED_XX: is calculated by \f$Y = \sum_i w_i Y_i\f$, with \f$Y_i\f$ the property value of compound \f$i\f$, and \f$w_i\f$ the mass fraction of compound \f$i\f$ in \p _phase.
-	* \param _time The specified time point.
-	* \param _phase The specified phase type.
+	* - ECompoundTPProperties::PERMITTIVITY: is calculated by \f$\varepsilon = \sum_i w_i \varepsilon_i\f$, with \f$\varepsilon_i\f$ permittivity of compound \f$i\f$, and \f$w_i\f$ mass fraction of compound \f$i\f$ in \p _phase.
+	* - ECompoundTPProperties::ENTHALPY: is calculated by \f$H = \sum_i w_i H_i\f$, with \f$H_i\f$ enthalpy of compound \f$i\f$, and \f$w_i\f$ mass fraction of compound \f$i\f$ in \p _phase.
+	* - ECompoundTPProperties::EQUILIBRIUM_MOISTURE_CONTENT: is calculated by \f$M = \sum_i w_i M_i\f$, with \f$M_i\f$ equilibrium moisture content of compound \f$i\f$, and \f$w_i\f$ mass fraction of compound \f$i\f$ in \p _phase.
+	* - ECompoundTPProperties::TP_PROP_USER_DEFINED_XX: is calculated by \f$Y = \sum_i w_i Y_i\f$, with \f$Y_i\f$ property value of compound \f$i\f$, and \f$w_i\f$ mass fraction of compound \f$i\f$ in \p _phase.
+	* .
+	* See also: \verbatim embed:rst:inline :ref:`sec.mdb.tpd` \endverbatim
+	* \param _time Target time point.
+	* \param _phase Indentifier of phase type.
 	* \param _property Identifier of temperature/pressure-dependent property.
-	* \return Value of the temperature/pressure-dependent physical property of the specified phase at the given time point.
+	* \return Value of the temperature/pressure-dependent physical property.
 	*/
 	double GetPhaseProperty(double _time, EPhase _phase, ECompoundTPProperties _property) const;
 
 	/**
 	* \brief Sets the mass fraction of the specified phase at the given time point.
 	* \details
-	* \param _time The specified time point.
-	* \param _phase The specified phase type.
-	* \param _value The mass fraction value of the specified phase.
+	* \param _time Target time point.
+	* \param _phase Indentifier of phase type.
+	* \param _value Value of mass fraction.
 	*/
 	void SetPhaseFraction(double _time, EPhase _phase, double _value);
 	/**
 	* \brief Sets the mass of the specified phase at the given time point.
 	* \details Total mass of the stream is correspondingly adjusted, masses of other phases remain the same. If there is no specified phase in the holdup, the value will not be set.
 	* Input parameter \p _value is the mass of one defined phase: \f$m_i =\f$ \p _value and \f$w_i = m_i / m\f$. Meanwhile, the total mass \f$m\f$ changes due to assignment for \f$m_i\f$: \f$m = m_{old} + (\f$ \p _value \f$- m_{i,old})\f$. Here \f$m_i\f$ stands for the mass of phase \f$i\f$, \f$w_i\f$ for the mass fraction of phase \f$i\f$, and \f$m\f$ for the total mass of the holdup.
-	* \param _time The specified time point.
-	* \param _phase The specified phase type.
-	* \param _value The mass value of the specified phase.
+	* \param _time Target time point.
+	* \param _phase Indentifier of phase type.
+	* \param _value Value of mass.
 	*/
 	void SetPhaseMass(double _time, EPhase _phase, double _value);
 
 	/**
 	* \brief Returns the molar fraction of the specified phase at the given time point.
-	* \details \f$x_i = \frac{n_i}{N}\f$, with \f$x_i\f$ the molar fraction of phase \f$i\f$, \f$n_i\f$ the amount of substance of phase \f$i\f$, and \f$N\f$ the value of the overall amount of substance.
-	* \param _time The specified time point.
-	* \param _value The mass value of the specified phase.
-	* \return The molar fraction of the specified phase at the given time point.
+	* \details \f$x_i = \frac{n_i}{n}\f$, with \f$x_i\f$ molar fraction of phase \f$i\f$, \f$n_i\f$ amount of substance of phase \f$i\f$, and \f$n\f$ value of the overall amount of substance.
+	* \param _time Target time point.
+	* \param _phase Indentifier of phase type.
+	* \return Molar fraction of the specified phase.
 	*/
 	double GetPhaseMolFraction(double _time, EPhase _phase) const;
 	/**
 	* \brief Returns the amount of substance of the specified phase at the given time point.
-	* \details \f$n_i = \sum_j n_{i,j}^{mol}\f$, with \f$n_i\f$ the amount of substance of phase \f$i\f$, \f$n_{i,j}^{mol}\f$ the amount of substance of compound \f$j\f$ in phase \f$i\f$.
-	* \param _time The specified time point.
-	* \param _phase The specified phase type.
-	* \return The amount of substance of the specified phase at the given time point.
+	* \details \f$n_i = \sum_j n_{i,j}\f$, with \f$n_i\f$ amount of substance of phase \f$i\f$, \f$n_{i,j}\f$ amount of substance of compound \f$j\f$ in phase \f$i\f$.
+	* \param _time Target time point.
+	* \param _phase Indentifier of phase type.
+	* \return Amount of substance of the specified phase.
 	*/
 	double GetPhaseMol(double _time, EPhase _phase) const;
 	/**
 	* \brief Sets the molar fraction of the specified phase at the given time point.
-	* \details Input parameter \p _value is the molar fraction of one defined phase: \f$f_i =\f$ \p _value \f$\cdot \frac{f_i}{x_i}\f$, with \f$f_i\f$ the mass fraction of phase \f$i\f$, and \f$x_i\f$ the molar fraction of phase \f$i\f$.
-	* \param _time The specified time point.
-	* \param _phase The specified phase type.
-	* \param _value The molar fraction of the specified phase.
+	* \details Input parameter \p _value is the molar fraction of one defined phase: \f$f_i =\f$ \p _value \f$\cdot \frac{f_i}{x_i}\f$, with \f$f_i\f$ mass fraction of phase \f$i\f$, and \f$x_i\f$ molar fraction of phase \f$i\f$.
+	* \param _time Target time point.
+	* \param _phase Indentifier of phase type.
+	* \param _value Molar fraction of the specified phase.
 	*/
 	void SetPhaseMolFraction(double _time, EPhase _phase, double _value);
 	/**
 	* \brief Sets the amount of substance of the specified phase at the given time point.
 	* \details Total mass of the stream is correspondingly adjusted, masses of other phases remain the same.
-	* Input parameter \p _value is the amount of substance of one defined phase: \f$m_i = \f$\p _value \f$\cdot \frac{m_i}{n_i}\f$, with \f$m_i\f$ the mass of phase \f$i\f$, and \f$n_i\f$ the amount of substance of phase \f$i\f$.
-	* \param _time The specified time point.
-	* \param _phase The specified phase type.
-	* \param _value The amount of substance of the specified phase.
+	* Input parameter \p _value is the amount of substance of one defined phase: \f$m_i = \f$\p _value \f$\cdot \frac{m_i}{n_i}\f$, with \f$m_i\f$ mass of phase \f$i\f$, and \f$n_i\f$ amount of substance of phase \f$i\f$.
+	* \param _time Target time point.
+	* \param _phase Indentifier of phase type.
+	* \param _value Amount of substance of the specified phase.
 	*/
 	void SetPhaseMol(double _time, EPhase _phase, double _value);
 
@@ -653,34 +658,34 @@ public:
 	/**
 	* \brief Returns the value of the property of the total mixture in the stream at the given time point.
 	* \details Refer to function CBaseStream::GetOverallProperty(double, EOverall) const.
-	* \param _time The specified time point.
+	* \param _time Target time point.
 	* \param _property Identifier of time-dependent overall property.
-	* \return Value of the property of the total mixture in the stream at the given time point.
+	* \return Value of the property of the total mixture.
 	*/
 	double GetMixtureProperty(double _time, EOverall _property) const;
 	/**
-	* \brief Returns the value of the constant physical property (MOLAR_MASS) of the total mixture in the stream at the given time point.
-	* \details \f$V = \sum_i v_i \cdot w_i\f$, with \f$V\f$ the value of the const physical property of the total mixture, \f$v_i\f$ the value of the const physical property of phase \f$i\f$, and \f$w_i\f$ the mass fraction of phase \f$i\f$.
-	* \param _time The specified time point.
+	* \brief Returns the value of the constant physical property (ECompoundConstProperties::MOLAR_MASS) of the total mixture in the stream at the given time point.
+	* \details \f$V = \sum_i v_i \cdot w_i\f$, with \f$V\f$ value of the const physical property of the total mixture, \f$v_i\f$ value of the const physical property of phase \f$i\f$, and \f$w_i\f$ mass fraction of phase \f$i\f$.
+	* \param _time Target time point.
 	* \param _property Identifier of constant material property.
-	* \return Value of the constant physical property of the total mixture in the stream at the given time point.
+	* \return Value of the constant physical property of the total mixture.
 	*/
 	double GetMixtureProperty(double _time, ECompoundConstProperties _property) const;
 	/**
-	* \brief Returns the value of the temperature/pressure-dependent physical property (DENSITY, ENTHALPY, etc) of the total mixture in the stream at the given time point.
-	* \details \f$V = \sum_i v_i \cdot w_i\f$, with \f$V\f$ the value of the temperature/pressure-dependent physical property of the total mixture, \f$v_i\f$ the value of the temperature/pressure-dependent physical property of phase \f$i\f$, and \f$w_i\f$ the mass fraction of phase \f$i\f$.
-	* \param _time The specified time point.
+	* \brief Returns the value of the temperature/pressure-dependent physical property (ECompoundTPProperties::DENSITY, ECompoundTPProperties::ENTHALPY, etc) of the total mixture in the stream at the given time point.
+	* \details \f$V = \sum_i v_i \cdot w_i\f$, with \f$V\f$ value of the temperature/pressure-dependent physical property of the total mixture, \f$v_i\f$ value of the temperature/pressure-dependent physical property of phase \f$i\f$, and \f$w_i\f$ mass fraction of phase \f$i\f$.
+	* \param _time Target time point.
 	* \param _property Identifier of temperature/pressure-dependent property.
-	* \return Value of the temperature/pressure-dependent physical property of the total mixture in the stream at the given time point.
+	* \return Value of the temperature/pressure-dependent physical property of the total mixture.
 	*/
 	double GetMixtureProperty(double _time, ECompoundTPProperties _property) const;
 
 	/**
 	* \brief Sets the value of the property of the total mixture in the stream at the given time point.
 	* \details Refer to function CBaseStream::SetOverallProperty(double, EOverall, double).
-	* \param _time The specified time point.
+	* \param _time Target time point.
 	* \param _property Identifier of time-dependent overall property.
-	* \param _value Value of the property of the total mixture in the stream at the given time point.
+	* \param _value Value of the property of the total mixture.
 	*/
 	void SetMixtureProperty(double _time, EOverall _property, double _value);
 
@@ -689,51 +694,51 @@ public:
 	//
 
 	/**
-	* \brief Returns the value of the constant physical property (CRITICAL_TEMPERATURE, MOLAR_MASS, etc) of the specified compound.
-	* \details These properties are stored in \verbatim embed:rst:inline :ref:`material database <label-materialDataDetailed>` \endverbatim
+	* \brief Returns the value of the constant physical property (ECompoundConstProperties::CRITICAL_TEMPERATURE, ECompoundConstProperties::MOLAR_MASS, etc) of the specified compound.
+	* \details
 	* \param _compoundKey Unique key of the compound.
 	* \param _property Identifier of constant material property.
 	* \return Value of the constant physical property of the specified compound.
 	*/
 	double GetCompoundProperty(const std::string& _compoundKey, ECompoundConstProperties _property) const;
 	/**
-	* \brief Returns the value of the temperature/pressure-dependent physical property (DENSITY, ENTHALPY, etc) of the specified compound with the given temperature [K] and pressure [Pa].
+	* \brief Returns the value of the temperature/pressure-dependent physical property (ECompoundTPProperties::DENSITY, ECompoundTPProperties::ENTHALPY, etc) of the specified compound with the given temperature [K] and pressure [Pa].
 	* \details
 	* \param _compoundKey Unique key of the compound.
 	* \param _property Identifier of temperature/pressure-dependent property.
 	* \param _temperature Value of temperature in [K].
 	* \param _pressure Value of pressure in [Pa].
-	* \return Value of the temperature/pressure-dependent physical property of the specified compound with the given temperature and pressure.
+	* \return Value of the temperature/pressure-dependent physical property of the specified compound.
 	*/
 	double GetCompoundProperty(const std::string& _compoundKey, ECompoundTPProperties _property, double _temperature, double _pressure) const;
 	/**
-	* \brief Returns the value of the temperature/pressure-dependent physical property (DENSITY, ENTHALPY, etc) of the specified compound at temperature and pressure at the given time point.
+	* \brief Returns the value of the temperature/pressure-dependent physical property (ECompoundTPProperties::DENSITY, ECompoundTPProperties::ENTHALPY, etc) of the specified compound at temperature and pressure at the given time point.
 	* \details Refer to function CBaseStream::GetCompoundProperty(const std::string&, ECompoundTPProperties, double, double) const.
-	* \param _time The specified time point.
+	* \param _time Target time point.
 	* \param _compoundKey Unique key of the compound.
 	* \param _property Identifier of temperature/pressure-dependent property.
-	* \return Value of the temperature/pressure-dependent physical property of the specified compound at temperature and pressure at the given time point.
+	* \return Value of the temperature/pressure-dependent physical property of the specified compound.
 	*/
 	double GetCompoundProperty(double _time, const std::string& _compoundKey, ECompoundTPProperties _property) const;
 	/**
-	* \brief Returns the value of the interaction physical property (INTERFACE_TENSION, etc) between the specified compounds with the given specified temperature [K] and pressure [Pa].
-	* \details These properties are stored in the \verbatim embed:rst:inline :ref:`material database <label-materialDataDetailed>` \endverbatim
+	* \brief Returns the value of the interaction physical property (EInteractionProperties::INTERFACE_TENSION, etc) between the specified compounds with the given specified temperature [K] and pressure [Pa].
+	* \details See also: \verbatim embed:rst:inline :ref:`sec.mdb.interactions` \endverbatim
 	* \param _compoundKey1 Unique key of the first compound.
 	* \param _compoundKey2 Unique key of the second compound.
 	* \param _property Identifier of property, defined for interaction of two compounds.
 	* \param _temperature Value of temperature in [K].
 	* \param _pressure Value of pressure in [Pa].
-	* \return Value of the interaction physical property between the specified compounds with the given specified temperature and pressure.
+	* \return Value of the interaction physical property between the specified compounds.
 	*/
 	double GetCompoundProperty(const std::string& _compoundKey1, const std::string& _compoundKey2, EInteractionProperties _property, double _temperature, double _pressure) const;
 	/**
-	* \brief Returns the value of the interaction physical property (INTERFACE_TENSION, etc) between the specified compounds at temperature and pressure at the given time point.
+	* \brief Returns the value of the interaction physical property (EInteractionProperties::INTERFACE_TENSION, etc) between the specified compounds at temperature and pressure at the given time point.
 	* \details Refer to function CBaseStream::GetCompoundProperty(const std::string&, const std::string&, EInteractionProperties, double, double) const.
-	* \param _time The specified time point.
+	* \param _time Target time point.
 	* \param _compoundKey1 Unique key of the first compound.
 	* \param _compoundKey2 Unique key of the second compound.
 	* \param _property Identifier of property, defined for interaction of two compounds.
-	* \return Value of the interaction physical property between the specified compounds at temperature and pressure at the given time point.
+	* \return Value of the interaction physical property between the specified compounds.
 	*/
 	double GetCompoundProperty(double _time, const std::string& _compoundKey1, const std::string& _compoundKey2, EInteractionProperties _property) const;
 
@@ -785,7 +790,7 @@ public:
 	CDenseMDMatrix GetDistribution(double _time, const std::vector<EDistrTypes>& _distributions) const;
 	/**
 	* \brief Returns the one-dimensional distribution of a solid material over the specified parameter for the given compound and time point.
-	* \details Input dimensions should not include distribution by compounds (\p DISTR_COMPOUNDS). If specified compound has not been defined in the stream, nothing will be done.
+	* \details Input dimensions should not include distribution by compounds (EDistrTypes::DISTR_COMPOUNDS). If specified compound has not been defined in the stream, nothing will be done.
 	* \param _time Target time point.
 	* \param _distribution Type of distributed parameter of the solid phase.
 	* \param _compoundKey Unique key of the compound.
@@ -794,7 +799,7 @@ public:
 	std::vector<double> GetDistribution(double _time, EDistrTypes _distribution, const std::string& _compoundKey) const;
 	/**
 	* \brief Returns the two-dimensional distribution of a solid material over the specified parameters for the given compound and time point.
-	* \details Input dimensions should not include distribution by compounds (\p DISTR_COMPOUNDS). If specified compound has not been defined in the stream, nothing will be done.
+	* \details Input dimensions should not include distribution by compounds (EDistrTypes::DISTR_COMPOUNDS). If specified compound has not been defined in the stream, nothing will be done.
 	* \param _time Target time point.
 	* \param _distribution1 First distributed parameter type of the solid phase.
 	* \param _distribution2 Second distributed parameter type of the solid phase.
@@ -804,7 +809,7 @@ public:
 	CMatrix2D GetDistribution(double _time, EDistrTypes _distribution1, EDistrTypes _distribution2, const std::string& _compoundKey) const;
 	/**
 	* \brief Returns the multi-dimensional distribution of a solid material over the specified parameters for the given compound and time point.
-	* \details Input dimensions should not include distribution by compounds (\p DISTR_COMPOUNDS). If specified compound has not been defined in the stream, nothing will be done.
+	* \details Input dimensions should not include distribution by compounds (EDistrTypes::DISTR_COMPOUNDS). If specified compound has not been defined in the stream, nothing will be done.
 	* \param _time Target time point.
 	* \param _distributions List of distributed parameter types of the solid phase.
 	* \param _compoundKey Unique key of the compound.
@@ -838,7 +843,7 @@ public:
 	void SetDistribution(double _time, const CDenseMDMatrix& _value);
 	/**
 	* \brief Sets the one-dimensional distribution of a solid material over the specified parameter for the given compound and time point.
-	* \details If such compound or dimension doesn't exist, nothing will be done. Input dimensions should not include distribution by compounds (\p DISTR_COMPOUNDS).
+	* \details If such compound or dimension doesn't exist, nothing will be done. Input dimensions should not include distribution by compounds (EDistrTypes::DISTR_COMPOUNDS).
 	* \param _time Target time point.
 	* \param _distribution Type of distributed parameter of the solid phase.
 	* \param _compoundKey Unique key of the compound.
@@ -847,7 +852,7 @@ public:
 	void SetDistribution(double _time, EDistrTypes _distribution, const std::string& _compoundKey, const std::vector<double>& _value);
 	/**
 	* \brief Sets the two-dimensional distribution of a solid material over the specified parameters for the given compound and time point.
-	* \details If such time point, compound or dimensions don't exist, nothing will be done. Input dimensions should not include distribution by compounds (\p DISTR_COMPOUNDS).
+	* \details If such time point, compound or dimensions don't exist, nothing will be done. Input dimensions should not include distribution by compounds (EDistrTypes::DISTR_COMPOUNDS).
 	* \param _time Target time point.
 	* \param _distribution1 First distributed parameter type of the solid phase.
 	* \param _distribution2 Second distributed parameter type of the solid phase.
@@ -857,7 +862,7 @@ public:
 	void SetDistribution(double _time, EDistrTypes _distribution1, EDistrTypes _distribution2, const std::string& _compoundKey, const CMatrix2D& _value);
 	/**
 	* \brief Sets the multi-dimensional distribution of a solid material over the specified parameters for the given compound and time point.
-	* \details If such compound or dimensions, which are specified in \p _value, don't exist, nothing will be done. Input dimensions should not include distribution by compounds (\p DISTR_COMPOUNDS).
+	* \details If such compound or dimensions, which are specified in \p _value, don't exist, nothing will be done. Input dimensions should not include distribution by compounds (EDistrTypes::DISTR_COMPOUNDS).
 	* \param _time Target time point.
 	* \param _compoundKey Unique key of the compound.
 	* \param _value Multi-dimensional distribution of a solid material.
@@ -873,7 +878,7 @@ public:
 	void ApplyTM(double _time, const CTransformMatrix& _matrix);
 	/**
 	* \brief Applies the movement matrix to transform the multidimensional distributed parameters of a solid material for the given compound and time point.
-	* \details Dimensions of transformation matrix should not include distribution by compounds (\p DISTR_COMPOUNDS).
+	* \details Dimensions of transformation matrix should not include distribution by compounds (EDistrTypes::DISTR_COMPOUNDS).
 	* \param _time Target time point.
 	* \param _compoundKey Unique key of the compound.
 	* \param _matrix Movement matrix.
@@ -923,8 +928,8 @@ public:
 	*/
 	std::vector<double> GetPSD(double _time, EPSDTypes _type, const std::string& _compoundKey, EPSDGridType _grid = EPSDGridType::DIAMETER) const;
 	/**
-	* \brief Returns the specified type of the PSD of a mixture of selected compounds for the given time point. If the list of compounds is empty, the whole mixture is considered.
-	* \details
+	* \brief Returns the specified type of the PSD of a mixture of selected compounds for the given time point.
+	* \details If the list of compounds is empty, the whole mixture is considered.
 	* \param _time Target time point.
 	* \param _type Identifier of PSD type.
 	* \param _compoundKeys Unique keys of the compounds.
@@ -1322,7 +1327,7 @@ private:
 
 	// TODO: move it somewhere
 	////////////////////////////////////////////////////////////////////////////////
-	/// Deprecated functions
+	// Deprecated functions
 public:
 	[[deprecated("WARNING! AddTimePoint(double, double) is deprecated. Use CopyTimePoint(double, double) instead.")]]
 	void AddTimePoint(double _timeDst, double _timeSrc);
