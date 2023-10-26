@@ -1017,12 +1017,27 @@ public:
 	// Thermodynamics
 	//
 
-	// Returns a pointer to enthalpy calculator.
+	/**
+	* \private
+	* \brief Returns a pointer to enthalpy calculator.
+	* \details
+	* \return Pointer to enthalpy calculator.
+	*/
 	[[nodiscard]] CMixtureEnthalpyLookup* GetEnthalpyCalculator() const;
 
-	// Calculates enthalpy of the stream mixture for the temperature at the given time point using a lookup table.
+	/**
+	* \brief Calculates enthalpy of the stream mixture for the temperature at the given time point using a lookup table.
+	* \details
+	* \param _time Target time point.
+	* \return Calculated value of enthalpy.
+	*/
 	[[nodiscard]] double CalculateEnthalpyFromTemperature(double _time) const;
-	// Calculates temperature of the stream mixture for the enthalpy at the given time point using a lookup table.
+	/**
+	* \brief Calculates temperature of the stream mixture for the enthalpy at the given time point using a lookup table.
+	* \details
+	* \param _time Target time point.
+	* \return Calculated value of temperature.
+	*/
 	[[nodiscard]] double CalculateTemperatureFromEnthalpy(double _time) const;
 
 	////////////////////////////////////////////////////////////////////////////////
