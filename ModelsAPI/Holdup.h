@@ -6,6 +6,10 @@
 
 class CStream;
 
+/**
+* \brief Class describes the holdup material.
+* \details
+*/
 class CHoldup : public CBaseStream
 {
 public:
@@ -18,25 +22,58 @@ public:
 	// Copy constructor.
 	CHoldup(const CBaseStream& _other);
 
-	// Copies all data at the given time point from another holdup. All data after the time point are removed from this holdup.
+	/**
+	* \brief Copies all data at the given time point from another holdup.
+	* \details All data after the time point are removed from this holdup. Refer to function CBaseStream::Copy(double, const CBaseStream&).
+	* \param _time Time point to copy.
+	* \param _source Source holdup.
+	*/
 	void CopyFromHoldup(double _time, const CHoldup* _source);
-	// Copies all data at the given time interval from another holdup. All data after the end time point are removed from this holdup.
+	/**
+	* \brief Copies all data at the given time interval from another holdup.
+	* \details All data after the end time point are removed from this holdup. Refer to function CBaseStream::Copy(double, double, const CBaseStream&).
+	* \param _timeBeg Begin of the time interval to copy.
+	* \param _timeEnd End of the time interval to copy.
+	* \param _source Source holdup.
+	*/
 	void CopyFromHoldup(double _timeBeg, double _timeEnd, const CHoldup* _source);
-	// Copies all data from the given time point of another holdup to another time point of this stream. All data after the time point are removed from this holdup.
+	/**
+	* \brief Copies all data from the given time point of another holdup to another time point of this stream.
+	* \details All data after the time point are removed from this holdup. Refer to function CBaseStream::Copy(double, const CBaseStream&, double).
+	* \param _timeDst Time point of the destination holdup to copy.
+	* \param _source Source holdup.
+	* \param _timeSrc Time point of the source holdup to copy.
+	*/
 	void CopyFromHoldup(double _timeDst, const CHoldup* _source, double _timeSrc);
 
-	/* Mixes the content of the specified stream at the given time interval with the holdup. Before mixing, all data after the end time point are removed.
-	 * Takes into account only two given time points, regardless of whether they were defined in the stream. All possible time points within the interval are discarded.*/
+	/**
+	* \brief Mixes the content of the specified stream at the given time interval with the holdup.
+	* \details Before mixing, all data after the end time point are removed. Takes into account only two given time points, regardless of whether they were defined in the stream. All possible time points within the interval are discarded.
+	* \param _timeBeg Begin of the time interval.
+	* \param _timeEnd End of the time interval.
+	* \param _source Source stream.
+	*/
 	void AddStream(double _timeBeg, double _timeEnd, const CStream* _source);
 
-	// Mixes the specified holdup with the current holdup at the given time point.
+	/**
+	* \brief Mixes the specified holdup with the current holdup at the given time point.
+	* \details Refer to function CBaseStream::Add(double, const CBaseStream&).
+	* \param _time Target time point.
+	* \param _source Source holdup.
+	*/
 	void AddHoldup(double _time, const CHoldup* _source);
-	// Mixes the specified holdup with the current holdup for each time point from the given time interval.
+	/**
+	* \brief Mixes the specified holdup with the current holdup for each time point from the given time interval.
+	* \details Refer to function CBaseStream::Add(double, double, const CBaseStream&).
+	* \param _timeBeg Begin of the time interval.
+	* \param _timeEnd End of the time interval.
+	* \param _source Source holdup.
+	*/
 	void AddHoldup(double _timeBeg, double _timeEnd, const CHoldup* _source);
 
 	// TODO: move it somewhere
 	////////////////////////////////////////////////////////////////////////////////
-	/// Deprecated functions
+	// Deprecated functions
 	[[deprecated("WARNING! CopyFromHoldup(const CHoldup*, double) is deprecated. Use CopyFromHoldup(double, const CHoldup*) instead.")]]
 	void CopyFromHoldup(const CHoldup* _source, double _time);
 	[[deprecated("WARNING! AddHoldup(const CHoldup*, double) is deprecated. Use AddHoldup(double, const CHoldup*) instead.")]]
