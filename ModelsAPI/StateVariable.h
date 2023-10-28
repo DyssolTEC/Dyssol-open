@@ -14,7 +14,10 @@ class CH5Handler;
 // CStateVariable
 //
 
-// Description of time-dependent state variables.
+/**
+* \brief Description of time-dependent state variables.
+* \details
+*/
 class CStateVariable
 {
 	static const unsigned m_saveVersion{ 1 };	// Current version of the saving procedure.
@@ -32,8 +35,18 @@ public:
 
 	void Clear();								// Clears state variable.
 
-	std::string GetName() const;				// Returns name of the state variable.
-	void SetName(const std::string& _name);		// Sets name of the state variable.
+	/**
+	* \brief Returns name of the state variable.
+	* \details
+	* \return Name of the state variable.
+	*/
+	std::string GetName() const;
+	/**
+	* \brief Sets name of the state variable.
+	* \details
+	* \param _name Name of the state variable.
+	*/
+	void SetName(const std::string& _name);
 
 	double GetValue() const;					// Returns current value of the state variable
 	void SetValue(double _value);				// Sets new value of the state variable.
@@ -57,6 +70,10 @@ private:
 // CStateVariablesManager
 //
 
+/**
+* \brief Manager of state variables.
+* \details
+*/
 class CStateVariablesManager
 {
 	static const unsigned m_saveVersion{ 1 };	// Current version of the saving procedure.
@@ -93,12 +110,22 @@ public:
 	// Returns const pointers to all defined state variables that track history of changes.
 	std::vector<CStateVariable*> GetAllStateVariablesWithHistory();
 
-	// Returns a number of defined state variables.
+	/**
+	* \brief Returns a number of defined state variables.
+	* \details
+	* \return Number of defined state variables.
+	*/
 	size_t GetStateVariablesNumber() const;
 
-	// Removes all defined state variables.
+	/**
+	* \brief Removes all defined state variables.
+	* \details
+	*/
 	void ClearData();
-	// Removes all data.
+	/**
+	* \brief Removes all data.
+	* \details
+	*/
 	void Clear();
 
 	// Stores the current state of all state variables.
