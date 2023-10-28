@@ -34,7 +34,10 @@ enum class EUnitParameter
 #define UP_MAX  (std::numeric_limits<double>::max())
 
 
-/* Base class for unit parameters. */
+/**
+* \brief Base class for unit parameters.
+* \details
+*/
 class CBaseUnitParameter
 {
 	EUnitParameter m_type;                          ///< Type of unit parameter.
@@ -56,12 +59,22 @@ public:
 	virtual void Clear() = 0;							     ///< Clears all data.
 
 	EUnitParameter GetType() const;                          ///< Returns parameter type.
-	std::string GetName() const;                             ///< Returns parameter name.
+	/**
+	* \brief Returns parameter name.
+	* \details
+	* \return Parameter name.
+	*/
+	std::string GetName() const;
 	std::string GetUnits() const;                            ///< Returns parameter units.
 	std::string GetDescription() const;                      ///< Returns parameter description.
 
 	void SetType(EUnitParameter _type);                      ///< Sets parameter type.
-	void SetName(const std::string& _name);                  ///< Sets parameter name.
+	/**
+	* \brief Sets parameter name.
+	* \details
+	* \param _name Parameter name.
+	*/
+	void SetName(const std::string& _name);
 	void SetUnits(const std::string& _units);                ///< Sets parameter units.
 	void SetDescription(const std::string& _description);    ///< Sets parameter description.
 
@@ -79,6 +92,7 @@ public:
 
 /**
  * \brief Basic class for constant unit parameters.
+ * \details
  */
 template<typename T>
 class CConstUnitParameter : public CBaseUnitParameter
@@ -96,12 +110,32 @@ public:
 	void Clear() override;							///< Sets value to zero.
 
 	T GetValue() const { return m_value; }			///< Returns constant unit parameter value.
-	T GetMin() const{ return m_min; }				///< Returns minimum allowed value.
-	T GetMax() const{ return m_max; }				///< Returns maximum allowed value.
+	/**
+	* \brief Returns minimum allowed value.
+	* \details
+	* \return Minimum allowed value.
+	*/
+	T GetMin() const{ return m_min; }
+	/**
+	* \brief Returns maximum allowed value.
+	* \details
+	* \return Maximum allowed value.
+	*/
+	T GetMax() const{ return m_max; }
 
 	void SetValue(T _value) { m_value = _value; }	///< Sets constant unit parameter value.
-	void SetMin(T _min){ m_min = _min; }			///< Sets minimum allowed value.
-	void SetMax(T _max){ m_max = _max; }			///< Sets maximum allowed value.
+	/**
+	* \brief Sets minimum allowed value.
+	* \details
+	* \param _min Minimum allowed value.
+	*/
+	void SetMin(T _min){ m_min = _min; }
+	/**
+	* \brief Sets maximum allowed value.
+	* \details
+	* \param _max Maximum allowed value.
+	*/
+	void SetMax(T _max){ m_max = _max; }
 
 	bool IsInBounds() const override;				///< Checks whether m_value lays in range [m_min; m_max].
 
@@ -127,7 +161,10 @@ using CConstIntUnitParameter = CConstUnitParameter<int64_t>;
  */
 using CConstUIntUnitParameter = CConstUnitParameter<uint64_t>;
 
-// Class for constant list unit parameters.
+/**
+* \brief Class for constant list unit parameters.
+* \details
+*/
 template<typename T>
 class CListUnitParameter : public CBaseUnitParameter
 {
@@ -156,14 +193,30 @@ public:
 	[[nodiscard]] std::vector<T> GetValues() const { return m_values; }
 	void SetValues(const std::vector<T>& _values) { m_values = _values; }
 
-	// Returns minimum allowed value.
+	/**
+	* \brief Returns minimum allowed value.
+	* \details
+	* \return Minimum allowed value.
+	*/
 	[[nodiscard]] T GetMin() const { return m_min; }
-	// Returns maximum allowed value.
+	/**
+	* \brief Returns maximum allowed value.
+	* \details
+	* \return Maximum allowed value.
+	*/
 	[[nodiscard]] T GetMax() const { return m_max; }
 
-	// Sets new minimum allowed value.
+	/**
+	* \brief Sets minimum allowed value.
+	* \details
+	* \param _min Minimum allowed value.
+	*/
 	void SetMin(T _min) { m_min = _min; }
-	// Sets new maximum allowed value.
+	/**
+	* \brief Sets maximum allowed value.
+	* \details
+	* \param _max Maximum allowed value.
+	*/
 	void SetMax(T _max) { m_max = _max; }
 
 	// Returns the number of defined values.
@@ -195,7 +248,10 @@ using CListIntUnitParameter  = CListUnitParameter<int64_t>;
  */
 using CListUIntUnitParameter = CListUnitParameter<uint64_t>;
 
-// Class for dependent unit parameters.
+/**
+* \brief Class for dependent unit parameters.
+* \details
+*/
 class CDependentUnitParameter : public CBaseUnitParameter
 {
 	static const unsigned m_cnSaveVersion{ 2 };
@@ -214,23 +270,73 @@ public:
 
 	void Clear() override;								///< Removes all values.
 
-	std::string GetParamName() const;					///< Returns parameter name.
-	void SetParamName(const std::string& _paramName);	///< Sets parameter name.
+	/**
+	* \brief Returns parameter name.
+	* \details
+	* \return Parameter name.
+	*/
+	std::string GetParamName() const;
+	/**
+	* \brief Sets parameter name.
+	* \details
+	* \param _paramName Parameter name.
+	*/
+	void SetParamName(const std::string& _paramName);
 
 	std::string GetParamUnits() const;					///< Returns parameter units.
 	void SetParamUnits(const std::string& _paramUnits);	///< Sets parameter units.
 
-	double GetValueMin() const;							///< Returns minimum allowed value.
-	double GetValueMax() const;							///< Returns maximum allowed value.
+	/**
+	* \brief Returns minimum allowed value.
+	* \details
+	* \return Minimum allowed value.
+	*/
+	double GetValueMin() const;
+	/**
+	* \brief Returns maximum allowed value.
+	* \details
+	* \return Maximum allowed value.
+	*/
+	double GetValueMax() const;
 
-	void SetValueMin(double _valueMin);					///< Sets minimum allowed value.
-	void SetValueMax(double _valueMax);					///< Sets maximum allowed value.
+	/**
+	* \brief Sets minimum allowed value.
+	* \details
+	* \param _valueMin Minimum allowed value.
+	*/
+	void SetValueMin(double _valueMin);
+	/**
+	* \brief Sets maximum allowed value.
+	* \details
+	* \param _valueMax Maximum allowed value.
+	*/
+	void SetValueMax(double _valueMax);
 
-	double GetParamMin() const;							///< Returns minimum allowed parameter.
-	double GetParamMax() const;							///< Returns maximum allowed parameter.
+	/**
+	* \brief Returns minimum allowed parameter.
+	* \details
+	* \return Minimum allowed parameter.
+	*/
+	double GetParamMin() const;
+	/**
+	* \brief Returns maximum allowed parameter.
+	* \details
+	* \return Maximum allowed parameter.
+	*/
+	double GetParamMax() const;
 
-	void SetParamMin(double _paramMin);					///< Sets minimum allowed parameter.
-	void SetParamMax(double _paramMax);					///< Sets maximum allowed parameter.
+	/**
+	* \brief Sets minimum allowed parameter.
+	* \details
+	* \param _paramMin Minimum allowed parameter.
+	*/
+	void SetParamMin(double _paramMin);
+	/**
+	* \brief Sets maximum allowed parameter.
+	* \details
+	* \param _paramMax Maximum allowed parameter.
+	*/
+	void SetParamMax(double _paramMax);
 
 	double GetValue(double _param) const;				///< Returns unit parameter value at given dependent value using interpolation if necessary.
 	void SetValue(double _param, double _value);		///< Adds new unit parameter value at given dependent value or changes the value of existing one.
@@ -255,7 +361,10 @@ public:
 	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
 };
 
-// Class for time-dependent unit parameters.
+/**
+* \brief Class for time-dependent unit parameters.
+* \details
+*/
 class CTDUnitParameter : public CDependentUnitParameter
 {
 	static const unsigned m_cnSaveVersion{ 2 };
@@ -264,7 +373,12 @@ public:
 	CTDUnitParameter();
 	CTDUnitParameter(std::string _name, std::string _units, std::string _description, double _min, double _max, double _value);
 
-	std::vector<double> GetTimes() const;				///< Returns list of all defined time points.
+	/**
+	* \brief Returns list of all defined time points.
+	* \details Refer to function CDependentUnitParameter::GetParams() const.
+	* \return List of all defined time points.
+	*/
+	std::vector<double> GetTimes() const;
 
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
 	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
@@ -456,12 +570,14 @@ public:
 };
 
 
-/* Manager of unit parameters for each unit.
- * Each parameter may be a member of one or several groups, to allow showing / hiding of some parameters in GUI.
- * Block is defined by a single CComboUnitParameter and may have several options to choose.
- * Each option is a group of one or several parameters, which should be shown / hidden together, depending on the selection of corresponding CComboUnitParameter.
- * One parameter can belong to several groups and several blocks.
- * Block is stored as an index of a CComboUnitParameter. Group is stored as indices of parameters, which belong to this group.*/
+/**
+* \brief Manager of unit parameters for each unit.
+* \details Each parameter may be a member of one or several groups, to allow showing / hiding of some parameters in GUI.
+* Block is defined by a single CComboUnitParameter and may have several options to choose.
+* Each option is a group of one or several parameters, which should be shown / hidden together, depending on the selection of corresponding CComboUnitParameter.
+* One parameter can belong to several groups and several blocks.
+* Block is stored as an index of a CComboUnitParameter. Group is stored as indices of parameters, which belong to this group.
+*/
 class CUnitParametersManager
 {
 	static const unsigned m_cnSaveVersion{ 1 };
@@ -480,7 +596,11 @@ public:
 	 */
 	void CopyUserData(const CUnitParametersManager& _other);
 
-	// Returns number of specified unit parameters.
+	/**
+	* \brief Returns number of specified unit parameters.
+	* \details
+	* \return Number of parameters defined in the unit.
+	*/
 	size_t ParametersNumber() const;
 	// Returns true if unit parameter with given name already exists.
 	bool IsNameExist(const std::string& _name) const;
