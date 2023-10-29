@@ -790,7 +790,7 @@ public:
 	CDenseMDMatrix GetDistribution(double _time, const std::vector<EDistrTypes>& _distributions) const;
 	/**
 	* \brief Returns the one-dimensional distribution of a solid material over the specified parameter for the given compound and time point.
-	* \details Input dimensions should not include distribution by compounds (EDistrTypes::DISTR_COMPOUNDS). If specified compound has not been defined in the stream, nothing will be done.
+	* \details Input dimensions should not include distribution by compounds (::DISTR_COMPOUNDS). If specified compound has not been defined in the stream, nothing will be done.
 	* \param _time Target time point.
 	* \param _distribution Type of distributed parameter of the solid phase.
 	* \param _compoundKey Unique key of the compound.
@@ -799,7 +799,7 @@ public:
 	std::vector<double> GetDistribution(double _time, EDistrTypes _distribution, const std::string& _compoundKey) const;
 	/**
 	* \brief Returns the two-dimensional distribution of a solid material over the specified parameters for the given compound and time point.
-	* \details Input dimensions should not include distribution by compounds (EDistrTypes::DISTR_COMPOUNDS). If specified compound has not been defined in the stream, nothing will be done.
+	* \details Input dimensions should not include distribution by compounds (::DISTR_COMPOUNDS). If specified compound has not been defined in the stream, nothing will be done.
 	* \param _time Target time point.
 	* \param _distribution1 First distributed parameter type of the solid phase.
 	* \param _distribution2 Second distributed parameter type of the solid phase.
@@ -809,7 +809,7 @@ public:
 	CMatrix2D GetDistribution(double _time, EDistrTypes _distribution1, EDistrTypes _distribution2, const std::string& _compoundKey) const;
 	/**
 	* \brief Returns the multi-dimensional distribution of a solid material over the specified parameters for the given compound and time point.
-	* \details Input dimensions should not include distribution by compounds (EDistrTypes::DISTR_COMPOUNDS). If specified compound has not been defined in the stream, nothing will be done.
+	* \details Input dimensions should not include distribution by compounds (::DISTR_COMPOUNDS). If specified compound has not been defined in the stream, nothing will be done.
 	* \param _time Target time point.
 	* \param _distributions List of distributed parameter types of the solid phase.
 	* \param _compoundKey Unique key of the compound.
@@ -843,7 +843,7 @@ public:
 	void SetDistribution(double _time, const CDenseMDMatrix& _value);
 	/**
 	* \brief Sets the one-dimensional distribution of a solid material over the specified parameter for the given compound and time point.
-	* \details If such compound or dimension doesn't exist, nothing will be done. Input dimensions should not include distribution by compounds (EDistrTypes::DISTR_COMPOUNDS).
+	* \details If such compound or dimension doesn't exist, nothing will be done. Input dimensions should not include distribution by compounds (::DISTR_COMPOUNDS).
 	* \param _time Target time point.
 	* \param _distribution Type of distributed parameter of the solid phase.
 	* \param _compoundKey Unique key of the compound.
@@ -852,7 +852,7 @@ public:
 	void SetDistribution(double _time, EDistrTypes _distribution, const std::string& _compoundKey, const std::vector<double>& _value);
 	/**
 	* \brief Sets the two-dimensional distribution of a solid material over the specified parameters for the given compound and time point.
-	* \details If such time point, compound or dimensions don't exist, nothing will be done. Input dimensions should not include distribution by compounds (EDistrTypes::DISTR_COMPOUNDS).
+	* \details If such time point, compound or dimensions don't exist, nothing will be done. Input dimensions should not include distribution by compounds (::DISTR_COMPOUNDS).
 	* \param _time Target time point.
 	* \param _distribution1 First distributed parameter type of the solid phase.
 	* \param _distribution2 Second distributed parameter type of the solid phase.
@@ -862,7 +862,7 @@ public:
 	void SetDistribution(double _time, EDistrTypes _distribution1, EDistrTypes _distribution2, const std::string& _compoundKey, const CMatrix2D& _value);
 	/**
 	* \brief Sets the multi-dimensional distribution of a solid material over the specified parameters for the given compound and time point.
-	* \details If such compound or dimensions, which are specified in \p _value, don't exist, nothing will be done. Input dimensions should not include distribution by compounds (EDistrTypes::DISTR_COMPOUNDS).
+	* \details If such compound or dimensions, which are specified in \p _value, don't exist, nothing will be done. Input dimensions should not include distribution by compounds (::DISTR_COMPOUNDS).
 	* \param _time Target time point.
 	* \param _compoundKey Unique key of the compound.
 	* \param _value Multi-dimensional distribution of a solid material.
@@ -878,7 +878,7 @@ public:
 	void ApplyTM(double _time, const CTransformMatrix& _matrix);
 	/**
 	* \brief Applies the movement matrix to transform the multidimensional distributed parameters of a solid material for the given compound and time point.
-	* \details Dimensions of transformation matrix should not include distribution by compounds (EDistrTypes::DISTR_COMPOUNDS).
+	* \details Dimensions of transformation matrix should not include distribution by compounds (::DISTR_COMPOUNDS).
 	* \param _time Target time point.
 	* \param _compoundKey Unique key of the compound.
 	* \param _matrix Movement matrix.
