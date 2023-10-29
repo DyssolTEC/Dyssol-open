@@ -136,7 +136,32 @@ enum class ENLSolverStrategy : uint32_t
 // ========== PSD TYPES
 /**
 * \brief Identifiers of PSD types.
+* \details
+* \note
+* Notations:
+* - \f$i\f$ - index of size classes
+* - \f$j\f$ - index of compounds
+* - \f$k\f$ - index of porosities
+* - \f$d_i\f$ - particle diameter of class \f$i\f$
+* - \f$\Delta d_i\f$ - size of the class \f$i\f$
+* - \f$m_i\f$ - mass of particles of class \f$i\f$
+* - \f$M_{tot}\f$ - total mass of particles
+* - \f$N_i\f$ - number of particles of class \f$i\f$
+* - \f$N_{i, j}\f$ - number of particles of compound \f$j\f$ with size class \f$i\f$
+* - \f$N_{tot}\f$ - total number of particles
+* - \f$w_i\f$ - mass fraction of particles of class \f$i\f$
+* - \f$w_{i, j}\f$ - mass fraction of particles of compound \f$j\f$ with size class \f$i\f$
+* - \f$w_{i, j, k}\f$ - mass fraction of particles of compound \f$j\f$ with size class \f$i\f$and porosity \f$k\f$
+* - \f$\rho_j\f$ - density of compound \f$j\f$
+* - \f$\varepsilon_k\f$ - porosity of class \f$k\f$
+* - \f$q_0\f$ - number - related density distribution
+* - \f$Q_0\f$ - number - related cumulative distribution
+* - \f$q_2\f$ - surface - area - related density distribution
+* - \f$Q_2\f$ - surface - area - related cumulative distribution
+* - \f$q_3\f$ - mass - related density distribution
+* - \f$Q_3\f$ - mass - related cumulative distribution
 */
+
 enum EPSDTypes
 {
 	PSD_q3       = 0, ///< Mass-related density distribution: \f$q_{3,i} = w_i / \Delta d_i\f$.
