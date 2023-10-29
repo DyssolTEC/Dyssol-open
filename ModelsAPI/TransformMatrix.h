@@ -81,8 +81,8 @@ public:
 	*/
 	bool SetDimensions( unsigned _nType1, unsigned _nClasses1, unsigned _nType2, unsigned _nClasses2, unsigned _nType3, unsigned _nClasses3 );
 	/**
-	* \brief Sets new dimensions set with types \p _vTypes and numbers of classes \p _vClasses. \p _vTypes is the vector of #EDistrTypes.
-	* \details All old data will be erased and matrix will be initialized with zeroes. Sizes of vectors \p _vTypes and \p _vClasses must be equal. Returns \p false on error.
+	* \brief Sets new dimensions set with types \p _vTypes and numbers of classes \p _vClasses.
+	* \details \p _vTypes is the vector of #EDistrTypes. All old data will be erased and matrix will be initialized with zeroes. Sizes of vectors \p _vTypes and \p _vClasses must be equal. Returns \p false on error.
 	* \param _vTypes Distribution types.
 	* \param _vClasses Numbers of classes of distributions.
 	* \return Whether an error has occurred.
