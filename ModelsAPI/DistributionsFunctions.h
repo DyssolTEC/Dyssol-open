@@ -7,6 +7,34 @@
 #include <numeric>
 #include <string>
 
+/** \file
+* \brief Several global functions are defined to work with particle size distributions. These functions can be called from any place of the code.
+* \details All functions receive grid (\p _grid) as the input parameter. The grid can be previously obtained with the help of the function CBaseUnit::GetNumericGrid(EDistrTypes) const.
+* \note
+* Notations:
+* - \f$d_i\f$ - diameter of particle in class \f$i\f$
+* - \f$\Delta d_i\f$ - size of the class \f$i\f$
+* - \f$M_k\f$ - \f$k\f$-th moment
+* - \f$q\f$ - density distribution
+* - \f$q_0\f$ - number related density distribution
+* - \f$Q_0\f$ - number related cumulative distribution
+* - \f$q_2\f$ - surface-area-related density distribution
+* - \f$Q_2\f$ - surface-area-related cumulative distribution
+* - \f$q_3\f$ - mass-related density distribution
+* - \f$Q_3\f$ - mass-related cumulative distribution
+* - \f$w_i\f$ - mass fraction of particles of class \f$i\f$
+* - \f$N_i\f$ - number of particles of class \f$i\f$
+* - \f$N_{tot}\f$ - total number of particles
+*/
+
+/**
+* \brief Calculates moment of the density distribution.
+* \details \f$M_k = \sum_i d_i^k q_i \Delta d_i\f$.
+* \param _moment Value of moment.
+* \param _grid Distribution grid.
+* \param _q Input distribution.
+* \return Value of the density distribution moment.
+*/
 double inline GetMMoment(int _moment, const std::vector<double>& _grid, const std::vector<double>& _q)
 {
 	if (_grid.size() != _q.size() + 1)	return 0;
@@ -17,6 +45,14 @@ double inline GetMMoment(int _moment, const std::vector<double>& _grid, const st
 	return dMoment;
 }
 
+/**
+* \brief Calculates Q.
+* \details
+* \param _QiDistr Input distribution.
+* \param _grid Distribution grid.
+* \param _size Value of size.
+* \return Calculated Q.
+*/
 double inline GetQ(const std::vector<double>& _QiDistr, const std::vector<double>& _grid, double _size)
 {
 	if (_size <= _grid.front()) return 0;
@@ -46,6 +82,13 @@ double inline GetQ(const std::vector<double>& _QiDistr, const std::vector<double
 		return(vTempDistr[nRight] - vTempDistr[nLeft]) / (_grid[nRight] - _grid[nLeft]) * (_size - _grid[nLeft]) + vTempDistr[nLeft];
 }
 
+/**
+* \brief Performs conversion from cumulative to density distributions.
+* \details \f$q_0 = \frac{Q_0}{\Delta d_i}\f$ and \f$q_i = \frac{Q_i - Q_{i-1}}{\Delta d_i}\f$.
+* \param _grid Distribution grid.
+* \param _Q Input distribution.
+* \return Density distribution.
+*/
 std::vector<double> inline Q2q(const std::vector<double>& _grid, const std::vector<double>& _Q)
 {
 	if (_Q.empty()) return {};
@@ -56,6 +99,13 @@ std::vector<double> inline Q2q(const std::vector<double>& _grid, const std::vect
 	return q;
 }
 
+/**
+* \brief Performs conversion from density to cumulative distributions.
+* \details \f$Q_i = \sum_i q_i \Delta d_i = Q_i-1 + q_i \Delta d_i\f$.
+* \param _grid Distribution grid.
+* \param _q Input distribution.
+* \return Cumulative distribution.
+*/
 std::vector<double> inline q2Q(const std::vector<double>& _grid, const std::vector<double>& _q)
 {
 	std::vector<double> Q(_q.size());
@@ -68,6 +118,15 @@ std::vector<double> inline q2Q(const std::vector<double>& _grid, const std::vect
 	return Q;
 }
 
+/**
+* \brief Performs conversion from one density distribution to another.
+* \details \f$q_i = \frac{d_i^{y-x} q_i}{M^{y-x}(q_x)}\f$.
+* \param _grid Distribution grid.
+* \param _qx Input distribution.
+* \param x Input density distribution.
+* \param y Output density distribution.
+* \return Density distribution.
+*/
 std::vector<double> inline qx2qy(const std::vector<double>& _grid, const std::vector<double>& _qx, int x, int y)
 {
 	if (_grid.size() != _qx.size() + 1) return {};
@@ -82,31 +141,79 @@ std::vector<double> inline qx2qy(const std::vector<double>& _grid, const std::ve
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+* \brief Performs conversion from Q0 to q0 distributions.
+* \details Using information about the size grid: \f$q_{0,0} = \frac{Q_{0,0}}{\Delta d_i}\f$ and \f$q_{0,i} = \frac{Q_{0,i} - Q_{0,i-1}}{\Delta d_i}\f$.
+* Refer to function Q2q(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _Q0 Input distribution.
+* \return Converted q0 distribution.
+*/
 std::vector<double> inline ConvertQ0Toq0(const std::vector<double>& _grid, const std::vector<double>& _Q0)
 {
 	return Q2q(_grid, _Q0);
 }
 
+/**
+* \brief Performs conversion from q0 to Q0 distributions.
+* \details Using information about the size grid: \f$Q_{0,i} = \sum_i q_{0,i} \Delta d_i = Q_{0,i-1} + q_{0,i} \Delta d_i\f$.
+* Refer to function q2Q(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _q0 Input distribution.
+* \return Converted Q0 distribution.
+*/
 std::vector<double> inline Convertq0ToQ0(const std::vector<double>& _grid, const std::vector<double>& _q0)
 {
 	return q2Q(_grid, _q0);
 }
 
+/**
+* \brief Performs conversion from Q2 to q2 distributions.
+* \details Using information about the size grid: \f$q_{2,0} = \frac{Q_{2,0}}{\Delta d_i}\f$ and \f$q_{2,i} = \frac{Q_{2,i} - Q_{2,i-1}}{\Delta d_i}\f$.
+* Refer to function Q2q(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _Q2 Input distribution.
+* \return Converted q2 distribution.
+*/
 std::vector<double> inline ConvertQ2Toq2(const std::vector<double>& _grid, const std::vector<double>& _Q2)
 {
 	return Q2q(_grid, _Q2);
 }
 
+/**
+* \brief Performs conversion from q2 to Q2 distributions.
+* \details Using information about the size grid: \f$Q_{2,i} = \sum_i q_{2,i} \Delta d_i = Q_{2,i-1} + q_{2,i} \Delta d_i\f$.
+* Refer to function q2Q(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _q2 Input distribution.
+* \return Converted Q2 distribution.
+*/
 std::vector<double> inline Convertq2ToQ2(const std::vector<double>& _grid, const std::vector<double>& _q2)
 {
 	return q2Q(_grid, _q2);
 }
 
+/**
+* \brief Performs conversion from Q3 to q3 distributions.
+* \details Using information about the size grid: \f$q_{3,0} = \dfrac{Q_{3,0}}{\Delta d_i}\f$ and \f$q_{3,i} = \frac{Q_{3,i} - Q_{3,i-1}}{\Delta d_i}\f$.
+* Refer to function Q2q(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _Q3 Input distribution.
+* \return Converted q3 distribution.
+*/
 std::vector<double> inline ConvertQ3Toq3(const std::vector<double>& _grid, const std::vector<double>& _Q3)
 {
 	return Q2q(_grid, _Q3);
 }
 
+/**
+* \brief Performs conversion from q3 to Q3 distributions.
+* \details Using information about the size grid: \f$Q_{3,i} = \sum_i q_{3,i} \Delta d_i = Q_{3,i-1} + q_{3,i} \Delta d_i\f$.
+* Refer to function q2Q(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _q3 Input distribution.
+* \return Converted Q3 distribution.
+*/
 std::vector<double> inline Convertq3ToQ3(const std::vector<double>& _grid, const std::vector<double>& _q3)
 {
 	return q2Q(_grid, _q3);
@@ -114,31 +221,79 @@ std::vector<double> inline Convertq3ToQ3(const std::vector<double>& _grid, const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+* \brief Performs conversion from q0 to q2 distributions.
+* \details Using information about the size grid by \f$q_{2,i} = \frac{d_i^2 q_{0,i}}{M_2(q_0)}\f$.
+* Refer to function qx2qy(const std::vector<double>&, const std::vector<double>&, int, int).
+* \param _grid Distribution grid.
+* \param _q0 Input distribution.
+* \return Converted q2 distribution.
+*/
 std::vector<double> inline Convertq0Toq2(const std::vector<double>& _grid, const std::vector<double>& _q0)
 {
 	return qx2qy(_grid, _q0, 0, 2);
 }
 
+/**
+* \brief Performs conversion from q0 to q3 distributions.
+* \details Using information about the size grid by \f$q_{3,i} = \frac{d_i^3 q_{0,i}}{M_3(q_0)}\f$.
+* Refer to function qx2qy(const std::vector<double>&, const std::vector<double>&, int, int).
+* \param _grid Distribution grid.
+* \param _q0 Input distribution.
+* \return Converted q3 distribution.
+*/
 std::vector<double> inline Convertq0Toq3(const std::vector<double>& _grid, const std::vector<double>& _q0)
 {
 	return qx2qy(_grid, _q0, 0, 3);
 }
 
+/**
+* \brief Performs conversion from q2 to q0 distributions.
+* \details Using information about the size grid by \f$q_{0,i} = \frac{d_i^{-2} q_{2,i}}{M_{-2}(q_2)}\f$.
+* Refer to function qx2qy(const std::vector<double>&, const std::vector<double>&, int, int).
+* \param _grid Distribution grid.
+* \param _q2 Input distribution.
+* \return Converted q0 distribution.
+*/
 std::vector<double> inline Convertq2Toq0(const std::vector<double>& _grid, const std::vector<double>& _q2)
 {
 	return qx2qy(_grid, _q2, 2, 0);
 }
 
+/**
+* \brief Performs conversion from q2 to q3 distributions.
+* \details Using information about the size grid by \f$q_{3,i} = \frac{d_i q_{2,i}}{M_1(q_2)}\f$.
+* Refer to function qx2qy(const std::vector<double>&, const std::vector<double>&, int, int).
+* \param _grid Distribution grid.
+* \param _q2 Input distribution.
+* \return Converted q3 distribution.
+*/
 std::vector<double> inline Convertq2Toq3(const std::vector<double>& _grid, const std::vector<double>& _q2)
 {
 	return qx2qy(_grid, _q2, 2, 3);
 }
 
+/**
+* \brief Performs conversion from q3 to q0 distributions.
+* \details Using information about the size grid by \f$q_{0,i} = \frac{d_i^{-3} q_{3,i}}{M_{-3}(q_3)}\f$.
+* Refer to function qx2qy(const std::vector<double>&, const std::vector<double>&, int, int).
+* \param _grid Distribution grid.
+* \param _q3 Input distribution.
+* \return Converted q0 distribution.
+*/
 std::vector<double> inline Convertq3Toq0(const std::vector<double>& _grid, const std::vector<double>& _q3)
 {
 	return qx2qy(_grid, _q3, 3, 0);
 }
 
+/**
+* \brief Performs conversion from q3 to q2 distributions.
+* \details Using information about the size grid by \f$q_{2,i} = \frac{d_i^{-1} q_{3,i}}{M_{-1}(q_3)}\f$.
+* Refer to function qx2qy(const std::vector<double>&, const std::vector<double>&, int, int).
+* \param _grid Distribution grid.
+* \param _q3 Input distribution.
+* \return Converted q2 distribution.
+*/
 std::vector<double> inline Convertq3Toq2(const std::vector<double>& _grid, const std::vector<double>& _q3)
 {
 	return qx2qy(_grid, _q3, 3, 2);
@@ -146,6 +301,13 @@ std::vector<double> inline Convertq3Toq2(const std::vector<double>& _grid, const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+* \brief Calculates q3 distribution.
+* \details Using the size grid and the distribution of mass fractions by \f$q_3 = w_i / \Delta d_i\f$.
+* \param _grid Distribution grid.
+* \param _massFrac Input distribution.
+* \return Calculated q3 distribution.
+*/
 std::vector<double> inline ConvertMassFractionsToq3(const std::vector<double>& _grid, const std::vector<double>& _massFrac)
 {
 	std::vector<double> q3(_massFrac.size());
@@ -154,6 +316,12 @@ std::vector<double> inline ConvertMassFractionsToq3(const std::vector<double>& _
 	return q3;
 }
 
+/**
+* \brief Calculates Q3 distribution.
+* \details Using the distribution of mass fractions: \f$Q_{3,0} = w_i\f$ and \f$Q_{3,i} = Q_{3,i-1} + w_i\f$.
+* \param _massFrac Input distribution.
+* \return Calculated Q3 distribution.
+*/
 std::vector<double> inline ConvertMassFractionsToQ3(const std::vector<double>& _massFrac)
 {
 	if (_massFrac.empty()) return {};
@@ -164,21 +332,49 @@ std::vector<double> inline ConvertMassFractionsToQ3(const std::vector<double>& _
 	return Q3;
 }
 
+/**
+* \brief Calculates q2 distribution.
+* \details Refer to the functions ConvertMassFractionsToq3(const std::vector<double>&, const std::vector<double>&) and Convertq3Toq2(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _massFrac Input distribution.
+* \return Calculated q2 distribution.
+*/
 std::vector<double> inline ConvertMassFractionsToq2(const std::vector<double>& _grid, const std::vector<double>& _massFrac)
 {
 	return Convertq3Toq2(_grid, ConvertMassFractionsToq3(_grid, _massFrac));
 }
 
+/**
+* \brief Calculates Q2 distribution.
+* \details Refer to the functions ConvertMassFractionsToq2(const std::vector<double>&, const std::vector<double>&) and Convertq2ToQ2(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _massFrac Input distribution.
+* \return Calculated Q2 distribution.
+*/
 std::vector<double> inline ConvertMassFractionsToQ2(const std::vector<double>& _grid, const std::vector<double>& _massFrac)
 {
 	return Convertq2ToQ2(_grid, ConvertMassFractionsToq2(_grid, _massFrac));
 }
 
+/**
+* \brief Calculates q0 distribution.
+* \details Refer to the functions ConvertMassFractionsToq3(const std::vector<double>&, const std::vector<double>&) and Convertq3Toq0(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _massFrac Input distribution.
+* \return Calculated q0 distribution.
+*/
 std::vector<double> inline ConvertMassFractionsToq0(const std::vector<double>& _grid, const std::vector<double>& _massFrac)
 {
 	return Convertq3Toq0(_grid, ConvertMassFractionsToq3(_grid, _massFrac));
 }
 
+/**
+* \brief Calculates Q0 distribution.
+* \details Refer to the functions ConvertMassFractionsToq0(const std::vector<double>&, const std::vector<double>&) and Convertq0ToQ0(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _massFrac Input distribution.
+* \return Calculated q0 distribution.
+*/
 std::vector<double> inline ConvertMassFractionsToQ0(const std::vector<double>& _grid, const std::vector<double>& _massFrac)
 {
 	return Convertq0ToQ0(_grid, ConvertMassFractionsToq0(_grid, _massFrac));
@@ -186,6 +382,13 @@ std::vector<double> inline ConvertMassFractionsToQ0(const std::vector<double>& _
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+* \brief Calculates mass fractions from q3.
+* \details Using the size grid by \f$w_i = q_{3,i}\cdot \Delta d_i\f$.
+* \param _grid Distribution grid.
+* \param _q3 Input distribution.
+* \return Calculated mass fractions.
+*/
 std::vector<double> inline Convertq3ToMassFractions(const std::vector<double>& _grid, const std::vector<double>& _q3)
 {
 	std::vector<double> massFrac(_q3.size());
@@ -194,6 +397,12 @@ std::vector<double> inline Convertq3ToMassFractions(const std::vector<double>& _
 	return massFrac;
 }
 
+/**
+* \brief Calculates mass fractions from Q3 distribution.
+* \details Using the size grid: \f$w_0 = Q_{3,0}\f$ and \f$w_i = Q_{3,i} - Q_{3,i-1}\f$.
+* \param _Q3 Input distribution.
+* \return Calculated mass fractions.
+*/
 std::vector<double> inline ConvertQ3ToMassFractions(const std::vector<double>& _Q3)
 {
 	if (_Q3.empty()) return {};
@@ -204,21 +413,49 @@ std::vector<double> inline ConvertQ3ToMassFractions(const std::vector<double>& _
 	return massFrac;
 }
 
+/**
+* \brief Calculates mass fractions from q2 distribution.
+* \details Refer to the functions Convertq2Toq3(const std::vector<double>&, const std::vector<double>&) and Convertq3ToMassFractions(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _q2 Input distribution.
+* \return Calculated mass fractions.
+*/
 std::vector<double> inline Convertq2ToMassFractions(const std::vector<double>& _grid, const std::vector<double>& _q2)
 {
 	return Convertq3ToMassFractions(_grid, Convertq2Toq3(_grid, _q2));
 }
 
+/**
+* \brief Calculates mass fractions from Q2 distribution.
+* \details Refer to the functions ConvertQ2Toq2(const std::vector<double>&, const std::vector<double>&) and Convertq2ToMassFractions(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _Q2 Input distribution.
+* \return Calculated mass fractions.
+*/
 std::vector<double> inline ConvertQ2ToMassFractions(const std::vector<double>& _grid, const std::vector<double>& _Q2)
 {
 	return Convertq2ToMassFractions(_grid, ConvertQ2Toq2(_grid, _Q2));
 }
 
+/**
+* \brief Calculates mass fractions from q0 distribution.
+* \details Refer to the functions Convertq0Toq3(const std::vector<double>&, const std::vector<double>&) and Convertq3ToMassFractions(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _q0 Input distribution.
+* \return Calculated mass fractions.
+*/
 std::vector<double> inline Convertq0ToMassFractions(const std::vector<double>& _grid, const std::vector<double>& _q0)
 {
 	return Convertq3ToMassFractions(_grid, Convertq0Toq3(_grid, _q0));
 }
 
+/**
+* \brief Calculates mass fractions from Q0 distribution.
+* \details Refer to the functions ConvertQ0Toq0(const std::vector<double>&, const std::vector<double>&) and Convertq0ToMassFractions(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _Q0 Input distribution.
+* \return Calculated mass fractions.
+*/
 std::vector<double> inline ConvertQ0ToMassFractions(const std::vector<double>& _grid, const std::vector<double>& _Q0)
 {
 	return Convertq0ToMassFractions(_grid, ConvertQ0Toq0(_grid, _Q0));
@@ -226,6 +463,13 @@ std::vector<double> inline ConvertQ0ToMassFractions(const std::vector<double>& _
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+* \brief Calculates q0 distribution using the number distribution and the size grid.
+* \details \f$q_{0,i} = \frac{N_i}{\Delta d_i N_{tot}}\f$.
+* \param _grid Distribution grid.
+* \param _number Number distribution.
+* \return Calculated q0 distribution.
+*/
 std::vector<double> inline ConvertNumbersToq0(const std::vector<double>& _grid, const std::vector<double>& _number)
 {
 	const double Ntot = std::accumulate(_number.begin(), _number.end(), 0.0);
@@ -236,11 +480,25 @@ std::vector<double> inline ConvertNumbersToq0(const std::vector<double>& _grid, 
 	return q0;
 }
 
+/**
+* \brief Calculates Q0 distribution using the number distribution.
+* \details Refer to the functions ConvertNumbersToq0(const std::vector<double>&, const std::vector<double>&) and Convertq0ToQ0(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _number Number distribution.
+* \return Calculated Q0 distribution.
+*/
 std::vector<double> inline ConvertNumbersToQ0(const std::vector<double>& _grid, const std::vector<double>& _number)
 {
 	return Convertq0ToQ0(_grid, ConvertNumbersToq0(_grid, _number));
 }
 
+/**
+* \brief Calculates Q2 distribution using the number distribution and the size grid.
+* \details \f$Q_{2,i} = \frac{\sum_{j=0}^i N_j \pi d_j^2}{\sum_j N_j \pi d_j^2}\f$.
+* \param _grid Distribution grid.
+* \param _number Number distribution.
+* \return Calculated Q2 distribution.
+*/
 std::vector<double> inline ConvertNumbersToQ2(const std::vector<double>& _grid, const std::vector<double>& _number)
 {
 	if (_number.empty()) return {};
@@ -255,21 +513,49 @@ std::vector<double> inline ConvertNumbersToQ2(const std::vector<double>& _grid, 
 	return Q2;
 }
 
+/**
+* \brief Calculates q2 distribution using the number distribution.
+* \details Refer to the functions ConvertNumbersToQ2(const std::vector<double>&, const std::vector<double>&) and ConvertQ2Toq2(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _number Number distribution.
+* \return Calculated q2 distribution.
+*/
 std::vector<double> inline ConvertNumbersToq2(const std::vector<double>& _grid, const std::vector<double>& _number)
 {
 	return ConvertQ2Toq2(_grid, ConvertNumbersToQ2(_grid, _number));
 }
 
+/**
+* \brief Calculates q3 distribution using the number distribution.
+* \details Refer to the functions ConvertNumbersToq0(const std::vector<double>&, const std::vector<double>&) and Convertq0Toq3(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _number Number distribution.
+* \return Calculated q3 distribution.
+*/
 std::vector<double> inline ConvertNumbersToq3(const std::vector<double>& _grid, const std::vector<double>& _number)
 {
 	return Convertq0Toq3(_grid, ConvertNumbersToq0(_grid, _number));
 }
 
+/**
+* \brief Calculates Q3 distribution using the number distribution.
+* \details Refer to the functions ConvertNumbersToq3(const std::vector<double>&, const std::vector<double>&) and Convertq3ToQ3(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _number Number distribution.
+* \return Calculated Q3 distribution.
+*/
 std::vector<double> inline ConvertNumbersToQ3(const std::vector<double>& _grid, const std::vector<double>& _number)
 {
 	return Convertq3ToQ3(_grid, ConvertNumbersToq3(_grid, _number));
 }
 
+/**
+* \brief Calculates mass fractions from the number distribution.
+* \details Refer to the functions ConvertNumbersToq0(const std::vector<double>&, const std::vector<double>&) and Convertq0ToMassFractions(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _number Number distribution.
+* \return Calculated mass fractions.
+*/
 std::vector<double> inline ConvertNumbersToMassFractions(const std::vector<double>& _grid, const std::vector<double>& _number)
 {
 	return Convertq0ToMassFractions(_grid, ConvertNumbersToq0(_grid, _number));
@@ -277,31 +563,73 @@ std::vector<double> inline ConvertNumbersToMassFractions(const std::vector<doubl
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+* \brief Calculates Q2 distribution.
+* \details Refer to the functions Convertq0Toq2(const std::vector<double>&, const std::vector<double>&) and Convertq2ToQ2(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _q0 Input distribution.
+* \return Calculated Q2 distribution.
+*/
 std::vector<double> inline Convertq0ToQ2(const std::vector<double>& _grid, const std::vector<double>& _q0)
 {
 	return Convertq2ToQ2(_grid, Convertq0Toq2(_grid, _q0));
 }
 
+/**
+* \brief Calculates Q3 distribution.
+* \details Refer to the functions Convertq0Toq3(const std::vector<double>&, const std::vector<double>&) and Convertq3ToQ3(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _q0 Input distribution.
+* \return Calculated Q3 distribution.
+*/
 std::vector<double> inline Convertq0ToQ3(const std::vector<double>& _grid, const std::vector<double>& _q0)
 {
 	return Convertq3ToQ3(_grid, Convertq0Toq3(_grid, _q0));
 }
 
+/**
+* \brief Calculates Q0 distribution.
+* \details Refer to the functions Convertq2Toq0(const std::vector<double>&, const std::vector<double>&) and Convertq0ToQ0(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _q2 Input distribution.
+* \return Calculated Q0 distribution.
+*/
 std::vector<double> inline Convertq2ToQ0(const std::vector<double>& _grid, const std::vector<double>& _q2)
 {
 	return Convertq0ToQ0(_grid, Convertq2Toq0(_grid, _q2));
 }
 
+/**
+* \brief Calculates Q3 distribution.
+* \details Refer to the functions Convertq2Toq3(const std::vector<double>&, const std::vector<double>&) and Convertq3ToQ3(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _q2 Input distribution.
+* \return Calculated Q3 distribution.
+*/
 std::vector<double> inline Convertq2ToQ3(const std::vector<double>& _grid, const std::vector<double>& _q2)
 {
 	return Convertq3ToQ3(_grid, Convertq2Toq3(_grid, _q2));
 }
 
+/**
+* \brief Calculates Q0 distribution.
+* \details Refer to the functions Convertq3Toq0(const std::vector<double>&, const std::vector<double>&) and Convertq0ToQ0(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _q3 Input distribution.
+* \return Calculated Q0 distribution.
+*/
 std::vector<double> inline Convertq3ToQ0(const std::vector<double>& _grid, const std::vector<double>& _q3)
 {
 	return Convertq0ToQ0(_grid, Convertq3Toq0(_grid, _q3));
 }
 
+/**
+* \brief Calculates Q2 distribution.
+* \details Refer to the functions Convertq3Toq2(const std::vector<double>&, const std::vector<double>&) and Convertq2ToQ2(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _q3 Input distribution.
+* \return Calculated Q2 distribution.
+*/
 std::vector<double> inline Convertq3ToQ2(const std::vector<double>& _grid, const std::vector<double>& _q3)
 {
 	return Convertq2ToQ2(_grid, Convertq3Toq2(_grid, _q3));
@@ -309,31 +637,73 @@ std::vector<double> inline Convertq3ToQ2(const std::vector<double>& _grid, const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+* \brief Calculates q2 distribution.
+* \details Refer to the functions ConvertQ0Toq0(const std::vector<double>&, const std::vector<double>&) and Convertq0Toq2(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _Q0 Input distribution.
+* \return Calculated q2 distribution.
+*/
 std::vector<double> inline ConvertQ0Toq2(const std::vector<double>& _grid, const std::vector<double>& _Q0)
 {
 	return Convertq0Toq2(_grid, ConvertQ0Toq0(_grid, _Q0));
 }
 
+/**
+* \brief Calculates q3 distribution.
+* \details Refer to the functions ConvertQ0Toq0(const std::vector<double>&, const std::vector<double>&) and Convertq0Toq3(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _Q0 Input distribution.
+* \return Calculated q3 distribution.
+*/
 std::vector<double> inline ConvertQ0Toq3(const std::vector<double>& _grid, const std::vector<double>& _Q0)
 {
 	return Convertq0Toq3(_grid, ConvertQ0Toq0(_grid, _Q0));
 }
 
+/**
+* \brief Calculates q0 distribution.
+* \details Refer to the functions ConvertQ2Toq2(const std::vector<double>&, const std::vector<double>&) and Convertq2Toq0(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _Q2 Input distribution.
+* \return Calculated q0 distribution.
+*/
 std::vector<double> inline ConvertQ2Toq0(const std::vector<double>& _grid, const std::vector<double>& _Q2)
 {
 	return Convertq2Toq0(_grid, ConvertQ2Toq2(_grid, _Q2));
 }
 
+/**
+* \brief Calculates q3 distribution.
+* \details Refer to the functions ConvertQ2Toq2(const std::vector<double>&, const std::vector<double>&) and Convertq2Toq3(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _Q2 Input distribution.
+* \return Calculated q3 distribution.
+*/
 std::vector<double> inline ConvertQ2Toq3(const std::vector<double>& _grid, const std::vector<double>& _Q2)
 {
 	return Convertq2Toq3(_grid, ConvertQ2Toq2(_grid, _Q2));
 }
 
+/**
+* \brief Calculates q0 distribution.
+* \details Refer to the functions ConvertQ3Toq3(const std::vector<double>&, const std::vector<double>&) and Convertq3Toq0(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _Q3 Input distribution.
+* \return Calculated q0 distribution.
+*/
 std::vector<double> inline ConvertQ3Toq0(const std::vector<double>& _grid, const std::vector<double>& _Q3)
 {
 	return Convertq3Toq0(_grid, ConvertQ3Toq3(_grid, _Q3));
 }
 
+/**
+* \brief Calculates q2 distribution.
+* \details Refer to the functions ConvertQ3Toq3(const std::vector<double>&, const std::vector<double>&) and Convertq3Toq2(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _Q3 Input distribution.
+* \return Calculated q2 distribution.
+*/
 std::vector<double> inline ConvertQ3Toq2(const std::vector<double>& _grid, const std::vector<double>& _Q3)
 {
 	return Convertq3Toq2(_grid, ConvertQ3Toq3(_grid, _Q3));
@@ -341,21 +711,49 @@ std::vector<double> inline ConvertQ3Toq2(const std::vector<double>& _grid, const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+* \brief Calculates Q2 distribution.
+* \details Refer to the functions ConvertQ0ToMassFractions(const std::vector<double>&, const std::vector<double>&) and ConvertMassFractionsToQ2(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _Q0 Input distribution.
+* \return Calculated Q2 distribution.
+*/
 std::vector<double> inline ConvertQ0ToQ2(const std::vector<double>& _grid, const std::vector<double>& _Q0)
 {
 	return ConvertMassFractionsToQ2(_grid, ConvertQ0ToMassFractions(_grid, _Q0));
 }
 
+/**
+* \brief Calculates Q3 distribution.
+* \details Refer to the functions ConvertQ0ToMassFractions(const std::vector<double>&, const std::vector<double>&) and ConvertMassFractionsToQ3(const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _Q0 Input distribution.
+* \return Calculated Q3 distribution.
+*/
 std::vector<double> inline ConvertQ0ToQ3(const std::vector<double>& _grid, const std::vector<double>& _Q0)
 {
 	return ConvertMassFractionsToQ3(ConvertQ0ToMassFractions(_grid, _Q0));
 }
 
+/**
+* \brief Calculates Q0 distribution.
+* \details Refer to the functions ConvertQ2ToMassFractions(const std::vector<double>&, const std::vector<double>&) and ConvertMassFractionsToQ0(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _Q2 Input distribution.
+* \return Calculated Q0 distribution.
+*/
 std::vector<double> inline ConvertQ2ToQ0(const std::vector<double>& _grid, const std::vector<double>& _Q2)
 {
 	return ConvertMassFractionsToQ0(_grid, ConvertQ2ToMassFractions(_grid, _Q2));
 }
 
+/**
+* \brief Calculates Q3 distribution.
+* \details Refer to the functions ConvertQ2ToMassFractions(const std::vector<double>&, const std::vector<double>&) and ConvertMassFractionsToQ3(const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _Q2 Input distribution.
+* \return Calculated Q3 distribution.
+*/
 std::vector<double> inline ConvertQ2ToQ3(const std::vector<double>& _grid, const std::vector<double>& _Q2)
 {
 	return ConvertMassFractionsToQ3(ConvertQ2ToMassFractions(_grid, _Q2));
@@ -366,6 +764,13 @@ std::vector<double> inline ConvertQ3ToQ0(const std::vector<double>& _grid, const
 	return ConvertMassFractionsToQ0(_grid, ConvertQ0ToMassFractions(_grid, _Q0));
 }
 
+/**
+* \brief Calculates Q2 distribution.
+* \details Refer to the functions ConvertQ3ToMassFractions(const std::vector<double>&) and ConvertMassFractionsToQ2(const std::vector<double>&, const std::vector<double>&).
+* \param _grid Distribution grid.
+* \param _Q3 Input distribution.
+* \return Calculated Q2 distribution.
+*/
 std::vector<double> inline ConvertQ3ToQ2(const std::vector<double>& _grid, const std::vector<double>& _Q3)
 {
 	return ConvertMassFractionsToQ2(_grid, ConvertQ3ToMassFractions(_Q3));
@@ -374,7 +779,11 @@ std::vector<double> inline ConvertQ3ToQ2(const std::vector<double>& _grid, const
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Assumes unity density and unity total mass.
+ * \brief Assumes unity density and unity total mass.
+ * \details \f$N_i = \frac{6 \cdot w_i}{\pi \cdot \Delta d_i^3}\f$.
+ * \param _grid Distribution grid.
+ * \param _massFrac Input distribution.
+ * \return Number distribution.
  */
 std::vector<double> inline ConvertMassFractionsToNumbers(const std::vector<double>& _grid, const std::vector<double>& _massFrac)
 {
@@ -386,7 +795,11 @@ std::vector<double> inline ConvertMassFractionsToNumbers(const std::vector<doubl
 }
 
 /**
- * Assumes unity density and unity total mass.
+ * \brief Assumes unity density and unity total mass.
+ * \details Refer to the functions Convertq0ToMassFractions(const std::vector<double>&, const std::vector<double>&) and ConvertMassFractionsToNumbers(const std::vector<double>&, const std::vector<double>&).
+ * \param _grid Distribution grid.
+ * \param _q0 Input distribution.
+ * \return Number distribution.
  */
 std::vector<double> inline Convertq0ToNumbers(const std::vector<double>& _grid, const std::vector<double>& _q0)
 {
@@ -394,7 +807,11 @@ std::vector<double> inline Convertq0ToNumbers(const std::vector<double>& _grid, 
 }
 
 /**
- * Assumes unity density and unity total mass.
+ * \brief Assumes unity density and unity total mass.
+ * \details Refer to the functions Convertq2ToMassFractions(const std::vector<double>&, const std::vector<double>&) and ConvertMassFractionsToNumbers(const std::vector<double>&, const std::vector<double>&).
+ * \param _grid Distribution grid.
+ * \param _q2 Input distribution.
+ * \return Number distribution.
  */
 std::vector<double> inline Convertq2ToNumbers(const std::vector<double>& _grid, const std::vector<double>& _q2)
 {
@@ -402,7 +819,11 @@ std::vector<double> inline Convertq2ToNumbers(const std::vector<double>& _grid, 
 }
 
 /**
- * Assumes unity density and unity total mass.
+ * \brief Assumes unity density and unity total mass.
+ * \details Refer to the functions Convertq3ToMassFractions(const std::vector<double>&, const std::vector<double>&) and ConvertMassFractionsToNumbers(const std::vector<double>&, const std::vector<double>&).
+ * \param _grid Distribution grid.
+ * \param _q3 Input distribution.
+ * \return Number distribution.
  */
 std::vector<double> inline Convertq3ToNumbers(const std::vector<double>& _grid, const std::vector<double>& _q3)
 {
@@ -410,7 +831,11 @@ std::vector<double> inline Convertq3ToNumbers(const std::vector<double>& _grid, 
 }
 
 /**
- * Assumes unity density and unity total mass.
+ * \brief Assumes unity density and unity total mass.
+ * \details Refer to the functions ConvertQ0ToMassFractions(const std::vector<double>&, const std::vector<double>&) and ConvertMassFractionsToNumbers(const std::vector<double>&, const std::vector<double>&).
+ * \param _grid Distribution grid.
+ * \param _Q0 Input distribution.
+ * \return Number distribution.
  */
 std::vector<double> inline ConvertQ0ToNumbers(const std::vector<double>& _grid, const std::vector<double>& _Q0)
 {
@@ -418,7 +843,11 @@ std::vector<double> inline ConvertQ0ToNumbers(const std::vector<double>& _grid, 
 }
 
 /**
- * Assumes unity density and unity total mass.
+ * \brief Assumes unity density and unity total mass.
+ * \details Refer to the functions ConvertQ2ToMassFractions(const std::vector<double>&, const std::vector<double>&) and ConvertMassFractionsToNumbers(const std::vector<double>&, const std::vector<double>&).
+ * \param _grid Distribution grid.
+ * \param _Q2 Input distribution.
+ * \return Number distribution.
  */
 std::vector<double> inline ConvertQ2ToNumbers(const std::vector<double>& _grid, const std::vector<double>& _Q2)
 {
@@ -426,7 +855,11 @@ std::vector<double> inline ConvertQ2ToNumbers(const std::vector<double>& _grid, 
 }
 
 /**
- * Assumes unity density and unity total mass.
+ * \brief Assumes unity density and unity total mass.
+ * \details Refer to the functions ConvertQ3ToMassFractions(const std::vector<double>&) and ConvertMassFractionsToNumbers(const std::vector<double>&, const std::vector<double>&).
+ * \param _grid Distribution grid.
+ * \param _Q3 Input distribution.
+ * \return Number distribution.
  */
 std::vector<double> inline ConvertQ3ToNumbers(const std::vector<double>& _grid, const std::vector<double>& _Q3)
 {
@@ -436,7 +869,14 @@ std::vector<double> inline ConvertQ3ToNumbers(const std::vector<double>& _grid, 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Converts the mass fraction distribution _w defined on the symbolic _grid to the new grid _gridNew.
+/**
+* \brief Converts the mass fraction distribution \p _w defined on the symbolic \p _grid to the new grid \p _gridNew.
+* \details
+* \param _grid Old mass fraction distribution.
+* \param _w Old symbolic distribution grid.
+* \param _gridNew New distribution grid.
+* \return Converted distribution on the modified size grid.
+*/
 std::vector<double> inline ConvertOnNewGrid(const std::vector<std::string>& _grid, const std::vector<double>& _w, const std::vector<std::string>& _gridNew)
 {
 	if (_grid == _gridNew) return _w;
@@ -449,7 +889,14 @@ std::vector<double> inline ConvertOnNewGrid(const std::vector<std::string>& _gri
 	return res;
 }
 
-// Converts the mass fraction distribution _w defined on the numeric _grid to the new grid _gridNew.
+/**
+* \brief Converts the mass fraction distribution \p _w defined on the numeric \p _grid to the new grid \p _gridNew.
+* \details
+* \param _grid Old mass fraction distribution.
+* \param _w Old numeric distribution grid.
+* \param _gridNew New distribution grid.
+* \return Converted distribution on the modified size grid.
+*/
 std::vector<double> inline ConvertOnNewGrid(const std::vector<double>& _grid, const std::vector<double>& _w, const std::vector<double>& _gridNew)
 {
 	if (_grid == _gridNew) return _w;
@@ -467,7 +914,14 @@ std::vector<double> inline ConvertOnNewGrid(const std::vector<double>& _grid, co
 	return res;
 }
 
-// Converts density distribution _q defined on the numeric _grid to the new grid _gridNew.
+/**
+* \brief Converts density distribution \p _q defined on the numeric \p _grid to the new grid \p _gridNew.
+* \details
+* \param _grid Old numeric distribution grid.
+* \param _q Old density distribution.
+* \param _gridNew New distribution grid.
+* \return Converted distribution on the modified size grid.
+*/
 std::vector<double> inline ConvertqOnNewGrid(const std::vector<double>& _grid, const std::vector<double>& _q, const std::vector<double>& _gridNew)
 {
 	if (_grid == _gridNew) return _q;
@@ -483,16 +937,40 @@ std::vector<double> inline ConvertqOnNewGrid(const std::vector<double>& _grid, c
 	return qNew;
 }
 
+/**
+* \brief Converts q0 distribution to the same distribution on the modified size grid.
+* \details Refer to function ConvertqOnNewGrid(const std::vector<double>&, const std::vector<double>&, const std::vector<double>&).
+* \param _gridOld Old distribution grid.
+* \param _q0Old Old distribution.
+* \param _gridNew New distribution grid.
+* \return Converted q0 distribution on the modified size grid.
+*/
 std::vector<double> inline Convertq0Toq0(const std::vector<double>& _gridOld, const std::vector<double>& _q0Old, std::vector<double>& _gridNew)
 {
 	return ConvertqOnNewGrid(_gridOld, _q0Old, _gridNew);
 }
 
+/**
+* \brief Converts q2 distribution to the same distribution on the modified size grid.
+* \details Refer to function ConvertqOnNewGrid(const std::vector<double>&, const std::vector<double>&, const std::vector<double>&).
+* \param _gridOld Old distribution grid.
+* \param _q2Old Old distribution.
+* \param _gridNew New distribution grid.
+* \return Converted q2 distribution on the modified size grid.
+*/
 std::vector<double> inline Convertq2Toq2(const std::vector<double>& _gridOld, const std::vector<double>& _q2Old, std::vector<double>& _gridNew)
 {
 	return ConvertqOnNewGrid(_gridOld, _q2Old, _gridNew);
 }
 
+/**
+* \brief Converts q3 distribution to the same distribution on the modified size grid.
+* \details Refer to function ConvertqOnNewGrid(const std::vector<double>&, const std::vector<double>&, const std::vector<double>&).
+* \param _gridOld Old distribution grid.
+* \param _q3Old Old distribution.
+* \param _gridNew New distribution grid.
+* \return Converted q3 distribution on the modified size grid.
+*/
 std::vector<double> inline Convertq3Toq3(const std::vector<double>& _gridOld, const std::vector<double>& _q3Old, std::vector<double>& _gridNew)
 {
 	return ConvertqOnNewGrid(_gridOld, _q3Old, _gridNew);
@@ -500,6 +978,12 @@ std::vector<double> inline Convertq3Toq3(const std::vector<double>& _gridOld, co
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+* \brief Normalizes density distribution q0 or q3.
+* \betails \f$q_i = \frac{q_i}{\sum_j q_j \Delta d_j}\f$.
+* \param _grid Distribution grid.
+* \param _qiDistr Input distribution.
+*/
 void inline NormalizeDensityDistribution(const std::vector<double>& _grid, std::vector<double>& _qiDistr)
 {
 	// normalization of the distribution
@@ -514,6 +998,14 @@ void inline NormalizeDensityDistribution(const std::vector<double>& _grid, std::
 			v = v / dSum;
 }
 
+/**
+* \brief Returns diameter in [m], which corresponds to a specified value of cumulative distribution Q0 or Q3.
+* \details Input value \p val should range between 0 and 1.
+* \param _grid Distribution grid.
+* \param _QiDistr Input distribution.
+* \param val Value in range between 0 and 1.
+* \return Distribution value.
+*/
 double inline GetDistributionValue(const std::vector<double>& _grid, const std::vector<double>& _QiDistr, double val)
 {
 	if (val < 0 || val > 1) return 0;
@@ -540,11 +1032,25 @@ double inline GetDistributionValue(const std::vector<double>& _grid, const std::
 		return dDLeft + (dDRight - dDLeft)*(val - dQLeft) / (dQRight - dQLeft);
 }
 
+/**
+* \brief Returns median in [m] of Q0 or Q3 distribution. Median is a diameter, which corresponds to a value of distribution equal to 0.5.
+* \details Refer to function GetDistributionValue(const std::vector<double>&, const std::vector<double>&, double).
+* \param _grid Distribution grid.
+* \param _QiDistr Input distribution.
+* \return Median of distribution.
+*/
 double inline GetDistributionMedian(const std::vector<double>& _grid, const std::vector<double>& _QiDistr)
 {
 	return GetDistributionValue(_grid, _QiDistr, 0.5);
 }
 
+/**
+* \brief Returns diameter in [m], which corresponds to a maximum value of density distribution.
+* \details
+* \param _grid Distribution grid.
+* \param _qiDistr Input distribution.
+* \return Mode of distribution.
+*/
 double inline GetDistributionMode(const std::vector<double>& _grid, const std::vector<double>& _qiDistr)
 {
 	if (_grid.size() != _qiDistr.size() + 1) return {};
@@ -559,6 +1065,13 @@ double inline GetDistributionMode(const std::vector<double>& _grid, const std::v
 	return dMaxDiameter;
 }
 
+/**
+* \brief Returns average diameter in [m] of the distribution q0 or q3.
+* \details
+* \param _grid Distribution grid.
+* \param _qiDistr Input distribution.
+* \return Average diameter of distribution.
+*/
 double inline GetAverageDiameter(const std::vector<double>& _grid, const std::vector<double>& _qiDistr)
 {
 	double dResult = 0;
@@ -567,6 +1080,13 @@ double inline GetAverageDiameter(const std::vector<double>& _grid, const std::ve
 	return dResult;
 }
 
+/**
+* \brief Calculates specific surface of q3 distribution in [m^2].
+* \details
+* \param _grid Distribution grid.
+* \param _q3 Input distribution.
+* \return Specific surface of distribution.
+*/
 double inline GetSpecificSurface(const std::vector<double>& _grid, const std::vector<double>& _q3)
 {
 	double dSV = 0;
@@ -575,6 +1095,13 @@ double inline GetSpecificSurface(const std::vector<double>& _grid, const std::ve
 	return dSV;
 }
 
+/**
+* \brief Calculates Sauter diameter (d_32) of q3 distribution in [m].
+* \details
+* \param _grid Distribution grid.
+* \param _q3 Input distribution.
+* \return Sauter diameter of distribution.
+*/
 double inline GetSauterDiameter(const std::vector<double>& _grid, const std::vector<double>& _q3)
 {
 	if (_q3.size() + 1 != _grid.size())

@@ -3,10 +3,6 @@
 Distributions functions
 =======================
 
-Several global functions are defined to work with particle size distributions. These functions can be called from any place of the code.
-
-All functions receive grid (``Grid``) as the input parameter. The grid can be previously obtained with the help of the function ``GetNumericGrid``, for more information please refer to :ref:`getNumericGrid <label-getNumericGrid>` in section :ref:`sec.development.api.class_baseunit`.
-
 .. doxygenfile:: DistributionsFunctions.h
 	:project: dyssol_models_api
 ..    :members:
