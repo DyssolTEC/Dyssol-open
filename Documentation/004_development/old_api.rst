@@ -26,52 +26,9 @@ Basic information and functions of class ``CDense2DMatrix`` are introduced below
 
 .. code-block:: cpp
 
-	CDense2DMatrix()
-
-**Basic constructor**. Creates empty matrix with zero in all rows and columns.
-
-|
-
-.. code-block:: cpp
-
 	CDense2DMatrix(CDense2DMatrix &_matrix)
 
 **Copy constructor**. Creates matrix with the same dimensions as in ``_matrix`` and copies all data.
-
-|
-
-.. code-block:: cpp
-
-	CDense2DMatrix(unsigned _nRows, unsigned _nColumns)
-
-Creates new matrix with specified number of rows and columns. All data will be set to 0.
-
-|
-
-Dimensions
-""""""""""
-
-.. code-block:: cpp
-
-	void SetDimensions(unsigned _nRows, unsigned _nColumns)
-
-Sets new dimensions to the matrix. Old data is removed and all entries are set to zero.
-
-|
-
-.. code-block:: cpp
-
-	unsigned GetRowsNumber()
-
-Returns number of rows in the matrix.
-
-|
-
-.. code-block:: cpp
-
-	unsigned GetColumnsNumber()
-
-Returns number of columns in the matrix.
 
 |
 
@@ -86,30 +43,6 @@ Returns data by the specified indexes. Returns ``0`` if such indexes do not exis
 
 |
 
-.. code-block:: cpp
-
-	std::vector<double> GetRow(unsigned _nRow)
-
-Returns vector of data for specified row. Returns empty vector if such row does not exist.
-
-|
-
-.. code-block:: cpp
-
-	std::vector<double> GetColumn(unsigned _nColumn)
-
-Returns vector of data for specified column. Returns empty vector if such column does not exist.
-
-|
-
-.. code-block:: cpp
-
-	std::vector<std::vector<double>> GetMatrix()
-
-Returns all data in form of vector-of-vectors.
-
-|
-
 Set data
 """"""""
 
@@ -121,56 +54,8 @@ Sets data ``_dValue`` by the specified indexes.
 
 |
 
-.. code-block:: cpp
-
-	void SetRow(unsigned _nRow, const std::vector<double>& _Values)
-
-Sets data ``_Values`` to a specified row.
-
-|
-
-.. code-block:: cpp
-
-	void SetColumn(unsigned _nColumn, const std::vector<double>& _Values)
-
-Sets data ``_Values`` to a specified column.
-
-|
-
-.. code-block:: cpp
-
-	void SetMatrix(const std::vector<std::vector<double>>& _matr)
-
-Sets all values in form vector-of-vectors ``_matr`` to matrix. ``_matr`` must have the same dimensions as the matrix itself.
-
-|
-
 Overloaded operators
 """"""""""""""""""""
-
-.. code-block:: cpp
-
-	CDense2DMatrix operator+(const CDense2DMatrix& _Matrix1, const CDense2DMatrix &_Matrix2)
-
-Performs **addition** of two matrices with the same dimensions. Returns an empty matrix in case of different dimensions.
-
-|
-
-.. code-block:: cpp
-
-	CDense2DMatrix operator-(const CDense2DMatrix &_Matrix1, const CDense2DMatrix &_Matrix2)
-
-Performs **subtraction** of two matrices with the same dimensions. Returns an empty matrix in case of different dimensions.
-
-|
-
-.. code-block:: cpp
-
-	CDense2DMatrix operator*(double _dMultiplier)
-
-Performs **multiplication** of the matrix with a coefficient ``_dMultiplier``.
-
-|
 
 .. code-block:: cpp
 
@@ -185,25 +70,9 @@ Other functions
 
 .. code-block:: cpp
 
-	void Normalize()
-
-Normalizes the matrix so that the sum of all elements equals to 1.
-
-|
-
-.. code-block:: cpp
-
 	void ClearData()
 
 Sets all elements in matrix to 0.
-
-|
-
-.. code-block:: cpp
-
-	void Clear()
-	
-Removes all data and sets number of rows and columns equal to 0.
 
 |
 

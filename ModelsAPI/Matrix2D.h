@@ -17,51 +17,101 @@ private:
 	size_t m_cols;		///< Number of columns in the matrix
 
 public:
-	/** Creates an empty matrix. */
+	/**
+	* \brief **Basic constructor**. Creates empty matrix with zero in all rows and columns.
+	*/
 	CMatrix2D();
-	/** Creates a matrix with the specified dimensions and sets all cells to zero. */
+	/**
+	* \brief Creates a matrix with the specified dimensions and sets all cells to zero.
+	* \details
+	* \param _rows Number of rows.
+	* \param _cols Number of colums.
+	*/
 	CMatrix2D(size_t _rows, size_t _cols);
 
 
 	//////////////////////////////////////////////////////////////////////////
-	/// Work with dimensions
+	// Work with dimensions
 
-	/** Sets new dimensions of the matrix. */
+	/**
+	* \brief Sets new dimensions of the matrix.
+	* \details
+	* \param _rows Number of rows.
+	* \param _cols Number of columns.
+	*/
 	void Resize(size_t _rows, size_t _cols);
 	/** Sets new dimensions of the matrix and fills it with the specified value. */
 	void Assign(size_t _rows, size_t _cols, double _val);
 
-	/** Returns the current number of rows. */
+	/**
+	* \brief Returns the current number of rows.
+	* \details
+	* \return Number of rows.
+	*/
 	size_t Rows() const;
-	/** Returns the current number of columns. */
+	/**
+	* \brief Returns the current number of columns.
+	* \details
+	* \return Number of columns.
+	*/
 	size_t Cols() const;
 
 
 	//////////////////////////////////////////////////////////////////////////
-	/// Work with data
+	// Work with data
 
 	/** Returns reference to the vector of values of the specified row. */
 	d_vect_t& operator[](size_t _row);
 	/** Returns const reference to the vector of values of the specified row. */
 	const d_vect_t& operator[](size_t _row) const;
 
-	/** Returns the vector of values for the specified row. If there is no such row, returns an empty vector. */
+	/**
+	* \brief Returns the vector of values for the specified row.
+	* \details If there is no such row, returns an empty vector.
+	* \param _row Index of row.
+	* \return Vector of values.
+	*/
 	d_vect_t GetRow(size_t _row) const;
-	/** Returns the vector of values for the specified column. If there is no such column, returns an empty vector. */
+	/**
+	* \brief Returns the vector of values for the specified column.
+	* \details If there is no such column, returns an empty vector.
+	* \param _col Index of column.
+	* \return Vector of values.
+	*/
 	d_vect_t GetCol(size_t _col) const;
-	/** Returns all values in the vector-of-vectors form. */
+	/**
+	* \brief Returns all values in the vector-of-vectors form.
+	* \return All values in the vector-of-vectors form.
+	*/
 	d_matr_t GetMatrix() const;
 
-	/** Sets data to the existing row, if dimensions match. */
+	/**
+	* \brief Sets data to the existing row, if dimensions match.
+	* \details
+	* \param _row Index of row.
+	* \param _vector Vector of values.
+	*/
 	void SetRow(size_t _row, const d_vect_t& _vector);
-	/** Sets data to the existing column, if dimensions match. */
+	/**
+	* \brief Sets data to the existing column, if dimensions match.
+	* \details
+	* \param _col Index of column.
+	* \param _vector Vector of values.
+	*/
 	void SetCol(size_t _col, const d_vect_t& _vector);
-	/** Sets all values to the matrix in the vector-of-vectors form, if dimensions match. */
+	/**
+	* \brief Sets all values to the matrix in the vector-of-vectors form, if dimensions match.
+	* \details
+	* \param _matrix All values in the vector-of-vectors form.
+	*/
 	void SetMatrix(const d_matr_t& _matrix);
 
 	/** Fills the matrix with the specified value. */
 	void Fill(double _val);
-	/** Removes all data and information about dimensions from the matrix. */
+	/**
+	* \brief Removes all data and information about dimensions from the matrix.
+	* \details
+	*/
 	void Clear();
 
 	/** Returns a vector with all values joining all rows one after another. */
@@ -69,9 +119,12 @@ public:
 
 
 	//////////////////////////////////////////////////////////////////////////
-	/// Arithmetic
+	// Arithmetic
 
-	/** Normalizes values of the matrix. */
+	/**
+	* \brief Normalizes values of the matrix.
+	* \details
+	*/
 	void Normalize();
 	/** Returns identity matrix with the specified dimensions. */
 	static CMatrix2D Identity(size_t _size);
@@ -83,15 +136,30 @@ public:
 	CMatrix2D operator-(double _val) const;
 
 	CMatrix2D& operator*=(double _val);
+	/**
+	* \brief Performs **multiplication** of the matrix with a coefficient \p _val.
+	* \details
+	* \param _val Coefficient.
+	*/
 	CMatrix2D operator*(double _val) const;
 
 	CMatrix2D& operator/=(double _val);
 	CMatrix2D operator/(double _val) const;
 
 	CMatrix2D& operator+=(const CMatrix2D& _matrix);
+	/**
+	* \brief Performs **addition** of two matrices with the same dimensions.
+	* \details
+	* \param _matrix Other matrix.
+	*/
 	CMatrix2D operator+(const CMatrix2D& _matrix) const;
 
 	CMatrix2D& operator-=(const CMatrix2D& _matrix);
+	/**
+	* \brief Performs **subtraction** of two matrices with the same dimensions.
+	* \details
+	* \param _matrix Other matrix.
+	*/
 	CMatrix2D operator-(const CMatrix2D& _matrix) const;
 
 	CMatrix2D operator*(const CMatrix2D& _matrix) const;
