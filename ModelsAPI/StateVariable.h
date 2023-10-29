@@ -83,7 +83,7 @@ class CStateVariablesManager
 public:
 	/**
 	 * \internal
-	 * \brief Copies user-defined data from _stateVariables.
+	 * \brief Copies user-defined data from \p _stateVariables.
 	 * \details Copies information about state variables. Assumes the corresponding state variables structure is the same.
 	 * \param _stateVariables Reference to state variables manager.
 	 */
