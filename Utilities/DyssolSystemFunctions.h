@@ -7,7 +7,7 @@
 #include <string>
 #include <processthreadsapi.h>
 #include <handleapi.h>
-#include <Windows.h>
+#include "DyssolWindows.h"
 #include <tchar.h>
 #include <Psapi.h>
 #endif
