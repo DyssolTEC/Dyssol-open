@@ -6,7 +6,7 @@
 #ifdef _MSC_VER
 #include <corecrt_io.h>
 #include <direct.h>
-#include <Windows.h>
+#include "DyssolWindows.h"
 #else
 #include <locale>
 #include <codecvt>

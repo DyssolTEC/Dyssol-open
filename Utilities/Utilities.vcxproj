@@ -127,6 +127,7 @@
     <ClInclude Include="DyssolTypes.h" />
     <ClInclude Include="DyssolDefines.h" />
     <ClInclude Include="DyssolUtilities.h" />
+    <ClInclude Include="DyssolWindows.h" />
     <ClInclude Include="FileSystem.h" />
     <ClInclude Include="StringFunctions.h" />
     <ClInclude Include="TaskFuture.h" />

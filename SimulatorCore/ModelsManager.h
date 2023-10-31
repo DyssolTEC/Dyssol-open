@@ -10,8 +10,7 @@
 #include <vector>
 
 #ifdef _MSC_VER
-#define NOMINMAX
-#include <Windows.h>
+#include "DyssolWindows.h"
 
 typedef HINSTANCE DYSSOL_LIBRARY_INSTANCE;
 typedef FARPROC DYSSOL_CREATE_FUNCTION_TYPE;

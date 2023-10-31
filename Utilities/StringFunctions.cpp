@@ -2,9 +2,7 @@
 
 #include "StringFunctions.h"
 #ifdef _MSC_VER
-#include <Windows.h>
-#undef AddPort
-#undef CreateFile
+#include "DyssolWindows.h"
 #else
 #include <codecvt>
 #endif
