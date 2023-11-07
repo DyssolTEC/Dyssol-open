@@ -1,4 +1,11 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+
+ /**
+ \file DefinesMDB.h
+ \details This definition is needed for Doxygen to properly generate documentation.
+ */
 
 #pragma once
 
@@ -88,7 +95,7 @@ namespace MDBDescriptors
 // TODO: make enum class
 // TODO: rename enum
 /**
- * Identifiers of constant material properties.
+ * \brief Identifiers of constant material properties.
  */
 enum ECompoundConstProperties : unsigned
 {
@@ -177,7 +184,7 @@ namespace MDBDescriptors
 // TODO: make enum class
 // TODO: rename enum
 /**
- * Identifiers of temperature/pressure-dependent properties.
+ * \brief Identifiers of temperature/pressure-dependent properties.
  */
 enum ECompoundTPProperties : unsigned
 {
@@ -247,7 +254,7 @@ namespace MDBDescriptors
 // TODO: make enum class
 // TODO: rename enum
 /**
- * Identifiers of properties, defined for interaction of two compounds.
+ * \brief Identifiers of properties, defined for interaction of two compounds.
  */
 enum EInteractionProperties : unsigned
 {
