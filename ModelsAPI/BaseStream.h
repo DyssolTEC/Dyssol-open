@@ -128,7 +128,7 @@ public:
 		const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics);
 	/**
 	 * \private
-	 * \brief Copy constructor
+	 * \brief Copy constructor.
 	 * \details Copies all structural parameters and settings from the source stream, including unique key and data.
 	 * \param _other Source stream.
 	 */
