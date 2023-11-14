@@ -3,34 +3,38 @@
 List of constants
 =================
 
-Universal constants
--------------------
+Universal physical constants
+----------------------------
 
-In Dyssol, certain universal constants are pre-defined and available for direct utilization in the code.
+.. doxygendefine:: AVOGADRO_CONSTANT
+   :project: dyssol_models_api
 
-+------------------------------------------+----------------------------------------+--------------------+
-|  Define                                  |   Typical value                        |   Unit             |
-+==========================================+========================================+====================+
-|   ``AVOGADRO_CONSTANT``                  |   :math:`6.02214199(47) \cdot 10^{23}` |   [1/mol]          |
-+------------------------------------------+----------------------------------------+--------------------+
-|   ``BOLTZMANN_CONSTANT``                 |   :math:`1.3806503(24) \cdot 10^{-23}` |   [J/K]            |
-+------------------------------------------+----------------------------------------+--------------------+
-|   ``IDEAL_GAS_STATE_REFERENCE_PRESSURE`` |   :math:`101\,325`                     |   [Pa]             |
-+------------------------------------------+----------------------------------------+--------------------+
-|   ``MOLAR_GAS_CONSTANT``                 |   :math:`8.314472(15)`                 |   [J/mol/K]        |
-+------------------------------------------+----------------------------------------+--------------------+
-|   ``SPEED_OF_LIGHT_IN_VACUUM``           |   :math:`2.99792458(1) \cdot 10^8`     |   [m/s]            |
-+------------------------------------------+----------------------------------------+--------------------+
-|   ``STANDARD_ACCELERATION_OF_GRAVITY``   |   :math:`9.80665`                      |   [m/s :math:`^2`] |
-+------------------------------------------+----------------------------------------+--------------------+
-|   ``MATH_PI``                            |   :math:`3.14159265358979323846`       |   [-]              |
-+------------------------------------------+----------------------------------------+--------------------+
+.. doxygendefine:: BOLTZMANN_CONSTANT
+   :project: dyssol_models_api
+
+.. doxygendefine:: MOLAR_GAS_CONSTANT
+   :project: dyssol_models_api
+
+.. doxygendefine:: SPEED_OF_LIGHT_IN_VACUUM
+   :project: dyssol_models_api
+
+.. doxygendefine:: STANDARD_ACCELERATION_OF_GRAVITY
+   :project: dyssol_models_api
 
 .. doxygendefine:: STANDARD_CONDITION_T
    :project: dyssol_models_api
-   
+
 .. doxygendefine:: STANDARD_CONDITION_P
    :project: dyssol_models_api
+
+.. doxygendefine:: STEFAN_BOLTZMANN_CONSTANT
+   :project: dyssol_models_api
+
+.. doxygendefine:: MATH_PI
+   :project: dyssol_models_api
+
+Dyssol constants
+----------------
 
 .. doxygenenum:: EUnitPort
     :project: dyssol_models_api
