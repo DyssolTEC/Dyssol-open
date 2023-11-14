@@ -209,6 +209,7 @@ IF(BUILD_DOCS)
   # List of all API headers
   SET(API_FILE_NAMES
     "MaterialsDatabase/DefinesMDB"
+    "ModelsAPI/BaseStream"
     "ModelsAPI/BaseUnit"
     "ModelsAPI/ChemicalReaction"
     "ModelsAPI/DenseMDMatrix"
@@ -218,12 +219,10 @@ IF(BUILD_DOCS)
     "ModelsAPI/MixtureEnthalpyLookup"
     "ModelsAPI/PlotManager"
     "ModelsAPI/StateVariable"
-    "ModelsAPI/BaseStream"
     "ModelsAPI/Stream"
     "ModelsAPI/TransformMatrix"
     "ModelsAPI/UnitParameters"
     "ModelsAPI/UnitPorts"
-    "ModelsAPI/TimeDependentValue"
     "BaseSolvers/AgglomerationSolver"
     "BaseSolvers/BaseSolver"
     "Utilities/DyssolDefines"

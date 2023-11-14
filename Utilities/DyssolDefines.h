@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 /**
 \file DyssolDefines.h
@@ -65,7 +67,7 @@ enum class EExtrapolationMethod : uint32_t
 
 // TODO: make enum class
 /**
- * \brief Types of distributed parameters of the solid phase.
+ * \brief Types of distributed properties of the solid phase.
  */
 enum EDistrTypes : uint32_t
 {
@@ -85,7 +87,7 @@ enum EDistrTypes : uint32_t
 	DISTR_USER_DEFINED_08 = 27,	///< User-defined distribution.
 	DISTR_USER_DEFINED_09 = 28,	///< User-defined distribution.
 	DISTR_USER_DEFINED_10 = 29,	///< User-defined distribution.
-	DISTR_UNDEFINED		  = 31,	///< Type is undefined.
+	DISTR_UNDEFINED		  = 31,	///< Distribution type is undefined.
 };
 
 #define DISTR_NAMES { "Compounds", "Size", "Particle porosity", "Form factor", "Color", "Moisture", "Distribution 1", "Distribution 2", "Distribution 3", "Distribution 4", "Distribution 5", "Distribution 6", "Distribution 7", "Distribution 8", "Distribution 9", "Distribution 10" }
@@ -106,13 +108,13 @@ inline int GetDistributionTypeIndex(EDistrTypes _nType)
 #define MTP_PRESSURE	2
 
 /**
- * \brief Types of grid entries of distributed parameters of the solid phase.
+ * \brief Types of grid entries for distributed properties of the solid phase.
  */
 enum class EGridEntry : uint32_t
 {
 	GRID_NUMERIC	= 0,  ///< Numeric grid.
 	GRID_SYMBOLIC	= 2,  ///< Symbolic grid.
-	GRID_UNDEFINED  = 15, ///< Type is undefined.
+	GRID_UNDEFINED  = 15, ///< Grid type is undefined.
 };
 
 // ========== TYPES OF GRID FUNCTIONAL DISTRIBUTIONS
@@ -133,12 +135,10 @@ enum class ENLSolverStrategy : uint32_t
 	Newton, Linesearch, Picard, Fixedpoint
 };
 
-// ========== PSD TYPES
 /**
 * \brief Identifiers of PSD types.
 * \details
 * \note
-* Notations:
 * - \f$i\f$ - index of size classes
 * - \f$j\f$ - index of compounds
 * - \f$k\f$ - index of porosities
@@ -147,33 +147,31 @@ enum class ENLSolverStrategy : uint32_t
 * - \f$m_i\f$ - mass of particles of class \f$i\f$
 * - \f$M_{tot}\f$ - total mass of particles
 * - \f$N_i\f$ - number of particles of class \f$i\f$
-* - \f$N_{i, j}\f$ - number of particles of compound \f$j\f$ with size class \f$i\f$
+* - \f$N_{i,j}\f$ - number of particles of compound \f$j\f$ of size class \f$i\f$
 * - \f$N_{tot}\f$ - total number of particles
 * - \f$w_i\f$ - mass fraction of particles of class \f$i\f$
-* - \f$w_{i, j}\f$ - mass fraction of particles of compound \f$j\f$ with size class \f$i\f$
-* - \f$w_{i, j, k}\f$ - mass fraction of particles of compound \f$j\f$ with size class \f$i\f$and porosity \f$k\f$
-* - \f$\rho_j\f$ - density of compound \f$j\f$
-* - \f$\varepsilon_k\f$ - porosity of class \f$k\f$
-* - \f$q_0\f$ - number - related density distribution
-* - \f$Q_0\f$ - number - related cumulative distribution
-* - \f$q_2\f$ - surface - area - related density distribution
-* - \f$Q_2\f$ - surface - area - related cumulative distribution
-* - \f$q_3\f$ - mass - related density distribution
-* - \f$Q_3\f$ - mass - related cumulative distribution
+* - \f$w_{i,j}\f$ - mass fraction of particles of compound \f$j\f$ of size class \f$i\f$
+* - \f$w_{i,j,k}\f$ - mass fraction of particles of compound \f$j\f$ of size class \f$i\f$ and porosity \f$k\f$
+* - \f$\rho_{j}\f$ - density of compound \f$j\f$
+* - \f$\varepsilon_{k}\f$ - porosity of class \f$k\f$
+* - \f$q_0\f$ - number-related density distribution
+* - \f$Q_0\f$ - number-related cumulative distribution
+* - \f$q_2\f$ - surface-related density distribution
+* - \f$Q_2\f$ - surface-related cumulative distribution
+* - \f$q_3\f$ - mass-related density distribution
+* - \f$Q_3\f$ - mass-related cumulative distribution
 */
-
 enum EPSDTypes
 {
-	PSD_q3       = 0, ///< Mass-related density distribution: \f$q_{3,i} = w_i / \Delta d_i\f$.
+	PSD_q3       = 0, ///< Mass-related density distribution: \f$q_{3,i} = \frac{w_i}{\Delta d_i}\f$.
 	PSD_Q3       = 1, ///< Mass-related cumulative distribution: \f$Q_{3,0} = w_0\f$, \f$Q_{3,i} = Q_{3,i-1} + w_i\f$.
-	PSD_q0       = 2, ///< Number-related density distribution: \f$q_{0,i} = \frac{N_i}{N_{tot} \cdot \Delta d_i}\f$.
-	PSD_Q0       = 3, ///< Number-related cumulative distribution: \f$Q_{0,i} = Q_{0,i-1} + q_{0,i} \cdot \Delta d_i\f$.
+	PSD_q0       = 2, ///< Number-related density distribution: \f$q_{0,i} = \frac{N_i}{N_{tot} \Delta d_i}\f$.
+	PSD_Q0       = 3, ///< Number-related cumulative distribution: \f$Q_{0,i} = Q_{0,i-1} + q_{0,i} \Delta d_i\f$.
 	PSD_MassFrac = 4, ///< Size distribution in the form of mass fractions with the total sum of 1.
-	PSD_Number   = 5, ///< Number-related distribution of particles depends on several conditions.
-					  ///< Three cases of calculation can be distinguished:
+	PSD_Number   = 5, ///< Number-related distribution of particles, depends on several conditions:
 					  ///< -# If only one compound is specified: \f$N_i = \frac{m_i}{\rho \frac{\pi}{6} d_i^3}\f$.
-					  ///< -# For several compounds: \f$N_i = \sum_j \frac{M_{tot} \cdot w_{i,j}}{\frac{\pi \cdot d_i^3}{6} \cdot \rho_j}\f$.
-					  ///< -# If distribution by particle porosity has been defined: \f$N_i = \sum_j N_{i,j}\f$, with \f$N_{i, j} = \sum_k \frac{ M_{tot} \cdot w_{i,j,k} }{\frac{ \pi \cdot d_i ^ 3 }{6} \cdot \rho_j \cdot(1 - \varepsilon_k)}\f$.
+					  ///< -# For several compounds: \f$N_i = \sum_j \frac{M_{tot} w_{i,j}}{\frac{\pi d_i^3}{6} \rho_j}\f$.
+					  ///< -# If distribution by particle porosity defined: \f$N_i = \sum_j N_{i,j}\f$, with \f$N_{i, j} = \sum_k \frac{M_{tot} w_{i,j,k}}{\frac{\pi d_i^3}{6} \rho_j (1 - \varepsilon_k)}\f$.
 	PSD_q2       = 6, ///< Surface-area-related density distribution: \f$q_{2,i} = \frac{Q_{2,i} - Q_{2,i-1}}{\Delta d_i}\f$.
 	PSD_Q2       = 7  ///< Surface-area-related cumulative distribution: \f$Q_{2,i} = \frac{\sum_{j=0}^i N_j \pi d_j^2}{\sum_j N_j \pi d_j^2}\f$.
 };
@@ -202,16 +200,15 @@ enum class EDependencyTypes
 
 // ========== Universal constants
 
-#define AVOGADRO_CONSTANT					6.022141994747e+23
-#define BOLTZMANN_CONSTANT					1.38065032424e-23
-#define IDEAL_GAS_STATE_REFERENCE_PRESSURE	101325
-#define MOLAR_GAS_CONSTANT					8.314459848
-#define SPEED_OF_LIGHT_IN_VACUUM			2.9979245811e+8
-#define STANDARD_ACCELERATION_OF_GRAVITY	9.80665
+#define AVOGADRO_CONSTANT					6.022141994747e+23     ///< Avogadro constant [1/mol].
+#define BOLTZMANN_CONSTANT					1.38065032424e-23	   ///< Boltzmann constant [J/K].
+#define MOLAR_GAS_CONSTANT					8.314459848			   ///< Molar gas constant [J/mol/K].
+#define SPEED_OF_LIGHT_IN_VACUUM			2.9979245811e+8		   ///< Speed of light in vacuum [m/s].
+#define STANDARD_ACCELERATION_OF_GRAVITY	9.80665				   ///< Standard acceleration of gravity [m/s<sup>2</sup>].
 #define STANDARD_CONDITION_T				298.15	               ///< Standard condition temperature [K].
 #define STANDARD_CONDITION_P				101325	               ///< Standard condition pressure [Pa].
-#define STEFAN_BOLTZMANN_CONSTANT			5.670374419e-8		   // W/m^2.K^4
-#define MATH_PI								3.14159265358979323846
+#define STEFAN_BOLTZMANN_CONSTANT			5.670374419e-8		   ///< Stefan-Boltzmann constant [W/m<sup>2</sup>/K<sup>4</sup>].
+#define MATH_PI								3.14159265358979323846 ///< \f$\pi\f$ constant.
 
 // ========== Value basis
 
@@ -234,12 +231,12 @@ enum class EDistrFunction : unsigned
 };
 
 /**
-* \brief Identifiers of grid units types.
+* \brief Identifiers of grid unit types.
 */
 enum class EPSDGridType : unsigned
 {
-	DIAMETER = 0, ///< Grid units type for diameter in [m].
-	VOLUME = 1	  ///< Grid units type for volume in [m<sup>3</sup>].
+	DIAMETER = 0, ///< Diameter-based size-grid [m].
+	VOLUME = 1	  ///< Volume-based size-grid [m<sup>3</sup>].
 };
 
 /**
@@ -255,24 +252,24 @@ enum class EPhase : uint32_t
 };
 
 /**
-* \brief Identifiers of time-dependent overall parameters.
+* \brief Identifiers of time-dependent overall properties.
 */
 enum class EOverall : uint32_t
 {
 	// TODO: rename when corresponding defines are removed
-	OVERALL_MASS,					///< Overall mass.
+	OVERALL_MASS,					///< Overall mass or mass flow.
 	OVERALL_TEMPERATURE,			///< Overall temperature.
 	OVERALL_PRESSURE,				///< Overall pressure.
-	OVERALL_USER_DEFINED_01 = 201,	///< User-defined overall.
-	OVERALL_USER_DEFINED_02 = 202,	///< User-defined overall.
-	OVERALL_USER_DEFINED_03 = 203,	///< User-defined overall.
-	OVERALL_USER_DEFINED_04 = 204,	///< User-defined overall.
-	OVERALL_USER_DEFINED_05 = 205,	///< User-defined overall.
-	OVERALL_USER_DEFINED_06 = 206,	///< User-defined overall.
-	OVERALL_USER_DEFINED_07 = 207,	///< User-defined overall.
-	OVERALL_USER_DEFINED_08 = 208,	///< User-defined overall.
-	OVERALL_USER_DEFINED_09 = 209,	///< User-defined overall.
-	OVERALL_USER_DEFINED_10 = 210,	///< User-defined overall.
+	OVERALL_USER_DEFINED_01 = 201,	///< User-defined overall property.
+	OVERALL_USER_DEFINED_02 = 202,	///< User-defined overall property.
+	OVERALL_USER_DEFINED_03 = 203,	///< User-defined overall property.
+	OVERALL_USER_DEFINED_04 = 204,	///< User-defined overall property.
+	OVERALL_USER_DEFINED_05 = 205,	///< User-defined overall property.
+	OVERALL_USER_DEFINED_06 = 206,	///< User-defined overall property.
+	OVERALL_USER_DEFINED_07 = 207,	///< User-defined overall property.
+	OVERALL_USER_DEFINED_08 = 208,	///< User-defined overall property.
+	OVERALL_USER_DEFINED_09 = 209,	///< User-defined overall property.
+	OVERALL_USER_DEFINED_10 = 210,	///< User-defined overall property.
 };
 
 /**
