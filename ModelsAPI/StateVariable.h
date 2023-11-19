@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -15,9 +17,9 @@ class CH5Handler;
 //
 
 /**
-* \brief Description of time-dependent state variables.
-* \details
-*/
+ * \brief Description of time-dependent state variables of the unit.
+ * \details Used either to track internal time-dependent variables of the unit or to output it to the user.
+ */
 class CStateVariable
 {
 	static const unsigned m_saveVersion{ 1 };	// Current version of the saving procedure.
@@ -31,37 +33,99 @@ class CStateVariable
 	std::vector<STDValue> m_history;	// Stored history of time-dependent changes.
 
 public:
+	/**
+	 * \private
+	 * \param _name Name of the state variable.
+	 * \param _initValue Initial value of the state variable.
+	 */
 	CStateVariable(std::string _name, double _initValue);
 
-	void Clear();								// Clears state variable.
+	/**
+	 * \private
+	 * \brief Clears state variable.
+	 */
+	void Clear();
 
 	/**
-	* \brief Returns name of the state variable.
-	* \details
-	* \return Name of the state variable.
-	*/
+	 * \brief Returns name of the state variable.
+	 * \return Name of the state variable.
+	 */
 	std::string GetName() const;
 	/**
-	* \brief Sets name of the state variable.
-	* \details
-	* \param _name Name of the state variable.
-	*/
+	 * \private
+	 * \brief Sets name of the state variable.
+	 * \param _name Name of the state variable.
+	 */
 	void SetName(const std::string& _name);
 
-	double GetValue() const;					// Returns current value of the state variable
-	void SetValue(double _value);				// Sets new value of the state variable.
-	void SetValue(double _time, double _value);	// Sets new value of the state variable and saves it in the history of changes.
+	/**
+	 * \brief Returns current value of the state variable.
+	 * \return Current value of the state variable.
+	 */
+	double GetValue() const;
+	/**
+	 * \private
+	 * \brief Sets new value of the state variable.
+	 * \param _value New value.
+	 */
+	void SetValue(double _value);
+	/**
+	 * \private
+	 * \brief Sets new value of the state variable and saves it in the history of changes.
+	 * \param _time Time point.
+	 * \param _value New value.
+	 */
+	void SetValue(double _time, double _value);
 
-	void SaveState();							// Stores current value of the state variable.
-	void LoadState();							// Restores previously stored value of the state variable.
+	/**
+	 * \private
+	 * \brief Stores current value of the state variable.
+	 */
+	void SaveState();
+	/**
+	 * \private
+	 * \brief Restores previously stored value of the state variable.
+	 */
+	void LoadState();
 
-	bool HasHistory() const;								// Checks whether the state variable contains a stored history of time-dependent changes.
-	std::vector<STDValue> GetHistory() const;				// Returns the stored history of time-dependent changes.
-	double GetHistoryValue(double _time) const;				// Returns an (interpolated) value for a given time point from the stored history.
-	void SetHistory(const std::vector<STDValue>& _history);	// Sets the history of time-dependent changes.
+	/**
+	 * \brief Checks whether the state variable contains a stored history of time-dependent changes.
+	 * \return Whether the state variable stores history.
+	 */
+	bool HasHistory() const;
+	/**
+	 * \brief Returns the stored history of time-dependent changes.
+	 * \return History of time-dependent changes.
+	 */
+	std::vector<STDValue> GetHistory() const;
+	/**
+	 * \brief Returns a value for a given time point from the stored history.
+	 * \details Interpolates the value if it is required.
+	 * \param _time Time point.
+	 * \return Value at the given time point.
+	 */
+	double GetHistoryValue(double _time) const;
+	/**
+	 * \private
+	 * \brief Sets the history of time-dependent changes.
+	 * \param _history New history.
+	 */
+	void SetHistory(const std::vector<STDValue>& _history);
 
-	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;	// Saves data to file.
-	void LoadFromFile(CH5Handler& _h5File, const std::string& _path);		// Loads data from file.
+	/**
+	 * \private
+	 * \brief Saves data to file.
+	 * \param _h5File Reference to the file handler.
+	 * \param _path Path to data in the file.
+	 */
+	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
+	/**
+	 * \private
+	 * \brief Loads data from file.
+	 * \param _h5File Reference to the file handler.
+	 * \param _path Path to data in the file.
+	 */
+	void LoadFromFile(CH5Handler& _h5File, const std::string& _path);
 private:
 	void AddToHistory(double _time, double _value);	// Adds the given value to the history and removes all data after the given time.
 };
@@ -72,7 +136,6 @@ private:
 
 /**
 * \brief Manager of state variables.
-* \details
 */
 class CStateVariablesManager
 {
@@ -82,61 +145,118 @@ class CStateVariablesManager
 
 public:
 	/**
-	 * \internal
+	 * \private
 	 * \brief Copies user-defined data from \p _stateVariables.
 	 * \details Copies information about state variables. Assumes the corresponding state variables structure is the same.
 	 * \param _stateVariables Reference to state variables manager.
 	 */
 	void CopyUserData(const CStateVariablesManager& _stateVariables) const;
 
-	// Adds a new time-dependent state variable and returns a pointer to it. If a state variable with this name already exists, does nothing and returns nullptr.
+	/**
+	 * \private
+	 * \brief Adds a new time-dependent state variable and returns a pointer to it.
+	 * \details If a state variable with this name already exists, does nothing and returns nullptr.
+	 * \param _name Name of the state variable.
+	 * \param _initValue Initial value of the state variable.
+	 * \return Pointer to added state variable.
+	 */
 	CStateVariable* AddStateVariable(const std::string& _name, double _initValue);
-	// Returns a state variable with the specified index.
+	/**
+	 * \brief Returns a state variable with the specified index.
+	 * \param _index Index of the state variable.
+	 * \return Const pointer to state variable.
+	 */
 	const CStateVariable* GetStateVariable(size_t _index) const;
-	// Returns a state variable with the specified index.
+	/**
+	 * \brief Returns a state variable with the specified index.
+	 * \param _index Index of the state variable.
+	 * \return Pointer to state variable.
+	 */
 	CStateVariable* GetStateVariable(size_t _index);
-	// Returns a state variable with the specified name.
+	/**
+	 * \brief Returns a state variable with the specified name.
+	 * \param _name Name of the state variable.
+	 * \return Const pointer to state variable.
+	 */
 	const CStateVariable* GetStateVariable(const std::string& _name) const;
-	// Returns a state variable with the specified name.
+	/**
+	 * \brief Returns a state variable with the specified name.
+	 * \param _name Name of the state variable.
+	 * \return Pointer to state variable.
+	 */
 	CStateVariable* GetStateVariable(const std::string& _name);
 
-	// Returns const pointers to all defined state variables.
+	/**
+	 * \brief Returns const pointers to all defined state variables.
+	 * \return Const pointers to all state variables.
+	 */
 	std::vector<const CStateVariable*> GetAllStateVariables() const;
-	// Returns const pointers to all defined state variables.
+	/**
+	 * \brief Returns const pointers to all defined state variables.
+	 * \return Pointers to all state variables.
+	 */
 	std::vector<CStateVariable*> GetAllStateVariables();
 
-	// Returns const pointers to all defined state variables that track history of changes.
+	/**
+	 * \private
+	 * \brief Returns const pointers to all defined state variables that track history of changes.
+	 * \return Const pointers to all state variables with history.
+	 */
 	std::vector<const CStateVariable*> GetAllStateVariablesWithHistory() const;
-	// Returns const pointers to all defined state variables that track history of changes.
+	/**
+	 * \private
+	 * \brief Returns const pointers to all defined state variables that track history of changes.
+	 * \return Pointers to all state variables with history.
+	 */
 	std::vector<CStateVariable*> GetAllStateVariablesWithHistory();
 
 	/**
-	* \brief Returns a number of defined state variables.
-	* \details
-	* \return Number of defined state variables.
-	*/
+	 * \brief Returns number of defined state variables.
+	 * \return Number of state variables.
+	 */
 	size_t GetStateVariablesNumber() const;
 
 	/**
-	* \brief Removes all defined state variables.
-	* \details
-	*/
+	 * \private
+	 * \brief Clears all data in all state variables.
+	 */
 	void ClearData();
 	/**
-	* \brief Removes all data.
-	* \details
-	*/
+	 * \private
+	 * \brief Removes all defined state variables.
+	 */
 	void Clear();
 
-	// Stores the current state of all state variables.
+	/**
+	 * \private
+	 * \brief Stores the current state of all state variables.
+	 */
 	void SaveState();
-	// Restores previously stored state of all state variables.
+	/**
+	 * \private
+	 * \brief Restores previously stored state of all state variables.
+	 */
 	void LoadState();
 
-	// Saves data to file.
+	/**
+	 * \private
+	 * \brief Saves data to file.
+	 * \param _h5File Reference to the file handler.
+	 * \param _path Path to data in the file.
+	 */
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
-	// Loads data from file.
+	/**
+	 * \private
+	 * \brief Loads data from file.
+	 * \param _h5File Reference to the file handler.
+	 * \param _path Path to data in the file.
+	 */
 	void LoadFromFile(CH5Handler& _h5File, const std::string& _path);
-	// Loads data from file. A compatibility version.
+	/**
+	 * \private
+	 * \brief Loads data from file. A compatibility version.
+	 * \param _h5File Reference to the file handler.
+	 * \param _path Path to data in the file.
+	 */
 	void LoadFromFile_v0(const CH5Handler& _h5File, const std::string& _path);
 };

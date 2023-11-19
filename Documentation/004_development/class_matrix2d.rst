@@ -3,8 +3,6 @@
 Two-mensional matrix
 =====================
 
-Dense two-mensional matrix
-
 .. doxygenclass:: CMatrix2D
    :project: dyssol_models_api
    :members:
