@@ -9,8 +9,6 @@ Matrices
 
 Several types of matrix classes, including the following types, are introduced in this section. 
 
-- Transform matrix: ``CTransformMatrix``.
-
 - Dense 2-dimensional matrix: ``CDense2DMatrix``.
 
 - Dense multidimensional matrix: ``CDenseMDMatrix``.

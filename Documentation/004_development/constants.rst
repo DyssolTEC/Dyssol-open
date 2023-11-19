@@ -65,3 +65,6 @@ Dyssol constants
 
 .. doxygenenum:: EPSDGridType
     :project: dyssol_models_api
+	
+.. doxygenenum:: ESolverTypes
+    :project: dyssol_models_api

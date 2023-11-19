@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "UnitParameters.h"
 #include "DyssolStringConstants.h"
@@ -1571,24 +1573,24 @@ std::vector<CChemicalReaction> CUnitParametersManager::GetReactionParameterValue
 	return {};
 }
 
-double CUnitParametersManager::GetListRealParameterValue(size_t _index, size_t _vauleIndex) const
+double CUnitParametersManager::GetListRealParameterValue(size_t _index, size_t _valueIndex) const
 {
 	if (const auto* p = GetListRealParameter(_index))
-		return p->GetValue(_vauleIndex);
+		return p->GetValue(_valueIndex);
 	return {};
 }
 
-int64_t CUnitParametersManager::GetListIntParameterValue(size_t _index, size_t _vauleIndex) const
+int64_t CUnitParametersManager::GetListIntParameterValue(size_t _index, size_t _valueIndex) const
 {
 	if (const auto* p = GetListIntParameter(_index))
-		return p->GetValue(_vauleIndex);
+		return p->GetValue(_valueIndex);
 	return {};
 }
 
-uint64_t CUnitParametersManager::GetListUIntParameterValue(size_t _index, size_t _vauleIndex) const
+uint64_t CUnitParametersManager::GetListUIntParameterValue(size_t _index, size_t _valueIndex) const
 {
 	if (const auto* p = GetListUIntParameter(_index))
-		return p->GetValue(_vauleIndex);
+		return p->GetValue(_valueIndex);
 	return {};
 }
 

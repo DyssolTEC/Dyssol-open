@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -16,11 +18,14 @@
 	#define DECLDIR
 #endif
 
+/**
+ * \brief Types of solver parameters.
+ */
 enum class ESolverTypes : uint32_t
 {
-	SOLVER_NONE            = 0,
-	SOLVER_AGGLOMERATION_1 = 1,
-	SOLVER_PBM_1           = 2
+	SOLVER_NONE            = 0,	///< Undefined.
+	SOLVER_AGGLOMERATION_1 = 1,	///< Agglomeration solver.
+	SOLVER_PBM_1           = 2, ///< Population balance solver.
 };
 
 #define CREATE_SOLVER_FUNCTION_BASE CreateDYSSOLSolverV4

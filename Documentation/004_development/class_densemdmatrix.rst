@@ -3,8 +3,6 @@
 Multidimensional matrix
 =======================
 
-Dense multidimensional matrix
-
 .. doxygenclass:: CDenseMDMatrix
    :project: dyssol_models_api
    :members:

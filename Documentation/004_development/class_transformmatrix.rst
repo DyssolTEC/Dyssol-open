@@ -3,10 +3,6 @@
 Transformation matrix
 =====================
 
-:ref:`label-TM` (class ``CTransformMatrix``) are applied to describe laws of changes for multidimensional distributions. Each cell of matrix describes how much of material will be transferred from one class of multidimensional distribution to another.
-
-|
-
 .. doxygenclass:: CTransformMatrix
    :project: dyssol_models_api
    :members:
