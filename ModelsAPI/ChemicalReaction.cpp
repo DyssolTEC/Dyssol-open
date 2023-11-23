@@ -1,4 +1,6 @@
-/* Copyright (c) 2021, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2021, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "ChemicalReaction.h"
 #include "MaterialsDatabase.h"
@@ -16,7 +18,7 @@ CChemicalReaction::CChemicalReaction(const CChemicalReaction& _other)
 	m_substances.clear();
 	m_substances.reserve(_other.m_substances.size());
 	for (const auto& s : _other.m_substances)
-		m_substances.emplace_back(new SChemicalSubstanse{ *s });
+		m_substances.emplace_back(new SChemicalSubstance{ *s });
 }
 
 CChemicalReaction& CChemicalReaction::operator=(const CChemicalReaction& _other)
@@ -44,14 +46,14 @@ std::string CChemicalReaction::GetName() const
 	return m_name;
 }
 
-CChemicalReaction::SChemicalSubstanse* CChemicalReaction::AddSubstance()
+CChemicalReaction::SChemicalSubstance* CChemicalReaction::AddSubstance()
 {
 	return m_substances.emplace_back().get();
 }
 
-void CChemicalReaction::AddSubstance(const SChemicalSubstanse& _substance)
+void CChemicalReaction::AddSubstance(const SChemicalSubstance& _substance)
 {
-	m_substances.emplace_back(new SChemicalSubstanse{ _substance });
+	m_substances.emplace_back(new SChemicalSubstance{ _substance });
 }
 
 void CChemicalReaction::RemoveSubstance(size_t _index)
@@ -60,17 +62,17 @@ void CChemicalReaction::RemoveSubstance(size_t _index)
 	m_substances.erase(m_substances.begin() + _index);
 }
 
-std::vector<const CChemicalReaction::SChemicalSubstanse*> CChemicalReaction::GetSubstances() const
+std::vector<const CChemicalReaction::SChemicalSubstance*> CChemicalReaction::GetSubstances() const
 {
-	auto res = ReservedVector<const SChemicalSubstanse*>(m_substances.size());
+	auto res = ReservedVector<const SChemicalSubstance*>(m_substances.size());
 	for (const auto& s : m_substances)
 		res.emplace_back(s.get());
 	return res;
 }
 
-std::vector<CChemicalReaction::SChemicalSubstanse*> CChemicalReaction::GetSubstances()
+std::vector<CChemicalReaction::SChemicalSubstance*> CChemicalReaction::GetSubstances()
 {
-	auto res = ReservedVector<SChemicalSubstanse*>(m_substances.size());
+	auto res = ReservedVector<SChemicalSubstance*>(m_substances.size());
 	for (auto& s : m_substances)
 		res.emplace_back(s.get());
 	return res;
@@ -81,54 +83,54 @@ size_t CChemicalReaction::GetSubstancesNumber() const
 	return m_substances.size();
 }
 
-std::vector<const CChemicalReaction::SChemicalSubstanse*> CChemicalReaction::GetSubstances(EPhase _phase) const
+std::vector<const CChemicalReaction::SChemicalSubstance*> CChemicalReaction::GetSubstances(EPhase _phase) const
 {
-	auto res = ReservedVector<const SChemicalSubstanse*>(m_substances.size());
+	auto res = ReservedVector<const SChemicalSubstance*>(m_substances.size());
 	for (const auto& s : m_substances)
 		if (s->phase == _phase)
 			res.emplace_back(s.get());
 	return res;
 }
 
-std::vector<CChemicalReaction::SChemicalSubstanse*> CChemicalReaction::GetSubstances(EPhase _phase)
+std::vector<CChemicalReaction::SChemicalSubstance*> CChemicalReaction::GetSubstances(EPhase _phase)
 {
-	auto res = ReservedVector<SChemicalSubstanse*>(m_substances.size());
+	auto res = ReservedVector<SChemicalSubstance*>(m_substances.size());
 	for (auto& s : m_substances)
 		if (s->phase == _phase)
 			res.emplace_back(s.get());
 	return res;
 }
 
-std::vector<const CChemicalReaction::SChemicalSubstanse*> CChemicalReaction::GetSubstances(ESubstance _type) const
+std::vector<const CChemicalReaction::SChemicalSubstance*> CChemicalReaction::GetSubstances(ESubstance _type) const
 {
-	auto res = ReservedVector<const SChemicalSubstanse*>(m_substances.size());
+	auto res = ReservedVector<const SChemicalSubstance*>(m_substances.size());
 	for (const auto& s : m_substances)
 		if (_type == s->GetType())
 			res.emplace_back(s.get());
 	return res;
 }
 
-std::vector<CChemicalReaction::SChemicalSubstanse*> CChemicalReaction::GetSubstances(ESubstance _type)
+std::vector<CChemicalReaction::SChemicalSubstance*> CChemicalReaction::GetSubstances(ESubstance _type)
 {
-	auto res = ReservedVector<SChemicalSubstanse*>(m_substances.size());
+	auto res = ReservedVector<SChemicalSubstance*>(m_substances.size());
 	for (auto& s : m_substances)
 		if (_type == s->GetType())
 			res.emplace_back(s.get());
 	return res;
 }
 
-std::vector<const CChemicalReaction::SChemicalSubstanse*> CChemicalReaction::GetSubstances(EPhase _phase, ESubstance _type) const
+std::vector<const CChemicalReaction::SChemicalSubstance*> CChemicalReaction::GetSubstances(EPhase _phase, ESubstance _type) const
 {
-	auto res = ReservedVector<const SChemicalSubstanse*>(m_substances.size());
+	auto res = ReservedVector<const SChemicalSubstance*>(m_substances.size());
 	for (const auto& s : m_substances)
 		if (s->phase == _phase && _type == s->GetType())
 			res.emplace_back(s.get());
 	return res;
 }
 
-std::vector<CChemicalReaction::SChemicalSubstanse*> CChemicalReaction::GetSubstances(EPhase _phase, ESubstance _type)
+std::vector<CChemicalReaction::SChemicalSubstance*> CChemicalReaction::GetSubstances(EPhase _phase, ESubstance _type)
 {
-	auto res = ReservedVector<SChemicalSubstanse*>(m_substances.size());
+	auto res = ReservedVector<SChemicalSubstance*>(m_substances.size());
 	for (auto& s : m_substances)
 		if (s->phase == _phase && _type == s->GetType())
 			res.emplace_back(s.get());
@@ -141,13 +143,13 @@ void CChemicalReaction::SetBaseSubstance(size_t _index)
 	m_iBase = _index;
 }
 
-const CChemicalReaction::SChemicalSubstanse* CChemicalReaction::GetBaseSubstance() const
+const CChemicalReaction::SChemicalSubstance* CChemicalReaction::GetBaseSubstance() const
 {
 	if (m_iBase >= m_substances.size()) return nullptr;
 	return m_substances[m_iBase].get();
 }
 
-CChemicalReaction::SChemicalSubstanse* CChemicalReaction::GetBaseSubstance()
+CChemicalReaction::SChemicalSubstance* CChemicalReaction::GetBaseSubstance()
 {
 	if (m_iBase >= m_substances.size()) return nullptr;
 	return m_substances[m_iBase].get();
@@ -208,7 +210,7 @@ void CChemicalReaction::LoadFromFile(const CH5Handler& _h5File, const std::strin
 	m_substances.reserve(number);
 	for (size_t i = 0; i < number; ++i)
 	{
-		m_substances.emplace_back(new SChemicalSubstanse);
+		m_substances.emplace_back(new SChemicalSubstance);
 		const std::string group = _path + "/" + StrConst::Reac_H5Substance + std::to_string(i);
 		_h5File.ReadData(group, StrConst::Reac_H5SubstanceKey  , m_substances.back()->key);
 		_h5File.ReadData(group, StrConst::Reac_H5SubstanceNu   , m_substances.back()->nu);

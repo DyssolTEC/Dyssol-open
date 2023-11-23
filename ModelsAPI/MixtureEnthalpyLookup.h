@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -12,69 +14,184 @@ class CMaterialsDatabase;
  */
 class CMixtureEnthalpyLookup
 {
-	SInterval m_limits{ DEFAULT_ENTHALPY_MIN_T, DEFAULT_ENTHALPY_MAX_T };	// Temperature limits.
-	size_t m_intervals{ DEFAULT_ENTHALPY_INTERVALS };						// Number of temperature intervals.
+	SInterval m_limits{ DEFAULT_ENTHALPY_MIN_T, DEFAULT_ENTHALPY_MAX_T };	///< Temperature limits.
+	size_t m_intervals{ DEFAULT_ENTHALPY_INTERVALS };						///< Number of temperature intervals.
 
-	CMixtureLookup m_mixtureLookup;				// Lookup table for the mixture.
-	const CMaterialsDatabase* m_materialsDB{};	// Pointer to a materials database.
-	std::vector<std::string> m_compounds;		// Vector with keys of the chemical compounds which contains this lookup table
+	CMixtureLookup m_mixtureLookup;				///< Lookup table for the mixture.
+	const CMaterialsDatabase* m_materialsDB{};	///< Pointer to a materials database.
+	std::vector<std::string> m_compounds;		///< Vector with keys of the chemical compounds which contains this lookup table
 
 public:
+	/**
+	 * \brief Default constructor.
+	 */
 	CMixtureEnthalpyLookup() = default;
+	/**
+	 * \brief Constructs lookup table with the pointer to materials database and compounds and default values of limits and number of intervals.
+	 * \param _materialsDB Pointer to materials database.
+	 * \param _compounds List of compounds.
+	 */
 	CMixtureEnthalpyLookup(const CMaterialsDatabase* _materialsDB, std::vector<std::string> _compounds);
+	/**
+	 * \brief Constructs lookup table with the pointer to materials database, compounds, values of limits and number of intervals.
+	 * \param _materialsDB Pointer to materials database.
+	 * \param _compounds List of compounds.
+	 * \param _limits Temperature limits.
+	 * \param _intervalsNumber Number of temperature intervals.
+	 */
 	CMixtureEnthalpyLookup(const CMaterialsDatabase* _materialsDB, std::vector<std::string> _compounds, const SInterval& _limits, size_t _intervalsNumber);
 
-	// Sets temperature limits and number of intervals for the lookup table.
+	/**
+	 * \brief Sets temperature limits and number of intervals for the lookup table.
+	 * \param _limits Temperature limits.
+	 * \param _number Number of temperature intervals.
+	 */
 	void SetLimits(const SInterval& _limits, size_t _number);
-	// Returns current temperature limits.
+	/**
+	 * \brief Returns current temperature limits.
+	 * \return Temperature limits.
+	 */
 	[[nodiscard]] SInterval GetLimits() const;
-	// Returns current number of temperature intervals.
+	/**
+	 * \brief Returns current number of temperature intervals.
+	 * \return Number of intervals.
+	 */
 	[[nodiscard]] size_t GetIntervalsNumber() const;
 
-	// Sets pointer to materials database
+	/**
+	 * \brief Sets pointer to materials database
+	 * \param _materialsDB Pointer to materials database.
+	 */
 	void SetMaterialsDatabase(const CMaterialsDatabase* _materialsDB);
-	// Sets new list of _compounds.
+	/**
+	 * \brief Sets new list of _compounds.
+	 * \param _compounds List of compounds.
+	 */
 	void SetCompounds(const std::vector<std::string>& _compounds);
-	// Sets new _fractions of all compounds. The length of _fractions must be equal to the number of previously defined compounds.
+	/**
+	 * \brief Sets new fractions of all compounds.
+	 * \details The length of fractions must be equal to the number of previously defined compounds.
+	 * \param _fractions Compounds fractions.
+	 */
 	void SetCompoundFractions(const std::vector<double>& _fractions);
-	// Returns current fractions of compounds.
+	/**
+	 * \brief Returns current fractions of compounds.
+	 * \return Compounds fractions.
+	 */
 	[[nodiscard]] std::vector<double> GetCompoundFractions() const;
-	// Returns the number of entries in the lookup table.
+	/**
+	 * \brief Returns the number of entries in the lookup table.
+	 * \return Number of entries.
+	 */
 	[[nodiscard]] size_t Size() const;
 
-	// Returns enthalpy for the given _temperature.
+	/**
+	 * \brief Returns enthalpy for the given temperature.
+	 * \param _temperature Temperature.
+	 * \return Enthalpy.
+	 */
 	[[nodiscard]] double GetEnthalpy(double _temperature) const;
-	// Returns temperature for the given _enthalpy.
+	/**
+	 * \brief Returns temperature for the given _enthalpy.
+	 * \param _enthalpy Enthalpy.
+	 * \return Temperature.
+	 */
 	[[nodiscard]] double GetTemperature(double _enthalpy) const;
 
-	// Sets new _fractions of all compounds and returns enthalpy for the given _temperature. The length of _fractions must be equal to the number of previously defined compounds.
+	/**
+	 * \brief Sets new fractions of all compounds and returns enthalpy for the given temperature.
+	 * \details The length of fractions must be equal to the number of previously defined compounds.
+	 * \param _temperature Temperature.
+	 * \param _fractions Compounds fractions.
+	 * \return Enthalpy.
+	 */
 	[[nodiscard]] double GetEnthalpy(double _temperature, const std::vector<double>& _fractions);
-	// Sets new _fractions of all compounds and returns temperature for the given _enthalpy. The length of _fractions must be equal to the number of previously defined compounds.
+	/**
+	 * \brief Sets new _fractions of all compounds and returns temperature for the given enthalpy.
+	 * \details The length of fractions must be equal to the number of previously defined compounds.
+	 * \param _enthalpy Enthalpy.
+	 * \param _fractions Compounds fractions.
+	 * \return Temperature.
+	 */
 	[[nodiscard]] double GetTemperature(double _enthalpy, const std::vector<double>& _fractions);
 
-	// Removes all information.
+	/**
+	 * \brief Removes all information.
+	 */
 	void Clear();
 
-	// Adds _value to each _right (dependent) entry of the mixture table.
+	/**
+	 * \brief Adds value to each right (dependent) entry of the mixture table.
+	 * \param _value New value.
+	 */
 	void Add(double _value);
-	// Adds a _component with some _weight to each _right (dependent) entry of the mixture table.
+	/**
+	 * \brief Adds a component with some weight to each right (dependent) entry of the mixture table.
+	 * \param _component New component.
+	 * \param _weight Weight of the component.
+	 */
 	void Add(const CDependentValues& _component, double _weight = 1.);
-	// Adds another mixture _table with some _weight to each _right (dependent) entry of the mixture table. _table must have the same number of compounds.
+	/**
+	 * \brief Adds another mixture table with some weight to each right (dependent) entry of the mixture table.
+	 * \details Table must have the same number of compounds.
+	 * \param _table Mixture table.
+	 * \param _weight Weight of the component.
+	 */
 	void Add(const CMixtureEnthalpyLookup& _table, double _weight = 1.);
-	// Multiplies each _right (dependent) entry of the mixture table with a _value.
+	/**
+	 * \brief Multiplies each right (dependent) entry of the mixture table with a value.
+	 * \param _value Value.
+	 */
 	void Multiply(double _value);
 
+	/**
+	 * \brief Adds a value to all entries of the lookup table.
+	 * \param _d Value.
+	 * \return Copy of the lookup table.
+	 */
 	CMixtureEnthalpyLookup operator+(double _d) const;
+	/**
+	 * \brief Multiplies all entries of the lookup table with a value.
+	 * \param _d Value.
+	 * \return Copy of the lookup table.
+	 */
 	CMixtureEnthalpyLookup operator*(double _d) const;
+	/**
+	 * \brief Adds another lookup table.
+	 * \param _t Lookup table.
+	 * \return Copy of the lookup table.
+	 */
 	CMixtureEnthalpyLookup operator+(const CMixtureEnthalpyLookup& _t) const;
+	/**
+	 * \brief Adds a value to all entries of the lookup table.
+	 * \param _d Value.
+	 * \return Reference to the lookup table.
+	 */
 	CMixtureEnthalpyLookup& operator+=(double _d);
+	/**
+	 * \brief Multiplies all entries of the lookup table with a value.
+	 * \param _d Value.
+	 * \return Reference to the lookup table.
+	 */
 	CMixtureEnthalpyLookup& operator*=(double _d);
+	/**
+	 * \brief Adds another lookup table.
+	 * \param _t Lookup table.
+	 * \return Reference to the lookup table.
+	 */
 	CMixtureEnthalpyLookup& operator+=(const CMixtureEnthalpyLookup& _t);
 
+	/**
+	 * \brief Compares two lookup tables.
+	 * \param _t Lookup table.
+	 * \return Whether lookup tables are the same.
+	 */
 	bool operator==(const CMixtureEnthalpyLookup& _t) const;
 
 private:
-	// Set enthalpies to the table according to the defined limits, compounds and their fractions.
+	/**
+	 * \brief Set enthalpies to the table according to the defined limits, compounds and their fractions.
+	 */
 	void UpdateCompoundsEnthalpies();
 };
 
