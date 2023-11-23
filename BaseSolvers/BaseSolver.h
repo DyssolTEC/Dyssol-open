@@ -42,67 +42,129 @@ enum class ESolverTypes : uint32_t
 #define CREATE_SOLVER_FUN(X)		MACRO_CONCAT(CREATE_SOLVER_FUNCTION_CONF, X)
 #define CREATE_SOLVER_FUN_NAME(X)	MACRO_TOSTRING(CREATE_SOLVER_FUN(X))
 
+/**
+ * \brief Base solver.
+ */
 class CBaseSolver
 {
 protected:
-	ESolverTypes m_type{ ESolverTypes::SOLVER_NONE };	// Type of the solver (SOLVER_AGGLOMERATION_1/SOLVER_PBM_1/...).
-	std::string m_name{};								// User-friendly name of the solver.
-	std::string m_authorName{};							// Name of solver's author.
-	std::string m_uniqueID{};							// Unique identifier of the solver.
-	std::string m_helpLink{};							// Link to help file for solver.
-	size_t m_version{};									// Version of the solver.
-	size_t m_compilerVersion{ COMPILER_VERSION };		// Version of compiler used to build the solver.
+	ESolverTypes m_type{ ESolverTypes::SOLVER_NONE };	///< Type of the solver (SOLVER_AGGLOMERATION_1/SOLVER_PBM_1/...).
+	std::string m_name{};								///< User-friendly name of the solver.
+	std::string m_authorName{};							///< Name of solver's author.
+	std::string m_uniqueID{};							///< Unique identifier of the solver.
+	std::string m_helpLink{};							///< Link to help file for solver.
+	size_t m_version{};									///< Version of the solver.
+	size_t m_compilerVersion{ COMPILER_VERSION };		///< Version of compiler used to build the solver.
 
 public:
+	/**
+	 * \private
+	 */
 	CBaseSolver()                                     = default;
+	/**
+	 * \private
+	 */
 	virtual ~CBaseSolver()                            = default;
+	/**
+	 * \private
+	 */
 	CBaseSolver(const CBaseSolver& _other)            = default;
+	/**
+	 * \private
+	 */
 	CBaseSolver(CBaseSolver&& _other)                 = default;
+	/**
+	 * \private
+	 */
 	CBaseSolver& operator=(const CBaseSolver& _other) = default;
+	/**
+	 * \private
+	 */
 	CBaseSolver& operator=(CBaseSolver&& _other)      = default;
 
-	// Returns type to which belongs this solver.
+	/**
+	 * \brief Returns type to which belongs this solver.
+	 * \return Solver's type.
+	 */
 	ESolverTypes GetType() const;
-	// Returns name of solver.
+	/**
+	 * \brief Returns name of solver.
+	 * \return Solver's name.
+	 */
 	std::string GetName() const;
-	// Returns name of the solver's author.
+	/**
+	 * \brief Returns name of the solver's author.
+	 * \return Author's type.
+	 */
 	std::string GetAuthorName() const;
-	// Returns version of solver.
+	/**
+	 * \brief Returns version of solver.
+	 * \return Solver's version.
+	 */
 	size_t GetVersion() const;
-	// Returns string key, unique for all solvers.
+	/**
+	 * \brief Returns string key, unique for all solvers.
+	 * \return Solver's unique ID.
+	 */
 	std::string GetUniqueID() const;
 	/**
-	* \brief Returns the help link of the solver.
-	* \return Help link of the solver.
-	*/
+	 * \brief Returns the help link of the solver.
+	 * \return Help link of the solver.
+	 */
 	std::string GetHelpLink() const;
 
-	// Sets the name of the solver.
+	/**
+	 * \brief Sets the name of the solver.
+	 * \param _name Solver's name.
+	 */
 	void SetName(const std::string& _name);
-	// Sets the name of solver's author.
+	/**
+	 * \brief Sets the name of solver's author.
+	 * \param _author Solver's author.
+	 */
 	void SetAuthorName(const std::string& _author);
-	// Sets the version of the solver.
+	/**
+	 * \brief Sets the version of the solver.
+	 * \param _version Solver's version.
+	 */
 	void SetVersion(size_t _version);
-	// Sets the unique identifier of the solver.
+	/**
+	 * \brief Sets the unique identifier of the solver.
+	 * \param _id Solver's unique ID.
+	 */
 	void SetUniqueID(const std::string& _id);
 	/**
-	* \brief Sets the help link of the solver.
-	* \param _helpLink Help link of the solver.
-	*/
+	 * \brief Sets the help link of the solver.
+	 * \param _helpLink Help link of the solver.
+	 */
 	void SetHelpLink(const std::string& _helpLink);
 
-	// Will be called once during creation of the solver (name, author, key, version).
+	/**
+	 * \brief Will be called once during creation of the solver (name, author, key, version).
+	 */
 	virtual void CreateBasicInfo() = 0;
-	// Will be called to initialize the solver.
+	/**
+	 * \brief Will be called to initialize the solver.
+	 */
 	virtual void Initialize();
-	// Will be called once after the whole simulation is finished.
+	/**
+	 * \brief Will be called once after the whole simulation is finished.
+	 */
 	virtual void Finalize();
-	// Will be called when storing of current internal state is needed.
+	/**
+	 * \brief Will be called when storing of current internal state is needed.
+	 */
 	virtual void SaveState();
-	// Will be called when loading of last stored internal state is needed.
+	/**
+	 * \brief Will be called when loading of last stored internal state is needed.
+	 */
 	virtual void LoadState();
 
 protected:
+	/**
+	 * \brief Sets an error state of the solver, prints the message to the simulation log, and requests to stop simulation.
+	 * \param _message Message to show in the simulation log.
+	 */
 	[[noreturn]] void RaiseError(const std::string& _message) const;
 };
 

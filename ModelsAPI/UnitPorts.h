@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -15,20 +17,25 @@ class CH5Handler;
 //
 
 /**
- * Description of the unit port.
- * The main purpose is connecting to material streams.
+ * \brief Description of the unit port.
+ * \details The main purpose is connecting to material streams.
  */
 class CUnitPort
 {
-	static const unsigned m_saveVersion{ 1 };	// Current version of the saving procedure.
+	static const unsigned m_saveVersion{ 1 };	///< Current version of the saving procedure.
 
 private:
-	std::string m_name;							// The name of the port, should be unique for the unit.
-	EUnitPort m_type{ EUnitPort::UNDEFINED };	// Port type: INPUT or OUTPUT.
-	std::string m_streamKey;					// The key of the stream which is connected to this port.
-	CStream* m_stream{ nullptr };				// Pointer to the connected material stream.
+	std::string m_name;							///< The name of the port, should be unique for the unit.
+	EUnitPort m_type{ EUnitPort::UNDEFINED };	///< Port type: INPUT or OUTPUT.
+	std::string m_streamKey;					///< The key of the stream which is connected to this port.
+	CStream* m_stream{ nullptr };				///< Pointer to the connected material stream.
 
 public:
+	/**
+	 * \brief Constructs unit port with the given name and type.
+	 * \param _name Name of the port.
+	 * \param _type Type of the port.
+	 */
 	CUnitPort(std::string _name, EUnitPort _type);
 
 	/**
@@ -75,14 +82,29 @@ public:
 	 */
 	void SetStream(CStream* _stream);
 
-	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;	// Saves data to file.
-	void LoadFromFile(CH5Handler& _h5File, const std::string& _path);		// Loads data from file.
+	/**
+	 * \private
+	 * \brief Saves data to file.
+	 * \param _h5File Reference to the file handler.
+	 * \param _path Path to data.
+	 */
+	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
+	/**
+	 * \private
+	 * \brief Loads data from file.
+	 * \param _h5File Reference to the file handler.
+	 * \param _path Path to data.
+	 */
+	void LoadFromFile(CH5Handler& _h5File, const std::string& _path);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // CPortsManager
 //
 
+/**
+ * \brief Manager of unit ports.
+ */
 class CPortsManager
 {
 	static const unsigned m_saveVersion{ 1 };	// Current version of the saving procedure.
@@ -91,7 +113,7 @@ class CPortsManager
 
 public:
 	/**
-	 * \internal
+	 * \private
 	 * \brief Copies user-defined data from _ports.
 	 * \details Copies information about selected streams. Assumes the corresponding ports structure is the same.
 	 * \param _ports Reference to source ports manager.
@@ -166,13 +188,35 @@ public:
 	 */
 	size_t GetPortsNumber() const;
 
-	// Saves data to file.
+	/**
+	 * \private
+	 * \brief Saves data to file.
+	 * \param _h5File Reference to the file handler.
+	 * \param _path Path to data.
+	 */
 	void SaveToFile(CH5Handler& _h5File, const std::string& _path) const;
-	// Loads data from file.
+	/**
+	 * \private
+	 * \brief Loads data from file.
+	 * \param _h5File Reference to the file handler.
+	 * \param _path Path to data.
+	 */
 	void LoadFromFile(CH5Handler& _h5File, const std::string& _path);
-	// Loads data from file. A compatibility version.
+	/**
+	 * \private
+	 * \brief Loads data from file.
+	 * \details A compatibility version.
+	 * \param _h5File Reference to the file handler.
+	 * \param _path Path to data.
+	 */
 	void LoadFromFile_v0(const CH5Handler& _h5File, const std::string& _path);
-	// Loads data from file. A compatibility version.
+	/**
+	 * \private
+	 * \brief Loads data from file.
+	 * \details A compatibility version.
+	 * \param _h5File Reference to the file handler.
+	 * \param _path Path to data.
+	 */
 	void LoadFromFile_v00(const CH5Handler& _h5File, const std::string& _path);
 
 private:

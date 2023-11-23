@@ -226,6 +226,7 @@ IF(BUILD_DOCS)
     "BaseSolvers/AgglomerationSolver"
     "BaseSolvers/BaseSolver"
     "Utilities/DyssolDefines"
+    "Utilities/DyssolTypes"
   )
 
   # Gather all API headers

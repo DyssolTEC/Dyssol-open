@@ -20,16 +20,19 @@
 
 namespace MDBDescriptors
 {
-	const std::string SIGNATURE_STRING = "DyssolMaterialsDatabase";
-	const unsigned VERSION = 3;
+	const std::string SIGNATURE_STRING = "DyssolMaterialsDatabase"; ///< Signature string to recognize materials database file.
+	const unsigned VERSION = 3;										///< Version of the materials database file.
 
-	const std::string DEFAULT_MDB_FILE_NAME = "Materials.dmdb";
+	const std::string DEFAULT_MDB_FILE_NAME = "Materials.dmdb";		///< Default name of the materials database file.
 
-	const double TEMP_MIN = 10;
-	const double TEMP_MAX = 10000;
-	const double PRES_MIN = 10e+2;
-	const double PRES_MAX = 10e+8;
+	const double TEMP_MIN = 10;										///< Minimum temperature.
+	const double TEMP_MAX = 10000;									///< Maximum temperature.
+	const double PRES_MIN = 10e+2;									///< Minimum pressure.
+	const double PRES_MAX = 10e+8;									///< Maximum pressure.
 
+	/**
+	 * \brief Type of the material property.
+	 */
 	enum class EPropertyType : unsigned
 	{
 		CONSTANT = 0,
@@ -37,9 +40,9 @@ namespace MDBDescriptors
 		INTERACTION = 2
 	};
 
-	const size_t MAX_USER_DEFINED_PROP_NUMBER = 20; /// Number of properties of each type, which user is allowed to add (0, 50].
+	const size_t MAX_USER_DEFINED_PROP_NUMBER = 20; ///< Number of properties of each type, which user is allowed to add (0, 50].
 
-	const std::string NEW_LINE_REPLACER = "%@#";
+	const std::string NEW_LINE_REPLACER = "%@#";    ///< Symbols to replace the new line symbol.
 }
 
 
@@ -64,6 +67,10 @@ enum class ECorrelationTypes : unsigned
 
 namespace MDBDescriptors
 {
+	/**
+	 * \private
+	 * \brief Description of the correlation property.
+	 */
 	struct SCorrelationDescriptor
 	{
 		std::string name;
@@ -134,7 +141,10 @@ enum ECompoundConstProperties : unsigned
 
 namespace MDBDescriptors
 {
-	// Base structure to describe initial values of all parameters
+	/**
+	 * \private
+	 * \brief Base structure to describe initial values of all parameters.
+	 */
 	struct SCompoundPropertyDescriptor
 	{
 		std::string name;
@@ -150,7 +160,10 @@ namespace MDBDescriptors
 		SCompoundPropertyDescriptor& operator=(SCompoundPropertyDescriptor&& _other) = default;
 	};
 
-	// Initial values of all parameters of a CConstProperty
+	/**
+	 * \private
+	 * \brief Initial values of all parameters of a CConstProperty.
+	 */
 	struct SCompoundConstPropertyDescriptor : SCompoundPropertyDescriptor
 	{
 		double defaultValue{};
@@ -159,6 +172,9 @@ namespace MDBDescriptors
 			: SCompoundPropertyDescriptor{ _name, _units, _description }, defaultValue{ _defaultValue } {}
 	};
 
+	/**
+	 * \private
+	 */
 	using constDescr = std::map<ECompoundConstProperties, SCompoundConstPropertyDescriptor>;
 
 	// List of initial values of const properties
@@ -221,7 +237,10 @@ enum ECompoundTPProperties : unsigned
 
 namespace MDBDescriptors
 {
-	// Initial values of all parameters of a CTPDProperty
+	/**
+	 * \private
+	 * \brief Initial values of all parameters of a CTPDProperty.
+	 */
 	struct SCompoundTPDPropertyDescriptor : SCompoundPropertyDescriptor
 	{
 		ECorrelationTypes defuaultType{ ECorrelationTypes::CONSTANT };
@@ -231,6 +250,9 @@ namespace MDBDescriptors
 			: SCompoundPropertyDescriptor{ _name, _units, _description }, defuaultType{ _defuaultType }, defaultParameters{std::move(_defaultValue)} {}
 	};
 
+	/**
+	 * \private
+	 */
 	using tpdepDescr = std::map<ECompoundTPProperties, MDBDescriptors::SCompoundTPDPropertyDescriptor>;
 
 	// List of initial values of temperature/pressure - dependent properties
@@ -284,6 +306,9 @@ enum EInteractionProperties : unsigned
 
 namespace MDBDescriptors
 {
+	/**
+	 * \private
+	 */
 	using interDescr = std::map<EInteractionProperties, SCompoundTPDPropertyDescriptor>;
 
 	// List of descriptors of temperature/pressure-dependent properties
@@ -295,10 +320,14 @@ namespace MDBDescriptors
 
 namespace MDBDescriptors
 {
-	const unsigned FIRST_CONST_USER_PROP = CONST_PROP_USER_DEFINED_01;
-	const unsigned FIRST_TPDEP_USER_PROP = TP_PROP_USER_DEFINED_01;
-	const unsigned FIRST_INTER_USER_PROP = INT_PROP_USER_DEFINED_01;
+	const unsigned FIRST_CONST_USER_PROP = CONST_PROP_USER_DEFINED_01; ///< Identifier of the first constant property.
+	const unsigned FIRST_TPDEP_USER_PROP = TP_PROP_USER_DEFINED_01;	   ///< Identifier of the first dependent property.
+	const unsigned FIRST_INTER_USER_PROP = INT_PROP_USER_DEFINED_01;   ///< Identifier of the first interaction property.
 
+	/**
+	 * \private
+	 * \brief Descriptor of the material property.
+	 */
 	struct SPropertyDescriptor
 	{
 		EPropertyType type{ EPropertyType::CONSTANT };
