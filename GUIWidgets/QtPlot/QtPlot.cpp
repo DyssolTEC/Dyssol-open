@@ -1,14 +1,17 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "QtPlot.h"
 #include <QMenu>
 #include <QPainter>
 #include <QAbstractTextDocumentLayout>
-#include <QTextStream>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QColorDialog>
 #include <cmath>
+#include <fstream>
+#include <iostream>
 
 using namespace QtPlot;
 
@@ -1317,28 +1320,25 @@ void CQtPlot::SaveAsPicture(const QString& _sFileName)
 
 void CQtPlot::SaveAsCSVFile(const QString& _sFileName)
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
-	using Qt::endl;
-#endif
-	QFile file(_sFileName);
-	if (file.open(QFile::WriteOnly | QFile::Truncate))
+	std::fstream file;
+	file.open(_sFileName.toStdString(), std::ios::out);
+	if (file)
 	{
-		QTextStream textStream(&file);
-
 		for (int i = 0; i < m_vpCurves.size(); ++i)
 		{
 			if ((m_vpCurves.at(i)->bVisibility) && (m_vpCurves.at(i)->points.size() > 0))
 			{
-				textStream << m_vpCurves.at(i)->sCurveName << endl;
+				file << m_vpCurves.at(i)->sCurveName.toStdString() << std::endl;
 				for (int j = 0; j < m_vpCurves.at(i)->points.size(); ++j)
-					textStream << m_vpCurves.at(i)->points.at(j).x() << ", ";
-				textStream << endl;
+					file << m_vpCurves.at(i)->points.at(j).x() << m_numberSeparator.toStdString();
+				file << std::endl;
 				for (int j = 0; j < m_vpCurves.at(i)->points.size(); ++j)
-					textStream << m_vpCurves.at(i)->points.at(j).y() << ", ";
-				textStream << endl;
+					file << m_vpCurves.at(i)->points.at(j).y() << m_numberSeparator.toStdString();
+				file << std::endl;
 			}
 		}
 	}
+	file.close();
 }
 void CQtPlot::ZoomIn()
 {
@@ -1404,6 +1404,7 @@ bool CQtPlot::GetAxisLablesVisible()
 {
 	return m_bIsAxisLablesVisible;
 }
+
 void CQtPlot::ChangeCurvesVisibilityAccordingToLabels()
 {
 	for (int i = 0; i < m_vpCurves.size(); ++i)

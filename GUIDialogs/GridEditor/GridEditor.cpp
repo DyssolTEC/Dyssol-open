@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "GridEditor.h"
 #include "Flowsheet.h"
@@ -11,8 +13,8 @@
 #include <QStandardItem>
 
 
-CGridEditor::CGridEditor(CFlowsheet* _flowsheet, const CMaterialsDatabase& _materialsDB, CModelsManager* _modelsManager, QWidget* _parent, Qt::WindowFlags _flags)
-	: CQtDialog{ _modelsManager, _parent, _flags }
+CGridEditor::CGridEditor(CFlowsheet* _flowsheet, const CMaterialsDatabase& _materialsDB, QWidget* _parent, Qt::WindowFlags _flags)
+	: CQtDialog{ _parent, _flags }
 	, m_materialsDB{ _materialsDB }
 	, m_flowsheet{ _flowsheet }
 	, m_grid{ _flowsheet->GetGrid() }

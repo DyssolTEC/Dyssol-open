@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -38,8 +40,8 @@ class CStatusWindow;
 class CMainWindowHelpHelper : public CQtDialog
 {
 public:
-	CMainWindowHelpHelper(CModelsManager* _modelsManager, QWidget* _parent = nullptr)
-		: CQtDialog{ _modelsManager, _parent } {}
+	explicit CMainWindowHelpHelper(QWidget* _parent = nullptr)
+		: CQtDialog{ _parent } {}
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -77,6 +79,8 @@ private:
 	CTearStreamsEditor* m_pTearStreamsEditor;
 	CDustFormationTesterTab* m_pDustTesterTab;
 	CSettingsEditor* m_pSettingsEditor;
+
+	std::vector<CDyssolBaseWidget*> m_dialogs{}; // List of all dialogs for unified access.
 
 	QList<QAction*> m_vRecentFilesActions;	// list of actions for recent files
 	bool m_bFlowsheetChanged;				// if the flowsheet has been changed after loading
@@ -140,7 +144,6 @@ private slots:
 	void LoadingFinished();	// loading process is finished
 
 	void ShowAboutDialog();				// open about dialog
-
 	void SlotSaveAndReopen();
 	void SlotRestart();
 	void SlotClearCache();

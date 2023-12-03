@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -14,7 +16,8 @@ class CUnitParametersManager;
 class CFlowsheetViewer;
 class QSettings;
 
-class CFlowsheetEditor : public CQtDialog
+class CFlowsheetEditor
+	: public CQtDialog
 {
 	Q_OBJECT
 
@@ -27,9 +30,10 @@ class CFlowsheetEditor : public CQtDialog
 	CFlowsheetViewer* m_viewer;					// Flowsheet diagram viewer.
 
 public:
-	CFlowsheetEditor(CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, CModelsManager* _modelsManager, QSettings* _settings, QWidget* _parent = nullptr);
+	CFlowsheetEditor(CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, QWidget* _parent = nullptr);
 	~CFlowsheetEditor() override;
 
+	void SetPointers(CModelsManager* _modelsManager, QSettings* _settings) override;
 	void InitializeConnections();
 
 public slots:

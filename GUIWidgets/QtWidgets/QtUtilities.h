@@ -1,10 +1,13 @@
-/* Copyright (c) 2023, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2023, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 #include <QApplication>
 #include <QClipboard>
 #include <QMessageBox>
 #include <vector>
+#include <locale>
 
 /**
  * Parses pasted text as a table of doubles.
@@ -12,6 +15,8 @@
  */
 inline std::vector<std::vector<double>> ParseClipboardAsDoubles()
 {
+	QString regExp = "[\t; ]";
+
 	// parse pasted text
 	const QString text = QApplication::clipboard()->text();
 	// split by rows
@@ -23,7 +28,7 @@ inline std::vector<std::vector<double>> ParseClipboardAsDoubles()
 	for (int irow = 0; irow < rows.length(); ++irow)
 	{
 		// split by columns
-		QStringList data = rows[irow].split(QRegExp("[\t ]"));
+		QStringList data = rows[irow].split(QRegExp(regExp), Qt::SkipEmptyParts);
 		// remove trailing whitespaces
 		while (!data.empty() && data.back().size() == 0)
 			data.pop_back();

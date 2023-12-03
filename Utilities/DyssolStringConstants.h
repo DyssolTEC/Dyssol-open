@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -22,16 +24,16 @@ namespace StrConst
 //////////////////////////////////////////////////////////////////////////
 /// Dyssol
 //////////////////////////////////////////////////////////////////////////
-	const char* const Dyssol_ApplicationName       = "Dyssol";
-	const char* const Dyssol_ConfigApp             = "application";
-	const char* const Dyssol_ConfigFileName        = "config.ini";
-	const char* const Dyssol_ConfigLastParamName   = "lastFile";
-	const char* const Dyssol_ConfigRecentParamName = "recentFiles";
-	const char* const Dyssol_ConfigLoadLastFlag    = "loadLast";
-	const char* const Dyssol_ConfigDMDBPath        = "materialsDBPath";
-	const char* const Dyssol_ConfigCachePath       = "cachePath";
-	const char* const Dyssol_CacheDirRelease       = "/cache";
-	const char* const Dyssol_CacheDirDebug         = "/cache_debug";
+	const char* const Dyssol_ApplicationName		          = "Dyssol";
+	const char* const Dyssol_ConfigApp				          = "application";
+	const char* const Dyssol_ConfigFileName			          = "config.ini";
+	const char* const Dyssol_ConfigLastParamName	          = "lastFile";
+	const char* const Dyssol_ConfigRecentParamName	          = "recentFiles";
+	const char* const Dyssol_ConfigLoadLastFlag		          = "loadLast";
+	const char* const Dyssol_ConfigDMDBPath			          = "materialsDBPath";
+	const char* const Dyssol_ConfigCachePath		          = "cachePath";
+	const char* const Dyssol_CacheDirRelease		          = "/cache";
+	const char* const Dyssol_CacheDirDebug			          = "/cache_debug";
 #if _DEBUG
 	const char* const Dyssol_CacheDir              = Dyssol_CacheDirDebug;
 #else

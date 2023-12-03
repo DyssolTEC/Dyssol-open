@@ -1,4 +1,5 @@
-/* Copyright (c) 2023, DyssolTEC. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2023, DyssolTEC.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "QtDialog.h"
 #include "DyssolStringConstants.h"
@@ -7,14 +8,30 @@
 #include <QCoreApplication>
 #include <QDesktopServices>
 
-CQtDialog::CQtDialog(CModelsManager* _modelsManager, QWidget* _parent)
-	: CQtDialog{ _modelsManager, _parent, Qt::WindowFlags()}
+void CDyssolBaseWidget::SetPointers(CModelsManager* _modelsManager, QSettings* _settings)
+{
+	m_modelsManager = _modelsManager;
+	m_settings = _settings;
+}
+
+CModelsManager* CDyssolBaseWidget::GetModelsManager() const
+{
+	return m_modelsManager;
+}
+
+QSettings* CDyssolBaseWidget::GetSettings() const
+{
+	return m_settings;
+}
+
+
+CQtDialog::CQtDialog(QWidget* _parent)
+	: CQtDialog{ _parent, Qt::WindowFlags() }
 {
 }
 
-CQtDialog::CQtDialog(CModelsManager* _modelsManager, QWidget* _parent, Qt::WindowFlags _flags)
+CQtDialog::CQtDialog(QWidget* _parent, Qt::WindowFlags _flags)
 	: QDialog{ _parent, _flags }
-	, m_modelsManager{ _modelsManager }
 {
 	// disable context menu
 	setContextMenuPolicy(Qt::NoContextMenu);

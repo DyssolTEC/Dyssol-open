@@ -1,4 +1,6 @@
-/* Copyright (c) 2021, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2021, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "FlowsheetViewer.h"
 #include "Flowsheet.h"
@@ -13,9 +15,8 @@
 
 namespace fs = std::filesystem;
 
-CFlowsheetViewer::CFlowsheetViewer(const CFlowsheet* _flowsheet, QSettings* _settings, QWidget* _parent)
+CFlowsheetViewer::CFlowsheetViewer(const CFlowsheet* _flowsheet, QWidget* _parent)
 	: QDialog{ _parent }
-	, m_settings{ _settings }
 	, m_flowsheet{ _flowsheet }
 {
 	ui.setupUi(this);
@@ -23,15 +24,6 @@ CFlowsheetViewer::CFlowsheetViewer(const CFlowsheet* _flowsheet, QSettings* _set
 	ui.scrollArea->viewport()->installEventFilter(this);
 	setWindowFlags(windowFlags() | Qt::WindowMaximizeButtonHint | Qt::WindowMinimizeButtonHint);
 
-	// where to temporary store images
-	const std::filesystem::path cachePath = _settings->value(StrConst::Dyssol_ConfigCachePath).toString().toStdString() + StrConst::Dyssol_CacheDir;
-	if (!fs::exists(cachePath))
-		fs::create_directory(cachePath);
-	const fs::path path = fs::exists(cachePath) ? cachePath : fs::current_path();
-	m_imageFullName = QString::fromStdU16String((path / (StringFunctions::GenerateRandomKey() + ".png")).u16string());
-
-	LoadSettings();
-	CreateMenu();
 	InitializeConnections();
 }
 
@@ -47,6 +39,21 @@ CFlowsheetViewer::~CFlowsheetViewer()
 	{
 		std::cerr << "Exception thrown in CFlowsheetViewer::~CFlowsheetViewer()" << std::endl;
 	}
+}
+
+void CFlowsheetViewer::SetPointers(CModelsManager* _modelsManager, QSettings* _settings)
+{
+	CDyssolBaseWidget::SetPointers(_modelsManager, _settings);
+
+	// where to temporary store images
+	const std::filesystem::path cachePath = m_settings->value(StrConst::Dyssol_ConfigCachePath).toString().toStdString() + StrConst::Dyssol_CacheDir;
+	if (!fs::exists(cachePath))
+		fs::create_directory(cachePath);
+	const fs::path path = fs::exists(cachePath) ? cachePath : fs::current_path();
+	m_imageFullName = QString::fromStdU16String((path / (StringFunctions::GenerateRandomKey() + ".png")).u16string());
+
+	LoadSettings();
+	CreateMenu();
 }
 
 void CFlowsheetViewer::InitializeConnections() const

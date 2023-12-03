@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "MaterialsDatabaseTab.h"
 #include "DyssolStringConstants.h"
@@ -10,10 +12,9 @@
 #include <QFileDialog>
 #include <QLockFile>
 
-CMaterialsDatabaseTab::CMaterialsDatabaseTab(CMaterialsDatabase* _pMaterialsDatabase, CModelsManager* _modelsManager, QSettings* _pSettings, QWidget* _parent)
-	: CQtDialog{ _modelsManager, _parent }
+CMaterialsDatabaseTab::CMaterialsDatabaseTab(CMaterialsDatabase* _pMaterialsDatabase, QWidget* _parent)
+	: CQtDialog{ _parent }
 	, m_materialsDB{ _pMaterialsDatabase }
-	, m_pSettings{ _pSettings }
 {
 	ui.setupUi(this);
 	setWindowFlags(windowFlags() ^ Qt::WindowContextHelpButtonHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
@@ -113,7 +114,7 @@ void CMaterialsDatabaseTab::LoadDatabase()
 	const QString sFileName = QFileDialog::getOpenFileName(this, StrConst::MDT_DialogLoadName, QString::fromStdWString(m_materialsDB->GetFileName().wstring()), StrConst::MDT_DialogDMDBFilter);
 	if (!QFile::exists(sFileName.simplified())) return;
 	m_materialsDB->LoadFromFile(sFileName.toStdWString());
-	m_pSettings->setValue(StrConst::Dyssol_ConfigDMDBPath, sFileName);
+	m_settings->setValue(StrConst::Dyssol_ConfigDMDBPath, sFileName);
 	UpdateWholeView();
 	SetMaterialsDatabaseModified(false);
 	emit MaterialDatabaseWasChanged();
@@ -132,7 +133,7 @@ void CMaterialsDatabaseTab::SaveDatabaseAs()
 	const QString sFileName = QFileDialog::getSaveFileName(this, StrConst::MDT_DialogSaveName, QString::fromStdWString(m_materialsDB->GetFileName().wstring()), StrConst::MDT_DialogDMDBFilter);
 	if (sFileName.simplified().isEmpty()) return;
 	if (!SaveToFile(sFileName)) return;
-	m_pSettings->setValue(StrConst::Dyssol_ConfigDMDBPath, sFileName);
+	m_settings->setValue(StrConst::Dyssol_ConfigDMDBPath, sFileName);
 	UpdateWindowTitle();
 	UpdateFileButtonsActivity();
 }

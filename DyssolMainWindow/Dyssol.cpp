@@ -67,24 +67,33 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	SetupCache();
 
 	// create help class for showing help files in main window
-	m_helpHelper = new CMainWindowHelpHelper(&m_ModelsManager, this);
+	m_helpHelper = new CMainWindowHelpHelper{ this };
 
 	// create dialogs and windows
-	m_pModelsManagerTab          = new CModulesManagerTab(&m_ModelsManager, m_pSettings, this);
-	m_pCalcSequenceEditor        = new CCalculationSequenceEditor(&m_Flowsheet, &m_ModelsManager, this);
-	m_pMaterialsDatabaseTab      = new CMaterialsDatabaseTab(&m_MaterialsDatabase, &m_ModelsManager, m_pSettings, this);
-	m_pCompoundsManager          = new CCompoundsManager(&m_Flowsheet, &m_MaterialsDatabase, &m_ModelsManager, this);
-	m_pFlowsheetEditor           = new CFlowsheetEditor(&m_Flowsheet, &m_MaterialsDatabase, &m_ModelsManager, m_pSettings, this);
-	m_pGridEditor                = new CGridEditor(&m_Flowsheet, m_MaterialsDatabase, &m_ModelsManager, this);
-	m_pHoldupsEditor             = new CHoldupsEditor(&m_Flowsheet, &m_MaterialsDatabase, &m_ModelsManager, this);
-	m_pOptionsEditor             = new COptionsEditor(&m_Flowsheet, &m_MaterialsDatabase, &m_ModelsManager, this);
-	m_pPhasesEditor              = new CPhasesEditor(&m_Flowsheet, &m_ModelsManager, this);
-	m_pSimulatorTab              = new CSimulatorTab(&m_Flowsheet, &m_Simulator, &m_ModelsManager, this);
-	m_pStreamsViewer             = new CStreamsViewer(&m_Flowsheet, &m_MaterialsDatabase, &m_ModelsManager, this);
-	m_pUnitsViewer               = new CUnitsViewer(&m_Flowsheet, &m_MaterialsDatabase, &m_ModelsManager, this);
-	m_pTearStreamsEditor         = new CTearStreamsEditor(&m_Flowsheet, &m_MaterialsDatabase, &m_ModelsManager, this);
-	m_pDustTesterTab             = new CDustFormationTesterTab(&m_Flowsheet, &m_MaterialsDatabase, &m_ModelsManager, this);
-	m_pSettingsEditor            = new CSettingsEditor(m_pSettings, &m_ModelsManager, this);
+	m_pModelsManagerTab     = new CModulesManagerTab(this);
+	m_pCalcSequenceEditor   = new CCalculationSequenceEditor(&m_Flowsheet, this);
+	m_pMaterialsDatabaseTab = new CMaterialsDatabaseTab(&m_MaterialsDatabase, this);
+	m_pCompoundsManager     = new CCompoundsManager(&m_Flowsheet, &m_MaterialsDatabase, this);
+	m_pFlowsheetEditor      = new CFlowsheetEditor(&m_Flowsheet, &m_MaterialsDatabase, this);
+	m_pGridEditor           = new CGridEditor(&m_Flowsheet, m_MaterialsDatabase, this);
+	m_pHoldupsEditor        = new CHoldupsEditor(&m_Flowsheet, &m_MaterialsDatabase, this);
+	m_pOptionsEditor        = new COptionsEditor(&m_Flowsheet, &m_MaterialsDatabase, this);
+	m_pPhasesEditor         = new CPhasesEditor(&m_Flowsheet, this);
+	m_pSimulatorTab         = new CSimulatorTab(&m_Flowsheet, &m_Simulator, this);
+	m_pStreamsViewer        = new CStreamsViewer(&m_Flowsheet, &m_MaterialsDatabase, this);
+	m_pUnitsViewer          = new CUnitsViewer(&m_Flowsheet, &m_MaterialsDatabase, this);
+	m_pTearStreamsEditor    = new CTearStreamsEditor(&m_Flowsheet, &m_MaterialsDatabase, this);
+	m_pDustTesterTab		= new CDustFormationTesterTab(&m_Flowsheet, &m_MaterialsDatabase, this);
+	m_pSettingsEditor		= new CSettingsEditor(this);
+
+	// gather pointers to all dialogs
+	m_dialogs = { m_pCalcSequenceEditor, m_pMaterialsDatabaseTab, m_pCompoundsManager, m_pFlowsheetEditor,
+				m_pGridEditor, m_pHoldupsEditor, m_pModelsManagerTab, m_pOptionsEditor, m_pPhasesEditor,
+				m_pSimulatorTab, m_pStreamsViewer, m_pUnitsViewer, m_pTearStreamsEditor, m_pDustTesterTab,
+				m_pSettingsEditor };
+
+	for (auto* d : m_dialogs)
+		d->SetPointers(&m_ModelsManager, m_pSettings);
 
 	// setup main window: add tabs to mainTabWidget
 	int tab = ui.mainTabWidget->addTab(m_pFlowsheetEditor, StrConst::Dyssol_FlowsheetTabName);

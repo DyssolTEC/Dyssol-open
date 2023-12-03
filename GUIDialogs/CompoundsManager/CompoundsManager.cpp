@@ -1,11 +1,13 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "CompoundsManager.h"
 #include "MaterialsDatabase.h"
 #include "Flowsheet.h"
 
-CCompoundsManager::CCompoundsManager(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pDatabase, CModelsManager* _modelsManager, QWidget* _parent)
-	: CQtDialog{ _modelsManager, _parent }
+CCompoundsManager::CCompoundsManager(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pDatabase, QWidget* _parent)
+	: CQtDialog{ _parent }
 {
 	ui.setupUi(this);
 	m_pFlowsheet = _pFlowsheet;

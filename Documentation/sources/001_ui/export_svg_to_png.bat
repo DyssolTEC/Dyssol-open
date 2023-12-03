@@ -26,3 +26,4 @@
 "C:\Program Files\Inkscape\bin\inkscape.exe" --export-type="png" tabs.svg
 "C:\Program Files\Inkscape\bin\inkscape.exe" --export-type="png" tools_mdb.svg
 "C:\Program Files\Inkscape\bin\inkscape.exe" --export-type="png" tools_models.svg
+"C:\Program Files\Inkscape\bin\inkscape.exe" --export-type="png" tools_settings.svg

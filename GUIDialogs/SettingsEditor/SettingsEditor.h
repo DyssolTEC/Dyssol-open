@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -6,18 +8,19 @@
 #include "QtDialog.h"
 #include <QSettings>
 
-class CSettingsEditor : public CQtDialog
+class CSettingsEditor
+	: public CQtDialog
 {
 	Q_OBJECT
 
 	Ui::CSettingsEditorClass ui;
 
-	QSettings *m_pSettings;
 	QString m_currCachePath; // Currently used cache path.
 
 public:
-	CSettingsEditor(QSettings* _pSettings, CModelsManager* _modelsManager, QWidget* _parent = nullptr);
+	CSettingsEditor(QWidget* _parent = nullptr);
 
+	void SetPointers(CModelsManager* _modelsManager, QSettings* _settings) override;
 	void InitializeConnections() const;
 
 public slots:

@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -10,7 +12,8 @@ class CFlowsheet;
 class CMaterialsDatabase;
 class CParametersHolder;
 
-class COptionsEditor : public CQtDialog
+class COptionsEditor
+	: public CQtDialog
 {
 	Q_OBJECT
 
@@ -23,7 +26,7 @@ class COptionsEditor : public CQtDialog
 	unsigned m_cacheWindowSizeBeforeEdit; // stores old the value of cacheWindowSize for undo
 
 public:
-	COptionsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pMaterialsDB, CModelsManager* _modelsManager, QWidget* _parent = nullptr, Qt::WindowFlags _flags = Qt::WindowFlags());
+	COptionsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pMaterialsDB, QWidget* _parent = nullptr, Qt::WindowFlags _flags = Qt::WindowFlags());
 
 	void InitializeConnections() const;
 

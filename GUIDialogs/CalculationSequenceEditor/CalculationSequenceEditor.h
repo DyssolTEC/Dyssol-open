@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -8,7 +10,8 @@
 class CCalculationSequence;
 class CFlowsheet;
 
-class CCalculationSequenceEditor: public CQtDialog
+class CCalculationSequenceEditor
+	: public CQtDialog
 {
 	Q_OBJECT
 
@@ -27,7 +30,7 @@ class CCalculationSequenceEditor: public CQtDialog
 	CCalculationSequence* m_pSequence; // Pointer to the calculation sequence.
 
 public:
-	CCalculationSequenceEditor(CFlowsheet* _pFlowsheet, CModelsManager* _modelsManager, QWidget* _parent = nullptr, Qt::WindowFlags _flags = Qt::WindowFlags());
+	CCalculationSequenceEditor(CFlowsheet* _pFlowsheet, QWidget* _parent = nullptr, Qt::WindowFlags _flags = Qt::WindowFlags());
 
 	void InitializeConnections() const;
 

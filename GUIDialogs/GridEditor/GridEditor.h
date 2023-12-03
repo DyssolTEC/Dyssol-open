@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -9,7 +11,8 @@
 
 class CFlowsheet;
 
-class CGridEditor : public CQtDialog
+class CGridEditor
+	: public CQtDialog
 {
 	Q_OBJECT
 	Ui::CGridEditorClass ui{};
@@ -19,7 +22,7 @@ class CGridEditor : public CQtDialog
 	CMultidimensionalGrid m_grid;				// Working copy of the grid.
 
 public:
-	CGridEditor(CFlowsheet* _flowsheet, const CMaterialsDatabase& _materialsDB, CModelsManager* _modelsManager, QWidget* _parent = nullptr, Qt::WindowFlags _flags = Qt::WindowFlags());
+	CGridEditor(CFlowsheet* _flowsheet, const CMaterialsDatabase& _materialsDB, QWidget* _parent = nullptr, Qt::WindowFlags _flags = Qt::WindowFlags());
 
 	// Connects all signals and slots.
 	void InitializeConnections() const;

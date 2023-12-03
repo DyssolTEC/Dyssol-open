@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "TearStreamsEditor.h"
 #include "Flowsheet.h"
@@ -8,8 +10,8 @@
 #include "SignalBlocker.h"
 #include <QMessageBox>
 
-CTearStreamsEditor::CTearStreamsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, CModelsManager* _modelsManager, QWidget* _parent)
-	: CQtDialog{ _modelsManager, _parent }
+CTearStreamsEditor::CTearStreamsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, QWidget* _parent)
+	: CQtDialog{ _parent }
 {
 	ui.setupUi(this);
 	ui.widgetStreamsEditor->SetFlowsheet(_pFlowsheet, _materialsDB);
