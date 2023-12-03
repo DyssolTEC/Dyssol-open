@@ -1,22 +1,31 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "SettingsEditor.h"
+#include "SignalBlocker.h"
 #include "DyssolStringConstants.h"
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <QFileDialog>
 
-CSettingsEditor::CSettingsEditor(QSettings* _pSettings, CModelsManager* _modelsManager, QWidget* _parent)
-	: CQtDialog{ _modelsManager, _parent }
-	, m_pSettings{ _pSettings }
+CSettingsEditor::CSettingsEditor(QWidget* _parent)
+	: CQtDialog{ _parent }
 {
 	ui.setupUi(this);
 	setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+
 	ui.labelWarningCachePath->setVisible(false);
 	ui.labelWarning->setVisible(false);
-	m_currCachePath = m_pSettings->value(StrConst::Dyssol_ConfigCachePath).toString();
 
 	SetHelpLink("001_ui/gui.html#sec-gui-menu-tools-settings");
+}
+
+void CSettingsEditor::SetPointers(CModelsManager* _modelsManager, QSettings* _settings)
+{
+	CDyssolBaseWidget::SetPointers(_modelsManager, _settings);
+
+	m_currCachePath = m_settings->value(StrConst::Dyssol_ConfigCachePath).toString();
 }
 
 void CSettingsEditor::InitializeConnections() const
@@ -30,8 +39,8 @@ void CSettingsEditor::InitializeConnections() const
 
 void CSettingsEditor::UpdateWholeView() const
 {
-	ui.checkBoxLoadLast->setChecked(m_pSettings->value(StrConst::Dyssol_ConfigLoadLastFlag).toBool());
-	ui.lineEditCachePath->setText(m_pSettings->value(StrConst::Dyssol_ConfigCachePath).toString());
+	ui.checkBoxLoadLast->setChecked(m_settings->value(StrConst::Dyssol_ConfigLoadLastFlag).toBool());
+	ui.lineEditCachePath->setText(m_settings->value(StrConst::Dyssol_ConfigCachePath).toString());
 
 	UpdateWarningsVisible();
 }
@@ -52,7 +61,7 @@ void CSettingsEditor::UpdateWarningsVisible() const
 
 void CSettingsEditor::OpenConfigFile() const
 {
-	QDesktopServices::openUrl(QUrl::fromLocalFile(m_pSettings->fileName()));
+	QDesktopServices::openUrl(QUrl::fromLocalFile(m_settings->fileName()));
 }
 
 void CSettingsEditor::ChangeCachePath()
@@ -90,7 +99,8 @@ void CSettingsEditor::ClearCacheClicked()
 
 void CSettingsEditor::ApplyChanges()
 {
-	m_pSettings->setValue(StrConst::Dyssol_ConfigLoadLastFlag, ui.checkBoxLoadLast->isChecked());
-	m_pSettings->setValue(StrConst::Dyssol_ConfigCachePath, ui.lineEditCachePath->text());
+	m_settings->setValue(StrConst::Dyssol_ConfigLoadLastFlag, ui.checkBoxLoadLast->isChecked());
+	m_settings->setValue(StrConst::Dyssol_ConfigCachePath, ui.lineEditCachePath->text());
+
 	QDialog::accept();
 }

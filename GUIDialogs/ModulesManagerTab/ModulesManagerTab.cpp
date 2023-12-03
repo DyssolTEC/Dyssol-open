@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "ModulesManagerTab.h"
 #include "ModelsManager.h"
@@ -6,26 +8,34 @@
 #include <QFileDialog>
 #include <QDateTime>
 
-CModulesManagerTab::CModulesManagerTab(CModelsManager* _pModelsManager, QSettings* _pSettings, QWidget* _parent)
-	: CQtDialog{ _pModelsManager, _parent }
-	, m_pSettings{ _pSettings }
+CModulesManagerTab::CModulesManagerTab(QWidget* _parent)
+	: CQtDialog{ _parent }
 {
 	ui.setupUi(this);
+
 	ui.tableModels->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	ui.tableDirs->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
 	ui.tableDirs->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
 	setWindowFlags(windowFlags() | Qt::WindowMaximizeButtonHint | Qt::WindowMinimizeButtonHint);
 
+	// set focus policy to enable focus to switch back to modules manager
+	this->setFocusPolicy(Qt::ClickFocus);
+
+	SetHelpLink("001_ui/gui.html#sec-gui-menu-tools-models-manager");
+}
+
+void CModulesManagerTab::SetPointers(CModelsManager* _modelsManager, QSettings* _settings)
+{
+	CQtDialog::SetPointers(_modelsManager, _settings);
+
 	// clear models manager
 	m_modelsManager->Clear();
 
 	// initialize units dirs
-	const QStringList dirs = m_pSettings->value(StrConst::MM_ConfigModelsParamName).toStringList();
-	const QList<bool> dirsFlags = m_pSettings->value(StrConst::MM_ConfigModelsFlagsParamName).value<QList<bool>>();
+	const QStringList dirs = m_settings->value(StrConst::MM_ConfigModelsParamName).toStringList();
+	const QList<bool> dirsFlags = m_settings->value(StrConst::MM_ConfigModelsFlagsParamName).value<QList<bool>>();
 	for (int i = 0; i < dirs.size(); ++i)
 		m_modelsManager->AddDir(dirs[i].toStdWString(), dirsFlags.size() < dirs.size() ? true : dirsFlags[i]);
-
-	SetHelpLink("001_ui/gui.html#sec-gui-menu-tools-models-manager");
 }
 
 void CModulesManagerTab::InitializeConnections() const
@@ -111,8 +121,8 @@ void CModulesManagerTab::UpdateConfigFile() const
 		unitDirs.push_back(QString::fromStdWString(m_modelsManager->GetDirPath(i).wstring()));
 		unitDirsFlags.push_back(m_modelsManager->GetDirActivity(i));
 	}
-	m_pSettings->setValue(StrConst::MM_ConfigModelsParamName, unitDirs);
-	m_pSettings->setValue(StrConst::MM_ConfigModelsFlagsParamName, QVariant::fromValue(unitDirsFlags));
+	m_settings->setValue(StrConst::MM_ConfigModelsParamName, unitDirs);
+	m_settings->setValue(StrConst::MM_ConfigModelsFlagsParamName, QVariant::fromValue(unitDirsFlags));
 }
 
 void CModulesManagerTab::AddDir()

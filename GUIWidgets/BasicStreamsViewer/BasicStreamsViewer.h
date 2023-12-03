@@ -1,9 +1,12 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
 #include "ui_BasicStreamsViewer.h"
 #include "DyssolDefines.h"
+#include "QtDialog.h"
 
 #define PLOT_LINE_WIDTH	3
 
@@ -14,7 +17,9 @@ class CTimeDependentValue;
 class CMDMatrix;
 class CMultidimensionalGrid;
 
-class CBasicStreamsViewer : public QWidget
+class CBasicStreamsViewer
+	: public QWidget
+	, public CDyssolBaseWidget
 {
 	Q_OBJECT
 

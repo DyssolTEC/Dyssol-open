@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -185,6 +187,9 @@ private:
 	QString m_sManualXLabelName;
 	QString m_sManualYLabelName;
 
+	QString m_numberSeparator{ "," };
+	QString m_decimalSeparator{ "." };
+
 public:
 	CQtPlot(QWidget* parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 	~CQtPlot() override;
@@ -242,7 +247,6 @@ public:
 	void SetAxisLablesVisible(bool _bIsVisible);
 	bool GetAxisLablesVisible();
 
-
 private:
 	void CreateDropMenu(QMenu* _pMenu);
 	void CreateFullDropMenu(QMenu* _pMenu);
@@ -285,6 +289,7 @@ protected:
 public slots:
 	void RedrawPlot(); // redraw QTPlot
 	void changeEvent(QEvent *_event) override;
+
 
 private slots:
 	void SetCurveNameSlot(int _nCurveIndex);

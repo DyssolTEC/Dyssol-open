@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "FlowsheetEditor.h"
 #include "Flowsheet.h"
@@ -15,16 +17,18 @@
 #include <sstream>
 
 
-CFlowsheetEditor::CFlowsheetEditor(CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, CModelsManager* _modelsManager, QSettings* _settings, QWidget* _parent)
-	: CQtDialog{ _modelsManager, _parent }
+CFlowsheetEditor::CFlowsheetEditor(CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, QWidget* _parent)
+	: CQtDialog{ _parent }
 	, m_pFlowsheet{ _pFlowsheet }
 	, m_materialsDB{ _matrialsDB }
 	, m_pSelectedModel{ nullptr }
 	, m_pSelectedStream{ nullptr }
-	, m_viewer{ new CFlowsheetViewer{ _pFlowsheet, _settings } }
+	, m_viewer{ new CFlowsheetViewer{ _pFlowsheet } }
 {
 	ui.setupUi(this);
 	ui.tableListValues->EnablePasting(false);
+	// set focus policy to enable focus to switch back to flowsheet editor
+	this->setFocusPolicy(Qt::ClickFocus);
 
 	SetHelpLink("001_ui/gui.html#sec-gui-tabs-flowsheet");
 }
@@ -32,6 +36,12 @@ CFlowsheetEditor::CFlowsheetEditor(CFlowsheet* _pFlowsheet, const CMaterialsData
 CFlowsheetEditor::~CFlowsheetEditor()
 {
 	delete m_viewer;
+}
+
+void CFlowsheetEditor::SetPointers(CModelsManager* _modelsManager, QSettings* _settings)
+{
+	CQtDialog::SetPointers(_modelsManager, _settings);
+	m_viewer->SetPointers(_modelsManager, _settings);
 }
 
 void CFlowsheetEditor::InitializeConnections()

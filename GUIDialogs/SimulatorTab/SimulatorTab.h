@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -11,7 +13,8 @@
 class CSimulator;
 class CFlowsheet;
 
-class CSimulatorTab : public CQtDialog
+class CSimulatorTab
+	: public CQtDialog
 {
 	Q_OBJECT
 
@@ -38,7 +41,7 @@ class CSimulatorTab : public CQtDialog
 	QTimer m_logTimer;				    // Interrupt timer to update simulation log.
 
 public:
-	CSimulatorTab(CFlowsheet* _pFlowsheet, CSimulator* _pSimulator, CModelsManager* _modelsManager, QWidget* _parent = nullptr);
+	CSimulatorTab(CFlowsheet* _pFlowsheet, CSimulator* _pSimulator, QWidget* _parent = nullptr);
 	CSimulatorTab(const CSimulatorTab&)            = delete;
 	CSimulatorTab(CSimulatorTab&&)                 = delete;
 	CSimulatorTab& operator=(const CSimulatorTab&) = delete;

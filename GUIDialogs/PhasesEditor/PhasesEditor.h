@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -8,7 +10,8 @@
 
 class CFlowsheet;
 
-class CPhasesEditor : public CQtDialog
+class CPhasesEditor
+	: public CQtDialog
 {
 	Q_OBJECT
 
@@ -17,7 +20,7 @@ private:
 	std::vector<QComboBox*> m_vCombos;
 
 public:
-	CPhasesEditor(CFlowsheet* _pFlowsheet, CModelsManager* _modelsManager, QWidget* _parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
+	CPhasesEditor(CFlowsheet* _pFlowsheet, QWidget* _parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 	~CPhasesEditor();
 
 	void InitializeConnections();

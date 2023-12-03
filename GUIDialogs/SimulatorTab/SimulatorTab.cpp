@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "SimulatorTab.h"
 #include "Flowsheet.h"
@@ -6,8 +8,8 @@
 #include <QMessageBox>
 #include <QDateTime>
 
-CSimulatorTab::CSimulatorTab(CFlowsheet* _pFlowsheet, CSimulator* _pSimulator, CModelsManager* _modelsManager, QWidget* _parent)
-	: CQtDialog{ _modelsManager, _parent }
+CSimulatorTab::CSimulatorTab(CFlowsheet* _pFlowsheet, CSimulator* _pSimulator, QWidget* _parent)
+	: CQtDialog{ _parent }
 	, m_pFlowsheet{ _pFlowsheet }
 	, m_pSimulator{ _pSimulator }
 {

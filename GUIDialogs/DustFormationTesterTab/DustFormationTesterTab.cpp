@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "DustFormationTesterTab.h"
 #include "Flowsheet.h"
@@ -6,8 +8,8 @@
 #include "Stream.h"
 #include "MaterialsDatabase.h"
 
-CDustFormationTesterTab::CDustFormationTesterTab(const CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, CModelsManager* _modelsManager, QWidget *_parent)
-	: CQtDialog{ _modelsManager, _parent }
+CDustFormationTesterTab::CDustFormationTesterTab(const CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, QWidget *_parent)
+	: CQtDialog{ _parent }
 	, m_pFlowsheet{ _pFlowsheet }
 	, m_matrialsDB{ _matrialsDB }
 {

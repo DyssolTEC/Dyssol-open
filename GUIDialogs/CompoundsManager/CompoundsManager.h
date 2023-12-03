@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -8,7 +10,8 @@
 class CFlowsheet;
 class CMaterialsDatabase;
 
-class CCompoundsManager: public CQtDialog
+class CCompoundsManager
+	: public CQtDialog
 {
 	Q_OBJECT
 private:
@@ -29,7 +32,7 @@ public slots:
 	void accept();
 
 public:
-	CCompoundsManager(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pDatabase, CModelsManager* _modelsManager, QWidget* _parent = nullptr);
+	CCompoundsManager(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pDatabase, QWidget* _parent = nullptr);
 
 	void InitializeConnections();
 

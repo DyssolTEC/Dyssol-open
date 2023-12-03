@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -16,6 +18,8 @@ class CQtTable : public QTableWidget
 
 private:
 	bool m_pasteEnabled{ true };
+	QString m_numberSeparator { " " };
+	QString m_decimalSeparator{ "." };
 
 public:
 	CQtTable(QWidget* parent = nullptr);

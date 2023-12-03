@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "QtTable.h"
 #include "QtUtilities.h"
@@ -569,6 +571,7 @@ void CQtTable::Copy()
 {
 	QModelIndexList indexes = this->selectionModel()->selection().indexes();
 	QString str;
+
 	for (int i = indexes.front().row(); i <= indexes.back().row(); ++i)
 	{
 		for (int j = indexes.front().column(); j <= indexes.back().column(); ++j)
@@ -577,7 +580,7 @@ void CQtTable::Copy()
 			{
 				str += this->item(i, j)->text();
 				if (j != indexes.back().column())
-					str += "\t";
+					str += m_numberSeparator;
 			}
 		}
 		if (i != indexes.back().row())

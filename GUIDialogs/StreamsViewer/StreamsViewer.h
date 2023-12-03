@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -9,7 +11,8 @@ class CMaterialsDatabase;
 class CFlowsheet;
 class CBasicStreamsViewer;
 
-class CStreamsViewer : public CQtDialog
+class CStreamsViewer
+	: public CQtDialog
 {
 	Q_OBJECT
 	Ui::CStreamsViewerClass ui;
@@ -18,8 +21,9 @@ class CStreamsViewer : public CQtDialog
 	CBasicStreamsViewer *m_pViewer;	// streams viewer
 
 public:
-	CStreamsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, CModelsManager* _modelsManager, QWidget* _parent = nullptr, Qt::WindowFlags _flags = Qt::WindowFlags());
+	CStreamsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, QWidget* _parent = nullptr, Qt::WindowFlags _flags = Qt::WindowFlags());
 
+	void SetPointers(CModelsManager* _modelsManager, QSettings* _settings) override;
 	void InitializeConnections() const;
 
 public slots:

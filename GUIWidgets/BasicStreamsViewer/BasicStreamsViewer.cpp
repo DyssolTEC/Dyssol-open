@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "BasicStreamsViewer.h"
 #include "Flowsheet.h"
@@ -11,10 +13,10 @@
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
 #include "ContainerFunctions.h"
+#include <fstream>
 #include <QMenu>
 #include <QContextMenuEvent>
 #include <QFileDialog>
-#include <QTextStream>
 
 CBasicStreamsViewer::CBasicStreamsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, QWidget* parent)
 	: QWidget(parent),
@@ -942,23 +944,21 @@ void CBasicStreamsViewer::RestorePosition(QComboBox* _combo, int _position, int 
 
 void CBasicStreamsViewer::ExportToFile()
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
-	using Qt::endl;
-#endif
 	const QString fileName = QFileDialog::getSaveFileName(this, "Save file", "", "Text Files (*.txt)");
-	QFile file(fileName);
-	if (!file.open(QFile::WriteOnly | QFile::Truncate)) return;
-	QTextStream fileStream(&file);
+	std::fstream file;
+	file.open(fileName.toStdString(), std::ios::out);
+	if (!file) return;
+
 	if(ChosenProperty() != EPropertyType::SolidDistr)
 	{
 		for (auto& s : ui.tabTable->GetColHeaderItems(0))
-			fileStream << s.replace("\n", " ") << "; ";
+			file << s.replace("\n", " ").toStdString() << "; ";
 		const std::vector<QString> rowHeaders = ui.tabTable->GetRowHeaderItems(0);
 		for (int i = 0; i < ui.tabTable->rowCount(); ++i)
 		{
-			fileStream << endl << rowHeaders[i];
+			file << std::endl << rowHeaders[i].toStdString();
 			for (const auto& s : ui.tabTable->GetItemsRow(i, 0))
-				fileStream << s << "; ";
+				file << s.toDouble() << "; ";
 		}
 	}
 	else
@@ -968,18 +968,18 @@ void CBasicStreamsViewer::ExportToFile()
 		const EDistrTypes distr = ChosenDim(EDimType::Row);
 		const EPSDTypes psdType = ChosenPSDType();
 
-		fileStream << ui.tabTable->GetColHeaderItem(0).replace("\n", " ");
+		file << ui.tabTable->GetColHeaderItem(0).replace("\n", " ").toStdString();
 		for (auto& s : ui.tabTable->GetRowHeaderItems(0))
-			fileStream << "; " << s.replace("\n", " ");
+			file << "; " << s.replace("\n", " ").toStdString();
 		for (double t : m_vSelectedMD.front()->GetAllTimePoints())
 		{
-			fileStream << endl << t << "; ";
+			file << std::endl << t << "; ";
 			if (distr == DISTR_SIZE)
 				for (double v : m_vSelectedStreams.front()->GetPSD(t, psdType, compounds, meanType))
-					fileStream << v << "; ";
+					file << v << "; ";
 			else
 				for (double v : m_vSelectedMD.front()->GetVectorValue(t, distr))
-					fileStream << v << "; ";
+					file << v << "; ";
 		}
 	}
 

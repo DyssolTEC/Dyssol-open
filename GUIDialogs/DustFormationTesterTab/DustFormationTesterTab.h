@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -13,7 +15,8 @@ class CStream;
 class CHoldup;
 class CMaterialsDatabase;
 
-class CDustFormationTesterTab : public CQtDialog
+class CDustFormationTesterTab
+	: public CQtDialog
 {
 	Q_OBJECT
 private:
@@ -24,7 +27,7 @@ private:
 	enum class EType { STREAMS = 0, UNITS = 1 } m_focusType{ EType::STREAMS };
 
 public:
-	CDustFormationTesterTab(const CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, CModelsManager* _modelsManager, QWidget* _parent = nullptr);
+	CDustFormationTesterTab(const CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, QWidget* _parent = nullptr);
 
 	void InitializeConnections();
 	void UpdateWholeView();

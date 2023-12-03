@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -7,7 +9,8 @@
 #include "QtDialog.h"
 #include <QSettings>
 
-class CMaterialsDatabaseTab : public CQtDialog
+class CMaterialsDatabaseTab
+	: public CQtDialog
 {
 	Q_OBJECT
 
@@ -18,12 +21,11 @@ private:
 	Ui::CMaterialsDatabaseTab ui;
 
 	CMaterialsDatabase* m_materialsDB;
-	QSettings* m_pSettings;
 
 	bool m_bMaterialsDatabaseChanged=false;
 
 public:
-	CMaterialsDatabaseTab(CMaterialsDatabase* _pMaterialsDatabase, CModelsManager* _modelsManager, QSettings* _pSettings, QWidget* _parent = nullptr);
+	CMaterialsDatabaseTab(CMaterialsDatabase* _pMaterialsDatabase, QWidget* _parent = nullptr);
 
 	void InitializeConnections();
 

@@ -1,12 +1,14 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "OptionsEditor.h"
 #include "Flowsheet.h"
 #include "ParametersHolder.h"
 #include "DyssolUtilities.h"
 
-COptionsEditor::COptionsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pMaterialsDB, CModelsManager* _modelsManager, QWidget* _parent, Qt::WindowFlags _flags)
-	: CQtDialog{ _modelsManager, _parent, _flags }
+COptionsEditor::COptionsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pMaterialsDB, QWidget* _parent, Qt::WindowFlags _flags)
+	: CQtDialog{ _parent, _flags }
 	, m_pFlowsheet{ _pFlowsheet }
 	, m_pParams{ m_pFlowsheet->GetParameters() }
 	, m_materialsDB{ _pMaterialsDB }

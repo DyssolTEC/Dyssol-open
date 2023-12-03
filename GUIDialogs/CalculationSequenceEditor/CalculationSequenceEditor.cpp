@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "CalculationSequenceEditor.h"
 #include "Flowsheet.h"
@@ -7,8 +9,8 @@
 #include <QMessageBox>
 #include "DyssolStringConstants.h"
 
-CCalculationSequenceEditor::CCalculationSequenceEditor(CFlowsheet* _pFlowsheet, CModelsManager* _modelsManager, QWidget* _parent, Qt::WindowFlags _flags)
-	: CQtDialog{ _modelsManager, _parent, _flags }
+CCalculationSequenceEditor::CCalculationSequenceEditor(CFlowsheet* _pFlowsheet, QWidget* _parent, Qt::WindowFlags _flags)
+	: CQtDialog{ _parent, _flags }
 	, m_pFlowsheet{ _pFlowsheet }
 	, m_pSequence{ _pFlowsheet->GetCalculationSequence() }
 {

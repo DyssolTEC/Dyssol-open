@@ -1,9 +1,12 @@
-/* Copyright (c) 2021, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2021, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
 #include "ui_FlowsheetViewer.h"
 #include "GraphvizHandler.h"
+#include "QtDialog.h"
 
 class QSettings;
 class CFlowsheet;
@@ -13,7 +16,9 @@ class QScrollArea;
 /*
  * Uses graphviz library to render flowsheet as a picture and shows it.
  */
-class CFlowsheetViewer : public QDialog
+class CFlowsheetViewer
+	: public QDialog
+	, public CDyssolBaseWidget
 {
 	Q_OBJECT
 
@@ -25,7 +30,6 @@ class CFlowsheetViewer : public QDialog
 	const double ZOOM_IN_FACTOR  = 1.1;	// Scaling factor for each zoom in step.
 	const double ZOOM_OUT_FACTOR = 0.9;	// Scaling factor for each zoom out step.
 
-	QSettings* m_settings{};				// Pointer to global settings.
 	const CFlowsheet* m_flowsheet{};		// Pointer to flowsheet.
 	QString m_imageFullName;				// Path and name to store temporary images.
 
@@ -35,13 +39,15 @@ class CFlowsheetViewer : public QDialog
 	QPoint m_lastMousePos;							// Last mouse position needed to track mouse movements.
 
 public:
-	CFlowsheetViewer(const CFlowsheet* _flowsheet, QSettings* _settings, QWidget* _parent = nullptr);
+	CFlowsheetViewer(const CFlowsheet* _flowsheet, QWidget* _parent = nullptr);
 	~CFlowsheetViewer() override;
 
 	CFlowsheetViewer(const CFlowsheetViewer& _other)                = delete;
 	CFlowsheetViewer(CFlowsheetViewer&& _other) noexcept            = delete;
 	CFlowsheetViewer& operator=(const CFlowsheetViewer& _other)     = delete;
 	CFlowsheetViewer& operator=(CFlowsheetViewer&& _other) noexcept = delete;
+
+	void SetPointers(CModelsManager* _modelsManager, QSettings* _settings) override;
 
 	// Connects signals and slots.
 	void InitializeConnections() const;

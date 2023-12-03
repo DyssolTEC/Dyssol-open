@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "UnitsViewer.h"
 #include "BasicStreamsViewer.h"
@@ -6,8 +8,8 @@
 #include "Flowsheet.h"
 #include "BaseUnit.h"
 
-CUnitsViewer::CUnitsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDatabase, CModelsManager* _modelsManager, QWidget* _parent, Qt::WindowFlags flags)
-	: CQtDialog{ _modelsManager, _parent, flags }
+CUnitsViewer::CUnitsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDatabase, QWidget* _parent, Qt::WindowFlags flags)
+	: CQtDialog{ _parent, flags }
 {
 	ui.setupUi(this);
 
@@ -51,6 +53,13 @@ CUnitsViewer::CUnitsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materia
 CUnitsViewer::~CUnitsViewer()
 {
 
+}
+
+void CUnitsViewer::SetPointers(CModelsManager* _modelsManager, QSettings* _settings)
+{
+	CQtDialog::SetPointers(_modelsManager, _settings);
+	m_pStreamsViewer->SetPointers(_modelsManager, _settings);
+	m_pPlotsViewer->SetPointers(_modelsManager, _settings);
 }
 
 void CUnitsViewer::InitializeConnections()
