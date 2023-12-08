@@ -174,6 +174,10 @@ void CSimulator::SimulateUnitsWithRecycles(size_t _iPartition, const CCalculatio
 			partVars.vRecyclesPrev[j]->CopyFromStream(partVars.dTWStartPrev, partVars.dTWEnd, vRecycles[j]);
 		}
 
+		// load units state
+		for (auto& model : _partition.models)
+			model->GetModel()->DoLoadStateUnit();
+
 		// simulation itself
 		SimulateUnits(_partition, partVars.dTWStart, partVars.dTWEnd);
 
@@ -276,9 +280,6 @@ void CSimulator::SimulateUnits(const CCalculationSequence::SPartition& _partitio
 
 		// write log
 		m_log.WriteInfo(StrConst::Sim_InfoUnitSimulation(m_unitName, model->GetModel()->GetUnitName(), _t1, _t2));
-
-		// load previous state
-		model->GetModel()->DoLoadStateUnit();
 
 		// clean output streams
 		for (auto& port : model->GetModel()->GetPortsManager().GetAllOutputPorts())
