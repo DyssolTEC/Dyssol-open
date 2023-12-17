@@ -31,30 +31,32 @@ You can find exemplary script files in the installation directory under ``Exampl
 
 Only 3 script keys from the list are mandatory: ``SOURCE_FILE`` or ``RESULT_FILE``, ``MODELS_PATH``, and ``MATERIALS_DATABASE``. The rest are optional and will override parameters set in initial file, specified as ``SOURCE_FILE``. If ``SOURCE_FILE`` is not defined, the script should describe the entire flowsheet with all parameters, and ``RESULT_FILE`` is required. If ``RESULT_FILE`` parameter is not specified, results of the simulation will be written to a ``SOURCE_FILE``.
 
-script keys ``MODELS_PATH``, ``DISTRIBUTION_GRID``, ``UNIT``, ``STREAM``, ``UNIT_PARAMETER``, ``UNIT_HOLDUP_*``, ``EXPORT_STREAM_*``, ``EXPORT_HOLDUP_*``, and ``EXPORT_UNIT_*`` can be mentioned several times in the script file, the rest should be places only once.
-
+script keys ``MODELS_PATH``, ``DISTRIBUTION_GRID``, ``UNIT``, ``STREAM``, ``UNIT_PARAMETER``, ``UNIT_HOLDUP_*``, ``EXPORT_STREAM_*``, ``EXPORT_HOLDUP_*``, ``EXPORT_UNIT_*`` can be mentioned several times in the script file, the rest should be places only once.
 
 Main
 ----
 
-+--------------------+--------+--------------------------------------------------------------+
-| Script key         | Value  | Description                                                  |
-+====================+========+==============================================================+
-| JOB                |        | Delimiter for a sequentially executed job within one script  |
-+--------------------+--------+--------------------------------------------------------------+
-| SOURCE_FILE        | <path> | Full path to a \*.dflw file with initial flowsheet           |
-+--------------------+--------+--------------------------------------------------------------+
-| RESULT_FILE        | <path> | Full path to a file where simulation results will be written |
-+--------------------+--------+--------------------------------------------------------------+
-| MODELS_PATH        | <path> | Path to the directory with libraries of units and solvers    |
-+--------------------+--------+--------------------------------------------------------------+
-| MATERIALS_DATABASE | <path> | Full path to the file with materials database                |
-+--------------------+--------+--------------------------------------------------------------+
++--------------------+--------------------------------+--------------------------------------------------------------+
+| Script key         | Value                          | Description                                                  |
++====================+================================+==============================================================+
+| JOB                |                                | Delimiter for a sequentially executed job within one script  |
++--------------------+--------------------------------+--------------------------------------------------------------+
+| SOURCE_FILE        | <path>                         | Full path to a \*.dflw file with initial flowsheet           |
++--------------------+--------------------------------+--------------------------------------------------------------+
+| RESULT_FILE        | <path>                         | Full path to a file where simulation results will be written |
++--------------------+--------------------------------+--------------------------------------------------------------+
+| MODELS_PATH        | <path>                         | Path to the directory with libraries of units and solvers    |
++--------------------+--------------------------------+--------------------------------------------------------------+
+| MATERIALS_DATABASE | <path>                         | Full path to the file with materials database                |
++--------------------+--------------------------------+--------------------------------------------------------------+
 
 |
 	
+Simulation
+----------
+
 Simulation options
-------------------
+^^^^^^^^^^^^^^^^^^
 
 +------------------------------+-----------------------------------------+----------------------------------------------------------------------------------------------------------------------------+
 | Script key                   | Value                                   | Description                                                                                                                |
@@ -105,7 +107,7 @@ Simulation options
 |
 
 Phases
-------
+^^^^^^
 
 +------------+---------------------------------------------------------+----------------+
 | Script key | Value                                                   | Description    |
@@ -116,7 +118,7 @@ Phases
 |
 
 Compounds
----------
+^^^^^^^^^
 
 +------------+-----------------------------------+-------------------------------------------+
 | Script key | Value                             | Description                               |
@@ -127,7 +129,7 @@ Compounds
 |
 
 Grids
------
+^^^^^
 
 +----------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
 | Script key                 | Value                                                                                                                                                                                                | Description                                                                                                                            |
@@ -144,7 +146,7 @@ Grids
 |
 
 Flowsheet structure
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 +---------------------+----------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------+
 | Script key          | Value                                                                                                                      | Description                                                                                                               |
@@ -159,7 +161,7 @@ Flowsheet structure
 |
 
 Unit parameters
----------------
+^^^^^^^^^^^^^^^
 
 +----------------+---------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------+
 | Script key     | Value                                                                                                                                       | Description                                                         |
@@ -174,7 +176,7 @@ Unit parameters
 |
 
 Holdups
--------
+^^^^^^^
 
 +------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
 | Script key                   | Value                                                                                                                                                                                                                                   | Description                                                                                                                              |
@@ -201,7 +203,7 @@ Holdups
 |
 
 Export
-------
+^^^^^^
 
 +-----------------------------------+------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
 | Script key                        | Value                                                                        | Description                                                                         |

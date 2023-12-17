@@ -99,7 +99,7 @@ double CTDArray::GetValue(double _dTime)
 	size_t indexAfter = GetIndexByTime( _dTime, false );
 	if(( indexAfter != m_data.size() ) && ( indexAfter != 0 )) // point inside - interpolation
 		//return GetInterpolation( indexAfter-1, indexAfter, _dTime );
-		return Interpolate( m_data[indexAfter].value, m_data[indexAfter-1].value, m_data[indexAfter].time, m_data[indexAfter-1].time, _dTime );
+		return Interpolate( m_data[indexAfter].time, m_data[indexAfter-1].time, m_data[indexAfter].value, m_data[indexAfter-1].value, _dTime );
 	else if( indexAfter == m_data.size() ) // point after the last - extrapolation
 		//return GetInterpolation( indexAfter-2, indexAfter-1, _dTime );
 		return m_data.back().value;
@@ -304,7 +304,7 @@ void CTDArray::CompressData( double _dStartTime, double _dEndTime, double _dATol
 	while( i<iEnd-1 )
 	{
 		//double dInterpVal = GetInterpolation( i-1, i+1, m_data[i].time );
-		double dInterpVal = Interpolate( m_data[i-1].value, m_data[i+1].value, m_data[i-1].time, m_data[i+1].time, m_data[i].time );
+		double dInterpVal = Interpolate( m_data[i-1].time, m_data[i+1].time, m_data[i-1].value, m_data[i+1].value, m_data[i].time );
 		if(std::fabs( m_data[i].value - dInterpVal ) <= std::fabs( m_data[i].value ) * _dRTol + _dATol ) // value can be interpolated. remove
 		{
 			m_data.erase( m_data.begin() + i );
@@ -518,7 +518,7 @@ void CTDArray::ExtrapolateToPoint(double _dT1, double _dT2, double _dTExtra)
 	double dV2 = GetValue( _dT2 );
 
 	//double dVExtra = ( dV2 - dV1 ) / ( _dT2 - _dT1 ) * ( _dTExtra - _dT1 ) + dV1;
-	double dVExtra = Interpolate( dV1, dV2, _dT1, _dT2, _dTExtra );
+	double dVExtra = Interpolate( _dT1, _dT2, dV1, dV2, _dTExtra );
 	SetValue( _dTExtra, dVExtra );
 }
 

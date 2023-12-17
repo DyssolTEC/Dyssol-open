@@ -7,16 +7,31 @@
   <PropertyGroup>
     <_PropertySheetDisplayName>CommonQt</_PropertySheetDisplayName>
   </PropertyGroup>
+  <PropertyGroup Label="QtDeploy">
+    <QtDeploy>false</QtDeploy>
+  </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)GUIWidgets\BasicStreamEditor;$(SolutionDir)$(Platform)\$(Configuration)\BasicStreamEditor\uic;$(SolutionDir)GUIWidgets\BasicStreamsViewer;$(SolutionDir)$(Platform)\$(Configuration)\BasicStreamsViewer\uic;$(SolutionDir)GUIWidgets\BasicThread;$(SolutionDir)GUIWidgets\StatusWindow;$(SolutionDir)$(Platform)\$(Configuration)\StatusWindow\uic;$(SolutionDir)GUIWidgets\QtPlot;$(SolutionDir)$(Platform)\$(Configuration)\QtPlot\uic;$(SolutionDir)GUIWidgets\QtWidgets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)GUIWidgets\BasicStreamEditor;$(SolutionDir)$(Platform)\$(Configuration)\BasicStreamEditor\uic;$(SolutionDir)GUIWidgets\BasicStreamsViewer;$(SolutionDir)$(Platform)\$(Configuration)\BasicStreamsViewer\uic;$(SolutionDir)GUIWidgets\BasicThread;$(SolutionDir)GUIWidgets\StatusWindow;$(SolutionDir)$(Platform)\$(Configuration)\StatusWindow\uic;$(SolutionDir)GUIWidgets\QtPlot;$(SolutionDir)$(Platform)\$(Configuration)\QtPlot\uic;$(SolutionDir)GUIWidgets\QtWidgets;$(SolutionDir)GUIWidgets\SimulationThread;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <QtMoc>
       <IncludePath>
       </IncludePath>
       <Define>
       </Define>
+      <ExecutionDescription>moc %(Identity)</ExecutionDescription>
+      <QtMocDir>$(IntDir)moc\</QtMocDir>
+      <QtMocFileName>moc_%(Filename).cpp</QtMocFileName>
+      <DynamicSource>output</DynamicSource>
+      <ParallelProcess>true</ParallelProcess>
+      <OverrideClCompile>false</OverrideClCompile>
     </QtMoc>
+    <QtUic>
+      <ExecutionDescription>uic %(Identity)</ExecutionDescription>
+      <QtUicDir>$(IntDir)uic\</QtUicDir>
+      <QtUicFileName>ui_%(Filename).h</QtUicFileName>
+      <ParallelProcess>true</ParallelProcess>
+    </QtUic>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>

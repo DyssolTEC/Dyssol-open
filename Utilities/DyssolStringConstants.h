@@ -726,6 +726,7 @@ namespace StrConst
 	const char* const  FUN_VolumeUnits	    = "[m3]";
 	const char* const  FUN_DiameterUnitsInv = "[1/m]";
 	const char* const  FUN_VolumeUnitsInv   = "[1/m3]";
+	const char* const  FUN_ManualName		= "Manual";
 	const char* const  FUN_NormalName       = "Normal";
 	const char* const  FUN_RRSBName         = "RRSB";
 	const char* const  FUN_GGSName          = "GGS";

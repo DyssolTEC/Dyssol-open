@@ -17,7 +17,7 @@ env:
   BUILD_CONFIGURATION: Release
   BUILD_PLATFORM: x64
 
-  # Versions.
+  # Versions
   QT_VERSION: 5.15.2
   QT_VS_VERSION: msvc2019_64
   QT_VS_ADDIN_VERSION: 2.7.2
@@ -73,7 +73,7 @@ jobs:
       # Also, it installs them to %LOCALAPPDATA%\QtMsBuild, so they can not be used by other Windows users.
       # Download the extension and extract requited files to the project directory.
       run: |
-        Invoke-WebRequest -Uri https://ftp.fau.de/qtproject/archive/vsaddin/${{env.QT_VS_ADDIN_VERSION}}/qt-vsaddin-msvc2019-${{env.QT_VS_ADDIN_VERSION}}.vsix -MaximumRetryCount 10 -RetryIntervalSec 30 -OutFile vspackage.vsix 
+        Invoke-WebRequest -Uri https://ftp.fau.de/qtproject/archive/vsaddin/${{env.QT_VS_ADDIN_VERSION}}/qt-vsaddin-msvc2019-${{env.QT_VS_ADDIN_VERSION}}.vsix -MaximumRetryCount 10 -RetryIntervalSec 30 -OutFile vspackage.vsix
         Expand-Archive vspackage.vsix -DestinationPath ${{github.workspace}}/ExternalLibraries/qtvsaddin
 
     - name: Cache ZLib
@@ -159,7 +159,7 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1
 
-    - name: Download Build Artifact    
+    - name: Download Build Artifact
       uses: actions/download-artifact@v3
       with:
         name: build-artifact
@@ -183,27 +183,27 @@ jobs:
 
     - name: Install Graphviz
       run: choco install graphviz
-        
+
     - name: Install Doxygen
       run: choco install doxygen.install
-        
+
     - name: Install Sphinx
       run: pip install -U sphinx sphinx-rtd-theme breathe
-        
+
     - name: Cache MiKTeX
       id: cache-miktex
       uses: actions/cache@v3
       with:
         path: C:/Program Files/MiKTeX
         key: ${{runner.os}}-MiKTeXCache-${{env.MIKTEX_VERSION}}
-        
+
     - name: Install MiKTeX
       if: steps.cache-miktex.outputs.cache-hit != 'true'
       run: choco install miktex.install --version ${{env.MIKTEX_VERSION}} -y
-        
+
     - name: Add MiKTeX to PATH
       run: Add-Content $env:GITHUB_PATH "C:\Program Files\MiKTeX\miktex\bin\x64"
-      
+
     - name: Configure MiKTeX
       run: |
         initexmf --admin --verbose --set-config-value=[MPM]AutoInstall=1
@@ -219,12 +219,12 @@ jobs:
       working-directory: ${{github.workspace}}
       # Add additional options to the MSBuild command line here: see https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference.
       run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ ${{env.DOCS_PROJECT_PATH}}
-        
+
   cleanup:
     runs-on: windows-2019
     needs: [build, tests]
     if: ${{always()}}
-    
+
     steps:
     - name: Delete Build Artifact
       uses: geekyeggo/delete-artifact@v2

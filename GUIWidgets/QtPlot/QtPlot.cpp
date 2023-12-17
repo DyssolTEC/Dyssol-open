@@ -1224,6 +1224,12 @@ void CQtPlot::SetNumXGridLines(unsigned _nNumXGridLines)
 	if (_nNumXGridLines > 0)
 		m_nNumXGridLines = _nNumXGridLines;
 }
+
+void QtPlot::CQtPlot::SetDefaultNumXGridLines()
+{
+	m_nNumXGridLines = DEFAULT_NUM_X_GRID_LINES;
+}
+
 unsigned CQtPlot::GetNumXGridLines()
 {
 	return m_nNumXGridLines;

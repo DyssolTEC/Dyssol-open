@@ -1,5 +1,5 @@
-# Copyright (c) 2020, Dyssol Development Team. All rights reserved. 
-# Copyright (c) 2023, DyssolTEC GmbH. All rights reserved. 
+# Copyright (c) 2020, Dyssol Development Team. All rights reserved.
+# Copyright (c) 2023, DyssolTEC GmbH. All rights reserved.
 # This file is part of Dyssol. See LICENSE file for license information.
 
 ################################################################################

@@ -60,6 +60,8 @@ private:
 	// Sets holdups distributed parameters. Returns success flag.
 	bool SetupHoldupsDistributions(const CScriptJob& _job);
 
+	// Saves the flowsheet. Returns success flag.
+	bool SaveFlowsheet(const CScriptJob& _job);
 	// Performs the simulation. Returns success flag.
 	bool RunSimulation(const CScriptJob& _job);
 	// Exports results from file.

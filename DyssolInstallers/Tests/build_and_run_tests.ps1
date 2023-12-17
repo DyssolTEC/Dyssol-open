@@ -22,13 +22,14 @@ if ($pre_build_binaries -eq "true") {
 	Write-Host Compiling $platform $configuration
 	devenv $solution_path /build "$($configuration)|$($platform)"
 }
-	
+
 # create build directory
 if (!(Test-Path $build_path)) {
 	New-Item -itemType Directory -Path $build_path
 }
 
-# compile docs
+# compile tests
 Set-Location $build_path
+
 cmake $solution_dir -D BUILD_BINARIES=NO -D BUILD_DOCS=NO -A $platform -D CMAKE_BUILD_TYPE=$configuration --fresh
 cmake --build . --target RUN_TESTS --parallel $ENV:NUMBER_OF_PROCESSORS

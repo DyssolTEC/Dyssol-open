@@ -2,6 +2,7 @@
 
 #include "DependentValues.h"
 #include "ContainerFunctions.h"
+#include "DyssolUtilities.h"
 #include "StringFunctions.h"
 #include <ostream>
 #include <sstream>
@@ -26,7 +27,7 @@ double CDependentValues::GetValue(double _param) const
 {
 	if (m_values.empty()) return 0;						// return zero, if there are no data at all
 	if (m_values.size() == 1) return m_values.front();	// return const value, if there is only a single value defined
-	return Interpolate(_param);							// return interpolation otherwise
+	return ::Interpolate(m_params, m_values, _param);	// return interpolation otherwise
 }
 
 void CDependentValues::SetValue(double _param, double _value)
@@ -139,26 +140,6 @@ void CDependentValues::Clear()
 bool CDependentValues::operator==(const CDependentValues& _v) const
 {
 	return m_params == _v.m_params && m_values == _v.m_values;
-}
-
-double CDependentValues::Interpolate(double _param) const
-{
-	const auto upper = std::upper_bound(m_params.begin(), m_params.end(), _param);
-	if (upper == m_params.end())	return m_values.back();		// nearest-neighbor extrapolation to the right
-	if (upper == m_params.begin())	return m_values.front();	// nearest-neighbor extrapolation to the left
-
-	auto lower = upper;
-	--lower;
-
-	const double upar = *upper;
-	const double lpar = *lower;
-	const double uval = m_values[std::distance(m_params.begin(), upper)];
-	const double lval = m_values[std::distance(m_params.begin(), lower)];
-
-	if (std::abs(upar - _param) <= m_eps)	return uval;	// exact value found
-	if (std::abs(lpar - _param) <= m_eps)	return lval;	// exact value found
-
-	return (uval - lval) / (upar - lpar) * (_param - lpar) + lval; // linearly interpolated value
 }
 
 std::ostream& operator<<(std::ostream& _s, const CDependentValues& _obj)

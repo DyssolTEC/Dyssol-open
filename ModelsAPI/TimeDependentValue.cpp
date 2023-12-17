@@ -92,7 +92,7 @@ double CTimeDependentValue::GetValue(double _time) const
 {
 	if (m_data.empty()) return {};							// return zero, if there are no data at all
 	if (m_data.size() == 1) return m_data.front().value;	// return const value, if there is only a single value defined
-	return Interpolate(_time);								// return interpolation otherwise
+	return ::Interpolate(m_data, _time);					// return interpolation otherwise
 }
 
 void CTimeDependentValue::SetRawData(const std::vector<std::vector<double>>& _data)
@@ -142,7 +142,7 @@ void CTimeDependentValue::Extrapolate(double _timeExtra, double _time1, double _
 {
 	const double v1 = GetValue(_time1);
 	const double v2 = GetValue(_time2);
-	const double res = ::Interpolate(v1, v2, _time1, _time2, _timeExtra);
+	const double res = ::Interpolate(_time1, _time2, v1, v2, _timeExtra);
 	SetValue(_timeExtra, res);
 }
 
@@ -184,23 +184,6 @@ void CTimeDependentValue::LoadFromFile(const CH5Handler& _h5File, const std::str
 	std::vector<std::vector<double>> data;
 	_h5File.ReadData(_path, StrConst::TDV_H5Data, data);
 	SetRawData(data);
-}
-
-double CTimeDependentValue::Interpolate(double _time) const
-{
-	if (m_data.empty()) return {};
-	if (m_data.size() == 1) return m_data.front().value;
-
-	auto u = std::upper_bound(m_data.begin(), m_data.end(), STDValue{ _time, 0.0 });
-	if (u == m_data.end())		return (--u)->value;	// nearest-neighbor extrapolation to the right
-	if (u == m_data.begin())	return u->value;		// nearest-neighbor extrapolation to the left
-
-	const auto l = u - 1;
-
-	if (std::abs(u->time - _time) <= m_eps)	return u->value;		// exact value found
-	if (std::abs(l->time - _time) <= m_eps)	return l->value;		// exact value found
-
-	return (u->value - l->value) / (u->time - l->time) * (_time - l->time) + l->value; // linearly interpolated value
 }
 
 bool CTimeDependentValue::HasTime(double _time) const

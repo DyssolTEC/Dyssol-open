@@ -390,7 +390,7 @@ Application-wide settings.
 2. Open application-wide configuration file
 3. Path to store cache files
 4. Change cache path
-5. Delete all cache files 
+5. Delete all cache files
 
 .. _sec.gui.menu_help:
 

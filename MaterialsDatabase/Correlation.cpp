@@ -145,6 +145,8 @@ double CCorrelation::GetValue(double _dT, double _dP) const
 	case ECorrelationTypes::SUTHERLAND:
 		res = m_vParameters[0] * (m_vParameters[1] + m_vParameters[2]) / (_dT + m_vParameters[2]) * pow(_dT / m_vParameters[1], 3. / 2.);
 		break;
+	case ECorrelationTypes::UNDEFINED:
+		break;
 	}
 
 	if (std::isinf(res) || std::isnan(res))

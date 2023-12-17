@@ -9,34 +9,78 @@
 #include <algorithm>
 #include <cmath>
 
-// Performs linear interpolation between two selected points.
-double inline Interpolate(double Y1, double Y2, double X1, double X2, double X)
+/**
+ * Performs linear interpolation between two selected points.
+ * \param _x1 First parameter.
+ * \param _x2 Second parameter.
+ * \param _y1 First value.
+ * \param _y2 Second value.
+ * \param _x Target parameter.
+ * \return Interpolated value.
+ */
+double inline Interpolate(double _x1, double _x2, double _y1, double _y2, double _x)
 {
-	return (Y2 - Y1) / (X2 - X1) * (X - X1) + Y1;
+	return (_y2 - _y1) / (_x2 - _x1) * (_x - _x1) + _y1;
 }
 
-// Returns a (linearly interpolated) value for the given time.
-double inline Interpolate(const std::vector<STDValue>& _vals, double _time)
+/**
+ * Interpolates the value from the input vector time-dependent _values for a given _time.
+ * Assumes input vector _values is sorted in ascending order.
+ * Performs linear interpolation between existing points
+ * or nearest-neighbor extrapolation, if the given _time lays outside the interval of _values.
+ * \param _values Sorted vector of time-dependent values.
+ * \param _time Time for which interpolation is sought.
+ * \param _epsilon Desired accuracy of comparisons (optional).
+ * \return Interpolated value.
+ */
+double inline Interpolate(const std::vector<STDValue>& _values, double _time, double _epsilon = 16 * std::numeric_limits<double>::epsilon())
 {
-	if (_vals.empty()) return 0; // no values
+	if (_values.empty()) return {}; // no values
 
-	const auto upper = std::upper_bound(_vals.begin(), _vals.end(), _time, [](double p, const STDValue& v) { return p < v.time; });
-	if (upper == _vals.end())	return _vals.back().value;	// nearest-neighbor extrapolation to the right
-	if (upper == _vals.begin())	return _vals.front().value;	// nearest-neighbor extrapolation to the left
+	const auto upper = std::upper_bound(_values.begin(), _values.end(), STDValue{ _time, {} });
+	if (upper == _values.end())   return _values.back().value;  // nearest-neighbor extrapolation to the right
+	if (upper == _values.begin()) return _values.front().value; // nearest-neighbor extrapolation to the left
 
 	auto lower = upper;
 	--lower;
 
-	const STDValue upar = *upper;
-	const STDValue lpar = *lower;
-	const STDValue uval = _vals[std::distance(_vals.begin(), upper)];
-	const STDValue lval = _vals[std::distance(_vals.begin(), lower)];
+	if (std::abs(upper->time - _time) <= _epsilon) return upper->value; // exact value found
+	if (std::abs(lower->time - _time) <= _epsilon) return lower->value; // exact value found
 
-	constexpr double eps{ 16 * std::numeric_limits<double>::epsilon() };
-	if (std::abs(upar.time - _time) <= eps)	return uval.value;	// exact value found
-	if (std::abs(lpar.time - _time) <= eps)	return lval.value;	// exact value found
+	return Interpolate(lower->time, upper->time, lower->value, upper->value, _time); // linearly interpolated value
+}
 
-	return Interpolate(lval.value, uval.value, lpar.time, upar.time, _time);
+/**
+ * Interpolates the Y value from the input vectors _xs and _ys for a given _x.
+ * Assumes input vector _xs is sorted in ascending order. _xs and _ys must be the same size.
+ * Performs linear interpolation between existing points
+ * or nearest-neighbor extrapolation, if the given _x lays outside the interval of _xs.
+ * \param _xs Sorted vector of parameters.
+ * \param _ys Vector of values.
+ * \param _x Parameter for which interpolation is sought.
+ * \param _epsilon Desired accuracy of comparisons (optional).
+ * \return Interpolated value.
+ */
+inline double Interpolate(const std::vector<double>& _xs, const std::vector<double>& _ys, double _x, double _epsilon = 16 * std::numeric_limits<double>::epsilon())
+{
+	if (_xs.size() != _ys.size() || _xs.empty()) return {};
+
+	const auto upper = std::upper_bound(_xs.begin(), _xs.end(), _x);
+	if (upper == _xs.end())   return _ys.back();  // nearest-neighbor extrapolation to the right
+	if (upper == _xs.begin()) return _ys.front(); // nearest-neighbor extrapolation to the left
+
+	auto lower = upper;
+	--lower;
+
+	const double upperX = *upper;
+	const double lowerX = *lower;
+	const double upperY = _ys[std::distance(_xs.begin(), upper)];
+	const double lowerY = _ys[std::distance(_xs.begin(), lower)];
+
+	if (std::abs(upperX - _x) <= _epsilon) return upperY; // exact value found
+	if (std::abs(lowerX - _x) <= _epsilon) return lowerY; // exact value found
+
+	return Interpolate(lowerX, upperX, lowerY, upperY, _x); // linearly interpolated value
 }
 
 // Performs spline extrapolation using three points.
@@ -68,6 +112,39 @@ double inline Extrapolate(double Y0, double Y1, double Y2, double X0, double X1,
 
 	const double dx = (X - splines[2].x);
 	return splines[2].a + (splines[2].b + (splines[2].c / 2. + splines[2].d * dx / 6.) * dx) * dx;
+}
+
+/**
+ * \brief Finds values laying before and next to the given value.
+ * Assumes input vector is sorted in ascending order.
+ * If exact value is found in the vector, it is returned. If vector contains only one value, it is returned.
+ * If the value lays outside the vector, the closest outermost element of the vector is returned.
+ * In general, if only one value is to be returned, it is returned in both values of the pair.
+ * Additionally, one can specify the precision for comparing values.
+ * \param _vector Sorted input vector of values.
+ * \param _value Search value.
+ * \param _epsilon Desired accuracy of comparisons (optional).
+ * \return A pair of vector values lying on either side of the given value.
+ */
+inline std::pair<double, double> FindNeighbors(const std::vector<double>& _vector, double _value, double _epsilon = 16 * std::numeric_limits<double>::epsilon())
+{
+	std::pair<double, double> res{ {}, {} };
+
+	if (_vector.empty()) return res;
+	if (_vector.size() == 1) { res.first = res.second = _vector.front(); return res; }
+
+	auto upper = std::upper_bound(_vector.begin(), _vector.end(), _value);
+	if (upper == _vector.end())   { res.first = res.second = *(--upper); return res; } // value is larger than the last - use the last one
+	if (upper == _vector.begin()) { res.first = res.second = *upper;     return res; } // value is smaller than the first - use the first one
+
+	const auto lower = upper - 1;
+	if (std::abs(*upper - _value) <= _epsilon) { res.first = res.second = *upper; return res; } // exact value found
+	if (std::abs(*lower - _value) <= _epsilon) { res.first = res.second = *lower; return res; } // exact value found
+
+	// two values
+	res.first  = *lower;
+	res.second = *upper;
+	return res;
 }
 
 // Return the sum of all elements of the vector
@@ -650,21 +727,37 @@ std::vector<double> inline CreateGridLogarithmicDec(size_t _classes, double _min
 	return res;
 }
 
-// Creates a distribution grid according to the given function and parameters.
+/**
+ * \brief Creates a distribution grid according to the given function and parameters.
+ * \param _fun Grid function.
+ * \param _min Minimum of the grid interval.
+ * \param _max Maximum of the grid interval.
+ * \param _classes Number of classes.
+ * \return Generated grid.
+ */
 std::vector<double> inline CreateGrid(EGridFunction _fun, size_t _classes, double _min, double _max)
 {
+	const bool reversed = _min > _max;
+	if (reversed)
+		std::swap(_min, _max);
+
+	std::vector<double> res = {};
 	switch (_fun)
 	{
-	case EGridFunction::GRID_FUN_EQUIDISTANT:		return CreateGridEquidistant(_classes, _min, _max);
-	case EGridFunction::GRID_FUN_GEOMETRIC_S2L:		return CreateGridGeometricInc(_classes, _min, _max);
-	case EGridFunction::GRID_FUN_GEOMETRIC_L2S:		return CreateGridGeometricDec(_classes, _min, _max);
-	case EGridFunction::GRID_FUN_LOGARITHMIC_S2L:	return CreateGridLogarithmicInc(_classes, _min, _max);
-	case EGridFunction::GRID_FUN_LOGARITHMIC_L2S:	return CreateGridLogarithmicDec(_classes, _min, _max);
+	case EGridFunction::GRID_FUN_EQUIDISTANT:     res = CreateGridEquidistant(_classes, _min, _max);																	break;
+	case EGridFunction::GRID_FUN_GEOMETRIC_S2L:   res = !reversed ? CreateGridGeometricInc(_classes, _min, _max)   : CreateGridGeometricDec(_classes, _min, _max);	break;
+	case EGridFunction::GRID_FUN_GEOMETRIC_L2S:   res = !reversed ? CreateGridGeometricDec(_classes, _min, _max)   : CreateGridGeometricInc(_classes, _min, _max);	break;
+	case EGridFunction::GRID_FUN_LOGARITHMIC_S2L: res = !reversed ? CreateGridLogarithmicInc(_classes, _min, _max) : CreateGridLogarithmicDec(_classes, _min, _max);	break;
+	case EGridFunction::GRID_FUN_LOGARITHMIC_L2S: res = !reversed ? CreateGridLogarithmicDec(_classes, _min, _max) : CreateGridLogarithmicInc(_classes, _min, _max);	break;
 	case EGridFunction::GRID_FUN_MANUAL:
 	case EGridFunction::GRID_FUN_UNDEFINED:
 		return std::vector<double>(_classes + 1);
 	}
-	return {};
+
+	if (reversed)
+		std::reverse(res.begin(), res.end());
+
+	return res;
 }
 
 // Calculates volume of the sphere from its diameter.

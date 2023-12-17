@@ -78,7 +78,7 @@ void CBaseStream::SetupStructure(const CBaseStream* _other)
 {
 	// TODO: check that thermodynamic and tolerance settings are correctly set here (if they need to be set at all)
 	Clear();
-	SetMaterialsDatabasePtr(_other->m_materialsDB);
+	SetMaterialsDatabase(_other->m_materialsDB);
 	SetCacheSettings(_other->m_cacheSettings);
 	m_grid = _other->m_grid;
 	for (const auto& [type, old] : _other->m_overall)
@@ -479,6 +479,31 @@ void CBaseStream::SetCompoundsFractions(double _time, EPhase _phase, const std::
 
 	AddTimePoint(_time);
 	m_phases[_phase]->SetCompoundsDistribution(_time, _value);
+}
+
+void CBaseStream::SetCompoundMass(double _time, const std::string& _compoundKey, EPhase _phase, double _value)
+{
+	if (!HasPhase(_phase) || !HasCompound(_compoundKey)) return;
+
+	// get current masses
+	double totalPhaseMass = GetPhaseMass(_time, _phase);
+	std::map<std::string, double> compoundsMasses;
+	for (const auto& key : GetAllCompounds())
+		compoundsMasses[key] = GetCompoundMass(_time, key, _phase);
+
+	// calculate adjustment for the total mass
+	totalPhaseMass += _value - compoundsMasses[_compoundKey];
+
+	// set new phase fractions according to the changed phase masses
+	compoundsMasses[_compoundKey] = _value;
+	for (const auto& key : GetAllCompounds())
+		if (totalPhaseMass != 0.0)
+			SetCompoundFraction(_time, key, _phase, compoundsMasses[key] / totalPhaseMass);
+		else
+			SetCompoundFraction(_time, key, _phase, 0.0);
+
+	// set new phase mass
+	SetPhaseMass(_time, _phase, totalPhaseMass);
 }
 
 double CBaseStream::GetCompoundMolFraction(double _time, const std::string& _compoundKey, EPhase _phase) const
@@ -1467,7 +1492,7 @@ const CMultidimensionalGrid& CBaseStream::GetGrid() const
 	return m_grid;
 }
 
-void CBaseStream::SetMaterialsDatabasePtr(const CMaterialsDatabase* _database)
+void CBaseStream::SetMaterialsDatabase(const CMaterialsDatabase* _database)
 {
 	m_materialsDB = _database;
 	ClearEnthalpyCalculator();

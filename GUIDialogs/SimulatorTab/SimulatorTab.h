@@ -5,7 +5,8 @@
 #pragma once
 
 #include "ui_SimulatorTab.h"
-#include "ProgressThread.h"
+#include "SimulationThread.h"
+#include "Simulator.h"
 #include "QtDialog.h"
 #include <QTimer>
 #include <QElapsedTimer>
@@ -35,7 +36,7 @@ class CSimulatorTab
 	CFlowsheet* m_pFlowsheet;			// Pointer to a current flowsheet.
 	CSimulator* m_pSimulator;			// Pointer to a current simulator.
 
-	CProgressThread m_progressThread{ m_pSimulator };	// Separate thread for simulator.
+	CSimulationThread m_simulationThread{[&]() {m_pSimulator->Simulate(); }, [&]() {m_pSimulator->Stop(); }};	// Separate thread for simulator.
 
 	QElapsedTimer m_simulationTimer;	// Timer to determine simulation time.
 	QTimer m_logTimer;				    // Interrupt timer to update simulation log.

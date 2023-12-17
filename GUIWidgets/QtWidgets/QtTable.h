@@ -65,6 +65,7 @@ public:
 
 	void SetItemsColNotEditable(int _startrow, int _col, const std::vector<double>& _val);
 	void SetItemsColNotEditable(int _startrow, int _col, const std::string& _val);
+	void SetItemsColNotEditable(int _startrow, int _col, const std::vector<std::string>& _val);
 	void SetItemsRowNotEditable(int _row, int _startcol, const std::vector<double>& _val);
 
 	QCheckBox* SetCheckBox(int _row, int _col, bool _checked = true);

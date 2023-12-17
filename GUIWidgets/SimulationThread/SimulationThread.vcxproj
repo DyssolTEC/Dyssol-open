@@ -19,20 +19,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="StatusWindow.cpp" />
+    <QtMoc Include="SimulationThread.h" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="StatusWindow.h">
-    </QtMoc>
-  </ItemGroup>
-  <ItemGroup>
-    <QtUic Include="StatusWindow.ui">
-    </QtUic>
+    <ClCompile Include="SimulationThread.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{599E6775-D11A-4007-8F9B-4D2344AFCF90}</ProjectGuid>
+    <ProjectGuid>{0F7B1A52-7766-4E37-9ACD-AC76AB000000}</ProjectGuid>
     <Keyword>QtVS_v303</Keyword>
     <QtMsBuild Condition="'$(QtMsBuild)'=='' or !Exists('$(QtMsBuild)\qt.targets')">$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
+    <ProjectName>SimulationThread</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -97,19 +93,22 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <QtInstall>msvc2019_64</QtInstall>
-    <QtModules>widgets</QtModules>
+    <QtModules>
+    </QtModules>
   </PropertyGroup>
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <QtInstall>msvc2019</QtInstall>
-    <QtModules>widgets</QtModules>
+    <QtModules>
+    </QtModules>
   </PropertyGroup>
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <QtInstall>msvc2019_64</QtInstall>
-    <QtModules>widgets</QtModules>
+    <QtModules>widgets;</QtModules>
   </PropertyGroup>
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <QtInstall>msvc2019</QtInstall>
-    <QtModules>widgets</QtModules>
+    <QtModules>
+    </QtModules>
   </PropertyGroup>
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
@@ -126,16 +125,4 @@
   <PropertyGroup Condition="'$(Language)'=='C++'">
     <CAExcludePath>$(Qt_INCLUDEPATH_);.\GeneratedFiles;$(CAExcludePath)</CAExcludePath>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile />
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile />
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile />
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ClCompile />
-  </ItemDefinitionGroup>
 </Project>

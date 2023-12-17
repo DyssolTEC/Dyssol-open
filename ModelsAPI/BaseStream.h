@@ -565,6 +565,15 @@ public:
 	 * \param _value List of mass fractions of all defined compounds.
 	 */
 	void SetCompoundsFractions(double _time, EPhase _phase, const std::vector<double>& _value);
+	/**
+	 * \brief Sets the mass of the specified compound in the specified phase at the given time point.
+	 * \details Total mass of the stream is correspondingly adjusted, masses of other compounds and phases remain the same.
+	 * \param _time Target time point.
+	 * \param _compoundKey Unique key of the compound.
+	 * \param _phase Phase type identifier.
+	 * \param _value Mass of the compound.
+	 */
+	void SetCompoundMass(double _time, const std::string& _compoundKey, EPhase _phase, double _value);
 
 	/**
 	 * \brief Returns the molar fraction of the compound in the specified phase at the given time point.
@@ -1280,7 +1289,7 @@ public:
 	 * \brief Sets new pointer to the used materials database.
 	 * \param _database Const pointer to the materials database.
 	 */
-	void SetMaterialsDatabasePtr(const CMaterialsDatabase* _database);
+	void SetMaterialsDatabase(const CMaterialsDatabase* _database);
 
 	/**
 	 * \private

@@ -68,8 +68,4 @@ public:
 
 	// Comparison.
 	bool operator==(const CDependentValues& _v) const;
-
-private:
-	// Performs linear interpolation. If the parameter is out of defined limits, performs nearest-neighbor extrapolation of data.
-	[[nodiscard]] double Interpolate(double _param) const;
 };

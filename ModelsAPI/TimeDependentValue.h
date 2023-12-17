@@ -76,8 +76,6 @@ public:
 	void LoadFromFile(const CH5Handler& _h5File, const std::string& _path);
 
 private:
-	// Performs linear interpolation. If the parameter is outside of the defined limits, performs nearest-neighbor extrapolation of data. Returns zero if the data vector is empty.
-	double Interpolate(double _time) const;
 	// Checks whether the given time point exists.
 	bool HasTime(double _time) const;
 	// Returns the nearest time point before _time.

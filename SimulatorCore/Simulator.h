@@ -56,6 +56,7 @@ private:
 
 	//// parameters of convergence methods
 	bool m_bSteffensenTrigger;
+	bool m_hasError{ false }; // Current simulation finished with error.
 
 public:
 	CSimulator();
@@ -67,12 +68,20 @@ public:
 	void SetCurrentStatus(ESimulatorStatus _nStatus);
 	// Returns current status of the simulator.
 	ESimulatorStatus GetCurrentStatus() const;
+	/**
+	 * Checks if current simulation finished with error.
+	 * \return Whether current simulation finished with error.
+	 */
+	[[nodiscard]] bool HasError() const;
 
 	// Returns information about currently calculated partition.
 	SPartitionStatus GetCurrentPartitionStatus() const;
 
 	/// Perform simulation.
 	void Simulate();
+
+	/// Stop Simulation
+	void Stop();
 
 private:
 	/// Initialize status for each partition.

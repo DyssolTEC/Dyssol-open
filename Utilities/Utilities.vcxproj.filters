@@ -63,10 +63,16 @@
     <ClInclude Include="ContainerFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DisableWarningHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="DyssolFilesystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DyssolWindows.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DyssolStreamUtilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

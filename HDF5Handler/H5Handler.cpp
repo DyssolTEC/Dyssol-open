@@ -174,7 +174,7 @@ void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatas
 	WriteValue(_sPath, _sDatasetName, _vData.size(), PredType::NATIVE_DOUBLE, &_vData.front());
 }
 
-void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<std::vector<double>>& _vvData) const
+void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<std::vector<double>>& _vvData) const
 {
 	if (!m_bFileValid) return;
 	if (_vvData.empty()) return;
@@ -191,7 +191,7 @@ void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatas
 	for (size_t i = 0; i < size; ++i)
 	{
 		buffer[i].len = _vvData[i].size();
-		buffer[i].p = !_vvData[i].empty() ? &_vvData[i].front() : nullptr;
+		buffer[i].p = !_vvData[i].empty() ? const_cast<double*>(&_vvData[i].front()) : nullptr;
 	}
 	h5Dataset.write(buffer, h5Varlentype);
 	delete[] buffer;

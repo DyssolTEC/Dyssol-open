@@ -691,15 +691,15 @@ std::vector<std::string> CMaterialsDatabase::GetCompoundsKeys() const
 
 double CMaterialsDatabase::GetConstPropertyValue(const std::string& _sCompoundUniqueKey, ECompoundConstProperties _nConstPropType) const
 {
-	if(const CCompound *comp = GetCompound(_sCompoundUniqueKey))
-		return comp->GetConstPropertyValue(_nConstPropType);
+	if (const CCompound* comp = GetCompound(_sCompoundUniqueKey))
+		return comp->GetConstProperty(_nConstPropType)->GetValue();
 	return 0;
 }
 
 double CMaterialsDatabase::GetTPPropertyValue(const std::string& _sCompoundUniqueKey, ECompoundTPProperties _nTPPropType, double _dT, double _dP) const
 {
 	if (const CCompound *comp = GetCompound(_sCompoundUniqueKey))
-		return comp->GetTPPropertyValue(_nTPPropType, _dT, _dP);
+		return comp->GetTPProperty(_nTPPropType)->GetValue(_dT, _dP);
 	return 0;
 }
 

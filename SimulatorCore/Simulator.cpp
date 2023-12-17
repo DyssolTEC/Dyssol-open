@@ -24,6 +24,7 @@ void CSimulator::SetFlowsheet(CFlowsheet* _pFlowsheet)
 	m_pFlowsheet = _pFlowsheet;
 	m_pSequence = m_pFlowsheet->GetCalculationSequence();
 	m_pParams = m_pFlowsheet->GetParameters();
+	m_hasError = false;
 }
 
 void CSimulator::SetCurrentStatus(ESimulatorStatus _nStatus)
@@ -36,6 +37,11 @@ ESimulatorStatus CSimulator::GetCurrentStatus() const
 	return m_nCurrentStatus;
 }
 
+bool CSimulator::HasError() const
+{
+	return m_hasError;
+}
+
 CSimulator::SPartitionStatus CSimulator::GetCurrentPartitionStatus() const
 {
 	if (m_iCurrentPartition >= m_partitionsStatus.size()) return {};
@@ -45,10 +51,12 @@ CSimulator::SPartitionStatus CSimulator::GetCurrentPartitionStatus() const
 void CSimulator::Simulate()
 {
 	m_nCurrentStatus = ESimulatorStatus::SIMULATOR_RUNNED;
+	m_hasError = false;
 
 	// Prepare
 	SetupConvergenceMethod();
 	ClearLogState();
+	m_hasError = false;
 	InitializePartitionsStatus();
 
 	// Clear initialization flags
@@ -103,6 +111,12 @@ void CSimulator::Simulate()
 		}
 
 	m_nCurrentStatus = ESimulatorStatus::SIMULATOR_IDLE;
+}
+
+void CSimulator::Stop()
+{
+	if (GetCurrentStatus() != ESimulatorStatus::SIMULATOR_IDLE)
+		SetCurrentStatus(ESimulatorStatus::SIMULATOR_SHOULD_BE_STOPPED);
 }
 
 void CSimulator::InitializePartitionsStatus()
@@ -394,6 +408,7 @@ void CSimulator::RaiseError(const std::string& _sError)
 {
 	m_log.WriteError(_sError);
 	m_nCurrentStatus = ESimulatorStatus::SIMULATOR_SHOULD_BE_STOPPED;
+	m_hasError = true;
 }
 
 void CSimulator::ClearLogState()

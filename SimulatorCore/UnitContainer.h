@@ -66,6 +66,9 @@ public:
 	// Returns a pointer to a contained model.
 	CBaseUnit* GetModel();
 
+	// Sets pointer to a global materials database.
+	void SetMaterialsDatabase(const CMaterialsDatabase* _materialsDB);
+
 	// Initializes all solvers chosen in unit parameters by loading them from corresponding dynamic libraries. Returns an empty string on success, otherwise returns an error description.
 	std::string InitializeExternalSolvers() const;
 	// Unloads all solvers from unit parameters.

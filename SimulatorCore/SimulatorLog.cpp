@@ -29,6 +29,7 @@ void CSimulatorLog::Write(const std::string& _text, ELogColor _color, bool _cons
 	const size_t iPos = m_iWritePos % MAX_LOG_SIZE; // up to MAX_LOG_SIZE and then again cyclic from 0
 	m_log[iPos].text = _text;
 	m_log[iPos].color = _color;
+
 	m_iWritePos++;
 	if(_console)
 		std::cout << _text << std::endl;

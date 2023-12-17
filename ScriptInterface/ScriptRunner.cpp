@@ -1,4 +1,6 @@
-/* Copyright (c) 2021, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2021, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "ScriptRunner.h"
 #include "ScriptJob.h"
@@ -231,7 +233,7 @@ bool CScriptRunner::SetupGrids(const CScriptJob& _job)
 			if (function != EGridFunction::GRID_FUN_MANUAL && entry.valuesNum.size() != 2 || function == EGridFunction::GRID_FUN_MANUAL && entry.valuesNum.size() != entry.classes + 1)
 				return PrintMessage(DyssolC_ErrorArgumentsNumberGrid(StrKey(EScriptKeys::DISTRIBUTION_GRID), unit ? unit->GetName() : "GLOBAL", entry.distrType.name, entry.distrType.key));
 			// create grid
-			std::vector<double> res = function == EGridFunction::GRID_FUN_MANUAL ? entry.valuesNum : CreateGrid(function, entry.classes, entry.valuesNum[0], entry.valuesNum[1]);
+			std::vector<double> res = function == EGridFunction::GRID_FUN_MANUAL ? entry.valuesNum : CreateGrid(function, entry.classes, std::min(entry.valuesNum[0], entry.valuesNum[1]), std::max(entry.valuesNum[0], entry.valuesNum[1]));
 			// convert volumes to diameters if required
 			if (type == DISTR_SIZE && static_cast<EPSDGridType>(entry.psdMeans.key) == EPSDGridType::VOLUME)
 				res = VolumeToDiameter(res);
@@ -469,6 +471,17 @@ bool CScriptRunner::SetupHoldupsDistributions(const CScriptJob& _job)
 	return true;
 }
 
+bool CScriptRunner::SaveFlowsheet(const CScriptJob& _job)
+{
+	const auto dstFile = fs::absolute(_job.HasKey(EScriptKeys::RESULT_FILE) ? _job.GetValue<fs::path>(EScriptKeys::RESULT_FILE) : _job.GetValue<fs::path>(EScriptKeys::SOURCE_FILE)).make_preferred();
+	fs::create_directories(dstFile.parent_path());
+	PrintMessage(DyssolC_SaveFlowsheet(dstFile.string()));
+	CSaveLoadManager saver{ &m_flowsheet };
+	if (!saver.SaveToFile(dstFile))
+		return PrintMessage(DyssolC_ErrorSave());
+	return true;
+}
+
 bool CScriptRunner::RunSimulation(const CScriptJob& _job)
 {
 	if (_job.HasKey(EScriptKeys::EXPORT_ONLY) && _job.GetValue<bool>(EScriptKeys::EXPORT_ONLY)) return true;
@@ -488,14 +501,7 @@ bool CScriptRunner::RunSimulation(const CScriptJob& _job)
 	PrintMessage(DyssolC_SimFinished(ch::duration_cast<ch::seconds>(tEnd - tStart).count()));
 
 	// save simulation results
-	const auto dstFile = fs::absolute(_job.HasKey(EScriptKeys::RESULT_FILE) ? _job.GetValue<fs::path>(EScriptKeys::RESULT_FILE) : _job.GetValue<fs::path>(EScriptKeys::SOURCE_FILE)).make_preferred();
-	fs::create_directories(dstFile.parent_path());
-	PrintMessage(DyssolC_SaveFlowsheet(dstFile.string()));
-	CSaveLoadManager saver{ &m_flowsheet };
-	if (!saver.SaveToFile(dstFile))
-		return PrintMessage(DyssolC_ErrorSave());
-
-	return true;
+	return SaveFlowsheet(_job);
 }
 
 // TODO: split
