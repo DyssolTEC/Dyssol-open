@@ -87,6 +87,13 @@ CBaseUnit* CUnitContainer::GetModel()
 	return m_model;
 }
 
+void CUnitContainer::SetMaterialsDatabase(const CMaterialsDatabase* _materialsDB)
+{
+	m_materialsDB = _materialsDB;
+	if (!m_model) return;
+	m_model->SetMaterialsDatabase(m_materialsDB);
+}
+
 std::string CUnitContainer::InitializeExternalSolvers() const
 {
 	ClearExternalSolvers();

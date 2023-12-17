@@ -218,7 +218,10 @@
     <ProjectReference Include="$(SolutionDir)GUIDialogs\ModulesManagerTab\ModulesManagerTab.vcxproj">
       <Project>{4882842d-566d-456a-a267-a5f9c8fdb16d}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\ScriptInterface\ScriptInterface.vcxproj">
+    <ProjectReference Include="..\GUIWidgets\SimulationThread\SimulationThread.vcxproj">
+      <Project>{0f7b1a52-7766-4e37-9acd-ac76ab000000}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)ScriptInterface\ScriptInterface.vcxproj">
       <Project>{0736ddb9-c29b-4dea-8e9a-6feffed8cfb6}</Project>
     </ProjectReference>
   </ItemGroup>

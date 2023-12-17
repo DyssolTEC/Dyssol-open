@@ -272,6 +272,14 @@ namespace StringFunctions
 	}
 
 	template <>
+	std::vector<uint64_t> GetValueFromStream<std::vector<uint64_t>>(std::istream& _is)
+	{
+		std::vector<uint64_t> res;
+		std::copy(std::istream_iterator<uint64_t>{ _is }, std::istream_iterator<uint64_t>{}, std::back_inserter(res));
+		return res;
+	}
+
+	template <>
 	std::vector<std::string> GetValueFromStream<std::vector<std::string>>(std::istream& _is)
 	{
 		std::vector<std::string> res;
@@ -338,5 +346,16 @@ namespace StringFunctions
 		if (std::find(_existing.begin(), _existing.end(), _init) == _existing.end())
 			return _init;
 		return GenerateUniqueKey(_existing, _length);
+	}
+
+	// Returns a name consisting of _namingBase + number not yet in _existing
+	std::string GenerateUniqueName(const std::string& _namingBase, const std::vector<std::string>& _existing)
+	{
+		int i = 1;
+		while (true)
+		{
+			std::string name = _namingBase + " " + std::to_string(i++);
+			if (std::find(_existing.begin(), _existing.end(), name) == _existing.end()) return name;
+		}
 	}
 }

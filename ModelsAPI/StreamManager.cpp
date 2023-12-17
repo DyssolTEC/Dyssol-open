@@ -19,6 +19,11 @@ void CStreamManager::SetPointers(const CMaterialsDatabase* _materialsDB, const C
 	m_thermodynamics = _thermodynamics;
 }
 
+void CStreamManager::SetMaterialsDatabase(const CMaterialsDatabase* _materialsDB)
+{
+	m_materialsDB = _materialsDB;
+}
+
 void CStreamManager::CopyUserData(const CStreamManager& _streams) const
 {
 	if (m_feedsInit.size() > _streams.m_feedsInit.size()) return;

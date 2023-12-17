@@ -149,6 +149,14 @@ public:
 	 */
 	void SetSettings(const CMaterialsDatabase* _materialsDB, const CMultidimensionalGrid& _grid, const std::vector<SOverallDescriptor>* _overall,
 					const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics);
+
+	/**
+	 * \private
+	 * \brief Sets new pointer to global materials database.
+	 * \param _materialsDB Pointer to global materials database.
+	*/
+	void SetMaterialsDatabase(const CMaterialsDatabase* _materialsDB);
+
 	/**
 	 * \private
 	 * \brief Copies user-defined data from _unit.

@@ -27,6 +27,8 @@ namespace QtPlot
 
 #define ACCURACY 1e-15
 
+#define DEFAULT_NUM_X_GRID_LINES 10
+
 enum LabelTypes
 {
 	LABEL_NONE,
@@ -225,6 +227,7 @@ public:
 	void SetMinY(double _dMinY, bool bRedrawPlot = true);   // set limitation of the y axis
 	double GetMinY();										// returns value of the minimal y value
 	void SetNumXGridLines(unsigned _nNumXGridLines);		// set number of grid lines on x-axis
+	void SetDefaultNumXGridLines();							// set default number of grid lines on x-axis
 	unsigned GetNumXGridLines();							// returns number of grid lines on x-axis
 	void SetNumYGridLines(unsigned _nNumYGridLines);		// set number of grid lines on y-axis
 	unsigned GetNumYGridLines();							// returns number of grid lines on y-axis

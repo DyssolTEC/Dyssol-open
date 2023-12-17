@@ -67,7 +67,7 @@ enum class EExtrapolationMethod : uint32_t
 };
 
 //======== SOLID DISTRIBUTIONS DATABASE [0; 50] ===============
-#define DISTRIBUTIONS_NUMBER 15 ///< Total number of distributions.
+#define DISTRIBUTIONS_NUMBER 16
 
 // TODO: make enum class
 /**

@@ -20,8 +20,8 @@ CSimulatorTab::CSimulatorTab(CFlowsheet* _pFlowsheet, CSimulator* _pSimulator, Q
 
 CSimulatorTab::~CSimulatorTab()
 {
-	m_progressThread.Stop();
-	m_progressThread.deleteLater();
+	m_simulationThread.Stop();
+	m_simulationThread.deleteLater();
 }
 
 void CSimulatorTab::InitializeConnections() const
@@ -32,7 +32,7 @@ void CSimulatorTab::InitializeConnections() const
 	connect(ui.buttonClearRecycles,	          &QPushButton::clicked,	   this, &CSimulatorTab::ClearInitialRecycleStreams);
 	connect(ui.buttonClearResultsAndRecycles, &QPushButton::clicked,	   this, &CSimulatorTab::ClearAll);
 
-	connect(&m_progressThread,	&CProgressThread::Finished,		this, &CSimulatorTab::SimulationFinished);
+	connect(&m_simulationThread,	&CSimulationThread::Finished,		this, &CSimulatorTab::SimulationFinished);
 	connect(&m_logTimer,	    &QTimer::timeout,				this, &CSimulatorTab::UpdateLog);
 }
 
@@ -95,7 +95,7 @@ void CSimulatorTab::StartSimulation()
 		// run simulation
 		BlockUI(true);
 		emit SimulatorStateToggled(true);
-		m_progressThread.Run();
+		m_simulationThread.Run();
 		m_logTimer.start(100);
 	}
 }
@@ -103,7 +103,7 @@ void CSimulatorTab::StartSimulation()
 void CSimulatorTab::AbortSimulation()
 {
 	// stop simulation
-	m_progressThread.RequestStop();
+	m_simulationThread.RequestStop();
 
 	// set the message to the log
 	ui.textBrowserLog->setTextColor(QColor(Qt::red));
@@ -116,11 +116,11 @@ void CSimulatorTab::SimulationFinished()
 	// stop simulation threads and timers
 	const QDateTime now = QDateTime::currentDateTime();
 	m_logTimer.stop();
-	m_progressThread.Stop();
+	m_simulationThread.Stop();
 
 	// update simulation log
 	UpdateLog();
-	if (m_progressThread.WasAborted())
+	if (m_simulationThread.WasAborted())
 	{
 		ui.textBrowserLog->setTextColor(QColor(Qt::red));
 		ui.textBrowserLog->append(StrConst::ST_LogSimUserStop);

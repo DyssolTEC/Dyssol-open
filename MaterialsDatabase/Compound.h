@@ -57,6 +57,10 @@ public:
 	CConstProperty* GetConstProperty(ECompoundConstProperties _nType);
 	// Returns constant pointer to a specified const property. Returns nullptr if property is not found.
 	const CConstProperty* GetConstProperty(ECompoundConstProperties _nType) const;
+	// Returns pointer to a specified const property by its index. Returns nullptr if property is not found.
+	CConstProperty* GetConstPropertyByIndex(size_t _index);
+	// Returns constant pointer to a specified const property by its index. Returns nullptr if property is not found.
+	const CConstProperty* GetConstPropertyByIndex(size_t _index) const;
 	// Returns vector of defined const properties.
 	const std::vector<CConstProperty>& GetConstProperties() const;
 	// Returns pointer to a specified temperature/pressure-dependent property. Returns nullptr if property is not found.
@@ -69,13 +73,4 @@ public:
 	const CTPDProperty* GetTPPropertyByIndex(size_t _index) const;
 	// Returns vector of defined temperature/pressure-dependent properties.
 	const std::vector<CTPDProperty>& GetTPProperties() const;
-
-
-	//////////////////////////////////////////////////////////////////////////
-	/// Values getters
-
-	// Returns value of a constant property. Returns 0 if such property doesn't exist.
-	double GetConstPropertyValue(ECompoundConstProperties _nType) const;
-	// Returns value of a temperature/pressure-dependent property by specified temperature [K] and pressure [Pa]. Returns 0 if such property doesn't exist.
-	double GetTPPropertyValue(ECompoundTPProperties _nType, double _dT, double _dP) const;
 };

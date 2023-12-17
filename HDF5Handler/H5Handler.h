@@ -48,7 +48,7 @@ public:
 	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<int32_t>& _vData) const;
 	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<int64_t>& _vData) const;
 	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<double>& _vData) const;
-	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<std::vector<double>>& _vvData) const;
+	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<std::vector<double>>& _vvData) const;
 	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<STDValue>& _data) const;
 	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<CPoint>& _data) const;
 

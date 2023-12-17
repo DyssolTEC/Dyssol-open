@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ProgressThread.cpp" />
     <ClCompile Include="SimulatorTab.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -29,10 +28,6 @@
   <ItemGroup>
     <QtUic Include="SimulatorTab.ui">
     </QtUic>
-  </ItemGroup>
-  <ItemGroup>
-    <QtMoc Include="ProgressThread.h">
-    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)GUIWidgets\BasicThread\BasicThread.vcxproj">

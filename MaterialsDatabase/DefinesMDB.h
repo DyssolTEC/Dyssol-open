@@ -63,6 +63,7 @@ enum class ECorrelationTypes : unsigned
 	POLYNOMIAL_H     = 8,	// y = a·T + b·(T^2)/2 + c·(T^3)/3 + d·(T^4)/4 − e/T + f − g
 	POLYNOMIAL_S     = 9,	// y = a·ln(T) + b·T + c·(T^2)/2 + d·(T^3)/3 − e/(2·T^2) + f
 	SUTHERLAND		 = 10,  // y = a·(b + c)/(T + c)·(T/b)^(3/2)
+	UNDEFINED		 = 63
 };
 
 namespace MDBDescriptors

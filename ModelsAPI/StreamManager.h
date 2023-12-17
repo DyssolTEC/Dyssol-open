@@ -54,6 +54,12 @@ public:
 
 	/**
 	 * \internal
+	 * \brief Sets pointer to a global materials database.
+	 * \param _materialsDB Pointer to materials database.
+	 */
+	void SetMaterialsDatabase(const CMaterialsDatabase* _materialsDB);
+	/**
+	 * \internal
 	 * \brief Copies user-defined data from _streams.
 	 * \details Copies information about configured and simulated feeds and holdups. Assumes the corresponding streams and holdups structure is the same.
 	 * \param _streams Reference to source streams manager.

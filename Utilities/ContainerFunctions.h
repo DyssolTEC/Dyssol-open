@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2023, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -187,6 +189,17 @@ std::vector<K> MapKeys(const std::map<K, V>& _map)
 	return keys;
 }
 
+// Returns all values defined in the map.
+template<typename K, typename V>
+std::vector<V> MapValues(const std::map<K, V>& _map)
+{
+	std::vector<V> values;
+	values.reserve(_map.size());
+	for (auto const& entry : _map)
+		values.push_back(entry.second);
+	return values;
+}
+
 // Returns a sorted copy of the vector.
 template<typename T>
 std::vector<T> VectorSort(const std::vector<T>& _v)
@@ -196,7 +209,7 @@ std::vector<T> VectorSort(const std::vector<T>& _v)
 	return res;
 }
 
-// Calculates union of two sorted vectors.
+// Calculates a sorted union of two sorted vectors.
 template<typename T>
 void VectorsUnionSorted(const std::vector<T>& _v1, const std::vector<T>& _v2, std::vector<T>& _res)
 {
@@ -204,7 +217,7 @@ void VectorsUnionSorted(const std::vector<T>& _v1, const std::vector<T>& _v2, st
 	_res.resize(std::set_union(_v1.begin(), _v1.end(), _v2.begin(), _v2.end(), _res.begin()) - _res.begin());
 }
 
-// Calculates and returns union of two sorted vectors.
+// Calculates and returns a sorted union of two sorted vectors.
 template<typename T>
 std::vector<T> VectorsUnionSorted(const std::vector<T>& _v1, const std::vector<T>& _v2)
 {

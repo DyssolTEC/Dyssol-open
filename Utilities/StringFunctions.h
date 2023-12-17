@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <cstdint>
 
 namespace StringFunctions
 {
@@ -63,6 +64,7 @@ namespace StringFunctions
 	template<> double GetValueFromStream(std::istream& _is);									// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for double type.
 	template<> std::string GetValueFromStream(std::istream& _is);								// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for string type.
 	template<> std::vector<double> GetValueFromStream(std::istream& _is);						// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for vector<double>.
+	template<> std::vector<uint64_t> GetValueFromStream(std::istream& _is);						// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for vector<uint64_t>.
 	template<> std::vector<std::string> GetValueFromStream(std::istream& _is);					// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for vector<string>.
 	template<typename T>
 	std::enable_if_t<std::is_enum_v<T>, T> GetEnumFromStream(std::istream& _is)					// Returns the next value from the stream and advances stream's iterator correspondingly. Version for enum types.
@@ -82,4 +84,6 @@ namespace StringFunctions
 	std::string GenerateUniqueKey(const std::vector<std::string>& _existing, size_t _length = 20);
 	// Returns a string with the specified length, which will be unique among the set of existing strings.
 	std::string GenerateUniqueKey(const std::string& _init, const std::vector<std::string>& _existing, size_t _length = 20);
+	// Returns a name consisting of _namingBase + number not yet in _existing
+	std::string GenerateUniqueName(const std::string& _namingBase, const std::vector<std::string>& _existing);
 }

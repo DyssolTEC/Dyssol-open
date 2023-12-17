@@ -106,6 +106,17 @@ const CConstProperty* CCompound::GetConstProperty(ECompoundConstProperties _nTyp
 	return nullptr;
 }
 
+CConstProperty* CCompound::GetConstPropertyByIndex(size_t _index)
+{
+	return const_cast<CConstProperty*>(static_cast<const CCompound&>(*this).GetConstPropertyByIndex(_index));
+}
+
+const CConstProperty* CCompound::GetConstPropertyByIndex(size_t _index) const
+{
+	if (_index >= m_vConstProperties.size()) return nullptr;
+	return &m_vConstProperties[_index];
+}
+
 const std::vector<CConstProperty>& CCompound::GetConstProperties() const
 {
 	return m_vConstProperties;
@@ -139,18 +150,4 @@ const CTPDProperty* CCompound::GetTPPropertyByIndex(size_t _index) const
 const std::vector<CTPDProperty>& CCompound::GetTPProperties() const
 {
 	return m_vTPProperties;
-}
-
-double CCompound::GetConstPropertyValue(ECompoundConstProperties _nType) const
-{
-	if (const CConstProperty *prop = GetConstProperty(_nType))
-		return prop->GetValue();
-	return 0;
-}
-
-double CCompound::GetTPPropertyValue(ECompoundTPProperties _nType, double _dT, double _dP) const
-{
-	if (const CTPDProperty *prop = GetTPProperty(_nType))
-		return prop->GetValue(_dT, _dP);
-	return 0;
 }

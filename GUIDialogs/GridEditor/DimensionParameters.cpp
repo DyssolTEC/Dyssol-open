@@ -236,7 +236,11 @@ std::vector<double> CDimensionParameters::CalculateGridNumeric() const
 	const size_t number = ui.spinClasses->value() + 1;
 	std::vector<double> res(number);
 	if (fun != EGridFunction::GRID_FUN_MANUAL)
-		res = CreateGrid(fun, ui.spinClasses->value(), ui.lineMin->text().toDouble(), ui.lineMax->text().toDouble());
+	{
+		const double val1 = ui.lineMin->text().toDouble();
+		const double val2 = ui.lineMax->text().toDouble();
+		res = CreateGrid(fun, ui.spinClasses->value(), std::min(val1, val2), std::max(val1, val2));
+	}
 	else
 	{
 		const auto values = ui.tableGrid->GetItemsCol(0, 0);
@@ -299,7 +303,9 @@ CDimensionParameters::EGridUnit CDimensionParameters::DetermineUnits() const
 
 bool CDimensionParameters::IsOfFunction(const std::vector<double>& _v, EGridFunction _fun, EGridUnit _units) const
 {
-	const auto ref = ToM(CreateGrid(_fun, _v.size() - 1, FromM(_v.front(), _units), FromM(_v.back(), _units)), _units);
+	const double val1 = FromM(_v.front(), _units);
+	const double val2 = FromM(_v.back() , _units);
+	const auto ref = ToM(CreateGrid(_fun, _v.size() - 1, std::min(val1, val2), std::max(val1, val2)), _units);
 	if (ref.empty()) return false;
 	const size_t iSmallestNonZero = VectorFind(_v, [](double v) { return v > 0; });
 	if (iSmallestNonZero == static_cast<size_t>(-1)) return false;

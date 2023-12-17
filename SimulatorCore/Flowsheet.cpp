@@ -849,6 +849,17 @@ const CMaterialsDatabase& CFlowsheet::GetMaterialDatabase() const
 	return *m_materialsDB;
 }
 
+void CFlowsheet::SetMaterialsDatabase(const CMaterialsDatabase* _materialsDB)
+{
+	m_materialsDB = _materialsDB;
+	for (const auto& unit : m_units)
+		unit->SetMaterialsDatabase(m_materialsDB);
+	for (const auto& stream : m_streams)
+		stream->SetMaterialsDatabase(m_materialsDB);
+	for (const auto& stream : m_streamsI)
+		stream->SetMaterialsDatabase(m_materialsDB);
+}
+
 const CParametersHolder* CFlowsheet::GetParameters() const
 {
 	return &m_parameters;

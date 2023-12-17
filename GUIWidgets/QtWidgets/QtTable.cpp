@@ -232,6 +232,13 @@ void CQtTable::SetItemsColNotEditable(int _startrow, int _col, const std::string
 			SetItemNotEditable(_startrow + i, _col, _val);
 }
 
+void CQtTable::SetItemsColNotEditable(int _startrow, int _col, const std::vector<std::string>& _val)
+{
+	for (int i = 0; i < static_cast<int>(_val.size()); ++i)
+		if (_startrow + i < rowCount())
+			SetItemNotEditable(_startrow + i, _col, _val[i]);
+}
+
 void CQtTable::SetItemsRowNotEditable(int _row, int _startcol, const std::vector<double>& _val)
 {
 	for (int i = 0; i < static_cast<int>(_val.size()); ++i)

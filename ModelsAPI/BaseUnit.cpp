@@ -23,6 +23,14 @@ void CBaseUnit::SetSettings(const CMaterialsDatabase* _materialsDB, const CMulti
 	m_streams.SetPointers(m_materialsDB, &m_grid, m_overall, m_phases, m_cache, m_tolerances, m_thermodynamics);
 }
 
+void CBaseUnit::SetMaterialsDatabase(const CMaterialsDatabase* _materialsDB)
+{
+	m_materialsDB = _materialsDB;
+	m_streams.SetMaterialsDatabase(m_materialsDB);
+	ClearEnthalpyCalculator();
+}
+
+
 void CBaseUnit::CopyUserData(const CBaseUnit& _unit)
 {
 	m_ports.CopyUserData(_unit.m_ports);
@@ -219,7 +227,7 @@ void CBaseUnit::SetupStream(CBaseStream* _stream) const
 {
 	if (!_stream) return;
 	_stream->Clear();
-	_stream->SetMaterialsDatabasePtr(m_materialsDB);
+	_stream->SetMaterialsDatabase(m_materialsDB);
 	_stream->SetCacheSettings(*m_cache);
 	_stream->SetToleranceSettings(*m_tolerances);
 	_stream->SetThermodynamicsSettings(*m_thermodynamics);
