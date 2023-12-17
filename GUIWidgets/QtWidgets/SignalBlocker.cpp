@@ -20,6 +20,12 @@ CSignalBlocker::~CSignalBlocker()
 	Unblock();
 }
 
+void CSignalBlocker::Add(QObject* _object)
+{
+	m_objects.push_back(_object);
+	m_flags.push_back(_object->blockSignals(true));
+}
+
 void CSignalBlocker::Unblock()
 {
 	for (size_t i = 0; i < m_objects.size(); ++i)

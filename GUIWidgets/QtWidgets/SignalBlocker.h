@@ -10,6 +10,7 @@ private:
 	std::vector<QObject*> m_objects;
 	std::vector<bool> m_flags;
 public:
+	CSignalBlocker() = default;
 	CSignalBlocker(QObject* _object);
 	CSignalBlocker(std::initializer_list<QObject*> _objects);
 	~CSignalBlocker();
@@ -18,6 +19,8 @@ public:
 	CSignalBlocker(CSignalBlocker&& _other) noexcept = delete;
 	CSignalBlocker& operator=(const CSignalBlocker& _other) = delete;
 	CSignalBlocker& operator=(CSignalBlocker&& _other) noexcept = delete;
+
+	void Add(QObject* _object);
 
 	void Unblock();
 };
