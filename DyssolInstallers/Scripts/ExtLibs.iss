@@ -2,7 +2,7 @@
 
 #include "CommonConstants.iss"
 
-#dim ExternalLibs[4]
+#dim ExternalLibs[3]
 #define ExternalLibs[0] "hdf5"
 #define ExternalLibs[1] "sundials"
 #define ExternalLibs[2] "zlib"
