@@ -448,7 +448,8 @@ void CMultidimensionalGrid::SaveToFile(const CH5Handler& _h5File, const std::str
 	// number of grid dimensions
 	_h5File.WriteAttribute(_path, StrConst::DGrid_H5AttrGridsNum, static_cast<int>(m_grids.size()));
 	// grid types for all dimensions
-	_h5File.WriteData(_path, StrConst::DGrid_H5GridType, E2I(GetGridsTypes()));
+	// NOTE: template argument deduction for E2I does not work here for msvc 19.24 and lower, therefore - explcicite argument
+	_h5File.WriteData(_path, StrConst::DGrid_H5GridType, E2I<EGridEntry>(GetGridsTypes()));
 	// save each grid dimension
 	for (size_t i = 0; i < m_grids.size(); ++i)
 		switch (m_grids[i]->GridType())
