@@ -1605,7 +1605,8 @@ void CBaseStream::SaveToFile(CH5Handler& _h5File, const std::string& _path)
 	m_grid.SaveToFile(_h5File, _h5File.CreateGroup(_path, StrConst::H5GroupDistrGrid));
 
 	// overall properties
-	_h5File.WriteData(_path, StrConst::Stream_H5OverallKeys, E2I(MapKeys(m_overall)));
+	// NOTE: template argument deduction for E2I does not work here for msvc 19.24 and lower, therefore - explcicite argument
+	_h5File.WriteData(_path, StrConst::Stream_H5OverallKeys, E2I<EOverall>(MapKeys(m_overall)));
 	const std::string groupOveralls = _h5File.CreateGroup(_path, StrConst::Stream_H5GroupOveralls);
 	size_t iOverall = 0;
 	for (auto& [type, param] : m_overall)
@@ -1615,7 +1616,8 @@ void CBaseStream::SaveToFile(CH5Handler& _h5File, const std::string& _path)
 	}
 
 	// phases
-	_h5File.WriteData(_path, StrConst::Stream_H5PhaseKeys, E2I(MapKeys(m_phases)));
+	// NOTE: template argument deduction for E2I does not work here for msvc 19.24 and lower, therefore - explcicite argument
+	_h5File.WriteData(_path, StrConst::Stream_H5PhaseKeys, E2I<EPhase>(MapKeys(m_phases)));
 	const std::string groupPhases = _h5File.CreateGroup(_path, StrConst::Stream_H5GroupPhases);
 	size_t iPhase = 0;
 	for (auto& [state, phase] : m_phases)
