@@ -14,8 +14,9 @@ if ($env:PROCESSOR_ARCHITEW6432 -eq "AMD64") {
 	exit $lastexitcode
 }
 
-# remove old install directory
-Remove-Item -Recurse -Force $install_path -ErrorAction Ignore
+# remove old build and install directory
+Remove-Item -Recurse -Force $build_path\doc -ErrorAction Ignore
+Remove-Item -Recurse -Force $install_path\share\Dyssol\docs -ErrorAction Ignore
 
 # create build and install directories
 if (!(Test-Path $build_path)) {
