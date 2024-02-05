@@ -1494,7 +1494,7 @@ Now you need the following steps:
 
 			``THoldupToCoarse`` – to transform holdup into the output of coarse material. All elements NOT on diagonal are zero. The value :math:`1-G(x_i)` of classe :math:`i` locates at position :math:`(i,i)`.
 
-			Here also fractions of mass streams of coarse and fines outlets must be calculated according to the grade efficiency :math:`G(x_i)`. The :ref:`screen unit of Plitt's model <label-screenPlitt>` can be used as a reference.
+			Here also fractions of mass streams of coarse and fines outlets must be calculated according to the grade efficiency :math:`G(x_i)`. The screen unit of :ref:`sec.units.screen.plitt` can be used as a reference.
 
 		- Copy the holdup to the output streams: copy all parameters of the holdup into the both outlet streams using function ``CopyFromHoldup`` and set their new mass flows, calculated by the :abbr:`DAE (Differential-algebraic equation)` solver in ``_pVars[2]``. This calculated mass must be previously scaled according to the grade efficiency :math:`G(x_i)`.
 
