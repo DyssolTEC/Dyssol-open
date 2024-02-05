@@ -79,7 +79,7 @@ jobs:
     - uses: actions/checkout@v3
     
     - name: Install build doc dependencies
-      run: sudo apt update && sudo apt upgrade && sudo apt install doxygen graphviz python3-sphinx python3-sphinx-rtd-theme python3-breathe texlive-latex-extra
+      run: sudo apt-get install doxygen graphviz python3-sphinx python3-sphinx-rtd-theme python3-breathe texlive-latex-extra
       
     - name: Create build environment
       run: cmake -E make_directory ${{github.workspace}}/build
