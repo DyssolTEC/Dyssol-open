@@ -210,20 +210,14 @@ void CBaseStream::ReduceTimePoints(double _timeBeg, double _timeEnd, double _ste
 	if (timePoints.size() <= 3) return;
 	timePoints.pop_back();
 
-	size_t iTime1 = 0;
-	size_t iTime2 = 1;
-	while (iTime1 < timePoints.size() && iTime2 < timePoints.size())
+	auto itBeg = timePoints.begin();
+	const auto itEnd = timePoints.end();
+	while (itBeg != itEnd)
 	{
-		if (std::fabs(timePoints[iTime1] - timePoints[iTime2]) < _step)
-		{
-			RemoveTimePoint(timePoints[iTime2]);
-			VectorDelete(timePoints, iTime2);
-		}
-		else
-		{
-			iTime1++;
-			iTime2++;
-		}
+		auto it = std::find_if(itBeg, itEnd, [&](double t) { return std::fabs(*itBeg - t) >= _step; });
+		if (std::distance(itBeg, it) > 2)
+			RemoveTimePoints(*itBeg, *it, false);
+		itBeg = it;
 	}
 }
 
