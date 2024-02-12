@@ -257,7 +257,9 @@ void CFlowsheetEditor::ChangeModelName(int _iRow, int _iCol)
 {
 	if (!m_pSelectedModel) return;
 
-	m_pSelectedModel->SetName(ui.listModels->item(_iRow, _iCol)->text().simplified().toStdString());
+	const auto item = ui.listModels->item(_iRow, _iCol);
+	if (!item) return;
+	m_pSelectedModel->SetName(item->text().simplified().toStdString());
 
 	UpdateModelsView();
 
