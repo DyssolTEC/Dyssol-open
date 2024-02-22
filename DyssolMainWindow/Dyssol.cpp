@@ -90,7 +90,7 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	m_dialogs = { m_pCalcSequenceEditor, m_pMaterialsDatabaseTab, m_pCompoundsManager, m_pFlowsheetEditor,
 				m_pGridEditor, m_pHoldupsEditor, m_pModelsManagerTab, m_pOptionsEditor, m_pPhasesEditor,
 				m_pSimulatorTab, m_pStreamsViewer, m_pUnitsViewer, m_pTearStreamsEditor, m_pDustTesterTab,
-				m_pSettingsEditor };
+				m_pSettingsEditor, m_helpHelper };
 
 	for (auto* d : m_dialogs)
 		d->SetPointers(&m_ModelsManager, m_pSettings);
