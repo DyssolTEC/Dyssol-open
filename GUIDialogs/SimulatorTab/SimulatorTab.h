@@ -36,7 +36,7 @@ class CSimulatorTab
 	CFlowsheet* m_pFlowsheet;			// Pointer to a current flowsheet.
 	CSimulator* m_pSimulator;			// Pointer to a current simulator.
 
-	CSimulationThread m_simulationThread{[&]() {m_pSimulator->Simulate(); }, [&]() {m_pSimulator->Stop(); }};	// Separate thread for simulator.
+	CSimulationThread* m_simulationThread = new CSimulationThread([&]() {m_pSimulator->Simulate(); }, [&]() {m_pSimulator->Stop(); });	// Separate thread for simulator.
 
 	QElapsedTimer m_simulationTimer;	// Timer to determine simulation time.
 	QTimer m_logTimer;				    // Interrupt timer to update simulation log.
@@ -47,7 +47,7 @@ public:
 	CSimulatorTab(CSimulatorTab&&)                 = delete;
 	CSimulatorTab& operator=(const CSimulatorTab&) = delete;
 	CSimulatorTab& operator=(CSimulatorTab&&)      = delete;
-	~CSimulatorTab();
+	~CSimulatorTab() override;
 
 	void InitializeConnections() const;
 
