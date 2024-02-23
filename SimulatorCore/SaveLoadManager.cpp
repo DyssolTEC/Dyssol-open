@@ -56,19 +56,13 @@ bool CSaveLoadManager::LoadFromFile(const std::filesystem::path& _fileName)
 	// version of save procedure
 	const int version = m_fileHandler.ReadAttribute(root, StrConst::H5AttrSaveVersion);
 
-	// compatibility with older versions
-	if (m_flowsheet && version <= 5)
-	{
-		const bool res = m_flowsheet->LoadFromFile(m_fileHandler, root);
-		m_flowsheet->SetFileName(_fileName);
-		m_fileHandler.Close();
-		return res;
-	}
-
 	bool success = true;
 
+	// compatibility with older versions
+	const auto rootPath = version <= 5 ? root : StrConst::SLM_H5GroupFlowsheet;
+
 	// load flowsheet
-	if (m_flowsheet && success) success &= m_flowsheet->LoadFromFile(m_fileHandler, StrConst::SLM_H5GroupFlowsheet);
+	if (m_flowsheet && success) success &= m_flowsheet->LoadFromFile(m_fileHandler, rootPath);
 	if (m_flowsheet && success) m_flowsheet->SetFileName(_fileName);
 
 	m_fileHandler.Close();
