@@ -250,6 +250,8 @@ public:
 	void UpdateToleranceSettings();
 	// Updates thermodynamics settings in all units and streams.
 	void UpdateThermodynamicsSettings();
+	// Sets pointer to a global database of materials
+	void SetMaterialDatabase(const CMaterialsDatabase* _materialsDB);
 
 	// Returns current grid of distributed parameters.
 	const CMultidimensionalGrid& GetGrid() const;

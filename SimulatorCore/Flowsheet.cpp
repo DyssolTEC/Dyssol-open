@@ -839,6 +839,18 @@ void CFlowsheet::UpdateThermodynamicsSettings()
 	m_calculationSequence.UpdateThermodynamicsSettings(m_thermodynamics);
 }
 
+void CFlowsheet::SetMaterialDatabase(const CMaterialsDatabase* _materialsDB)
+{
+	m_materialsDB = _materialsDB;
+
+	for (size_t i = 0; i < m_units.size(); i++)
+		m_units[i]->SetMaterialsDatabase(m_materialsDB);
+	for (size_t i = 0; i < m_streams.size(); i++)
+		m_streams[i]->SetMaterialsDatabase(m_materialsDB);
+	for (size_t i = 0; i < m_streamsI.size(); i++)
+		m_streamsI[i]->SetMaterialsDatabase(m_materialsDB);
+}
+
 const CMultidimensionalGrid& CFlowsheet::GetGrid() const
 {
 	return m_mainGrid;
