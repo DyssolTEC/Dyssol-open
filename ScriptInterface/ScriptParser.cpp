@@ -74,13 +74,13 @@ void CScriptParser::ProcessLine(const std::string& _line)
 	ReadScriptEntry(*entry, ss);
 }
 
-void CScriptParser::NamesToKeys()
+void CScriptParser::NamesToKeys() const
 {
 	for (const auto& job : m_jobs)
 	{
 		for (auto* param : job->GetValuesPtr<SNamedEnum>(EScriptKeys::CONVERGENCE_METHOD))
-			param->FillAndCheck<EConvergenceMethod>();
+			param->FillAndWarn<EConvergenceMethod>();
 		for (auto* param : job->GetValuesPtr<SNamedEnum>(EScriptKeys::EXTRAPOLATION_METHOD))
-			param->FillAndCheck<EExtrapolationMethod>();
+			param->FillAndWarn<EExtrapolationMethod>();
 	}
 }

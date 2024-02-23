@@ -27,5 +27,5 @@ private:
 	void ProcessLine(const std::string& _line);
 
 	// Post-process read entries by resolving named variables to their end values.
-	void NamesToKeys();
+	void NamesToKeys() const;
 };

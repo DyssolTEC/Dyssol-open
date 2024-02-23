@@ -36,7 +36,7 @@ namespace ScriptInterface
 		template<typename E, typename = std::enable_if_t<std::is_enum_v<E>>> explicit SNamedEnum(E _key)
 			: name{ Enum2Name<E>(_key) }, key{ static_cast<int64_t>(_key) } {}
 		// Ensures that both name and key are filled, converting one to another if necessary. Returns a converted object itself.
-		template<typename E, typename = std::enable_if_t<std::is_enum_v<E>>> SNamedEnum& FillAndCheck()
+		template<typename E, typename = std::enable_if_t<std::is_enum_v<E>>> SNamedEnum& FillAndWarn()
 		{
 			if (key == -1) key = static_cast<int64_t>(Name2Enum<E>(StringFunctions::ToUpperCase(name)));
 			else		   name = Enum2Name<E>(static_cast<E>(key));
