@@ -14,6 +14,7 @@
 #include <utility>
 #include <vector>
 #include <string>
+#include <limits>
 
 //////////////////////////////////////////////////////////////////////////
 /// Default and service values
