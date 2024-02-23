@@ -97,5 +97,13 @@ if ($sdk -eq "true") {
 if ($sdk_type -eq "Sources") {
 	$command = $command + ' "/dIsWithSrc=1"'
 }
+$command = $command + ' ; $res=$?'
 
 Invoke-Expression "& $command"
+
+if ($res -eq $true) {
+	exit 0
+}
+else {
+	exit 1
+}

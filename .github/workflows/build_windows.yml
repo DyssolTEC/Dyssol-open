@@ -10,8 +10,9 @@ env:
   # Path to the solution/project files relative to the root of the project.
   SOLUTION_FILE_PATH: .
   SOLUTION_FILE_NAME: Dyssol.sln
-  TESTS_PROJECT_PATH: ./DyssolInstallers/Tests/
-  DOCS_PROJECT_PATH:  ./DyssolInstallers/Documentation/
+  TESTS_PROJECT_PATH:     ./DyssolInstallers/Tests/
+  DOCS_PROJECT_PATH:      ./DyssolInstallers/Documentation/
+  INSTALLER_PROJECT_PATH: ./DyssolInstallers/Installer/
 
   # Configuration type to build.
   BUILD_CONFIGURATION: Release
@@ -19,7 +20,7 @@ env:
 
   # Versions
   QT_VERSION: 5.15.2
-  QT_VS_VERSION: msvc2019_64
+  QT_VS_VERSION: msvc2019
   QT_VS_ADDIN_VERSION: 2.7.2
   ZLIB_VERSION: 1.3
   SUNDIALS_VERSION: 6.4.1
@@ -45,7 +46,7 @@ jobs:
         path: ${{github.workspace}}/ExternalLibraries/qt
         key: ${{runner.os}}-QtCache-${{env.QT_VERSION}}
 
-    - name: Install Qt
+    - name: Install Qt 32
       uses: jurplel/install-qt-action@v3
       with:
         # If cached, only install essential build tools and set environmental variables.
@@ -53,7 +54,21 @@ jobs:
         # Version of Qt to install.
         version: ${{env.QT_VERSION}}
         # Architecture.
-        arch: win64_${{env.QT_VS_VERSION}}
+        arch: win32_${{env.QT_VS_VERSION}}
+        # Directory to install.
+        dir: ${{github.workspace}}/ExternalLibraries/qt
+        # Whether or not to automatically run setup-python to find a valid python version.
+        setup-python: 'false'
+        
+    - name: Install Qt 64
+      uses: jurplel/install-qt-action@v3
+      with:
+        # If cached, only install essential build tools and set environmental variables.
+        cache: ${{steps.cache-qt.outputs.cache-hit}}
+        # Version of Qt to install.
+        version: ${{env.QT_VERSION}}
+        # Architecture.
+        arch: win64_${{env.QT_VS_VERSION}}_64
         # Directory to install.
         dir: ${{github.workspace}}/ExternalLibraries/qt
         # Whether or not to automatically run setup-python to find a valid python version.
@@ -172,7 +187,6 @@ jobs:
 
   docs:
     runs-on: windows-2019
-    needs: build
 
     steps:
     - name: Checkout
@@ -220,9 +234,170 @@ jobs:
       # Add additional options to the MSBuild command line here: see https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference.
       run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ ${{env.DOCS_PROJECT_PATH}}
 
+    - name: Upload Docs Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: docs-artifact
+        path: ${{github.workspace}}/install/windows
+          
+  installer:
+    runs-on: windows-2019
+    needs: [build, docs]
+    if: github.ref == 'refs/heads/master'
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1
+
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v3
+      with:
+        path: ${{github.workspace}}/ExternalLibraries/qt
+        key: ${{runner.os}}-QtCache-${{env.QT_VERSION}}
+
+    - name: Install Qt 32
+      uses: jurplel/install-qt-action@v3
+      with:
+        # If cached, only install essential build tools and set environmental variables.
+        cache: ${{steps.cache-qt.outputs.cache-hit}}
+        # Version of Qt to install.
+        version: ${{env.QT_VERSION}}
+        # Architecture.
+        arch: win32_${{env.QT_VS_VERSION}}
+        # Additional modules.
+        modules: 'qtwebengine'
+        # Directory to install.
+        dir: ${{github.workspace}}/ExternalLibraries/qt
+        # Whether or not to automatically run setup-python to find a valid python version.
+        setup-python: 'false'
+        
+    - name: Install Qt 64
+      uses: jurplel/install-qt-action@v3
+      with:
+        # If cached, only install essential build tools and set environmental variables.
+        cache: ${{steps.cache-qt.outputs.cache-hit}}
+        # Version of Qt to install.
+        version: ${{env.QT_VERSION}}
+        # Architecture.
+        arch: win64_${{env.QT_VS_VERSION}}_64
+        # Additional modules.
+        modules: 'qtwebengine'
+        # Directory to install.
+        dir: ${{github.workspace}}/ExternalLibraries/qt
+        # Whether or not to automatically run setup-python to find a valid python version.
+        setup-python: 'false'
+        
+    - name: Cache QtMsBuild tools
+      id: cache-qt-ms-build-tools
+      uses: actions/cache@v3
+      with:
+        path: ${{github.workspace}}/ExternalLibraries/qtvsaddin
+        key: ${{runner.os}}-QtMsBuildCache-${{env.QT_VS_ADDIN_VERSION}}
+
+    - name: Get QtMsBuild tools
+      if: steps.cache-qt-ms-build-tools.outputs.cache-hit != 'true'
+      working-directory: ${{github.workspace}}
+      # Get additional project files to build Qt solution with MSBuild. This work is usually done in Visual Studio with Qt VS Tools extension.
+      # Also, it installs them to %LOCALAPPDATA%\QtMsBuild, so they can not be used by other Windows users.
+      # Download the extension and extract requited files to the project directory.
+      run: |
+        Invoke-WebRequest -Uri https://ftp.fau.de/qtproject/archive/vsaddin/${{env.QT_VS_ADDIN_VERSION}}/qt-vsaddin-msvc2019-${{env.QT_VS_ADDIN_VERSION}}.vsix -MaximumRetryCount 10 -RetryIntervalSec 30 -OutFile vspackage.vsix
+        Expand-Archive vspackage.vsix -DestinationPath ${{github.workspace}}/ExternalLibraries/qtvsaddin
+
+    - name: Cache ZLib
+      id: cache-zlib
+      uses: actions/cache@v3
+      with:
+        path: ${{github.workspace}}/ExternalLibraries/zlib
+        key: ${{runner.os}}-ZLibCache-${{env.ZLIB_VERSION}}
+
+    - name: Build ZLib
+      if: steps.cache-zlib.outputs.cache-hit != 'true'
+      working-directory: ${{github.workspace}}/ExternalLibraries
+      shell: pwsh
+      # Run the script to build zlib.
+      run: .\CompileZLib.ps1
+
+    - name: Cache SUNDIALS
+      id: cache-sundials
+      uses: actions/cache@v3
+      with:
+        path: ${{github.workspace}}/ExternalLibraries/sundials
+        key: ${{runner.os}}-SundialsCache-${{env.SUNDIALS_VERSION}}
+
+    - name: Build SUNDIALS
+      if: steps.cache-sundials.outputs.cache-hit != 'true'
+      working-directory: ${{github.workspace}}/ExternalLibraries
+      shell: pwsh
+      # Run the script to build sundials.
+      run: .\CompileSundials.ps1
+
+    - name: Cache HDF5
+      id: cache-hdf5
+      uses: actions/cache@v3
+      with:
+        path: ${{github.workspace}}/ExternalLibraries/hdf5
+        key: ${{runner.os}}-Hdf5Cache-${{env.HDF5_VERSION}}
+
+    - name: Build HDF5
+      if: steps.cache-hdf5.outputs.cache-hit != 'true'
+      working-directory: ${{github.workspace}}/ExternalLibraries
+      shell: pwsh
+      # Run the script to build hdf5.
+      run: .\CompileHDF5.ps1
+
+    - name: Cache Graphviz
+      id: cache-graphviz
+      uses: actions/cache@v3
+      with:
+        path: ${{github.workspace}}/ExternalLibraries/graphviz
+        key: ${{runner.os}}-GraphvizCache-${{env.GRAPHVIZ_VERSION}}
+
+    - name: Build Graphviz
+      if: steps.cache-graphviz.outputs.cache-hit != 'true'
+      working-directory: ${{github.workspace}}/ExternalLibraries
+      shell: pwsh
+      # Run the script to build graphviz.
+      run: .\CompileGraphviz.ps1
+
+    - name: Download Docs Artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: docs-artifact
+        path: ${{github.workspace}}/install/windows
+
+    - name: Build x86
+      working-directory: ${{github.workspace}}
+      env:
+        QtToolsPath: ${{env.Qt5_DIR}}/../${{env.QT_VS_VERSION}}/bin
+        QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
+      run: |
+        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Debug   -property:Platform=Win32 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
+        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Release -property:Platform=Win32 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
+
+    - name: Build x64
+      working-directory: ${{github.workspace}}
+      env:
+        QtToolsPath: ${{env.Qt5_DIR}}/../${{env.QT_VS_VERSION}}_64/bin
+        QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
+      run: |
+        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Debug   -property:Platform=x64 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
+        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Release -property:Platform=x64 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
+
+    - name: Build Installer
+      working-directory: ${{github.workspace}}
+      env:
+        QtToolsPath: ${{env.Qt5_DIR}}/bin
+        QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
+      run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:QtInstallDir=${{github.workspace}}/ExternalLibraries/qt/Qt/${{env.QT_VERSION}}/${{env.QT_VS_VERSION}}_64/ -property:InstallerPlatforms=x64 -property:InstallerDocumentation=true -property:InstallerSDK=true -property:InstallerSDKLibs=Precompiled -property:InstallerPreBuild=false -property:InstallerPreDocs=false ${{env.INSTALLER_PROJECT_PATH}}
+
   cleanup:
     runs-on: windows-2019
-    needs: [build, tests]
+    needs: [tests, installer]
     if: ${{always()}}
 
     steps:
@@ -230,4 +405,10 @@ jobs:
       uses: geekyeggo/delete-artifact@v2
       with:
         name: build-artifact
+        failOnError: false
+
+    - name: Delete Docs Artifact
+      uses: geekyeggo/delete-artifact@v2
+      with:
+        name: docs-artifact
         failOnError: false
