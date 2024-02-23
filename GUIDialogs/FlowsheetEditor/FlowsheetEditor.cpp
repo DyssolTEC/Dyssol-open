@@ -27,6 +27,7 @@ CFlowsheetEditor::CFlowsheetEditor(CFlowsheet* _pFlowsheet, const CMaterialsData
 {
 	ui.setupUi(this);
 	ui.tableListValues->EnablePasting(false);
+	ui.tableListValues->setSelectionMode(QAbstractItemView::ExtendedSelection);
 	// set focus policy to enable focus to switch back to flowsheet editor
 	this->setFocusPolicy(Qt::ClickFocus);
 
@@ -571,7 +572,7 @@ void CFlowsheetEditor::PasteParamTable(int _row, int _col)
 	case EUnitParameter::PARAM_DEPENDENT: [[fallthrough]];
 	case EUnitParameter::TIME_DEPENDENT:
 	{
-		auto* paramTD = dynamic_cast<CTDUnitParameter*>(up);
+		auto* paramTD = dynamic_cast<CDependentUnitParameter*>(up);
 
 		// new parameters (and possibly values) pasted
 		if (_col == 0)
@@ -579,7 +580,7 @@ void CFlowsheetEditor::PasteParamTable(int _row, int _col)
 			const std::vector<double> valuesOld = paramTD->GetValues();
 
 			// existing parameters that are going to be overwritten are deleted first
-			const std::vector<double> paramsOld = paramTD->GetTimes();
+			const std::vector<double> paramsOld = paramTD->GetParams();
 			for (size_t i = _row; i < paramsOld.size() && i < data.size() + _row; ++i)
 				paramTD->RemoveValue(paramsOld[i]);
 
@@ -616,7 +617,7 @@ void CFlowsheetEditor::PasteParamTable(int _row, int _col)
 		else
 		{
 			// all currently defined parameters
-			const std::vector<double> params = paramTD->GetTimes();
+			const std::vector<double> params = paramTD->GetParams();
 			// check there is enough defined parameters to paste all the values
 			if (_row + data.size() > paramTD->Size())
 				if (AskYesNoCancel(this, StrConst::FE_InvalidClipboard, StrConst::FE_NotEnoughParameters) != QMessageBox::Yes)
