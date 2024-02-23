@@ -119,6 +119,31 @@ bool VectorUniqueSorted(const std::vector<T>& _vec)
 	return std::adjacent_find(_vec.begin(), _vec.end()) == _vec.end();
 }
 
+
+// Checks if the element is unique in vector, returns indizes of duplicates
+template<typename T>
+std::vector<size_t> VectorGetDuplicates(const std::vector<T*>& _vec, size_t _index)
+{
+	T* elem = _vec[_index];
+	std::vector<size_t> indizes;
+	for (size_t i = 0; i < _vec.size(); i++)
+		if (_index != i && *elem == *_vec[i])
+			indizes.push_back(i);
+	return indizes;
+}
+
+// Checks if the element is unique in vector, returns indizes of duplicates
+template<typename T>
+std::vector<size_t> VectorGetDuplicates(const std::vector<T>& _vec, size_t _index)
+{
+	T elem = _vec[_index];
+	std::vector<size_t> indizes;
+	for (size_t i = 0; i < _vec.size(); i++)
+		if (_index != i && elem == _vec[i])
+			indizes.push_back(i);
+	return indizes;
+}
+
 // Adds two equally sized vectors element-wise and writes results to the third one.
 template<typename T>
 void AddVectors(const std::vector<T>& _vec1, const std::vector<T>& _vec2, std::vector<T>& _res)
