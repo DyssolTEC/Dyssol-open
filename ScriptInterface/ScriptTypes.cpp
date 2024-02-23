@@ -65,7 +65,7 @@ namespace ScriptInterface
 	{
 		_obj.unit   = GetValueFromStream<SNameOrIndex>(_s);
 		_obj.holdup = GetValueFromStream<SNameOrIndex>(_s);
-		_obj.phase  = GetValueFromStream<SNamedEnum>(_s).FillAndCheck<EPhase>();
+		_obj.phase  = GetValueFromStream<SNamedEnum>(_s).FillAndWarn<EPhase>();
 		_obj.values = GetValueFromStream<std::vector<double>>(_s); // format depends on the flowsheet settings, so postpone final parsing until the flowsheet is loaded
 		return _s;
 	}
@@ -81,15 +81,15 @@ namespace ScriptInterface
 	{
 		_obj.unit      = GetValueFromStream<SNameOrIndex>(_s);
 		_obj.holdup    = GetValueFromStream<SNameOrIndex>(_s);
-		_obj.distrType = GetValueFromStream<SNamedEnum>(_s).FillAndCheck<EDistrTypes>();
+		_obj.distrType = GetValueFromStream<SNamedEnum>(_s).FillAndWarn<EDistrTypes>();
 		_obj.compound  = GetValueFromStream<std::string>(_s);
 		// special treatment for PSD
 		if (_obj.distrType.key == DISTR_SIZE)
 		{
-			_obj.psdType  = GetValueFromStream<SNamedEnum>(_s).FillAndCheck<EPSDTypes>();
-			_obj.psdMeans = GetValueFromStream<SNamedEnum>(_s).FillAndCheck<EPSDGridType>();
+			_obj.psdType  = GetValueFromStream<SNamedEnum>(_s).FillAndWarn<EPSDTypes>();
+			_obj.psdMeans = GetValueFromStream<SNamedEnum>(_s).FillAndWarn<EPSDGridType>();
 		}
-		_obj.function = GetValueFromStream<SNamedEnum>(_s).FillAndCheck<EDistrFunction>();
+		_obj.function = GetValueFromStream<SNamedEnum>(_s).FillAndWarn<EDistrFunction>();
 		_obj.values   = GetValueFromStream<std::vector<double>>(_s);
 		return _s;
 	}
@@ -107,13 +107,13 @@ namespace ScriptInterface
 	std::istream& operator>>(std::istream& _s, SGridDimensionSE& _obj)
 	{
 		_obj.unit      = GetValueFromStream<SNameOrIndex>(_s);
-		_obj.distrType = GetValueFromStream<SNamedEnum>(_s).FillAndCheck<EDistrTypes>();
-		_obj.entryType = GetValueFromStream<SNamedEnum>(_s).FillAndCheck<EGridEntry>();
+		_obj.distrType = GetValueFromStream<SNamedEnum>(_s).FillAndWarn<EDistrTypes>();
+		_obj.entryType = GetValueFromStream<SNamedEnum>(_s).FillAndWarn<EGridEntry>();
 		if (static_cast<EGridEntry>(_obj.entryType.key) == EGridEntry::GRID_NUMERIC)
 		{
-			_obj.function = GetValueFromStream<SNamedEnum>(_s).FillAndCheck<EGridFunction>();
+			_obj.function = GetValueFromStream<SNamedEnum>(_s).FillAndWarn<EGridFunction>();
 			if (static_cast<EDistrTypes>(_obj.distrType.key) == DISTR_SIZE)
-				_obj.psdMeans = GetValueFromStream<SNamedEnum>(_s).FillAndCheck<EPSDGridType>();
+				_obj.psdMeans = GetValueFromStream<SNamedEnum>(_s).FillAndWarn<EPSDGridType>();
 		}
 		_obj.classes = GetValueFromStream<size_t>(_s);
 		if (static_cast<EGridEntry>(_obj.entryType.key) == EGridEntry::GRID_NUMERIC)
@@ -148,7 +148,7 @@ namespace ScriptInterface
 		while (!_s.eof())
 		{
 			_obj.names.push_back(GetValueFromStream<std::string>(_s));
-			_obj.types.push_back(GetValueFromStream<SNamedEnum>(_s).FillAndCheck<EPhase>());
+			_obj.types.push_back(GetValueFromStream<SNamedEnum>(_s).FillAndWarn<EPhase>());
 		}
 		return _s;
 	}
