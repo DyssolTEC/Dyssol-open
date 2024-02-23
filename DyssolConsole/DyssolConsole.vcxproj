@@ -142,7 +142,7 @@
     <ProjectReference Include="$(SolutionDir)SimulatorCore\SimulatorCore.vcxproj">
       <Project>{a631849a-0b28-4982-9a8d-9e4921a2a84c}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\ScriptInterface\ScriptInterface.vcxproj">
+    <ProjectReference Include="$(SolutionDir)ScriptInterface\ScriptInterface.vcxproj">
       <Project>{0736ddb9-c29b-4dea-8e9a-6feffed8cfb6}</Project>
     </ProjectReference>
   </ItemGroup>
