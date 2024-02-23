@@ -56,6 +56,7 @@ void CSimulator::Simulate()
 	// Prepare
 	SetupConvergenceMethod();
 	ClearLogState();
+
 	m_hasError = false;
 	InitializePartitionsStatus();
 
@@ -92,9 +93,6 @@ void CSimulator::Simulate()
 		}
 	}
 
-	// stop logger updater
-	m_logUpdater.Stop();
-
 	// Save new initial values of tear streams
 	if(m_pParams->initializeTearStreamsAutoFlag)
 	{
@@ -110,6 +108,10 @@ void CSimulator::Simulate()
 			delete m_partitionsStatus[i].vRecyclesPrevPrev[j];
 		}
 
+	m_log.WriteInfo("");
+
+	// stop logger updater
+	m_logUpdater.Stop();
 	m_nCurrentStatus = ESimulatorStatus::SIMULATOR_IDLE;
 }
 
