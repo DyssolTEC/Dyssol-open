@@ -265,21 +265,21 @@ jobs:
         path: ${{github.workspace}}/ExternalLibraries/qt
         key: ${{runner.os}}-QtCache-${{env.QT_VERSION}}
 
-    - name: Install Qt 32
-      uses: jurplel/install-qt-action@v3
-      with:
-        # If cached, only install essential build tools and set environmental variables.
-        cache: ${{steps.cache-qt.outputs.cache-hit}}
-        # Version of Qt to install.
-        version: ${{env.QT_VERSION}}
-        # Architecture.
-        arch: win32_${{env.QT_VS_VERSION}}
-        # Additional modules.
-        modules: 'qtwebengine'
-        # Directory to install.
-        dir: ${{github.workspace}}/ExternalLibraries/qt
-        # Whether or not to automatically run setup-python to find a valid python version.
-        setup-python: 'false'
+#    - name: Install Qt 32
+#      uses: jurplel/install-qt-action@v3
+#      with:
+#        # If cached, only install essential build tools and set environmental variables.
+#        cache: ${{steps.cache-qt.outputs.cache-hit}}
+#        # Version of Qt to install.
+#        version: ${{env.QT_VERSION}}
+#        # Architecture.
+#        arch: win32_${{env.QT_VS_VERSION}}
+#        # Additional modules.
+#        modules: 'qtwebengine'
+#        # Directory to install.
+#        dir: ${{github.workspace}}/ExternalLibraries/qt
+#        # Whether or not to automatically run setup-python to find a valid python version.
+#        setup-python: 'false'
         
     - name: Install Qt 64
       uses: jurplel/install-qt-action@v3
@@ -370,11 +370,11 @@ jobs:
       # Run the script to build graphviz.
       run: .\CompileGraphviz.ps1
 
-    - name: Download Docs Artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: docs-artifact
-        path: ${{github.workspace}}/install/windows
+#    - name: Download Docs Artifact
+#      uses: actions/download-artifact@v4
+#      with:
+#        name: docs-artifact
+#        path: ${{github.workspace}}/install/windows
 
 #    - name: Build x86
 #      working-directory: ${{github.workspace}}
