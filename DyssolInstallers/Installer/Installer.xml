@@ -38,4 +38,9 @@
     <EnumValue Name="Precompiled" DisplayName="Precompiled" Description="Models Creator with precompiled SDK libraries."/>
     <EnumValue Name="Sources"     DisplayName="Sources"     Description="Models Creator with source files of SDK libraries."/>
   </EnumProperty>
+  <BoolProperty
+    Name="InstallerPreBuild"
+    Category="General"
+    DisplayName="Pre-build"
+    Description="Build binary files before building installer."/>
 </Rule>

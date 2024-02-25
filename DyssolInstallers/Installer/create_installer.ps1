@@ -9,22 +9,32 @@ $platforms      = $args[3]
 $documentation  = $args[4]
 $sdk            = $args[5]
 $sdk_type       = $args[6]
+$pre_build      = $args[7]
 
-Write-Host $platforms
+Write-Host "solution_dir   " $solution_dir
+Write-Host "solution_path  " $solution_path
+Write-Host "qt_install_dir " $qt_install_dir
+Write-Host "platforms      " $platforms
+Write-Host "documentation  " $documentation
+Write-Host "sdk            " $sdk
+Write-Host "sdk_type       " $sdk_type
+Write-Host "pre_build      " $pre_build
 
 ### compile projects
 
-if ($platforms -eq "Win32" -Or $platforms -eq "Both" -Or $platforms -eq "") {
-	Write-Host Compiling Release Win32
-	devenv $solution_path /build "Release|Win32"
-	Write-Host Compiling Debug Win32
-	devenv $solution_path /build "Debug|Win32"
-}
-if ($platforms -eq "x64" -Or $platforms -eq "Both" -Or $platforms -eq "") {
-	Write-Host Compiling Release x64
-	devenv $solution_path /build "Release|x64"
-	Write-Host Compiling Debug x64
-	devenv $solution_path /build "Debug|x64"
+if ($pre_build -eq "true" -Or $pre_build -eq "") {
+	if ($platforms -eq "Win32" -Or $platforms -eq "Both" -Or $platforms -eq "") {
+		Write-Host Compiling Release Win32
+		devenv $solution_path /build "Release|Win32"
+		Write-Host Compiling Debug Win32
+		devenv $solution_path /build "Debug|Win32"
+	}
+	if ($platforms -eq "x64" -Or $platforms -eq "Both" -Or $platforms -eq "") {
+		Write-Host Compiling Release x64
+		devenv $solution_path /build "Release|x64"
+		Write-Host Compiling Debug x64
+		devenv $solution_path /build "Debug|x64"
+	}
 }
 if ($documentation -eq "true") {
 	Write-Host Compiling Documentation
