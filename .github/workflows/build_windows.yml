@@ -391,7 +391,7 @@ jobs:
         QtToolsPath: ${{env.Qt5_DIR}}/../${{env.QT_VS_VERSION}}_64/bin
         QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
       run: |
-        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Debug   -property:Platform=x64 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
+        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Release  -property:Platform=x64 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
 #      run: |
 #        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Debug   -property:Platform=x64 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
 #        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Release -property:Platform=x64 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
