@@ -376,23 +376,25 @@ jobs:
         name: docs-artifact
         path: ${{github.workspace}}/install/windows
 
-    # - name: Build x86
-      # working-directory: ${{github.workspace}}
-      # env:
-        # QtToolsPath: ${{env.Qt5_DIR}}/../${{env.QT_VS_VERSION}}/bin
-        # QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
-      # run: |
-        # msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Debug   -property:Platform=Win32 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
-        # msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Release -property:Platform=Win32 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
-
+#    - name: Build x86
+#      working-directory: ${{github.workspace}}
+#      env:
+#        QtToolsPath: ${{env.Qt5_DIR}}/../${{env.QT_VS_VERSION}}/bin
+#        QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
+#      run: |
+#        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Debug   -property:Platform=Win32 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
+#        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Release -property:Platform=Win32 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
+#
     - name: Build x64
       working-directory: ${{github.workspace}}
       env:
         QtToolsPath: ${{env.Qt5_DIR}}/../${{env.QT_VS_VERSION}}_64/bin
         QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
       run: |
+        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Debug   -property:Platform=x64 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
+#      run: |
 #        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Debug   -property:Platform=x64 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
-        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Release -property:Platform=x64 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
+#        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Release -property:Platform=x64 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
 
     - name: Build Installer
       working-directory: ${{github.workspace}}
