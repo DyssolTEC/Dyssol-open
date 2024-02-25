@@ -402,8 +402,7 @@ jobs:
       run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:QtInstallDir=${{github.workspace}}/ExternalLibraries/qt/Qt/${{env.QT_VERSION}}/${{env.QT_VS_VERSION}}_64/ -property:InstallerPlatforms=x64 -property:InstallerDocumentation=false -property:InstallerSDK=false -property:InstallerSDKLibs=Precompiled -property:InstallerPreBuild=false -property:InstallerPreDocs=false ${{env.INSTALLER_PROJECT_PATH}}
 
     - name: Run Installer
-      path: ${{github.workspace}}/Installers/Installers
-      run: Dyssol*.exe
+      run: ${{github.workspace}}/Installers/Installers/Dyssol*.exe
 
     - name: Upload Installer Artifact
       uses: actions/upload-artifact@v4
