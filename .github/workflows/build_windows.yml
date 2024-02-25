@@ -249,7 +249,7 @@ jobs:
   installer:
     runs-on: windows-2019
     needs: [build, docs]
-    if: github.ref == 'refs/heads/master'
+    # if: github.ref == 'refs/heads/master'
 
     steps:
     - name: Checkout
@@ -376,14 +376,14 @@ jobs:
         name: docs-artifact
         path: ${{github.workspace}}/install/windows
 
-    - name: Build x86
-      working-directory: ${{github.workspace}}
-      env:
-        QtToolsPath: ${{env.Qt5_DIR}}/../${{env.QT_VS_VERSION}}/bin
-        QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
-      run: |
-        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Debug   -property:Platform=Win32 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
-        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Release -property:Platform=Win32 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
+    # - name: Build x86
+      # working-directory: ${{github.workspace}}
+      # env:
+        # QtToolsPath: ${{env.Qt5_DIR}}/../${{env.QT_VS_VERSION}}/bin
+        # QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
+      # run: |
+        # msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Debug   -property:Platform=Win32 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
+        # msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Release -property:Platform=Win32 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
 
     - name: Build x64
       working-directory: ${{github.workspace}}
@@ -399,7 +399,20 @@ jobs:
       env:
         QtToolsPath: ${{env.Qt5_DIR}}/bin
         QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
-      run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:QtInstallDir=${{github.workspace}}/ExternalLibraries/qt/Qt/${{env.QT_VERSION}}/${{env.QT_VS_VERSION}}_64/ -property:InstallerPlatforms=x64 -property:InstallerDocumentation=true -property:InstallerSDK=true -property:InstallerSDKLibs=Precompiled -property:InstallerPreBuild=false -property:InstallerPreDocs=false ${{env.INSTALLER_PROJECT_PATH}}
+      run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:QtInstallDir=${{github.workspace}}/ExternalLibraries/qt/Qt/${{env.QT_VERSION}}/${{env.QT_VS_VERSION}}_64/ -property:InstallerPlatforms=x64 -property:InstallerDocumentation=false -property:InstallerSDK=false -property:InstallerSDKLibs=Precompiled -property:InstallerPreBuild=false -property:InstallerPreDocs=false ${{env.INSTALLER_PROJECT_PATH}}
+
+    - name: Run Installer
+      path: ${{github.workspace}}/Installers/Installers
+      run: Dyssol*.exe
+
+    - name: Upload Installer Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: installer-artifact
+        if-no-files-found: error
+        retention-days: 7
+        compression-level: 0
+        path: ${{github.workspace}}/Installers/Installers/*.exe
 
   cleanup:
     runs-on: windows-2019
