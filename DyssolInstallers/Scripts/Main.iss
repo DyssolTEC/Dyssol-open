@@ -22,7 +22,6 @@
 ; #define IsWithSrc
 ; #define IsWithSDK
 
-#include "ExtLibs.iss"
 #include "QtLibs.iss"
 #include "FlowsheetsExamples.iss"
 #include "SolversExamples.iss"
@@ -32,6 +31,7 @@
 #include "Units.iss"
 #ifdef IsWithSDK
 #include "ModelsCreator.iss"
+#include "ExtLibs.iss"
 #endif
 
 [Setup]
