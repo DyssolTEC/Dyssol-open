@@ -10,6 +10,7 @@ $documentation  = $args[4]
 $sdk            = $args[5]
 $sdk_type       = $args[6]
 $pre_build      = $args[7]
+$pre_docs       = $args[8]
 
 Write-Host "solution_dir   " $solution_dir
 Write-Host "solution_path  " $solution_path
@@ -19,6 +20,7 @@ Write-Host "documentation  " $documentation
 Write-Host "sdk            " $sdk
 Write-Host "sdk_type       " $sdk_type
 Write-Host "pre_build      " $pre_build
+Write-Host "pre_docs       " $pre_docs
 
 ### compile projects
 
@@ -36,9 +38,11 @@ if ($pre_build -eq "true" -Or $pre_build -eq "") {
 		devenv $solution_path /build "Debug|x64"
 	}
 }
-if ($documentation -eq "true") {
-	Write-Host Compiling Documentation
-	devenv $solution_path /build "Release|x64" /Project "Documentation"
+if ($pre_docs -eq "true" -Or $pre_docs -eq "") {
+	if ($documentation -eq "true") {
+		Write-Host Compiling Documentation
+		devenv $solution_path /build "Release|x64" /Project "Documentation"
+	}
 }
 
 ### get additional version information

@@ -6,5 +6,6 @@
     <InstallerSDK>true</InstallerSDK>
     <InstallerSDKLibs>Precompiled</InstallerSDKLibs>
     <InstallerPreBuild>true</InstallerPreBuild>
+    <InstallerPreDocs>true</InstallerPreDocs>
   </PropertyGroup>
 </Project>

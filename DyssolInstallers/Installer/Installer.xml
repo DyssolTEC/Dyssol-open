@@ -43,4 +43,9 @@
     Category="General"
     DisplayName="Pre-build"
     Description="Build binary files before building installer."/>
+  <BoolProperty
+    Name="InstallerPreDocs"
+    Category="General"
+    DisplayName="Pre-build docs"
+    Description="Build documentation before building installer."/>
 </Rule>
