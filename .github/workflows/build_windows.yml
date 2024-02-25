@@ -438,7 +438,8 @@ jobs:
 
   cleanup:
     runs-on: windows-2019
-    needs: [tests, installer]
+    needs: [installer]
+    # needs: [tests, installer]
     if: ${{always()}}
 
     steps:
