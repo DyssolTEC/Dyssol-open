@@ -29,165 +29,165 @@ env:
   MIKTEX_VERSION: 23.5
 
 jobs:
-  build:
-    runs-on: windows-2019
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v2
-
-    - name: Cache Qt
-      id: cache-qt
-      uses: actions/cache@v4
-      with:
-        path: ${{github.workspace}}/ExternalLibraries/qt
-        key: ${{runner.os}}-QtCache-${{env.QT_VERSION}}
-
-    - name: Install Qt 32
-      uses: jurplel/install-qt-action@v3
-      with:
-        # If cached, only install essential build tools and set environmental variables.
-        cache: ${{steps.cache-qt.outputs.cache-hit}}
-        # Version of Qt to install.
-        version: ${{env.QT_VERSION}}
-        # Architecture.
-        arch: win32_${{env.QT_VS_VERSION}}
-        # Directory to install.
-        dir: ${{github.workspace}}/ExternalLibraries/qt
-        # Whether or not to automatically run setup-python to find a valid python version.
-        setup-python: 'false'
-        
-    - name: Install Qt 64
-      uses: jurplel/install-qt-action@v3
-      with:
-        # If cached, only install essential build tools and set environmental variables.
-        cache: ${{steps.cache-qt.outputs.cache-hit}}
-        # Version of Qt to install.
-        version: ${{env.QT_VERSION}}
-        # Architecture.
-        arch: win64_${{env.QT_VS_VERSION}}_64
-        # Directory to install.
-        dir: ${{github.workspace}}/ExternalLibraries/qt
-        # Whether or not to automatically run setup-python to find a valid python version.
-        setup-python: 'false'
-
-    - name: Cache QtMsBuild tools
-      id: cache-qt-ms-build-tools
-      uses: actions/cache@v4
-      with:
-        path: ${{github.workspace}}/ExternalLibraries/qtvsaddin
-        key: ${{runner.os}}-QtMsBuildCache-${{env.QT_VS_ADDIN_VERSION}}
-
-    - name: Get QtMsBuild tools
-      if: steps.cache-qt-ms-build-tools.outputs.cache-hit != 'true'
-      working-directory: ${{github.workspace}}
-      # Get additional project files to build Qt solution with MSBuild. This work is usually done in Visual Studio with Qt VS Tools extension.
-      # Also, it installs them to %LOCALAPPDATA%\QtMsBuild, so they can not be used by other Windows users.
-      # Download the extension and extract requited files to the project directory.
-      run: |
-        Invoke-WebRequest -Uri https://ftp.fau.de/qtproject/archive/vsaddin/${{env.QT_VS_ADDIN_VERSION}}/qt-vsaddin-msvc2019-${{env.QT_VS_ADDIN_VERSION}}.vsix -MaximumRetryCount 10 -RetryIntervalSec 30 -OutFile vspackage.vsix
-        Expand-Archive vspackage.vsix -DestinationPath ${{github.workspace}}/ExternalLibraries/qtvsaddin
-
-    - name: Cache ZLib
-      id: cache-zlib
-      uses: actions/cache@v4
-      with:
-        path: ${{github.workspace}}/ExternalLibraries/zlib
-        key: ${{runner.os}}-ZLibCache-${{env.ZLIB_VERSION}}
-
-    - name: Build ZLib
-      if: steps.cache-zlib.outputs.cache-hit != 'true'
-      working-directory: ${{github.workspace}}/ExternalLibraries
-      shell: pwsh
-      # Run the script to build zlib.
-      run: .\CompileZLib.ps1
-
-    - name: Cache SUNDIALS
-      id: cache-sundials
-      uses: actions/cache@v4
-      with:
-        path: ${{github.workspace}}/ExternalLibraries/sundials
-        key: ${{runner.os}}-SundialsCache-${{env.SUNDIALS_VERSION}}
-
-    - name: Build SUNDIALS
-      if: steps.cache-sundials.outputs.cache-hit != 'true'
-      working-directory: ${{github.workspace}}/ExternalLibraries
-      shell: pwsh
-      # Run the script to build sundials.
-      run: .\CompileSundials.ps1
-
-    - name: Cache HDF5
-      id: cache-hdf5
-      uses: actions/cache@v4
-      with:
-        path: ${{github.workspace}}/ExternalLibraries/hdf5
-        key: ${{runner.os}}-Hdf5Cache-${{env.HDF5_VERSION}}
-
-    - name: Build HDF5
-      if: steps.cache-hdf5.outputs.cache-hit != 'true'
-      working-directory: ${{github.workspace}}/ExternalLibraries
-      shell: pwsh
-      # Run the script to build hdf5.
-      run: .\CompileHDF5.ps1
-
-    - name: Cache Graphviz
-      id: cache-graphviz
-      uses: actions/cache@v4
-      with:
-        path: ${{github.workspace}}/ExternalLibraries/graphviz
-        key: ${{runner.os}}-GraphvizCache-${{env.GRAPHVIZ_VERSION}}
-
-    - name: Build Graphviz
-      if: steps.cache-graphviz.outputs.cache-hit != 'true'
-      working-directory: ${{github.workspace}}/ExternalLibraries
-      shell: pwsh
-      # Run the script to build graphviz.
-      run: .\CompileGraphviz.ps1
-
-    - name: Build
-      working-directory: ${{github.workspace}}
-      env:
-        QtToolsPath: ${{env.Qt5_DIR}}/bin
-        QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
-      # Add additional options to the MSBuild command line here: see https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference.
-      run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
-
-    - name: Upload Build Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-artifact
-        if-no-files-found: error
-        retention-days: 1
-        compression-level: 1
-        path: |
-          ${{github.workspace}}/${{env.BUILD_PLATFORM}}/${{env.BUILD_CONFIGURATION}}/*.exe
-          ${{github.workspace}}/${{env.BUILD_PLATFORM}}/${{env.BUILD_CONFIGURATION}}/*.dll
-
-  tests:
-    runs-on: windows-2019
-    needs: build
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v2
-
-    - name: Download Build Artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: build-artifact
-        path: ${{github.workspace}}/${{env.BUILD_PLATFORM}}/${{env.BUILD_CONFIGURATION}}
-
-    - name: Run Tests
-      working-directory: ${{github.workspace}}
-      # Add additional options to the MSBuild command line here: see https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference.
-      run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:TestsPreBuild=false ${{env.TESTS_PROJECT_PATH}}
-
+#  build:
+#    runs-on: windows-2019
+#
+#    steps:
+#    - name: Checkout
+#      uses: actions/checkout@v4
+#
+#    - name: Add MSBuild to PATH
+#      uses: microsoft/setup-msbuild@v2
+#
+#    - name: Cache Qt
+#      id: cache-qt
+#      uses: actions/cache@v4
+#      with:
+#        path: ${{github.workspace}}/ExternalLibraries/qt
+#        key: ${{runner.os}}-QtCache-${{env.QT_VERSION}}
+#
+#    - name: Install Qt 32
+#      uses: jurplel/install-qt-action@v3
+#      with:
+#        # If cached, only install essential build tools and set environmental variables.
+#        cache: ${{steps.cache-qt.outputs.cache-hit}}
+#        # Version of Qt to install.
+#        version: ${{env.QT_VERSION}}
+#        # Architecture.
+#        arch: win32_${{env.QT_VS_VERSION}}
+#        # Directory to install.
+#        dir: ${{github.workspace}}/ExternalLibraries/qt
+#        # Whether or not to automatically run setup-python to find a valid python version.
+#        setup-python: 'false'
+#        
+#    - name: Install Qt 64
+#      uses: jurplel/install-qt-action@v3
+#      with:
+#        # If cached, only install essential build tools and set environmental variables.
+#        cache: ${{steps.cache-qt.outputs.cache-hit}}
+#        # Version of Qt to install.
+#        version: ${{env.QT_VERSION}}
+#        # Architecture.
+#        arch: win64_${{env.QT_VS_VERSION}}_64
+#        # Directory to install.
+#        dir: ${{github.workspace}}/ExternalLibraries/qt
+#        # Whether or not to automatically run setup-python to find a valid python version.
+#        setup-python: 'false'
+#
+#    - name: Cache QtMsBuild tools
+#      id: cache-qt-ms-build-tools
+#      uses: actions/cache@v4
+#      with:
+#        path: ${{github.workspace}}/ExternalLibraries/qtvsaddin
+#        key: ${{runner.os}}-QtMsBuildCache-${{env.QT_VS_ADDIN_VERSION}}
+#
+#    - name: Get QtMsBuild tools
+#      if: steps.cache-qt-ms-build-tools.outputs.cache-hit != 'true'
+#      working-directory: ${{github.workspace}}
+#      # Get additional project files to build Qt solution with MSBuild. This work is usually done in Visual Studio with Qt VS Tools extension.
+#      # Also, it installs them to %LOCALAPPDATA%\QtMsBuild, so they can not be used by other Windows users.
+#      # Download the extension and extract requited files to the project directory.
+#      run: |
+#        Invoke-WebRequest -Uri https://ftp.fau.de/qtproject/archive/vsaddin/${{env.QT_VS_ADDIN_VERSION}}/qt-vsaddin-msvc2019-${{env.QT_VS_ADDIN_VERSION}}.vsix -MaximumRetryCount 10 -RetryIntervalSec 30 -OutFile vspackage.vsix
+#        Expand-Archive vspackage.vsix -DestinationPath ${{github.workspace}}/ExternalLibraries/qtvsaddin
+#
+#    - name: Cache ZLib
+#      id: cache-zlib
+#      uses: actions/cache@v4
+#      with:
+#        path: ${{github.workspace}}/ExternalLibraries/zlib
+#        key: ${{runner.os}}-ZLibCache-${{env.ZLIB_VERSION}}
+#
+#    - name: Build ZLib
+#      if: steps.cache-zlib.outputs.cache-hit != 'true'
+#      working-directory: ${{github.workspace}}/ExternalLibraries
+#      shell: pwsh
+#      # Run the script to build zlib.
+#      run: .\CompileZLib.ps1
+#
+#    - name: Cache SUNDIALS
+#      id: cache-sundials
+#      uses: actions/cache@v4
+#      with:
+#        path: ${{github.workspace}}/ExternalLibraries/sundials
+#        key: ${{runner.os}}-SundialsCache-${{env.SUNDIALS_VERSION}}
+#
+#    - name: Build SUNDIALS
+#      if: steps.cache-sundials.outputs.cache-hit != 'true'
+#      working-directory: ${{github.workspace}}/ExternalLibraries
+#      shell: pwsh
+#      # Run the script to build sundials.
+#      run: .\CompileSundials.ps1
+#
+#    - name: Cache HDF5
+#      id: cache-hdf5
+#      uses: actions/cache@v4
+#      with:
+#        path: ${{github.workspace}}/ExternalLibraries/hdf5
+#        key: ${{runner.os}}-Hdf5Cache-${{env.HDF5_VERSION}}
+#
+#    - name: Build HDF5
+#      if: steps.cache-hdf5.outputs.cache-hit != 'true'
+#      working-directory: ${{github.workspace}}/ExternalLibraries
+#      shell: pwsh
+#      # Run the script to build hdf5.
+#      run: .\CompileHDF5.ps1
+#
+#    - name: Cache Graphviz
+#      id: cache-graphviz
+#      uses: actions/cache@v4
+#      with:
+#        path: ${{github.workspace}}/ExternalLibraries/graphviz
+#        key: ${{runner.os}}-GraphvizCache-${{env.GRAPHVIZ_VERSION}}
+#
+#    - name: Build Graphviz
+#      if: steps.cache-graphviz.outputs.cache-hit != 'true'
+#      working-directory: ${{github.workspace}}/ExternalLibraries
+#      shell: pwsh
+#      # Run the script to build graphviz.
+#      run: .\CompileGraphviz.ps1
+#
+#    - name: Build
+#      working-directory: ${{github.workspace}}
+#      env:
+#        QtToolsPath: ${{env.Qt5_DIR}}/bin
+#        QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
+#      # Add additional options to the MSBuild command line here: see https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference.
+#      run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
+#
+#    - name: Upload Build Artifact
+#      uses: actions/upload-artifact@v4
+#      with:
+#        name: build-artifact
+#        if-no-files-found: error
+#        retention-days: 1
+#        compression-level: 1
+#        path: |
+#          ${{github.workspace}}/${{env.BUILD_PLATFORM}}/${{env.BUILD_CONFIGURATION}}/*.exe
+#          ${{github.workspace}}/${{env.BUILD_PLATFORM}}/${{env.BUILD_CONFIGURATION}}/*.dll
+#
+#  tests:
+#    runs-on: windows-2019
+#    needs: build
+#
+#    steps:
+#    - name: Checkout
+#      uses: actions/checkout@v4
+#
+#    - name: Add MSBuild to PATH
+#      uses: microsoft/setup-msbuild@v2
+#
+#    - name: Download Build Artifact
+#      uses: actions/download-artifact@v4
+#      with:
+#        name: build-artifact
+#        path: ${{github.workspace}}/${{env.BUILD_PLATFORM}}/${{env.BUILD_CONFIGURATION}}
+#
+#    - name: Run Tests
+#      working-directory: ${{github.workspace}}
+#      # Add additional options to the MSBuild command line here: see https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference.
+#      run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:TestsPreBuild=false ${{env.TESTS_PROJECT_PATH}}
+#
 #  docs:
 #    runs-on: windows-2019
 #
@@ -248,7 +248,7 @@ jobs:
           
   installer:
     runs-on: windows-2019
-    needs: [build, docs]
+    # needs: [build, docs]
     # if: github.ref == 'refs/heads/master'
 
     steps:
