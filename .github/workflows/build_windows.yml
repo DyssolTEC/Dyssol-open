@@ -407,7 +407,7 @@ jobs:
       shell: pwsh
       run: |
         $InstallerFile = Resolve-Path "${{github.workspace}}\DyssolInstallers\Installers\Dyssol*.exe"
-        Start-Process -FilePath $InstallerFile -ArgumentList "/SP- /SILENT /SUPPRESSMSGBOXES"
+        Start-Process -FilePath $InstallerFile -ArgumentList "/SP- /SILENT /SUPPRESSMSGBOXES" -Wait
 
     - name: Upload Installer Artifact
       uses: actions/upload-artifact@v4
