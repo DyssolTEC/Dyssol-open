@@ -30,8 +30,8 @@
 #include "Solvers.iss"
 #include "Units.iss"
 #ifdef IsWithSDK
-#include "ModelsCreator.iss"
 #include "ExtLibs.iss"
+#include "ModelsCreator.iss"
 #endif
 
 [Setup]
