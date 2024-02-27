@@ -43,7 +43,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppPublisherURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={commonpf}\{#MyAppName}
+DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 UninstallDisplayIcon={app}\{#MyAppExeName}
 AppContact={#MyAppContact}
@@ -66,7 +66,8 @@ AllowNoIcons=yes
 ChangesAssociations=True
 ShowLanguageDialog=auto
 PrivilegesRequired=poweruser
-UsedUserAreasWarning=no
+PrivilegesRequiredOverridesAllowed=dialog
+UsedUserAreasWarning=yes
 #ifdef IsIncludeX64
   #ifdef IsIncludeX32
 ArchitecturesAllowed=x86 x64
@@ -108,38 +109,38 @@ Source: "..\Data\Licenses\*.txt"; DestDir: "{app}\Licenses"; Flags: ignoreversio
 
 [Dirs]
 Name: "{app}\Licenses";                                  Flags: uninsalwaysuninstall
-Name: "{userappdata}\{#MyAppName}";                      Flags: uninsalwaysuninstall
-Name: "{userappdata}\{#MyAppName}\{code:DirCache}";      Flags: uninsalwaysuninstall
-Name: "{userappdata}\{#MyAppName}\{code:DirCacheDebug}"; Flags: uninsalwaysuninstall
+Name: "{autoappdata}\{#MyAppName}";                      Flags: uninsalwaysuninstall
+Name: "{autoappdata}\{#MyAppName}\{code:DirCache}";      Flags: uninsalwaysuninstall
+Name: "{autoappdata}\{#MyAppName}\{code:DirCacheDebug}"; Flags: uninsalwaysuninstall
 
 [Icons]
 Name: "{group}\{#MyAppName}";                        Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:ProgramOnTheWeb,{#MyAppName}}";   Filename: "{#MyAppURL}"
 Name: "{group}\{cm:UninstallProgram, {#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{group}\{#MyAppName} Uninstall";              Filename: "{uninstallexe}"
-Name: "{commondesktop}\{#MyAppName}";                Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{autodesktop}\{#MyAppName}";                Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Registry]
-Root: "HKLM"; Subkey: "Software\Classes\.dflw";                              ValueType: string;                   ValueData: "DyssolFlowsheet";                 Flags: uninsdeletevalue
-Root: "HKLM"; Subkey: "Software\Classes\DyssolFlowsheet";                    ValueType: string;                   ValueData: "Dyssol Flowsheet";                Flags: uninsdeletekey
-Root: "HKLM"; Subkey: "Software\Classes\DyssolFlowsheet\DefaultIcon";        ValueType: string;                   ValueData: "{app}\{#MyAppExeName},0"
-Root: "HKLM"; Subkey: "Software\Classes\DyssolFlowsheet\shell\open\command"; ValueType: string;                   ValueData: """{app}\{#MyAppExeName}"" ""%1"""
-Root: "HKLM"; Subkey: "Software\{#MyAppName}";                               ValueType: string; ValueName: "key"; ValueData: "{code:VarRegKey}";                Flags: uninsdeletekey
+Root: "HKA"; Subkey: "Software\Classes\.dflw";                              ValueType: string;                   ValueData: "DyssolFlowsheet";                 Flags: uninsdeletevalue
+Root: "HKA"; Subkey: "Software\Classes\DyssolFlowsheet";                    ValueType: string;                   ValueData: "Dyssol Flowsheet";                Flags: uninsdeletekey
+Root: "HKA"; Subkey: "Software\Classes\DyssolFlowsheet\DefaultIcon";        ValueType: string;                   ValueData: "{app}\{#MyAppExeName},0"
+Root: "HKA"; Subkey: "Software\Classes\DyssolFlowsheet\shell\open\command"; ValueType: string;                   ValueData: """{app}\{#MyAppExeName}"" ""%1"""
+Root: "HKA"; Subkey: "Software\{#MyAppName}";                               ValueType: string; ValueName: "key"; ValueData: "{code:VarRegKey}";                Flags: uninsdeletekey
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
 [UninstallDelete]
 Type: dirifempty;     Name: "{app}"
-Type: filesandordirs; Name: "{userappdata}\{#MyAppName}\{code:DirCache}"
-Type: filesandordirs; Name: "{userappdata}\{#MyAppName}\{code:DirCacheDebug}"
+Type: filesandordirs; Name: "{autoappdata}\{#MyAppName}\{code:DirCache}"
+Type: filesandordirs; Name: "{autoappdata}\{#MyAppName}\{code:DirCacheDebug}"
 
 [INI]
-Filename: "{userappdata}\{#MyAppName}\{code:FileConfigIni}"; Section: "General"; Key: "modelsFolders";         String: "{code:VarIniModelsFolders}";                   Flags: createkeyifdoesntexist
-Filename: "{userappdata}\{#MyAppName}\{code:FileConfigIni}"; Section: "General"; Key: "modelsFoldersActivity"; String: "{code:VarIniFoldersActivity}";                 Flags: createkeyifdoesntexist
-Filename: "{userappdata}\{#MyAppName}\{code:FileConfigIni}"; Section: "General"; Key: "materialsDBPath";       String: "{code:MakeRightSlashes|{app}\Materials.dmdb}"; Flags: createkeyifdoesntexist
-Filename: "{userappdata}\{#MyAppName}\{code:FileConfigIni}"; Section: "General"; Key: "cachePath";             String: "{userappdata}\{#MyAppName}";                   Flags: createkeyifdoesntexist
-Filename: "{userappdata}\{#MyAppName}\{code:FileConfigIni}"; Section: "General"; Key: "loadLast";              String: "false";                                        Flags: createkeyifdoesntexist
+Filename: "{autoappdata}\{#MyAppName}\{code:FileConfigIni}"; Section: "General"; Key: "modelsFolders";         String: "{code:VarIniModelsFolders}";                   Flags: createkeyifdoesntexist
+Filename: "{autoappdata}\{#MyAppName}\{code:FileConfigIni}"; Section: "General"; Key: "modelsFoldersActivity"; String: "{code:VarIniFoldersActivity}";                 Flags: createkeyifdoesntexist
+Filename: "{autoappdata}\{#MyAppName}\{code:FileConfigIni}"; Section: "General"; Key: "materialsDBPath";       String: "{code:MakeRightSlashes|{app}\Materials.dmdb}"; Flags: createkeyifdoesntexist
+Filename: "{autoappdata}\{#MyAppName}\{code:FileConfigIni}"; Section: "General"; Key: "cachePath";             String: "{autoappdata}\{#MyAppName}";                   Flags: createkeyifdoesntexist
+Filename: "{autoappdata}\{#MyAppName}\{code:FileConfigIni}"; Section: "General"; Key: "loadLast";              String: "false";                                        Flags: createkeyifdoesntexist
 
 [Code]
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
@@ -148,7 +149,7 @@ begin
   begin
     if MsgBox('Delete all configuration files?'+#13#10+'This includes a list of recently opened files, paths to models and materials database, etc.', mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES then 
     begin
-      DeleteFile(ExpandConstant('{userappdata}\{#MyAppName}\{code:FileConfigIni}'));
+      DeleteFile(ExpandConstant('{autoappdata}\{#MyAppName}\{code:FileConfigIni}'));
     end;
   end;
 end;
@@ -159,7 +160,7 @@ var
   newPaths: string;
   iniPath: string;
 begin
-  iniPath := ExpandConstant('{userappdata}') + '\' + '{#MyAppName}' + '\' + FileConfigIni('');
+  iniPath := ExpandConstant('{autoappdata}') + '\' + '{#MyAppName}' + '\' + FileConfigIni('');
   oldPaths := GetIniString('General', 'modelsFolders', '', iniPath);
   if oldPaths <> VarIniModelsFolders('') then
   begin
