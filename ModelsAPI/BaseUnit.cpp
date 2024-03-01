@@ -987,13 +987,15 @@ std::vector<std::string> CBaseUnit::GetSymbolicGrid(EDistrTypes _distribution) c
 
 std::vector<double> CBaseUnit::GetClassesSizes(EDistrTypes _distribution) const
 {
-	if (m_grid.GetGridDimension(_distribution)->GridType() != EGridEntry::GRID_NUMERIC) return {};
+	const auto* dim = m_grid.GetGridDimension(_distribution);
+	if (!dim || dim->GridType() != EGridEntry::GRID_NUMERIC) return {};
 	return m_grid.GetGridDimensionNumeric(_distribution)->GetClassesSizes();
 }
 
 std::vector<double> CBaseUnit::GetClassesMeans(EDistrTypes _distribution) const
 {
-	if (m_grid.GetGridDimension(_distribution)->GridType() != EGridEntry::GRID_NUMERIC) return {};
+	const auto* dim = m_grid.GetGridDimension(_distribution);
+	if (!dim || dim->GridType() != EGridEntry::GRID_NUMERIC) return {};
 	return m_grid.GetGridDimensionNumeric(_distribution)->GetClassesMeans();
 }
 
