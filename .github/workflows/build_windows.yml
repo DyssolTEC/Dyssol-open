@@ -8,8 +8,8 @@ on: [push]
 
 env:
   # Path to the solution/project files relative to the root of the project.
-  SOLUTION_FILE_PATH: .
-  SOLUTION_FILE_NAME: Dyssol.sln
+  SOLUTION_FILE_PATH:     .
+  SOLUTION_FILE_NAME:     Dyssol.sln
   TESTS_PROJECT_PATH:     ./DyssolInstallers/Tests/
   DOCS_PROJECT_PATH:      ./DyssolInstallers/Documentation/
   INSTALLER_PROJECT_PATH: ./DyssolInstallers/Installer/
@@ -274,8 +274,6 @@ jobs:
         version: ${{env.QT_VERSION}}
         # Architecture.
         arch: win32_${{env.QT_VS_VERSION}}
-        # Additional modules.
-        modules: 'qtwebengine'
         # Directory to install.
         dir: ${{github.workspace}}/ExternalLibraries/qt
         # Whether or not to automatically run setup-python to find a valid python version.
@@ -290,8 +288,6 @@ jobs:
         version: ${{env.QT_VERSION}}
         # Architecture.
         arch: win64_${{env.QT_VS_VERSION}}_64
-        # Additional modules.
-        modules: 'qtwebengine'
         # Directory to install.
         dir: ${{github.workspace}}/ExternalLibraries/qt
         # Whether or not to automatically run setup-python to find a valid python version.
@@ -390,8 +386,6 @@ jobs:
       env:
         QtToolsPath: ${{env.Qt5_DIR}}/../${{env.QT_VS_VERSION}}_64/bin
         QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
-#      run: |
-#        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Release  -property:Platform=x64 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
       run: |
         msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Debug   -property:Platform=x64 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
         msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Release -property:Platform=x64 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
