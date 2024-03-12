@@ -285,8 +285,6 @@ jobs:
         cache: 'true'
         # If cached, only install essential build tools and set environmental variables.
         cache-key-prefix: 'cache-qt-64'
-        # If cached, only install essential build tools and set environmental variables.
-        cache: ${{steps.cache-qt.outputs.cache-hit}}
         # Version of Qt to install.
         version: ${{env.QT_VERSION}}
         # Architecture.
