@@ -39,18 +39,20 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
 
-    - name: Cache Qt
-      id: cache-qt
-      uses: actions/cache@v4
-      with:
-        path: ${{github.workspace}}/ExternalLibraries/qt
-        key: ${{runner.os}}-QtCache-${{env.QT_VERSION}}
+    # - name: Cache Qt
+      # id: cache-qt
+      # uses: actions/cache@v4
+      # with:
+        # path: ${{github.workspace}}/ExternalLibraries/qt
+        # key: ${{runner.os}}-QtCache-${{env.QT_VERSION}}
 
     - name: Install Qt 32
       uses: jurplel/install-qt-action@v3
       with:
+        # Whether to cache Qt automatically.
+        cache: 'true'
         # If cached, only install essential build tools and set environmental variables.
-        cache: ${{steps.cache-qt.outputs.cache-hit}}
+        cache-key-prefix: 'cache-qt-32'
         # Version of Qt to install.
         version: ${{env.QT_VERSION}}
         # Architecture.
@@ -63,8 +65,10 @@ jobs:
     - name: Install Qt 64
       uses: jurplel/install-qt-action@v3
       with:
+        # Whether to cache Qt automatically.
+        cache: 'true'
         # If cached, only install essential build tools and set environmental variables.
-        cache: ${{steps.cache-qt.outputs.cache-hit}}
+        cache-key-prefix: 'cache-qt-64'
         # Version of Qt to install.
         version: ${{env.QT_VERSION}}
         # Architecture.
@@ -258,18 +262,13 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
 
-    - name: Cache Qt
-      id: cache-qt
-      uses: actions/cache@v4
-      with:
-        path: ${{github.workspace}}/ExternalLibraries/qt
-        key: ${{runner.os}}-QtCache-${{env.QT_VERSION}}
-
     - name: Install Qt 32
       uses: jurplel/install-qt-action@v3
       with:
+        # Whether to cache Qt automatically.
+        cache: 'true'
         # If cached, only install essential build tools and set environmental variables.
-        cache: ${{steps.cache-qt.outputs.cache-hit}}
+        cache-key-prefix: 'cache-qt-32'
         # Version of Qt to install.
         version: ${{env.QT_VERSION}}
         # Architecture.
@@ -282,6 +281,10 @@ jobs:
     - name: Install Qt 64
       uses: jurplel/install-qt-action@v3
       with:
+        # Whether to cache Qt automatically.
+        cache: 'true'
+        # If cached, only install essential build tools and set environmental variables.
+        cache-key-prefix: 'cache-qt-64'
         # If cached, only install essential build tools and set environmental variables.
         cache: ${{steps.cache-qt.outputs.cache-hit}}
         # Version of Qt to install.
