@@ -404,7 +404,7 @@ jobs:
         if-no-files-found: error
         retention-days: 7
         compression-level: 0
-        path: ${{github.workspace}}\DyssolInstallers\Installers\*.exe
+        path: ${{github.workspace}}/DyssolInstallers/Installers/*.exe
 
     - name: Upload Portable Installer Artifact
       uses: actions/upload-artifact@v4
@@ -413,20 +413,42 @@ jobs:
         if-no-files-found: error
         retention-days: 7
         compression-level: 9
-        path: C:\Program Files\Dyssol
+        path: C:/Program Files/Dyssol
 
-#  release:
-#    runs-on: windows-2019
-#    needs: [installer]
-#    if: startsWith(github.ref, 'refs/tags/v')
-#
-#    steps:
-#    - name: Checkout
-#      uses: actions/checkout@v4
+  release:
+    runs-on: windows-2019
+    needs: [tests, installer]
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Download Installer Artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: installer-artifact
+        path: ${{github.workspace}}/DyssolInstallers/Installers/*.exe
+
+    - name: Download Portable Installer Artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: portable-installer-artifact
+        path: C:/Program Files/Dyssol
+        
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      with:
+        name: 'Dyssol ${{github.ref_name}}'
+        draft: 'true'
+        body_path: CHANGELOG
+        files: |
+          ${{github.workspace}}/DyssolInstallers/Installers/*.exe
+          C:/Program Files/Dyssol
 
   cleanup:
     runs-on: windows-2019
-    needs: [tests, installer]
+    needs: [tests, installer, release]
     if: ${{always()}}
 
     steps:
