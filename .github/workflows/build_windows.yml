@@ -360,12 +360,12 @@ jobs:
       # Run the script to build graphviz.
       run: .\CompileGraphviz.ps1
 
-    - name: Download Docs Artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: docs-artifact
-        path: ${{github.workspace}}/install/windows
-
+#    - name: Download Docs Artifact
+#      uses: actions/download-artifact@v4
+#      with:
+#        name: docs-artifact
+#        path: ${{github.workspace}}/install/windows
+#
 #    - name: Build x86
 #      working-directory: ${{github.workspace}}
 #      env:
