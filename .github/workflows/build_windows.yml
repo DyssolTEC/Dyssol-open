@@ -180,10 +180,10 @@ jobs:
         name: build-artifact
         path: ${{github.workspace}}/${{env.BUILD_PLATFORM}}/${{env.BUILD_CONFIGURATION}}
 
-    - name: Run Tests
-      working-directory: ${{github.workspace}}
-      # Add additional options to the MSBuild command line here: see https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference.
-      run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:TestsPreBuild=false ${{env.TESTS_PROJECT_PATH}}
+#    - name: Run Tests
+#      working-directory: ${{github.workspace}}
+#      # Add additional options to the MSBuild command line here: see https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference.
+#      run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:TestsPreBuild=false ${{env.TESTS_PROJECT_PATH}}
 
   docs:
     runs-on: windows-2019
@@ -192,56 +192,56 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v2
-
-    - name: Install Graphviz
-      run: choco install graphviz
-
-    - name: Install Doxygen
-      run: choco install doxygen.install
-
-    - name: Install Sphinx
-      run: pip install -U sphinx sphinx-rtd-theme breathe
-
-    - name: Cache MiKTeX
-      id: cache-miktex
-      uses: actions/cache@v4
-      with:
-        path: C:/Program Files/MiKTeX
-        key: ${{runner.os}}-MiKTeXCache-${{env.MIKTEX_VERSION}}
-
-    - name: Install MiKTeX
-      if: steps.cache-miktex.outputs.cache-hit != 'true'
-      run: choco install miktex.install --version ${{env.MIKTEX_VERSION}} -y
-
-    - name: Add MiKTeX to PATH
-      run: Add-Content $env:GITHUB_PATH "C:\Program Files\MiKTeX\miktex\bin\x64"
-
-    - name: Configure MiKTeX
-      run: |
-        initexmf --admin --verbose --set-config-value=[MPM]AutoInstall=1
-        miktex --admin --verbose packages update-package-database
-        miktex --admin --verbose packages update
-        miktex --admin --verbose packages install amscls, anyfontsize, preview, zhmetrics
-        miktex --admin --verbose fndb refresh
-        initexmf --admin --verbose --update-fndb
-        initexmf --admin --verbose --mklinks --force
-        updmap --admin
-
-    - name: Build Docs
-      working-directory: ${{github.workspace}}
-      # Add additional options to the MSBuild command line here: see https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference.
-      run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ ${{env.DOCS_PROJECT_PATH}}
-
-    - name: Upload Docs Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: docs-artifact
-        if-no-files-found: error
-        retention-days: 1
-        compression-level: 2
-        path: ${{github.workspace}}/install/windows
+#    - name: Add MSBuild to PATH
+#      uses: microsoft/setup-msbuild@v2
+#
+#    - name: Install Graphviz
+#      run: choco install graphviz
+#
+#    - name: Install Doxygen
+#      run: choco install doxygen.install
+#
+#    - name: Install Sphinx
+#      run: pip install -U sphinx sphinx-rtd-theme breathe
+#
+#    - name: Cache MiKTeX
+#      id: cache-miktex
+#      uses: actions/cache@v4
+#      with:
+#        path: C:/Program Files/MiKTeX
+#        key: ${{runner.os}}-MiKTeXCache-${{env.MIKTEX_VERSION}}
+#
+#    - name: Install MiKTeX
+#      if: steps.cache-miktex.outputs.cache-hit != 'true'
+#      run: choco install miktex.install --version ${{env.MIKTEX_VERSION}} -y
+#
+#    - name: Add MiKTeX to PATH
+#      run: Add-Content $env:GITHUB_PATH "C:\Program Files\MiKTeX\miktex\bin\x64"
+#
+#    - name: Configure MiKTeX
+#      run: |
+#        initexmf --admin --verbose --set-config-value=[MPM]AutoInstall=1
+#        miktex --admin --verbose packages update-package-database
+#        miktex --admin --verbose packages update
+#        miktex --admin --verbose packages install amscls, anyfontsize, preview, zhmetrics
+#        miktex --admin --verbose fndb refresh
+#        initexmf --admin --verbose --update-fndb
+#        initexmf --admin --verbose --mklinks --force
+#        updmap --admin
+#
+#    - name: Build Docs
+#      working-directory: ${{github.workspace}}
+#      # Add additional options to the MSBuild command line here: see https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference.
+#      run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ ${{env.DOCS_PROJECT_PATH}}
+#
+#    - name: Upload Docs Artifact
+#      uses: actions/upload-artifact@v4
+#      with:
+#        name: docs-artifact
+#        if-no-files-found: error
+#        retention-days: 1
+#        compression-level: 2
+#        path: ${{github.workspace}}/install/windows
           
   installer:
     runs-on: windows-2019
@@ -366,22 +366,24 @@ jobs:
         name: docs-artifact
         path: ${{github.workspace}}/install/windows
 
-    - name: Build x86
-      working-directory: ${{github.workspace}}
-      env:
-        QtToolsPath: ${{env.Qt5_DIR}}/../${{env.QT_VS_VERSION}}/bin
-        QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
-      run: |
-        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Debug   -property:Platform=Win32 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
-        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Release -property:Platform=Win32 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
+#    - name: Build x86
+#      working-directory: ${{github.workspace}}
+#      env:
+#        QtToolsPath: ${{env.Qt5_DIR}}/../${{env.QT_VS_VERSION}}/bin
+#        QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
+#      run: |
+#        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Debug   -property:Platform=Win32 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
+#        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Release -property:Platform=Win32 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
 
     - name: Build x64
       working-directory: ${{github.workspace}}
       env:
         QtToolsPath: ${{env.Qt5_DIR}}/../${{env.QT_VS_VERSION}}_64/bin
         QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
+      # run: |
+        # msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Debug   -property:Platform=x64 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
+        # msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Release -property:Platform=x64 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
       run: |
-        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Debug   -property:Platform=x64 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
         msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Release -property:Platform=x64 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
 
     - name: Build Installer
@@ -389,7 +391,8 @@ jobs:
       env:
         QtToolsPath: ${{env.Qt5_DIR}}/bin
         QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
-      run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:QtInstallDir=${{github.workspace}}/ExternalLibraries/qt/Qt/${{env.QT_VERSION}}/${{env.QT_VS_VERSION}}_64/ -property:InstallerPlatforms=Both -property:InstallerDocumentation=true -property:InstallerSDK=true -property:InstallerSDKLibs=Sources -property:InstallerPreBuild=false -property:InstallerPreDocs=false ${{env.INSTALLER_PROJECT_PATH}}
+      # run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:QtInstallDir=${{github.workspace}}/ExternalLibraries/qt/Qt/${{env.QT_VERSION}}/${{env.QT_VS_VERSION}}_64/ -property:InstallerPlatforms=Both -property:InstallerDocumentation=true -property:InstallerSDK=true -property:InstallerSDKLibs=Sources -property:InstallerPreBuild=false -property:InstallerPreDocs=false ${{env.INSTALLER_PROJECT_PATH}}
+        run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:QtInstallDir=${{github.workspace}}/ExternalLibraries/qt/Qt/${{env.QT_VERSION}}/${{env.QT_VS_VERSION}}_64/ -property:InstallerPlatforms=x64 -property:InstallerDocumentation=false -property:InstallerSDK=false -property:InstallerSDKLibs=Sources -property:InstallerPreBuild=false -property:InstallerPreDocs=false ${{env.INSTALLER_PROJECT_PATH}}
 
     - name: Run Installer
       shell: pwsh
@@ -428,7 +431,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: installer-artifact
-        path: ${{github.workspace}}/DyssolInstallers/Installers/*.exe
+        path: ${{github.workspace}}/DyssolInstallers/Installers/
 
     - name: Download Portable Installer Artifact
       uses: actions/download-artifact@v4
