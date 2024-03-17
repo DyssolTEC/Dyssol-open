@@ -438,7 +438,26 @@ jobs:
       with:
         name: portable-installer-artifact
         path: C:/Program Files/Dyssol
-        
+
+    - name: Get Version
+      id: get-version
+      run: |
+        TAG=${{github.ref_name}}
+        echo "VERSION=${TAG:1}" >> $GITHUB_OUTPUT
+
+    - name: Rename Installer
+      working-directory: ${{github.workspace}}/DyssolInstallers/Installers/
+      shell: pwsh
+      run: Get-ChildItem -Path "." | Rename-Item -NewName "Dyssol.${{steps.get-version.outputs.VERSION}}.open.setup.exe"
+
+    - name: Zip Portable Installer
+      working-directory: ${{github.workspace}}/DyssolInstallers/Installers/
+      shell: pwsh
+      run: |
+        TAG=${{github.ref_name}}
+        VERSION=${TAG:1}
+        Compress-Archive -Path 'C:/Program Files/Dyssol' -DestinationPath ${{github.workspace}}/install/Dyssol.${{steps.get-version.outputs.VERSION}}.open.portable.zip
+
     - name: Release
       uses: softprops/action-gh-release@v2
       with:
@@ -446,8 +465,8 @@ jobs:
         draft: 'true'
         body_path: CHANGELOG
         files: |
-          ${{github.workspace}}/DyssolInstallers/Installers/*.exe
-          C:/Program Files/Dyssol
+          ${{github.workspace}}/DyssolInstallers/Installers/Dyssol.${{steps.get-version.outputs.VERSION}}.open.setup.exe
+          ${{github.workspace}}/install/Dyssol.${{steps.get-version.outputs.VERSION}}.open.portable.zip
 
   cleanup:
     runs-on: windows-2019
