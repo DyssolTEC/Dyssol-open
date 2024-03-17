@@ -242,7 +242,7 @@ jobs:
 #        retention-days: 1
 #        compression-level: 2
 #        path: ${{github.workspace}}/install/windows
-          
+
   installer:
     runs-on: windows-2019
     needs: [build, docs]
@@ -380,19 +380,19 @@ jobs:
       env:
         QtToolsPath: ${{env.Qt5_DIR}}/../${{env.QT_VS_VERSION}}_64/bin
         QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
+      run: |
+        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Release -property:Platform=x64 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
       # run: |
         # msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Debug   -property:Platform=x64 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
         # msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Release -property:Platform=x64 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
-      run: |
-        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Release -property:Platform=x64 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
 
     - name: Build Installer
       working-directory: ${{github.workspace}}
       env:
         QtToolsPath: ${{env.Qt5_DIR}}/bin
         QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
-      # run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:QtInstallDir=${{github.workspace}}/ExternalLibraries/qt/Qt/${{env.QT_VERSION}}/${{env.QT_VS_VERSION}}_64/ -property:InstallerPlatforms=Both -property:InstallerDocumentation=true -property:InstallerSDK=true -property:InstallerSDKLibs=Sources -property:InstallerPreBuild=false -property:InstallerPreDocs=false ${{env.INSTALLER_PROJECT_PATH}}
         run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:QtInstallDir=${{github.workspace}}/ExternalLibraries/qt/Qt/${{env.QT_VERSION}}/${{env.QT_VS_VERSION}}_64/ -property:InstallerPlatforms=x64 -property:InstallerDocumentation=false -property:InstallerSDK=false -property:InstallerSDKLibs=Sources -property:InstallerPreBuild=false -property:InstallerPreDocs=false ${{env.INSTALLER_PROJECT_PATH}}
+      # run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:QtInstallDir=${{github.workspace}}/ExternalLibraries/qt/Qt/${{env.QT_VERSION}}/${{env.QT_VS_VERSION}}_64/ -property:InstallerPlatforms=Both -property:InstallerDocumentation=true -property:InstallerSDK=true -property:InstallerSDKLibs=Sources -property:InstallerPreBuild=false -property:InstallerPreDocs=false ${{env.INSTALLER_PROJECT_PATH}}
 
     - name: Run Installer
       shell: pwsh
