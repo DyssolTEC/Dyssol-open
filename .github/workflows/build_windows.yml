@@ -455,7 +455,7 @@ jobs:
     - name: Zip Portable Installer
       working-directory: ${{github.workspace}}/DyssolInstallers/Installers/
       shell: pwsh
-      run: Compress-Archive -Path 'C:/Program Files/Dyssol' -DestinationPath ${{github.workspace}}/install/Dyssol.${{steps.get-version.outputs.VERSION}}.open.portable.zip
+      run: Compress-Archive -Path 'C:/Program Files/Dyssol' -DestinationPath ${{github.workspace}}/DyssolInstallers/Installers/Dyssol.${{steps.get-version.outputs.VERSION}}.open.portable.zip
 
     - name: Release
       uses: softprops/action-gh-release@v2
@@ -465,7 +465,7 @@ jobs:
         body_path: CHANGELOG
         files: |
           ${{github.workspace}}/DyssolInstallers/Installers/Dyssol.${{steps.get-version.outputs.VERSION}}.open.setup.exe
-          ${{github.workspace}}/install/Dyssol.${{steps.get-version.outputs.VERSION}}.open.portable.zip
+          ${{github.workspace}}/DyssolInstallers/Installers/Dyssol.${{steps.get-version.outputs.VERSION}}.open.portable.zip
 
   cleanup:
     runs-on: windows-2019
