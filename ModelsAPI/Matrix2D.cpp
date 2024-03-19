@@ -62,7 +62,7 @@ CMatrix2D::d_vect_t CMatrix2D::GetRow(size_t _row) const
 CMatrix2D::d_vect_t CMatrix2D::GetCol(size_t _col) const
 {
 	if (_col >= m_cols) return {};
-	d_vect_t res(m_cols);
+	d_vect_t res(m_rows);
 	for (size_t i = 0; i < m_rows; ++i)
 		res[i] = m_data[i][_col];
 	return res;
