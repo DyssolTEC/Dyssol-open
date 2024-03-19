@@ -441,6 +441,7 @@ jobs:
 
     - name: Get Version
       id: get-version
+      shell: pwsh
       run: |
         TAG=${{github.ref_name}}
         echo "VERSION=${TAG:1}" >> $GITHUB_OUTPUT
@@ -453,10 +454,7 @@ jobs:
     - name: Zip Portable Installer
       working-directory: ${{github.workspace}}/DyssolInstallers/Installers/
       shell: pwsh
-      run: |
-        TAG=${{github.ref_name}}
-        VERSION=${TAG:1}
-        Compress-Archive -Path 'C:/Program Files/Dyssol' -DestinationPath ${{github.workspace}}/install/Dyssol.${{steps.get-version.outputs.VERSION}}.open.portable.zip
+      run: Compress-Archive -Path 'C:/Program Files/Dyssol' -DestinationPath ${{github.workspace}}/install/Dyssol.${{steps.get-version.outputs.VERSION}}.open.portable.zip
 
     - name: Release
       uses: softprops/action-gh-release@v2
