@@ -760,6 +760,31 @@ std::vector<double> inline CreateGrid(EGridFunction _fun, size_t _classes, doubl
 	return res;
 }
 
+/**
+ * \brief Calculates mass of the sphere from its diameter and density.
+ * \param _d Diameter of the sphere
+ * \param _rho Density of the sphere
+ * \return Sphere Mass of the sphere
+ */
+inline double DiameterToMass(double _d, double _rho)
+{
+	return MATH_PI / 6 * std::pow(_d, 3) * _rho;
+}
+
+/**
+ * \brief Calculates masses of the spheres from their diameters and densities.
+ * \param _d Diameters of the spheres
+ * \param _rho Density of the spheres
+ * \return Sphere Masses of the spheres
+ */
+inline std::vector<double> DiameterToMass(const std::vector<double>& _d, double _rho)
+{
+	std::vector<double> res(_d.size());
+	for (size_t i = 0; i < _d.size(); ++i)
+		res[i] = DiameterToMass(_d[i], _rho);
+	return res;
+}
+
 // Calculates volume of the sphere from its diameter.
 inline double DiameterToVolume(double _d)
 {
