@@ -443,7 +443,7 @@ jobs:
       id: get-version
       shell: pwsh
       run: |
-        $TAG=${{github.ref_name}}
+        $TAG='${{github.ref_name}}'
         $VERSION=$TAG.TrimStart('v')
         echo "VERSION=$VERSION" >> $env:GITHUB_OUTPUT
 
