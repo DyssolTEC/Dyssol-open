@@ -448,12 +448,16 @@ jobs:
         echo "VERSION=$VERSION" >> $env:GITHUB_OUTPUT
 
     - name: Rename Installer
+      working-directory: ${{github.workspace}}/DyssolInstallers/Installers/
       shell: pwsh
-      run: Get-ChildItem -Path "${{github.workspace}}/DyssolInstallers/Installers/" | Rename-Item -NewName "${{github.workspace}}/Dyssol.${{steps.get-version.outputs.VERSION}}.open.setup.exe"
+      run: |
+        Get-ChildItem -Path "." | Rename-Item -NewName "Dyssol.${{steps.get-version.outputs.VERSION}}.open.setup.exe"
+        Move-Item -Path "Dyssol.${{steps.get-version.outputs.VERSION}}.open.setup.exe" -Destination "${{github.workspace}}/Dyssol.${{steps.get-version.outputs.VERSION}}.open.setup.exe"
 
     - name: Zip Portable Installer
       shell: pwsh
-      run: Compress-Archive -Path 'C:/Program Files/Dyssol' -DestinationPath ${{github.workspace}}/Dyssol.${{steps.get-version.outputs.VERSION}}.open.portable.zip
+      run: |
+        Compress-Archive -Path 'C:/Program Files/Dyssol' -DestinationPath ${{github.workspace}}/Dyssol.${{steps.get-version.outputs.VERSION}}.open.portable.zip
 
     - name: Release
       uses: softprops/action-gh-release@v2
