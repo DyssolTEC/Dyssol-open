@@ -389,7 +389,31 @@ jobs:
       env:
         QtToolsPath: ${{env.Qt5_DIR}}/bin
         QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
-      run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:QtInstallDir=${{github.workspace}}/ExternalLibraries/qt/Qt/${{env.QT_VERSION}}/${{env.QT_VS_VERSION}}_64/ -property:InstallerPlatforms=x64 -property:InstallerDocumentation=true -property:InstallerSDK=true -property:InstallerSDKLibs=Precompiled -property:InstallerPreBuild=false -property:InstallerPreDocs=false ${{env.INSTALLER_PROJECT_PATH}}
+      run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:QtInstallDir=${{github.workspace}}/ExternalLibraries/qt/Qt/${{env.QT_VERSION}}/${{env.QT_VS_VERSION}}_64/ -property:InstallerPlatforms=Both -property:InstallerDocumentation=true -property:InstallerSDK=true -property:InstallerSDKLibs=Sources -property:InstallerPreBuild=false -property:InstallerPreDocs=false ${{env.INSTALLER_PROJECT_PATH}}
+
+    - name: Run Installer
+      shell: pwsh
+      run: |
+        $InstallerFile = Resolve-Path "${{github.workspace}}\DyssolInstallers\Installers\Dyssol*.exe"
+        Start-Process -FilePath $InstallerFile -ArgumentList "/SP- /SILENT /SUPPRESSMSGBOXES" -Wait
+
+    - name: Upload Installer Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: installer-artifact
+        if-no-files-found: error
+        retention-days: 7
+        compression-level: 0
+        path: ${{github.workspace}}/DyssolInstallers/Installers/*.exe
+
+    - name: Upload Portable Installer Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: portable-installer-artifact
+        if-no-files-found: error
+        retention-days: 7
+        compression-level: 9
+        path: C:/Program Files/Dyssol
 
   cleanup:
     runs-on: windows-2019
