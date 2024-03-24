@@ -8,8 +8,8 @@ on: [push]
 
 env:
   # Path to the solution/project files relative to the root of the project.
-  SOLUTION_FILE_PATH: .
-  SOLUTION_FILE_NAME: Dyssol.sln
+  SOLUTION_FILE_PATH:     .
+  SOLUTION_FILE_NAME:     Dyssol.sln
   TESTS_PROJECT_PATH:     ./DyssolInstallers/Tests/
   DOCS_PROJECT_PATH:      ./DyssolInstallers/Documentation/
   INSTALLER_PROJECT_PATH: ./DyssolInstallers/Installer/
@@ -34,10 +34,10 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1
+      uses: microsoft/setup-msbuild@v2
 
     - name: Cache Qt
       id: cache-qt
@@ -76,7 +76,7 @@ jobs:
 
     - name: Cache QtMsBuild tools
       id: cache-qt-ms-build-tools
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{github.workspace}}/ExternalLibraries/qtvsaddin
         key: ${{runner.os}}-QtMsBuildCache-${{env.QT_VS_ADDIN_VERSION}}
@@ -93,7 +93,7 @@ jobs:
 
     - name: Cache ZLib
       id: cache-zlib
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{github.workspace}}/ExternalLibraries/zlib
         key: ${{runner.os}}-ZLibCache-${{env.ZLIB_VERSION}}
@@ -107,7 +107,7 @@ jobs:
 
     - name: Cache SUNDIALS
       id: cache-sundials
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{github.workspace}}/ExternalLibraries/sundials
         key: ${{runner.os}}-SundialsCache-${{env.SUNDIALS_VERSION}}
@@ -121,7 +121,7 @@ jobs:
 
     - name: Cache HDF5
       id: cache-hdf5
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{github.workspace}}/ExternalLibraries/hdf5
         key: ${{runner.os}}-Hdf5Cache-${{env.HDF5_VERSION}}
@@ -135,7 +135,7 @@ jobs:
 
     - name: Cache Graphviz
       id: cache-graphviz
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{github.workspace}}/ExternalLibraries/graphviz
         key: ${{runner.os}}-GraphvizCache-${{env.GRAPHVIZ_VERSION}}
@@ -156,7 +156,7 @@ jobs:
       run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
 
     - name: Upload Build Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: build-artifact
         path: |
@@ -169,13 +169,13 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1
+      uses: microsoft/setup-msbuild@v2
 
     - name: Download Build Artifact
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: build-artifact
         path: ${{github.workspace}}/${{env.BUILD_PLATFORM}}/${{env.BUILD_CONFIGURATION}}
@@ -190,10 +190,10 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1
+      uses: microsoft/setup-msbuild@v2
 
     - name: Install Graphviz
       run: choco install graphviz
@@ -206,7 +206,7 @@ jobs:
 
     - name: Cache MiKTeX
       id: cache-miktex
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: C:/Program Files/MiKTeX
         key: ${{runner.os}}-MiKTeXCache-${{env.MIKTEX_VERSION}}
@@ -235,7 +235,7 @@ jobs:
       run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ ${{env.DOCS_PROJECT_PATH}}
 
     - name: Upload Docs Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: docs-artifact
         path: ${{github.workspace}}/install/windows
@@ -247,10 +247,10 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1
+      uses: microsoft/setup-msbuild@v2
 
     - name: Cache Qt
       id: cache-qt
@@ -293,7 +293,7 @@ jobs:
         
     - name: Cache QtMsBuild tools
       id: cache-qt-ms-build-tools
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{github.workspace}}/ExternalLibraries/qtvsaddin
         key: ${{runner.os}}-QtMsBuildCache-${{env.QT_VS_ADDIN_VERSION}}
@@ -310,7 +310,7 @@ jobs:
 
     - name: Cache ZLib
       id: cache-zlib
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{github.workspace}}/ExternalLibraries/zlib
         key: ${{runner.os}}-ZLibCache-${{env.ZLIB_VERSION}}
@@ -324,7 +324,7 @@ jobs:
 
     - name: Cache SUNDIALS
       id: cache-sundials
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{github.workspace}}/ExternalLibraries/sundials
         key: ${{runner.os}}-SundialsCache-${{env.SUNDIALS_VERSION}}
@@ -338,7 +338,7 @@ jobs:
 
     - name: Cache HDF5
       id: cache-hdf5
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{github.workspace}}/ExternalLibraries/hdf5
         key: ${{runner.os}}-Hdf5Cache-${{env.HDF5_VERSION}}
@@ -352,7 +352,7 @@ jobs:
 
     - name: Cache Graphviz
       id: cache-graphviz
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{github.workspace}}/ExternalLibraries/graphviz
         key: ${{runner.os}}-GraphvizCache-${{env.GRAPHVIZ_VERSION}}
@@ -365,7 +365,7 @@ jobs:
       run: .\CompileGraphviz.ps1
 
     - name: Download Docs Artifact
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: docs-artifact
         path: ${{github.workspace}}/install/windows
@@ -402,13 +402,13 @@ jobs:
 
     steps:
     - name: Delete Build Artifact
-      uses: geekyeggo/delete-artifact@v2
+      uses: geekyeggo/delete-artifact@v4
       with:
         name: build-artifact
         failOnError: false
 
     - name: Delete Docs Artifact
-      uses: geekyeggo/delete-artifact@v2
+      uses: geekyeggo/delete-artifact@v4
       with:
         name: docs-artifact
         failOnError: false
