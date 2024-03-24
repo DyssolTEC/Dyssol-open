@@ -1,0 +1,14 @@
+UI:
+
+Models API:
+- Add functions DiameterToMass()
+
+Core:
+
+Documentation:
+
+Fixes:
+
+Other:
+- Add lactose to the default materials database.
+- Other minor bug fixes and performance improvements.

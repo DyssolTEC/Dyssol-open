@@ -415,9 +415,60 @@ jobs:
         compression-level: 9
         path: C:/Program Files/Dyssol
 
-  cleanup:
+  release:
     runs-on: windows-2019
     needs: [tests, installer]
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Download Installer Artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: installer-artifact
+        path: ${{github.workspace}}/DyssolInstallers/Installers/
+
+    - name: Download Portable Installer Artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: portable-installer-artifact
+        path: C:/Program Files/Dyssol
+
+    - name: Get Version
+      id: get-version
+      shell: pwsh
+      run: |
+        $TAG='${{github.ref_name}}'
+        $VERSION=$TAG.TrimStart('v')
+        echo "VERSION=$VERSION" >> $env:GITHUB_OUTPUT
+
+    - name: Rename Installer
+      working-directory: ${{github.workspace}}/DyssolInstallers/Installers/
+      shell: pwsh
+      run: |
+        Get-ChildItem -Path "." | Rename-Item -NewName "Dyssol.${{steps.get-version.outputs.VERSION}}.open.setup.exe"
+        Move-Item -Path "Dyssol.${{steps.get-version.outputs.VERSION}}.open.setup.exe" -Destination "${{github.workspace}}/Dyssol.${{steps.get-version.outputs.VERSION}}.open.setup.exe"
+
+    - name: Zip Portable Installer
+      shell: pwsh
+      run: |
+        Compress-Archive -Path 'C:/Program Files/Dyssol' -DestinationPath ${{github.workspace}}/Dyssol.${{steps.get-version.outputs.VERSION}}.open.portable.zip
+
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      with:
+        name: 'Dyssol ${{github.ref_name}}'
+        draft: 'true'
+        body_path: CHANGELOG
+        files: |
+          Dyssol.${{steps.get-version.outputs.VERSION}}.open.setup.exe
+          Dyssol.${{steps.get-version.outputs.VERSION}}.open.portable.zip
+
+  cleanup:
+    runs-on: windows-2019
+    needs: [tests, installer, release]
     if: ${{always()}}
 
     steps:
