@@ -36,7 +36,7 @@ class CNLModel
 
 	std::vector<SNLVariable> m_vVariables;	///< Vector of state variables
 	void *m_pUserData;						///< Pointer to a user data
-	
+
 											// Solver settings
 	ENLSolverStrategy m_eStrategy;		///< Solver strategy
 
@@ -51,13 +51,21 @@ public:
 
 	// ========== Functions to work with variables
 
-	/**	Add new differentiable variable.
+	/**	Add new nonlinear variable.
 	 *	\param _dVariableInit Initial value of variable
 	 *	\param _dConstraint Constraint for variable: '0.0' - no constraint; '1.0' - >=0.0; '−1.0' - <=0.0; '2.0' - >0.0; '−2.0' - <0.0
-	 *	\param _dUScale
-	 *	\param _dFScale
+	 *	\param _dUScale UScale of variable.
+	 *	\param _dFScale FScale of variable.
 	 *	\return Index of variable*/
 	size_t AddNLVariable(double _dVariableInit, double _dConstraint = 0.0, double _dUScale = 1.0, double _dFScale = 1.0);
+	/**	Add multiple nonlinear variables.
+	 *	\param _variablesInit Initial values of variables.
+	 *	\param _constraint Constraint for variable: '0.0' - no constraint; '1.0' - >=0.0; '−1.0' - <=0.0; '2.0' - >0.0; '−2.0' - <0.0
+	 *	\param _uScale UScale of variable
+	 *	\param _fScale FScale of variable
+	 *	\return Indices of variables
+	 */
+	std::vector<size_t> AddNLVariables(const std::vector<double>& _variablesInit, double _constraint = 0.0, double _uScale = 1.0, double _fScale = 1.0);
 	/**	Get current number of variables.*/
 	size_t GetVariablesNumber() const;
 	/**	Get initial value of variable.

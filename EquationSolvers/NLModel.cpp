@@ -29,6 +29,15 @@ size_t CNLModel::AddNLVariable(double _dVariableInit, double _dConstraint /*= 0.
 	return m_vVariables.size()-1;
 }
 
+std::vector<size_t> CNLModel::AddNLVariables(const std::vector<double>& _variablesInit, double _constraint, double _uScale, double _fScale)
+{
+	std::vector<size_t> res;
+	if (_variablesInit.empty()) return res;
+	for (const auto& v : _variablesInit)
+		res.push_back(AddNLVariable(v, _constraint, _uScale, _fScale));
+	return res;
+}
+
 size_t CNLModel::GetVariablesNumber() const
 {
 	return m_vVariables.size();
