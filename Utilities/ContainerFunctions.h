@@ -310,7 +310,39 @@ inline std::vector<double> Slice(const double* const _data, const std::vector<si
 		std::copy(_data + _ind.front(), _data + _ind.back() + 1, res.begin());
 	else
 		for (size_t i = 0; i < _ind.size(); ++i)
-			res[i] = _data[i];
+			res[i] = _data[_ind[i]];
+	return res;
+}
+
+/**
+ * \brief Returns the values at the specified indices in the data array.
+ * \details Does not perform any out-of-boundary checks.
+ * \param _data Input array of data.
+ * \param _ind List of indices of data to be extracted to the slice.
+ * \return Vector of data with given indices.
+ */
+inline std::vector<std::vector<double>> Slice(const double* const _data, const std::vector<std::vector<size_t>>& _ind)
+{
+	std::vector<std::vector<double>> res(_ind.size());
+	if (_ind.empty()) return res;
+	for (size_t i = 0; i < _ind.size(); ++i)
+		res[i] = Slice(_data, _ind[i]);
+	return res;
+}
+
+/**
+ * \brief Returns the values at the specified indices in the data array.
+ * \details Does not perform any out-of-boundary checks.
+ * \param _data Input array of data.
+ * \param _ind List of indices of data to be extracted to the slice.
+ * \return Vector of data with given indices.
+ */
+inline std::vector<std::vector<std::vector<double>>> Slice(const double* const _data, const std::vector<std::vector<std::vector<size_t>>>& _ind)
+{
+	std::vector<std::vector<std::vector<double>>> res(_ind.size());
+	if (_ind.empty()) return res;
+	for (size_t i = 0; i < _ind.size(); ++i)
+		res[i] = Slice(_data, _ind[i]);
 	return res;
 }
 
@@ -324,4 +356,52 @@ inline std::vector<double> Slice(const double* const _data, const std::vector<si
 inline std::vector<double> Slice(const std::vector<double>& _data, const std::vector<size_t>& _ind)
 {
 	return Slice(_data.data(), _ind);
+}
+
+/**
+ * \brief Sets the values at the specified indices in the data array.
+ * \details Does not perform any out-of-boundary checks.
+ * \param _data Output array of data.
+ * \param _ind List of indices of data to be set to the slice.
+ * \param _val Values to be set to the data array.
+ * \return Vector of data with given indices.
+ */
+inline void SetSlice(double* _data, const std::vector<size_t>& _ind, const std::vector<double>& _val)
+{
+	if (_ind.empty()) return;
+	if (std::adjacent_find(_ind.begin(), _ind.end(), [](size_t i1, size_t i2) { return i2 != i1 + 1; }) == _ind.end())
+		std::copy(_val.begin(), _val.end(), _data + _ind.front());
+	else
+		for (size_t i = 0; i < _ind.size(); ++i)
+			_data[_ind[i]] = _val[i];
+}
+
+/**
+ * \brief Sets the values at the specified indices in the data array.
+ * \details Does not perform any out-of-boundary checks.
+ * \param _data Output array of data.
+ * \param _ind List of indices of data to be set to the slice.
+ * \param _val Values to be set to the data array.
+ * \return Vector of data with given indices.
+ */
+inline void SetSlice(double* _data, const std::vector<std::vector<size_t>>& _ind, const std::vector<std::vector<double>>& _val)
+{
+	if (_ind.empty()) return;
+	for (size_t i = 0; i < _ind.size(); ++i)
+		SetSlice(_data, _ind[i], _val[i]);
+}
+
+/**
+ * \brief Sets the values at the specified indices in the data array.
+ * \details Does not perform any out-of-boundary checks.
+ * \param _data Output array of data.
+ * \param _ind List of indices of data to be set to the slice.
+ * \param _val Values to be set to the data array.
+ * \return Vector of data with given indices.
+ */
+inline void SetSlice(double* _data, const std::vector<std::vector<std::vector<size_t>>>& _ind, const std::vector<std::vector<std::vector<double>>>& _val)
+{
+	if (_ind.empty()) return;
+	for (size_t i = 0; i < _ind.size(); ++i)
+		SetSlice(_data, _ind[i], _val[i]);
 }
