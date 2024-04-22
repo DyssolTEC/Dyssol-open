@@ -304,7 +304,8 @@ DyssolMaterialsDatabase 3
 22 Lactose 	$ Compound's name
 26 121 0.342297 	$ Molar mass [kg/mol]
 27 207 2 10 10000 1000 1e+09 1220  	$ Heat capacity [J/(kg·K)]; Constant
-27 223 2 10 10000 1000 1e+09 0.5  	$ Equilibrium moisture content [kg/kg]; Constant
+27 222 2 10 10000 1000 1e+09 0.35  	$ Thermal conductivity [W/(m·K)]; Constant
+27 223 2 10 10000 1000 1e+09 0.0001  	$ Equilibrium moisture content [kg/kg]; Constant
 27 234 2 10 10000 1000 1e+09 1525  	$ Density [kg/m<sup>3</sup>]; Constant
 
 31 4b3f8A1A71A315EFB4E5 4e3a9D257E6A9E4F03D1 	$ Unique keys of interacting compounds
