@@ -179,6 +179,15 @@ std::vector<T> MultVector(const std::vector<T>& _vec, const T& _val)
 	return res;
 }
 
+// Adds the value to all values of the vector and returns the result.
+template<typename T>
+std::vector<T> AddVector(const std::vector<T>& _vec, const T& _val)
+{
+	std::vector<T> res(_vec.size());
+	std::transform(_vec.begin(), _vec.end(), res.begin(), [&](const T& el) { return el + _val; });
+	return res;
+}
+
 // Checks whether the map contains a specified key.
 template<typename K, typename V>
 bool MapContainsKey(const std::map<K, V>& _map, K _key)
