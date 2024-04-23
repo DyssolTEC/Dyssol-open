@@ -34,19 +34,22 @@ namespace ScriptInterface
 			case EScriptKeys::SOURCE_FILE:
 			{
 				auto entry = _flowsheet.GetFileName();
-				job.AddEntry(e.keyStr)->value = fs::absolute(entry.make_preferred());
+				// using empty path can cause problems on Linux, so check it explicitly here
+				job.AddEntry(e.keyStr)->value = !entry.empty() ? absolute(entry.make_preferred()) : "";
 				break;
 			}
 			case EScriptKeys::RESULT_FILE:
 			{
 				auto entry = _flowsheet.GetFileName().parent_path() /= _flowsheet.GetFileName().stem() += fs::path{ "_res" } += _flowsheet.GetFileName().extension();
-				job.AddEntry(e.keyStr)->value = fs::absolute(entry.make_preferred());
+				// using empty path can cause problems on Linux, so check it explicitly here
+				job.AddEntry(e.keyStr)->value = !entry.empty() ? absolute(entry.make_preferred()) : "";
 				break;
 			}
 			case EScriptKeys::MATERIALS_DATABASE:
 			{
 				auto entry = _materialsDB.GetFileName();
-				job.AddEntry(e.keyStr)->value = fs::absolute(entry.make_preferred());
+				// using empty path can cause problems on Linux, so check it explicitly here
+				job.AddEntry(e.keyStr)->value = !entry.empty() ? absolute(entry.make_preferred()) : "";
 				break;
 			}
 			case EScriptKeys::MODELS_PATH:

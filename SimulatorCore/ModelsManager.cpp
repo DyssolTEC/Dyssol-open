@@ -15,12 +15,12 @@ CModelsManager::SModelDir::SModelDir(std::filesystem::path _path, std::string _k
 	, key{ std::move(_key) }
 	, active{ _active }
 {
-	// try to treat _dir as absolute path
-	const std::filesystem::path path1 = std::filesystem::absolute(path);
+	// using empty path can cause problems on Linux, so check it explicitly here
+	const std::filesystem::path path1 = !path.empty() ? absolute(path) : "";
 	const std::filesystem::path path2 = std::filesystem::absolute(FileSystem::ExecutableDirPath() + L"/" + path.wstring());
-	if (std::filesystem::exists(path1))
+	if (exists(path1))
 		pathFull = path1;
-	else if (std::filesystem::exists(path2))
+	else if (exists(path2))
 		pathFull = path2;
 	else
 		pathFull = path;
