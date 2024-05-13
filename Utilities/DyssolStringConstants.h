@@ -83,10 +83,10 @@ namespace StrConst
 		return "Starting simulation"; }
 	inline std::string DyssolC_ExportResults(const std::string& s)	{
 		return "Exporting results to: \n\t" + s; }
-	inline std::string DyssolC_ScriptFinished(const int64_t& time) {
-		return "Script job finished in " + std::to_string(time) + " [s]"; }
-	inline std::string DyssolC_SimFinished(const int64_t& time) {
-		return "Simulation finished in " + std::to_string(time) + " [s]"; }
+	inline std::string DyssolC_ScriptFinished(const int64_t& time_s, const int64_t& time_ms) {
+		return "Script job finished in " + std::to_string(time_s) + "." + std::to_string(time_ms) + " [s]"; }
+	inline std::string DyssolC_SimFinished(const int64_t& time_s, const int64_t& time_ms) {
+		return "Simulation finished in " + std::to_string(time_s) + "." + std::to_string(time_ms) + " [s]"; }
 	inline std::string DyssolC_WarningUnknown(const std::string& s) {
 		return "Warning while parsing script file: Unknown keyword " + StringFunctions::Quote(s); }
 	inline std::string DyssolC_ErrorNoScript() {

@@ -28,7 +28,11 @@ bool CScriptRunner::RunJob(const CScriptJob& _job)
 
 	const auto tEnd = ch::steady_clock::now();
 
-	PrintMessage(DyssolC_ScriptFinished(ch::duration_cast<ch::seconds>(tEnd - tStart).count()));
+	const auto elapsed_time = tEnd - tStart;
+	const auto elapsed_s = ch::duration_cast<ch::seconds>(elapsed_time);
+	const auto elapsed_ms = ch::duration_cast<ch::milliseconds>(elapsed_time - elapsed_s);
+
+	PrintMessage(DyssolC_ScriptFinished(elapsed_s.count(), elapsed_ms.count()));
 	if (!success)
 		PrintMessage(DyssolC_ErrorFinish());
 
@@ -498,7 +502,10 @@ bool CScriptRunner::RunSimulation(const CScriptJob& _job)
 	const auto tStart = ch::steady_clock::now();
 	m_simulator.Simulate();
 	const auto tEnd = ch::steady_clock::now();
-	PrintMessage(DyssolC_SimFinished(ch::duration_cast<ch::seconds>(tEnd - tStart).count()));
+	const auto elapsed_time = tEnd - tStart;
+	const auto elapsed_s = ch::duration_cast<ch::seconds>(elapsed_time);
+	const auto elapsed_ms = ch::duration_cast<ch::milliseconds>(elapsed_time - elapsed_s);
+	PrintMessage(DyssolC_SimFinished(elapsed_s.count(), elapsed_ms.count()));
 
 	// save simulation results
 	return SaveFlowsheet(_job);
