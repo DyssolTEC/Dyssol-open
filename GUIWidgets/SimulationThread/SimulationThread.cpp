@@ -26,5 +26,4 @@ void CSimulationThread::RequestStop()
 {
 	m_stop();
 	m_aborted = true;
-	emit Finished();
 }
