@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2024, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "ArgumentsParser.h"
 #include "ScriptParser.h"
@@ -91,8 +93,22 @@ bool RunDyssol(const std::filesystem::path& _script)
 	return success;
 }
 
+void HandleException(const std::exception_ptr& _exceptionPtr)
+{
+	try
+	{
+		if (_exceptionPtr)
+			std::rethrow_exception(_exceptionPtr);
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << "Unknown unhandled exception caught: '" << e.what() << "'\n";
+	}
+}
+
 int main(int argc, const char* argv[])
 {
+	std::exception_ptr exceptionPtr;
 	try
 	{
 		// possible keys with aliases and descriptions
@@ -125,15 +141,11 @@ int main(int argc, const char* argv[])
 			if (!RunDyssol(parser.GetValue("s")))
 				return 1;
 	}
-	catch (const std::exception& e)
-	{
-		std::cout << "Unhandled exception caught: " << e.what() << std::endl;
-		return 1;
-	}
 	catch (...)
 	{
-		std::cout << "Unknown unhandled exception caught" << std::endl;
-		return 1;
+		exceptionPtr = std::current_exception(); // capture current exception
 	}
+	HandleException(exceptionPtr);
+
 	return 0;
 }
