@@ -1006,8 +1006,8 @@ void inline NormalizeDensityDistribution(const std::vector<double>& _grid, std::
 }
 
 /**
- * \brief Returns diameter in [m], which corresponds to a specified value of cumulative distribution Q0 or Q3.
- * \details Input value should range between 0 and 1.
+ * \brief Returns value of the grid in the measurement units of the grid, which corresponds to a specified value of cumulative distribution Q0 or Q3.
+ * \details For PSD, returns particle diameter in [m]. Input value should range between 0 and 1.
  * \param _grid Distribution grid.
  * \param _QiDistr Input distribution.
  * \param _val Value in range between 0 and 1.
@@ -1040,8 +1040,8 @@ double inline GetDistributionValue(const std::vector<double>& _grid, const std::
 }
 
 /**
- * \brief Returns median in [m] of Q0 or Q3 distribution. Median is a diameter, which corresponds to a value of distribution equal to 0.5.
- * \details Refer to function GetDistributionValue(const std::vector<double>&, const std::vector<double>&, double).
+ * \brief Returns median in the measurement units of the grid of Q0 or Q3 distribution. Median is a value of the grid, which corresponds to a value of distribution equal to 0.5.
+ * \details For PSD, returns particle diameter in [m]. Refer to function GetDistributionValue(const std::vector<double>&, const std::vector<double>&, double).
  * \param _grid Distribution grid.
  * \param _QiDistr Input distribution.
  * \return Median of distribution.
@@ -1052,24 +1052,92 @@ double inline GetDistributionMedian(const std::vector<double>& _grid, const std:
 }
 
 /**
- * \brief Returns diameter in [m], which corresponds to a maximum value of density distribution.
- * \details
+ * \brief Returns value of the grid in the measurement units of the grid, which corresponds to a maximum value of density distribution.
+ * \details For PSD, returns particle diameter in [m].
  * \param _grid Distribution grid.
  * \param _qiDistr Input distribution.
  * \return Mode of distribution.
  */
 double inline GetDistributionMode(const std::vector<double>& _grid, const std::vector<double>& _qiDistr)
 {
-	if (_grid.size() != _qiDistr.size() + 1) return {};
-	double dMaxDiameter = 0;
-	double dMaxqValue = 0;
+	double maxDiameter{ 0.0 };
+	if (_grid.size() != _qiDistr.size() + 1)
+		return maxDiameter;
+	double maxqValue = 0;
 	for (size_t i = 0; i < _qiDistr.size(); ++i)
-		if (_qiDistr[i] > dMaxqValue)
+		if (_qiDistr[i] > maxqValue)
 		{
-			dMaxqValue = _qiDistr[i];
-			dMaxDiameter = (_grid[i] + _grid[i + 1]) / 2;
+			maxqValue = _qiDistr[i];
+			maxDiameter = (_grid[i] + _grid[i + 1]) / 2;
 		}
-	return dMaxDiameter;
+	return maxDiameter;
+}
+
+/**
+ * \brief Returns value of the grid in the measurement units of the grid, which corresponds to a mean value of density distribution.
+ * \details For PSD, returns particle diameter in [m]. Calculated as
+ * \f$\mu = \frac{\sum q_{i} d_{i}}{\sum q_{i}}\f$ with
+ * \f$\mu\f$ mean value of the distribution,
+ * \f$q_{i}\f$ value of the distribution at class \f$i\f$,
+ * \f$d_{i}\f$ mean value of the class \f$i\f$.
+ * \param _grid Distribution grid.
+ * \param _qiDistr Input density distribution.
+ * \return Mean of distribution.
+ */
+double inline GetDistributionMean(const std::vector<double>& _grid, const std::vector<double>& _qiDistr)
+{
+	double res{ 0.0 };
+	if (_grid.size() != _qiDistr.size() + 1)
+		return res;
+	for (size_t i = 0; i < _qiDistr.size(); ++i)
+		res += _qiDistr[i] * (_grid[i] + _grid[i + 1]) / 2;
+	res /= std::accumulate(_qiDistr.begin(), _qiDistr.end(), 0.0);
+	return res;
+}
+
+/**
+ * \brief Returns variance of the density distribution around its mean value in the measurement units of the grid.
+ * \details For PSD, calculates in the terms of particle diameter in [m]. Calculated as
+ * \f$\sigma^2 = \frac{\sum q_{i} d_{i}^2}{\sum q_{i}}-\mu^2\f$ with
+ * \f$\sigma^2\f$ variance of the distribution,
+ * \f$q_{i}\f$ value of the distribution at class \f$i\f$,
+ * \f$d_{i}\f$ mean value of the class \f$i\f$,
+ * \f$\mu\f$ mean value of the distribution (Refer to function GetDistributionMean(const std::vector<double>&, const std::vector<double>&)).
+ * \param _grid Distribution grid.
+ * \param _qiDistr Input density distribution.
+ * \return Variance of distribution.
+ */
+double inline GetDistributionVariance(const std::vector<double>& _grid, const std::vector<double>& _qiDistr)
+{
+	double res{ 0.0 };
+	if (_grid.size() != _qiDistr.size() + 1)
+		return res;
+	for (size_t i = 0; i < _qiDistr.size(); ++i)
+		res += _qiDistr[i] * pow((_grid[i] + _grid[i + 1]) / 2, 2);
+	res /= std::accumulate(_qiDistr.begin(), _qiDistr.end(), 0.0);
+	const auto mean = GetDistributionMean(_grid, _qiDistr);
+	res -= pow(mean, 2);
+	return res;
+}
+
+/**
+ * \brief Returns standard deviation of the density distribution around its mean value in the measurement units of the grid.
+ * \details For PSD, calculates in the terms of particle diameter in [m]. Calculated as
+ * \f$\sigma = \sqrt{\frac{\sum q_{i} d_{i}^2}{\sum q_{i}}-\mu^2}\f$ with
+ * \f$\sigma\f$ standard deviation  of the distribution,
+ * \f$q_{i}\f$ value of the distribution at class \f$i\f$,
+ * \f$d_{i}\f$ mean value of the class \f$i\f$,
+ * \f$\mu\f$ mean value of the distribution (Refer to function GetDistributionMean(const std::vector<double>&, const std::vector<double>&)).
+ * \param _grid Distribution grid.
+ * \param _qiDistr Input density distribution.
+ * \return Standard deviation of distribution.
+ */
+double inline GetDistributionStdDev(const std::vector<double>& _grid, const std::vector<double>& _qiDistr)
+{
+	const double variance = GetDistributionVariance(_grid, _qiDistr);
+	if (variance < 0.0)
+		return 0.0;
+	return sqrt(variance);
 }
 
 /**
