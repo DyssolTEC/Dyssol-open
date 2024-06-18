@@ -27,8 +27,13 @@ inline std::vector<std::vector<double>> ParseClipboardAsDoubles()
 	std::vector<std::vector<double>> res(rows.length());
 	for (int irow = 0; irow < rows.length(); ++irow)
 	{
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 9)
+		constexpr auto skipEmptyParts = Qt::SkipEmptyParts;
+#else
+		constexpr auto skipEmptyParts = QString::SkipEmptyParts;
+#endif
 		// split by columns
-		QStringList data = rows[irow].split(QRegExp(regExp), Qt::SkipEmptyParts);
+		QStringList data = rows[irow].split(QRegExp(regExp), skipEmptyParts);
 		// remove trailing whitespaces
 		while (!data.empty() && data.back().size() == 0)
 			data.pop_back();
