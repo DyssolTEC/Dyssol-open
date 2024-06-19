@@ -43,7 +43,7 @@ private:
 
 public:
 	CUnitsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDatabase, QWidget* _parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
-	~CUnitsViewer();
+	~CUnitsViewer() override;
 
 	void SetPointers(CModelsManager* _modelsManager, QSettings* _settings) override;
 	void InitializeConnections();
@@ -71,5 +71,5 @@ private slots:
 
 public slots:
 	void UpdateWholeView();
-	void setVisible( bool _bVisible );
+	void setVisible( bool _bVisible ) override;
 };

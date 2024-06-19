@@ -54,7 +54,7 @@ private:
 
 public slots:
 	void UpdateWholeView();
-	void setVisible( bool _bVisible );
+	void setVisible( bool _bVisible ) override;
 
 private slots:
 	void SliderPositionChanged( int _nIndex );
