@@ -18,9 +18,6 @@
     <ClCompile Include="SimulatorTab.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProgressThread.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="SimulatorTab.h">
@@ -29,8 +26,5 @@
     <QtUic Include="SimulatorTab.ui">
       <Filter>Form Files</Filter>
     </QtUic>
-    <QtMoc Include="ProgressThread.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
   </ItemGroup>
 </Project>
