@@ -93,8 +93,8 @@ bool CTransformMatrix::SetDimensions(const std::vector<unsigned>& _vTypes, const
 
 	// allocate memory
 	m_nSize = 1;
-	for( unsigned i=0; i<_vClasses.size(); ++i )
-		m_nSize *= _vClasses[i]*_vClasses[i];
+	for (const unsigned count : _vClasses)
+		m_nSize *= static_cast<size_t>(count) * static_cast<size_t>(count);
 	m_pData = new double[m_nSize]();
 
 	return true;
