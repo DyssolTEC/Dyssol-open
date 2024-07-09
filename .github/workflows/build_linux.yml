@@ -39,7 +39,7 @@ jobs:
             build_type: RelWithDebInfo
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Install build dependencies
       run: sudo add-apt-repository ppa:gladky-anton/sundials && sudo apt-get install build-essential libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev
@@ -76,7 +76,7 @@ jobs:
     needs: build
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Install build doc dependencies
       run: sudo apt-get install doxygen graphviz python3-sphinx python3-sphinx-rtd-theme python3-breathe texlive-latex-extra
@@ -105,7 +105,7 @@ jobs:
       
     - name: Deploy docs
       if: ${{ github.ref == 'refs/heads/master' }}
-      uses: JamesIves/github-pages-deploy-action@v4.3.3
+      uses: JamesIves/github-pages-deploy-action@v4
       with:
         branch: gh-pages # The branch the action should deploy to.
         folder: ${{github.workspace}}/install/share/Dyssol/docs/sphinx/html # The folder the action should deploy.
