@@ -3,15 +3,12 @@
  * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "Dyssol.h"
-#include "FileSystem.h"
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 // Print message to the VS Output window.
-void VSDebugOutput(const std::string_view _message)
+void VSDebugOutput(const std::string& _message)
 {
-	std::ostringstream os;
-	os << _message;
-	OutputDebugStringA(os.str().c_str());
+	OutputDebugStringA(_message.c_str());
 }
 #endif
 
@@ -26,7 +23,7 @@ void HandleException(const std::exception_ptr& _exceptionPtr)
 	{
 		const std::string message = "Unknown unhandled exception caught: '" + std::string{ e.what() } + "'\n";
 		std::cout << message;
-#ifdef _WIN32
+#ifdef _MSC_VER
 		VSDebugOutput(message);
 #endif
 	}
