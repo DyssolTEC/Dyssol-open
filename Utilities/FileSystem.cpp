@@ -100,15 +100,16 @@ namespace FileSystem
 	bool IsWriteProtected(const std::wstring& _dirPath)
 	{
 #ifdef _MSC_VER
-		const std::wstring testDirName = _dirPath + L"/WriteProtectionTest";
+		const std::wstring testDir = _dirPath + L"/DyssolWriteProtectionTest";
 #else
-		const std::string testDirName = Convert(_dirPath) + "/WriteProtectionTest";
+		const std::string testDir = Convert(_dirPath) + "/DyssolWriteProtectionTest";
 #endif
-		const bool bCreated = std::filesystem::create_directory(testDirName);
-		if (!bCreated) return true;
-		const bool bExists = std::filesystem::exists(testDirName);
-		if (!bExists) return true;
-		std::filesystem::remove_all(testDirName);
+		std::error_code ec;
+		if (const bool created = std::filesystem::create_directory(testDir, ec); !created)
+			return true;
+		if (const bool exists = std::filesystem::exists(testDir, ec); !exists)
+			return true;
+		std::filesystem::remove_all(testDir, ec);
 		return false;
 	}
 

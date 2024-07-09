@@ -642,6 +642,8 @@ void Dyssol::SaveScriptFile()
 
 void Dyssol::SavingFinished()
 {
+	QApplication::restoreOverrideCursor();
+
 	if(m_pSavingThread->IsSuccess())
 	{
 		SetCurrFlowsheetFile(m_pSavingThread->GetFinalFileName());
@@ -657,8 +659,6 @@ void Dyssol::SavingFinished()
 
 	m_pSavingThread->Stop();
 	m_pSavingWindow->accept();
-
-	QApplication::restoreOverrideCursor();
 }
 
 void Dyssol::LoadingFinished()
