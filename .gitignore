@@ -228,11 +228,14 @@ Dyssol.VC.VC.opendb
 /DyssolLinux/compiled/
 /inst/
 .vscode
-/ExternalLibraries/sundials/
+/ExternalLibraries/_backup/
 /ExternalLibraries/hdf5/
-/ExternalLibraries/zlib/
 /ExternalLibraries/graphviz
+/ExternalLibraries/muparserx/
+/ExternalLibraries/nlopt/
+/ExternalLibraries/qschematic/
+/ExternalLibraries/sundials/
+/ExternalLibraries/zlib/
 /Documentation/_build
 /Documentation/conf.py
 /install/
-/ExternalLibraries/_backup/
