@@ -19,9 +19,9 @@
       <SupportJustMyCode>true</SupportJustMyCode>
     </ClCompile>
     <Link>
+      <AdditionalLibraryDirectories>$(MATLAB_PATH)\extern\lib\win64\microsoft;$(SolutionDir)ExternalLibraries\graphviz\lib;$(SolutionDir)ExternalLibraries\hdf5\lib;$(SolutionDir)ExternalLibraries\sundials\lib;$(SolutionDir)ExternalLibraries\zlib\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup />
 </Project>

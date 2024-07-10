@@ -12,7 +12,6 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{0736ddb9-c29b-4dea-8e9a-6feffed8cfb6}</ProjectGuid>
     <RootNamespace>ScriptInterface</RootNamespace>
   </PropertyGroup>
@@ -36,13 +35,11 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(SolutionDir)PropertySheets\Common.props" />
-    <Import Project="$(SolutionDir)PropertySheets\Common64.props" />
     <Import Project="$(SolutionDir)PropertySheets\CommonDebug.props" />
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(SolutionDir)PropertySheets\Common.props" />
-    <Import Project="$(SolutionDir)PropertySheets\Common64.props" />
     <Import Project="$(SolutionDir)PropertySheets\CommonRelease.props" />
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>

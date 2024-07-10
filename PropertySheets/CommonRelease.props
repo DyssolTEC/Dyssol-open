@@ -26,5 +26,4 @@
       <StringPooling>true</StringPooling>
     </ClCompile>
   </ItemDefinitionGroup>
-  <ItemGroup />
 </Project>
