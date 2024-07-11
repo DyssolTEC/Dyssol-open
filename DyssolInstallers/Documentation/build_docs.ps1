@@ -1,3 +1,6 @@
+# Copyright (c) 2024, DyssolTEC GmbH. 
+# All rights reserved. This file is part of Dyssol. See LICENSE file for license information.
+
 # read arguments
 $solution_dir = $args[0]
 
