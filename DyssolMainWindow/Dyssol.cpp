@@ -33,7 +33,12 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	m_Simulator.SetFlowsheet(&m_Flowsheet);
 
 	// setup config file
-	m_sSettingsPath = QFileInfo(QSettings(QSettings::IniFormat, QSettings::UserScope, StrConst::Dyssol_ApplicationName, StrConst::Dyssol_ConfigApp).fileName()).absolutePath();
+	const auto systemSettingsPath = QFileInfo{ QSettings{ QSettings::IniFormat, QSettings::SystemScope, StrConst::Dyssol_ApplicationName, StrConst::Dyssol_ConfigApp }.fileName() }.absolutePath();
+	const auto userSettingsPath   = QFileInfo{ QSettings{ QSettings::IniFormat, QSettings::UserScope  , StrConst::Dyssol_ApplicationName, StrConst::Dyssol_ConfigApp }.fileName() }.absolutePath();
+	if (std::filesystem::exists(systemSettingsPath.toStdString()))
+		m_sSettingsPath = systemSettingsPath;
+	else
+		m_sSettingsPath = userSettingsPath;
 	// create directory for temporary data if it doesn't exist
 	if (!std::filesystem::exists(m_sSettingsPath.toStdString()))
 		std::filesystem::create_directories(m_sSettingsPath.toStdString());
