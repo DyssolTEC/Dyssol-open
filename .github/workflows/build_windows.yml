@@ -1,4 +1,5 @@
-# Copyright (c) 2023, DyssolTEC. All rights reserved. This file is part of Dyssol. See LICENSE file for license information.
+# Copyright (c) 2023, DyssolTEC. 
+# All rights reserved. This file is part of Dyssol. See LICENSE file for license information.
 
 # A workflow for testing on Windows
 
@@ -20,7 +21,7 @@ env:
 
   # Versions
   QT_VERSION: 5.15.2
-  QT_VS_VERSION: msvc2019
+  QT_VS_VERSION: msvc2019_64
   QT_VS_ADDIN_VERSION: 3.0.2
   ZLIB_VERSION: 1.3
   SUNDIALS_VERSION: 6.4.1
@@ -38,34 +39,18 @@ jobs:
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
-
-    - name: Install Qt 32
-      uses: jurplel/install-qt-action@v4
-      with:
-        # Whether to cache Qt automatically.
-        cache: 'true'
-        # If cached, only install essential build tools and set environmental variables.
-        cache-key-prefix: 'cache-qt-32'
-        # Version of Qt to install.
-        version: ${{env.QT_VERSION}}
-        # Architecture.
-        arch: win32_${{env.QT_VS_VERSION}}
-        # Directory to install.
-        dir: ${{github.workspace}}/ExternalLibraries/qt
-        # Whether or not to automatically run setup-python to find a valid python version.
-        setup-python: 'false'
         
-    - name: Install Qt 64
+    - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
         # Whether to cache Qt automatically.
         cache: 'true'
         # If cached, only install essential build tools and set environmental variables.
-        cache-key-prefix: 'cache-qt-64'
+        cache-key-prefix: 'cache-qt'
         # Version of Qt to install.
         version: ${{env.QT_VERSION}}
         # Architecture.
-        arch: win64_${{env.QT_VS_VERSION}}_64
+        arch: win64_${{env.QT_VS_VERSION}}
         # Directory to install.
         dir: ${{github.workspace}}/ExternalLibraries/qt
         # Whether or not to automatically run setup-python to find a valid python version.
@@ -254,34 +239,18 @@ jobs:
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
-
-    - name: Install Qt 32
-      uses: jurplel/install-qt-action@v4
-      with:
-        # Whether to cache Qt automatically.
-        cache: 'true'
-        # If cached, only install essential build tools and set environmental variables.
-        cache-key-prefix: 'cache-qt-32'
-        # Version of Qt to install.
-        version: ${{env.QT_VERSION}}
-        # Architecture.
-        arch: win32_${{env.QT_VS_VERSION}}
-        # Directory to install.
-        dir: ${{github.workspace}}/ExternalLibraries/qt
-        # Whether or not to automatically run setup-python to find a valid python version.
-        setup-python: 'false'
         
-    - name: Install Qt 64
+    - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
         # Whether to cache Qt automatically.
         cache: 'true'
         # If cached, only install essential build tools and set environmental variables.
-        cache-key-prefix: 'cache-qt-64'
+        cache-key-prefix: 'cache-qt'
         # Version of Qt to install.
         version: ${{env.QT_VERSION}}
         # Architecture.
-        arch: win64_${{env.QT_VS_VERSION}}_64
+        arch: win64_${{env.QT_VS_VERSION}}
         # Directory to install.
         dir: ${{github.workspace}}/ExternalLibraries/qt
         # Whether or not to automatically run setup-python to find a valid python version.
@@ -366,30 +335,21 @@ jobs:
         name: docs-artifact
         path: ${{github.workspace}}/install/windows
 
-    - name: Build x86
+    - name: Build
       working-directory: ${{github.workspace}}
       env:
         QtToolsPath: ${{env.QT_ROOT_DIR}}/../${{env.QT_VS_VERSION}}/bin
         QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
       run: |
-        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Debug   -property:Platform=Win32 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
-        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Release -property:Platform=Win32 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
-
-    - name: Build x64
-      working-directory: ${{github.workspace}}
-      env:
-        QtToolsPath: ${{env.QT_ROOT_DIR}}/../${{env.QT_VS_VERSION}}_64/bin
-        QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
-      run: |
-        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Debug   -property:Platform=x64 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
-        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Release -property:Platform=x64 ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
+        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Debug   -property:Platform=${{env.BUILD_PLATFORM}} ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
+        msbuild -maxCpuCount -verbosity:minimal -property:Configuration=Release -property:Platform=${{env.BUILD_PLATFORM}} ${{env.SOLUTION_FILE_PATH}}/${{env.SOLUTION_FILE_NAME}}
 
     - name: Build Installer
       working-directory: ${{github.workspace}}
       env:
         QtToolsPath: ${{env.QT_ROOT_DIR}}/bin
         QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
-      run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:QtInstallDir=${{github.workspace}}/ExternalLibraries/qt/Qt/${{env.QT_VERSION}}/${{env.QT_VS_VERSION}}_64/ -property:InstallerPlatforms=Both -property:InstallerDocumentation=true -property:InstallerSDK=true -property:InstallerSDKLibs=Sources -property:InstallerPreBuild=false -property:InstallerPreDocs=false ${{env.INSTALLER_PROJECT_PATH}}
+      run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:QtInstallDir=${{github.workspace}}/ExternalLibraries/qt/Qt/${{env.QT_VERSION}}/${{env.QT_VS_VERSION}}/ -property:InstallerDocumentation=true -property:InstallerSDK=true -property:InstallerSDKLibs=Sources -property:InstallerPreBuild=false -property:InstallerPreDocs=false ${{env.INSTALLER_PROJECT_PATH}}
 
     - name: Run Installer
       shell: pwsh
