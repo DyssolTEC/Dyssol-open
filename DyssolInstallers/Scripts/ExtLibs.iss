@@ -1,4 +1,6 @@
-; Copyright (c) 2023, DyssolTEC GmbH. All rights reserved. This file is part of Dyssol. See LICENSE file for license information.
+; Copyright (c) 2023, DyssolTEC GmbH. 
+; Copyright (c) 2024, DyssolTEC GmbH. 
+; All rights reserved. This file is part of Dyssol. See LICENSE file for license information.
 
 #include "CommonConstants.iss"
 
@@ -13,12 +15,7 @@
 ; External libraries
 #sub ExternalLibsFileEntry
 Source: "..\..\ExternalLibraries\{#ExternalLibs[I]}\include\*"; DestDir: "{app}\{code:DirModelsCreator}\{code:DirExternalLibs}\{#ExternalLibs[I]}\include"; Flags: ignoreversion createallsubdirs recursesubdirs
-  #ifdef IsIncludeX32
-Source: "..\..\ExternalLibraries\{#ExternalLibs[I]}\lib32\*";   DestDir: "{app}\{code:DirModelsCreator}\{code:DirExternalLibs}\{#ExternalLibs[I]}\lib32";   Flags: ignoreversion createallsubdirs recursesubdirs; Check: not Is64BitInstallMode
-  #endif
-  #ifdef IsIncludeX64
-Source: "..\..\ExternalLibraries\{#ExternalLibs[I]}\lib64\*";   DestDir: "{app}\{code:DirModelsCreator}\{code:DirExternalLibs}\{#ExternalLibs[I]}\lib64";   Flags: ignoreversion createallsubdirs recursesubdirs; Check: Is64BitInstallMode
-  #endif
+Source: "..\..\ExternalLibraries\{#ExternalLibs[I]}\lib\*";     DestDir: "{app}\{code:DirModelsCreator}\{code:DirExternalLibs}\{#ExternalLibs[I]}\lib";     Flags: ignoreversion createallsubdirs recursesubdirs
 #endsub
 #for {I = 0; I < DimOf(ExternalLibs); I++} ExternalLibsFileEntry
 

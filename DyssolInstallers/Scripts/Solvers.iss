@@ -1,4 +1,6 @@
-; Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. 
+; Copyright (c) 2020, Dyssol Development Team. 
+; Copyright (c) 2024, DyssolTEC GmbH. 
+; All rights reserved. This file is part of Dyssol. See LICENSE file for license information. 
 
 #include "CommonConstants.iss"
 
@@ -10,17 +12,9 @@
 
 [Files]
 #sub SolversDllFileEntry
-#ifdef IsIncludeX32
-Source: "..\..\Win32\Release\Solver_{#SolversDll[I]}.dll"; DestDir: "{app}\{code:DirSolversDll}";                              Flags: ignoreversion; Check: not Is64BitInstallMode
-  #ifdef IsWithSDK
-Source: "..\..\Win32\Debug\Solver_{#SolversDll[I]}.dll";   DestDir: "{app}\{code:DirModelsCreator}\{code:DirSolversDebugDll}"; Flags: ignoreversion; Check: not Is64BitInstallMode
-  #endif
-#endif
-#ifdef IsIncludeX64
-Source: "..\..\x64\Release\Solver_{#SolversDll[I]}.dll";   DestDir: "{app}\{code:DirSolversDll}";                              Flags: ignoreversion; Check: Is64BitInstallMode
-  #ifdef IsWithSDK
-Source: "..\..\x64\Debug\Solver_{#SolversDll[I]}.dll";     DestDir: "{app}\{code:DirModelsCreator}\{code:DirSolversDebugDll}"; Flags: ignoreversion; Check: Is64BitInstallMode
-  #endif
+Source: "..\..\x64\Release\Solver_{#SolversDll[I]}.dll";   DestDir: "{app}\{code:DirSolversDll}";                              Flags: ignoreversion
+#ifdef IsWithSDK
+Source: "..\..\x64\Debug\Solver_{#SolversDll[I]}.dll";     DestDir: "{app}\{code:DirModelsCreator}\{code:DirSolversDebugDll}"; Flags: ignoreversion
 #endif
 #endsub
 #for {I = 0; I < DimOf(SolversDll); I++} SolversDllFileEntry

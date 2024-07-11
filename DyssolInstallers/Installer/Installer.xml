@@ -11,15 +11,6 @@
   <Rule.Categories>
     <Category Name="General" DisplayName="General"/>
   </Rule.Categories>
-  <EnumProperty
-    Name="InstallerPlatforms"
-    Category="General"
-    DisplayName="Platforms"
-    Description="Select what platforms to include in the installer.">
-    <EnumValue Name="Win32" DisplayName="Win32" Description="Build installer with 32-bit version of the program."/>
-    <EnumValue Name="x64"   DisplayName="x64"   Description="Build installer with 64-bit version of the program."/>
-    <EnumValue Name="Both"  DisplayName="Both"  Description="Build installer with 32-bit and 64-bit version of the program."/>
-  </EnumProperty>
   <BoolProperty
     Name="InstallerDocumentation"
     Category="General"

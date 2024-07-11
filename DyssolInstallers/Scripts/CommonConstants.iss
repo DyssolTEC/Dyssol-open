@@ -1,4 +1,6 @@
-; Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. 
+; Copyright (c) 2020, Dyssol Development Team. 
+; Copyright (c) 2024, DyssolTEC GmbH. 
+; All rights reserved. This file is part of Dyssol. See LICENSE file for license information. 
 
 #ifndef CommonConstantsIss
 #define CommonConstantsIss
@@ -34,8 +36,8 @@ function DirNoSrcLibRelease(Param: String): String;     begin  Result := 'Releas
 function FileConfigIni(Param: String): String;          begin  Result := 'config.ini';          end;
 function FileSolution(Param: String): String;           begin  Result := 'Dyssol.sln';          end;
 
-function VarIniModelsFolders(Param: String): String;    begin  Result := 'Units, Solvers, ../UnitsDebugLibs, ../SolversDebugLibs, ../Win32/Debug, ../Win32/Release, ../x64/Debug, ../x64/Release'; end;
-function VarIniFoldersActivity(Param: String): String;  begin  Result := '@Variant(\0\0\0\x7f\0\0\0\fQList<bool>\0\0\0\0\b\x1\x1\x1\x1\x1\x1\x1\x1)';                                              end;
+function VarIniModelsFolders(Param: String): String;    begin  Result := 'Units, Solvers, ../UnitsDebugLibs, ../SolversDebugLibs, ../x64/Debug, ../x64/Release'; end;
+function VarIniFoldersActivity(Param: String): String;  begin  Result := '@Variant(\0\0\0\x7f\0\0\0\fQList<bool>\0\0\0\0\b\x1\x1\x1\x1\x1\x1\x1\x1)';            end;
 
 function VarRegKey(Param: String): String;              begin  Result := '{9E9E04A4-2EE2-4146-96C2-18FF59F7B0B5}';  end;
 

@@ -1,4 +1,6 @@
-; Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. 
+; Copyright (c) 2020, Dyssol Development Team. 
+; Copyright (c) 2024, DyssolTEC GmbH. 
+; All rights reserved. This file is part of Dyssol. See LICENSE file for license information. 
 
 #include "CommonConstants.iss"
 
@@ -25,21 +27,15 @@
 [Files]
 ; Projects
 #sub CppProjectsFileEntry
-  #ifdef IsWithSrc
+#ifdef IsWithSrc
 Source: "..\..\{#CppProjects[I]}\*.vcxproj";          DestDir: "{app}\{code:DirModelsCreator}\{#CppProjects[I]}";                            Flags: ignoreversion
 Source: "..\..\{#CppProjects[I]}\*.h";                DestDir: "{app}\{code:DirModelsCreator}\{#CppProjects[I]}";                            Flags: ignoreversion
 Source: "..\..\{#CppProjects[I]}\*.cpp";              DestDir: "{app}\{code:DirModelsCreator}\{#CppProjects[I]}";                            Flags: ignoreversion
-  #else                                                                                                                                    
+#else                                                                                                                                    
 Source: "..\..\{#CppProjects[I]}\*.h";                DestDir: "{app}\{code:DirModelsCreator}\{code:DirNoSrcInclude}";                       Flags: ignoreversion
-    #ifdef IsIncludeX32                                                                                                                    
-Source: "..\..\Win32\Debug\{#CppProjects[I]}*.lib";   DestDir: "{app}\{code:DirModelsCreator}\{code:DirNoSrcLib}\{code:DirNoSrcLibDebug}";   Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "..\..\Win32\Release\{#CppProjects[I]}*.lib"; DestDir: "{app}\{code:DirModelsCreator}\{code:DirNoSrcLib}\{code:DirNoSrcLibRelease}"; Flags: ignoreversion; Check: not Is64BitInstallMode
-    #endif
-    #ifdef IsIncludeX64
-Source: "..\..\x64\Debug\{#CppProjects[I]}*.lib";     DestDir: "{app}\{code:DirModelsCreator}\{code:DirNoSrcLib}\{code:DirNoSrcLibDebug}";   Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "..\..\x64\Release\{#CppProjects[I]}*.lib";   DestDir: "{app}\{code:DirModelsCreator}\{code:DirNoSrcLib}\{code:DirNoSrcLibRelease}"; Flags: ignoreversion; Check: Is64BitInstallMode
-    #endif
-  #endif
+Source: "..\..\x64\Debug\{#CppProjects[I]}*.lib";     DestDir: "{app}\{code:DirModelsCreator}\{code:DirNoSrcLib}\{code:DirNoSrcLibDebug}";   Flags: ignoreversion
+Source: "..\..\x64\Release\{#CppProjects[I]}*.lib";   DestDir: "{app}\{code:DirModelsCreator}\{code:DirNoSrcLib}\{code:DirNoSrcLibRelease}"; Flags: ignoreversion
+#endif
 #endsub
 #for {I = 0; I < DimOf(CppProjects); I++} CppProjectsFileEntry
 
@@ -76,12 +72,7 @@ Source: "..\Data\ModelsCreatorSDK\Dyssol_Lib.sln";         DestDir: "{app}\{code
 #endif
 
 ; Binaries
-#ifdef IsIncludeX32
-Source: "..\..\ExternalLibraries\graphviz\bin32\*"; DestDir: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}"; Flags: ignoreversion; Check: not Is64BitInstallMode
-#endif
-#ifdef IsIncludeX64
-Source: "..\..\ExternalLibraries\graphviz\bin64\*"; DestDir: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}"; Flags: ignoreversion; Check: Is64BitInstallMode
-#endif
+Source: "..\..\ExternalLibraries\graphviz\bin\*"; DestDir: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}"; Flags: ignoreversion
 
 [Dirs]
 Name: "{app}\{code:DirModelsCreator}";                                              Flags: uninsalwaysuninstall
@@ -97,29 +88,6 @@ Name: "{app}\{code:DirModelsCreator}\{code:DirNoSrcLib}\{code:DirNoSrcLibRelease
 #endif
 
 [Code]
-// Removes all lines that contain Tag
-procedure RemoveLines(const FileName, Tag: string);
-var
-  I: Integer;
-  FileLines: TStringList;
-begin
-  FileLines := TStringList.Create;
-  try
-    FileLines.LoadFromFile(FileName);
-    I := 0;
-    while I < FileLines.Count do 
-    begin
-      if Pos(Tag, FileLines[I]) = 0 then
-        I := I + 1
-      else
-        FileLines.Delete(I);
-    end;
-  finally
-    FileLines.SaveToFile(FileName);
-    FileLines.Free;
-  end;
-end;
-
 // Removes all Nodes, which attribute contains AttributeText
 procedure RemoveNodeFromXML(const FileName, Node, AttributeText: string);
 var
@@ -171,58 +139,13 @@ begin
   end;
 end;
 
-// Remove Win32/x64 configuration from file
-procedure UpdateVcprojFile(FilePath : string);
-begin
-  if Is64BitInstallMode then
-  begin    
-    RemoveNodeFromXML(FilePath, 'ProjectConfiguration', '|Win32');
-    RemoveNodeFromXML(FilePath, 'PropertyGroup',        '|Win32');
-    RemoveNodeFromXML(FilePath, 'ImportGroup',          '|Win32');
-    RemoveNodeFromXML(FilePath, 'ItemDefinitionGroup',  '|Win32');
-  end
-  else
-  begin
-    RemoveNodeFromXML(FilePath, 'ProjectConfiguration', '|x64');
-    RemoveNodeFromXML(FilePath, 'PropertyGroup',        '|x64');
-    RemoveNodeFromXML(FilePath, 'ImportGroup',          '|x64');
-    RemoveNodeFromXML(FilePath, 'ItemDefinitionGroup',  '|x64');
-  end;
-end;
-
-// Remove Win32/x64 configuration from all *.vcxproj file
-procedure UpdateVcprojFiles();
-var
-  FilePath: string;
-begin
-#sub UpdateProjFilesEntry
-  FilePath := ExpandConstant('{app}\') + DirModelsCreator('') + '\' + ExpandConstant('{#CppProjects[I]}') + '\' + ExpandConstant('{#CppProjects[I]}') + '.vcxproj';
-  UpdateVcprojFile(FilePath);
-#endsub
-#for {I = 0; I < DimOf(CppProjects); I++} UpdateProjFilesEntry
-#sub UpdateProjUnitTemplatesFileEntry
-  FilePath := ExpandConstant('{app}\') + DirModelsCreator('') + '\' + DirUnitTemplates('') + '\' + ExpandConstant('{#UnitTemplates[I]}') + '\' + ExpandConstant('{#UnitTemplates[I]}') + '.vcxproj';
-  UpdateVcprojFile(FilePath);
-#endsub
-#for {I = 0; I < DimOf(UnitTemplates); I++} UpdateProjUnitTemplatesFileEntry
-#sub UpdateProjSolverTemplatesFileEntry
-  FilePath := ExpandConstant('{app}\') + DirModelsCreator('') + '\' + DirSolverTemplates('') + '\' + ExpandConstant('{#SolverTemplates[I]}') + '\' + ExpandConstant('{#SolverTemplates[I]}') + '.vcxproj';
-  UpdateVcprojFile(FilePath);
-#endsub
-#for {I = 0; I < DimOf(SolverTemplates); I++} UpdateProjSolverTemplatesFileEntry
-end;
-
-// Remove Win32/x64 configuration from all ModelsAPI.vcxproj.user file
+// Set path to executable in ModelsAPI.vcxproj.user file
 procedure UpdateVcprojUserFile();
 var
   FilePath: string;
 begin
   // remove unnecessary configurations
   FilePath := ExpandConstant('{app}\') + DirModelsCreator('') + '\' + DirMainProj('') + '\' + DirMainProj('') + '.vcxproj.user';
-  if Is64BitInstallMode then
-    RemoveNodeFromXML(FilePath, 'PropertyGroup', '|Win32')
-  else
-    RemoveNodeFromXML(FilePath, 'PropertyGroup', '|x64');
   // set proper path to exe
   WriteValueToXML(FilePath, 'PropertyGroup', 'Release', 'LocalDebuggerCommand', ExpandConstant('{app}\{#MyAppExeName}'));
 end;
@@ -239,30 +162,10 @@ begin
   WriteValueToXML(FilePath, 'PropertyGroup', 'Configuration', 'ConfigurationType', 'Application');
 end;
 
-// Remove Win32/x64 configuration from Dyssol.sln file
-procedure UpdateSlnFile();
-var
-  FilePath: string;
-begin
-  FilePath := ExpandConstant('{app}\') + DirModelsCreator('') + '\' +  FileSolution('');
-  if Is64BitInstallMode then
-  begin
-    RemoveLines(FilePath, 'Debug|Win32');
-    RemoveLines(FilePath, 'Release|Win32');
-  end
-  else
-  begin
-    RemoveLines(FilePath, 'Debug|x64');
-    RemoveLines(FilePath, 'Release|x64');
-  end;
-end;
-
 procedure UpdateProjFiles();
 begin
-  UpdateVcprojFiles();
   UpdateVcprojUserFile();
 #ifndef IsWithSrc
   UpdateMainVcprojFile();
 #endif
-  UpdateSlnFile();
 end;

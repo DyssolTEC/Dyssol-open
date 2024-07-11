@@ -1,4 +1,6 @@
-; Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. 
+; Copyright (c) 2020, Dyssol Development Team. 
+; Copyright (c) 2024, DyssolTEC GmbH. 
+; All rights reserved. This file is part of Dyssol. See LICENSE file for license information. 
 
 #define MyAppName "Dyssol"
 #define MyAppExeName "Dyssol.exe"
@@ -6,19 +8,13 @@
 #define MyAppURL "https://github.com/DyssolTEC/Dyssol-open"
 #define MyAppPublisherURL "https://www.dyssoltec.com/"
 #define MyAppContact "info@dyssoltec.com"
-#ifdef IsIncludeX64
 #define MyAppVersion GetStringFileInfo(SolutionDir+'\x64\Release\Dyssol.exe', 'ProductVersion')
-#else
-#define MyAppVersion GetStringFileInfo(SolutionDir+'\Win32\Release\Dyssol.exe', 'ProductVersion')
-#endif
 
 ; all come as parameters from the running script
 ; #define MyAppBranch
 ; #define SolutionDir
 ; #define QtPath
 ; #define IsDocs
-; #define IsIncludeX32
-; #define IsIncludeX64
 ; #define IsWithSrc
 ; #define IsWithSDK
 
@@ -68,17 +64,8 @@ ShowLanguageDialog=auto
 PrivilegesRequired=poweruser
 PrivilegesRequiredOverridesAllowed=dialog
 UsedUserAreasWarning=yes
-#ifdef IsIncludeX64
-  #ifdef IsIncludeX32
 ArchitecturesAllowed=x86 x64
 ArchitecturesInstallIn64BitMode=x64
-  #else
-ArchitecturesAllowed=x64
-ArchitecturesInstallIn64BitMode=x64
-  #endif
-#else
-ArchitecturesAllowed=x86 x64
-#endif
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -87,25 +74,15 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Files]
-#ifdef IsIncludeX32
-Source: "..\..\Win32\Release\{#MyAppExeName}"      ; DestDir: "{app}"                                            ; Flags: ignoreversion; Check: not Is64BitInstallMode
-  #ifdef IsWithSDK                                                                                               
-Source: "..\..\Win32\Debug\{#MyAppExeName}"        ; DestDir: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}" ; Flags: ignoreversion; Check: not Is64BitInstallMode
-  #endif                                                                                                         
-Source: "..\..\Win32\Release\DyssolC.exe"          ; DestDir: "{app}"                                            ; Flags: ignoreversion; Check: not Is64BitInstallMode
-Source: "..\..\ExternalLibraries\graphviz\bin32\*" ; DestDir: "{app}"                                            ; Flags: ignoreversion; Check: not Is64BitInstallMode
-#endif                                                                                                           
-#ifdef IsIncludeX64                                                                                              
-Source: "..\..\x64\Release\{#MyAppExeName}"        ; DestDir: "{app}"                                            ; Flags: ignoreversion; Check: Is64BitInstallMode
-  #ifdef IsWithSDK                                                                                              
-Source: "..\..\x64\Debug\{#MyAppExeName}"          ; DestDir: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}" ; Flags: ignoreversion; Check: Is64BitInstallMode
-  #endif                                                                                                        
-Source: "..\..\x64\Release\DyssolC.exe"            ; DestDir: "{app}"                                            ; Flags: ignoreversion; Check: Is64BitInstallMode
-Source: "..\..\ExternalLibraries\graphviz\bin64\*" ; DestDir: "{app}"                                            ; Flags: ignoreversion; Check: Is64BitInstallMode
-#endif
-Source: "..\..\LICENSE";          DestDir: "{app}";          Flags: ignoreversion
-Source: "..\..\Materials.dmdb";   DestDir: "{app}";          Flags: ignoreversion
-Source: "..\Data\Licenses\*.txt"; DestDir: "{app}\Licenses"; Flags: ignoreversion
+Source: "..\..\x64\Release\{#MyAppExeName}"      ; DestDir: "{app}"                                            ; Flags: ignoreversion
+#ifdef IsWithSDK                                                                                              
+Source: "..\..\x64\Debug\{#MyAppExeName}"        ; DestDir: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}" ; Flags: ignoreversion
+#endif                                                                                                        
+Source: "..\..\x64\Release\DyssolC.exe"          ; DestDir: "{app}"                                            ; Flags: ignoreversion
+Source: "..\..\ExternalLibraries\graphviz\bin\*" ; DestDir: "{app}"                                            ; Flags: ignoreversion
+Source: "..\..\LICENSE"                          ; DestDir: "{app}"                                            ; Flags: ignoreversion
+Source: "..\..\Materials.dmdb"                   ; DestDir: "{app}"                                            ; Flags: ignoreversion
+Source: "..\Data\Licenses\*.txt"                 ; DestDir: "{app}\Licenses"                                   ; Flags: ignoreversion
 
 [Dirs]
 Name: "{app}\Licenses";                                  Flags: uninsalwaysuninstall
@@ -118,7 +95,7 @@ Name: "{group}\{#MyAppName}";                        Filename: "{app}\{#MyAppExe
 Name: "{group}\{cm:ProgramOnTheWeb,{#MyAppName}}";   Filename: "{#MyAppURL}"
 Name: "{group}\{cm:UninstallProgram, {#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{group}\{#MyAppName} Uninstall";              Filename: "{uninstallexe}"
-Name: "{autodesktop}\{#MyAppName}";                Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{autodesktop}\{#MyAppName}";                  Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Registry]
 Root: "HKA"; Subkey: "Software\Classes\.dflw";                              ValueType: string;                   ValueData: "DyssolFlowsheet";                 Flags: uninsdeletevalue
