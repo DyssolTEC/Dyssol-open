@@ -1,9 +1,11 @@
+# Copyright (c) 2024, DyssolTEC GmbH. 
+# All rights reserved. This file is part of Dyssol. See LICENSE file for license information.
+
 # read arguments
 $solution_dir       = $args[0]
 $solution_path      = $args[1]
-$platform           = $args[2]
-$configuration      = $args[3]
-$pre_build_binaries = $args[4]
+$configuration      = $args[2]
+$pre_build_binaries = $args[3]
 
 # set variables
 $build_path = "$($solution_dir)\build\windows"
@@ -31,5 +33,5 @@ if (!(Test-Path $build_path)) {
 # compile tests
 Set-Location $build_path
 
-cmake $solution_dir -D BUILD_BINARIES=NO -D BUILD_DOCS=NO -A $platform -D CMAKE_BUILD_TYPE=$configuration --fresh
+cmake $solution_dir -D BUILD_BINARIES=NO -D BUILD_DOCS=NO -A x64 -D CMAKE_BUILD_TYPE=$configuration --fresh
 cmake --build . --target RUN_TESTS --parallel $ENV:NUMBER_OF_PROCESSORS

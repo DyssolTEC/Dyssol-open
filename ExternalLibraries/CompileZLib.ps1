@@ -1,6 +1,6 @@
 # Copyright (c) 2020, Dyssol Development Team. All rights reserved.
-# Copyright (c) 2023, DyssolTEC GmbH. All rights reserved.
-# This file is part of Dyssol. See LICENSE file for license information.
+# Copyright (c) 2023, DyssolTEC GmbH. 
+# All rights reserved. This file is part of Dyssol. See LICENSE file for license information.
 
 ################################################################################
 ### Initializing
@@ -14,14 +14,14 @@ if (-not (Get-Command Expand-7Zip -ErrorAction Ignore)) {
 ################################################################################
 ### Paths
 
-$ZLIB_VERSION = "1.3"
-$ZLIB_NAME = "zlib-$ZLIB_VERSION"
-$ZLIB_TAR_NAME = "$ZLIB_NAME.tar"
-$ZLIB_ZIP_NAME = "$ZLIB_TAR_NAME.gz"
+$ZLIB_VERSION          = "1.3"
+$ZLIB_NAME             = "zlib-$ZLIB_VERSION"
+$ZLIB_TAR_NAME         = "$ZLIB_NAME.tar"
+$ZLIB_ZIP_NAME         = "$ZLIB_TAR_NAME.gz"
 $ZLIB_DOWNLOAD_ADDRESS = "https://github.com/madler/zlib/releases/download/v$ZLIB_VERSION/$ZLIB_ZIP_NAME"
-$ZLIB_INSTALL_PATH = "$CURRENT_PATH\zlib"
-$ZLIB_SRC_PATH = "$CURRENT_PATH\$ZLIB_NAME"
-$ZLIB_BUILD_PATH = "$ZLIB_SRC_PATH\build"
+$ZLIB_INSTALL_PATH     = "$CURRENT_PATH\zlib"
+$ZLIB_SRC_PATH         = "$CURRENT_PATH\$ZLIB_NAME"
+$ZLIB_BUILD_PATH       = "$ZLIB_SRC_PATH\build"
 
 ################################################################################
 ### Clear old
@@ -39,27 +39,18 @@ Expand-7Zip $ZLIB_ZIP_NAME . | Expand-7Zip $ZLIB_TAR_NAME .
 ################################################################################
 ### Build and install
 
-# Build x32
-New-Item $ZLIB_BUILD_PATH\x32 -ItemType directory
-Set-Location $ZLIB_BUILD_PATH\x32
-cmake -G "Visual Studio 16 2019" -A Win32 $ZLIB_SRC_PATH -DCMAKE_INSTALL_PREFIX:PATH=$ZLIB_INSTALL_PATH
+# Build
+New-Item $ZLIB_BUILD_PATH -ItemType directory
+Set-Location $ZLIB_BUILD_PATH
+cmake -G "Visual Studio 16 2019" -A x64 $ZLIB_SRC_PATH `
+	-DCMAKE_INSTALL_PREFIX:PATH=$ZLIB_INSTALL_PATH
 cmake --build . --parallel --target INSTALL --config Debug
 cmake --build . --parallel --target INSTALL --config Release
-Rename-Item -Path "$ZLIB_INSTALL_PATH\lib" -NewName "$ZLIB_INSTALL_PATH\lib32"
-
-# Build x64
-New-Item $ZLIB_BUILD_PATH\x64 -ItemType directory
-Set-Location $ZLIB_BUILD_PATH\x64
-cmake -G "Visual Studio 16 2019" -A x64 $ZLIB_SRC_PATH -DCMAKE_INSTALL_PREFIX:PATH=$ZLIB_INSTALL_PATH
-cmake --build . --parallel --target INSTALL --config Debug
-cmake --build . --parallel --target INSTALL --config Release
-Rename-Item -Path "$ZLIB_INSTALL_PATH\lib" -NewName "$ZLIB_INSTALL_PATH\lib64"
 
 ################################################################################
 ### Copy *.pdb files
 
-Copy-Item "$ZLIB_BUILD_PATH\x32\Debug\zlibstaticd.pdb" "$ZLIB_INSTALL_PATH\lib32\zlibstaticd.pdb"
-Copy-Item "$ZLIB_BUILD_PATH\x64\Debug\zlibstaticd.pdb" "$ZLIB_INSTALL_PATH\lib64\zlibstaticd.pdb"
+Copy-Item "$ZLIB_BUILD_PATH\Debug\zlibstaticd.pdb" "$ZLIB_INSTALL_PATH\lib\zlibstaticd.pdb"
 
 ################################################################################
 ### Clean installation directory
@@ -67,18 +58,16 @@ Copy-Item "$ZLIB_BUILD_PATH\x64\Debug\zlibstaticd.pdb" "$ZLIB_INSTALL_PATH\lib64
 $REM_ZLIB_ROOT_LIST = @(
 	"bin",
 	"share",
-	"lib32\zlib.lib",
-	"lib64\zlib.lib",
-	"lib32\zlibd.lib",
-	"lib64\zlibd.lib"
+	"lib\zlib.lib",
+	"lib\zlibd.lib"
 )
 
-# gather
+# Gather
 $REM_LIST = @("TEMP_TO_DEL")
 foreach ($item in $REM_ZLIB_ROOT_LIST) {
 	$REM_LIST += $ZLIB_INSTALL_PATH + '\' + $item
 }
-# remove
+# Remove
 foreach ($item in $REM_LIST) {
 	Remove-Item "$item" -Force -Recurse -ErrorAction Ignore
 }

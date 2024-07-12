@@ -1,4 +1,6 @@
-; Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. 
+; Copyright (c) 2020, Dyssol Development Team. 
+; Copyright (c) 2024, DyssolTEC GmbH. 
+; All rights reserved. This file is part of Dyssol. See LICENSE file for license information. 
 
 #include "CommonConstants.iss"
 
@@ -24,23 +26,15 @@
 
 [Files]
 #sub UnitsDllFileEntry
-#ifdef IsIncludeX32
-Source: "..\..\Win32\Release\Unit_{#UnitsDll[I]}.dll"; DestDir: "{app}\{code:DirUnitsDll}";                              Flags: ignoreversion; Check: not Is64BitInstallMode
-  #ifdef IsWithSDK
-Source: "..\..\Win32\Debug\Unit_{#UnitsDll[I]}.dll";   DestDir: "{app}\{code:DirModelsCreator}\{code:DirUnitsDebugDll}"; Flags: ignoreversion; Check: not Is64BitInstallMode
-  #endif
-#endif
-#ifdef IsIncludeX64
-Source: "..\..\x64\Release\Unit_{#UnitsDll[I]}.dll";   DestDir: "{app}\{code:DirUnitsDll}";                              Flags: ignoreversion; Check: Is64BitInstallMode
-  #ifdef IsWithSDK
-Source: "..\..\x64\Debug\Unit_{#UnitsDll[I]}.dll";     DestDir: "{app}\{code:DirModelsCreator}\{code:DirUnitsDebugDll}"; Flags: ignoreversion; Check: Is64BitInstallMode
-  #endif
+Source: "..\..\x64\Release\Unit_{#UnitsDll[I]}.dll";   DestDir: "{app}\{code:DirUnitsDll}";                              Flags: ignoreversion
+#ifdef IsWithSDK
+Source: "..\..\x64\Debug\Unit_{#UnitsDll[I]}.dll";     DestDir: "{app}\{code:DirModelsCreator}\{code:DirUnitsDebugDll}"; Flags: ignoreversion
 #endif
 #endsub
 #for {I = 0; I < DimOf(UnitsDll); I++} UnitsDllFileEntry
 
 [Dirs]
-Name: "{app}\{code:DirUnitsDll}";                            Flags: uninsalwaysuninstall
+Name: "{app}\{code:DirUnitsDll}";                              Flags: uninsalwaysuninstall
 #ifdef IsWithSDK
 Name: "{app}\{code:DirModelsCreator}\{code:DirUnitsDebugDll}"; Flags: uninsalwaysuninstall
 #endif

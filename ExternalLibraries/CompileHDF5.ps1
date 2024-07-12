@@ -1,4 +1,6 @@
-# Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information.
+# Copyright (c) 2020, Dyssol Development Team. 
+# Copyright (c) 2024, DyssolTEC GmbH.
+# All rights reserved. This file is part of Dyssol. See LICENSE file for license information.
 
 ################################################################################
 ### Initializing
@@ -12,18 +14,18 @@ if (-not (Get-Command Expand-7Zip -ErrorAction Ignore)) {
 ################################################################################
 ### Paths
 
-$HDF5_MAJOR_VERSION = "1"
-$HDF5_MIDDLE_VERSION = "12"
-$HDF5_MINOR_VERSION = "2"
-$HDF5_VERSION = "$HDF5_MAJOR_VERSION.$HDF5_MIDDLE_VERSION.$HDF5_MINOR_VERSION"
+$HDF5_MAJOR_VERSION    = "1"
+$HDF5_MIDDLE_VERSION   = "12"
+$HDF5_MINOR_VERSION    = "2"
+$HDF5_VERSION          = "$HDF5_MAJOR_VERSION.$HDF5_MIDDLE_VERSION.$HDF5_MINOR_VERSION"
 $HDF5_DOWNLOAD_ADDRESS = "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-$HDF5_MAJOR_VERSION.$HDF5_MIDDLE_VERSION/hdf5-$HDF5_VERSION/src/hdf5-$HDF5_VERSION.zip"
-$HDF5_NAME = "hdf5-$HDF5_VERSION"
-$HDF5_ZIP_NAME = "$HDF5_NAME.zip"
-$HDF5_INSTALL_PATH = "$CURRENT_PATH\hdf5"
-$HDF5_SRC_PATH = "$CURRENT_PATH\$HDF5_NAME"
-$HDF5_BUILD_PATH = "$HDF5_SRC_PATH\build"
+$HDF5_NAME             = "hdf5-$HDF5_VERSION"
+$HDF5_ZIP_NAME         = "$HDF5_NAME.zip"
+$HDF5_INSTALL_PATH     = "$CURRENT_PATH\hdf5"
+$HDF5_SRC_PATH         = "$CURRENT_PATH\$HDF5_NAME"
+$HDF5_BUILD_PATH       = "$HDF5_SRC_PATH\build"
 
-# libs
+# Libs
 $ZLIB_INSTALL_PATH = "$CURRENT_PATH\zlib"
 
 ################################################################################
@@ -42,33 +44,32 @@ Expand-Archive -Path $HDF5_ZIP_NAME -DestinationPath .
 ################################################################################
 ### Build and install
 
-# Build x32
-New-Item $HDF5_BUILD_PATH\x32 -ItemType directory
-Set-Location $HDF5_BUILD_PATH\x32
-cmake -G "Visual Studio 16 2019" -A Win32 $HDF5_SRC_PATH -DCMAKE_INSTALL_PREFIX:PATH=$HDF5_INSTALL_PATH -DBUILD_SHARED_LIBS=NO -DBUILD_TESTING=NO -DHDF5_BUILD_CPP_LIB=YES -DHDF5_BUILD_HL_LIB=YES -DHDF5_BUILD_EXAMPLES=NO -DHDF5_BUILD_TOOLS=NO -DHDF5_ENABLE_Z_LIB_SUPPORT=YES -DZLIB_DIR="" -DZLIB_INCLUDE_DIR="$ZLIB_INSTALL_PATH/include" -DZLIB_LIBRARY_DEBUG="$ZLIB_INSTALL_PATH/lib32/zlibstaticd.lib" -DZLIB_LIBRARY_RELEASE="$ZLIB_INSTALL_PATH/lib32/zlibstatic.lib"
+# Build
+New-Item $HDF5_BUILD_PATH -ItemType directory
+Set-Location $HDF5_BUILD_PATH
+cmake -G "Visual Studio 16 2019" -A x64 $HDF5_SRC_PATH `
+	-DCMAKE_INSTALL_PREFIX:PATH=$HDF5_INSTALL_PATH `
+	-DBUILD_SHARED_LIBS=NO `
+	-DBUILD_TESTING=NO `
+	-DHDF5_BUILD_CPP_LIB=YES `
+	-DHDF5_BUILD_HL_LIB=YES `
+	-DHDF5_BUILD_EXAMPLES=NO `
+	-DHDF5_BUILD_TOOLS=NO `
+	-DHDF5_ENABLE_Z_LIB_SUPPORT=YES `
+	-DZLIB_DIR="" `
+	-DZLIB_INCLUDE_DIR="$ZLIB_INSTALL_PATH/include" `
+	-DZLIB_LIBRARY_DEBUG="$ZLIB_INSTALL_PATH/lib/zlibstaticd.lib" `
+	-DZLIB_LIBRARY_RELEASE="$ZLIB_INSTALL_PATH/lib/zlibstatic.lib"
 cmake --build . --parallel --target INSTALL --config Debug
 cmake --build . --parallel --target INSTALL --config Release
-Rename-Item -Path "$HDF5_INSTALL_PATH\lib" -NewName "$HDF5_INSTALL_PATH\lib32"
-
-# Build x64
-New-Item $HDF5_BUILD_PATH\x64 -ItemType directory
-Set-Location $HDF5_BUILD_PATH\x64
-cmake -G "Visual Studio 16 2019" -A x64 $HDF5_SRC_PATH -DCMAKE_INSTALL_PREFIX:PATH=$HDF5_INSTALL_PATH -DBUILD_SHARED_LIBS=NO -DBUILD_TESTING=NO -DHDF5_BUILD_CPP_LIB=YES -DHDF5_BUILD_HL_LIB=YES -DHDF5_BUILD_EXAMPLES=NO -DHDF5_BUILD_TOOLS=NO -DHDF5_ENABLE_Z_LIB_SUPPORT=YES -DZLIB_DIR="" -DZLIB_INCLUDE_DIR="$ZLIB_INSTALL_PATH/include" -DZLIB_LIBRARY_DEBUG="$ZLIB_INSTALL_PATH/lib64/zlibstaticd.lib" -DZLIB_LIBRARY_RELEASE="$ZLIB_INSTALL_PATH/lib64/zlibstatic.lib"
-cmake --build . --parallel --target INSTALL --config Debug
-cmake --build . --parallel --target INSTALL --config Release
-Rename-Item -Path "$HDF5_INSTALL_PATH\lib" -NewName "$HDF5_INSTALL_PATH\lib64"
 
 ################################################################################
 ### Copy *.pdb files
 
-Copy-Item "$HDF5_BUILD_PATH\x32\bin\Debug\libhdf5_D.pdb" "$HDF5_INSTALL_PATH\lib32\libhdf5_D.pdb"
-Copy-Item "$HDF5_BUILD_PATH\x64\bin\Debug\libhdf5_D.pdb" "$HDF5_INSTALL_PATH\lib64\libhdf5_D.pdb"
-Copy-Item "$HDF5_BUILD_PATH\x32\bin\Debug\libhdf5_hl_D.pdb" "$HDF5_INSTALL_PATH\lib32\libhdf5_hl_D.pdb"
-Copy-Item "$HDF5_BUILD_PATH\x64\bin\Debug\libhdf5_hl_D.pdb" "$HDF5_INSTALL_PATH\lib64\libhdf5_hl_D.pdb"
-Copy-Item "$HDF5_BUILD_PATH\x32\bin\Debug\libhdf5_cpp_D.pdb" "$HDF5_INSTALL_PATH\lib32\libhdf5_cpp_D.pdb"
-Copy-Item "$HDF5_BUILD_PATH\x64\bin\Debug\libhdf5_cpp_D.pdb" "$HDF5_INSTALL_PATH\lib64\libhdf5_cpp_D.pdb"
-Copy-Item "$HDF5_BUILD_PATH\x32\bin\Debug\libhdf5_hl_cpp_D.pdb" "$HDF5_INSTALL_PATH\lib32\libhdf5_hl_cpp_D.pdb"
-Copy-Item "$HDF5_BUILD_PATH\x64\bin\Debug\libhdf5_hl_cpp_D.pdb" "$HDF5_INSTALL_PATH\lib64\libhdf5_hl_cpp_D.pdb"
+Copy-Item "$HDF5_BUILD_PATH\bin\Debug\libhdf5_D.pdb"        "$HDF5_INSTALL_PATH\lib\libhdf5_D.pdb"
+Copy-Item "$HDF5_BUILD_PATH\bin\Debug\libhdf5_hl_D.pdb"     "$HDF5_INSTALL_PATH\lib\libhdf5_hl_D.pdb"
+Copy-Item "$HDF5_BUILD_PATH\bin\Debug\libhdf5_cpp_D.pdb"    "$HDF5_INSTALL_PATH\lib\libhdf5_cpp_D.pdb"
+Copy-Item "$HDF5_BUILD_PATH\bin\Debug\libhdf5_hl_cpp_D.pdb" "$HDF5_INSTALL_PATH\lib\libhdf5_hl_cpp_D.pdb"
 
 ################################################################################
 ### Clean installation directory
@@ -76,10 +77,8 @@ Copy-Item "$HDF5_BUILD_PATH\x64\bin\Debug\libhdf5_hl_cpp_D.pdb" "$HDF5_INSTALL_P
 $REM_HDF5_ROOT_LIST = @(
 	"bin",
 	"cmake",
-	"lib32\libhdf5.settings",
-	"lib64\libhdf5.settings",
-	"lib32\pkgconfig",
-	"lib64\pkgconfig",
+	"lib\libhdf5.settings",
+	"lib\pkgconfig",
 	"COPYING",
 	"RELEASE.txt",
 	"USING_HDF5_CMake.txt",
@@ -139,7 +138,7 @@ $REM_HDF5_INCLUDE_LIST = @(
 	"hdf5_hl"
 )
 
-# gather
+# Gather
 $REM_LIST = @("TEMP_TO_DEL")
 foreach ($item in $REM_HDF5_ROOT_LIST) {
 	$REM_LIST += $HDF5_INSTALL_PATH + '\' + $item
@@ -147,7 +146,7 @@ foreach ($item in $REM_HDF5_ROOT_LIST) {
 foreach ($item in $REM_HDF5_INCLUDE_LIST) {
 	$REM_LIST += $HDF5_INSTALL_PATH + '\include\' + $item + '.h'
 }
-# remove
+# Remove
 foreach ($item in $REM_LIST) {
 	Remove-Item "$item" -Force -Recurse -ErrorAction Ignore
 }

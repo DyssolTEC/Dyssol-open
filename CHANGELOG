@@ -4,16 +4,24 @@ Models:
 - Added residual moisture of granules in the Granulator model.
 
 Models API:
-- Add functions DiameterToMass()
+- Added functions DiameterToMass() to calculate masses from particle diameters. 
+- Added function AddVector() to add the value to all values of the vector.
 - Added function CBaseUnit::ConfigureUnitStructures() to setup all the internal settings of the units from an existing one.
+- Added function AddNLVariables() to KINSOL solver to add multiple state variables.
+- Added function Slice() and SetSlice() to simplify work with indexed arrays of values.
+- Added functions GetDistributionMean(), GetDistributionVariance(), GetDistributionStdDev().
 
 Core:
+- Drop support of Win32/x86 version.
 
 Documentation:
 
 Fixes:
 - Fixed a possible crash when saving a file in a write-protected directory.
+- In some cases simulation wasn't stop after pressing the stop button.
+- Fixed the work of Save Time Step setting in some cases.
 
 Other:
+- Allow installation for single user.
 - Add lactose to the default materials database.
 - Other minor bug fixes and performance improvements.

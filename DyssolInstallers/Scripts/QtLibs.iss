@@ -1,10 +1,8 @@
-; Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. 
+; Copyright (c) 2020, Dyssol Development Team. 
+; Copyright (c) 2024, DyssolTEC GmbH. 
+; All rights reserved. This file is part of Dyssol. See LICENSE file for license information. 
 
 #include "CommonConstants.iss"
-
-#define QtConfig "msvc2019"
-#define QtPath32 QtPath + "\" + QtConfig
-#define QtPath64 QtPath + "\" + QtConfig + "_64"
 
 #dim QtLibs[3]
 #define QtLibs[0] "Qt5Core"
@@ -21,49 +19,25 @@
 
 [Files]
 #sub QtLibsFileEntry
-#ifdef IsIncludeX32
-Source: "{#QtPath32}\bin\{#QtLibs[I]}.dll";  DestDir: "{app}";                                            Flags: ignoreversion; Check: not Is64BitInstallMode
-  #ifdef IsWithSDK
-Source: "{#QtPath32}\bin\{#QtLibs[I]}d.dll"; DestDir: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}"; Flags: ignoreversion; Check: not Is64BitInstallMode
-  #endif
-#endif
-#ifdef IsIncludeX64
-Source: "{#QtPath64}\bin\{#QtLibs[I]}.dll";  DestDir: "{app}";                                            Flags: ignoreversion; Check: Is64BitInstallMode
-  #ifdef IsWithSDK
-Source: "{#QtPath64}\bin\{#QtLibs[I]}d.dll"; DestDir: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}"; Flags: ignoreversion; Check: Is64BitInstallMode
-  #endif
+Source: "{#QtPath}\bin\{#QtLibs[I]}.dll";  DestDir: "{app}";                                            Flags: ignoreversion
+#ifdef IsWithSDK
+Source: "{#QtPath}\bin\{#QtLibs[I]}d.dll"; DestDir: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}"; Flags: ignoreversion
 #endif
 #endsub
 #for {I = 0; I < DimOf(QtLibs); I++} QtLibsFileEntry
 
 #sub QtLibsPlatformsFileEntry
-#ifdef IsIncludeX32
-Source: "{#QtPath32}\plugins\platforms\{#QtLibsPlatforms[I]}.dll";  DestDir: "{app}\{code:DirQtPlatforms}";                                            Flags: ignoreversion; Check: not Is64BitInstallMode
-  #ifdef IsWithSDK
-Source: "{#QtPath32}\plugins\platforms\{#QtLibsPlatforms[I]}d.dll"; DestDir: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}\{code:DirQtPlatforms}"; Flags: ignoreversion; Check: not Is64BitInstallMode
-  #endif
-#endif
-#ifdef IsIncludeX64
-Source: "{#QtPath64}\plugins\platforms\{#QtLibsPlatforms[I]}.dll";  DestDir: "{app}\{code:DirQtPlatforms}";                                            Flags: ignoreversion; Check: Is64BitInstallMode
-  #ifdef IsWithSDK
-Source: "{#QtPath64}\plugins\platforms\{#QtLibsPlatforms[I]}d.dll"; DestDir: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}\{code:DirQtPlatforms}"; Flags: ignoreversion; Check: Is64BitInstallMode
-  #endif
+Source: "{#QtPath}\plugins\platforms\{#QtLibsPlatforms[I]}.dll";  DestDir: "{app}\{code:DirQtPlatforms}";                                            Flags: ignoreversion
+#ifdef IsWithSDK
+Source: "{#QtPath}\plugins\platforms\{#QtLibsPlatforms[I]}d.dll"; DestDir: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}\{code:DirQtPlatforms}"; Flags: ignoreversion
 #endif
 #endsub
 #for {I = 0; I < DimOf(QtLibsPlatforms); I++} QtLibsPlatformsFileEntry
 
 #sub QtLibsStylesFileEntry
-#ifdef IsIncludeX32
-Source: "{#QtPath32}\plugins\styles\{#QtLibsStyles[I]}.dll";  DestDir: "{app}\{code:DirQtStyles}";                                            Flags: ignoreversion; Check: not Is64BitInstallMode
-  #ifdef IsWithSDK
-Source: "{#QtPath32}\plugins\styles\{#QtLibsStyles[I]}d.dll"; DestDir: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}\{code:DirQtStyles}"; Flags: ignoreversion; Check: not Is64BitInstallMode
-  #endif
-#endif
-#ifdef IsIncludeX64
-Source: "{#QtPath64}\plugins\styles\{#QtLibsStyles[I]}.dll";  DestDir: "{app}\{code:DirQtStyles}";                                            Flags: ignoreversion; Check: Is64BitInstallMode
-  #ifdef IsWithSDK
-Source: "{#QtPath64}\plugins\styles\{#QtLibsStyles[I]}d.dll"; DestDir: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}\{code:DirQtStyles}"; Flags: ignoreversion; Check: Is64BitInstallMode
-  #endif
+Source: "{#QtPath}\plugins\styles\{#QtLibsStyles[I]}.dll";  DestDir: "{app}\{code:DirQtStyles}";                                            Flags: ignoreversion
+#ifdef IsWithSDK
+Source: "{#QtPath}\plugins\styles\{#QtLibsStyles[I]}d.dll"; DestDir: "{app}\{code:DirModelsCreator}\{code:DirDebugExe}\{code:DirQtStyles}"; Flags: ignoreversion
 #endif
 #endsub
 #for {I = 0; I < DimOf(QtLibsStyles); I++} QtLibsStylesFileEntry
