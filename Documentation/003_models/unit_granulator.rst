@@ -34,9 +34,21 @@ Continuous granulator
 
 	\dot{m}_{out} = \dot{m}_{in} + \dot{m}_{e}
 
+.. math:: 
+
+	\dot{m}_{in,liq} = (1 - K_{os}) \cdot \dot{m}_{sus,liq} + \dot{m}_{nuc,liq} + \dot{m}_{gas,liq}
+
 .. math::
 
-	\dot{m}_{dust} = \dot{m}_{s,susp}\cdot K_{os} + (\dot{m}_{susp} - \dot{m}_{s,susp} + \dot{m}_{fl,g})
+	\dot{m}_{gran,liq} = 
+	\begin{cases}
+	u_{moist} \cdot \dot{m}_{out} & u_{moist} \cdot \dot{m}_{out} \leq \dot{m}_{in,liq} \\
+	\dot{m}_{in,liq} & u_{moist} \cdot \dot{m}_{out} > \dot{m}_{in,liq} \\
+	\end{cases}
+
+.. math::
+
+	\dot{m}_{dust} = \dot{m}_{s,susp}\cdot K_{os} + (\dot{m}_{susp} - \dot{m}_{s,susp} + \dot{m}_{fl,g} - \dot{m}_{gran,liq})
 
 Batch granulator
 ^^^^^^^^^^^^^^^^^^^^^
@@ -93,7 +105,19 @@ Batch granulator
 
 	:math:`\dot{m}_{e}` – effective mass stream of the injected suspension
 
+	:math:`\dot{m}_{gran,liq}` – liquid mass flow leaving the granulator with granules
+
+	:math:`\dot{m}_{in,liq}` – total effective mass flow of liquid
+
+	:math:`\dot{m}_{sus,liq}` – mass flow of the liquid phase in the **Suspension** inlet
+
+	:math:`\dot{m}_{nuc,liq}` – mass flow of the liquid phase in the **ExternalNuclei** inlet
+
+	:math:`\dot{m}_{gas,liq}` – mass flow of the liquid phase in the **FluidizationGas** inlet
+
 	:math:`M_{tot}` – holdup mass
+
+	:math:`u_{moist}` – moisture content of granules (dry basis)
 
 	:math:`\rho_{s,susp}` – density of solids in the holdup
 
@@ -109,15 +133,17 @@ Batch granulator
 
 .. note:: Input parameters needed for the simulation:
 
-	+------+-----------------+----------------------------------------+-------+--------------+
-	| Name | Symbol          | Description                            | Units | Boundaries   |
-	+======+=================+========================================+=======+==============+
-	| Kos  | :math:`K_{os}`  | Overspray part in the suspension       | [--]  | 0 ≤ Kos ≤ 1  |
-	+------+-----------------+----------------------------------------+-------+--------------+
-	| RTol | --              | Relative tolerance for equation solver | [--]  | 0 < RTol ≤ 1 |
-	+------+-----------------+----------------------------------------+-------+--------------+
-	| ATol | --              | Absolute tolerance for equation solver | [--]  | 0 < ATol ≤ 1 |
-	+------+-----------------+----------------------------------------+-------+--------------+
+	+---------------------------+-------------------+------------------------------------------+-------+------------------------+
+	| Name                      | Symbol            | Description                              | Units | Boundaries             |
+	+===========================+===================+==========================================+=======+========================+
+	| Kos                       | :math:`K_{os}`    | Overspray part in the suspension         | [--]  | 0 ≤ :math:`K_{os}` ≤ 1 |
+	+---------------------------+-------------------+------------------------------------------+-------+------------------------+
+	| Granules moisture content | :math:`u_{moist}` | Moisture content of granules (dry basis) | [--]  | 0 ≤ :math:`u_{moist}`  |
+	+---------------------------+-------------------+------------------------------------------+-------+------------------------+
+	| Relative tolerance        | --                | Relative tolerance for equation solver   | [--]  | 0 < RTol ≤ 1           |
+	+---------------------------+-------------------+------------------------------------------+-------+------------------------+
+	| Absolute tolerance        | --                | Absolute tolerance for equation solver   | [--]  | 0 < ATol ≤ 1           |
+	+---------------------------+-------------------+------------------------------------------+-------+------------------------+
 
 
 .. note:: State variables:

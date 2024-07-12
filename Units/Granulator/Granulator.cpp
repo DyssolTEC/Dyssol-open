@@ -28,6 +28,7 @@ void CSimpleGranulator::CreateStructure()
 
 	/// Add unit parameters ///
 	AddTDParameter       ("Kos"               , 0.0, "-", "Overspray part of solution"                                     , 0.0, 1.0);
+	AddTDParameter("Granules moisture content", 0.0, "-", "Residual moisture content in granules on a dry basis", 0.0);
 	AddConstRealParameter("Relative tolerance", 0.0, "-", "Solver relative tolerance. Set to 0 to use flowsheet-wide value", 0       );
 	AddConstRealParameter("Absolute tolerance", 0.0, "-", "Solver absolute tolerance. Set to 0 to use flowsheet-wide value", 0       );
 
@@ -125,11 +126,16 @@ void CUnitDAEModel::ResultsHandler(double _time, double* _vars, double* _ders, v
 
 	const double mSolut = unit->m_inSolutStream->GetPhaseMassFlow(_time, EPhase::SOLID);	// Mass flow of solid phase in solution for current time
 	const double Kos = unit->GetTDParameterValue("Kos", _time);								// Overspray part in solution for current time
+	const double moistureContent = unit->GetTDParameterValue("Granules moisture content", _time);	// Moisture content of output granules [kg(liq)/kg(sol)]
 	const double me = mSolut * (1 - Kos);													// Effective mass stream of the injected solution for current time
+	const double totLiqMass = (1 - Kos) * unit->m_inSolutStream->GetPhaseMassFlow(_time, EPhase::LIQUID) + unit->m_inNuclStream->GetPhaseMassFlow(_time, EPhase::LIQUID) + unit->m_inGasStream->GetPhaseMassFlow(_time, EPhase::LIQUID);
 	const double mInNucl = unit->m_inNuclStream->GetPhaseMassFlow(_time, EPhase::SOLID);	// Mass of input nuclei - solid part
 	const double mOutTemp = mInNucl + me;
 
 	const double dustMass = _vars[m_iMdust];
+
+	// Output mass flow of liquid in the granules
+	const double moistureMassFlow = ClampR(moistureContent * mOutTemp, totLiqMass);
 
 	unit->m_holdup->AddTimePoint(_time);
 
@@ -153,9 +159,9 @@ void CUnitDAEModel::ResultsHandler(double _time, double* _vars, double* _ders, v
 
 	unit->m_holdup->SetMass(_time, holdupMass);
 
-	unit->m_outNuclStream->CopyFromHoldup(_time, unit->m_holdup, mOutTemp);
-	unit->m_outNuclStream->SetPhaseFraction(_time, EPhase::SOLID, 1);
-	unit->m_outNuclStream->SetPhaseFraction(_time, EPhase::LIQUID, 0);
+	unit->m_outNuclStream->CopyFromHoldup(_time, unit->m_holdup, mOutTemp + moistureMassFlow);
+	unit->m_outNuclStream->SetPhaseFraction(_time, EPhase::SOLID, mOutTemp / (mOutTemp + moistureMassFlow));
+	unit->m_outNuclStream->SetPhaseFraction(_time, EPhase::LIQUID, moistureMassFlow / (mOutTemp + moistureMassFlow));
 	unit->m_outNuclStream->SetPhaseFraction(_time, EPhase::VAPOR, 0);
 
 	unit->m_outDustStream->CopyFromHoldup(_time, unit->m_holdup, unit->m_holdup->GetMass(_time));
@@ -188,7 +194,9 @@ void CUnitDAEModel::CalculateResiduals(double _time, double* _vars, double* _der
 	const double mSusp = unit->m_inSolutStream->GetPhaseMassFlow(_time, EPhase::SOLID);					// Mass flow of solid phase in solution for current time
 	const double mNotSol = unit->m_inSolutStream->GetMassFlow(_time) - mSusp;							// Mass flow of all phases except solid in solution for current time
 	const double Kos = unit->GetTDParameterValue("Kos", _time);											// Overspray part in solution for current time
+	const double moistureContent = unit->GetTDParameterValue("Granules moisture content", _time);		// Moisture content of output granules [kg(liq)/kg(sol)]
 	const double me = mSusp * (1 - Kos);																// Effective mass stream of the injected solution for current time
+	const double totLiqMass = (1 - Kos) * unit->m_inSolutStream->GetPhaseMassFlow(_time, EPhase::LIQUID) + unit->m_inNuclStream->GetPhaseMassFlow(_time, EPhase::LIQUID) + unit->m_inGasStream->GetPhaseMassFlow(_time, EPhase::LIQUID);
 	const double solutSolDens = unit->m_inSolutStream->GetPhaseProperty(_time, EPhase::SOLID, DENSITY);	// Density of the solid in the solution
 	const double mInNucl = unit->m_inNuclStream->GetPhaseMassFlow(_time, EPhase::SOLID);				// Mass of input nuclei - solid part
 	const double mInNuclNotSol = unit->m_inNuclStream->GetMassFlow(_time) - mInNucl;					// Mass of input nuclei - not solid part
@@ -206,8 +214,11 @@ void CUnitDAEModel::CalculateResiduals(double _time, double* _vars, double* _der
 	// Output mass flow of nuclei (MOut)
 	_res[m_iMout] = mOut - (mInNucl + me);
 
+	// Output mass flow of liquid in the granules
+	const double moistureMassFlow = ClampR(moistureContent * mOut, totLiqMass);
+
 	// Output mass flow of dust (MDust)
-	_res[m_iMdust] = mDust - (mInNuclNotSol + mSusp*Kos + mNotSol + totGasMass);
+	_res[m_iMdust] = mDust - (mInNuclNotSol + mSusp*Kos + mNotSol + totGasMass - moistureMassFlow);
 
 	// Growth rate (G)
 	if (ATot != 0)

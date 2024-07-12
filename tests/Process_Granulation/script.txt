@@ -53,6 +53,7 @@ STREAM "Fines2" "Screen2" "Fine" "Mixer2" "In1"
 STREAM "Milled" "Crusher" "Output" "Mixer2" "In2"
 
 UNIT_PARAMETER "Granulator" "Kos"  0 0
+UNIT_PARAMETER "Granulator" "Granules moisture content" 0 0.01
 UNIT_PARAMETER "Granulator" "Relative tolerance" 1e-6
 UNIT_PARAMETER "Granulator" "Absolute tolerance" 1e-7
 UNIT_PARAMETER "Screen1" "Model" 0

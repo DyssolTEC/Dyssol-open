@@ -1,11 +1,33 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2024, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "Dyssol.h"
-#include "FileSystem.h"
-#include "DyssolStringConstants.h"
-#include "DyssolSystemDefines.h"
-#include <QDir>
-#include <QDate>
+
+#ifdef _MSC_VER
+// Print message to the VS Output window.
+void VSDebugOutput(const std::string& _message)
+{
+	OutputDebugStringA(_message.c_str());
+}
+#endif
+
+void HandleException(const std::exception_ptr& _exceptionPtr)
+{
+	try
+	{
+		if (_exceptionPtr)
+			std::rethrow_exception(_exceptionPtr);
+	}
+	catch (const std::exception& e)
+	{
+		const std::string message = "Unknown unhandled exception caught: '" + std::string{ e.what() } + "'\n";
+		std::cout << message;
+#ifdef _MSC_VER
+		VSDebugOutput(message);
+#endif
+	}
+}
 
 int main(int argc, char* argv[])
 {
@@ -25,6 +47,7 @@ int main(int argc, char* argv[])
 
 		Dyssol w;
 
+		std::exception_ptr exceptionPtr;
 		try
 		{
 			w.InitializeConnections();
@@ -37,8 +60,9 @@ int main(int argc, char* argv[])
 		}
 		catch(...)
 		{
-			int i = 0;
+			exceptionPtr = std::current_exception(); // capture current exception
 		}
+		HandleException(exceptionPtr);
 	}
 	while (nExitCode == Dyssol::EXIT_CODE_REBOOT);
 

@@ -71,7 +71,7 @@ void CUnitContainer::SetModel(const std::string& _uniqueID)
 	m_model = m_modelsManager->InstantiateUnit(_uniqueID);
 	if (m_model)
 	{
-		m_model->SetSettings(m_materialsDB, *m_grid, m_overall, m_phases, m_cache, m_tolerance, m_thermodynamics);
+		m_model->ConfigureUnitStructures(m_materialsDB, *m_grid, m_overall, m_phases, m_cache, m_tolerance, m_thermodynamics);
 		// TODO: catch exceptions from Add-functions
 		m_model->DoCreateStructure();
 	}
