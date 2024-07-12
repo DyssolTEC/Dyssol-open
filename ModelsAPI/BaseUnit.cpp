@@ -10,7 +10,7 @@
 #include <stdexcept>
 #include <numeric>
 
-void CBaseUnit::SetSettings(const CMaterialsDatabase* _materialsDB, const CMultidimensionalGrid& _grid, const std::vector<SOverallDescriptor>* _overall,
+void CBaseUnit::ConfigureUnitStructures(const CMaterialsDatabase* _materialsDB, const CMultidimensionalGrid& _grid, const std::vector<SOverallDescriptor>* _overall,
 	const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics)
 {
 	m_materialsDB    = _materialsDB;
@@ -20,6 +20,18 @@ void CBaseUnit::SetSettings(const CMaterialsDatabase* _materialsDB, const CMulti
 	m_cache          = _cache;
 	m_tolerances     = _tolerance;
 	m_thermodynamics = _thermodynamics;
+	m_streams.SetPointers(m_materialsDB, &m_grid, m_overall, m_phases, m_cache, m_tolerances, m_thermodynamics);
+}
+
+void CBaseUnit::ConfigureUnitStructures(const CBaseUnit* _other)
+{
+	m_materialsDB    = _other->m_materialsDB;
+	m_grid           = _other->m_grid;
+	m_overall        = _other->m_overall;
+	m_phases         = _other->m_phases;
+	m_cache          = _other->m_cache;
+	m_tolerances     = _other->m_tolerances;
+	m_thermodynamics = _other->m_thermodynamics;
 	m_streams.SetPointers(m_materialsDB, &m_grid, m_overall, m_phases, m_cache, m_tolerances, m_thermodynamics);
 }
 

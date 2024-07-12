@@ -138,7 +138,7 @@ public:
 
 	/**
 	 * \private
-	 * \brief Sets pointers and values of all required data.
+	 * \brief Sets pointers and values of all required internal data.
 	 * \param _materialsDB Pointer to global materials database.
 	 * \param _grid Const reference to global multidimensional grid.
 	 * \param _overall Pointer to a vector of global overall stream parameters.
@@ -147,8 +147,14 @@ public:
 	 * \param _tolerance Pointer to global tolerance settings.
 	 * \param _thermodynamics Pointer to global thermodynamics settings.
 	 */
-	void SetSettings(const CMaterialsDatabase* _materialsDB, const CMultidimensionalGrid& _grid, const std::vector<SOverallDescriptor>* _overall,
-					const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics);
+	void ConfigureUnitStructures(const CMaterialsDatabase* _materialsDB, const CMultidimensionalGrid& _grid, const std::vector<SOverallDescriptor>* _overall,
+		const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics);
+
+	/**
+	 * \brief Sets pointers and values of all required internal data.
+	 * \param _other Pointer to an existing unit.
+	 */
+	void ConfigureUnitStructures(const CBaseUnit* _other);
 
 	/**
 	 * \private

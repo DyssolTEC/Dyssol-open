@@ -1,13 +1,18 @@
 UI:
 
+Models:
+- Added residual moisture of granules in the Granulator model.
+
 Models API:
 - Add functions DiameterToMass()
+- Added function CBaseUnit::ConfigureUnitStructures() to setup all the internal settings of the units from an existing one.
 
 Core:
 
 Documentation:
 
 Fixes:
+- Fixed a possible crash when saving a file in a write-protected directory.
 
 Other:
 - Add lactose to the default materials database.
