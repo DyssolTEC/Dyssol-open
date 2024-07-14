@@ -124,10 +124,17 @@ procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
   if CurUninstallStep = usUninstall then
   begin
-    if MsgBox('Delete all configuration files?'+#13#10+'This includes a list of recently opened files, paths to models and materials database, etc.', mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES then 
-    begin
-      DeleteFile(ExpandConstant('{autoappdata}\{#MyAppName}\{code:FileConfigIni}'));
-    end;
+    if ExpandConstant('{param:skipaskconfig|no}') = 'no' then
+	begin
+      if MsgBox('Delete all configuration files?'+#13#10+'This includes a list of recently opened files, paths to models and materials database, etc.', mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES then 
+      begin
+        DeleteFile(ExpandConstant('{autoappdata}\{#MyAppName}\{code:FileConfigIni}'));
+      end;
+	end
+	else
+	begin
+	  DeleteFile(ExpandConstant('{autoappdata}\{#MyAppName}\{code:FileConfigIni}'));
+	end;
   end;
 end;
 
