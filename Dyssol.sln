@@ -150,6 +150,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tests", "DyssolInstallers\T
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimulationThread", "GUIWidgets\SimulationThread\SimulationThread.vcxproj", "{0F7B1A52-7766-4E37-9ACD-AC76AB000000}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MainWindow", "GUIDialogs\MainWindow\MainWindow.vcxproj", "{9F945E6D-B524-490A-81E3-F4F0A48139AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -398,6 +400,10 @@ Global
 		{0F7B1A52-7766-4E37-9ACD-AC76AB000000}.Debug|x64.Build.0 = Debug|x64
 		{0F7B1A52-7766-4E37-9ACD-AC76AB000000}.Release|x64.ActiveCfg = Release|x64
 		{0F7B1A52-7766-4E37-9ACD-AC76AB000000}.Release|x64.Build.0 = Release|x64
+		{9F945E6D-B524-490A-81E3-F4F0A48139AF}.Debug|x64.ActiveCfg = Debug|x64
+		{9F945E6D-B524-490A-81E3-F4F0A48139AF}.Debug|x64.Build.0 = Debug|x64
+		{9F945E6D-B524-490A-81E3-F4F0A48139AF}.Release|x64.ActiveCfg = Release|x64
+		{9F945E6D-B524-490A-81E3-F4F0A48139AF}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -469,9 +475,10 @@ Global
 		{C91712C5-4A46-4703-9857-4E742D247601} = {FF9F78BB-144A-48EF-87D3-7EEE6C6B4682}
 		{9E33ACE6-5DDA-400C-8242-6BE0B8569221} = {FF9F78BB-144A-48EF-87D3-7EEE6C6B4682}
 		{0F7B1A52-7766-4E37-9ACD-AC76AB000000} = {8B7A2AEC-46DD-47CE-937E-767D7692C15F}
+		{9F945E6D-B524-490A-81E3-F4F0A48139AF} = {A0D725D5-C2B1-436E-94CE-E56F2DDF24AE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {CAC327DA-BA65-4990-BEC0-618347D67688}
 		Qt5Version = msvc2019_64
+		SolutionGuid = {CAC327DA-BA65-4990-BEC0-618347D67688}
 	EndGlobalSection
 EndGlobal

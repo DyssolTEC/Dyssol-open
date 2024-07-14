@@ -3,6 +3,7 @@
  * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "Dyssol.h"
+#include <QApplication>
 
 #ifdef _MSC_VER
 // Print message to the VS Output window.
