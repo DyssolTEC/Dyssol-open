@@ -21,7 +21,7 @@ MACRO(SUBDIRLIST result curdir)
 ENDMACRO()
 
 set(DyssolGUInames
-	"DyssolMainWindow"
+	"DyssolGUI"
 	"GUIDialogs"
 	"GUIWidgets"
 )

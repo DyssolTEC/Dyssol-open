@@ -50,7 +50,7 @@ OutputBaseFilename={#MyAppName} {#MyAppVersion} setup
 #endif
 OutputDir={#SolutionDir}\DyssolInstallers\Installers
 LicenseFile={#SolutionDir}\LICENSE
-SetupIconFile={#SolutionDir}\DyssolMainWindow\Resources\Icon.ico
+SetupIconFile={#SolutionDir}\DyssolGUI\Resources\Icon.ico
 WizardImageFile={#SolutionDir}\DyssolInstallers\Data\WizardImageFile.bmp
 WizardSmallImageFile={#SolutionDir}\DyssolInstallers\Data\WizardSmallImageFile.bmp
 DisableStartupPrompt=False

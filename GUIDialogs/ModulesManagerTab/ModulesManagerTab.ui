@@ -14,7 +14,7 @@
       <string>Models manager</string>
     </property>
     <property name="windowIcon">
-      <iconset resource="../../DyssolMainWindow/Resources.qrc">
+      <iconset resource="../../DyssolGUI/Resources.qrc">
         <normaloff>:/Icons/WinIcon</normaloff>:/Icons/WinIcon</iconset>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1,3">
@@ -178,7 +178,7 @@
     <tabstop>tableModels</tabstop>
   </tabstops>
   <resources>
-    <include location="../../DyssolMainWindow/Resources.qrc" />
+    <include location="../../DyssolGUI/Resources.qrc" />
   </resources>
   <connections />
 </ui>

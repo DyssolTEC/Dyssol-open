@@ -179,7 +179,7 @@
     <tabstop>mainTabWidget</tabstop>
   </tabstops>
   <resources>
-    <include location="../../DyssolMainWindow/Resources.qrc" />
+    <include location="../../DyssolGUI/Resources.qrc" />
   </resources>
   <connections />
 </ui>

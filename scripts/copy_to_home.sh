@@ -9,4 +9,4 @@ SCRIPT=$(readlink -f "$0")
 # Absolute path this script is in, thus /home/user/bin
 SCRIPTPATH=$(dirname "$SCRIPT")
 # Run copy
-rsync -av --exclude=.git --exclude=.vs --exclude=build --exclude=Documentation/sources --exclude=DyssolConsole/cache --exclude=DyssolInstallers/Compiler --exclude=DyssolInstallers/Installers --exclude=ExternalLibraries --exclude=install --exclude=Win32 --exclude=x64 ${SCRIPTPATH}/../ ~/dyssol/
+rsync -av --exclude=.git --exclude=.vs --exclude=build --exclude=Documentation/sources --exclude=DyssolCLI/cache --exclude=DyssolInstallers/Compiler --exclude=DyssolInstallers/Installers --exclude=ExternalLibraries --exclude=install --exclude=Win32 --exclude=x64 ${SCRIPTPATH}/../ ~/dyssol/

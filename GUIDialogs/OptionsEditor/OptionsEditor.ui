@@ -32,7 +32,7 @@
       <string>Options</string>
     </property>
     <property name="windowIcon">
-      <iconset resource="../../DyssolMainWindow/Resources.qrc">
+      <iconset resource="../../DyssolGUI/Resources.qrc">
         <normaloff>:/Icons/WinIcon</normaloff>:/Icons/WinIcon</iconset>
     </property>
     <property name="sizeGripEnabled">
@@ -1162,7 +1162,7 @@
     <tabstop>checkBoxSplitFile</tabstop>
   </tabstops>
   <resources>
-    <include location="../../DyssolMainWindow/Resources.qrc" />
+    <include location="../../DyssolGUI/Resources.qrc" />
   </resources>
   <connections>
     <connection>

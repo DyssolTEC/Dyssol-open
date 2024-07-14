@@ -14,7 +14,7 @@
       <string>Dependent property editor</string>
     </property>
     <property name="windowIcon">
-      <iconset resource="../../DyssolMainWindow/Resources.qrc">
+      <iconset resource="../../DyssolGUI/Resources.qrc">
         <normaloff>:/Icons/WinIcon</normaloff>:/Icons/WinIcon</iconset>
     </property>
     <layout class="QGridLayout" name="gridLayout_2" rowstretch="1,0,1,0" columnstretch="1,0">
@@ -395,7 +395,7 @@
     <tabstop>lineCalcVal</tabstop>
   </tabstops>
   <resources>
-    <include location="../../DyssolMainWindow/Resources.qrc" />
+    <include location="../../DyssolGUI/Resources.qrc" />
   </resources>
   <connections />
 </ui>

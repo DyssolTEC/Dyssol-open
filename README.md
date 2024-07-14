@@ -103,9 +103,9 @@ The compiled executable file and all the units' libraries will appear in `/path_
 - BaseSolvers - interfaces for equation solvers
 - CahceHandlers - dynamic data caching
 - Documentation - manuals
-- DyssolConsole - main project for command-line version of Dyssol
+- DyssolCLI - main project for command-line version of Dyssol
+- DyssolGUI - main project for GUI version of Dyssol
 - DyssolInstallers - scripts and data needed to build installers for Windows
-- DyssolMainWindow - main project for GUI version of Dyssol
 - EquationSolvers - built-in equation solvers based on SUNDIALS library
 - ExternalLibraries - all third-party libraries and scripts to build them
 - GUIDialogs - main GUI components

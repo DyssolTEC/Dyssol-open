@@ -14,7 +14,7 @@
    <string>Dust formation tendency</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../DyssolMainWindow/Resources.qrc">
+   <iconset resource="../../DyssolGUI/Resources.qrc">
     <normaloff>:/Icons/WinIcon</normaloff>:/Icons/WinIcon</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout" columnstretch="1,4">
@@ -348,7 +348,7 @@ Wet bulk</string>
   <tabstop>listWidgetUnits</tabstop>
  </tabstops>
  <resources>
-  <include location="../../DyssolMainWindow/Resources.qrc"/>
+  <include location="../../DyssolGUI/Resources.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -14,7 +14,7 @@
    <string>Add property</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../DyssolMainWindow/Resources.qrc">
+   <iconset resource="../../DyssolGUI/Resources.qrc">
     <normaloff>:/Icons/WinIcon</normaloff>:/Icons/WinIcon</iconset>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -210,7 +210,7 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="../../DyssolMainWindow/Resources.qrc"/>
+  <include location="../../DyssolGUI/Resources.qrc"/>
  </resources>
  <connections>
   <connection>
