@@ -86,9 +86,9 @@ Source: "..\Data\Licenses\*.txt"                 ; DestDir: "{app}\Licenses"    
 
 [Dirs]
 Name: "{app}\Licenses";                                  Flags: uninsalwaysuninstall
-Name: "{autoappdata}\{#MyAppName}";                      Flags: uninsalwaysuninstall
-Name: "{autoappdata}\{#MyAppName}\{code:DirCache}";      Flags: uninsalwaysuninstall
-Name: "{autoappdata}\{#MyAppName}\{code:DirCacheDebug}"; Flags: uninsalwaysuninstall
+Name: "{autoappdata}\{#MyAppName}";                      Flags: uninsalwaysuninstall; Permissions: users-modify
+Name: "{autoappdata}\{#MyAppName}\{code:DirCache}";      Flags: uninsalwaysuninstall; Permissions: users-modify
+Name: "{autoappdata}\{#MyAppName}\{code:DirCacheDebug}"; Flags: uninsalwaysuninstall; Permissions: users-modify
 
 [Icons]
 Name: "{group}\{#MyAppName}";                        Filename: "{app}\{#MyAppExeName}"
@@ -113,11 +113,11 @@ Type: filesandordirs; Name: "{autoappdata}\{#MyAppName}\{code:DirCache}"
 Type: filesandordirs; Name: "{autoappdata}\{#MyAppName}\{code:DirCacheDebug}"
 
 [INI]
-Filename: "{autoappdata}\{#MyAppName}\{code:FileConfigIni}"; Section: "General"; Key: "modelsFolders";         String: "{code:VarIniModelsFolders}";                   Flags: createkeyifdoesntexist
-Filename: "{autoappdata}\{#MyAppName}\{code:FileConfigIni}"; Section: "General"; Key: "modelsFoldersActivity"; String: "{code:VarIniFoldersActivity}";                 Flags: createkeyifdoesntexist
-Filename: "{autoappdata}\{#MyAppName}\{code:FileConfigIni}"; Section: "General"; Key: "materialsDBPath";       String: "{code:MakeRightSlashes|{app}\Materials.dmdb}"; Flags: createkeyifdoesntexist
-Filename: "{autoappdata}\{#MyAppName}\{code:FileConfigIni}"; Section: "General"; Key: "cachePath";             String: "{autoappdata}\{#MyAppName}";                   Flags: createkeyifdoesntexist
-Filename: "{autoappdata}\{#MyAppName}\{code:FileConfigIni}"; Section: "General"; Key: "loadLast";              String: "false";                                        Flags: createkeyifdoesntexist
+Filename: "{autoappdata}\{#MyAppName}\{code:FileConfigIni}"; Section: "General"; Key: "modelsFolders";         String: "{code:VarIniModelsFolders}";                         Flags: createkeyifdoesntexist
+Filename: "{autoappdata}\{#MyAppName}\{code:FileConfigIni}"; Section: "General"; Key: "modelsFoldersActivity"; String: "{code:VarIniFoldersActivity}";                       Flags: createkeyifdoesntexist
+Filename: "{autoappdata}\{#MyAppName}\{code:FileConfigIni}"; Section: "General"; Key: "materialsDBPath";       String: "{code:MakeRightSlashes|{app}\Materials.dmdb}";       Flags: createkeyifdoesntexist
+Filename: "{autoappdata}\{#MyAppName}\{code:FileConfigIni}"; Section: "General"; Key: "cachePath";             String: "{code:MakeRightSlashes|{autoappdata}\{#MyAppName}}"; Flags: createkeyifdoesntexist
+Filename: "{autoappdata}\{#MyAppName}\{code:FileConfigIni}"; Section: "General"; Key: "loadLast";              String: "false";                                              Flags: createkeyifdoesntexist
 
 [Code]
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);

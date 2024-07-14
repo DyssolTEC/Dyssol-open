@@ -61,7 +61,6 @@ private:
 	CSimulator m_Simulator;						// simulator
 
 	QSettings* m_pSettings;		// Config file.
-	QString m_sSettingsPath;	// Path to store settings and temporary data, where config file and caches are stored.
 
 	CMainWindowHelpHelper* m_helpHelper{}; // Fake window to provide main window with functionality to show help files.
 	CCalculationSequenceEditor* m_pCalcSequenceEditor;

@@ -33,21 +33,22 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	m_Simulator.SetFlowsheet(&m_Flowsheet);
 
 	// setup config file
+	QString settingsPath{};
 	const auto systemSettingsPath = QFileInfo{ QSettings{ QSettings::IniFormat, QSettings::SystemScope, StrConst::Dyssol_ApplicationName, StrConst::Dyssol_ConfigApp }.fileName() }.absolutePath();
 	const auto userSettingsPath   = QFileInfo{ QSettings{ QSettings::IniFormat, QSettings::UserScope  , StrConst::Dyssol_ApplicationName, StrConst::Dyssol_ConfigApp }.fileName() }.absolutePath();
-	if (std::filesystem::exists(systemSettingsPath.toStdString()))
-		m_sSettingsPath = systemSettingsPath;
+	if (std::filesystem::exists(systemSettingsPath.toStdString()) && !FileSystem::IsWriteProtected(systemSettingsPath.toStdWString()))
+		settingsPath = systemSettingsPath;
 	else
-		m_sSettingsPath = userSettingsPath;
+		settingsPath = userSettingsPath;
 	// create directory for temporary data if it doesn't exist
-	if (!std::filesystem::exists(m_sSettingsPath.toStdString()))
-		std::filesystem::create_directories(m_sSettingsPath.toStdString());
+	if (!std::filesystem::exists(settingsPath.toStdString()))
+		std::filesystem::create_directories(settingsPath.toStdString());
 
-	const QString globalConfigFile = m_sSettingsPath + "/" + StrConst::Dyssol_ConfigFileName;
+	const QString globalConfigFile = settingsPath + "/" + StrConst::Dyssol_ConfigFileName;
 	const QString localConfigFile  = QString{ "./" } + StrConst::Dyssol_ConfigFileName;
 
 #ifdef _MSC_VER
-	const QString currConfigFile = QFile::exists(globalConfigFile) || (!QFile::exists(globalConfigFile) && !FileSystem::IsWriteProtected(FileSystem::FilePath(m_sSettingsPath.toStdWString()))) ?
+	const QString currConfigFile = QFile::exists(globalConfigFile) || (!QFile::exists(globalConfigFile) && !FileSystem::IsWriteProtected(FileSystem::FilePath(settingsPath.toStdWString()))) ?
 		globalConfigFile : localConfigFile;
 #else
 	const QString currConfigFile = QFile::exists(localConfigFile) ? localConfigFile : globalConfigFile;
@@ -334,7 +335,10 @@ void Dyssol::SetupCache()
 	// set the default cache path to config.ini if it has not been set or does not exist
 	const QVariant cachePathVar = m_pSettings->value(StrConst::Dyssol_ConfigCachePath);
 	if (!cachePathVar.isValid() || cachePathVar.toString().isEmpty() || !std::filesystem::exists(cachePathVar.toString().toStdString()))
-		m_pSettings->setValue(StrConst::Dyssol_ConfigCachePath, m_sSettingsPath);
+	{
+		const auto path = QFileInfo{ m_pSettings->fileName() }.absoluteDir().path();
+		m_pSettings->setValue(StrConst::Dyssol_ConfigCachePath, path);
+	}
 
 	// setup cache path
 	const QString cachePath = m_pSettings->value(StrConst::Dyssol_ConfigCachePath).toString();
@@ -343,8 +347,8 @@ void Dyssol::SetupCache()
 	// check whether the cache path is accessible
 	if (FileSystem::IsWriteProtected(cachePath.toStdWString()))
 	{
-		m_pSavingThread->Block();
-		m_pLoadingThread->Block();
+		if (m_pSavingThread) m_pSavingThread->Block();
+		if (m_pLoadingThread) m_pLoadingThread->Block();
 		QMessageBox::critical(this, StrConst::Dyssol_MainWindowName, "Unable to access the selected cache path because it is write-protected:\n'" + cachePath + "'\nPlease choose another path using Tools -> Settings -> Change path...\nSaving/loading of flowsheets is blocked until that.");
 	}
 
