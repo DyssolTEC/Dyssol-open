@@ -117,13 +117,17 @@ public:
 	 */
 	void OnPointersSet() override;
 	/**
+	 * \brief Updates all information on the widget.
+	 */
+	virtual void UpdateWholeView() {}
+	/**
 	 * \brief Is called upon loading of a new flowsheet or changes in the flowsheet data.
 	 */
 	virtual void UpdateFromFlowsheet();
 	/**
-	 * \brief Updates all information on the widget.
+	 * \brief Is called upon loading of a new materials database or changes in the database data.
 	 */
-	virtual void UpdateWholeView() {}
+	virtual void UpdateFromMaterialsDB() {}
 
 	/**
 	 * \brief Reaction on the change of visibility of the dialog.
@@ -137,5 +141,8 @@ public:
 	void keyPressEvent(QKeyEvent* _event) override;
 
 signals:
+	/**
+	 * \brief Signal is emitted when data on the dialog are changed.
+	 */
 	void DataChanged();
 };

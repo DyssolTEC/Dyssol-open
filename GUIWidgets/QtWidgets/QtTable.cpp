@@ -493,10 +493,8 @@ void CQtTable::RestoreSelectedCell(const std::pair<int, int>& _cellPos)
 
 void CQtTable::RestoreSelectedCell(int _row, int _col)
 {
-	if (_row < rowCount())
-		setCurrentCell(_row, _col, QItemSelectionModel::SelectCurrent);
-	else
-		setCurrentCell(rowCount() - 1, _col, QItemSelectionModel::SelectCurrent);
+	if (rowCount() <= 0 || columnCount() <= 0) return;
+	setCurrentCell(std::clamp(_row, 0, rowCount() - 1), std::clamp(_col, 0, columnCount() - 1), QItemSelectionModel::SelectCurrent);
 }
 
 QString CQtTable::GetCurrentItemUserData() const
