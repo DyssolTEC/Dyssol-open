@@ -78,7 +78,7 @@ void CGridEditor::UpdateGridsList() const
 		auto* item = ui.treeGrids->CreateItem(units);
 		ui.treeGrids->SetCheckBox(item, 0, "", activ)->setEnabled(exist);
 		ui.treeGrids->SetText(item, 1, u->GetName(), QString::fromStdString(u->GetKey()));
-		ui.treeGrids->SetItemFlags(item, exist ? CQtTree::EFlags::Enabled : CQtTree::EFlags::Diasabled);
+		ui.treeGrids->SetItemFlags(item, exist ? CQtTree::EFlags::Enabled : CQtTree::EFlags::Disabled);
 	}
 	// resize columns and expand/contract rows
 	for (int i = 0; i < ui.treeGrids->columnCount(); ++i)

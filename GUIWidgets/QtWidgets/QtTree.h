@@ -13,13 +13,13 @@ class CQtTree : public QTreeWidget
 public:
 	enum class EFlags
 	{
-		Default   = 1 << 0,
-		Edit      = 1 << 1,
-		NoEdit    = 1 << 2,
-		Select    = 1 << 3,
-		NoSelect  = 1 << 4,
-		Enabled   = 1 << 5,
-		Diasabled = 1 << 6,
+		Default  = 1 << 0,
+		Edit     = 1 << 1,
+		NoEdit   = 1 << 2,
+		Select   = 1 << 3,
+		NoSelect = 1 << 4,
+		Enabled  = 1 << 5,
+		Disabled = 1 << 6,
 	};
 
 	CQtTree(QWidget* _parent = nullptr);
