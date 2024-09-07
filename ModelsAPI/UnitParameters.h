@@ -184,6 +184,8 @@ class CConstUnitParameter : public CBaseUnitParameter
 	T m_max{};   ///< Maximum allowed value.
 
 public:
+	using value_type = T;
+
 	/**
 	 * \private
 	 */
@@ -298,6 +300,8 @@ class CListUnitParameter : public CBaseUnitParameter
 	T m_max{};                 ///< Maximum allowed value.
 
 public:
+	using value_type = T;
+
 	/**
 	 * \private
 	 */
@@ -363,6 +367,11 @@ public:
 	 * \return Maximum allowed value.
 	 */
 	[[nodiscard]] T GetMax() const { return m_max; }
+	/**
+	 * \brief Returns allowed interval for the value.
+	 * \return Allowed interval for the value.
+	 */
+	[[nodiscard]] SInterval GetLimits() const { return { (double)m_min , (double)m_max }; }
 
 	/**
 	 * \private
@@ -503,6 +512,11 @@ public:
 	 * \return Maximum allowed value.
 	 */
 	double GetValueMax() const;
+	/**
+	 * \brief Returns allowed interval for the value.
+	 * \return Allowed interval for the value.
+	 */
+	[[nodiscard]] SInterval GetValueLimits() const;
 
 	/**
 	 * \private
@@ -527,6 +541,11 @@ public:
 	 * \return Maximum allowed dependent parameter.
 	 */
 	double GetParamMax() const;
+	/**
+	 * \brief Returns allowed interval for the dependent parameter.
+	 * \return Allowed interval for the dependent parameter.
+	 */
+	[[nodiscard]] SInterval GetParamLimits() const;
 
 	/**
 	 * \private
@@ -581,6 +600,11 @@ public:
 	 * \param _values List of values.
 	 */
 	void SetValues(const std::vector<double>& _params, const std::vector<double>& _values);
+	/**
+	 * \brief Returns all defined data as parameter-value pairs.
+	 * \return All defined data.
+	 */
+	[[nodiscard]] std::vector<std::pair<double, double>> GetParamValuePairs() const;
 	/**
 	 * \private
 	 * \brief Returns the dependent data itself.
@@ -1358,6 +1382,11 @@ public:
 	 * \return List of all defined unit parameters.
 	 */
 	std::vector<CBaseUnitParameter*> GetParameters() const;
+	/**
+	 * \brief Returns list of all active unit parameters.
+	 * \return List of all active unit parameters.
+	 */
+	[[nodiscard]] std::vector<CBaseUnitParameter*> GetActiveParameters() const;
 
 	/**
 	 * \brief Returns const pointer to the unit parameter with the specified index.
