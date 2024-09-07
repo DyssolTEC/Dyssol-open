@@ -119,7 +119,7 @@ void CGridEditor::GridSelected()
 void CGridEditor::GridActivityChanged(const QCheckBox* _checkbox, const QTreeWidgetItem* _item)
 {
 	if (_checkbox->isChecked()) return;
-	const auto key = ui.treeGrids->GetData(_item, 1).toStdString();
+	const auto key = ui.treeGrids->GetDataString(_item, 1).toStdString();
 	auto* model = m_flowsheet->GetUnit(key)->GetModel();
 	if (!model) return UpdateGridsList();
 	const auto name = QString::fromStdString(m_flowsheet->GetUnit(key)->GetName());
