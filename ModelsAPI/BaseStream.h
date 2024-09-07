@@ -764,6 +764,10 @@ public:
 	 * \f$M = \sum_i w_i M_i\f$ with
 	 * \f$M_i\f$ equilibrium moisture content of compound \f$i\f$,
 	 * \f$w_i\f$ mass fraction of compound \f$i\f$ in \p _phase.
+	 * - ::MASS_DIFFUSION_COEFFICIENT:
+	 * \f$D = \sum_i w_i D_i\f$ with
+	 * \f$D_i\f$ mass diffusion coefficient of compound \f$i\f$,
+	 * \f$w_i\f$ mass fraction of compound \f$i\f$ in \p _phase.
 	 * - ::TP_PROP_USER_DEFINED_01 - ::TP_PROP_USER_DEFINED_20:
 	 * \f$Y = \sum_i w_i Y_i\f$ with
 	 * \f$Y_i\f$ property value of compound \f$i\f$,

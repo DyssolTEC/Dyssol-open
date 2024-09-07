@@ -182,16 +182,16 @@ namespace MDBDescriptors
 	// List of initial values of const properties
 	static constDescr defaultConstProperties
 	{
-		{ CRITICAL_PRESSURE                            , { "Critical pressure"            , L"Pa"     , ""                                                                                                    , 0 } },
-		{ CRITICAL_TEMPERATURE                         , { "Critical temperature"         , L"K"      , ""                                                                                                    , 0 } },
-		{ HEAT_OF_FUSION_AT_NORMAL_FREEZING_POINT      , { "Heat of fusion"               , L"J/mol"  , "Heat of fusion at normal freezing point"                                                             , 0 } },
-		{ HEAT_OF_VAPORIZATION_AT_NORMAL_BOILING_POINT , { "Heat of vaporization "        , L"J/mol"  , "Heat of vaporization at normal boiling point"                                                        , 0 } },
-		{ MOLAR_MASS                                   , { "Molar mass"                   , L"kg/mol" , ""                                                                                                    , 0.0180154 } },
-		{ NORMAL_BOILING_POINT                         , { "Normal boiling point"         , L"K"      , ""                                                                                                    , 0 } },
-		{ NORMAL_FREEZING_POINT                        , { "Normal freezing point"        , L"K"      , ""                                                                                                    , 0 } },
-		{ STANDARD_FORMATION_ENTHALPY                  , { "Formation enthalpy"           , L"J/mol"  , "Standard enthalpy of formation"                                                                      , 0 } },
-		{ BOND_WORK_INDEX                              , { "Bond work index"              , L"kWh/t"  , "Bond work index"																					  , 12 } },
-		{ SOA_AT_NORMAL_CONDITIONS                     , { "State of aggregation"         , L"-"      , "State of aggregation at normal conditions\n[ 0 - solid ] [ 1 - liquid ] [ 2 - gas ] [ 3 - unknown ]" , 1 } },
+		{ CRITICAL_PRESSURE                            , { "Critical pressure"             , L"Pa"     , ""                                                                                                    , 0 } },
+		{ CRITICAL_TEMPERATURE                         , { "Critical temperature"          , L"K"      , ""                                                                                                    , 0 } },
+		{ HEAT_OF_FUSION_AT_NORMAL_FREEZING_POINT      , { "Heat of fusion"                , L"J/mol"  , "Heat of fusion at normal freezing point"                                                             , 0 } },
+		{ HEAT_OF_VAPORIZATION_AT_NORMAL_BOILING_POINT , { "Heat of vaporization "         , L"J/mol"  , "Heat of vaporization at normal boiling point"                                                        , 0 } },
+		{ MOLAR_MASS                                   , { "Molar mass"                    , L"kg/mol" , ""                                                                                                    , 0.0180154 } },
+		{ NORMAL_BOILING_POINT                         , { "Normal boiling point"          , L"K"      , ""                                                                                                    , 0 } },
+		{ NORMAL_FREEZING_POINT                        , { "Normal freezing point"         , L"K"      , ""                                                                                                    , 0 } },
+		{ STANDARD_FORMATION_ENTHALPY                  , { "Formation enthalpy"            , L"J/mol"  , "Standard enthalpy of formation"                                                                      , 0 } },
+		{ BOND_WORK_INDEX                              , { "Bond work index"               , L"kWh/t"  , "Bond work index"																					  , 12 } },
+		{ SOA_AT_NORMAL_CONDITIONS                     , { "State of aggregation"          , L"-"      , "State of aggregation at normal conditions\n[ 0 - solid ] [ 1 - liquid ] [ 2 - gas ] [ 3 - unknown ]" , 1 } },
 	};
 }
 
@@ -215,6 +215,7 @@ enum ECompoundTPProperties : unsigned
 	VISCOSITY                    = 226,	///< Dynamic viscosity [Pa·s].
 	DENSITY                      = 234,	///< Density [kg/m<sup>3</sup>].
 	PERMITTIVITY                 = 235,	///< Permittivity [F/m].
+	MASS_DIFFUSION_COEFFICIENT   = 236, ///< Mass diffusion Coefficient [m2/s].
 	TP_PROP_USER_DEFINED_01      = 250,	///< User-defined dependent property.
 	TP_PROP_USER_DEFINED_02      = 251,	///< User-defined dependent property.
 	TP_PROP_USER_DEFINED_03      = 252,	///< User-defined dependent property.
@@ -268,6 +269,7 @@ namespace MDBDescriptors
 		{ VISCOSITY                    , { "Dynamic Viscosity"            , L"Pa·s" 			, "" , ECorrelationTypes::CONSTANT , { 0 } } },
 		{ DENSITY                      , { "Density"                      , L"kg/m<sup>3</sup>" , "" , ECorrelationTypes::CONSTANT , { 1000 } } },
 		{ PERMITTIVITY                 , { "Permittivity"                 , L"F/m" 				, "" , ECorrelationTypes::CONSTANT , { 0 } } },
+		{ MASS_DIFFUSION_COEFFICIENT   , { "Mass diffusion coefficient"   , L"m2/s"             , "" , ECorrelationTypes::CONSTANT , { 0 } } },
 	};
 }
 
