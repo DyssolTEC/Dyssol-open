@@ -13,7 +13,10 @@ Models API:
 
 Core:
 - Drop support of Win32/x86 version.
-- Added TP-dependent mass diffusion coefficient to MDB.
+
+Materials database:
+- Added TP-dependent mass diffusion coefficient.
+- Added new correlation type.
 
 Documentation:
 

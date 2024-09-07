@@ -64,6 +64,7 @@ enum class ECorrelationTypes : unsigned
 	POLYNOMIAL_H     = 8,	// y = a·T + b·(T^2)/2 + c·(T^3)/3 + d·(T^4)/4 − e/T + f − g
 	POLYNOMIAL_S     = 9,	// y = a·ln(T) + b·T + c·(T^2)/2 + d·(T^3)/3 − e/(2·T^2) + f
 	SUTHERLAND		 = 10,  // y = a·(b + c)/(T + c)·(T/b)^(3/2)
+	POW_2            = 11,	// y = a + b·(T)^c + d·((e·T + f)/(g·T + h))^i
 	UNDEFINED		 = 63
 };
 
@@ -83,17 +84,18 @@ namespace MDBDescriptors
 	// List of descriptors of correlations
 	static std::map<ECorrelationTypes, SCorrelationDescriptor> correlations
 	{
-		{ ECorrelationTypes::LIST_OF_T_VALUES ,	{ "List of T-values" ,			L"y = {T1:val1, T2:val2, T3:val3, ...}" ,																				0 } },
-		{ ECorrelationTypes::LIST_OF_P_VALUES ,	{ "List of P-values" ,			L"y = {P1:val1, P2:val2, P3:val3, ...}" ,																				0 } },
-		{ ECorrelationTypes::CONSTANT ,			{ "Constant" ,					L"y = a" ,																												1 } },
-		{ ECorrelationTypes::LINEAR ,			{ "Linear" ,					L"y = aT + bP + c" ,																									3 } },
-		{ ECorrelationTypes::EXPONENT_1 ,		{ "Exponential" ,				L"y = ab<sup>(c + dT + (eT + f) / (gT + h))</sup> + i" ,																9 } },
-		{ ECorrelationTypes::POW_1 ,			{ "Power function" ,			L"y = aT<sup>b</sup>" ,																									2 } },
-		{ ECorrelationTypes::POLYNOMIAL_1 ,		{ "Polynomial" ,				L"y = a + bT + cT<sup>2</sup> + dT<sup>3</sup> + eT<sup>4</sup> + fT<sup>5</sup> + gT<sup>6</sup> + hT<sup>7</sup>" ,	8 } },
-		{ ECorrelationTypes::POLYNOMIAL_CP ,	{ "Shomate heat capacity" ,		L"y = a + bT + cT<sup>2</sup> + dT<sup>3</sup> + e/T<sup>2</sup>" ,														5 } },
-		{ ECorrelationTypes::POLYNOMIAL_H ,		{ "Shomate standard enthalpy" ,	L"y = aT + bT<sup>2</sup>/2 + cT<sup>3</sup>/3 + dT<sup>4</sup>/4 - e/T + f - g" ,										7 } },
-		{ ECorrelationTypes::POLYNOMIAL_S ,		{ "Shomate standard entropy" ,	L"y = a·ln(T) + bT + cT<sup>2</sup>/2 + dT<sup>3</sup>/3 - e/(2T<sup>2</sup>) + f" ,									6 } },
-		{ ECorrelationTypes::SUTHERLAND,		{ "Sutherland's law"          ,	L"y = y = a·(b + c)/(T + c)·(T/b)<sup>3/2</sup>"                                                                    ,   3 } }
+		{ ECorrelationTypes::LIST_OF_T_VALUES ,	{ "List of T-values" ,			L"y = {T1:val1, T2:val2, T3:val3, ...}"                                                                             , 0 } },
+		{ ECorrelationTypes::LIST_OF_P_VALUES ,	{ "List of P-values" ,			L"y = {P1:val1, P2:val2, P3:val3, ...}"                                                                             , 0 } },
+		{ ECorrelationTypes::CONSTANT ,			{ "Constant" ,					L"y = a"                                                                                                            , 1 } },
+		{ ECorrelationTypes::LINEAR ,			{ "Linear" ,					L"y = aT + bP + c"                                                                                                  , 3 } },
+		{ ECorrelationTypes::EXPONENT_1 ,		{ "Exponential" ,				L"y = ab<sup>(c + dT + (eT + f) / (gT + h))</sup> + i"                                                              , 9 } },
+		{ ECorrelationTypes::POW_1 ,			{ "Power function" ,			L"y = aT<sup>b</sup>"                                                                                               , 2 } },
+		{ ECorrelationTypes::POLYNOMIAL_1 ,		{ "Polynomial" ,				L"y = a + bT + cT<sup>2</sup> + dT<sup>3</sup> + eT<sup>4</sup> + fT<sup>5</sup> + gT<sup>6</sup> + hT<sup>7</sup>" , 8 } },
+		{ ECorrelationTypes::POLYNOMIAL_CP ,	{ "Shomate heat capacity" ,		L"y = a + bT + cT<sup>2</sup> + dT<sup>3</sup> + e/T<sup>2</sup>"                                                   , 5 } },
+		{ ECorrelationTypes::POLYNOMIAL_H ,		{ "Shomate standard enthalpy" ,	L"y = aT + bT<sup>2</sup>/2 + cT<sup>3</sup>/3 + dT<sup>4</sup>/4 - e/T + f - g"                                    , 7 } },
+		{ ECorrelationTypes::POLYNOMIAL_S ,		{ "Shomate standard entropy" ,	L"y = a*ln(T) + bT + cT<sup>2</sup>/2 + dT<sup>3</sup>/3 - e/(2T<sup>2</sup>) + f"                                  , 6 } },
+		{ ECorrelationTypes::SUTHERLAND,		{ "Sutherland's law"          ,	L"y = a(b + c)/(T + c)(T/b)<sup>3/2</sup>"                                                                          , 3 } },
+		{ ECorrelationTypes::POW_2,		        { "Power function 2"          ,	L"y = a + b(T)<sup>c</sup> + d((eT + f)/(gT + h))<sup>i</sup>"                                                      , 9 } },
 	};
 }
 
@@ -215,7 +217,7 @@ enum ECompoundTPProperties : unsigned
 	VISCOSITY                    = 226,	///< Dynamic viscosity [Pa·s].
 	DENSITY                      = 234,	///< Density [kg/m<sup>3</sup>].
 	PERMITTIVITY                 = 235,	///< Permittivity [F/m].
-	MASS_DIFFUSION_COEFFICIENT   = 236, ///< Mass diffusion Coefficient [m2/s].
+	MASS_DIFFUSION_COEFFICIENT   = 236, ///< Mass diffusion Coefficient [m<sup>2</sup>/s].
 	TP_PROP_USER_DEFINED_01      = 250,	///< User-defined dependent property.
 	TP_PROP_USER_DEFINED_02      = 251,	///< User-defined dependent property.
 	TP_PROP_USER_DEFINED_03      = 252,	///< User-defined dependent property.
@@ -269,7 +271,7 @@ namespace MDBDescriptors
 		{ VISCOSITY                    , { "Dynamic Viscosity"            , L"Pa·s" 			, "" , ECorrelationTypes::CONSTANT , { 0 } } },
 		{ DENSITY                      , { "Density"                      , L"kg/m<sup>3</sup>" , "" , ECorrelationTypes::CONSTANT , { 1000 } } },
 		{ PERMITTIVITY                 , { "Permittivity"                 , L"F/m" 				, "" , ECorrelationTypes::CONSTANT , { 0 } } },
-		{ MASS_DIFFUSION_COEFFICIENT   , { "Mass diffusion coefficient"   , L"m2/s"             , "" , ECorrelationTypes::CONSTANT , { 0 } } },
+		{ MASS_DIFFUSION_COEFFICIENT   , { "Mass diffusion coefficient"   , L"m<sup>2</sup>/s"  , "" , ECorrelationTypes::POW_2    , { 0, 0, 0, 0.211e-4, 1, 0, 0, 273.15, 1.94 } } },
 	};
 }
 
