@@ -80,12 +80,13 @@ bool CNLSolver::SetNewtonSolverParameters(unsigned _nMaxSet, unsigned _nMaxSubSe
 		return false;
 }
 
-bool CNLSolver::SetFixedPointSolverParameters(size_t _nMAA, double _dDampingAA)
+bool CNLSolver::SetFixedPointSolverParameters(size_t _nMAA, double _dDampingAA, double _dDamping)
 {
 	if (m_eStrategy == ENLSolverStrategy::Fixedpoint || m_eStrategy == ENLSolverStrategy::Picard)
 	{
 		m_nMAA = static_cast<long>(_nMAA);
 		m_dDampingAA = _dDampingAA;
+		m_dDamping = _dDamping;
 		return true;
 	}
 	else
@@ -193,6 +194,7 @@ bool CNLSolver::SetModel(CNLModel* _pModel)
 	{
 		KINSetMAA(m_pKINmem, m_nMAA);
 		KINSetDampingAA(m_pKINmem, static_cast<realtype>(m_dDampingAA));
+		KINSetDamping(m_pKINmem, static_cast<realtype>(m_dDamping));
 	}
 
 	// Initialize IDA memory
