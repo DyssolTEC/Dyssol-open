@@ -89,5 +89,8 @@
     <ClInclude Include="ThreadTask.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ReversedIterable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

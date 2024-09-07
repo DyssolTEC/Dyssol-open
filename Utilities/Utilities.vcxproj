@@ -74,6 +74,7 @@
     <ClInclude Include="DyssolUtilities.h" />
     <ClInclude Include="DyssolWindows.h" />
     <ClInclude Include="FileSystem.h" />
+    <ClInclude Include="ReversedIterable.h" />
     <ClInclude Include="StringFunctions.h" />
     <ClInclude Include="TaskFuture.h" />
     <ClInclude Include="ThreadPool.h" />
