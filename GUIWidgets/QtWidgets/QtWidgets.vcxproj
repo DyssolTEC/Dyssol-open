@@ -61,14 +61,11 @@
   </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="QtDialog.cpp" />
-    <ClCompile Include="QtValidatorDouble.cpp" />
-    <ClCompile Include="QtValidatorInt.cpp" />
     <ClCompile Include="QtList.cpp" />
     <ClCompile Include="QtPushButton.cpp" />
     <ClCompile Include="QtTable.cpp" />
     <ClCompile Include="QtTooltipMenuBar.cpp" />
     <ClCompile Include="QtTree.cpp" />
-    <ClCompile Include="QtValidatorUInt.cpp" />
     <ClCompile Include="SignalBlocker.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -83,10 +80,8 @@
     <QtMoc Include="QtList.h" />
     <QtMoc Include="QtTooltipMenuBar.h" />
     <QtMoc Include="QtDialog.h" />
-    <ClInclude Include="QtValidatorDouble.h" />
-    <ClInclude Include="QtValidatorInt.h" />
+    <ClInclude Include="QtValidator.h" />
     <ClInclude Include="QtPushButton.h" />
-    <ClInclude Include="QtValidatorUInt.h" />
     <ClInclude Include="QtUtilities.h" />
     <ClInclude Include="SignalBlocker.h" />
   </ItemGroup>
