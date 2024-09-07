@@ -279,6 +279,11 @@ double CDependentUnitParameter::GetValueMax() const
 	return m_valueMax;
 }
 
+SInterval CDependentUnitParameter::GetValueLimits() const
+{
+	return { m_valueMin, m_valueMax };
+}
+
 void CDependentUnitParameter::SetValueMin(double _valueMin)
 {
 	m_valueMin = _valueMin;
@@ -297,6 +302,11 @@ double CDependentUnitParameter::GetParamMin() const
 double CDependentUnitParameter::GetParamMax() const
 {
 	return m_paramMax;
+}
+
+SInterval CDependentUnitParameter::GetParamLimits() const
+{
+	return { m_paramMin, m_paramMax };
 }
 
 void CDependentUnitParameter::SetParamMin(double _paramMin)
@@ -338,6 +348,14 @@ void CDependentUnitParameter::SetValues(const std::vector<double>& _params, cons
 {
 	m_data.Clear();
 	m_data.SetValues(_params, _values);
+}
+
+std::vector<std::pair<double, double>> CDependentUnitParameter::GetParamValuePairs() const
+{
+	auto res = ReservedVector<std::pair<double, double>>(m_data.Size());
+	for (size_t i = 0; i < m_data.Size(); ++i)
+		res.push_back(m_data.GetPairAt(i));
+	return res;
 }
 
 const CDependentValues& CDependentUnitParameter::GetDependentData() const
@@ -1164,6 +1182,15 @@ std::vector<CBaseUnitParameter*> CUnitParametersManager::GetParameters() const
 	std::vector<CBaseUnitParameter*> res;
 	for (const auto& p : m_parameters)
 		res.push_back(p.get());
+	return res;
+}
+
+std::vector<CBaseUnitParameter*> CUnitParametersManager::GetActiveParameters() const
+{
+	auto res = ReservedVector<CBaseUnitParameter*>(m_parameters.size());
+	for (const auto& p : m_parameters)
+		if(IsParameterActive(*p))
+			res.push_back(p.get());
 	return res;
 }
 
