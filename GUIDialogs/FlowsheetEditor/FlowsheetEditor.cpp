@@ -771,7 +771,7 @@ void CFlowsheetEditor::UpdateUnitParamTable() const
 			ui.tableUnitParams->SetItemEditable(iRow, 2, p->GetValue());
 			if (!p->IsInBounds())
 				ui.tableUnitParams->SetItemBackgroundColor(iRow, 2, Qt::red);
-			ui.tableUnitParams->SetItemNotEditable(iRow, 1, !p->GetUnits().empty() ? "[" + p->GetUnits() + "]" : std::string{});
+			ui.tableUnitParams->SetItemNotEditable(iRow, 1, !p->GetUnits().empty() ? L"[" + p->GetUnits() + L"]" : std::wstring{});
 			break;
 		}
 		case EUnitParameter::CONSTANT_INT64:
@@ -780,7 +780,7 @@ void CFlowsheetEditor::UpdateUnitParamTable() const
 			ui.tableUnitParams->SetItemEditable(iRow, 2, static_cast<double>(p->GetValue()));
 			if (!p->IsInBounds())
 				ui.tableUnitParams->SetItemBackgroundColor(iRow, 2, Qt::red);
-			ui.tableUnitParams->SetItemNotEditable(iRow, 1, !p->GetUnits().empty() ? "[" + p->GetUnits() + "]" : std::string{});
+			ui.tableUnitParams->SetItemNotEditable(iRow, 1, !p->GetUnits().empty() ? L"[" + p->GetUnits() + L"]" : std::wstring{});
 			break;
 		}
 		case EUnitParameter::CONSTANT_UINT64:
@@ -789,7 +789,7 @@ void CFlowsheetEditor::UpdateUnitParamTable() const
 			ui.tableUnitParams->SetItemEditable(iRow, 2, static_cast<double>(p->GetValue()));
 			if (!p->IsInBounds())
 				ui.tableUnitParams->SetItemBackgroundColor(iRow, 2, Qt::red);
-			ui.tableUnitParams->SetItemNotEditable(iRow, 1, !p->GetUnits().empty() ? "[" + p->GetUnits() + "]" : std::string{});
+			ui.tableUnitParams->SetItemNotEditable(iRow, 1, !p->GetUnits().empty() ? L"[" + p->GetUnits() + L"]" : std::wstring{});
 			break;
 		}
 		case EUnitParameter::TIME_DEPENDENT: [[fallthrough]];
@@ -808,7 +808,7 @@ void CFlowsheetEditor::UpdateUnitParamTable() const
 				ui.tableUnitParams->SetItemBackgroundColor(iRow, 2, Qt::gray);
 				ui.tableUnitParams->SetItemFontItalic(iRow, 2);
 			}
-			ui.tableUnitParams->SetItemNotEditable(iRow, 1, !p->GetUnits().empty() ? "[" + p->GetUnits() + "]" : std::string{});
+			ui.tableUnitParams->SetItemNotEditable(iRow, 1, !p->GetUnits().empty() ? L"[" + p->GetUnits() + L"]" : std::wstring{});
 			break;
 		}
 		case EUnitParameter::STRING:
@@ -888,7 +888,7 @@ void CFlowsheetEditor::UpdateUnitParamTable() const
 				ui.tableUnitParams->SetItemBackgroundColor(iRow, 2, Qt::gray);
 				ui.tableUnitParams->SetItemFontItalic(iRow, 2);
 			}
-			ui.tableUnitParams->SetItemNotEditable(iRow, 1, !p->GetUnits().empty() ? "[" + p->GetUnits() + "]" : std::string{});
+			ui.tableUnitParams->SetItemNotEditable(iRow, 1, !p->GetUnits().empty() ? L"[" + p->GetUnits() + L"]" : std::wstring{});
 			break;
 		}
 		case EUnitParameter::LIST_UINT64:
@@ -906,7 +906,7 @@ void CFlowsheetEditor::UpdateUnitParamTable() const
 				ui.tableUnitParams->SetItemBackgroundColor(iRow, 2, Qt::gray);
 				ui.tableUnitParams->SetItemFontItalic(iRow, 2);
 			}
-			ui.tableUnitParams->SetItemNotEditable(iRow, 1, !p->GetUnits().empty() ? "[" + p->GetUnits() + "]" : std::string{});
+			ui.tableUnitParams->SetItemNotEditable(iRow, 1, !p->GetUnits().empty() ? L"[" + p->GetUnits() + L"]" : std::wstring{});
 			break;
 		}
 		case EUnitParameter::LIST_INT64:
@@ -924,7 +924,7 @@ void CFlowsheetEditor::UpdateUnitParamTable() const
 				ui.tableUnitParams->SetItemBackgroundColor(iRow, 2, Qt::gray);
 				ui.tableUnitParams->SetItemFontItalic(iRow, 2);
 			}
-			ui.tableUnitParams->SetItemNotEditable(iRow, 1, !p->GetUnits().empty() ? "[" + p->GetUnits() + "]" : std::string{});
+			ui.tableUnitParams->SetItemNotEditable(iRow, 1, !p->GetUnits().empty() ? L"[" + p->GetUnits() + L"]" : std::wstring{});
 			break;
 		}
 		case EUnitParameter::UNKNOWN:
@@ -966,8 +966,8 @@ void CFlowsheetEditor::UpdateListValuesTable() const
 		ui.tableListValues->SetItemsColEditable(0, 0, paramD->GetParams());
 		ui.tableListValues->SetItemsColEditable(0, 1, paramD->GetValues());
 
-		ui.tableListValues->SetColHeaderItem(0, paramD->GetParamName() + " [" + paramD->GetParamUnits() + "]");
-		ui.tableListValues->SetColHeaderItem(1, paramD->GetName() + " [" + paramD->GetUnits() + "]");
+		ui.tableListValues->SetColHeaderItem(0, StringFunctions::String2WString(paramD->GetParamName()) + L" [" + paramD->GetParamUnits() + L"]");
+		ui.tableListValues->SetColHeaderItem(1, StringFunctions::String2WString(paramD->GetName()) + L" [" + paramD->GetUnits() + L"]");
 
 		// check if values are in boundaries
 		if (!paramD->IsInBounds())
@@ -993,7 +993,7 @@ void CFlowsheetEditor::UpdateListValuesTable() const
 		ui.tableListValues->setRowCount(static_cast<int>(paramL->Size()));
 		ui.tableListValues->SetItemsColEditable(0, 1, paramL->GetValues());
 
-		ui.tableListValues->SetColHeaderItem(1, paramL->GetName() + " [" + paramL->GetUnits() + "]");
+		ui.tableListValues->SetColHeaderItem(1, StringFunctions::String2WString(paramL->GetName()) + L" [" + paramL->GetUnits() + L"]");
 
 		// check if values are in boundaries
 		if (!paramL->IsInBounds())
@@ -1014,7 +1014,7 @@ void CFlowsheetEditor::UpdateListValuesTable() const
 		ui.tableListValues->setRowCount(static_cast<int>(paramL->Size()));
 		ui.tableListValues->SetItemsColEditable(0, 1, paramL->GetValues());
 
-		ui.tableListValues->SetColHeaderItem(1, paramL->GetName() + " [" + paramL->GetUnits() + "]");
+		ui.tableListValues->SetColHeaderItem(1, StringFunctions::String2WString(paramL->GetName()) + L" [" + paramL->GetUnits() + L"]");
 
 		// check if values are in boundaries
 		if (!paramL->IsInBounds())
@@ -1035,7 +1035,7 @@ void CFlowsheetEditor::UpdateListValuesTable() const
 		ui.tableListValues->setRowCount(static_cast<int>(paramL->Size()));
 		ui.tableListValues->SetItemsColEditable(0, 1, paramL->GetValues());
 
-		ui.tableListValues->SetColHeaderItem(1, paramL->GetName() + " [" + paramL->GetUnits() + "]");
+		ui.tableListValues->SetColHeaderItem(1, StringFunctions::String2WString(paramL->GetName()) + L" [" + paramL->GetUnits() + L"]");
 
 		// check if values are in boundaries
 		if (!paramL->IsInBounds())
