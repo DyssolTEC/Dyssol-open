@@ -2138,6 +2138,12 @@ public:
 
 	/**
 	 * \private
+	 * \brief Clears all parameter groups.
+	 */
+	void ClearGroups();
+
+	/**
+	 * \private
 	 * \brief Saves data to file.
 	 * \param _h5Saver Reference to the file handler.
 	 * \param _path Path to data in the file.
