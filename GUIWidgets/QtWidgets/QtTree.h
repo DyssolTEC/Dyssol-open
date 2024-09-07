@@ -65,7 +65,9 @@ public:
 	QTreeWidgetItem* GetItem(const QVariant& _data) const;
 
 	// Returns user data of the given column in the specified item.
-	static QString GetData(const QTreeWidgetItem* _item, int _col = 0);
+	static QVariant GetData(const QTreeWidgetItem* _item, int _col = 0);
+	// Returns user data of the given column in the specified item.
+	static QString GetDataString(const QTreeWidgetItem* _item, int _col = 0);
 	// Returns user data of the given column in current item.
 	QString GetCurrentData(int _col = 0) const;
 

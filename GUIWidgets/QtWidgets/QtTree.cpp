@@ -163,7 +163,13 @@ QTreeWidgetItem* CQtTree::GetItem(const QVariant& _data) const
 	return nullptr;
 }
 
-QString CQtTree::GetData(const QTreeWidgetItem* _item, int _col)
+QVariant CQtTree::GetData(const QTreeWidgetItem* _item, int _col)
+{
+	if (!_item || _col >= _item->columnCount()) return {};
+	return _item->data(_col, Qt::UserRole);
+}
+
+QString CQtTree::GetDataString(const QTreeWidgetItem* _item, int _col)
 {
 	if (!_item || _col >= _item->columnCount()) return {};
 	return _item->data(_col, Qt::UserRole).toString();
@@ -171,7 +177,7 @@ QString CQtTree::GetData(const QTreeWidgetItem* _item, int _col)
 
 QString CQtTree::GetCurrentData(int _col) const
 {
-	return GetData(currentItem(), _col);
+	return GetDataString(currentItem(), _col);
 }
 
 bool CQtTree::blockSignals(bool _flag)
