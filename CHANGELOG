@@ -10,6 +10,7 @@ Models API:
 - Added function AddNLVariables() to KINSOL solver to add multiple state variables.
 - Added function Slice() and SetSlice() to simplify work with indexed arrays of values.
 - Added functions GetDistributionMean(), GetDistributionVariance(), GetDistributionStdDev().
+- Added functions to obtain limits of CDependentUnitParameter.
 
 Core:
 - Drop support of Win32/x86 version.
@@ -25,6 +26,8 @@ Fixes:
 - In some cases simulation wasn't stop after pressing the stop button.
 - Fixed the work of Save Time Step setting in some cases.
 - Fixed calculation of density for a mixture of compounds with the function CBaseStream::GetPhaseProperty.
+- Fixed potential crash at program start.
+- Defining unit parameters with the same name do not result in crash.
 
 Other:
 - Allow installation for single user.
