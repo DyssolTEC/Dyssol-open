@@ -42,7 +42,7 @@ public:
 	 * Returns port's name.
 	 * \return Name of the port.
 	 */
-	std::string GetName() const;
+	const std::string& GetName() const;
 	/**
 	 * Sets port's name.
 	 * \param _name New name of the port.
@@ -64,7 +64,7 @@ public:
 	 * Returns key of the stream, connected to this port.
 	 * \return Key of the stream connected to the port.
 	 */
-	std::string GetStreamKey() const;
+	const std::string& GetStreamKey() const;
 	/**
 	 * Sets key of the stream, connected to this port.
 	 * \param _key New key of the stream.
@@ -187,6 +187,22 @@ public:
 	 * \return Number of ports.
 	 */
 	size_t GetPortsNumber() const;
+
+	/**
+	 * Returns names of all defined input ports.
+	 * \return Names all input ports.
+	 */
+	[[nodiscard]] std::vector<std::string> GetInputPortsNames() const;
+	/**
+	 * Returns names of all defined output ports.
+	 * \return Names all output ports.
+	 */
+	[[nodiscard]] std::vector<std::string> GetOutputPortsNames() const;
+
+	/**
+	 * \brief Removes all ports.
+	 */
+	void Clear();
 
 	/**
 	 * \private

@@ -1804,6 +1804,11 @@ bool CUnitParametersManager::IsParameterActive(const CBaseUnitParameter& _parame
 	return IsParameterActive(Name2Index(_parameter.GetName()));
 }
 
+void CUnitParametersManager::ClearGroups()
+{
+	m_groups.clear();
+}
+
 void CUnitParametersManager::SaveToFile(CH5Handler& _h5Saver, const std::string& _path)
 {
 	if (!_h5Saver.IsValid()) return;

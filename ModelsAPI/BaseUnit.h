@@ -180,12 +180,12 @@ public:
 	 * \brief Returns the name of the unit.
 	 * \return Name of the unit.
 	 */
-	std::string GetUnitName() const;
+	const std::string& GetUnitName() const;
 	/**
 	 * \brief Returns the name of unit's author.
 	 * \return Name of unit's author.
 	 */
-	std::string GetAuthorName() const;
+	const std::string& GetAuthorName() const;
 	/**
 	 * \brief Returns the version of the unit.
 	 * \return Version of the unit.
@@ -195,12 +195,12 @@ public:
 	 * \brief Returns the unique identifier of the unit.
 	 * \return Unique identifier of the unit.
 	 */
-	std::string GetUniqueID() const;
+	const std::string& GetUniqueID() const;
 	/**
 	 * \brief Returns the help link of the unit.
 	 * \return Help link of the unit.
 	 */
-	std::string GetHelpLink() const;
+	const std::string& GetHelpLink() const;
 
 	// TODO: rename to SetModelName() and add an alias to SetUnitName().
 	/**

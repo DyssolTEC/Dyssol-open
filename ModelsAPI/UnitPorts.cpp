@@ -15,7 +15,7 @@ CUnitPort::CUnitPort(std::string _name, EUnitPort _type) :
 {
 }
 
-std::string CUnitPort::GetName() const
+const std::string& CUnitPort::GetName() const
 {
 	return m_name;
 }
@@ -35,7 +35,7 @@ void CUnitPort::SetType(EUnitPort _type)
 	m_type = _type;
 }
 
-std::string CUnitPort::GetStreamKey() const
+const std::string& CUnitPort::GetStreamKey() const
 {
 	return m_streamKey;
 }
@@ -175,6 +175,29 @@ std::vector<const CUnitPort*> CPortsManager::GetAllOutputPorts() const
 size_t CPortsManager::GetPortsNumber() const
 {
 	return m_ports.size();
+}
+
+std::vector<std::string> CPortsManager::GetInputPortsNames() const
+{
+	std::vector<std::string> res;
+	for (const auto& p : m_ports)
+		if (p->GetType() == EUnitPort::INPUT)
+			res.push_back(p->GetName());
+	return res;
+}
+
+std::vector<std::string> CPortsManager::GetOutputPortsNames() const
+{
+	std::vector<std::string> res;
+	for (const auto& p : m_ports)
+		if (p->GetType() == EUnitPort::OUTPUT)
+			res.push_back(p->GetName());
+	return res;
+}
+
+void CPortsManager::Clear()
+{
+	m_ports.clear();
 }
 
 void CPortsManager::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
