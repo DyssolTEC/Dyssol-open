@@ -256,7 +256,7 @@ public:
 	// Returns current grid of distributed parameters.
 	const CMultidimensionalGrid& GetGrid() const;
 	// Returns reference to a global database of materials.
-	const CMaterialsDatabase& GetMaterialDatabase() const;
+	const CMaterialsDatabase& GetMaterialsDatabase() const;
 	// Sets pointer to a global database of materials
 	void SetMaterialsDatabase(const CMaterialsDatabase* _materialsDB);
 
