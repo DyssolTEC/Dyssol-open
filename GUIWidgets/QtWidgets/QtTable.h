@@ -59,6 +59,7 @@ public:
 
 	void SetItemNotEditable(int _row, int _col, const QString& _text, const QVariant& _userData = -1);
 	void SetItemNotEditable(int _row, int _col, const std::string& _text, const QVariant& _userData = -1);
+	void SetItemNotEditable(int _row, int _col, const std::string& _text, const std::string& _userData);
 	void SetItemNotEditable(int _row, int _col, const std::wstring& _text, const QVariant& _userData = -1);
 	void SetItemNotEditable(int _row, int _col, double _value, const QVariant& _userData = -1);
 	void SetItemNotEditable(int _row, int _col);

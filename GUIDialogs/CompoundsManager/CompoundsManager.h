@@ -16,13 +16,14 @@ class CCompoundsManager
 	Q_OBJECT
 private:
 	Ui::CCompoundsManagerClass ui;
-	bool m_bAvoidSignal;
+	bool m_bAvoidSignal{};
 	CFlowsheet* m_pFlowsheet; // pointer to the flowsheet
 	CMaterialsDatabase* m_pMaterialsDatabase;
 	std::vector<std::string> m_vAddedCompKeys;
 
 public slots:
 	void setVisible( bool _bVisible );
+	void NewFlowsheetDataSet();
 	void UpdateWholeView();
 	void UpdateAvailableCompounds();
 	void UpdateUsedCompounds();

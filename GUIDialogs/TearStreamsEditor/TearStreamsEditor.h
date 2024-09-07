@@ -24,6 +24,7 @@ public:
 	CTearStreamsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, QWidget* _parent = nullptr);
 
 	void InitializeConnections();
+	void NewFlowsheetDataSet();
 	void UpdateWholeView();
 
 private slots:

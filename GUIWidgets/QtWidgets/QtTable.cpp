@@ -203,6 +203,11 @@ void CQtTable::SetItemNotEditable(int _row, int _col, const std::string& _text, 
 	SetItemNotEditable(_row, _col, QString::fromStdString(_text), _userData);
 }
 
+void CQtTable::SetItemNotEditable(int _row, int _col, const std::string& _text, const std::string& _userData)
+{
+	SetItemNotEditable(_row, _col, QString::fromStdString(_text), QString::fromStdString(_userData));
+}
+
 void CQtTable::SetItemNotEditable(int _row, int _col, const std::wstring& _text, const QVariant& _userData)
 {
 	SetItemNotEditable(_row, _col, QString::fromStdWString(_text), _userData);

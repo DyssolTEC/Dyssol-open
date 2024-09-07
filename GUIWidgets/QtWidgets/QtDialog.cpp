@@ -7,6 +7,8 @@
 #include <QMessageBox>
 #include <QCoreApplication>
 #include <QDesktopServices>
+#include <QLabel>
+#include <QLineEdit>
 
 void CDyssolBaseWidget::SetChildWidgets(std::initializer_list<CDyssolBaseWidget*> _widgets)
 {
@@ -37,6 +39,28 @@ CModelsManager* CDyssolBaseWidget::GetModelsManager() const
 QSettings* CDyssolBaseWidget::GetSettings() const
 {
 	return m_settings;
+}
+
+void CDyssolBaseWidget::ShowLabel(QLabel* _labelWidget) const
+{
+	const QString text = _labelWidget->text().remove(QRegExp{ R"(\[[^\]]*\])" }).trimmed();
+	_labelWidget->setText(text);
+}
+
+void CDyssolBaseWidget::ShowValue(QLineEdit* _valueWidget, double _value) const
+{
+	_valueWidget->setText(QString::number(_value));
+}
+
+void CDyssolBaseWidget::ShowValueAndLabel(QLineEdit* _valueWidget, QLabel* _labelWidget, double _value) const
+{
+	ShowLabel(_labelWidget);
+	ShowValue(_valueWidget, _value);
+}
+
+double CDyssolBaseWidget::ReadValue(const QLineEdit* _valueWidget) const
+{
+	return _valueWidget->text().toDouble();
 }
 
 
@@ -74,7 +98,13 @@ void CQtDialog::OpenHelp(const QString& _link)
 	QDesktopServices::openUrl(QUrl(StrConst::Dyssol_HelpURL + _link));
 }
 
-void CQtDialog::OnNewFlowsheet()
+void CQtDialog::OnPointersSet()
+{
+	CDyssolBaseWidget::OnPointersSet();
+	NewFlowsheetDataSet();
+}
+
+void CQtDialog::NewFlowsheetDataSet()
 {
 	if (isVisible())
 		UpdateWholeView();
@@ -82,7 +112,7 @@ void CQtDialog::OnNewFlowsheet()
 
 void CQtDialog::setVisible(bool _flag)
 {
-	if (_flag)
+	if (!isVisible() && _flag)
 		UpdateWholeView();
 	QDialog::setVisible(_flag);
 }

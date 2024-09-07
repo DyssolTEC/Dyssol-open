@@ -665,6 +665,22 @@ const CCompound* CMaterialsDatabase::GetCompoundByName(const std::string& _sComp
 	return nullptr;
 }
 
+std::vector<CCompound*> CMaterialsDatabase::GetCompounds()
+{
+	auto res = ReservedVector<CCompound*>(m_vCompounds.size());
+	for (auto& c : m_vCompounds)
+		res.push_back(&c);
+	return res;
+}
+
+std::vector<const CCompound*> CMaterialsDatabase::GetCompounds() const
+{
+	auto res = ReservedVector<const CCompound*>(m_vCompounds.size());
+	for (const auto& c : m_vCompounds)
+		res.push_back(&c);
+	return res;
+}
+
 std::vector<std::string> CMaterialsDatabase::GetCompoundsNames(const std::vector<std::string>& _keys) const
 {
 	std::vector<std::string> res;

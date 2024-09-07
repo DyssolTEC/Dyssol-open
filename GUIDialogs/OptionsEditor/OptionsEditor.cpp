@@ -6,6 +6,7 @@
 #include "Flowsheet.h"
 #include "ParametersHolder.h"
 #include "DyssolUtilities.h"
+#include "SignalBlocker.h"
 
 COptionsEditor::COptionsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pMaterialsDB, QWidget* _parent, Qt::WindowFlags _flags)
 	: CQtDialog{ _parent, _flags }
@@ -24,7 +25,8 @@ COptionsEditor::COptionsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pMa
 
 void COptionsEditor::InitializeConnections() const
 {
-	connect(ui.pushButtonOk,			  &QPushButton::clicked,	   this, &COptionsEditor::ApplyChanges);
+	connect(ui.pushButtonOk,			  &QPushButton::clicked,	   this, &COptionsEditor::ApplyChangesAndClose);
+	connect(ui.pushButtonApply,			  &QPushButton::clicked,	   this, &COptionsEditor::ApplyChanges);
 	connect(ui.pushButtonCancel,		  &QPushButton::clicked,	   this, &COptionsEditor::close);
 	connect(ui.checkBoxCacheStreamsFlag,  &QCheckBox::toggled,         this, &COptionsEditor::CacheStreamsFlagChanged);
 	connect(ui.checkBoxCacheHoldupsFlag,  &QCheckBox::toggled,	       this, &COptionsEditor::CacheHoldupsFlagChanged);
@@ -32,37 +34,42 @@ void COptionsEditor::InitializeConnections() const
 	connect(ui.lineEditCacheWindow,	      &QLineEdit::editingFinished, this, &COptionsEditor::CacheWindowChanged);
 }
 
+void COptionsEditor::NewFlowsheetDataSet()
+{
+	if (isVisible())
+		UpdateWholeView();
+}
+
 void COptionsEditor::UpdateWholeView()
 {
-	QSignalBlocker blocker1(ui.checkBoxCacheStreamsFlag);
-	QSignalBlocker blocker2(ui.checkBoxCacheHoldupsFlag);
-	QSignalBlocker blocker3(ui.checkBoxCacheInternalFlag);
-	QSignalBlocker blocker4(ui.lineEditCacheWindow);
+	CSignalBlocker blocker{ ui.checkBoxCacheStreamsFlag, ui.checkBoxCacheHoldupsFlag, ui.checkBoxCacheInternalFlag, ui.lineEditCacheWindow };
 
-	ui.lineEditATol->setText(QString::number(m_pParams->absTol));
-	ui.lineEditRTol->setText(QString::number(m_pParams->relTol));
-	ui.lineEditMinFraction->setText(QString::number(m_pParams->minFraction));
-	ui.lineEditSaveTimeStep->setText(QString::number(m_pParams->saveTimeStep));
+	ShowValueAndLabel(ui.lineEditRTol        , ui.labelRTol        , m_pParams->relTol      );
+	ShowValueAndLabel(ui.lineEditATol        , ui.labelATol        , m_pParams->absTol      );
+	ShowValueAndLabel(ui.lineEditMinFraction , ui.labelMinFraction , m_pParams->minFraction );
+	ShowValueAndLabel(ui.lineEditSaveTimeStep, ui.labelSaveTimeStep, m_pParams->saveTimeStep);
+	ShowValueAndLabel(ui.lineEditTMin        , ui.labelTMin        , m_pParams->enthalpyMinT);
+	ShowValueAndLabel(ui.lineEditTMax        , ui.labelTMax        , m_pParams->enthalpyMaxT);
+	ShowValueAndLabel(ui.lineEditTIntervals  , ui.labelTIntervals  , m_pParams->enthalpyInt );
 	ui.checkBoxSaveTimeStepHoldup->setChecked(m_pParams->saveTimeStepFlagHoldups);
-	ui.lineEditTMin->setText(QString::number(m_pParams->enthalpyMinT));
-	ui.lineEditTMax->setText(QString::number(m_pParams->enthalpyMaxT));
-	ui.lineEditTIntervals->setText(QString::number(m_pParams->enthalpyInt));
-	ui.lineEditInitialWindow->setText(QString::number(m_pParams->initTimeWindow));
-	ui.lineEditMinWindow->setText(QString::number(m_pParams->minTimeWindow));
-	ui.lineEditMaxWindow->setText(QString::number(m_pParams->maxTimeWindow));
-	ui.lineEditMaxIterNum->setText(QString::number(m_pParams->maxItersNumber));
-	ui.lineEditRatio->setText(QString::number(m_pParams->magnificationRatio));
-	ui.lineEditUpperLimit->setText(QString::number(m_pParams->itersUpperLimit));
-	ui.lineEditLowerLimit->setText(QString::number(m_pParams->itersLowerLimit));
-	ui.lineEdit1stUpperLimit->setText(QString::number(m_pParams->iters1stUpperLimit));
-	ui.comboBoxConvMethod->setCurrentIndex(E2I(static_cast<EConvergenceMethod>(m_pParams->convergenceMethod)));
-	ui.lineEditAccelParam->setText(QString::number(m_pParams->wegsteinAccelParam));
-	ui.lineEditRelaxParam->setText(QString::number(m_pParams->relaxationParam));
-	ui.comboBoxExtrapMethod->setCurrentIndex(E2I(static_cast<EExtrapolationMethod>(m_pParams->extrapolationMethod)));
+
+	ShowValueAndLabel(ui.lineEditInitialWindow, ui.labelInitialWindow, m_pParams->initTimeWindow    );
+	ShowValueAndLabel(ui.lineEditMinWindow    , ui.labelMinWindow    , m_pParams->minTimeWindow     );
+	ShowValueAndLabel(ui.lineEditMaxWindow    , ui.labelMaxWindow    , m_pParams->maxTimeWindow     );
+	ShowValueAndLabel(ui.lineEditMaxIterNum   , ui.labelMaxIterNum   , m_pParams->maxItersNumber    );
+	ShowValueAndLabel(ui.lineEditRatio        , ui.labelRatio        , m_pParams->magnificationRatio);
+	ShowValueAndLabel(ui.lineEditUpperLimit   , ui.labelUpperLimit   , m_pParams->itersUpperLimit   );
+	ShowValueAndLabel(ui.lineEditLowerLimit   , ui.labelLowerLimit   , m_pParams->itersLowerLimit   );
+	ShowValueAndLabel(ui.lineEdit1stUpperLimit, ui.label1stUpperLimit, m_pParams->iters1stUpperLimit);
+	ShowValueAndLabel(ui.lineEditAccelParam   , ui.labelAccelParam   , m_pParams->wegsteinAccelParam);
+	ShowValueAndLabel(ui.lineEditRelaxParam   , ui.labelRelaxParam   , m_pParams->relaxationParam   );
+	ui.comboBoxConvMethod->setCurrentIndex(static_cast<int>(static_cast<EConvergenceMethod>(m_pParams->convergenceMethod)));
+	ui.comboBoxExtrapMethod->setCurrentIndex(static_cast<int>(static_cast<EExtrapolationMethod>(m_pParams->extrapolationMethod)));
+
+	ShowValueAndLabel(ui.lineEditCacheWindow, ui.labelCacheWindow, m_pParams->cacheWindowAfterReload);
 	ui.checkBoxCacheStreamsFlag->setChecked(m_pParams->cacheFlagStreamsAfterReload);
 	ui.checkBoxCacheHoldupsFlag->setChecked(m_pParams->cacheFlagHoldupsAfterReload);
 	ui.checkBoxCacheInternalFlag->setChecked(m_pParams->cacheFlagInternalAfterReload);
-	ui.lineEditCacheWindow->setText(QString::number(m_pParams->cacheWindowAfterReload));
 	ui.checkBoxSplitFile->setChecked(!m_pParams->fileSingleFlag);
 
 	UpdateCacheWindowVisible();
@@ -91,7 +98,7 @@ void COptionsEditor::UpdateWarningsVisible() const
 
 void COptionsEditor::CacheFlagChanged(QCheckBox* _checkBox, bool _currFlag)
 {
-	QSignalBlocker blocker(_checkBox);
+	CSignalBlocker blocker{ _checkBox };
 
 	if (_checkBox->isChecked() != _currFlag)
 	{
@@ -114,7 +121,7 @@ void COptionsEditor::CacheFlagChanged(QCheckBox* _checkBox, bool _currFlag)
 
 void COptionsEditor::CacheWindowChanged()
 {
-	QSignalBlocker blocker(ui.lineEditCacheWindow);
+	CSignalBlocker blocker{ ui.lineEditCacheWindow };
 	ui.lineEditCacheWindow->clearFocus(); // to prevent re-firing of signals
 
 	if (ui.lineEditCacheWindow->text().toUInt() != m_pParams->cacheWindow)
@@ -162,27 +169,29 @@ void COptionsEditor::CacheInternalFlagChanged()
 
 void COptionsEditor::ApplyChanges()
 {
-	m_pParams->AbsTol(ui.lineEditATol->text().toDouble());
-	m_pParams->RelTol(ui.lineEditRTol->text().toDouble());
-	m_pParams->MinFraction(ui.lineEditMinFraction->text().toDouble());
-	m_pParams->SaveTimeStep(ui.lineEditSaveTimeStep->text().toDouble());
+	m_pParams->RelTol(ReadValue(ui.lineEditRTol));
+	m_pParams->AbsTol(ReadValue(ui.lineEditATol));
+	m_pParams->MinFraction(ReadValue(ui.lineEditMinFraction));
+	m_pParams->SaveTimeStep(ReadValue(ui.lineEditSaveTimeStep));
+	m_pParams->EnthalpyMinT(ReadValue(ui.lineEditTMin));
+	m_pParams->EnthalpyMaxT(ReadValue(ui.lineEditTMax));
+	m_pParams->EnthalpyInt(static_cast<uint32_t>(ReadValue(ui.lineEditTIntervals)));
 	m_pParams->SaveTimeStepFlagHoldups(ui.checkBoxSaveTimeStepHoldup->isChecked());
-	m_pParams->EnthalpyMinT(ui.lineEditTMin->text().toDouble());
-	m_pParams->EnthalpyMaxT(ui.lineEditTMax->text().toDouble());
-	m_pParams->EnthalpyInt(ui.lineEditTIntervals->text().toDouble());
-	m_pParams->InitTimeWindow(ui.lineEditInitialWindow->text().toDouble());
-	m_pParams->MinTimeWindow(ui.lineEditMinWindow->text().toDouble());
-	m_pParams->MaxTimeWindow(ui.lineEditMaxWindow->text().toDouble());
-	m_pParams->MaxItersNumber(ui.lineEditMaxIterNum->text().toDouble());
-	m_pParams->MagnificationRatio(ui.lineEditRatio->text().toDouble());
-	m_pParams->ItersUpperLimit(ui.lineEditUpperLimit->text().toInt());
-	m_pParams->ItersLowerLimit(ui.lineEditLowerLimit->text().toInt());
-	m_pParams->Iters1stUpperLimit(ui.lineEdit1stUpperLimit->text().toInt());
+
+	m_pParams->InitTimeWindow(ReadValue(ui.lineEditInitialWindow));
+	m_pParams->MinTimeWindow(ReadValue(ui.lineEditMinWindow));
+	m_pParams->MaxTimeWindow(ReadValue(ui.lineEditMaxWindow));
+	m_pParams->MaxItersNumber(static_cast<uint32_t>(ReadValue(ui.lineEditMaxIterNum)));
+	m_pParams->MagnificationRatio(ReadValue(ui.lineEditRatio));
+	m_pParams->ItersUpperLimit(static_cast<uint32_t>(ReadValue(ui.lineEditUpperLimit)));
+	m_pParams->ItersLowerLimit(static_cast<uint32_t>(ReadValue(ui.lineEditLowerLimit)));
+	m_pParams->Iters1stUpperLimit(static_cast<uint32_t>(ReadValue(ui.lineEdit1stUpperLimit)));
+	m_pParams->WegsteinAccelParam(ReadValue(ui.lineEditAccelParam));
+	m_pParams->RelaxationParam(ReadValue(ui.lineEditRelaxParam));
 	m_pParams->ConvergenceMethod(static_cast<EConvergenceMethod>(ui.comboBoxConvMethod->currentIndex()));
-	m_pParams->WegsteinAccelParam(ui.lineEditAccelParam->text().toDouble());
-	m_pParams->RelaxationParam(ui.lineEditRelaxParam->text().toDouble());
 	m_pParams->ExtrapolationMethod(static_cast<EExtrapolationMethod>(ui.comboBoxExtrapMethod->currentIndex()));
-	m_pParams->CacheWindowAfterReload(ui.lineEditCacheWindow->text().toInt());
+
+	m_pParams->CacheWindowAfterReload(static_cast<uint32_t>(ReadValue(ui.lineEditCacheWindow)));
 	m_pParams->CacheFlagStreamsAfterReload(ui.checkBoxCacheStreamsFlag->isChecked());
 	m_pParams->CacheFlagHoldupsAfterReload(ui.checkBoxCacheHoldupsFlag->isChecked());
 	m_pParams->CacheFlagInternalAfterReload(ui.checkBoxCacheInternalFlag->isChecked());
@@ -191,6 +200,12 @@ void COptionsEditor::ApplyChanges()
 	m_pFlowsheet->UpdateToleranceSettings();
 	m_pFlowsheet->UpdateThermodynamicsSettings();
 	emit DataChanged();
+	UpdateWholeView();
+}
+
+void COptionsEditor::ApplyChangesAndClose()
+{
+	ApplyChanges();
 	QDialog::accept();
 }
 
@@ -198,5 +213,5 @@ void COptionsEditor::setVisible(bool _bVisible)
 {
 	if (_bVisible && !isVisible())
 		UpdateWholeView();
-	QDialog::setVisible(_bVisible);
+	CQtDialog::setVisible(_bVisible);
 }

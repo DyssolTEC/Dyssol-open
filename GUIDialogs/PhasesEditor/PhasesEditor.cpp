@@ -91,6 +91,12 @@ bool CPhasesEditor::ValidateInput()
 	return true;
 }
 
+void CPhasesEditor::NewFlowsheetDataSet()
+{
+	if (isVisible())
+		UpdateWholeView();
+}
+
 void CPhasesEditor::UpdateWholeView()
 {
 	ui.tableWidget->setRowCount(0);
