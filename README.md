@@ -45,7 +45,6 @@ To install, run the [installer](https://github.com/DyssolTEC/Dyssol-open/release
 ### Build documentation and installers on Windows
 
 - Install [Doxygen](https://www.doxygen.nl/download.html).
-- Install [Graphviz](https://graphviz.org/download/), with "add to PATH" option enabled
 - Install [MikTeX](https://miktex.org/download) with packages: amscls, anyfontsize, preview, zhmetrics. With default installation, MikTeX will install the packages on-the-fly during the first build of the documentation (user confirmation may be required).
 - Install required python libraries by running in terminal
 ```powershell
