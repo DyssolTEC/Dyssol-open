@@ -55,6 +55,18 @@ public:
 		 */
 		SChemicalSubstance(std::string _key, double _nu, double _order, EPhase _phase) : key{ std::move(_key) }, nu{ _nu }, order{ _order }, phase{ _phase } {}
 		/**
+		 * \brief Equality comparison.
+		 * \param _other Second object.
+		 * \return Whether objects are equal.
+		 */
+		bool operator==(const SChemicalSubstance& _other) const { return key == _other.key && nu == _other.nu && order == _other.order && phase == _other.phase; }
+		/**
+		 * \brief Inequality comparison.
+		 * \param _other Second object.
+		 * \return Whether objects are not equal.
+		 */
+		bool operator!=(const SChemicalSubstance& _other) const { return !(*this == _other); }
+		/**
 		 * \brief Returns type of the substance based on the value of stoichiometric coefficient.
 		 * \return Type of the substance in the reaction.
 		 */
@@ -104,6 +116,13 @@ public:
 	 * \param _other Target chemical reaction.
 	 */
 	void Swap(CChemicalReaction& _other) noexcept;
+
+	/**
+	 * \brief Comparison.
+	 * \param _other Second object.
+	 * \return Whether objects are equal.
+	 */
+	bool operator==(const CChemicalReaction& _other) const;
 
 	/**
 	 * \brief Sets name of the reaction.

@@ -36,6 +36,18 @@ void CChemicalReaction::Swap(CChemicalReaction& _other) noexcept
 	std::swap(m_substances, _other.m_substances);
 }
 
+bool CChemicalReaction::operator==(const CChemicalReaction& _other) const
+{
+	if (m_name != _other.m_name) return false;
+	if (m_enthalpy != _other.m_enthalpy) return false;
+	if (m_iBase != _other.m_iBase) return false;
+	if (m_substances.size() != _other.m_substances.size()) return false;
+	for (size_t i = 0; i < m_substances.size(); ++i)
+		if (*m_substances[i] != *_other.m_substances[i])
+			return false;
+	return true;
+}
+
 void CChemicalReaction::SetName(const std::string& _name)
 {
 	m_name = _name;
