@@ -89,8 +89,14 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="$(SolutionDir)GUIDialogs\CalculationSequenceEditor\CalculationSequenceEditor.vcxproj">
+      <Project>{e5c9c319-448e-4855-823f-182aedeec9a7}</Project>
+    </ProjectReference>
     <ProjectReference Include="$(SolutionDir)GUIDialogs\CompoundsManager\CompoundsManager.vcxproj">
       <Project>{905615c6-5300-4931-8463-137fb44b7a5b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)GUIDialogs\DustFormationTesterTab\DustFormationTesterTab.vcxproj">
+      <Project>{cf7ef1fb-265a-4b10-8d3c-133a5e30cacf}</Project>
     </ProjectReference>
     <ProjectReference Include="$(SolutionDir)GUIDialogs\FlowsheetEditor\FlowsheetEditor.vcxproj">
       <Project>{c2c2a003-ead4-46bf-a83d-b3d702a1349d}</Project>
@@ -101,14 +107,23 @@
     <ProjectReference Include="$(SolutionDir)GUIDialogs\HoldupsEditor\HoldupsEditor.vcxproj">
       <Project>{2c1e0c56-be38-483f-aef5-54a8808aeb2b}</Project>
     </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)GUIDialogs\MainWindow\MainWindow.vcxproj">
+      <Project>{9f945e6d-b524-490a-81e3-f4f0a48139af}</Project>
+    </ProjectReference>
     <ProjectReference Include="$(SolutionDir)GUIDialogs\MaterialsDatabaseTab\MaterialsDatabaseTab.vcxproj">
       <Project>{b12702ad-abfb-343a-a199-8e24837244a3}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)GUIDialogs\ModulesManagerTab\ModulesManagerTab.vcxproj">
+      <Project>{4882842d-566d-456a-a267-a5f9c8fdb16d}</Project>
     </ProjectReference>
     <ProjectReference Include="$(SolutionDir)GUIDialogs\OptionsEditor\OptionsEditor.vcxproj">
       <Project>{2c23a589-4152-493d-981b-9c4baf987c59}</Project>
     </ProjectReference>
     <ProjectReference Include="$(SolutionDir)GUIDialogs\PhasesEditor\PhasesEditor.vcxproj">
       <Project>{3c008e3a-52b3-4604-b1c9-2167339c572a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)GUIDialogs\SettingsEditor\SettingsEditor.vcxproj">
+      <Project>{aa695107-b3df-4383-bb70-483c28e3d81a}</Project>
     </ProjectReference>
     <ProjectReference Include="$(SolutionDir)GUIDialogs\SimulatorTab\SimulatorTab.vcxproj">
       <Project>{d144fed6-8136-46b2-a6f2-9b8002499035}</Project>
@@ -122,29 +137,14 @@
     <ProjectReference Include="$(SolutionDir)GUIDialogs\UnitsViewer\UnitsViewer.vcxproj">
       <Project>{78166748-08af-4453-9871-7c896e1a2323}</Project>
     </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)SimulatorCore\SimulatorCore.vcxproj">
-      <Project>{a631849a-0b28-4982-9a8d-9e4921a2a84c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)GUIDialogs\CalculationSequenceEditor\CalculationSequenceEditor.vcxproj">
-      <Project>{e5c9c319-448e-4855-823f-182aedeec9a7}</Project>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)GUIDialogs\DustFormationTesterTab\DustFormationTesterTab.vcxproj">
-      <Project>{cf7ef1fb-265a-4b10-8d3c-133a5e30cacf}</Project>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)GUIDialogs\SettingsEditor\SettingsEditor.vcxproj">
-      <Project>{aa695107-b3df-4383-bb70-483c28e3d81a}</Project>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)GUIDialogs\ModulesManagerTab\ModulesManagerTab.vcxproj">
-      <Project>{4882842d-566d-456a-a267-a5f9c8fdb16d}</Project>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)GUIDialogs\MainWindow\MainWindow.vcxproj">
-      <Project>{9f945e6d-b524-490a-81e3-f4f0a48139af}</Project>
-    </ProjectReference>
     <ProjectReference Include="$(SolutionDir)GUIWidgets\SimulationThread\SimulationThread.vcxproj">
       <Project>{0f7b1a52-7766-4e37-9acd-ac76ab000000}</Project>
     </ProjectReference>
     <ProjectReference Include="$(SolutionDir)ScriptInterface\ScriptInterface.vcxproj">
       <Project>{0736ddb9-c29b-4dea-8e9a-6feffed8cfb6}</Project>
+    </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)SimulatorCore\SimulatorCore.vcxproj">
+      <Project>{a631849a-0b28-4982-9a8d-9e4921a2a84c}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
