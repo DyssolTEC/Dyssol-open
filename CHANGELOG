@@ -20,6 +20,7 @@ Fixes:
 - Fixed a possible crash when saving a file in a write-protected directory.
 - In some cases simulation wasn't stop after pressing the stop button.
 - Fixed the work of Save Time Step setting in some cases.
+- Fixed calculation of density for a mixture of compounds with the function CBaseStream::GetPhaseProperty.
 
 Other:
 - Allow installation for single user.
