@@ -237,6 +237,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Get LocalAppData Directory
+      run: echo ("LOCALAPPDATA_DIR=" + $env:LOCALAPPDATA) >> $env:GITHUB_ENV
+      
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
         
@@ -355,7 +358,7 @@ jobs:
       shell: pwsh
       run: |
         $InstallerFile = Resolve-Path "${{github.workspace}}\DyssolInstallers\Installers\Dyssol*.exe"
-        Start-Process -FilePath $InstallerFile -ArgumentList "/SP- /SILENT /SUPPRESSMSGBOXES" -Wait
+        Start-Process -FilePath $InstallerFile -ArgumentList "/SP- /SILENT /SUPPRESSMSGBOXES /CURRENTUSER" -Wait
 
     - name: Upload Installer Artifact
       uses: actions/upload-artifact@v4
@@ -373,7 +376,13 @@ jobs:
         if-no-files-found: error
         retention-days: 7
         compression-level: 9
-        path: C:/Program Files/Dyssol
+        path: ${{ env.LOCALAPPDATA_DIR }}/Programs/Dyssol
+
+    - name: Uninstall Dyssol
+      shell: pwsh
+      run: |
+        $UnInstallerFile = Resolve-Path "${{ env.LOCALAPPDATA_DIR }}/Programs/Dyssol/unins000.exe"
+        Start-Process -FilePath $UnInstallerFile -ArgumentList "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /skipaskconfig=yes" -Wait
 
   release:
     runs-on: windows-2019
