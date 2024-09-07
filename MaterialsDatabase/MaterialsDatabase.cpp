@@ -705,6 +705,14 @@ std::vector<std::string> CMaterialsDatabase::GetCompoundsKeys() const
 	return vKeys;
 }
 
+bool CMaterialsDatabase::HasCompound(const std::string& _key)
+{
+	return std::any_of(m_vCompounds.begin(), m_vCompounds.end(), [&](const CCompound& _c)
+	{
+		return _c.GetKey() == _key;
+	});
+}
+
 double CMaterialsDatabase::GetConstPropertyValue(const std::string& _sCompoundUniqueKey, ECompoundConstProperties _nConstPropType) const
 {
 	if (const CCompound* comp = GetCompound(_sCompoundUniqueKey))

@@ -42,7 +42,7 @@ void CHoldupsEditor::UpdateHoldupsList()
 	ui.holdupsList->setColumnCount(1);
 	ui.holdupsList->setRowCount(0);
 
-	m_pSelectedModel = ui.modelsList->currentRow() != -1 ? m_pFlowsheet->GetUnit(ui.modelsList->GetItemUserData(ui.modelsList->currentRow(), 0).toStdString()) : nullptr;
+	m_pSelectedModel = ui.modelsList->currentRow() != -1 ? m_pFlowsheet->GetUnit(ui.modelsList->GetItemUserDataQStr(ui.modelsList->currentRow(), 0).toStdString()) : nullptr;
 	if (m_pSelectedModel && m_pSelectedModel->GetModel())
 	{
 		for (const auto& stream : m_pSelectedModel->GetModel()->GetStreamsManager().GetAllInit())

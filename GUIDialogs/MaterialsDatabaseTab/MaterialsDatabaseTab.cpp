@@ -79,6 +79,11 @@ void CMaterialsDatabaseTab::InitializeConnections()
 	connect(ui.propertyEditorInter,     &CPropertyEditor::MDBPropertyChanged,       this, [=] { SetMaterialsDatabaseModified(true); });
 }
 
+void CMaterialsDatabaseTab::SelectCompound(const std::string& _key) const
+{
+	SelectCompound(m_materialsDB->GetCompound(_key));
+}
+
 void CMaterialsDatabaseTab::setVisible(bool _bVisible)
 {
 	if (_bVisible && !isVisible())
@@ -882,7 +887,7 @@ void CMaterialsDatabaseTab::AddToolButtonOnTable(CQtTable* _pTable, int _iRow, i
 
 CCompound* CMaterialsDatabaseTab::GetSelectedCompound(const int _row /*= -1*/) const
 {
-	return m_materialsDB->GetCompound(ui.tableCompounds->GetItemUserData(_row, ECompTable::CT_NAME_COL).toStdString());
+	return m_materialsDB->GetCompound(ui.tableCompounds->GetItemUserDataQStr(_row, ECompTable::CT_NAME_COL).toStdString());
 }
 
 std::pair<CCompound*, CCompound*> CMaterialsDatabaseTab::GetSelectedInterCompounds() const
@@ -904,7 +909,7 @@ CInteraction* CMaterialsDatabaseTab::GetSelectedInteraction() const
 
 unsigned CMaterialsDatabaseTab::GetPropertyKey(const CQtTable* _pTable, int _iRow)
 {
-	return _pTable->GetItemUserData(_iRow, EPropTable::PT_VALUE_COL).toUInt();
+	return _pTable->GetItemUserDataQStr(_iRow, EPropTable::PT_VALUE_COL).toUInt();
 }
 
 bool CMaterialsDatabaseTab::IsConstProperty(int _iRow) const
@@ -914,6 +919,7 @@ bool CMaterialsDatabaseTab::IsConstProperty(int _iRow) const
 
 void CMaterialsDatabaseTab::SelectCompound(const CCompound* _pCompound) const
 {
+	if (!_pCompound) return;
 	for (int i = 0; i < static_cast<int>(m_materialsDB->CompoundsNumber()); ++i)
 		if (GetSelectedCompound(i)->GetKey() == _pCompound->GetKey())
 		{

@@ -65,7 +65,7 @@ void CGridEditor::UpdateWholeView()
 void CGridEditor::UpdateGridsList() const
 {
 	[[maybe_unused]] CSignalBlocker blocker{ ui.treeGrids };
-	const auto oldData = ui.treeGrids->GetCurrentData(1); // key of currently selected entity
+	const auto oldData = ui.treeGrids->GetCurrentDataQStr(1); // key of currently selected entity
 	ui.treeGrids->clear();
 	ui.treeGrids->setColumnCount(2);
 	const auto& mainGrid = m_flowsheet->GetGrid();
@@ -112,7 +112,7 @@ void CGridEditor::UpdateDimensionsList()
 
 void CGridEditor::GridSelected()
 {
-	const auto key = ui.treeGrids->GetCurrentData(1).toStdString();
+	const auto key = ui.treeGrids->GetCurrentDataQStr(1).toStdString();
 	const auto* unit = m_flowsheet->GetUnit(key);
 	const auto* model = unit ? unit->GetModel() : nullptr;
 	if (key != "global" && model)
@@ -125,7 +125,7 @@ void CGridEditor::GridSelected()
 void CGridEditor::GridActivityChanged(const QCheckBox* _checkbox, const QTreeWidgetItem* _item)
 {
 	if (_checkbox->isChecked()) return;
-	const auto key = ui.treeGrids->GetDataString(_item, 1).toStdString();
+	const auto key = ui.treeGrids->GetDataQStr(_item, 1).toStdString();
 	auto* model = m_flowsheet->GetUnit(key)->GetModel();
 	if (!model) return UpdateGridsList();
 	const auto name = QString::fromStdString(m_flowsheet->GetUnit(key)->GetName());
@@ -178,7 +178,7 @@ bool CGridEditor::ApplyChanges()
 		newGrid.AddDimension(dynamic_cast<CDimensionParameters*>(ui.listDims->itemWidget(ui.listDims->item(i)))->GetGrid());
 
 	// set the grid
-	const auto key = ui.treeGrids->GetCurrentData(1).toStdString();
+	const auto key = ui.treeGrids->GetCurrentDataQStr(1).toStdString();
 	if (key.empty()) return false;
 	if (key == "global")
 		m_flowsheet->SetMainGrid(newGrid);

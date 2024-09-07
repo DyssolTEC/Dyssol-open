@@ -20,14 +20,14 @@ private:
 public:
 	CModulesManagerTab(QWidget* _parent = nullptr);
 
-	void SetPointers(CFlowsheet* _flowsheet, CModelsManager* _modelsManager, QSettings* _settings) override;
+	void OnPointersSet() override;
 
 	void InitializeConnections() const;
 
 public slots:
 	void setVisible(bool _bVisible) override;
 
-	void UpdateWholeView() const;
+	void UpdateWholeView() override;
 
 private:
 	void UpdateModels();

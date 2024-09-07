@@ -506,7 +506,7 @@ void CQtTable::SetCurrentCellPos(int _row, int _col)
 	setCurrentCell(std::clamp(_row, 0, rowCount() - 1), std::clamp(_col, 0, columnCount() - 1), QItemSelectionModel::SelectCurrent);
 }
 
-QString CQtTable::GetCurrentItemUserData() const
+QString CQtTable::GetCurrentItemUserDataQStr() const
 {
 	if (!currentItem()) return {};
 	return currentItem()->data(Qt::UserRole).toString();
@@ -514,16 +514,21 @@ QString CQtTable::GetCurrentItemUserData() const
 
 std::string CQtTable::GetCurrentItemUserDataStr() const
 {
-	return GetCurrentItemUserData().toStdString();
+	return GetCurrentItemUserDataQStr().toStdString();
 }
 
-QString CQtTable::GetItemUserData(int _row /*= -1*/, int _col /*= -1*/) const
+QString CQtTable::GetItemUserDataQStr(int _row /*= -1*/, int _col /*= -1*/) const
 {
 	const int row = _row == -1 ? currentRow() : _row;
 	const int col = _col == -1 ? currentColumn() : _col;
 	if(const QTableWidgetItem* pItem = item(row, col))
 		return pItem->data(Qt::UserRole).toString();
 	return {};
+}
+
+std::string CQtTable::GetItemUserDataStr(int _row, int _col) const
+{
+	return GetItemUserDataQStr(_row, _col).toStdString();
 }
 
 std::vector<double> CQtTable::GetRowValues(const int _row) const

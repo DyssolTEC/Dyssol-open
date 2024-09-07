@@ -69,9 +69,19 @@ public:
 	// Returns user data of the given column in the specified item.
 	static QVariant GetData(const QTreeWidgetItem* _item, int _col = 0);
 	// Returns user data of the given column in the specified item.
-	static QString GetDataString(const QTreeWidgetItem* _item, int _col = 0);
+	static QString GetDataQStr(const QTreeWidgetItem* _item, int _col = 0);
+	// Returns user data of the given column in the specified item.
+	static std::string GetDataStr(const QTreeWidgetItem* _item, int _col = 0);
 	// Returns user data of the given column in current item.
-	QString GetCurrentData(int _col = 0) const;
+	QString GetCurrentDataQStr(int _col = 0) const;
+
+	/**
+	 * \brief Check if one item is a successor of another.
+	 * \param _parent Parent item.
+	 * \param _child Testing child item.
+	 * \return Whether child is a successor of the parent.
+	 */
+	static bool IsSuccessor(const QTreeWidgetItem* _parent, const QTreeWidgetItem* _child);
 
 	bool blockSignals(bool _flag);
 	bool eventFilter(QObject* _object, QEvent* _event) override;

@@ -105,9 +105,18 @@ namespace StringFunctions
 		return _s.find(_c) != std::string::npos;
 	}
 
-	bool Contains(const std::string& _s, const std::string& _subs)
+	bool Contains(const std::string& _s, const std::string& _subs, bool _caseSensitive)
 	{
-		return _s.find(_subs) != std::string::npos;
+		if (_caseSensitive)
+			return _s.find(_subs) != std::string::npos;
+		else
+		{
+			const auto it = std::search(_s.begin(), _s.end(), _subs.begin(), _subs.end(), [](char _c1, char _c2)
+			{
+				return std::tolower(_c1) == std::tolower(_c2);
+			});
+			return it != _s.end();
+		}
 	}
 
 	bool StartsWith(const std::string& _s, const std::string& _subs)

@@ -9,6 +9,11 @@ CQtPushButton::CQtPushButton(QWidget* _parent)
 {
 }
 
+QIcon CQtPushButton::GetIcon()
+{
+	return m_icon;
+}
+
 void CQtPushButton::setIcon(const QIcon& _icon)
 {
 	m_icon = _icon;
