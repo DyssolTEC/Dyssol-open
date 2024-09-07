@@ -32,15 +32,6 @@
     <ClCompile Include="QtPushButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="QtValidatorDouble.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="QtValidatorInt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="QtValidatorUInt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="QtTable.h">
@@ -69,13 +60,7 @@
     <ClInclude Include="QtPushButton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="QtValidatorDouble.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="QtValidatorInt.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="QtValidatorUInt.h">
+    <ClInclude Include="QtValidator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
