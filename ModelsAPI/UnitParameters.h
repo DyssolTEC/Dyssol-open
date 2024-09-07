@@ -43,7 +43,7 @@ class CBaseUnitParameter
 {
 	EUnitParameter m_type;     ///< Type of unit parameter.
 	std::string m_name;        ///< Parameter name.
-	std::string m_units;       ///< Units of measurement.
+	std::wstring m_units;      ///< Units of measurement.
 	std::string m_description; ///< Description of the parameter.
 
 public:
@@ -58,7 +58,7 @@ public:
 	/**
 	 * \private
 	 */
-	CBaseUnitParameter(EUnitParameter _type, std::string _name, std::string _units, std::string _description);
+	CBaseUnitParameter(EUnitParameter _type, std::string _name, std::wstring _units, std::string _description);
 	/**
 	 * \private
 	 */
@@ -101,7 +101,7 @@ public:
 	 * \brief Returns parameter units.
 	 * \return Parameter units.
 	 */
-	std::string GetUnits() const;
+	std::wstring GetUnits() const;
 	/**
 	 * \brief Returns parameter description.
 	 * \return Parameter description.
@@ -125,7 +125,7 @@ public:
 	 * \brief Sets parameter units.
 	 * \param _units Parameter units.
 	 */
-	void SetUnits(const std::string& _units);
+	void SetUnits(const std::wstring& _units);
 	/**
 	 * \private
 	 * \brief Sets parameter description.
@@ -193,7 +193,7 @@ public:
 	/**
 	 * \private
 	 */
-	CConstUnitParameter(std::string _name, std::string _units, std::string _description, T _min, T _max, T _value);
+	CConstUnitParameter(std::string _name, std::wstring _units, std::string _description, T _min, T _max, T _value);
 
 	/**
 	 * \private
@@ -309,7 +309,7 @@ public:
 	/**
 	 * \private
 	 */
-	CListUnitParameter(std::string _name, std::string _units, std::string _description, T _min, T _max, std::vector<T> _values);
+	CListUnitParameter(std::string _name, std::wstring _units, std::string _description, T _min, T _max, std::vector<T> _values);
 
 	/**
 	 * \private
@@ -460,7 +460,7 @@ class CDependentUnitParameter : public CBaseUnitParameter
 	double m_paramMin{};      ///< Minimum allowed parameter.
 	double m_paramMax{};      ///< Maximum allowed parameter.
 	std::string m_paramName;  ///< Parameter name.
-	std::string m_paramUnits; ///< Parameter units.
+	std::wstring m_paramUnits; ///< Parameter units.
 
 public:
 	/**
@@ -470,7 +470,7 @@ public:
 	/**
 	 * \private
 	 */
-	CDependentUnitParameter(std::string _valueName, double _valueInit, std::string _valueUnits, std::string _paramName, double _paramInit, std::string _paramUnits, std::string _description, double _valueMin, double _valueMax, double _paramMin, double _paramMax);
+	CDependentUnitParameter(std::string _valueName, double _valueInit, std::wstring _valueUnits, std::string _paramName, double _paramInit, std::wstring _paramUnits, std::string _description, double _valueMin, double _valueMax, double _paramMin, double _paramMax);
 
 	/**
 	 * \private
@@ -494,13 +494,13 @@ public:
 	 * \brief Returns dependent parameter units.
 	 * \return Dependent parameter units.
 	 */
-	std::string GetParamUnits() const;
+	std::wstring GetParamUnits() const;
 	/**
 	 * \private
 	 * \brief Sets dependent parameter units.
 	 * \param _paramUnits Dependent parameter units.
 	 */
-	void SetParamUnits(const std::string& _paramUnits);
+	void SetParamUnits(const std::wstring& _paramUnits);
 
 	/**
 	 * \brief Returns minimum allowed value.
@@ -680,7 +680,7 @@ public:
 	/**
 	 * \private
 	 */
-	CTDUnitParameter(std::string _name, std::string _units, std::string _description, double _min, double _max, double _value);
+	CTDUnitParameter(std::string _name, std::wstring _units, std::string _description, double _min, double _max, double _value);
 
 	/**
 	* \brief Returns list of all defined time points.
@@ -1291,31 +1291,31 @@ public:
 	 * \brief Adds new real constant unit parameter.
 	 * \details If parameter with the given name already exists, does nothing.
 	 */
-	void AddConstRealParameter(const std::string& _name, const std::string& _units, const std::string& _description, double _min, double _max, double _value);
+	void AddConstRealParameter(const std::string& _name, const std::wstring& _units, const std::string& _description, double _min, double _max, double _value);
 	/**
 	 * \private
 	 * \brief Adds new signed integer constant unit parameter.
 	 * \details If parameter with the given name already exists, does nothing.
 	 */
-	void AddConstIntParameter(const std::string& _name, const std::string& _units, const std::string& _description, int64_t _min, int64_t _max, int64_t _value);
+	void AddConstIntParameter(const std::string& _name, const std::wstring& _units, const std::string& _description, int64_t _min, int64_t _max, int64_t _value);
 	/**
 	 * \private
 	 * \brief Adds new unsigned integer constant unit parameter.
 	 * \details If parameter with the given name already exists, does nothing.
 	 */
-	void AddConstUIntParameter(const std::string& _name, const std::string& _units, const std::string& _description, uint64_t _min, uint64_t _max, uint64_t _value);
+	void AddConstUIntParameter(const std::string& _name, const std::wstring& _units, const std::string& _description, uint64_t _min, uint64_t _max, uint64_t _value);
 	/**
 	 * \private
 	 * \brief Adds new dependent unit parameter.
 	 * \details If parameter with the given name already exists, does nothing.
 	 */
-	void AddDependentParameter(const std::string& _name, const std::string& _units, const std::string& _description, double _min, double _max, double _value, const std::string& _paramName, const std::string& _paramUnits, double _paramMin, double _paramMax, double _paramValue);
+	void AddDependentParameter(const std::string& _name, const std::wstring& _units, const std::string& _description, double _min, double _max, double _value, const std::string& _paramName, const std::wstring& _paramUnits, double _paramMin, double _paramMax, double _paramValue);
 	/**
 	 * \private
 	 * \brief Adds new time-dependent unit parameter.
 	 * \details If parameter with the given name already exists, does nothing.
 	 */
-	void AddTDParameter(const std::string& _name, const std::string& _units, const std::string& _description, double _min, double _max, double _value);
+	void AddTDParameter(const std::string& _name, const std::wstring& _units, const std::string& _description, double _min, double _max, double _value);
 	/**
 	 * \private
 	 * \brief Adds new string unit parameter.
@@ -1363,19 +1363,19 @@ public:
 	 * \brief Adds new real list unit parameter.
 	 * \details If parameter with the given name already exists, does nothing.
 	 */
-	void AddListRealParameter(const std::string& _name, const std::string& _units, const std::string& _description, double _min, double _max, const std::vector<double>& _values);
+	void AddListRealParameter(const std::string& _name, const std::wstring& _units, const std::string& _description, double _min, double _max, const std::vector<double>& _values);
 	/**
 	 * \private
 	 * \brief Adds new signed integer list unit parameter.
 	 * \details If parameter with the given name already exists, does nothing.
 	 */
-	void AddListIntParameter(const std::string& _name, const std::string& _units, const std::string& _description, int64_t _min, int64_t _max, const std::vector<int64_t>& _values);
+	void AddListIntParameter(const std::string& _name, const std::wstring& _units, const std::string& _description, int64_t _min, int64_t _max, const std::vector<int64_t>& _values);
 	/**
 	 * \private
 	 * \brief Adds new unsigned integer list unit parameter.
 	 * \details If parameter with the given name already exists, does nothing.
 	 */
-	void AddListUIntParameter(const std::string& _name, const std::string& _units, const std::string& _description, uint64_t _min, uint64_t _max, const std::vector<uint64_t>& _values);
+	void AddListUIntParameter(const std::string& _name, const std::wstring& _units, const std::string& _description, uint64_t _min, uint64_t _max, const std::vector<uint64_t>& _values);
 
 	/**
 	 * \brief Returns list of all defined unit parameters.

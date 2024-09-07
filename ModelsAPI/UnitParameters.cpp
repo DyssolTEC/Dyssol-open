@@ -44,7 +44,7 @@ CBaseUnitParameter::CBaseUnitParameter(EUnitParameter _type) :
 {
 }
 
-CBaseUnitParameter::CBaseUnitParameter(EUnitParameter _type, std::string _name, std::string _units, std::string _description) :
+CBaseUnitParameter::CBaseUnitParameter(EUnitParameter _type, std::string _name, std::wstring _units, std::string _description) :
 	m_type(_type),
 	m_name(std::move(_name)),
 	m_units(std::move(_units)),
@@ -62,7 +62,7 @@ std::string CBaseUnitParameter::GetName() const
 	return m_name;
 }
 
-std::string CBaseUnitParameter::GetUnits() const
+std::wstring CBaseUnitParameter::GetUnits() const
 {
 	return m_units;
 }
@@ -82,7 +82,7 @@ void CBaseUnitParameter::SetName(const std::string& _name)
 	m_name = _name;
 }
 
-void CBaseUnitParameter::SetUnits(const std::string& _units)
+void CBaseUnitParameter::SetUnits(const std::wstring& _units)
 {
 	m_units = _units;
 }
@@ -108,7 +108,7 @@ CConstUnitParameter<T>::CConstUnitParameter() :
 }
 
 template<typename T>
-CConstUnitParameter<T>::CConstUnitParameter(std::string _name, std::string _units, std::string _description, T _min, T _max, T _value) :
+CConstUnitParameter<T>::CConstUnitParameter(std::string _name, std::wstring _units, std::string _description, T _min, T _max, T _value) :
 	CBaseUnitParameter(DeduceTypeConst<T>(), std::move(_name), std::move(_units), std::move(_description)),
 	m_value{ _value },
 	m_min{ _min },
@@ -175,7 +175,7 @@ CListUnitParameter<T>::CListUnitParameter()
 }
 
 template <typename T>
-CListUnitParameter<T>::CListUnitParameter(std::string _name, std::string _units, std::string _description, T _min, T _max, std::vector<T> _values)
+CListUnitParameter<T>::CListUnitParameter(std::string _name, std::wstring _units, std::string _description, T _min, T _max, std::vector<T> _values)
 	: CBaseUnitParameter{ DeduceTypeList<T>(), std::move(_name), std::move(_units), std::move(_description) }
 	, m_values{ std::move(_values) }
 	, m_min{ _min }
@@ -232,7 +232,7 @@ CDependentUnitParameter::CDependentUnitParameter() :
 {
 }
 
-CDependentUnitParameter::CDependentUnitParameter(std::string _valueName, double _valueInit, std::string _valueUnits, std::string _paramName, double _paramInit, std::string _paramUnits, std::string _description, double _valueMin, double _valueMax, double _paramMin, double _paramMax) :
+CDependentUnitParameter::CDependentUnitParameter(std::string _valueName, double _valueInit, std::wstring _valueUnits, std::string _paramName, double _paramInit, std::wstring _paramUnits, std::string _description, double _valueMin, double _valueMax, double _paramMin, double _paramMax) :
 	CBaseUnitParameter(EUnitParameter::PARAM_DEPENDENT, std::move(_valueName), std::move(_valueUnits), std::move(_description)),
 	m_valueMin{ _valueMin },
 	m_valueMax{ _valueMax },
@@ -259,12 +259,12 @@ void CDependentUnitParameter::SetParamName(const std::string& _paramName)
 	m_paramName = _paramName;
 }
 
-std::string CDependentUnitParameter::GetParamUnits() const
+std::wstring CDependentUnitParameter::GetParamUnits() const
 {
 	return m_paramUnits;
 }
 
-void CDependentUnitParameter::SetParamUnits(const std::string& _paramUnits)
+void CDependentUnitParameter::SetParamUnits(const std::wstring& _paramUnits)
 {
 	m_paramUnits = _paramUnits;
 }
@@ -437,8 +437,8 @@ CTDUnitParameter::CTDUnitParameter() :
 	SetType(EUnitParameter::TIME_DEPENDENT);
 }
 
-CTDUnitParameter::CTDUnitParameter(std::string _name, std::string _units, std::string _description, double _min, double _max, double _value) :
-	CDependentUnitParameter(std::move(_name), _value, std::move(_units), "Time", 0.0, "s", std::move(_description),
+CTDUnitParameter::CTDUnitParameter(std::string _name, std::wstring _units, std::string _description, double _min, double _max, double _value) :
+	CDependentUnitParameter(std::move(_name), _value, std::move(_units), "Time", 0.0, L"s", std::move(_description),
 		_min, _max, 0.0, std::numeric_limits<double>::max())
 {
 	SetType(EUnitParameter::TIME_DEPENDENT);
@@ -488,7 +488,7 @@ CStringUnitParameter::CStringUnitParameter() :
 }
 
 CStringUnitParameter::CStringUnitParameter(std::string _name, std::string _description, std::string _value) :
-	CBaseUnitParameter(EUnitParameter::STRING, std::move(_name), "", std::move(_description)),
+	CBaseUnitParameter(EUnitParameter::STRING, std::move(_name), L"", std::move(_description)),
 	m_value(std::move(_value))
 {
 }
@@ -554,7 +554,7 @@ CCheckBoxUnitParameter::CCheckBoxUnitParameter() :
 }
 
 CCheckBoxUnitParameter::CCheckBoxUnitParameter(std::string _name, std::string _description, bool _checked) :
-	CBaseUnitParameter(EUnitParameter::CHECKBOX, std::move(_name), "", std::move(_description)),
+	CBaseUnitParameter(EUnitParameter::CHECKBOX, std::move(_name), L"", std::move(_description)),
 	m_checked(_checked)
 {
 }
@@ -620,7 +620,7 @@ CSolverUnitParameter::CSolverUnitParameter() :
 }
 
 CSolverUnitParameter::CSolverUnitParameter(std::string _name, std::string _description, ESolverTypes _type) :
-	CBaseUnitParameter(EUnitParameter::SOLVER, std::move(_name), "", std::move(_description)),
+	CBaseUnitParameter(EUnitParameter::SOLVER, std::move(_name), L"", std::move(_description)),
 	m_solverType(_type)
 {
 }
@@ -706,7 +706,7 @@ CComboUnitParameter::CComboUnitParameter() :
 }
 
 CComboUnitParameter::CComboUnitParameter(std::string _name, std::string _description, size_t _itemDefault, const std::vector<size_t>& _items, const std::vector<std::string>& _itemsNames) :
-	CBaseUnitParameter(EUnitParameter::COMBO, std::move(_name), "", std::move(_description))
+	CBaseUnitParameter(EUnitParameter::COMBO, std::move(_name), L"", std::move(_description))
 {
 	if (_items.size() != _itemsNames.size()) return;
 	for (size_t i = 0; i < _itemsNames.size(); ++i)
@@ -826,7 +826,7 @@ CCompoundUnitParameter::CCompoundUnitParameter() :
 }
 
 CCompoundUnitParameter::CCompoundUnitParameter(std::string _name, std::string _description) :
-	CBaseUnitParameter(EUnitParameter::COMPOUND, std::move(_name), "", std::move(_description))
+	CBaseUnitParameter(EUnitParameter::COMPOUND, std::move(_name), L"", std::move(_description))
 {
 }
 
@@ -907,7 +907,7 @@ CReactionUnitParameter::CReactionUnitParameter()
 }
 
 CReactionUnitParameter::CReactionUnitParameter(std::string _name, std::string _description)
-	: CBaseUnitParameter(EUnitParameter::REACTION, std::move(_name), "", std::move(_description))
+	: CBaseUnitParameter(EUnitParameter::REACTION, std::move(_name), L"", std::move(_description))
 {
 }
 
@@ -1087,31 +1087,31 @@ bool CUnitParametersManager::IsNameExist(const std::string& _name) const
 	return false;
 }
 
-void CUnitParametersManager::AddConstRealParameter(const std::string& _name, const std::string& _units, const std::string& _description, double _min, double _max, double _value)
+void CUnitParametersManager::AddConstRealParameter(const std::string& _name, const std::wstring& _units, const std::string& _description, double _min, double _max, double _value)
 {
 	if (IsNameExist(_name)) return;
 	m_parameters.emplace_back(new CConstUnitParameter<double>{ _name, _units, _description, _min, _max, _value });
 }
 
-void CUnitParametersManager::AddConstIntParameter(const std::string& _name, const std::string& _units, const std::string& _description, int64_t _min, int64_t _max, int64_t _value)
+void CUnitParametersManager::AddConstIntParameter(const std::string& _name, const std::wstring& _units, const std::string& _description, int64_t _min, int64_t _max, int64_t _value)
 {
 	if (IsNameExist(_name)) return;
 	m_parameters.emplace_back(new CConstUnitParameter<int64_t>{ _name, _units, _description, _min, _max, _value });
 }
 
-void CUnitParametersManager::AddConstUIntParameter(const std::string& _name, const std::string& _units, const std::string& _description, uint64_t _min, uint64_t _max, uint64_t _value)
+void CUnitParametersManager::AddConstUIntParameter(const std::string& _name, const std::wstring& _units, const std::string& _description, uint64_t _min, uint64_t _max, uint64_t _value)
 {
 	if (IsNameExist(_name)) return;
 	m_parameters.emplace_back(new CConstUnitParameter<uint64_t>{ _name, _units, _description, _min, _max, _value });
 }
 
-void CUnitParametersManager::AddDependentParameter(const std::string& _name, const std::string& _units, const std::string& _description, double _min, double _max, double _value, const std::string& _paramName, const std::string& _paramUnits, double _paramMin, double _paramMax, double _paramValue)
+void CUnitParametersManager::AddDependentParameter(const std::string& _name, const std::wstring& _units, const std::string& _description, double _min, double _max, double _value, const std::string& _paramName, const std::wstring& _paramUnits, double _paramMin, double _paramMax, double _paramValue)
 {
 	if (IsNameExist(_name)) return;
 	m_parameters.emplace_back(new CDependentUnitParameter{ _name, _value, _units, _paramName, _paramValue, _paramUnits, _description, _min, _max, _paramMin, _paramMax });
 }
 
-void CUnitParametersManager::AddTDParameter(const std::string& _name, const std::string& _units, const std::string& _description, double _min, double _max, double _value)
+void CUnitParametersManager::AddTDParameter(const std::string& _name, const std::wstring& _units, const std::string& _description, double _min, double _max, double _value)
 {
 	if (IsNameExist(_name)) return;
 	m_parameters.emplace_back(new CTDUnitParameter{ _name, _units, _description, _min, _max, _value });
@@ -1159,19 +1159,19 @@ void CUnitParametersManager::AddReactionParameter(const std::string& _name, cons
 	m_parameters.emplace_back(new CReactionUnitParameter{ _name, _description });
 }
 
-void CUnitParametersManager::AddListRealParameter(const std::string& _name, const std::string& _units, const std::string& _description, double _min, double _max, const std::vector<double>& _values)
+void CUnitParametersManager::AddListRealParameter(const std::string& _name, const std::wstring& _units, const std::string& _description, double _min, double _max, const std::vector<double>& _values)
 {
 	if (IsNameExist(_name)) return;
 	m_parameters.emplace_back(new CListUnitParameter<double>{ _name, _units, _description, _min, _max, _values });
 }
 
-void CUnitParametersManager::AddListIntParameter(const std::string& _name, const std::string& _units, const std::string& _description, int64_t _min, int64_t _max, const std::vector<int64_t>& _values)
+void CUnitParametersManager::AddListIntParameter(const std::string& _name, const std::wstring& _units, const std::string& _description, int64_t _min, int64_t _max, const std::vector<int64_t>& _values)
 {
 	if (IsNameExist(_name)) return;
 	m_parameters.emplace_back(new CListUnitParameter<int64_t>{ _name, _units, _description, _min, _max, _values });
 }
 
-void CUnitParametersManager::AddListUIntParameter(const std::string& _name, const std::string& _units, const std::string& _description, uint64_t _min, uint64_t _max, const std::vector<uint64_t>& _values)
+void CUnitParametersManager::AddListUIntParameter(const std::string& _name, const std::wstring& _units, const std::string& _description, uint64_t _min, uint64_t _max, const std::vector<uint64_t>& _values)
 {
 	if (IsNameExist(_name)) return;
 	m_parameters.emplace_back(new CListUnitParameter<uint64_t>{ _name, _units, _description, _min, _max, _values });
