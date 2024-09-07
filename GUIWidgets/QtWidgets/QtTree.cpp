@@ -163,7 +163,7 @@ QTreeWidgetItem* CQtTree::GetItem(const QVariant& _data) const
 	return nullptr;
 }
 
-QString CQtTree::GetData(const QTreeWidgetItem* _item, int _col) const
+QString CQtTree::GetData(const QTreeWidgetItem* _item, int _col)
 {
 	if (!_item || _col >= _item->columnCount()) return {};
 	return _item->data(_col, Qt::UserRole).toString();
@@ -203,12 +203,12 @@ QTreeWidgetItem* CQtTree::CreateItem(T* _parent, int _col, const std::string& _t
 
 bool CQtTree::Contains(EFlags _composition, EFlags _flag)
 {
-	using type = std::underlying_type<EFlags>::type;
+	using type = std::underlying_type_t<EFlags>;
 	return static_cast<type>(_composition) & static_cast<type>(_flag);
 }
 
 CQtTree::EFlags operator|(CQtTree::EFlags _f1, CQtTree::EFlags _f2)
 {
-	using type = std::underlying_type<CQtTree::EFlags>::type;
+	using type = std::underlying_type_t<CQtTree::EFlags>;
 	return static_cast<CQtTree::EFlags>(static_cast<type>(_f1) | static_cast<type>(_f2));
 }
