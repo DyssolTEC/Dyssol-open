@@ -31,7 +31,7 @@ public:
 	void InitializeConnections() const;
 
 public slots:
-	void NewFlowsheetDataSet() override;
+	void UpdateFromFlowsheet();
 	void UpdateWholeView() override;
 
 	void setVisible(bool _bVisible) override;

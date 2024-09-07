@@ -23,7 +23,7 @@ private:
 
 public slots:
 	void setVisible( bool _bVisible );
-	void NewFlowsheetDataSet();
+	void UpdateFromFlowsheet();
 	void UpdateWholeView();
 	void UpdateAvailableCompounds();
 	void UpdateUsedCompounds();

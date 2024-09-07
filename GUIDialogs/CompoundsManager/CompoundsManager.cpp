@@ -65,7 +65,7 @@ void CCompoundsManager::setVisible( bool _bVisible )
 	CQtDialog::setVisible( _bVisible );
 }
 
-void CCompoundsManager::NewFlowsheetDataSet()
+void CCompoundsManager::UpdateFromFlowsheet()
 {
 	if (isVisible())
 		UpdateWholeView();

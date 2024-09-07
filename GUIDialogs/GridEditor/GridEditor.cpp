@@ -50,7 +50,7 @@ void CGridEditor::accept()
 		QDialog::accept();
 }
 
-void CGridEditor::NewFlowsheetDataSet()
+void CGridEditor::UpdateFromFlowsheet()
 {
 	if (isVisible())
 		UpdateWholeView();

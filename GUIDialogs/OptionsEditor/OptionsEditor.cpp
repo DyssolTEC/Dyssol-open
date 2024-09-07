@@ -34,7 +34,7 @@ void COptionsEditor::InitializeConnections() const
 	connect(ui.lineEditCacheWindow,	      &QLineEdit::editingFinished, this, &COptionsEditor::CacheWindowChanged);
 }
 
-void COptionsEditor::NewFlowsheetDataSet()
+void COptionsEditor::UpdateFromFlowsheet()
 {
 	if (isVisible())
 		UpdateWholeView();

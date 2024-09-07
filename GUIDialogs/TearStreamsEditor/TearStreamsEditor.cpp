@@ -33,7 +33,7 @@ void CTearStreamsEditor::InitializeConnections()
 	connect(ui.widgetStreamsEditor, &CBasicStreamEditor::DataChanged,		this, &CTearStreamsEditor::DataChanged);
 }
 
-void CTearStreamsEditor::NewFlowsheetDataSet()
+void CTearStreamsEditor::UpdateFromFlowsheet()
 {
 	if (isVisible())
 		UpdateWholeView();

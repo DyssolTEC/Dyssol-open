@@ -101,10 +101,10 @@ void CQtDialog::OpenHelp(const QString& _link)
 void CQtDialog::OnPointersSet()
 {
 	CDyssolBaseWidget::OnPointersSet();
-	NewFlowsheetDataSet();
+	UpdateFromFlowsheet();
 }
 
-void CQtDialog::NewFlowsheetDataSet()
+void CQtDialog::UpdateFromFlowsheet()
 {
 	if (isVisible())
 		UpdateWholeView();

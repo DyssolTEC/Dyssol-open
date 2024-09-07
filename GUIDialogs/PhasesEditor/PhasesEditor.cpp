@@ -91,7 +91,7 @@ bool CPhasesEditor::ValidateInput()
 	return true;
 }
 
-void CPhasesEditor::NewFlowsheetDataSet()
+void CPhasesEditor::UpdateFromFlowsheet()
 {
 	if (isVisible())
 		UpdateWholeView();

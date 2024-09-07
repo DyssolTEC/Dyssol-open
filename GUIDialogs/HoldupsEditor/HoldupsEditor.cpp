@@ -87,7 +87,7 @@ void CHoldupsEditor::setVisible( bool _bVisible )
 		SaveViewState();
 }
 
-void CHoldupsEditor::NewFlowsheetDataSet()
+void CHoldupsEditor::UpdateFromFlowsheet()
 {
 	if (isVisible())
 		UpdateWholeView();
