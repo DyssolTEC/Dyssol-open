@@ -41,11 +41,11 @@ void CReactionsEditor::InitializeConnections() const
 void CReactionsEditor::UpdateWholeView()
 {
 	[[maybe_unused]] CSignalBlocker block{ ui.tableReactions };
-	const auto oldCell = ui.tableReactions->CurrentCellPos();
+	const auto oldCell = ui.tableReactions->GetCurrentCellPos();
 	ui.tableReactions->setRowCount(0);
 	for (auto& r : m_reactions)
 		AddReactionItem(r.get());
-	ui.tableReactions->RestoreSelectedCell(oldCell);
+	ui.tableReactions->SetCurrentCellPos(oldCell);
 	ResizeTable();
 }
 
@@ -69,9 +69,9 @@ void CReactionsEditor::RemoveReaction()
 {
 	[[maybe_unused]] CSignalBlocker block{ ui.tableReactions };
 	VectorDelete(m_reactions, static_cast<size_t>(ui.tableReactions->currentRow()));
-	const auto oldCell = ui.tableReactions->CurrentCellPos();
+	const auto oldCell = ui.tableReactions->GetCurrentCellPos();
 	ui.tableReactions->removeRow(ui.tableReactions->currentRow());
-	ui.tableReactions->RestoreSelectedCell(oldCell);
+	ui.tableReactions->SetCurrentCellPos(oldCell);
 }
 
 void CReactionsEditor::UpReaction()
@@ -79,7 +79,7 @@ void CReactionsEditor::UpReaction()
 	const auto index = static_cast<size_t>(ui.tableReactions->currentRow());
 	if (index >= m_reactions.size() || index == 0) return;
 	std::iter_swap(m_reactions.begin() + index, m_reactions.begin() + index - 1);
-	const auto [row, col] = ui.tableReactions->CurrentCellPos();
+	const auto [row, col] = ui.tableReactions->GetCurrentCellPos();
 	ui.tableReactions->setCurrentCell(row - 1, col);
 	UpdateWholeView();
 }
@@ -89,7 +89,7 @@ void CReactionsEditor::DownReaction()
 	const auto index = static_cast<size_t>(ui.tableReactions->currentRow());
 	if (index >= m_reactions.size() || index == m_reactions.size() - 1) return;
 	std::iter_swap(m_reactions.begin() + index, m_reactions.begin() + index + 1);
-	const auto [row, col] = ui.tableReactions->CurrentCellPos();
+	const auto [row, col] = ui.tableReactions->GetCurrentCellPos();
 	ui.tableReactions->setCurrentCell(row + 1, col);
 	UpdateWholeView();
 }
@@ -109,7 +109,7 @@ void CReactionsEditor::OnNameChange()
 	ResizeTable();
 	const auto index = ui.tableReactions->currentRow();
 	if (index == -1 || index >= static_cast<int>(m_reactions.size())) return;
-	m_reactions[index]->SetName(ui.tableReactions->GetItem(index, ECol::NAME).toStdString());
+	m_reactions[index]->SetName(ui.tableReactions->GetItemText(index, ECol::NAME).toStdString());
 }
 
 void CReactionsEditor::ResizeTable() const

@@ -66,7 +66,7 @@ void CTearStreamsEditor::UpdatePartitionsList()
 	for (int i = 0; i < (int)m_pSequence->PartitionsNumber(); ++i)
 		ui.tablePartitions->setItem(i, 0, new QTableWidgetItem(QString(StrConst::TSE_PartitionName) + " " + QString::number(i)));
 
-	ui.tablePartitions->RestoreSelectedCell(iOldRow, 0);
+	ui.tablePartitions->SetCurrentCellPos(iOldRow, 0);
 
 	ui.tablePartitions->blockSignals(bBlocked);
 }
@@ -88,7 +88,7 @@ void CTearStreamsEditor::UpdateStreamsList()
 			ui.tableStreams->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(m_pSequence->PartitionTearStreams(iPartition)[i]->GetName())));
 	}
 
-	ui.tableStreams->RestoreSelectedCell(iOldRow, 0);
+	ui.tableStreams->SetCurrentCellPos(iOldRow, 0);
 
 	ui.tableStreams->blockSignals(bBlocked);
 

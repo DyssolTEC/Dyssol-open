@@ -37,7 +37,7 @@ void CHoldupsEditor::UpdateWholeView()
 void CHoldupsEditor::UpdateHoldupsList()
 {
 	QSignalBlocker blocker(ui.holdupsList);
-	const auto oldPos = ui.modelsList->CurrentCellPos();
+	const auto oldPos = ui.modelsList->GetCurrentCellPos();
 
 	ui.holdupsList->setColumnCount(1);
 	ui.holdupsList->setRowCount(0);
@@ -52,14 +52,14 @@ void CHoldupsEditor::UpdateHoldupsList()
 		}
 	}
 
-	ui.holdupsList->RestoreSelectedCell(oldPos);
+	ui.holdupsList->SetCurrentCellPos(oldPos);
 	NewHoldupSelected();
 }
 
 void CHoldupsEditor::UpdateUnitsList() const
 {
 	QSignalBlocker blocker(ui.modelsList);
-	const auto oldPos = ui.modelsList->CurrentCellPos();
+	const auto oldPos = ui.modelsList->GetCurrentCellPos();
 
 	ui.modelsList->setColumnCount(1);
 	ui.modelsList->setRowCount(0);
@@ -72,7 +72,7 @@ void CHoldupsEditor::UpdateUnitsList() const
 			ui.modelsList->SetItemNotEditable(ui.modelsList->rowCount() - 1, 0, unit->GetName(), QString::fromStdString(unit->GetKey()));
 		}
 	}
-	ui.modelsList->RestoreSelectedCell(oldPos);
+	ui.modelsList->SetCurrentCellPos(oldPos);
 }
 
 void CHoldupsEditor::setVisible( bool _bVisible )

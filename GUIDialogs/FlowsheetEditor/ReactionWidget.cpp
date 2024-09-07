@@ -38,7 +38,7 @@ void CReactionWidget::UpdateWholeView()
 		m_radioGroup.removeButton(b);
 
 	// currently selected rows
-	const auto selection = ui.tableSubstances->CurrentCellPos();
+	const auto selection = ui.tableSubstances->GetCurrentCellPos();
 
 	// update substances
 	ui.tableSubstances->clearContents();
@@ -56,7 +56,7 @@ void CReactionWidget::UpdateWholeView()
 	}
 
 	// restore selection
-	ui.tableSubstances->RestoreSelectedCell(selection);
+	ui.tableSubstances->SetCurrentCellPos(selection);
 
 	ui.tableSubstances->resizeColumnsToContents();
 	ui.tableSubstances->resizeRowsToContents();
@@ -86,8 +86,8 @@ void CReactionWidget::ApplyChanges() const
 	auto substances = m_reaction->GetSubstances();
 	for (int i = 0; i < static_cast<int>(substances.size()); ++i)
 	{
-		substances[i]->nu = ui.tableSubstances->GetItem(i, ECols::NU).toDouble();
-		substances[i]->order = ui.tableSubstances->GetItem(i, ECols::ORDER).toDouble();
+		substances[i]->nu = ui.tableSubstances->GetItemText(i, ECols::NU).toDouble();
+		substances[i]->order = ui.tableSubstances->GetItemText(i, ECols::ORDER).toDouble();
 		// reactants must be negative, products must bo positive
 		if (ui.tableSubstances->GetComboBox(i, ECols::TYPE)->currentData().toUInt() != static_cast<uint>(substances[i]->GetType()))
 			substances[i]->nu = -substances[i]->nu;

@@ -93,26 +93,26 @@ void CQtTable::SetRowHeaderItems(int _startrow, const std::vector<std::string>& 
 			SetRowHeaderItem(_startrow + i, _text[i]);
 }
 
-QString CQtTable::GetItem(int _row, int _col) const
+QString CQtTable::GetItemText(int _row, int _col) const
 {
 	if (const auto* i = item(_row, _col))
 		return i->text();
 	return {};
 }
 
-std::vector<QString> CQtTable::GetItemsCol(int _startrow, int _col) const
+std::vector<QString> CQtTable::GetItemsTextCol(int _startrow, int _col) const
 {
 	std::vector<QString> res;
 	for (int i = _startrow; i < rowCount(); ++i)
-		res.push_back(GetItem(i, _col));
+		res.push_back(GetItemText(i, _col));
 	return res;
 }
 
-std::vector<QString> CQtTable::GetItemsRow(int _row, int _startcol) const
+std::vector<QString> CQtTable::GetItemsTextRow(int _row, int _startcol) const
 {
 	std::vector<QString> res;
 	for (int i = _startcol; i < columnCount(); ++i)
-		res.push_back(GetItem(_row, i));
+		res.push_back(GetItemText(_row, i));
 	return res;
 }
 
@@ -249,6 +249,15 @@ void CQtTable::SetItemsRowNotEditable(int _row, int _startcol, const std::vector
 	for (int i = 0; i < static_cast<int>(_val.size()); ++i)
 		if (_startcol + i < columnCount())
 			SetItemNotEditable(_row, _startcol + i, _val[i]);
+}
+
+QTableWidgetItem* CQtTable::FindItem(const std::string& _userData) const
+{
+	if (!model()->index(0, 0).isValid()) return nullptr;
+	const QModelIndexList matches = model()->match(model()->index(0, 0), Qt::UserRole, QString::fromStdString(_userData));
+	if (matches.isEmpty()) return nullptr;
+	const auto index = matches.first();
+	return item(index.row(), index.column());
 }
 
 QCheckBox* CQtTable::SetCheckBox(const int _row, const int _col, bool _checked /*= true*/)
@@ -481,17 +490,17 @@ void CQtTable::SetEditable(bool _flag)
 		setEditTriggers(NoEditTriggers);
 }
 
-std::pair<int, int> CQtTable::CurrentCellPos() const
+std::pair<int, int> CQtTable::GetCurrentCellPos() const
 {
 	return { currentRow(), currentColumn() };
 }
 
-void CQtTable::RestoreSelectedCell(const std::pair<int, int>& _cellPos)
+void CQtTable::SetCurrentCellPos(const std::pair<int, int>& _cellPos)
 {
-	RestoreSelectedCell(_cellPos.first, _cellPos.second);
+	SetCurrentCellPos(_cellPos.first, _cellPos.second);
 }
 
-void CQtTable::RestoreSelectedCell(int _row, int _col)
+void CQtTable::SetCurrentCellPos(int _row, int _col)
 {
 	if (rowCount() <= 0 || columnCount() <= 0) return;
 	setCurrentCell(std::clamp(_row, 0, rowCount() - 1), std::clamp(_col, 0, columnCount() - 1), QItemSelectionModel::SelectCurrent);
@@ -501,6 +510,11 @@ QString CQtTable::GetCurrentItemUserData() const
 {
 	if (!currentItem()) return {};
 	return currentItem()->data(Qt::UserRole).toString();
+}
+
+std::string CQtTable::GetCurrentItemUserDataStr() const
+{
+	return GetCurrentItemUserData().toStdString();
 }
 
 QString CQtTable::GetItemUserData(int _row /*= -1*/, int _col /*= -1*/) const

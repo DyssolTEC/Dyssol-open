@@ -720,7 +720,7 @@ void CMaterialsDatabaseTab::UpdateCompoundsList() const
 		ui.tableCompounds->SetItemEditable(i, ECompTable::CT_NAME_COL, m_materialsDB->GetCompound(i)->GetName(), QString::fromStdString(m_materialsDB->GetCompound(i)->GetKey()));
 		ui.tableCompounds->SetItemEditable(i, ECompTable::CT_KEY_COL, m_materialsDB->GetCompound(i)->GetKey(), QString::fromStdString(m_materialsDB->GetCompound(i)->GetKey()));
 	}
-	ui.tableCompounds->RestoreSelectedCell(iOldRow, ECompTable::CT_NAME_COL);
+	ui.tableCompounds->SetCurrentCellPos(iOldRow, ECompTable::CT_NAME_COL);
 }
 
 void CMaterialsDatabaseTab::UpdateCompoundProperties() const
