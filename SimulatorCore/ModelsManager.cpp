@@ -336,7 +336,14 @@ SUnitDescriptor CModelsManager::TryGetUnitDescriptor(const std::filesystem::path
 		return {};
 	}
 
-	pUnit->CreateBasicInfo();
+	try {
+		pUnit->CreateBasicInfo();
+		pUnit->DoCreateStructure();
+	}
+	catch (const std::logic_error& e) {
+		std::cerr << e.what() << std::endl;
+		return {};
+	}
 
 	SUnitDescriptor unitDescriptor;
 
