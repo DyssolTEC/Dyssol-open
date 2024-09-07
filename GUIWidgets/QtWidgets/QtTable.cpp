@@ -30,7 +30,12 @@ void CQtTable::SetGeometry(int _rows, int _cols)
 
 void CQtTable::EnablePasting(bool _flag)
 {
-	m_pasteEnabled = _flag;
+	m_pasteAllowed = _flag;
+}
+
+void CQtTable::EnableAddRowsOnPaste(bool _flag)
+{
+	m_addRowsOnPaste = _flag;
 }
 
 QString CQtTable::GetColHeaderItem(int _col) const
@@ -63,20 +68,50 @@ std::vector<QString> CQtTable::GetRowHeaderItems(int _startrow) const
 	return res;
 }
 
-void CQtTable::SetColHeaderItem(int _col, const std::string& _text)
+QTableWidgetItem* CQtTable::SetColHeaderItem(int _col)
 {
-	if(horizontalHeaderItem(_col))
+	return SetColHeaderItem(_col, "");
+}
+
+QTableWidgetItem* CQtTable::SetColHeaderItem(int _col, const std::string& _text)
+{
+	if (horizontalHeaderItem(_col))
 		horizontalHeaderItem(_col)->setText(QString::fromStdString(_text));
 	else
 		setHorizontalHeaderItem(_col, new QTableWidgetItem(QString::fromStdString(_text)));
+	return horizontalHeaderItem(_col);
 }
 
-void CQtTable::SetRowHeaderItem(int _row, const std::string& _text)
+QTableWidgetItem* CQtTable::SetColHeaderItem(int _col, const std::wstring& _text)
+{
+	if (horizontalHeaderItem(_col))
+		horizontalHeaderItem(_col)->setText(QString::fromStdWString(_text));
+	else
+		setHorizontalHeaderItem(_col, new QTableWidgetItem(QString::fromStdWString(_text)));
+	return horizontalHeaderItem(_col);
+}
+
+QTableWidgetItem* CQtTable::SetRowHeaderItem(int _row)
+{
+	return SetRowHeaderItem(_row, "");
+}
+
+QTableWidgetItem* CQtTable::SetRowHeaderItem(int _row, const std::string& _text)
 {
 	if (verticalHeaderItem(_row))
 		verticalHeaderItem(_row)->setText(QString::fromStdString(_text));
 	else
 		setVerticalHeaderItem(_row, new QTableWidgetItem(QString::fromStdString(_text)));
+	return verticalHeaderItem(_row);
+}
+
+QTableWidgetItem* CQtTable::SetRowHeaderItem(int _row, const std::wstring& _text)
+{
+	if (verticalHeaderItem(_row))
+		verticalHeaderItem(_row)->setText(QString::fromStdWString(_text));
+	else
+		setVerticalHeaderItem(_row, new QTableWidgetItem(QString::fromStdWString(_text)));
+	return verticalHeaderItem(_row);
 }
 
 void CQtTable::SetColHeaderItems(int _startcol, const std::vector<std::string>& _text)
@@ -116,30 +151,31 @@ std::vector<QString> CQtTable::GetItemsTextRow(int _row, int _startcol) const
 	return res;
 }
 
-void CQtTable::SetItemEditable(const int _row, const int _col, const QString& _text, const QVariant& _userData /*= -1*/)
+QTableWidgetItem* CQtTable::SetItemEditable(const int _row, const int _col, const QString& _text, const QVariant& _userData /*= -1*/)
 {
 	SetItemNotEditable(_row, _col, _text, _userData);
 	item(_row, _col)->setFlags(item(_row, _col)->flags() | Qt::ItemIsEditable);
+	return item(_row, _col);
 }
 
-void CQtTable::SetItemEditable(int _row, int _col, const std::string& _text, const QVariant& _userData)
+QTableWidgetItem* CQtTable::SetItemEditable(int _row, int _col, const std::string& _text, const QVariant& _userData)
 {
-	SetItemEditable(_row, _col, QString::fromStdString(_text), _userData);
+	return SetItemEditable(_row, _col, QString::fromStdString(_text), _userData);
 }
 
-void CQtTable::SetItemEditable(int _row, int _col, double _value, const QVariant& _userData)
+QTableWidgetItem* CQtTable::SetItemEditable(int _row, int _col, double _value, const QVariant& _userData)
 {
-	SetItemEditable(_row, _col, QString::number(_value), _userData);
+	return SetItemEditable(_row, _col, QString::number(_value), _userData);
 }
 
-void CQtTable::SetItemEditablePrecise(int _row, int _col, double _value, int _precision, const QVariant& _userData)
+QTableWidgetItem* CQtTable::SetItemEditablePrecise(int _row, int _col, double _value, int _precision, const QVariant& _userData)
 {
-	SetItemEditable(_row, _col, QString::number(_value, 'g', _precision), _userData);
+	return SetItemEditable(_row, _col, QString::number(_value, 'g', _precision), _userData);
 }
 
-void CQtTable::SetItemEditable(int _row, int _col)
+QTableWidgetItem* CQtTable::SetItemEditable(int _row, int _col)
 {
-	SetItemEditable(_row, _col, QString{});
+	return SetItemEditable(_row, _col, QString{});
 }
 
 void CQtTable::SetItemsColEditable(int _startrow, int _col, const std::vector<double>& _val)
@@ -482,6 +518,15 @@ void CQtTable::SetItemFontItalic(int _row, int _col) const
 			item(_row, i)->setFont(font);
 }
 
+void CQtTable::SetItemFontColor(int _row, int _col, const QColor& _color) const
+{
+	if (_row < 0 || _row >= rowCount()) return;
+	if (_col < 0 || _col >= columnCount()) return;
+
+	item(_row, _col)->setForeground(_color);
+
+}
+
 void CQtTable::SetEditable(bool _flag)
 {
 	if (_flag)
@@ -625,22 +670,44 @@ void CQtTable::Paste()
 	const int iFirstCol = indexes.count() ? indexes.at(0).column() : 0;
 
 	emit PasteInitiated(iFirstRow, iFirstCol);
-	if (!m_pasteEnabled) return;
+	if (!m_pasteAllowed) return;
 
 	const bool oldBlock = blockSignals(true);
-
 	const auto data = ParseClipboardAsDoubles();
 	int rowMax = static_cast<int>(data.size());
-	if (rowMax > rowCount() - iFirstRow)
-		rowMax = rowCount() - iFirstRow;
-	for (int i = 0; i < rowMax; ++i)
+
+	if (!m_addRowsOnPaste)
 	{
-		int colMax = static_cast<int>(data[i].size());
-		if (colMax > columnCount() - iFirstCol)
-			colMax = columnCount() - iFirstCol;
-		for (int j = 0; j < colMax; ++j)
-			if (item(i, j + iFirstCol) && item(i, j + iFirstCol)->flags().testFlag(Qt::ItemIsEditable))
-				item(i + iFirstRow, j + iFirstCol)->setText(QString::number(data[i][j]));
+		if (rowMax > rowCount() - iFirstRow)
+			rowMax = rowCount() - iFirstRow;
+		for (int i = 0; i < rowMax; ++i)
+		{
+			int colMax = static_cast<int>(data[i].size());
+			if (colMax > columnCount() - iFirstCol)
+				colMax = columnCount() - iFirstCol;
+			for (int j = 0; j < colMax; ++j)
+				if (item(i, j + iFirstCol) && item(i, j + iFirstCol)->flags().testFlag(Qt::ItemIsEditable))
+					item(i + iFirstRow, j + iFirstCol)->setText(QString::number(data[i][j]));
+		}
+	}
+	else
+	{
+		// update the size of the table according to the pasted data
+		SetGeometry(rowMax + iFirstRow, columnCount());
+		// paste data
+		for (int i = 0; i < rowMax; ++i)
+		{
+			int colMax = static_cast<int>(data[i].size());
+			if (colMax > columnCount() - iFirstCol)
+				colMax = columnCount() - iFirstCol;
+			for (int j = 0; j < colMax; ++j)
+				SetItemEditable(i + iFirstRow, j + iFirstCol, data[i][j]);
+		}
+		// create empty items if necessary
+		for (int i = 0; i < rowCount(); ++i)
+			for (int j = 0; j < columnCount(); ++j)
+				if (!item(i, j))
+					SetItemEditable(i, j, QString{});
 	}
 
 	blockSignals(oldBlock);
