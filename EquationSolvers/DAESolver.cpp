@@ -161,6 +161,7 @@ bool CDAESolver::IntegrateUntil(realtype _time)
 void CDAESolver::SaveState()
 {
 	if (!m_model) return;
+	if (!m_solverMem.idamem) return;
 
 	const size_t len = m_model->GetVariablesNumber();
 	const auto* src = static_cast<IDAMem>(m_solverMem.idamem);
