@@ -39,7 +39,7 @@ namespace ThreadPool
 		auto SubmitJob(Func&& _fun, Args&&... _args)
 		{
 			auto boundTask = std::bind(std::forward<Func>(_fun), std::forward<Args>(_args)...);
-			using ResultType = std::result_of_t<decltype(boundTask)()>;
+			using ResultType = std::invoke_result_t<decltype(boundTask)()>;
 			using PackagedTask = std::packaged_task<ResultType()>;
 			using TaskType = CThreadTask<PackagedTask>;
 
