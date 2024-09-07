@@ -5,7 +5,6 @@
 [Files]
 #ifdef IsDocs
 Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\*.html";            DestDir: "{app}\{code:DirHelp}";                 Flags: ignoreversion
-Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\.doctrees\*";       DestDir: "{app}\{code:DirHelp}\.doctrees";       Flags: ignoreversion recursesubdirs
 Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\_static\*";         DestDir: "{app}\{code:DirHelp}\_static";         Flags: ignoreversion recursesubdirs
 Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\_images\*";         DestDir: "{app}\{code:DirHelp}\_images";         Flags: ignoreversion recursesubdirs
 Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\000_get_started\*"; DestDir: "{app}\{code:DirHelp}\000_get_started"; Flags: ignoreversion recursesubdirs
