@@ -62,6 +62,7 @@
   <ItemGroup>
     <ClCompile Include="QtDialog.cpp" />
     <ClCompile Include="QtList.cpp" />
+    <ClCompile Include="QtPushButton.cpp" />
     <ClCompile Include="QtTable.cpp" />
     <ClCompile Include="QtTooltipMenuBar.cpp" />
     <ClCompile Include="QtTree.cpp" />
@@ -79,6 +80,7 @@
     <QtMoc Include="QtList.h" />
     <QtMoc Include="QtTooltipMenuBar.h" />
     <QtMoc Include="QtDialog.h" />
+    <ClInclude Include="QtPushButton.h" />
     <ClInclude Include="QtUtilities.h" />
     <ClInclude Include="SignalBlocker.h" />
   </ItemGroup>
