@@ -201,7 +201,7 @@ void CPropertyEditor::UpCorrelation()
 	if (m_pProperty->ShiftCorrelationUp(iRow))
 	{
 		UpdateCorrelations();
-		ui.listCorrelations->RestoreSelectedCell(iRow - 1, 0);
+		ui.listCorrelations->SetCurrentCellPos(iRow - 1, 0);
 		emit MDBPropertyChanged();
 	}
 }
@@ -212,7 +212,7 @@ void CPropertyEditor::DownCorrelation()
 	if (m_pProperty->ShiftCorrelationDown(iRow))
 	{
 		UpdateCorrelations();
-		ui.listCorrelations->RestoreSelectedCell(iRow + 1, 0);
+		ui.listCorrelations->SetCurrentCellPos(iRow + 1, 0);
 		emit MDBPropertyChanged();
 	}
 }

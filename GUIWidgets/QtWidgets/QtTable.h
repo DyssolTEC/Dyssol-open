@@ -40,9 +40,9 @@ public:
 	void SetColHeaderItems(int _startcol, const std::vector<std::string>& _text);
 	void SetRowHeaderItems(int _startrow, const std::vector<std::string>& _text);
 
-	QString GetItem(int _row, int _col) const;
-	std::vector<QString> GetItemsCol(int _startrow, int _col) const;
-	std::vector<QString> GetItemsRow(int _row, int _startcol) const;
+	QString GetItemText(int _row, int _col) const;
+	std::vector<QString> GetItemsTextCol(int _startrow, int _col) const;
+	std::vector<QString> GetItemsTextRow(int _row, int _startcol) const;
 
 	void SetItemEditable(int _row, int _col, const QString& _text, const QVariant& _userData = -1);
 	void SetItemEditable(int _row, int _col, const std::string& _text, const QVariant& _userData = -1);
@@ -68,6 +68,15 @@ public:
 	void SetItemsColNotEditable(int _startrow, int _col, const std::string& _val);
 	void SetItemsColNotEditable(int _startrow, int _col, const std::vector<std::string>& _val);
 	void SetItemsRowNotEditable(int _row, int _startcol, const std::vector<double>& _val);
+
+	/**
+	 * \brief Find an item by its user data.
+	 * \details If multiple items with the same user data exist, the first one is returned.
+	 * If nothing fount, nullptr is returned.
+	 * \param _userData User data.
+	 * \return Pointer to the found item.
+	 */
+	QTableWidgetItem* FindItem(const std::string& _userData) const;
 
 	QCheckBox* SetCheckBox(int _row, int _col, bool _checked = true);
 	QCheckBox* GetCheckBox(int _row, int _col) const;
@@ -95,11 +104,12 @@ public:
 	void SetItemFontItalic(int _row, int _col) const;
 	void SetEditable(bool _flag);
 
-	std::pair<int, int> CurrentCellPos() const;
-	void RestoreSelectedCell(const std::pair<int, int>& _cellPos);
-	void RestoreSelectedCell(int _row, int _col);
+	[[nodiscard]] std::pair<int, int> GetCurrentCellPos() const;
+	void SetCurrentCellPos(const std::pair<int, int>& _cellPos);
+	void SetCurrentCellPos(int _row, int _col);
 
 	QString GetCurrentItemUserData() const;
+	[[nodiscard]] std::string GetCurrentItemUserDataStr() const;
 	QString GetItemUserData(int _row = -1, int _col = -1) const;
 
 	std::vector<double> GetRowValues(int _row) const;

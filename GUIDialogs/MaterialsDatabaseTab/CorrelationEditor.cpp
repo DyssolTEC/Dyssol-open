@@ -165,7 +165,7 @@ void CCorrelationEditor::ParameterChanged(int _iRow, int _iCol)
 		m_pCorrelation->SetParameters(ui.tableParams->GetRowValues(1));
 
 	UpdateParameters();
-	ui.tableParams->RestoreSelectedCell(_iRow, _iCol);
+	ui.tableParams->SetCurrentCellPos(_iRow, _iCol);
 	emit CorrelationChanged();
 }
 

@@ -133,7 +133,7 @@ void CModulesManagerTab::AddDir()
 	if (m_modelsManager->AddDir(folder.toStdWString()))
 	{
 		UpdateModels();
-		ui.tableDirs->RestoreSelectedCell(ui.tableDirs->rowCount() - 1, 0);
+		ui.tableDirs->SetCurrentCellPos(ui.tableDirs->rowCount() - 1, 0);
 	}
 	QApplication::restoreOverrideCursor();
 }
@@ -145,7 +145,7 @@ void CModulesManagerTab::RemoveDir()
 	if(m_modelsManager->RemoveDir(iRow))
 	{
 		UpdateModels();
-		ui.tableDirs->RestoreSelectedCell(iRow, 0);
+		ui.tableDirs->SetCurrentCellPos(iRow, 0);
 	}
 	QApplication::restoreOverrideCursor();
 }
@@ -157,7 +157,7 @@ void CModulesManagerTab::UpDir()
 	if (m_modelsManager->UpDir(iRow))
 	{
 		UpdateModels();
-		ui.tableDirs->RestoreSelectedCell(iRow - 1, 0);
+		ui.tableDirs->SetCurrentCellPos(iRow - 1, 0);
 	}
 	QApplication::restoreOverrideCursor();
 }
@@ -169,7 +169,7 @@ void CModulesManagerTab::DownDir()
 	if (m_modelsManager->DownDir(iRow))
 	{
 		UpdateModels();
-		ui.tableDirs->RestoreSelectedCell(iRow + 1, 0);
+		ui.tableDirs->SetCurrentCellPos(iRow + 1, 0);
 	}
 	QApplication::restoreOverrideCursor();
 }

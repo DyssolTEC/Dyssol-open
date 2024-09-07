@@ -243,7 +243,7 @@ std::vector<double> CDimensionParameters::CalculateGridNumeric() const
 	}
 	else
 	{
-		const auto values = ui.tableGrid->GetItemsCol(0, 0);
+		const auto values = ui.tableGrid->GetItemsTextCol(0, 0);
 		for (size_t i = 0; i < res.size() && i < values.size(); ++i)
 			res[i] = values[i].toDouble();
 	}
@@ -253,7 +253,7 @@ std::vector<double> CDimensionParameters::CalculateGridNumeric() const
 
 std::vector<std::string> CDimensionParameters::CalculateGridSymbolic() const
 {
-	const auto values = ui.tableGrid->GetItemsCol(0, 0);
+	const auto values = ui.tableGrid->GetItemsTextCol(0, 0);
 	std::vector<std::string> res(ui.spinClasses->value());
 	for (size_t i = 0; i < res.size() && i < values.size(); ++i)
 		res[i] = values[i].toStdString();

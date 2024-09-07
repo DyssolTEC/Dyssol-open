@@ -957,7 +957,7 @@ void CBasicStreamsViewer::ExportToFile()
 		for (int i = 0; i < ui.tabTable->rowCount(); ++i)
 		{
 			file << std::endl << rowHeaders[i].toStdString();
-			for (const auto& s : ui.tabTable->GetItemsRow(i, 0))
+			for (const auto& s : ui.tabTable->GetItemsTextRow(i, 0))
 				file << s.toDouble() << "; ";
 		}
 	}
