@@ -740,7 +740,14 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 			return  res;
 		}
 		break;
-	case HEAT_CAPACITY_CP:
+	case HEAT_CAPACITY_CP: // same for solids, liquids and gases
+		for (const auto& c : GetAllCompounds())
+		{
+			const double cp = m_materialsDB->GetTPPropertyValue(c, _property, T, P);
+			if (cp != 0.0)
+				res += GetCompoundFraction(_time, c, _phase) * cp;
+		}
+		return res;
 	case ENTHALPY:
 	case PERMITTIVITY:
 	case EQUILIBRIUM_MOISTURE_CONTENT:
