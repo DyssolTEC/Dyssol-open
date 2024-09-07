@@ -38,8 +38,9 @@ private:
 	long m_nMaxSubSet;				///< Max. iterations without residual check. nMaxSet should be multiple of nMaxSubSet.
 
 	// Fixed point method settings
-	long m_nMAA;						///< Anderson Acceleration subspace size. The value of nMAA should always be less than nMaxIter.
+	long m_nMAA;						///< Anderson Acceleration subspace size. The value of nMAA should always be less than nMaxIter. From this value the Anderson Acceleration is applied.
 	double m_dDampingAA;				///< Anderson Acceleration damping parameter between 0 and 1
+	double m_dDamping;					///< Damping parameter between 0 and 1
 
 #if SUNDIALS_VERSION_MAJOR < 6
 #else
@@ -75,7 +76,7 @@ public:
 	 *	\param _nMAA Anderson Acceleration subspace size
 	 *  \param _dDampingAA Anderson Acceleration damping parameter between 0 and 1
 	 *  \retval true No errors occurred */
-	bool SetFixedPointSolverParameters(size_t _nMAA, double _dDampingAA);
+	bool SetFixedPointSolverParameters(size_t _nMAA, double _dDampingAA, double _dDamping = 1.0);
 
 	/** Set model to a solver.
 	 *	\param _pModel Pointer to a model
