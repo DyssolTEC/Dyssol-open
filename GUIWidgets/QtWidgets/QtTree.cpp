@@ -174,15 +174,31 @@ QVariant CQtTree::GetData(const QTreeWidgetItem* _item, int _col)
 	return _item->data(_col, Qt::UserRole);
 }
 
-QString CQtTree::GetDataString(const QTreeWidgetItem* _item, int _col)
+QString CQtTree::GetDataQStr(const QTreeWidgetItem* _item, int _col)
 {
-	if (!_item || _col >= _item->columnCount()) return {};
-	return _item->data(_col, Qt::UserRole).toString();
+	return GetData(_item, _col).toString();
 }
 
-QString CQtTree::GetCurrentData(int _col) const
+std::string CQtTree::GetDataStr(const QTreeWidgetItem* _item, int _col)
 {
-	return GetDataString(currentItem(), _col);
+	return GetDataQStr(_item, _col).toStdString();
+}
+
+QString CQtTree::GetCurrentDataQStr(int _col) const
+{
+	return GetDataQStr(currentItem(), _col);
+}
+
+bool CQtTree::IsSuccessor(const QTreeWidgetItem* _parent, const QTreeWidgetItem* _child)
+{
+	for (int i = 0; i < _parent->childCount(); ++i)
+	{
+		if (_parent->child(i) == _child)
+			return true;
+		if (IsSuccessor(_parent->child(i), _child))
+			return true;
+	}
+	return false;
 }
 
 bool CQtTree::blockSignals(bool _flag)

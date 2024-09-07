@@ -29,6 +29,12 @@ public:
 
 	void InitializeConnections();
 
+	/**
+	 * \brief Select the given compound.
+	 * \param _key Unique key of the compound.
+	 */
+	void SelectCompound(const std::string& _key) const;
+
 public slots:
 	void setVisible(bool _bVisible) override;
 	void UpdateWholeView();

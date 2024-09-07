@@ -142,6 +142,13 @@ public:
 	// Returns the list of compounds keys that have been defined in the database.
 	[[nodiscard]] std::vector<std::string> GetCompoundsKeys() const;
 
+	/**
+	 * \brief Checks if the the compound exists in the database.
+	 * \param _key Unique key of the compound.
+	 * \return Existence flag.
+	 */
+	bool HasCompound(const std::string& _key);
+
 	//////////////////////////////////////////////////////////////////////////
 	/// Functions to work with properties values
 
@@ -181,7 +188,6 @@ public:
 
 	// Returns value of an interaction property between specified compounds for selected T[K] and P[Pa]. Returns 0 if such property doesn't exist.
 	double GetInteractionValue(const std::string& _sCompoundKey1, const std::string& _sCompoundKey2, EInteractionProperties _nInterPropType, double _dT, double _dP) const;
-
 
 private:
 	//////////////////////////////////////////////////////////////////////////

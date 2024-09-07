@@ -15,6 +15,11 @@ public:
     explicit CQtPushButton(QWidget* _parent = nullptr);
 
     /**
+     * \brief Returns current icon.
+     * \return Icon.
+     */
+    QIcon GetIcon();
+    /**
      * \brief Sets new icon.
      * \details Hides the parent function, so should be used with care from own code.
      * But if the QPushButton is promoted to CQtPushButton in Qt Designer, this version will be properly called.

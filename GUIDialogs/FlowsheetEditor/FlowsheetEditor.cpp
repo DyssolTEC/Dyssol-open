@@ -284,7 +284,7 @@ void CFlowsheetEditor::ChangeStreamName(int _iRow, int _iCol)
 void CFlowsheetEditor::NewPortStreamSelected(int _iRow, int _iCol, QComboBox* _comboBox)
 {
 	if (!m_pSelectedModel || !m_pSelectedModel->GetModel()) return;
-	m_pSelectedModel->GetModel()->GetPortsManager().GetPort(ui.tablePorts->GetItemUserData(_iRow, 0).toStdString())->SetStreamKey(_comboBox->currentData(Qt::UserRole).toString().toStdString());
+	m_pSelectedModel->GetModel()->GetPortsManager().GetPort(ui.tablePorts->GetItemUserDataQStr(_iRow, 0).toStdString())->SetStreamKey(_comboBox->currentData(Qt::UserRole).toString().toStdString());
 	m_pFlowsheet->SetTopologyModified(true);
 	emit DataChanged();
 }
@@ -300,7 +300,7 @@ void CFlowsheetEditor::AddUnitParamListItem()
 	if (!m_pModelParams) return;
 
 	// get selected parameter
-	auto* param = m_pModelParams->GetParameter(ui.tableUnitParams->GetItemUserData(ui.tableUnitParams->currentRow(), 0).toInt());
+	auto* param = m_pModelParams->GetParameter(ui.tableUnitParams->GetItemUserDataQStr(ui.tableUnitParams->currentRow(), 0).toInt());
 	if (!param) return;
 
 	if (param->GetType() == EUnitParameter::TIME_DEPENDENT || param->GetType() == EUnitParameter::PARAM_DEPENDENT)
@@ -343,7 +343,7 @@ void CFlowsheetEditor::DeleteUnitParamListItem()
 	if (!m_pModelParams) return;
 
 	// get selected parameter
-	auto* param = m_pModelParams->GetParameter(ui.tableUnitParams->GetItemUserData(ui.tableUnitParams->currentRow(), 0).toInt());
+	auto* param = m_pModelParams->GetParameter(ui.tableUnitParams->GetItemUserDataQStr(ui.tableUnitParams->currentRow(), 0).toInt());
 	if (!param) return;
 
 	if (param->GetType() == EUnitParameter::TIME_DEPENDENT || param->GetType() == EUnitParameter::PARAM_DEPENDENT)
@@ -401,7 +401,7 @@ void CFlowsheetEditor::ListValueChanged()
 	if (!m_pModelParams) return;
 
 	// get selected parameter
-	auto* param = m_pModelParams->GetParameter(ui.tableUnitParams->GetItemUserData(ui.tableUnitParams->currentRow(), 0).toInt());
+	auto* param = m_pModelParams->GetParameter(ui.tableUnitParams->GetItemUserDataQStr(ui.tableUnitParams->currentRow(), 0).toInt());
 	if (!param) return;
 
 	const int iRow = ui.tableListValues->currentRow();
@@ -442,7 +442,7 @@ void CFlowsheetEditor::UnitParamValueChanged(int _row, int _col)
 	if (!m_pModelParams) return;
 
 	// get selected parameter
-	auto* param = m_pModelParams->GetParameter(ui.tableUnitParams->GetItemUserData(_row, 0).toInt());
+	auto* param = m_pModelParams->GetParameter(ui.tableUnitParams->GetItemUserDataQStr(_row, 0).toInt());
 	if (!param) return;
 
 	bool dataChanged = true; // whether the data were changed here
@@ -560,7 +560,7 @@ void CFlowsheetEditor::PasteParamTable(int _row, int _col)
 {
 	if (!m_pModelParams) return;
 
-	auto* up = m_pModelParams->GetParameter(ui.tableUnitParams->GetItemUserData(ui.tableUnitParams->currentRow(), 0).toInt());
+	auto* up = m_pModelParams->GetParameter(ui.tableUnitParams->GetItemUserDataQStr(ui.tableUnitParams->currentRow(), 0).toInt());
 	if (!up) return;
 
 	// parse pasted text
@@ -949,7 +949,7 @@ void CFlowsheetEditor::UpdateListValuesTable() const
 	if (ui.tableUnitParams->currentRow() == -1) return;
 
 	// get selected parameter
-	const auto* param = m_pModelParams->GetParameter(ui.tableUnitParams->GetItemUserData(ui.tableUnitParams->currentRow(), 0).toInt());
+	const auto* param = m_pModelParams->GetParameter(ui.tableUnitParams->GetItemUserDataQStr(ui.tableUnitParams->currentRow(), 0).toInt());
 	if (!param) return;
 
 	if (param->GetType() == EUnitParameter::TIME_DEPENDENT || param->GetType() == EUnitParameter::PARAM_DEPENDENT)
@@ -1052,7 +1052,7 @@ void CFlowsheetEditor::UpdateUnitParamDescr() const
 	if (!m_pModelParams) return;
 	if (ui.tableUnitParams->currentRow() == -1) return;
 
-	auto* param = m_pModelParams->GetParameter(ui.tableUnitParams->GetItemUserData(ui.tableUnitParams->currentRow(), 0).toInt());
+	auto* param = m_pModelParams->GetParameter(ui.tableUnitParams->GetItemUserDataQStr(ui.tableUnitParams->currentRow(), 0).toInt());
 	if (!param) return;
 
 	const EUnitParameter type = param->GetType();
