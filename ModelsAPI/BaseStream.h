@@ -710,13 +710,16 @@ public:
 	 * \brief Returns the value of the temperature/pressure-dependent physical property of the specified phase at the given time point.
 	 * \details Available properties are:
 	 * - ::DENSITY:
-	 *	- For solid phase:
+	 *	- For solid phase with porosity distribution:
 	 *	\f$\rho = \sum_{i,j} \rho_i (1 - \varepsilon_j) f_{i,j}\f$ with
 	 *	\f$\varepsilon_j\f$ porosity in interval \f$j\f$,
 	 *	\f$f_{i,j}\f$ mass fraction of compound \f$i\f$ with porosity \f$j\f$.
-	 *	- For liquid and vapor phase:
-	 *	\f$\frac{1}{\rho} = \sum_i \frac{w_i}{\rho_i}\f$ with
+	 *	- For solid and liquid phase:
+	 *	\f$\rho = \sum_i w_i \cdot \rho_i \f$ with
 	 *	\f$w_i\f$ mass fraction of compound \f$i\f$ in \p _phase.
+	 *  - For vapor phase:
+	 *  \f$\rho = \sum x_i \cdot \rho_i \f$ with
+	 *  \f$x_i\f$ as the mole fraction of component \f$i\f$ in \p _phase.
 	 * - ::HEAT_CAPACITY_CP:
 	 * \f$C_p = \sum_i w_i \cdot C_{p,i}\f$ with
 	 * \f$C_{p,i}\f$ heat capacity of compound \f$i\f$,

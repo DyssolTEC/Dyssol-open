@@ -720,16 +720,24 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 			}
 			return res;
 		}
-		else
+		else if (_phase == EPhase::VAPOR)
+		{
+			// ideal gas: VolumeFlow = MolarFlow * R * T / p --> comparison of MolarFlow or MolarFractions
+			for (const auto& c : GetAllCompounds())
+			{
+				res += GetCompoundMolFraction(_time, c, _phase) * GetCompoundProperty(c,DENSITY,T,P);
+			}
+			return res;
+		}
+		else // for liquids and solids
 		{
 			for (const auto& c : GetAllCompounds())
 			{
 				const double componentDensity = m_materialsDB->GetTPPropertyValue(c, _property, T, P);
 				if (componentDensity != 0.0)
-					res += GetCompoundFraction(_time, c, _phase) / componentDensity;
+					res += GetCompoundFraction(_time, c, _phase) * componentDensity;
 			}
-			if (res != 0.0)
-				return 1.0 / res;
+			return  res;
 		}
 		break;
 	case HEAT_CAPACITY_CP:
