@@ -119,7 +119,7 @@ public:
 	/**
 	 * \brief Is called upon loading of a new flowsheet or changes in the flowsheet data.
 	 */
-	virtual void NewFlowsheetDataSet();
+	virtual void UpdateFromFlowsheet();
 	/**
 	 * \brief Updates all information on the widget.
 	 */

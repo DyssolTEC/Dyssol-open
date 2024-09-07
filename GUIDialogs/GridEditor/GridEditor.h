@@ -32,7 +32,7 @@ public:
 	// Tries to apply all changes and closes the dialog on success.
 	void accept() override;
 
-	void NewFlowsheetDataSet();
+	void UpdateFromFlowsheet();
 	// Updates all widgets.
 	void UpdateWholeView();
 
