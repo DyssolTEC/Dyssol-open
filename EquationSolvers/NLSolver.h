@@ -40,7 +40,7 @@ private:
 	// Fixed point method settings
 	long m_nMAA;						///< Anderson Acceleration subspace size. The value of nMAA should always be less than nMaxIter. From this value the Anderson Acceleration is applied.
 	double m_dDampingAA;				///< Anderson Acceleration damping parameter between 0 and 1
-	double m_dDamping;					///< Damping parameter between 0 and 1
+	double m_dDamping{};				///< Damping parameter between 0 and 1
 
 #if SUNDIALS_VERSION_MAJOR < 6
 #else
@@ -124,7 +124,7 @@ public:
 	// ========== Functions to work with solver settings
 
 	/** Returns the maximum iteration number of the solver (default: 200)*/
-	size_t GetSolverMaxIter();
+	size_t GetSolverMaxIter() const;
 	/** Sets the maximum iteration number of the solver*/
 	void SetSolverMaxIter(size_t _nMaxIter);
 	/** Returns the number of iterations to solve the system*/
