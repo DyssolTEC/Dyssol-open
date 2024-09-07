@@ -32,6 +32,8 @@ public:
 	QTreeWidgetItem* CreateItem(int _col, const std::string& _text, EFlags _flags = EFlags::Default, const QVariant& _data = -1);
 	// Creates a new item as a child of the widget and sets the given text and data to the specified column.
 	static QTreeWidgetItem* CreateItem(QTreeWidgetItem* _parent, int _col, const std::string& _text, EFlags _flags = EFlags::Default, const QVariant& _data = -1);
+	// Creates a new item as a child of the widget and sets the given text and data to the specified column.
+	static QTreeWidgetItem* CreateItem(QTreeWidgetItem* _parent, int _col, const std::string& _text, EFlags _flags = EFlags::Default, const std::string& _data = {});
 
 	// Sets new text and data to the selected column of the given existing item.
 	static void SetText(QTreeWidgetItem* _item, int _col, const std::string& _text, const QVariant& _data = -1);

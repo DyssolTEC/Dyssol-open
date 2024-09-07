@@ -130,6 +130,10 @@ public:
 	CCompound* GetCompoundByName(const std::string& _sCompoundName);
 	// Returns const pointer to a compound with specified name. Returns nullptr if such compound has not been defined.
 	const CCompound* GetCompoundByName(const std::string& _sCompoundName) const;
+	// Returns pointers to all defined compounds.
+	[[nodiscard]] std::vector<CCompound*> GetCompounds();
+	// Returns const pointers to all defined compounds.
+	[[nodiscard]] std::vector<const CCompound*> GetCompounds() const;
 
 	// Returns names of compounds with the specified unique keys.
 	std::vector<std::string> GetCompoundsNames(const std::vector<std::string>& _keys) const;

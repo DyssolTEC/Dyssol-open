@@ -23,7 +23,7 @@ class COptionsEditor
 	CParametersHolder* m_pParams;	// pointer to the flowsheet parameters
 	CMaterialsDatabase* m_materialsDB; // pointer to materials database
 
-	unsigned m_cacheWindowSizeBeforeEdit; // stores old the value of cacheWindowSize for undo
+	unsigned m_cacheWindowSizeBeforeEdit{}; // stores old the value of cacheWindowSize for undo
 
 public:
 	COptionsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _pMaterialsDB, QWidget* _parent = nullptr, Qt::WindowFlags _flags = Qt::WindowFlags());
@@ -31,7 +31,8 @@ public:
 	void InitializeConnections() const;
 
 public slots:
-	void UpdateWholeView();
+	void NewFlowsheetDataSet() override;
+	void UpdateWholeView() override;
 
 	void setVisible(bool _bVisible) override;
 
@@ -47,8 +48,8 @@ private slots:
 	void CacheHoldupsFlagChanged();
 	void CacheInternalFlagChanged();
 	void ApplyChanges();
+	void ApplyChangesAndClose();
 
 signals:
 	void NeedSaveAndReopen();
-	void DataChanged();
 };

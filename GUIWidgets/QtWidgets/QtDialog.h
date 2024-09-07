@@ -7,7 +7,10 @@
 #include <QDialog>
 #include <QSettings>
 
+class QLabel;
 class CFlowsheet;
+class QLineEdit;
+class QTableWidgetItem;
 
 class CDyssolBaseWidget
 {
@@ -59,6 +62,35 @@ public:
 	 * \return Pointer to global settings.
 	 */
 	[[nodiscard]] QSettings* GetSettings() const;
+
+	/**
+	 * \brief Shows a label.
+	 * Current text in the item is used as label.
+	 * \param _labelWidget Widget to set label.
+	 */
+	void ShowLabel(QLabel* _labelWidget) const;
+	/**
+	 * \brief Sets the given value to the QLineEdit
+	 * \param _valueWidget Widget to set the value.
+	 * \param _value Value in SI.
+	 */
+	void ShowValue(QLineEdit* _valueWidget, double _value) const;
+	/**
+	 * \brief Sets the given value to the QLineEdit
+	 * \param _valueWidget Widget to set the value.
+	 * \param _labelWidget Widget to set label.
+	 * \param _value Value in SI.
+	 */
+	void ShowValueAndLabel(QLineEdit* _valueWidget, QLabel* _labelWidget, double _value) const;
+
+	/**
+	 * \brief Reads the value from QLineEdit.
+	 * Converts it from the selected measurement unit to SI.
+	 * The type of the measurement unit is read from the property "UnitType" in the value widget.
+	 * \param _valueWidget Widget to read the value from.
+	 * \return Value in SI.
+	 */
+	double ReadValue(const QLineEdit* _valueWidget) const;
 };
 
 class CQtDialog
@@ -81,9 +113,13 @@ public:
 	 */
 	void OpenHelp(const QString& _link);
 	/**
-	 * \brief Reaction to loading of a new flowsheet.
+	 * \brief Is called after all external pointers are set.
 	 */
-	virtual void OnNewFlowsheet();
+	void OnPointersSet() override;
+	/**
+	 * \brief Is called upon loading of a new flowsheet or changes in the flowsheet data.
+	 */
+	virtual void NewFlowsheetDataSet();
 	/**
 	 * \brief Updates all information on the widget.
 	 */

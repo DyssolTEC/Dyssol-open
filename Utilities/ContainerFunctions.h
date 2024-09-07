@@ -72,7 +72,7 @@ void VectorDelete(std::vector<T>& _vec, const FUN& _fun)
 	_vec.erase(std::remove_if(_vec.begin(), _vec.end(), _fun), _vec.end());
 }
 
-// Removes an element with the given index if it does exist.
+// Removes an element with the given value if it does exist.
 template<typename T>
 void VectorDelete(std::vector<T>& _vec, T _value)
 {

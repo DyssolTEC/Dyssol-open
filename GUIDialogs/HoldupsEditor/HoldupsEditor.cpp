@@ -87,6 +87,12 @@ void CHoldupsEditor::setVisible( bool _bVisible )
 		SaveViewState();
 }
 
+void CHoldupsEditor::NewFlowsheetDataSet()
+{
+	if (isVisible())
+		UpdateWholeView();
+}
+
 void CHoldupsEditor::SaveViewState()
 {
 	m_nLastModel = ui.modelsList->currentRow() == -1 ? 0 : ui.modelsList->currentRow();

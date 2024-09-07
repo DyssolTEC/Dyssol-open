@@ -32,6 +32,12 @@ void CDustFormationTesterTab::InitializeConnections()
 	connect(ui.comboBoxCompound, QOverload<int>::of(&QComboBox::currentIndexChanged),	this, &CDustFormationTesterTab::CompoundChanged);
 }
 
+void CDustFormationTesterTab::NewFlowsheetDataSet()
+{
+	if (isVisible())
+		UpdateWholeView();
+}
+
 void CDustFormationTesterTab::UpdateWholeView()
 {
 	if (!isVisible()) return;

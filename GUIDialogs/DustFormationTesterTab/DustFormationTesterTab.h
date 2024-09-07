@@ -30,6 +30,7 @@ public:
 	CDustFormationTesterTab(const CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, QWidget* _parent = nullptr);
 
 	void InitializeConnections();
+	void NewFlowsheetDataSet();
 	void UpdateWholeView();
 
 public slots:

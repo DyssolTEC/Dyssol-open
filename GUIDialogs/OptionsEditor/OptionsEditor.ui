@@ -1,1185 +1,1521 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-  <class>COptionsEditorClass</class>
-  <widget class="QDialog" name="COptionsEditorClass">
-    <property name="geometry">
-      <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>402</width>
-        <height>499</height>
-      </rect>
-    </property>
-    <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-      </sizepolicy>
-    </property>
-    <property name="minimumSize">
-      <size>
-        <width>0</width>
-        <height>0</height>
-      </size>
-    </property>
-    <property name="maximumSize">
-      <size>
-        <width>16777215</width>
-        <height>16777215</height>
-      </size>
-    </property>
-    <property name="windowTitle">
-      <string>Options</string>
-    </property>
-    <property name="windowIcon">
+ <class>COptionsEditorClass</class>
+ <widget class="QDialog" name="COptionsEditorClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>536</width>
+    <height>584</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>16777215</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Options</string>
+  </property>
+  <property name="windowIcon">
       <iconset resource="../../DyssolGUI/Resources.qrc">
         <normaloff>:/Icons/WinIcon</normaloff>:/Icons/WinIcon</iconset>
-    </property>
-    <property name="sizeGripEnabled">
-      <bool>false</bool>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout_8">
-      <property name="leftMargin">
-        <number>6</number>
-      </property>
-      <property name="topMargin">
-        <number>6</number>
-      </property>
-      <property name="rightMargin">
-        <number>6</number>
-      </property>
-      <property name="bottomMargin">
-        <number>6</number>
-      </property>
-      <item>
-        <widget class="QTabWidget" name="tabWidget">
-          <property name="currentIndex">
-            <number>0</number>
-          </property>
-          <widget class="QWidget" name="tabGeneral">
-            <attribute name="title">
-              <string>General</string>
-            </attribute>
-            <layout class="QVBoxLayout" name="verticalLayout_7">
-              <item>
-                <widget class="QGroupBox" name="groupBox">
-                  <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                    </sizepolicy>
-                  </property>
-                  <property name="title">
-                    <string>Tolerances</string>
-                  </property>
-                  <layout class="QVBoxLayout" name="verticalLayout">
-                    <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
-                        <item>
-                          <widget class="QLabel" name="label">
-                            <property name="minimumSize">
-                              <size>
-                                <width>100</width>
-                                <height>0</height>
-                              </size>
-                            </property>
-                            <property name="text">
-                              <string>Relative tolerance</string>
-                            </property>
-                          <property name="toolTip"><string>Global relative calculation tolerance</string></property><property name="whatsThis"><string>Global relative calculation tolerance</string></property></widget>
-                        </item>
-                        <item>
-                          <widget class="QLineEdit" name="lineEditRTol">
-                            <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                              </sizepolicy>
-                            </property>
-                          <property name="toolTip"><string>Global relative calculation tolerance</string></property><property name="whatsThis"><string>Global relative calculation tolerance</string></property></widget>
-                        </item>
-                      </layout>
-                    </item>
-                    <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,0">
-                        <item>
-                          <widget class="QLabel" name="label_2">
-                            <property name="minimumSize">
-                              <size>
-                                <width>100</width>
-                                <height>0</height>
-                              </size>
-                            </property>
-                            <property name="text">
-                              <string>Absolute tolerance</string>
-                            </property>
-                          <property name="toolTip"><string>Global absolute calculation tolerance</string></property><property name="whatsThis"><string>Global absolute calculation tolerance</string></property></widget>
-                        </item>
-                        <item>
-                          <widget class="QLineEdit" name="lineEditATol">
-                            <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                              </sizepolicy>
-                            </property>
-                          <property name="toolTip"><string>Global absolute calculation tolerance</string></property><property name="whatsThis"><string>Global absolute calculation tolerance</string></property></widget>
-                        </item>
-                      </layout>
-                    </item>
-                  </layout>
-                  <property name="toolTip">
-                    <string>Tolerances for convergence calculation</string>
-                  </property>
-                  
-                  <property name="whatsThis">
-                    <string>Tolerances for convergence calculation</string>
-                  </property>
-                </widget>
-              </item>
-              <item>
-                <widget class="QGroupBox" name="groupBox_2">
-                  <property name="title">
-                    <string>MD matrix</string>
-                  </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_2">
-                    <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,0">
-                        <item>
-                          <widget class="QLabel" name="label_3">
-                            <property name="minimumSize">
-                              <size>
-                                <width>100</width>
-                                <height>0</height>
-                              </size>
-                            </property>
-                            <property name="text">
-                              <string>Minimal fraction</string>
-                            </property>
-                          <property name="toolTip"><string>Minimal significant fraction of multidimensional distributed properties</string></property><property name="whatsThis"><string>Minimal significant fraction of multidimensional distributed properties</string></property></widget>
-                        </item>
-                        <item>
-                          <widget class="QLineEdit" name="lineEditMinFraction">
-                            <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                              </sizepolicy>
-                            </property>
-                          <property name="toolTip"><string>Minimal significant fraction of multidimensional distributed properties</string></property><property name="whatsThis"><string>Minimal significant fraction of multidimensional distributed properties</string></property></widget>
-                        </item>
-                      </layout>
-                    </item>
-                  </layout>
-                  <property name="toolTip">
-                    <string>Settings for multidimensional matrices</string>
-                  </property>
-                  
-                  <property name="whatsThis">
-                    <string>Settings for multidimensional matrices</string>
-                  </property>
-                </widget>
-              </item>
-              <item>
-                <widget class="QGroupBox" name="groupBox_5">
-                  <property name="title">
-                    <string>Save time step</string>
-                  </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_5">
-                    <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="1,0">
-                        <item>
-                          <widget class="QLabel" name="label_6">
-                            <property name="minimumSize">
-                              <size>
-                                <width>100</width>
-                                <height>0</height>
-                              </size>
-                            </property>
-                            <property name="text">
-                              <string>Save time step hint [s]</string>
-                            </property>
-                            <property name="toolTip">
-                              <string>Remove excessive time points for streams after the simulation is finished</string>
-                            </property>
-                            
-                            <property name="whatsThis">
-                              <string>Remove excessive time points for streams after the simulation is finished</string>
-                            </property>
-                          </widget>
-                        </item>
-                        <item>
-                          <widget class="QLineEdit" name="lineEditSaveTimeStep">
-                            <property name="toolTip">
-                              <string>Remove excessive time points for streams after the simulation is finished</string>
-                            </property>
-                            
-                            <property name="whatsThis">
-                              <string>Remove excessive time points for streams after the simulation is finished</string>
-                            </property>
-                          </widget>
-                        </item>
-                      </layout>
-                    </item>
-                    <item>
-                      <widget class="QCheckBox" name="checkBoxSaveTimeStepHoldup">
-                        <property name="text">
-                          <string>Apply save time step also for holdups and internal streams</string>
-                        </property>
-                        <property name="toolTip">
-                          <string>Remove time points for holdups and internal streams as well</string>
-                        </property>
-                        
-                        <property name="whatsThis">
-                          <string>Remove time points for holdups and internal streams as well</string>
-                        </property>
-                      </widget>
-                    </item>
-                  </layout>
-                </widget>
-              </item>
-              <item>
-                <widget class="QGroupBox" name="groupBoxTemperature">
-                  <property name="toolTip">
-                    <string>Settings for calculation of thermal properties</string>
-                  </property>
-                  <property name="statusTip">
-                    <string>Settings for calculating the temperature of mixtures</string>
-                  </property>
-                  <property name="whatsThis">
-                    <string>Settings for calculation of thermal properties</string>
-                  </property>
-                  <property name="title">
-                    <string>Temperature</string>
-                  </property>
-                  <layout class="QGridLayout" name="gridLayout_2" columnstretch="1,0">
-                    <item row="0" column="0">
-                      <widget class="QLabel" name="labelTMin">
-                        <property name="minimumSize">
-                          <size>
-                            <width>100</width>
-                            <height>0</height>
-                          </size>
-                        </property>
-                        <property name="text">
-                          <string>Min temperature [K]</string>
-                        </property>
-                        <property name="toolTip">
-                          <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
-                        </property>
-                        
-                        <property name="whatsThis">
-                          <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
-                        </property>
-                      </widget>
-                    </item>
-                    <item row="0" column="1">
-                      <widget class="QLineEdit" name="lineEditTMin">
-                        <property name="toolTip">
-                          <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
-                        </property>
-                        
-                        <property name="whatsThis">
-                          <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
-                        </property>
-                      </widget>
-                    </item>
-                    <item row="1" column="0">
-                      <widget class="QLabel" name="labelTMax">
-                        <property name="text">
-                          <string>Max temperature [K]</string>
-                        </property>
-                        <property name="toolTip">
-                          <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
-                        </property>
-                        
-                        <property name="whatsThis">
-                          <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
-                        </property>
-                      </widget>
-                    </item>
-                    <item row="1" column="1">
-                      <widget class="QLineEdit" name="lineEditTMax">
-                        <property name="toolTip">
-                          <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
-                        </property>
-                        
-                        <property name="whatsThis">
-                          <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
-                        </property>
-                      </widget>
-                    </item>
-                    <item row="2" column="0">
-                      <widget class="QLabel" name="labelTIntervals">
-                        <property name="text">
-                          <string>Temperature intervals</string>
-                        </property>
-                        <property name="toolTip">
-                          <string>Number of temperature intervals of the lookup table for calculating temperature of stream mixtures</string>
-                        </property>
-                        
-                        <property name="whatsThis">
-                          <string>Number of temperature intervals of the lookup table for calculating temperature of stream mixtures</string>
-                        </property>
-                      </widget>
-                    </item>
-                    <item row="2" column="1">
-                      <widget class="QLineEdit" name="lineEditTIntervals">
-                        <property name="toolTip">
-                          <string>Number of temperature intervals of the lookup table for calculating temperature of stream mixtures</string>
-                        </property>
-                        
-                        <property name="whatsThis">
-                          <string>Number of temperature intervals of the lookup table for calculating temperature of stream mixtures</string>
-                        </property>
-                      </widget>
-                    </item>
-                  </layout>
-                </widget>
-              </item>
-              <item>
-                <spacer name="verticalSpacer_3">
-                  <property name="orientation">
-                    <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                    <size>
-                      <width>20</width>
-                      <height>40</height>
-                    </size>
-                  </property>
-                </spacer>
-              </item>
-            </layout>
-          <attribute name="toolTip"><string>General options</string></attribute><attribute name="whatsThis"><string>General options</string></attribute></widget>
-          <widget class="QWidget" name="tabConvergence">
-            <attribute name="title">
-              <string>Convergence</string>
-            </attribute>
-            <layout class="QVBoxLayout" name="verticalLayout_12">
-              <item>
-                <widget class="QGroupBox" name="groupBox_3">
-                  <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                    </sizepolicy>
-                  </property>
-                  <property name="title">
-                    <string>Time windows</string>
-                  </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_3">
-                    <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="1,0">
-                        <item>
-                          <widget class="QLabel" name="label_4">
-                            <property name="minimumSize">
-                              <size>
-                                <width>130</width>
-                                <height>0</height>
-                              </size>
-                            </property>
-                            <property name="text">
-                              <string>Initial time window [s]</string>
-                            </property>
-                            <property name="toolTip">
-                              <string>Initial size of the time window</string>
-                            </property>
-                            
-                            <property name="whatsThis">
-                              <string>Initial size of the time window of the waveform relaxation method</string>
-                            </property>
-                          </widget>
-                        </item>
-                        <item>
-                          <widget class="QLineEdit" name="lineEditInitialWindow">
-                            <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                              </sizepolicy>
-                            </property>
-                            <property name="toolTip">
-                              <string>Initial size of the time window</string>
-                            </property>
-                            
-                            <property name="whatsThis">
-                              <string>Initial size of the time window of the waveform relaxation method</string>
-                            </property>
-                          </widget>
-                        </item>
-                      </layout>
-                    </item>
-                    <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="1,0">
-                        <item>
-                          <widget class="QLabel" name="label_19">
-                            <property name="minimumSize">
-                              <size>
-                                <width>130</width>
-                                <height>0</height>
-                              </size>
-                            </property>
-                            <property name="text">
-                              <string>Min time window [s]</string>
-                            </property>
-                            <property name="toolTip">
-                              <string>Minimum allowed size of the time window</string>
-                            </property>
-                            
-                            <property name="whatsThis">
-                              <string>Minimum allowed size of the time window of the waveform relaxation method</string>
-                            </property>
-                          </widget>
-                        </item>
-                        <item>
-                          <widget class="QLineEdit" name="lineEditMinWindow">
-                            <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                              </sizepolicy>
-                            </property>
-                            <property name="toolTip">
-                              <string>Minimum allowed size of the time window</string>
-                            </property>
-                            
-                            <property name="whatsThis">
-                              <string>Minimum allowed size of the time window of the waveform relaxation method</string>
-                            </property>
-                          </widget>
-                        </item>
-                      </layout>
-                    </item>
-                    <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="1,0">
-                        <item>
-                          <widget class="QLabel" name="label_5">
-                            <property name="minimumSize">
-                              <size>
-                                <width>130</width>
-                                <height>0</height>
-                              </size>
-                            </property>
-                            <property name="text">
-                              <string>Max time window [s]</string>
-                            </property>
-                            <property name="toolTip">
-                              <string>Maximum allowed size of the time window</string>
-                            </property>
-                            
-                            <property name="whatsThis">
-                              <string>Maximum allowed size of the time window of the waveform relaxation method</string>
-                            </property>
-                          </widget>
-                        </item>
-                        <item>
-                          <widget class="QLineEdit" name="lineEditMaxWindow">
-                            <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                              </sizepolicy>
-                            </property>
-                            <property name="toolTip">
-                              <string>Maximum allowed size of the time window</string>
-                            </property>
-                            
-                            <property name="whatsThis">
-                              <string>Maximum allowed size of the time window of the waveform relaxation method</string>
-                            </property>
-                          </widget>
-                        </item>
-                      </layout>
-                    </item>
-                    <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,0">
-                        <item>
-                          <widget class="QLabel" name="label_9">
-                            <property name="minimumSize">
-                              <size>
-                                <width>130</width>
-                                <height>0</height>
-                              </size>
-                            </property>
-                            <property name="text">
-                              <string>Max iterations number</string>
-                            </property>
-                            <property name="toolTip">
-                              <string>Allowed number of iterations before stop</string>
-                            </property>
-                            
-                            <property name="whatsThis">
-                              <string>Allowed number of iterations before stopping waveform relaxation calculations</string>
-                            </property>
-                          </widget>
-                        </item>
-                        <item>
-                          <widget class="QLineEdit" name="lineEditMaxIterNum">
-                            <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                              </sizepolicy>
-                            </property>
-                            <property name="toolTip">
-                              <string>Allowed number of iterations before stop</string>
-                            </property>
-                            
-                            <property name="whatsThis">
-                              <string>Allowed number of iterations before stopping waveform relaxation calculations</string>
-                            </property>
-                          </widget>
-                        </item>
-                      </layout>
-                    </item>
-                    <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="1,0">
-                        <item>
-                          <widget class="QLabel" name="label_13">
-                            <property name="minimumSize">
-                              <size>
-                                <width>130</width>
-                                <height>0</height>
-                              </size>
-                            </property>
-                            <property name="text">
-                              <string>Time window change rate</string>
-                            </property>
-                            <property name="toolTip">
-                              <string>Time window resizing factor</string>
-                            </property>
-                            
-                            <property name="whatsThis">
-                              <string>Time window resizing factor for the waveform relaxation method</string>
-                            </property>
-                          </widget>
-                        </item>
-                        <item>
-                          <widget class="QLineEdit" name="lineEditRatio">
-                            <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                              </sizepolicy>
-                            </property>
-                            <property name="toolTip">
-                              <string>Time window resizing factor</string>
-                            </property>
-                            
-                            <property name="whatsThis">
-                              <string>Time window resizing factor for the waveform relaxation method</string>
-                            </property>
-                          </widget>
-                        </item>
-                      </layout>
-                    </item>
-                    <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="1,0">
-                        <item>
-                          <widget class="QLabel" name="label_14">
-                            <property name="minimumSize">
-                              <size>
-                                <width>130</width>
-                                <height>0</height>
-                              </size>
-                            </property>
-                            <property name="text">
-                              <string>Iterations upper limit</string>
-                            </property>
-                            <property name="toolTip">
-                              <string>Max number of iterations in the current window before decreasing its size</string>
-                            </property>
-                            
-                            <property name="whatsThis">
-                              <string>Max number of iterations in the current window before decreasing its size</string>
-                            </property>
-                          </widget>
-                        </item>
-                        <item>
-                          <widget class="QLineEdit" name="lineEditUpperLimit">
-                            <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                              </sizepolicy>
-                            </property>
-                            <property name="toolTip">
-                              <string>Max number of iterations in the current window before decreasing its size</string>
-                            </property>
-                            
-                            <property name="whatsThis">
-                              <string>Max number of iterations in the current window before decreasing its size</string>
-                            </property>
-                          </widget>
-                        </item>
-                      </layout>
-                    </item>
-                    <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="1,0">
-                        <item>
-                          <widget class="QLabel" name="label_11">
-                            <property name="minimumSize">
-                              <size>
-                                <width>130</width>
-                                <height>0</height>
-                              </size>
-                            </property>
-                            <property name="text">
-                              <string>Iterations lower limit</string>
-                            </property>
-                            <property name="toolTip">
-                              <string>Min number of iterations in the current window before increasing the size of the next one</string>
-                            </property>
-                            
-                            <property name="whatsThis">
-                              <string>Min number of iterations in the current window before increasing the size of the next one</string>
-                            </property>
-                          </widget>
-                        </item>
-                        <item>
-                          <widget class="QLineEdit" name="lineEditLowerLimit">
-                            <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                              </sizepolicy>
-                            </property>
-                            <property name="toolTip">
-                              <string>Min number of iterations in the current window before increasing the size of the next one</string>
-                            </property>
-                            
-                            <property name="whatsThis">
-                              <string>Min number of iterations in the current window before increasing the size of the next one</string>
-                            </property>
-                          </widget>
-                        </item>
-                      </layout>
-                    </item>
-                    <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="1,0">
-                        <item>
-                          <widget class="QLabel" name="label_12">
-                            <property name="minimumSize">
-                              <size>
-                                <width>130</width>
-                                <height>0</height>
-                              </size>
-                            </property>
-                            <property name="text">
-                              <string>Iterations upper limit (1st window)</string>
-                            </property>
-                            <property name="toolTip">
-                              <string>Max number of iterations in the first window before decreasing its size</string>
-                            </property>
-                            
-                            <property name="whatsThis">
-                              <string>Max number of iterations in the first window before decreasing its size</string>
-                            </property>
-                          </widget>
-                        </item>
-                        <item>
-                          <widget class="QLineEdit" name="lineEdit1stUpperLimit">
-                            <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                              </sizepolicy>
-                            </property>
-                            <property name="toolTip">
-                              <string>Max number of iterations in the first window before decreasing its size</string>
-                            </property>
-                            
-                            <property name="whatsThis">
-                              <string>Max number of iterations in the first window before decreasing its size</string>
-                            </property>
-                          </widget>
-                        </item>
-                      </layout>
-                    </item>
-                  </layout>
-                <property name="toolTip"><string>Settings for waveform relaxation method</string></property><property name="whatsThis"><string>Settings for waveform relaxation method</string></property></widget>
-              </item>
-              <item>
-                <widget class="QGroupBox" name="groupBox_4">
-                  <property name="title">
-                    <string>Convergence methods</string>
-                  </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_10">
-                    <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_16" stretch="0,1">
-                        <item>
-                          <widget class="QLabel" name="label_15">
-                            <property name="minimumSize">
-                              <size>
-                                <width>130</width>
-                                <height>0</height>
-                              </size>
-                            </property>
-                            <property name="text">
-                              <string>Method</string>
-                            </property>
-                          <property name="toolTip"><string>Selected convergence method</string></property><property name="whatsThis"><string>Selected convergence method</string></property></widget>
-                        </item>
-                        <item>
-                          <widget class="QComboBox" name="comboBoxConvMethod">
-                            <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                              </sizepolicy>
-                            </property>
-                            <item>
-                              <property name="text">
-                                <string>Direct substitution</string>
-                              </property>
-                            </item>
-                            <item>
-                              <property name="text">
-                                <string>Wegstein's method</string>
-                              </property>
-                            </item>
-                            <item>
-                              <property name="text">
-                                <string>Steffensen's method</string>
-                              </property>
-                            </item>
-                          <property name="toolTip"><string>Selected convergence method</string></property><property name="whatsThis"><string>Selected convergence method</string></property></widget>
-                        </item>
-                      </layout>
-                    </item>
-                    <item>
-                      <widget class="QStackedWidget" name="stackedWidget">
-                        <property name="currentIndex">
-                          <number>0</number>
-                        </property>
-                        <widget class="QWidget" name="page">
-                          <layout class="QVBoxLayout" name="verticalLayout_13">
-                            <item>
-                              <layout class="QHBoxLayout" name="horizontalLayout_19" stretch="1,0">
-                                <property name="spacing">
-                                  <number>6</number>
-                                </property>
-                                <item>
-                                  <widget class="QLabel" name="label_18">
-                                    <property name="sizePolicy">
-                                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                      </sizepolicy>
-                                    </property>
-                                    <property name="minimumSize">
-                                      <size>
-                                        <width>130</width>
-                                        <height>0</height>
-                                      </size>
-                                    </property>
-                                    <property name="text">
-                                      <string>Relaxation parameter (0;1]</string>
-                                    </property>
-                                  <property name="toolTip"><string>Relaxation parameter of the Direct Substitution convergence method</string></property><property name="whatsThis"><string>Relaxation parameter of the Direct Substitution convergence method</string></property></widget>
-                                </item>
-                                <item>
-                                  <widget class="QLineEdit" name="lineEditRelaxParam">
-                                    <property name="sizePolicy">
-                                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                      </sizepolicy>
-                                    </property>
-                                  <property name="toolTip"><string>Relaxation parameter of the Direct Substitution convergence method</string></property><property name="whatsThis"><string>Relaxation parameter of the Direct Substitution convergence method</string></property></widget>
-                                </item>
-                              </layout>
-                            </item>
-                          </layout>
-                        </widget>
-                        <widget class="QWidget" name="page_2">
-                          <layout class="QVBoxLayout" name="verticalLayout_9">
-                            <item>
-                              <layout class="QHBoxLayout" name="horizontalLayout_17" stretch="1,0">
-                                <property name="spacing">
-                                  <number>6</number>
-                                </property>
-                                <item>
-                                  <widget class="QLabel" name="label_16">
-                                    <property name="sizePolicy">
-                                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                      </sizepolicy>
-                                    </property>
-                                    <property name="minimumSize">
-                                      <size>
-                                        <width>130</width>
-                                        <height>0</height>
-                                      </size>
-                                    </property>
-                                    <property name="text">
-                                      <string>Acceleration parameter limit (-5;1)</string>
-                                    </property>
-                                  <property name="toolTip"><string>Acceleration parameter limit for the Wegstein's convergence method</string></property><property name="whatsThis"><string>Acceleration parameter limit for the Wegstein's convergence method</string></property></widget>
-                                </item>
-                                <item>
-                                  <widget class="QLineEdit" name="lineEditAccelParam">
-                                    <property name="sizePolicy">
-                                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                                        <horstretch>0</horstretch>
-                                        <verstretch>0</verstretch>
-                                      </sizepolicy>
-                                    </property>
-                                  <property name="toolTip"><string>Acceleration parameter limit for the Wegstein's convergence method</string></property><property name="whatsThis"><string>Acceleration parameter limit for the Wegstein's convergence method</string></property></widget>
-                                </item>
-                              </layout>
-                            </item>
-                          </layout>
-                        </widget>
-                        <widget class="QWidget" name="page_3" />
-                      </widget>
-                    </item>
-                  </layout>
-                  <property name="toolTip">
-                    <string>Settings for convergence methods</string>
-                  </property>
-                  
-                  <property name="whatsThis">
-                    <string>Settings for convergence methods</string>
-                  </property>
-                </widget>
-              </item>
-              <item>
-                <widget class="QGroupBox" name="groupBox_7">
-                  <property name="title">
-                    <string>Data extrapolation</string>
-                  </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_11">
-                    <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="0,1">
-                        <item>
-                          <widget class="QLabel" name="label_17">
-                            <property name="minimumSize">
-                              <size>
-                                <width>130</width>
-                                <height>0</height>
-                              </size>
-                            </property>
-                            <property name="text">
-                              <string>Extrapolation method</string>
-                            </property>
-                          <property name="toolTip"><string>Selected extrapolation method</string></property><property name="whatsThis"><string>Selected extrapolation method</string></property></widget>
-                        </item>
-                        <item>
-                          <widget class="QComboBox" name="comboBoxExtrapMethod">
-                            <property name="sizePolicy">
-                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                              </sizepolicy>
-                            </property>
-                            <item>
-                              <property name="text">
-                                <string>Linear extrapolation</string>
-                              </property>
-                            </item>
-                            <item>
-                              <property name="text">
-                                <string>Cubic spline extrapolation</string>
-                              </property>
-                            </item>
-                            <item>
-                              <property name="text">
-                                <string>Nearest neighbor extrapolation</string>
-                              </property>
-                            </item>
-                          <property name="toolTip"><string>Selected extrapolation method</string></property><property name="whatsThis"><string>Selected extrapolation method</string></property></widget>
-                        </item>
-                      </layout>
-                    </item>
-                  </layout>
-                  <property name="toolTip">
-                    <string>Settings for data extrapolation</string>
-                  </property>
-                  
-                  <property name="whatsThis">
-                    <string>Settings for data extrapolation</string>
-                  </property>
-                </widget>
-              </item>
-            </layout>
-          <attribute name="toolTip"><string>Convergence options</string></attribute><attribute name="whatsThis"><string>Options for waveform relaxation, data extrapolation and convergence methods</string></attribute></widget>
-          <widget class="QWidget" name="tabService">
-            <attribute name="title">
-              <string>Service</string>
-            </attribute>
-            <layout class="QVBoxLayout" name="verticalLayout_14">
-              <item>
-                <widget class="QGroupBox" name="groupBoxCache">
-                  <property name="title">
-                    <string>Caching</string>
-                  </property>
-                  <layout class="QGridLayout" name="gridLayout">
-                    <item row="0" column="0" colspan="2">
-                      <widget class="QCheckBox" name="checkBoxCacheStreamsFlag">
-                        <property name="text">
-                          <string>Enable cache for material streams</string>
-                        </property>
-                        <property name="toolTip">
-                          <string>Cache time-dependent data of streams on disk during the simulation</string>
-                        </property>
-                        
-                        <property name="whatsThis">
-                          <string>Cache time-dependent data of streams on disk during the simulation</string>
-                        </property>
-                      </widget>
-                    </item>
-                    <item row="0" column="2">
-                      <widget class="QLabel" name="labelWarningStreams">
-                        <property name="text">
-                          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=" color:#ff0000;"&gt;*&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                        </property>
-                        <property name="alignment">
-                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                      </widget>
-                    </item>
-                    <item row="1" column="0" colspan="2">
-                      <widget class="QCheckBox" name="checkBoxCacheHoldupsFlag">
-                        <property name="text">
-                          <string>Enable cache for holdups and streams in units 
-(can significantly reduce performance)</string>
-                        </property>
-                        <property name="toolTip">
-                          <string>Cache time-dependent data of holdups on disk during the simulation</string>
-                        </property>
-                        
-                        <property name="whatsThis">
-                          <string>Cache time-dependent data of holdups on disk during the simulation</string>
-                        </property>
-                      </widget>
-                    </item>
-                    <item row="1" column="2">
-                      <widget class="QLabel" name="labelWarningHoldups">
-                        <property name="text">
-                          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=" color:#ff0000;"&gt;*&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                        </property>
-                        <property name="alignment">
-                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                      </widget>
-                    </item>
-                    <item row="2" column="0" colspan="2">
-                      <widget class="QCheckBox" name="checkBoxCacheInternalFlag">
-                        <property name="text">
-                          <string>Enable cache for internal service streams 
-(can significantly reduce performance)</string>
-                        </property>
-                        <property name="toolTip">
-                          <string>Cache time-dependent data of internal and service streams on disk during the simulation</string>
-                        </property>
-                        
-                        <property name="whatsThis">
-                          <string>Cache time-dependent data of internal and service streams on disk during the simulation</string>
-                        </property>
-                      </widget>
-                    </item>
-                    <item row="2" column="2">
-                      <widget class="QLabel" name="labelWarningInternal">
-                        <property name="text">
-                          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=" color:#ff0000;"&gt;*&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                        </property>
-                        <property name="alignment">
-                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                      </widget>
-                    </item>
-                    <item row="3" column="2" rowspan="2">
-                      <widget class="QLabel" name="labelWarningWindow">
-                        <property name="text">
-                          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=" color:#ff0000;"&gt;*&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                        </property>
-                        <property name="alignment">
-                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                      </widget>
-                    </item>
-                    <item row="4" column="0">
-                      <widget class="QLabel" name="label_8">
-                        <property name="minimumSize">
-                          <size>
-                            <width>130</width>
-                            <height>0</height>
-                          </size>
-                        </property>
-                        <property name="text">
-                          <string>Cache window</string>
-                        </property>
-                        <property name="toolTip">
-                          <string>Number of time points to stay in RAM if caching is enabled</string>
-                        </property>
-                        
-                        <property name="whatsThis">
-                          <string>Number of time points to stay in RAM if caching is enabled</string>
-                        </property>
-                      </widget>
-                    </item>
-                    <item row="5" column="1" colspan="2">
-                      <widget class="QLabel" name="labelWarning">
-                        <property name="text">
-                          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=" color:#ff0000;"&gt;*&lt;/span&gt;Will be applied after saving and reopening&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                        </property>
-                        <property name="alignment">
-                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                      </widget>
-                    </item>
-                    <item row="4" column="1">
-                      <widget class="QLineEdit" name="lineEditCacheWindow">
-                        <property name="toolTip">
-                          <string>Number of time points to stay in RAM if caching is enabled</string>
-                        </property>
-                        
-                        <property name="whatsThis">
-                          <string>Number of time points to stay in RAM if caching is enabled</string>
-                        </property>
-                      </widget>
-                    </item>
-                  </layout>
-                <property name="toolTip"><string>Settings for data caching</string></property><property name="whatsThis"><string>Settings for data caching</string></property></widget>
-              </item>
-              <item>
-                <widget class="QGroupBox" name="groupBoxApp">
-                  <property name="title">
-                    <string>Saving</string>
-                  </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_4">
-                    <item>
-                      <widget class="QCheckBox" name="checkBoxSplitFile">
-                        <property name="text">
-                          <string>Split output file into chunks (2Gb each) upon save</string>
-                        </property>
-                        <property name="toolTip">
-                          <string>Split result file into files up to 2 GB in size</string>
-                        </property>
-                        
-                        <property name="whatsThis">
-                          <string>Split result file into files up to 2 GB in size</string>
-                        </property>
-                      </widget>
-                    </item>
-                  </layout>
-                <property name="toolTip"><string>Settings for data saving</string></property><property name="whatsThis"><string>Settings for data saving</string></property></widget>
-              </item>
-              <item>
-                <spacer name="verticalSpacer_2">
-                  <property name="orientation">
-                    <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                    <size>
-                      <width>20</width>
-                      <height>194</height>
-                    </size>
-                  </property>
-                </spacer>
-              </item>
-            </layout>
-          <attribute name="toolTip"><string>Service options</string></attribute><attribute name="whatsThis"><string>Additional options for caching and saving</string></attribute></widget>
-        </widget>
-      </item>
-      <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>false</bool>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_8">
+   <property name="leftMargin">
+    <number>6</number>
+   </property>
+   <property name="topMargin">
+    <number>6</number>
+   </property>
+   <property name="rightMargin">
+    <number>6</number>
+   </property>
+   <property name="bottomMargin">
+    <number>6</number>
+   </property>
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tabGeneral">
+      <attribute name="title">
+       <string>General</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>General options</string>
+      </attribute>
+      <attribute name="whatsThis">
+       <string>General options</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_7">
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Tolerances for convergence calculation</string>
+         </property>
+         <property name="whatsThis">
+          <string>Tolerances for convergence calculation</string>
+         </property>
+         <property name="title">
+          <string>Tolerances</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-            <spacer name="horizontalSpacer">
+           <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1,0">
+            <item>
+             <widget class="QLabel" name="labelRTol">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Global relative calculation tolerance</string>
+              </property>
+              <property name="whatsThis">
+               <string>Global relative calculation tolerance</string>
+              </property>
+              <property name="text">
+               <string>Relative tolerance [-]</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_2">
               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
+               <enum>Qt::Horizontal</enum>
               </property>
               <property name="sizeHint" stdset="0">
-                <size>
-                  <width>40</width>
-                  <height>20</height>
-                </size>
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
               </property>
-            </spacer>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEditRTol">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Global relative calculation tolerance</string>
+              </property>
+              <property name="whatsThis">
+               <string>Global relative calculation tolerance</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
-            <widget class="QPushButton" name="pushButtonOk">
-              <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                </sizepolicy>
+           <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1,0">
+            <item>
+             <widget class="QLabel" name="labelATol">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Global absolute calculation tolerance</string>
+              </property>
+              <property name="whatsThis">
+               <string>Global absolute calculation tolerance</string>
               </property>
               <property name="text">
-                <string>OK</string>
+               <string>Absolute tolerance [-]</string>
               </property>
-            </widget>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEditATol">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Global absolute calculation tolerance</string>
+              </property>
+              <property name="whatsThis">
+               <string>Global absolute calculation tolerance</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="toolTip">
+          <string>Settings for multidimensional matrices</string>
+         </property>
+         <property name="whatsThis">
+          <string>Settings for multidimensional matrices</string>
+         </property>
+         <property name="title">
+          <string>MD matrix</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,1,0">
+            <item>
+             <widget class="QLabel" name="labelMinFraction">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Minimal significant fraction of multidimensional distributed properties</string>
+              </property>
+              <property name="whatsThis">
+               <string>Minimal significant fraction of multidimensional distributed properties</string>
+              </property>
+              <property name="text">
+               <string>Minimal fraction [-]</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEditMinFraction">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Minimal significant fraction of multidimensional distributed properties</string>
+              </property>
+              <property name="whatsThis">
+               <string>Minimal significant fraction of multidimensional distributed properties</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_5">
+         <property name="title">
+          <string>Save time step</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,1,0">
+            <item>
+             <widget class="QLabel" name="labelSaveTimeStep">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Remove excessive time points for streams after the simulation is finished</string>
+              </property>
+              <property name="whatsThis">
+               <string>Remove excessive time points for streams after the simulation is finished</string>
+              </property>
+              <property name="text">
+               <string>Save time step hint [s]</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEditSaveTimeStep">
+              <property name="toolTip">
+               <string>Remove excessive time points for streams after the simulation is finished</string>
+              </property>
+              <property name="whatsThis">
+               <string>Remove excessive time points for streams after the simulation is finished</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
-            <widget class="QPushButton" name="pushButtonCancel">
-              <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                </sizepolicy>
+           <widget class="QCheckBox" name="checkBoxSaveTimeStepHoldup">
+            <property name="toolTip">
+             <string>Remove time points for holdups and internal streams as well</string>
+            </property>
+            <property name="whatsThis">
+             <string>Remove time points for holdups and internal streams as well</string>
+            </property>
+            <property name="text">
+             <string>Apply save time step also for holdups and internal streams</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBoxTemperature">
+         <property name="toolTip">
+          <string>Settings for calculation of thermal properties</string>
+         </property>
+         <property name="statusTip">
+          <string>Settings for calculating the temperature of mixtures</string>
+         </property>
+         <property name="whatsThis">
+          <string>Settings for calculation of thermal properties</string>
+         </property>
+         <property name="title">
+          <string>Temperature</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2" columnstretch="1,0,0">
+          <item row="0" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_25" stretch="0,0">
+            <item>
+             <widget class="QLabel" name="labelTMin">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
+              </property>
+              <property name="whatsThis">
+               <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
               </property>
               <property name="text">
-                <string>Cancel</string>
+               <string>Min temperature [K]</string>
               </property>
-              <property name="autoDefault">
-                <bool>false</bool>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_6">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
               </property>
-            </widget>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </item>
-        </layout>
-      </item>
+          <item row="2" column="2">
+           <widget class="QLineEdit" name="lineEditTIntervals">
+            <property name="toolTip">
+             <string>Number of temperature intervals of the lookup table for calculating temperature of stream mixtures</string>
+            </property>
+            <property name="whatsThis">
+             <string>Number of temperature intervals of the lookup table for calculating temperature of stream mixtures</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLineEdit" name="lineEditTMin">
+            <property name="toolTip">
+             <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
+            </property>
+            <property name="whatsThis">
+             <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLineEdit" name="lineEditTMax">
+            <property name="toolTip">
+             <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
+            </property>
+            <property name="whatsThis">
+             <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_23" stretch="0,0">
+            <item>
+             <widget class="QLabel" name="labelTMax">
+              <property name="toolTip">
+               <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
+              </property>
+              <property name="whatsThis">
+               <string>Limits of the lookup table for calculating temperature of stream mixtures</string>
+              </property>
+              <property name="text">
+               <string>Max temperature [K]</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_7">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_24" stretch="0,0">
+            <item>
+             <widget class="QLabel" name="labelTIntervals">
+              <property name="toolTip">
+               <string>Number of temperature intervals of the lookup table for calculating temperature of stream mixtures</string>
+              </property>
+              <property name="whatsThis">
+               <string>Number of temperature intervals of the lookup table for calculating temperature of stream mixtures</string>
+              </property>
+              <property name="text">
+               <string>Temperature intervals [#]</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_8">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabConvergence">
+      <attribute name="title">
+       <string>Convergence</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>Convergence options</string>
+      </attribute>
+      <attribute name="whatsThis">
+       <string>Options for waveform relaxation, data extrapolation and convergence methods</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_12">
+       <item>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Settings for waveform relaxation method</string>
+         </property>
+         <property name="whatsThis">
+          <string>Settings for waveform relaxation method</string>
+         </property>
+         <property name="title">
+          <string>Time windows</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="0,1,0">
+            <property name="sizeConstraint">
+             <enum>QLayout::SetDefaultConstraint</enum>
+            </property>
+            <item>
+             <widget class="QLabel" name="labelInitialWindow">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Initial size of the time window</string>
+              </property>
+              <property name="whatsThis">
+               <string>Initial size of the time window of the waveform relaxation method</string>
+              </property>
+              <property name="text">
+               <string>Initial time window [s]</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_9">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEditInitialWindow">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Initial size of the time window</string>
+              </property>
+              <property name="whatsThis">
+               <string>Initial size of the time window of the waveform relaxation method</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="0,1,0">
+            <item>
+             <widget class="QLabel" name="labelMinWindow">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Minimum allowed size of the time window</string>
+              </property>
+              <property name="whatsThis">
+               <string>Minimum allowed size of the time window of the waveform relaxation method</string>
+              </property>
+              <property name="text">
+               <string>Min time window [s]</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_10">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEditMinWindow">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Minimum allowed size of the time window</string>
+              </property>
+              <property name="whatsThis">
+               <string>Minimum allowed size of the time window of the waveform relaxation method</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="0,1,0">
+            <item>
+             <widget class="QLabel" name="labelMaxWindow">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Maximum allowed size of the time window</string>
+              </property>
+              <property name="whatsThis">
+               <string>Maximum allowed size of the time window of the waveform relaxation method</string>
+              </property>
+              <property name="text">
+               <string>Max time window [s]</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_11">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEditMaxWindow">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Maximum allowed size of the time window</string>
+              </property>
+              <property name="whatsThis">
+               <string>Maximum allowed size of the time window of the waveform relaxation method</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0,1,0">
+            <item>
+             <widget class="QLabel" name="labelMaxIterNum">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Allowed number of iterations before stop</string>
+              </property>
+              <property name="whatsThis">
+               <string>Allowed number of iterations before stopping waveform relaxation calculations</string>
+              </property>
+              <property name="text">
+               <string>Max iterations number [#]</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_12">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEditMaxIterNum">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Allowed number of iterations before stop</string>
+              </property>
+              <property name="whatsThis">
+               <string>Allowed number of iterations before stopping waveform relaxation calculations</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="0,1,0">
+            <item>
+             <widget class="QLabel" name="labelRatio">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Time window resizing factor</string>
+              </property>
+              <property name="whatsThis">
+               <string>Time window resizing factor for the waveform relaxation method</string>
+              </property>
+              <property name="text">
+               <string>Time window change rate [-]</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_13">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEditRatio">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Time window resizing factor</string>
+              </property>
+              <property name="whatsThis">
+               <string>Time window resizing factor for the waveform relaxation method</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="0,1,0">
+            <item>
+             <widget class="QLabel" name="labelUpperLimit">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Max number of iterations in the current window before decreasing its size</string>
+              </property>
+              <property name="whatsThis">
+               <string>Max number of iterations in the current window before decreasing its size</string>
+              </property>
+              <property name="text">
+               <string>Iterations upper limit [#]</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_14">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEditUpperLimit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Max number of iterations in the current window before decreasing its size</string>
+              </property>
+              <property name="whatsThis">
+               <string>Max number of iterations in the current window before decreasing its size</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="0,1,0">
+            <item>
+             <widget class="QLabel" name="labelLowerLimit">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Min number of iterations in the current window before increasing the size of the next one</string>
+              </property>
+              <property name="whatsThis">
+               <string>Min number of iterations in the current window before increasing the size of the next one</string>
+              </property>
+              <property name="text">
+               <string>Iterations lower limit [#]</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_15">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEditLowerLimit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Min number of iterations in the current window before increasing the size of the next one</string>
+              </property>
+              <property name="whatsThis">
+               <string>Min number of iterations in the current window before increasing the size of the next one</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="0,1,0">
+            <item>
+             <widget class="QLabel" name="label1stUpperLimit">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Max number of iterations in the first window before decreasing its size</string>
+              </property>
+              <property name="whatsThis">
+               <string>Max number of iterations in the first window before decreasing its size</string>
+              </property>
+              <property name="text">
+               <string>Iterations upper limit (1st window) [#]</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_16">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit1stUpperLimit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Max number of iterations in the first window before decreasing its size</string>
+              </property>
+              <property name="whatsThis">
+               <string>Max number of iterations in the first window before decreasing its size</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_4">
+         <property name="toolTip">
+          <string>Settings for convergence methods</string>
+         </property>
+         <property name="whatsThis">
+          <string>Settings for convergence methods</string>
+         </property>
+         <property name="title">
+          <string>Convergence methods</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_10">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_16" stretch="0,1">
+            <item>
+             <widget class="QLabel" name="label_15">
+              <property name="minimumSize">
+               <size>
+                <width>130</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Selected convergence method</string>
+              </property>
+              <property name="whatsThis">
+               <string>Selected convergence method</string>
+              </property>
+              <property name="text">
+               <string>Method</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboBoxConvMethod">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Selected convergence method</string>
+              </property>
+              <property name="whatsThis">
+               <string>Selected convergence method</string>
+              </property>
+              <item>
+               <property name="text">
+                <string>Direct substitution</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Wegstein's method</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Steffensen's method</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QStackedWidget" name="stackedWidget">
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <widget class="QWidget" name="page">
+             <layout class="QVBoxLayout" name="verticalLayout_13">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_19" stretch="1,0">
+                <property name="spacing">
+                 <number>6</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="labelRelaxParam">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>130</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="toolTip">
+                   <string>Relaxation parameter of the Direct Substitution convergence method</string>
+                  </property>
+                  <property name="whatsThis">
+                   <string>Relaxation parameter of the Direct Substitution convergence method</string>
+                  </property>
+                  <property name="text">
+                   <string>Relaxation parameter (0;1]</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="lineEditRelaxParam">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="toolTip">
+                   <string>Relaxation parameter of the Direct Substitution convergence method</string>
+                  </property>
+                  <property name="whatsThis">
+                   <string>Relaxation parameter of the Direct Substitution convergence method</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="page_2">
+             <layout class="QVBoxLayout" name="verticalLayout_9">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_17" stretch="1,0">
+                <property name="spacing">
+                 <number>6</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="labelAccelParam">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>130</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="toolTip">
+                   <string>Acceleration parameter limit for the Wegstein's convergence method</string>
+                  </property>
+                  <property name="whatsThis">
+                   <string>Acceleration parameter limit for the Wegstein's convergence method</string>
+                  </property>
+                  <property name="text">
+                   <string>Acceleration parameter limit (-5;1)</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="lineEditAccelParam">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="toolTip">
+                   <string>Acceleration parameter limit for the Wegstein's convergence method</string>
+                  </property>
+                  <property name="whatsThis">
+                   <string>Acceleration parameter limit for the Wegstein's convergence method</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="page_3"/>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_7">
+         <property name="toolTip">
+          <string>Settings for data extrapolation</string>
+         </property>
+         <property name="whatsThis">
+          <string>Settings for data extrapolation</string>
+         </property>
+         <property name="title">
+          <string>Data extrapolation</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_11">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="0,1">
+            <item>
+             <widget class="QLabel" name="label_17">
+              <property name="minimumSize">
+               <size>
+                <width>130</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Selected extrapolation method</string>
+              </property>
+              <property name="whatsThis">
+               <string>Selected extrapolation method</string>
+              </property>
+              <property name="text">
+               <string>Extrapolation method</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboBoxExtrapMethod">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Selected extrapolation method</string>
+              </property>
+              <property name="whatsThis">
+               <string>Selected extrapolation method</string>
+              </property>
+              <item>
+               <property name="text">
+                <string>Linear extrapolation</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Cubic spline extrapolation</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Nearest neighbor extrapolation</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabService">
+      <attribute name="title">
+       <string>Service</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>Service options</string>
+      </attribute>
+      <attribute name="whatsThis">
+       <string>Additional options for caching and saving</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_14">
+       <item>
+        <widget class="QGroupBox" name="groupBoxCache">
+         <property name="toolTip">
+          <string>Settings for data caching</string>
+         </property>
+         <property name="whatsThis">
+          <string>Settings for data caching</string>
+         </property>
+         <property name="title">
+          <string>Caching</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="1" column="2">
+           <widget class="QLabel" name="labelWarningHoldups">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;*&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2" rowspan="2">
+           <widget class="QLabel" name="labelWarningWindow">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;*&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QLabel" name="labelWarningInternal">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;*&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="labelWarningStreams">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;*&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="2">
+           <widget class="QCheckBox" name="checkBoxCacheStreamsFlag">
+            <property name="toolTip">
+             <string>Cache time-dependent data of streams on disk during the simulation</string>
+            </property>
+            <property name="whatsThis">
+             <string>Cache time-dependent data of streams on disk during the simulation</string>
+            </property>
+            <property name="text">
+             <string>Enable cache for material streams</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="2">
+           <widget class="QCheckBox" name="checkBoxCacheInternalFlag">
+            <property name="toolTip">
+             <string>Cache time-dependent data of internal and service streams on disk during the simulation</string>
+            </property>
+            <property name="whatsThis">
+             <string>Cache time-dependent data of internal and service streams on disk during the simulation</string>
+            </property>
+            <property name="text">
+             <string>Enable cache for internal service streams 
+(can significantly reduce performance)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <widget class="QCheckBox" name="checkBoxCacheHoldupsFlag">
+            <property name="toolTip">
+             <string>Cache time-dependent data of holdups on disk during the simulation</string>
+            </property>
+            <property name="whatsThis">
+             <string>Cache time-dependent data of holdups on disk during the simulation</string>
+            </property>
+            <property name="text">
+             <string>Enable cache for holdups and streams in units 
+(can significantly reduce performance)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1" colspan="2">
+           <widget class="QLabel" name="labelWarning">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;*&lt;/span&gt;Will be applied after saving and reopening&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_26" stretch="0,0">
+            <item>
+             <widget class="QLabel" name="labelCacheWindow">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Number of time points to stay in RAM if caching is enabled</string>
+              </property>
+              <property name="whatsThis">
+               <string>Number of time points to stay in RAM if caching is enabled</string>
+              </property>
+              <property name="text">
+               <string>Cache window [#]</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_22">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="lineEditCacheWindow">
+            <property name="toolTip">
+             <string>Number of time points to stay in RAM if caching is enabled</string>
+            </property>
+            <property name="whatsThis">
+             <string>Number of time points to stay in RAM if caching is enabled</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBoxApp">
+         <property name="toolTip">
+          <string>Settings for data saving</string>
+         </property>
+         <property name="whatsThis">
+          <string>Settings for data saving</string>
+         </property>
+         <property name="title">
+          <string>Saving</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="QCheckBox" name="checkBoxSplitFile">
+            <property name="toolTip">
+             <string>Split result file into files up to 2 GB in size</string>
+            </property>
+            <property name="whatsThis">
+             <string>Split result file into files up to 2 GB in size</string>
+            </property>
+            <property name="text">
+             <string>Split output file into chunks (2Gb each) upon save</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>194</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonOk">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>OK</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonCancel">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonApply">
+       <property name="text">
+        <string>Apply</string>
+       </property>
+      </widget>
+     </item>
     </layout>
-  </widget>
-  <layoutdefault spacing="6" margin="11" />
-  <tabstops>
-    <tabstop>tabWidget</tabstop>
-    <tabstop>lineEditRTol</tabstop>
-    <tabstop>lineEditATol</tabstop>
-    <tabstop>lineEditMinFraction</tabstop>
-    <tabstop>lineEditSaveTimeStep</tabstop>
-    <tabstop>checkBoxSaveTimeStepHoldup</tabstop>
-    <tabstop>pushButtonOk</tabstop>
-    <tabstop>pushButtonCancel</tabstop>
-    <tabstop>lineEditMaxIterNum</tabstop>
-    <tabstop>lineEditRatio</tabstop>
-    <tabstop>lineEditUpperLimit</tabstop>
-    <tabstop>lineEditLowerLimit</tabstop>
-    <tabstop>lineEdit1stUpperLimit</tabstop>
-    <tabstop>comboBoxConvMethod</tabstop>
-    <tabstop>lineEditAccelParam</tabstop>
-    <tabstop>lineEditInitialWindow</tabstop>
-    <tabstop>lineEditMaxWindow</tabstop>
-    <tabstop>lineEditMinWindow</tabstop>
-    <tabstop>lineEditRelaxParam</tabstop>
-    <tabstop>comboBoxExtrapMethod</tabstop>
-    <tabstop>checkBoxCacheStreamsFlag</tabstop>
-    <tabstop>checkBoxCacheHoldupsFlag</tabstop>
-    <tabstop>checkBoxCacheInternalFlag</tabstop>
-    <tabstop>lineEditCacheWindow</tabstop>
-    <tabstop>checkBoxSplitFile</tabstop>
-  </tabstops>
-  <resources>
-    <include location="../../DyssolGUI/Resources.qrc" />
-  </resources>
-  <connections>
-    <connection>
-      <sender>comboBoxConvMethod</sender>
-      <signal>currentIndexChanged(int)</signal>
-      <receiver>stackedWidget</receiver>
-      <slot>setCurrentIndex(int)</slot>
-      <hints>
-        <hint type="sourcelabel">
-          <x>371</x>
-          <y>330</y>
-        </hint>
-        <hint type="destinationlabel">
-          <x>181</x>
-          <y>343</y>
-        </hint>
-      </hints>
-    </connection>
-  </connections>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>lineEditRTol</tabstop>
+  <tabstop>lineEditATol</tabstop>
+  <tabstop>lineEditMinFraction</tabstop>
+  <tabstop>lineEditSaveTimeStep</tabstop>
+  <tabstop>checkBoxSaveTimeStepHoldup</tabstop>
+  <tabstop>lineEditTMin</tabstop>
+  <tabstop>lineEditTMax</tabstop>
+  <tabstop>lineEditTIntervals</tabstop>
+  <tabstop>pushButtonOk</tabstop>
+  <tabstop>pushButtonCancel</tabstop>
+  <tabstop>pushButtonApply</tabstop>
+  <tabstop>lineEditInitialWindow</tabstop>
+  <tabstop>lineEditMinWindow</tabstop>
+  <tabstop>lineEditMaxWindow</tabstop>
+  <tabstop>lineEditMaxIterNum</tabstop>
+  <tabstop>lineEditRatio</tabstop>
+  <tabstop>lineEditUpperLimit</tabstop>
+  <tabstop>lineEditLowerLimit</tabstop>
+  <tabstop>lineEdit1stUpperLimit</tabstop>
+  <tabstop>comboBoxConvMethod</tabstop>
+  <tabstop>lineEditRelaxParam</tabstop>
+  <tabstop>comboBoxExtrapMethod</tabstop>
+  <tabstop>checkBoxCacheStreamsFlag</tabstop>
+  <tabstop>checkBoxCacheHoldupsFlag</tabstop>
+  <tabstop>checkBoxCacheInternalFlag</tabstop>
+  <tabstop>lineEditCacheWindow</tabstop>
+  <tabstop>checkBoxSplitFile</tabstop>
+  <tabstop>lineEditAccelParam</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../../DyssolGUI/Resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>comboBoxConvMethod</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>stackedWidget</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>371</x>
+     <y>330</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>181</x>
+     <y>343</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

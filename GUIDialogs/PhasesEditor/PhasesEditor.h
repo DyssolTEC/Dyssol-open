@@ -31,6 +31,7 @@ private:
 	bool ValidateInput();
 
 public slots:
+	void NewFlowsheetDataSet();
 	void UpdateWholeView();
 	void setVisible( bool _bVisible );
 	void accept();

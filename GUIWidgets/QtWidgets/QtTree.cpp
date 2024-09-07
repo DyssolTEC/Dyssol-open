@@ -28,6 +28,11 @@ QTreeWidgetItem* CQtTree::CreateItem(QTreeWidgetItem* _parent, int _col, const s
 	return CreateItem<QTreeWidgetItem>(_parent, _col, _text, _flags, _data);
 }
 
+QTreeWidgetItem* CQtTree::CreateItem(QTreeWidgetItem* _parent, int _col, const std::string& _text, EFlags _flags, const std::string& _data)
+{
+	return CreateItem<QTreeWidgetItem>(_parent, _col, _text, _flags, QString::fromStdString(_data));
+}
+
 void CQtTree::SetText(QTreeWidgetItem* _item, int _col, const std::string& _text, const QVariant& _data)
 {
 	if (_col < 0) return;
