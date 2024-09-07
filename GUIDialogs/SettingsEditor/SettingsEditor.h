@@ -20,11 +20,11 @@ class CSettingsEditor
 public:
 	CSettingsEditor(QWidget* _parent = nullptr);
 
-	void SetPointers(CModelsManager* _modelsManager, QSettings* _settings) override;
+	void SetPointers(CFlowsheet* _flowsheet, CModelsManager* _modelsManager, QSettings* _settings) override;
 	void InitializeConnections() const;
 
 public slots:
-	void UpdateWholeView() const;
+	void UpdateWholeView() override;
 	void setVisible(bool _bVisible) override;
 
 private:

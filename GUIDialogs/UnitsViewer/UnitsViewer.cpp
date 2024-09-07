@@ -55,11 +55,11 @@ CUnitsViewer::~CUnitsViewer()
 
 }
 
-void CUnitsViewer::SetPointers(CModelsManager* _modelsManager, QSettings* _settings)
+void CUnitsViewer::SetPointers(CFlowsheet* _flowsheet, CModelsManager* _modelsManager, QSettings* _settings)
 {
-	CQtDialog::SetPointers(_modelsManager, _settings);
-	m_pStreamsViewer->SetPointers(_modelsManager, _settings);
-	m_pPlotsViewer->SetPointers(_modelsManager, _settings);
+	CQtDialog::SetPointers(_flowsheet, _modelsManager, _settings);
+	m_pStreamsViewer->SetPointers(_flowsheet, _modelsManager, _settings);
+	m_pPlotsViewer->SetPointers(_flowsheet, _modelsManager, _settings);
 }
 
 void CUnitsViewer::InitializeConnections()

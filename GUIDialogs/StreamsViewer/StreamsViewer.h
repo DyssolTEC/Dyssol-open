@@ -23,7 +23,7 @@ class CStreamsViewer
 public:
 	CStreamsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, QWidget* _parent = nullptr, Qt::WindowFlags _flags = Qt::WindowFlags());
 
-	void SetPointers(CModelsManager* _modelsManager, QSettings* _settings) override;
+	void SetPointers(CFlowsheet* _flowsheet, CModelsManager* _modelsManager, QSettings* _settings) override;
 	void InitializeConnections() const;
 
 public slots:

@@ -41,9 +41,9 @@ CFlowsheetViewer::~CFlowsheetViewer()
 	}
 }
 
-void CFlowsheetViewer::SetPointers(CModelsManager* _modelsManager, QSettings* _settings)
+void CFlowsheetViewer::SetPointers(CFlowsheet* _flowsheet, CModelsManager* _modelsManager, QSettings* _settings)
 {
-	CDyssolBaseWidget::SetPointers(_modelsManager, _settings);
+	CDyssolBaseWidget::SetPointers(_flowsheet, _modelsManager, _settings);
 
 	// where to temporary store images
 	const std::filesystem::path cachePath = m_settings->value(StrConst::Dyssol_ConfigCachePath).toString().toStdString() + StrConst::Dyssol_CacheDir;

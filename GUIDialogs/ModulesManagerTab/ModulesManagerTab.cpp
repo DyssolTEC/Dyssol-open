@@ -24,9 +24,9 @@ CModulesManagerTab::CModulesManagerTab(QWidget* _parent)
 	SetHelpLink("001_ui/gui.html#sec-gui-menu-tools-models-manager");
 }
 
-void CModulesManagerTab::SetPointers(CModelsManager* _modelsManager, QSettings* _settings)
+void CModulesManagerTab::SetPointers(CFlowsheet* _flowsheet, CModelsManager* _modelsManager, QSettings* _settings)
 {
-	CQtDialog::SetPointers(_modelsManager, _settings);
+	CQtDialog::SetPointers(_flowsheet, _modelsManager, _settings);
 
 	// clear models manager
 	m_modelsManager->Clear();

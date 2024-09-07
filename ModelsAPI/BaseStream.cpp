@@ -50,7 +50,7 @@ CBaseStream::CBaseStream(const CBaseStream& _other) :
 		m_phases.insert({ state, std::make_unique<CPhase>(*phase) });
 }
 
-CBaseStream::CBaseStream(CBaseStream&& _other) :
+CBaseStream::CBaseStream(CBaseStream&& _other) noexcept :
 	m_name{ std::move(_other.m_name) },
 	m_key{ std::move(_other.m_key) },
 	m_materialsDB{ _other.m_materialsDB },

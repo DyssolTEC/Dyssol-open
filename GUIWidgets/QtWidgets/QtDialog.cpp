@@ -8,10 +8,25 @@
 #include <QCoreApplication>
 #include <QDesktopServices>
 
-void CDyssolBaseWidget::SetPointers(CModelsManager* _modelsManager, QSettings* _settings)
+void CDyssolBaseWidget::SetChildWidgets(std::initializer_list<CDyssolBaseWidget*> _widgets)
 {
+	m_childWidgets = _widgets;
+}
+
+void CDyssolBaseWidget::AddChildWidget(CDyssolBaseWidget* _widget)
+{
+	m_childWidgets.push_back(_widget);
+}
+
+void CDyssolBaseWidget::SetPointers(CFlowsheet* _flowsheet, CModelsManager* _modelsManager, QSettings* _settings)
+{
+	m_flowsheet     = _flowsheet;
 	m_modelsManager = _modelsManager;
 	m_settings = _settings;
+	m_settings      = _settings;
+	for (auto* w : m_childWidgets)
+		w->SetPointers(_flowsheet, _modelsManager, _settings);
+	OnPointersSet();
 }
 
 CModelsManager* CDyssolBaseWidget::GetModelsManager() const
@@ -57,4 +72,25 @@ void CQtDialog::OpenHelp(const QString& _link)
 
 	// try to open like remote url from web
 	QDesktopServices::openUrl(QUrl(StrConst::Dyssol_HelpURL + _link));
+}
+
+void CQtDialog::OnNewFlowsheet()
+{
+	if (isVisible())
+		UpdateWholeView();
+}
+
+void CQtDialog::setVisible(bool _flag)
+{
+	if (_flag)
+		UpdateWholeView();
+	QDialog::setVisible(_flag);
+}
+
+void CQtDialog::keyPressEvent(QKeyEvent* _event)
+{
+	if (_event->key() == Qt::Key_F1)
+		OpenHelp(m_helpLink);
+	else
+		QDialog::keyPressEvent(_event);
 }

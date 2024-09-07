@@ -21,9 +21,9 @@ CSettingsEditor::CSettingsEditor(QWidget* _parent)
 	SetHelpLink("001_ui/gui.html#sec-gui-menu-tools-settings");
 }
 
-void CSettingsEditor::SetPointers(CModelsManager* _modelsManager, QSettings* _settings)
+void CSettingsEditor::SetPointers(CFlowsheet* _flowsheet, CModelsManager* _modelsManager, QSettings* _settings)
 {
-	CDyssolBaseWidget::SetPointers(_modelsManager, _settings);
+	CDyssolBaseWidget::SetPointers(_flowsheet, _modelsManager, _settings);
 
 	m_currCachePath = m_settings->value(StrConst::Dyssol_ConfigCachePath).toString();
 }
@@ -37,7 +37,7 @@ void CSettingsEditor::InitializeConnections() const
 	connect(ui.pushButtonClearCache,  &QPushButton::clicked,       this, &CSettingsEditor::ClearCacheClicked);
 }
 
-void CSettingsEditor::UpdateWholeView() const
+void CSettingsEditor::UpdateWholeView()
 {
 	ui.checkBoxLoadLast->setChecked(m_settings->value(StrConst::Dyssol_ConfigLoadLastFlag).toBool());
 	ui.lineEditCachePath->setText(m_settings->value(StrConst::Dyssol_ConfigCachePath).toString());

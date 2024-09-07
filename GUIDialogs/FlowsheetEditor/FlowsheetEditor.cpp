@@ -39,10 +39,10 @@ CFlowsheetEditor::~CFlowsheetEditor()
 	delete m_viewer;
 }
 
-void CFlowsheetEditor::SetPointers(CModelsManager* _modelsManager, QSettings* _settings)
+void CFlowsheetEditor::SetPointers(CFlowsheet* _flowsheet, CModelsManager* _modelsManager, QSettings* _settings)
 {
-	CQtDialog::SetPointers(_modelsManager, _settings);
-	m_viewer->SetPointers(_modelsManager, _settings);
+	CQtDialog::SetPointers(_flowsheet, _modelsManager, _settings);
+	m_viewer->SetPointers(_flowsheet, _modelsManager, _settings);
 }
 
 void CFlowsheetEditor::InitializeConnections()

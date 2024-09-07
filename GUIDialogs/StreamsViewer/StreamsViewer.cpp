@@ -18,10 +18,10 @@ CStreamsViewer::CStreamsViewer(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _mat
 	SetHelpLink("001_ui/gui.html#sec-gui-tabs-streams");
 }
 
-void CStreamsViewer::SetPointers(CModelsManager* _modelsManager, QSettings* _settings)
+void CStreamsViewer::SetPointers(CFlowsheet* _flowsheet, CModelsManager* _modelsManager, QSettings* _settings)
 {
-	CQtDialog::SetPointers(_modelsManager, _settings);
-	m_pViewer->SetPointers(_modelsManager, _settings);
+	CQtDialog::SetPointers(_flowsheet, _modelsManager, _settings);
+	m_pViewer->SetPointers(_flowsheet, _modelsManager, _settings);
 }
 
 void CStreamsViewer::InitializeConnections() const
