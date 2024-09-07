@@ -93,6 +93,18 @@ bool CNLSolver::SetFixedPointSolverParameters(size_t _nMAA, double _dDampingAA, 
 		return false;
 }
 
+size_t CNLSolver::GetSolverMaxIter() const
+{
+	return static_cast<size_t>(m_nMaxIter);
+}
+
+void CNLSolver::SetSolverMaxIter(size_t _nMaxIter)
+{
+	m_nMaxIter = static_cast<long>(_nMaxIter);
+	if (m_pKINmem)
+		KINSetNumMaxIters(m_pKINmem, m_nMaxIter);
+}
+
 unsigned CNLSolver::GetSolverIter()
 {
 	long int nIter = 0;
