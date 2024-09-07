@@ -1402,8 +1402,9 @@ void CBaseUnit::DoFinalizeUnit()
 void CBaseUnit::DoSaveStateUnit(double _timeBeg, double _timeEnd)
 {
 	SaveState();
-	for (auto& param : m_unitParameters.GetAllSolverParameters())
-		param->GetSolver()->SaveState();
+	for (const auto& param : m_unitParameters.GetAllSolverParameters())
+		if (CBaseSolver* solver = param->GetSolver())
+			solver->SaveState();
 	m_stateVariables.SaveState();
 	m_streams.SaveState(_timeBeg, _timeEnd);
 	m_plots.SaveState();
