@@ -751,6 +751,7 @@ double CBaseStream::GetPhaseProperty(double _time, EPhase _phase, ECompoundTPPro
 	case ENTHALPY:
 	case PERMITTIVITY:
 	case EQUILIBRIUM_MOISTURE_CONTENT:
+	case MASS_DIFFUSION_COEFFICIENT:
 	case TP_PROP_USER_DEFINED_01:
 	case TP_PROP_USER_DEFINED_02:
 	case TP_PROP_USER_DEFINED_03:
