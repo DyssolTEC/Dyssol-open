@@ -17,7 +17,8 @@ class CQtTable : public QTableWidget
 	Q_OBJECT
 
 private:
-	bool m_pasteEnabled{ true };
+	bool m_pasteAllowed{ true };	/// Allow pasting from the clipboard.
+	bool m_addRowsOnPaste{ false }; /// Allow adding new rows to the table during pasting from the clipboard.
 	QString m_numberSeparator { " " };
 	QString m_decimalSeparator{ "." };
 
@@ -29,14 +30,19 @@ public:
 	void SetGeometry(int _rows, int _cols);
 
 	void EnablePasting(bool _flag);
+	void EnableAddRowsOnPaste(bool _flag);
 
 	QString GetColHeaderItem(int _col) const;
 	QString GetRowHeaderItem(int _row) const;
 	std::vector<QString> GetColHeaderItems(int _startcol) const;
 	std::vector<QString> GetRowHeaderItems(int _startrow) const;
 
-	void SetColHeaderItem(int _col, const std::string& _text);
-	void SetRowHeaderItem(int _row, const std::string& _text);
+	QTableWidgetItem* SetColHeaderItem(int _col);
+	QTableWidgetItem* SetColHeaderItem(int _col, const std::string& _text);
+	QTableWidgetItem* SetColHeaderItem(int _col, const std::wstring& _text);
+	QTableWidgetItem* SetRowHeaderItem(int _row);
+	QTableWidgetItem* SetRowHeaderItem(int _row, const std::string& _text);
+	QTableWidgetItem* SetRowHeaderItem(int _row, const std::wstring& _text);
 	void SetColHeaderItems(int _startcol, const std::vector<std::string>& _text);
 	void SetRowHeaderItems(int _startrow, const std::vector<std::string>& _text);
 
@@ -44,11 +50,11 @@ public:
 	std::vector<QString> GetItemsTextCol(int _startrow, int _col) const;
 	std::vector<QString> GetItemsTextRow(int _row, int _startcol) const;
 
-	void SetItemEditable(int _row, int _col, const QString& _text, const QVariant& _userData = -1);
-	void SetItemEditable(int _row, int _col, const std::string& _text, const QVariant& _userData = -1);
-	void SetItemEditable(int _row, int _col, double _value, const QVariant& _userData = -1);
-	void SetItemEditablePrecise(int _row, int _col, double _value, int _precision, const QVariant& _userData = -1);
-	void SetItemEditable(int _row, int _col);
+	QTableWidgetItem* SetItemEditable(int _row, int _col, const QString& _text, const QVariant& _userData = -1);
+	QTableWidgetItem* SetItemEditable(int _row, int _col, const std::string& _text, const QVariant& _userData = -1);
+	QTableWidgetItem* SetItemEditable(int _row, int _col, double _value, const QVariant& _userData = -1);
+	QTableWidgetItem* SetItemEditablePrecise(int _row, int _col, double _value, int _precision, const QVariant& _userData = -1);
+	QTableWidgetItem* SetItemEditable(int _row, int _col);
 
 	void SetItemsColEditable(int _startrow, int _col, const std::vector<double>& _val);
 	void SetItemsColEditable(int _startrow, int _col, const std::vector<int64_t>& _val);
@@ -102,6 +108,7 @@ public:
 	void SetBackgroundColor(const QColor& _color) const;
 
 	void SetItemFontItalic(int _row, int _col) const;
+	void SetItemFontColor(int _row, int _col, const QColor& _color) const;
 	void SetEditable(bool _flag);
 
 	[[nodiscard]] std::pair<int, int> GetCurrentCellPos() const;
