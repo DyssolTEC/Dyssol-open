@@ -99,7 +99,7 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 				m_pSettingsEditor, m_helpHelper };
 
 	for (auto* d : m_dialogs)
-		d->SetPointers(&m_ModelsManager, m_pSettings);
+		d->SetPointers(&m_Flowsheet, &m_ModelsManager, m_pSettings);
 
 	// setup main window: add tabs to mainTabWidget
 	int tab = ui.mainTabWidget->addTab(m_pFlowsheetEditor, StrConst::Dyssol_FlowsheetTabName);

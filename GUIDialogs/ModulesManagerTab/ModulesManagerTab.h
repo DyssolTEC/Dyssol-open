@@ -20,7 +20,7 @@ private:
 public:
 	CModulesManagerTab(QWidget* _parent = nullptr);
 
-	void SetPointers(CModelsManager* _modelsManager, QSettings* _settings) override;
+	void SetPointers(CFlowsheet* _flowsheet, CModelsManager* _modelsManager, QSettings* _settings) override;
 
 	void InitializeConnections() const;
 

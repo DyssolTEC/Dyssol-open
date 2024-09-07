@@ -47,7 +47,7 @@ public:
 	CFlowsheetViewer& operator=(const CFlowsheetViewer& _other)     = delete;
 	CFlowsheetViewer& operator=(CFlowsheetViewer&& _other) noexcept = delete;
 
-	void SetPointers(CModelsManager* _modelsManager, QSettings* _settings) override;
+	void SetPointers(CFlowsheet* _flowsheet, CModelsManager* _modelsManager, QSettings* _settings) override;
 
 	// Connects signals and slots.
 	void InitializeConnections() const;

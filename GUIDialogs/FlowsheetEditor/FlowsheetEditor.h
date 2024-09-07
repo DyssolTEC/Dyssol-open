@@ -33,13 +33,13 @@ public:
 	CFlowsheetEditor(CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, QWidget* _parent = nullptr);
 	~CFlowsheetEditor() override;
 
-	void SetPointers(CModelsManager* _modelsManager, QSettings* _settings) override;
+	void SetPointers(CFlowsheet* _flowsheet, CModelsManager* _modelsManager, QSettings* _settings) override;
 	void InitializeConnections();
 
 public slots:
 	void setVisible(bool _bVisible) override;
 
-	void UpdateWholeView();
+	void UpdateWholeView() override;
 	void UpdateAvailableUnits() const;   // Update information about available units.
 	void UpdateAvailableSolvers() const; // Update information about available solvers.
 
@@ -86,5 +86,4 @@ signals:
 	void ModelsChanged();  // A model has been added, removed or renamed.
 	void StreamsChanged(); // A stream has been added, removed or renamed.
 	void UnitChanged();	   // New unit has been selected for model.
-	void DataChanged();	   // User has made some changes to the flowsheet.
 };

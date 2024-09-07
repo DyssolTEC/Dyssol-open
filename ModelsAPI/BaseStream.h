@@ -139,7 +139,7 @@ public:
 	 * \details Moves all structural parameters and settings from the source stream, including unique key and data.
 	 * \param _other Source stream.
 	 */
-	CBaseStream(CBaseStream&& _other);
+	CBaseStream(CBaseStream&& _other) noexcept;
 	/**
 	 * \private
 	 * \brief Destructor
