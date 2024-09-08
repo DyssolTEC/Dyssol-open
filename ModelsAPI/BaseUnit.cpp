@@ -54,12 +54,12 @@ void CBaseUnit::CopyUserData(const CBaseUnit& _unit)
 	m_plots.CopyUserData(_unit.m_plots);
 }
 
-const std::string& CBaseUnit::GetUnitName() const
+std::string CBaseUnit::GetUnitName() const
 {
 	return m_unitName;
 }
 
-const std::string& CBaseUnit::GetAuthorName() const
+std::string CBaseUnit::GetAuthorName() const
 {
 	return m_authorName;
 }
@@ -69,12 +69,12 @@ size_t CBaseUnit::GetVersion() const
 	return m_version;
 }
 
-const std::string& CBaseUnit::GetUniqueID() const
+std::string CBaseUnit::GetUniqueID() const
 {
 	return m_uniqueID;
 }
 
-const std::string& CBaseUnit::GetHelpLink() const
+std::string CBaseUnit::GetHelpLink() const
 {
 	return m_helpLink;
 }

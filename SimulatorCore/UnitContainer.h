@@ -50,12 +50,12 @@ public:
 	~CUnitContainer();
 
 	// Returns a name of the unit.
-	std::string GetName() const;
+	[[nodiscard]] std::string GetName() const;
 	// Sets a new name of the unit.
 	void SetName(const std::string& _name);
 
 	// Returns a unique key of the unit.
-	std::string GetKey() const;
+	[[nodiscard]] std::string GetKey() const;
 	// Sets a new unique key of the unit.
 	void SetKey(const std::string& _id);
 

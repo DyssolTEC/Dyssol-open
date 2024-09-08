@@ -222,7 +222,7 @@ public:
 	 * \brief Returns the name of the stream.
 	 * \return Name of the stream.
 	 */
-	std::string GetName() const;
+	[[nodiscard]] std::string GetName() const;
 	/**
 	 * \brief Sets new name of the stream.
 	 * \param _name Name of the stream.
@@ -232,7 +232,7 @@ public:
 	 * \brief Returns unique key of the stream.
 	 * \return Unique key of the stream.
 	 */
-	std::string GetKey() const;
+	[[nodiscard]] std::string GetKey() const;
 	/**
 	 * \brief Sets new unique key of the stream.
 	 * \param _key Unique key of the stream.
