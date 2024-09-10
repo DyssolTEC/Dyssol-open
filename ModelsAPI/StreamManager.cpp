@@ -106,10 +106,17 @@ void CStreamManager::ClearResults()
 
 void CStreamManager::Clear()
 {
+	// remove all streams and holdups
 	for (auto* streams : m_allStreams)
 		streams->clear();
 	for (auto* holdups : m_allHoldups)
 		holdups->clear();
+	// reset number of variable objects
+	m_nVarHoldups = 0;
+	m_nVarStreams = 0;
+	// reset stored time window
+	m_timeBegStored = 0.0;
+	m_timeEndStored = 0.0;
 }
 
 size_t CStreamManager::GetFeedsNumber() const
