@@ -1,0 +1,8 @@
+004_development/models_development.rst:1596: [redirected with Found] http://de.mathworks.com/help/matlab/cc-mx-matrix-library.html to https://de.mathworks.com/help/matlab/cc-mx-matrix-library.html
+index.rst:85: [redirected with Found] https://doi.org/10.1016/j.powtec.2017.01.061 to https://linkinghub.elsevier.com/retrieve/pii/S0032591017300827
+index.rst:86: [redirected with Found] https://doi.org/10.1016/j.apt.2018.12.007 to https://linkinghub.elsevier.com/retrieve/pii/S0921883118306629
+index.rst:88: [redirected with Found] https://doi.org/10.1016/j.softx.2020.100572 to https://linkinghub.elsevier.com/retrieve/pii/S2352711020302855
+index.rst:87: [redirected with Found] https://doi.org/10.3390/pr7080535 to https://www.mdpi.com/2227-9717/7/8/535
+004_development/models_development.rst:9: [redirected with Found] https://go.microsoft.com/fwlink/?LinkId=615448&clcid=0x409 to https://download.microsoft.com/download/b/e/d/bedddfc4-55f4-4748-90a8-ffe38a40e89f/vs2015.3.com_enu.iso
+index.rst:89: [redirected with Found] https://doi.org/10.1007/978-3-030-45168-4_17 to https://link.springer.com/chapter/10.1007/978-3-030-45168-4_17
+003_models/unit_cyclone.rst:462: [redirected with Found] https://doi.org/10.1007/978-3-662-52989-8_91 to https://link.springer.com/chapter/10.1007/978-3-662-52989-8_91
