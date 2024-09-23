@@ -14,8 +14,8 @@ if (-not (Get-Command Expand-7Zip -ErrorAction Ignore)) {
 ################################################################################
 ### Paths
 
-$SUNDIALS_MAJOR_VERSION    = "6"
-$SUNDIALS_MIDDLE_VERSION   = "4"
+$SUNDIALS_MAJOR_VERSION    = "7"
+$SUNDIALS_MIDDLE_VERSION   = "1"
 $SUNDIALS_MINOR_VERSION    = "1"
 $SUNDIALS_VERSION          = "$SUNDIALS_MAJOR_VERSION.$SUNDIALS_MIDDLE_VERSION.$SUNDIALS_MINOR_VERSION"
 $SUNDIALS_DOWNLOAD_ADDRESS = "https://github.com/LLNL/sundials/releases/download/v$SUNDIALS_VERSION/sundials-$SUNDIALS_VERSION.tar.gz"
@@ -48,8 +48,10 @@ Set-Location $SUNDIALS_BUILD_PATH
 cmake -G "Visual Studio 16 2019" -A x64 $SUNDIALS_SRC_PATH `
 	-DCMAKE_INSTALL_PREFIX:PATH=$SUNDIALS_INSTALL_PATH `
 	-DBUILD_ARKODE=NO `
+	-DBUILD_BENCHMARKS=NO `
 	-DBUILD_CVODE=NO `
 	-DBUILD_CVODES=NO `
+	-DBUILD_FORTRAN_MODULE_INTERFACE=NO `
 	-DBUILD_IDA=YES `
 	-DBUILD_IDAS=NO `
 	-DBUILD_KINSOL=YES `
@@ -57,7 +59,8 @@ cmake -G "Visual Studio 16 2019" -A x64 $SUNDIALS_SRC_PATH `
 	-DBUILD_STATIC_LIBS=YES `
 	-DEXAMPLES_ENABLE_C=NO `
 	-DEXAMPLES_ENABLE_CXX=NO `
-	-DEXAMPLES_INSTALL=NO
+	-DEXAMPLES_INSTALL=NO `
+	-DSUNDIALS_ENABLE_ERROR_CHECKS=NO
 cmake --build . --parallel --target INSTALL --config Debug
 Get-ChildItem -Path "$SUNDIALS_INSTALL_PATH\lib" -Filter "*.lib" | Rename-Item -NewName {$_.BaseName + "_d" + $_.extension}
 cmake --build . --parallel --target INSTALL --config Release
@@ -76,6 +79,13 @@ if ([int]$SUNDIALS_MAJOR_VERSION -eq 6) {
 	Copy-Item "$SUNDIALS_SRC_PATH\src\sundials\sundials_context_impl.h" "$SUNDIALS_INSTALL_PATH\include\sundials_context_impl.h"
 	Copy-Item "$SUNDIALS_SRC_PATH\src\sundials\sundials_hashmap.h"      "$SUNDIALS_INSTALL_PATH\include\sundials_hashmap.h"
 	Copy-Item "$SUNDIALS_SRC_PATH\src\sundials\sundials_logger_impl.h"  "$SUNDIALS_INSTALL_PATH\include\sundials_logger_impl.h"
+}
+if ([int]$SUNDIALS_MAJOR_VERSION -eq 7) {
+	Copy-Item "$SUNDIALS_SRC_PATH\src\ida\ida_impl.h"                   "$SUNDIALS_INSTALL_PATH\include\ida\ida_impl.h"
+	Copy-Item "$SUNDIALS_SRC_PATH\src\sundials\sundials_hashmap_impl.h"      "$SUNDIALS_INSTALL_PATH\include\sundials_hashmap_impl.h"
+	Copy-Item "$SUNDIALS_SRC_PATH\src\sundials\sundials_logger_impl.h"  "$SUNDIALS_INSTALL_PATH\include\sundials_logger_impl.h"
+	Copy-Item "$SUNDIALS_SRC_PATH\src\sundials\sundials_macros.h"  "$SUNDIALS_INSTALL_PATH\include\sundials_macros.h"
+	Copy-Item "$SUNDIALS_SRC_PATH\src\sundials\sundials_utils.h"  "$SUNDIALS_INSTALL_PATH\include\sundials_utils.h"
 }
 
 # Copy *.pdb files

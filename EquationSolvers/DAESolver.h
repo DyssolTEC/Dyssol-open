@@ -10,6 +10,12 @@
 /** Solver of differential algebraic equations. Uses IDA solver from SUNDIALS package*/
 class CDAESolver
 {
+#if SUNDIALS_VERSION_MAJOR <= 6
+	using sun_real = realtype;
+#else
+	using sun_real = sunrealtype;
+#endif
+
 	/** Memory needed for solver. */
 	struct SSolverMemory
 	{
@@ -29,15 +35,15 @@ class CDAESolver
 	/** Data field from IDA memory needed to be temporary stored. */
 	struct SStoreMemory
 	{
-		std::vector<realtype> vars;
-		std::vector<realtype> ders;
-		std::vector<std::vector<realtype>> ida_phi;
-		std::vector<realtype> ida_psi;
+		std::vector<sun_real> vars;
+		std::vector<sun_real> ders;
+		std::vector<std::vector<sun_real>> ida_phi;
+		std::vector<sun_real> ida_psi;
 		int ida_kused;
 		int ida_ns;
-		realtype ida_hh;
-		realtype ida_tn;
-		realtype ida_cj;
+		sun_real ida_hh;
+		sun_real ida_tn;
+		sun_real ida_cj;
 		long int ida_nst;
 	};
 
@@ -46,8 +52,8 @@ class CDAESolver
 	SSolverMemory m_solverMem{};      ///< Solver-specific memory.
 	SStoreMemory m_solverMem_store{}; ///< Solver-specific memory for temporary storing.
 
-	realtype m_timeLast{};            ///< Last calculated time point.
-	realtype m_maxStep{};             ///< Maximum iteration time step.
+	sun_real m_timeLast{};            ///< Last calculated time point.
+	sun_real m_maxStep{};             ///< Maximum iteration time step.
 	size_t m_maxNumSteps{ 500 };      ///< Maximum number of allowed solver iterations.
 
 	std::string m_errorMessage;	      ///< Text description of the occurred errors.
@@ -66,12 +72,12 @@ public:
 	/** Solve problem on a given time point.
 	*	\param _time Time point.
 	*	\retval true No errors occurred. */
-	bool Calculate(realtype _time);
+	bool Calculate(sun_real _time);
 	/** Solve problem on a given time interval.
 	*	\param _timeBeg Start of the time interval.
 	*	\param _timeEnd End of the time interval.
 	*	\retval true No errors occurred. */
-	bool Calculate(realtype _timeBeg, realtype _timeEnd);
+	bool Calculate(sun_real _timeBeg, sun_real _timeEnd);
 
 	/** Calculates and applies corrected initial conditions.
 	*	\retval true No errors occurred. */
@@ -79,7 +85,7 @@ public:
 	/** Integrates the problem until the given time point.
 	*	\param _time Final time of integration.
 	*	\retval true No errors occurred. */
-	bool IntegrateUntil(realtype _time);
+	bool IntegrateUntil(sun_real _time);
 
 	/** Save current state of solver.
 	*	Should be called during saving of unit. */
@@ -128,7 +134,7 @@ private:
 	*	\param _ress Output residual vector F(t, y, y').
 	*	\param _model Pointer to a DAE model.
 	*	\return Error code. */
-	static int ResidualFunction(realtype _time, N_Vector _vals, N_Vector _ders, N_Vector _ress, void *_model);
+	static int ResidualFunction(sun_real _time, N_Vector _vals, N_Vector _ders, N_Vector _ress, void *_model);
 
 	/** A callback function called by the solver to handle internal errors.
 	*	\param _errorCode Error code
@@ -137,6 +143,18 @@ private:
 	*	\param _message The error message
 	*	\param _outString Pointer to a string to put error message*/
 	static void ErrorHandler(int _errorCode, const char* _module, const char* _function, char* _message, void* _outString);
+	/**
+	 * \brief A callback function called by the solver to handle internal errors.
+	 * \details A version for SUNDIALS 7+.
+	 * \param _line The line number at which the error occured.
+	 * \param _function The function in which the error occured.
+	 * \param _file The file in which the error occured.
+	 * \param _message The error message.
+	 * \param _errCode The error code for the error that occured.
+	 * \param _outString Pointer to a string to put error message.
+	 * \param _sunctx Pointer to a valid SUNContext object.
+	 */
+	static void ErrorHandler(int _line, const char* _function, const char* _file, const char* _message, SUNErrCode _errCode, void* _outString, SUNContext _sunctx);
 	/** Builds an error message from its parts.
 	*	\param _module Name of the module reporting the error
 	*	\param _function Name of the function in which the error occurred

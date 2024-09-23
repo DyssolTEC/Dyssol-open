@@ -118,9 +118,18 @@ bool CNLSolver::SetModel(CNLModel* _pModel)
 {
 	ClearMemory();
 
-#if SUNDIALS_VERSION_MAJOR < 6
+	// create context
+#if SUNDIALS_VERSION_MAJOR == 6
+	SUNErrCode res = SUNContext_Create(nullptr, &m_sunctx);
 #else
-	SUNContext_Create(nullptr, &m_sunctx);
+	SUNErrCode res = SUNContext_Create(SUN_COMM_NULL, &m_sunctx);
+#endif
+#if SUNDIALS_VERSION_MAJOR >= 6
+	if (!res)
+	{
+		ErrorHandler(-1, "KIN", "SUNContext_Create", "Cannot create SUNDIALS context.", &m_sErrorDescription);
+		return false;
+	}
 #endif
 
 	m_pModel = _pModel;
@@ -136,11 +145,22 @@ bool CNLSolver::SetModel(CNLModel* _pModel)
 		ErrorHandler(-1, "KIN", "KINCreate", "Cannot allocate memory for solver.", &m_sErrorDescription);
 		return false;
 	}
-	if (KINSetErrHandlerFn(m_pKINmem, &CNLSolver::ErrorHandler, &m_sErrorDescription) != KIN_SUCCESS)
+	// set error handler function
+#if SUNDIALS_VERSION_MAJOR < 7
+	res = KINSetErrHandlerFn(m_pKINmem, &CNLSolver::ErrorHandler, &m_sErrorDescription));
+	if (res != KIN_SUCCESS)
 	{
 		ErrorHandler(-1, "KIN", "KINSetErrHandlerFn", "Cannot setup error handler function.", &m_sErrorDescription);
 		return false;
 	}
+#else
+	res = SUNContext_PushErrHandler(m_sunctx, &CNLSolver::ErrorHandler, &m_sErrorDescription);
+	if (res != KIN_SUCCESS)
+	{
+		ErrorHandler(-1, "KIN", "SUNContext_PushErrHandler", "Cannot setup error handler function.", &m_sErrorDescription);
+		return false;
+	}
+#endif
 
 	const sunindextype nVarsCnt = static_cast<sunindextype>(m_pModel->GetVariablesNumber());
 	m_pModel->SetStrategy(m_eStrategy);
@@ -205,8 +225,8 @@ bool CNLSolver::SetModel(CNLModel* _pModel)
 	else
 	{
 		KINSetMAA(m_pKINmem, m_nMAA);
-		KINSetDampingAA(m_pKINmem, static_cast<realtype>(m_dDampingAA));
-		KINSetDamping(m_pKINmem, static_cast<realtype>(m_dDamping));
+		KINSetDampingAA(m_pKINmem, static_cast<sun_real>(m_dDampingAA));
+		KINSetDamping(m_pKINmem, static_cast<sun_real>(m_dDamping));
 	}
 
 	// Initialize IDA memory
@@ -238,7 +258,7 @@ bool CNLSolver::SetModel(CNLModel* _pModel)
 	return true;
 }
 
-bool CNLSolver::Calculate(realtype _dTime)
+bool CNLSolver::Calculate(sun_real _dTime)
 {
 	const int ret = KINSol(m_pKINmem, m_vectorVars, (int)E2I(m_eStrategy), m_vectorUScales, m_vectorFScales);
 
@@ -267,8 +287,8 @@ std::string CNLSolver::GetError() const
 
 int CNLSolver::ResidualFunction(N_Vector _value, N_Vector _func, void *_pModel)
 {
-	realtype *pValue = NV_DATA_S(_value);
-	realtype *pFunc = NV_DATA_S(_func);
+	sun_real *pValue = NV_DATA_S(_value);
+	sun_real *pFunc = NV_DATA_S(_func);
 
 	const bool bRes = static_cast<CNLModel*>(_pModel)->GetFunctions(pValue, pFunc);
 
@@ -302,7 +322,7 @@ void CNLSolver::ClearMemory()
 void CNLSolver::CopyNVector(N_Vector _dst, N_Vector _src)
 {
 	if (_dst == nullptr || _src == nullptr)	return;
-	std::memcpy(NV_DATA_S(_dst), NV_DATA_S(_src), sizeof(realtype)*static_cast<size_t>(NV_LENGTH_S(_src)));
+	std::memcpy(NV_DATA_S(_dst), NV_DATA_S(_src), sizeof(sun_real)*static_cast<size_t>(NV_LENGTH_S(_src)));
 }
 
 void CNLSolver::ErrorHandler(int _nErrorCode, const char *_pModule, const char *_pFunction, char *_pMsg, void *_sOutString)
@@ -319,6 +339,19 @@ void CNLSolver::ErrorHandler(int _nErrorCode, const char *_pModule, const char *
 		sDescr += _pMsg;
 		*static_cast<std::string*>(_sOutString) = sDescr;
 	}
+}
+
+void CNLSolver::ErrorHandler(int _line, const char* _function, const char* _file, const char* _message, SUNErrCode _errCode, void* _outString, SUNContext _sunctx)
+{
+	if (!_outString) return;
+	if (!_errCode) return;
+	std::string description = "[";
+	description += _file;
+	description += " ERROR] in ";
+	description += _function;
+	description += ": ";
+	description += _message;
+	*static_cast<std::string*>(_outString) = description;
 }
 
 #ifdef _MSC_VER

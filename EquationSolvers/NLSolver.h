@@ -12,6 +12,12 @@
 /** Solver of differential algebraic equations. Uses IDA solver from SUNDIALS package*/
 class CNLSolver
 {
+#if SUNDIALS_VERSION_MAJOR <= 6
+	using sun_real = realtype;
+#else
+	using sun_real = sunrealtype;
+#endif
+
 private:
 	CNLModel* m_pModel;					///< Pointer to a DAE model
 	void* m_pKINmem;					///< KIN memory
@@ -86,7 +92,7 @@ public:
 	/** Solve problem on a given time point.
 	 *	\param _dTime Time point
 	 *	\retval true No errors occurred*/
-	bool Calculate(realtype _dTime);
+	bool Calculate(sun_real _dTime);
 
 	/** Save current state of solver. Should be called during saving of unit.*/
 	void SaveState();
@@ -119,6 +125,18 @@ private:
 	 *	\param _pMsg The error message
 	 *	\param _sOutString Pointer to a string to put error message*/
 	static void ErrorHandler(int _nErrorCode, const char *_pModule, const char *_pFunction, char *_pMsg, void *_sOutString);
+	/**
+	 * \brief A callback function called by the solver to handle internal errors.
+	 * \details A version for SUNDIALS 7+.
+	 * \param _line The line number at which the error occured.
+	 * \param _function The function in which the error occured.
+	 * \param _file The file in which the error occured.
+	 * \param _message The error message.
+	 * \param _errCode The error code for the error that occured.
+	 * \param _outString Pointer to a string to put error message.
+	 * \param _sunctx Pointer to a valid SUNContext object.
+	 */
+	static void ErrorHandler(int _line, const char* _function, const char* _file, const char* _message, SUNErrCode _errCode, void* _outString, SUNContext _sunctx);
 
 public:
 	// ========== Functions to work with solver settings

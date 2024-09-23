@@ -51,7 +51,7 @@ bool CDAESolver::SetModel(CDAEModel* _model)
 	return true;
 }
 
-bool CDAESolver::Calculate(realtype _time)
+bool CDAESolver::Calculate(sun_real _time)
 {
 	if (_time == 0.0)
 	{
@@ -70,7 +70,7 @@ bool CDAESolver::Calculate(realtype _time)
 	return true;
 }
 
-bool CDAESolver::Calculate(realtype _timeBeg, realtype _timeEnd)
+bool CDAESolver::Calculate(sun_real _timeBeg, sun_real _timeEnd)
 {
 	int res;
 
@@ -94,7 +94,7 @@ bool CDAESolver::Calculate(realtype _timeBeg, realtype _timeEnd)
 		return WriteError("IDA", "IDASetMaxStep", "Cannot set maximum absolute step size");
 
 	/* Get current integration step.*/
-	realtype currStep;
+	sun_real currStep;
 	res = IDAGetCurrentStep(m_solverMem.idamem, &currStep);
 	if (res != IDA_SUCCESS)
 		return WriteError("IDA", "IDAGetCurrentStep", "Cannot read current time step.");
@@ -140,7 +140,7 @@ bool CDAESolver::CalculateInitialConditions()
 	return true;
 }
 
-bool CDAESolver::IntegrateUntil(realtype _time)
+bool CDAESolver::IntegrateUntil(sun_real _time)
 {
 	/* set integration limit */
 	int res = IDASetStopTime(m_solverMem.idamem, _time);
@@ -166,12 +166,12 @@ void CDAESolver::SaveState()
 	const size_t len = m_model->GetVariablesNumber();
 	const auto* src = static_cast<IDAMem>(m_solverMem.idamem);
 
-	std::memcpy(m_solverMem_store.vars.data(), N_VGetArrayPointer(m_solverMem.vars), sizeof(realtype) * len);
-	std::memcpy(m_solverMem_store.ders.data(), N_VGetArrayPointer(m_solverMem.ders), sizeof(realtype) * len);
+	std::memcpy(m_solverMem_store.vars.data(), N_VGetArrayPointer(m_solverMem.vars), sizeof(sun_real) * len);
+	std::memcpy(m_solverMem_store.ders.data(), N_VGetArrayPointer(m_solverMem.ders), sizeof(sun_real) * len);
 
 	for (size_t i = 0; i < MXORDP1; ++i)
-		std::memcpy(m_solverMem_store.ida_phi[i].data(), N_VGetArrayPointer(src->ida_phi[i]), sizeof(realtype) * len);
-	std::memcpy(m_solverMem_store.ida_psi.data(), src->ida_psi, sizeof(realtype) * MXORDP1);
+		std::memcpy(m_solverMem_store.ida_phi[i].data(), N_VGetArrayPointer(src->ida_phi[i]), sizeof(sun_real) * len);
+	std::memcpy(m_solverMem_store.ida_psi.data(), src->ida_psi, sizeof(sun_real) * MXORDP1);
 	m_solverMem_store.ida_kused = src->ida_kused;
 	m_solverMem_store.ida_ns    = src->ida_ns;
 	m_solverMem_store.ida_hh    = src->ida_hh;
@@ -187,12 +187,12 @@ void CDAESolver::LoadState() const
 	const size_t len = m_model->GetVariablesNumber();
 	auto* dst = static_cast<IDAMem>(m_solverMem.idamem);
 
-	std::memcpy(N_VGetArrayPointer(m_solverMem.vars), m_solverMem_store.vars.data(), sizeof(realtype) * len);
-	std::memcpy(N_VGetArrayPointer(m_solverMem.ders), m_solverMem_store.ders.data(), sizeof(realtype) * len);
+	std::memcpy(N_VGetArrayPointer(m_solverMem.vars), m_solverMem_store.vars.data(), sizeof(sun_real) * len);
+	std::memcpy(N_VGetArrayPointer(m_solverMem.ders), m_solverMem_store.ders.data(), sizeof(sun_real) * len);
 
 	for (size_t i = 0; i < MXORDP1; ++i)
-		std::memcpy(N_VGetArrayPointer(dst->ida_phi[i]), m_solverMem_store.ida_phi[i].data(), sizeof(realtype) * len);
-	std::memcpy(dst->ida_psi, m_solverMem_store.ida_psi.data(), sizeof(realtype) * MXORDP1);
+		std::memcpy(N_VGetArrayPointer(dst->ida_phi[i]), m_solverMem_store.ida_phi[i].data(), sizeof(sun_real) * len);
+	std::memcpy(dst->ida_psi, m_solverMem_store.ida_psi.data(), sizeof(sun_real) * MXORDP1);
 	dst->ida_kused = m_solverMem_store.ida_kused;
 	dst->ida_ns    = m_solverMem_store.ida_ns;
 	dst->ida_hh    = m_solverMem_store.ida_hh;
@@ -231,8 +231,12 @@ bool CDAESolver::InitSolverMemory(SSolverMemory& _mem)
 	int res; // return value
 
 	// create context
-#if SUNDIALS_VERSION_MAJOR >= 6
+#if SUNDIALS_VERSION_MAJOR == 6
 	res = SUNContext_Create(nullptr, &_mem.sunctx);
+#else
+	res = SUNContext_Create(SUN_COMM_NULL, &_mem.sunctx);
+#endif
+#if SUNDIALS_VERSION_MAJOR >= 6
 	if (res != IDA_SUCCESS)
 		return WriteError("IDA", "SUNContext_Create", "Cannot create SUNDIALS context.");
 #endif
@@ -249,11 +253,11 @@ bool CDAESolver::InitSolverMemory(SSolverMemory& _mem)
 		return WriteError("IDA", "N_VNew_Serial", "Cannot create vectors.");
 
 	// initialize vectors
-	std::memcpy(N_VGetArrayPointer(_mem.vars)  , m_model->GetVarInitValues()   .data(), sizeof(realtype) * len);
-	std::memcpy(N_VGetArrayPointer(_mem.ders)  , m_model->GetDerInitValues()   .data(), sizeof(realtype) * len);
-	std::memcpy(N_VGetArrayPointer(_mem.atols) , m_model->GetATols()           .data(), sizeof(realtype) * len);
-	std::memcpy(N_VGetArrayPointer(_mem.types) , m_model->GetVarTypes()        .data(), sizeof(realtype) * len);
-	std::memcpy(N_VGetArrayPointer(_mem.constr), m_model->GetConstraintValues().data(), sizeof(realtype) * len);
+	std::memcpy(N_VGetArrayPointer(_mem.vars)  , m_model->GetVarInitValues()   .data(), sizeof(sun_real) * len);
+	std::memcpy(N_VGetArrayPointer(_mem.ders)  , m_model->GetDerInitValues()   .data(), sizeof(sun_real) * len);
+	std::memcpy(N_VGetArrayPointer(_mem.atols) , m_model->GetATols()           .data(), sizeof(sun_real) * len);
+	std::memcpy(N_VGetArrayPointer(_mem.types) , m_model->GetVarTypes()        .data(), sizeof(sun_real) * len);
+	std::memcpy(N_VGetArrayPointer(_mem.constr), m_model->GetConstraintValues().data(), sizeof(sun_real) * len);
 
 	// create matrix object
 	_mem.sunmatr = SUNDenseMatrix(len, len MAYBE_COMMA_CONTEXT(m_solverMem));
@@ -287,9 +291,15 @@ bool CDAESolver::InitSolverMemory(SSolverMemory& _mem)
 
 	// set optional inputs
 	// set error handler function
+#if SUNDIALS_VERSION_MAJOR < 7
 	res = IDASetErrHandlerFn(_mem.idamem, &CDAESolver::ErrorHandler, &m_errorMessage);
 	if (res != IDA_SUCCESS)
 		return WriteError("IDA", "IDASetErrHandlerFn", "Cannot setup error handler function.");
+#else
+	res = SUNContext_PushErrHandler(_mem.sunctx, &CDAESolver::ErrorHandler, &m_errorMessage);
+	if (res != IDA_SUCCESS)
+		return WriteError("IDA", "SUNContext_PushErrHandler", "Cannot setup error handler function.");
+#endif
 	// set model as user data
 	res = IDASetUserData(_mem.idamem, m_model);
 	if (res != IDA_SUCCESS)
@@ -330,7 +340,7 @@ void CDAESolver::InitStoreMemory(SStoreMemory& _mem) const
 	const auto len = static_cast<sunindextype>(m_model->GetVariablesNumber());
 	_mem.vars.resize(len);
 	_mem.ders.resize(len);
-	_mem.ida_phi.resize(MXORDP1, std::vector<realtype>(len));
+	_mem.ida_phi.resize(MXORDP1, std::vector<sun_real>(len));
 	_mem.ida_psi.resize(MXORDP1);
 }
 
@@ -342,11 +352,11 @@ void CDAESolver::Clear()
 	ClearSolverMemory(m_solverMem);
 }
 
-int CDAESolver::ResidualFunction(realtype _time, N_Vector _vals, N_Vector _ders, N_Vector _ress, void* _model)
+int CDAESolver::ResidualFunction(sun_real _time, N_Vector _vals, N_Vector _ders, N_Vector _ress, void* _model)
 {
-	realtype* vals = N_VGetArrayPointer(_vals);
-	realtype* ders = N_VGetArrayPointer(_ders);
-	realtype* ress = N_VGetArrayPointer(_ress);
+	sun_real* vals = N_VGetArrayPointer(_vals);
+	sun_real* ders = N_VGetArrayPointer(_ders);
+	sun_real* ress = N_VGetArrayPointer(_ress);
 	const bool res = static_cast<CDAEModel*>(_model)->GetResiduals(_time, vals, ders, ress);
 	return res ? 0 : -1;
 }
@@ -357,6 +367,14 @@ void CDAESolver::ErrorHandler(int _errorCode, const char* _module, const char* _
 	if (_errorCode >= 0) return;
 	std::string& out = *static_cast<std::string*>(_outString);
 	AppendMessage(_module, _function, _message, out);
+}
+
+void CDAESolver::ErrorHandler(int _line, const char* _function, const char* _file, const char* _message, SUNErrCode _errCode, void* _outString, [[maybe_unused]] SUNContext _sunctx)
+{
+	if (!_outString) return;
+	if (!_errCode) return;
+	std::string& out = *static_cast<std::string*>(_outString);
+	AppendMessage(_file, _function, _message, out);
 }
 
 std::string CDAESolver::BuildErrorMessage(const std::string& _module, const std::string& _function, const std::string& _message)
