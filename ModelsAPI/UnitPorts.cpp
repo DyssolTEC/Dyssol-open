@@ -200,11 +200,6 @@ void CPortsManager::Clear()
 	m_ports.clear();
 }
 
-void CPortsManager::Clear()
-{
-	m_ports.clear();
-}
-
 void CPortsManager::SaveToFile(CH5Handler& _h5File, const std::string& _path) const
 {
 	if (!_h5File.IsValid()) return;
