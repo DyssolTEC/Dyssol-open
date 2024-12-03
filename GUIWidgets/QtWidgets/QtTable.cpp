@@ -414,6 +414,22 @@ QComboBox* CQtTable::SetComboBox(int _row, int _col, const std::vector<std::stri
 	return SetComboBox(_row, _col, names, data, iSelected);
 }
 
+QComboBox* CQtTable::SetComboBox(int _row, int _col, const std::vector<std::string>& _names, const std::vector<uint32_t>& _data, uint32_t _dataSelected)
+{
+	if (_names.size() != _data.size()) return nullptr;
+	std::vector<QString> names;
+	std::vector<QVariant> data;
+	int iSelected = -1;
+	for (int i = 0; i < static_cast<int>(_names.size()); ++i)
+	{
+		names.emplace_back(QString::fromStdString(_names[i]));
+		data.emplace_back(QVariant::fromValue(_data[i]));
+		if (_data[i] == _dataSelected)	// this one is selected
+			iSelected = i;
+	}
+	return SetComboBox(_row, _col, names, data, iSelected);
+}
+
 QComboBox* CQtTable::GetComboBox(int _row, int _col) const
 {
 	return dynamic_cast<QComboBox*>(cellWidget(_row, _col));
