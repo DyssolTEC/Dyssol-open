@@ -222,6 +222,8 @@ IF(BUILD_DOCS)
     "ModelsAPI/Stream"
     "ModelsAPI/TransformMatrix"
     "ModelsAPI/UnitParameters"
+    "ModelsAPI/UnitParametersEnum"
+    "ModelsAPI/UnitParametersManager"
     "ModelsAPI/UnitPorts"
     "BaseSolvers/AgglomerationSolver"
     "BaseSolvers/BaseSolver"
