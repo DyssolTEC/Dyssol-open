@@ -14,10 +14,10 @@
 /**
  * \brief Manager of unit parameters for each unit.
  * \details Each parameter may be a member of one or several groups, to allow showing / hiding of some parameters in GUI.
- * Block is defined by a single CComboUnitParameter and may have several options to choose.
- * Each option is a group of one or several parameters, which should be shown / hidden together, depending on the selection of corresponding CComboUnitParameter.
+ * Block is defined by a single CComboUnitParameter or CCheckboxUnitParameter and may have several options to choose.
+ * Each option is a group of one or several parameters, which should be shown / hidden together, depending on the selection of the corresponding CComboUnitParameter or CCheckboxUnitParameter.
  * One parameter can belong to several groups and several blocks.
- * Block is stored as an index of a CComboUnitParameter. Group is stored as indices of parameters, which belong to this group.
+ * Block is stored as an index of a CComboUnitParameter or CCheckboxUnitParameter. Group is stored as indices of parameters, which belong to this group.
  */
 class CUnitParametersManager
 {
@@ -912,7 +912,7 @@ public:
 
 	/**
 	 * \brief Adds the list of parameters by their indices to existing group of existing block.
-	 * \details If block, group or some of parameters do not exist, does nothing.
+	 * \details If block, group or some of the parameters do not exist, does nothing.
 	 * \param _block Index of a block of unit parameters.
 	 * \param _group Index of a group of unit parameters shown/hidden together.
 	 * \param _parameters Indices of unit parameters to add to the group.
@@ -920,12 +920,20 @@ public:
 	void AddParametersToGroup(size_t _block, size_t _group, const std::vector<size_t>& _parameters);
 	/**
 	 * \brief Adds the list of _parameters by their names to existing _group of existing _block.
-	 * \details If block, group or some of parameters do not exist, does nothing.
-	 * \param _block Name of a block of unit parameters.
-	 * \param _group Name of a group of unit parameters shown/hidden together.
+	 * \details If block, group or some of the parameters do not exist, does nothing.
+	 * \param _block Name of a block of unit parameters (name of the combobox unit parameter).
+	 * \param _group Value of the combobox, specifying a group of unit parameters shown/hidden together.
 	 * \param _parameters Names of unit parameters to add to the group.
 	 */
 	void AddParametersToGroup(const std::string& _block, const std::string& _group, const std::vector<std::string>& _parameters);
+	/**
+	 * \brief Adds the list of _parameters by their names to existing _group of existing _block.
+	 * \details If block, group or some of the parameters do not exist, does nothing.
+	 * \param _block Name of a block of unit parameters (name of the checkbox unit parameter).
+	 * \param _group Value of the checkbox, specifying a group of unit parameters shown/hidden together.
+	 * \param _parameters Names of unit parameters to add to the group.
+	 */
+	void AddParametersToGroup(const std::string & _block, bool _group, const std::vector<std::string>&_parameters);
 	/**
 	 * \brief Returns true if unit parameter with the specified index is selected in at least one group of any block, or if it is a not grouped parameter.
 	 * \param _index Index of the unit parameter.
@@ -943,7 +951,7 @@ public:
 	 * \param _parameter Reference to unit parameter.
 	 * \return Whether unit parameter is selected in the group.
 	 */
-	[[nodiscard]] bool IsGrouping(const CComboUnitParameter& _parameter) const;
+	[[nodiscard]] bool IsGroupSelector(const CBaseUnitParameter& _parameter) const;
 
 	/**
 	 * \private
