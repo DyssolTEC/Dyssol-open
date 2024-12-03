@@ -26,9 +26,16 @@ bool VectorContainsSorted(const std::vector<T>& _vec, T _value)
 
 // Checks whether the vector contains a specified element.
 template<typename T, typename FUN>
+bool VectorContains(const T& begin, const T& end, const FUN& _fun)
+{
+	return std::find_if(begin, end, _fun) != end;
+}
+
+// Checks whether the vector contains a specified element.
+template<typename T, typename FUN>
 bool VectorContains(const std::vector<T>& _vec, const FUN& _fun)
 {
-	return std::find_if(_vec.begin(), _vec.end(), _fun) != _vec.end();
+	return VectorContains(_vec.begin(), _vec.end(), _fun);
 }
 
 // Returns index of a specified element or -1 if it does not exist.
