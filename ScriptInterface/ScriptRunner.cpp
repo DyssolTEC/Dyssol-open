@@ -98,8 +98,8 @@ bool CScriptRunner::SetupFlowsheet(const CScriptJob& _job)
 	if (success) success &= SetupCompounds(_job);
 	if (success) success &= SetupPhases(_job);
 	if (success) success &= SetupUnits(_job);
-	if (success) success &= SetupStreams(_job);
 	if (success) success &= SetupUnitParameters(_job);
+	if (success) success &= SetupStreams(_job);
 	if (success) success &= SetupHoldups(_job);
 
 	return success;
@@ -302,6 +302,8 @@ bool CScriptRunner::SetupUnitParameters(const CScriptJob& _job)
 		if (!param) return false;
 		std::stringstream ss{ entry.values };	// create a stream with parameter values
 		param->ValueFromStream(ss);				// read unit parameter values
+		const auto [model, unit] = TryGetUnitAndModelPtr(EScriptKeys::UNIT_PARAMETER, entry.unit);
+		model->DoCreateStructure();
 	}
 
 	return true;
