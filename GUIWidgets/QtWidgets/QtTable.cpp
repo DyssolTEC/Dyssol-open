@@ -45,6 +45,24 @@ bool CQtTable::EnableBlockOnPaste(bool _flag)
 	return res;
 }
 
+int CQtTable::AddRow(int _row)
+{
+	const int rowCount = QTableWidget::rowCount();
+	// If the row index is -1 or >= row count, add at the end
+	const int rowIndex = (_row == -1 || _row >= rowCount) ? rowCount : _row;
+	QTableWidget::insertRow(rowIndex);
+	return rowIndex;
+}
+
+void CQtTable::RemoveRow(int _row)
+{
+	const int rowCount = QTableWidget::rowCount();
+	if (rowCount == 0)
+		return;
+	const int rowIndex = (_row == -1 || _row >= rowCount) ? rowCount - 1 : _row;
+	QTableWidget::removeRow(rowIndex);
+}
+
 QString CQtTable::GetColHeaderItem(int _col) const
 {
 	if (const auto* itm = horizontalHeaderItem(_col))
@@ -292,6 +310,18 @@ void CQtTable::SetItemsRowNotEditable(int _row, int _startcol, const std::vector
 	for (int i = 0; i < static_cast<int>(_val.size()); ++i)
 		if (_startcol + i < columnCount())
 			SetItemNotEditable(_row, _startcol + i, _val[i]);
+}
+
+void CQtTable::SetAllRowItemsNotEditable(int _row)
+{
+	for (int column = 0; column < QTableWidget::columnCount(); ++column)
+		SetItemNotEditable(_row, column);
+}
+
+void CQtTable::SetAllColItemsNotEditable(int _col)
+{
+	for (int row = 0; row < QTableWidget::rowCount(); ++row)
+		SetItemNotEditable(row, _col);
 }
 
 QTableWidgetItem* CQtTable::FindItem(const std::string& _userData) const

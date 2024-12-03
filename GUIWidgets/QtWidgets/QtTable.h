@@ -39,6 +39,18 @@ public:
 	 */
 	bool EnableBlockOnPaste(bool _flag);
 
+	/**
+	 * \brief Add a new row to the table.
+	 * \param _row Index of the row to insert. If -1, the row is added to the end of the table.
+	 * \return Index of the added row.
+	 */
+	int AddRow(int _row = -1);
+	/**
+	 * \brief Remove the row from the table.
+	 * \param _row Index of the row to remove. If -1, the row is removed from the end of the table.
+	 */
+	void RemoveRow(int _row = -1);
+
 	QString GetColHeaderItem(int _col) const;
 	QString GetRowHeaderItem(int _row) const;
 	std::vector<QString> GetColHeaderItems(int _startcol) const;
@@ -92,6 +104,16 @@ public:
 	void SetItemsColNotEditable(int _startrow, int _col, const std::vector<std::string>& _val);
 	void SetItemsRowNotEditable(int _row, int _startcol, const std::vector<double>& _val);
 
+	/**
+	 * \brief Inserts cell widget items to the whole row and makes them editable.
+	 * \param _row Row to fill.
+	 */
+	void SetAllRowItemsNotEditable(int _row);
+	/**
+	 * \brief Inserts cell widget items to the whole column and makes them editable.
+	 * \param _col Column to fill.
+	 */
+	void SetAllColItemsNotEditable(int _col);
 	/**
 	 * \brief Find an item by its user data.
 	 * \details If multiple items with the same user data exist, the first one is returned.
