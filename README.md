@@ -6,7 +6,7 @@ To contact developers, visit [dyssoltec.com](https://www.dyssoltec.com/).
 
 For more information and documentation, check [dyssoltec.github.io](https://dyssoltec.github.io/Dyssol-open/).
 
-Video intruductions: [Basics](https://youtu.be/IHzr0NVYW6M) and [Simulation of granulation process](https://youtu.be/ni54JwvCVDc).
+Video introductions: [Basics](https://youtu.be/IHzr0NVYW6M) and [Simulation of granulation process](https://youtu.be/ni54JwvCVDc).
 
 New versions and updates on our [github page](https://github.com/DyssolTEC/Dyssol-open/releases).
 
@@ -39,7 +39,7 @@ To install, run the [installer](https://github.com/DyssolTEC/Dyssol-open/release
 
 - Make sure all programs and tools from the [list](#compilation-requirements-on-windows) are installed.
 - Setup Qt Visual Studio Tools extension to point to the installed Qt libraries. In Visual Studio 2019, go to Extensions → Qt VS Tools → Qt Versions → add new Qt version → ... → Navigate in the Qt installation directory to `Qt/5.15.0/msvc2019/bin/qmake.exe` → rename Version to `msvc2019` → OK. Repeat for `Qt/5.15.0/msvc2019_64/bin/qmake.exe` and rename Version to `msvc2019_64`.
-- Compile and build external libraries: zlib, HDF5, SUNDIALS, graphviz. To do this, navigate to `Dyssol/ExternalLibraries/` and execute file `RunAll.bat`. It will start building all the required libraries by executing files `CompileZLib.ps1`, `CompileHDF5.ps1`, `CompileSundials.ps1`, `CompileGraphviz.ps1`. To use the scripts, the following requirements apply: Visual Studio 16 2019, CMake, PowerShell 5.0.
+- Compile and build external libraries: HDF5, graphviz, SUNDIALS, zlib. To do this, navigate to `Dyssol/ExternalLibraries/` and execute file `RunAll.bat`. It will start building all the required libraries by executing files `CompileZLib.ps1`, `CompileHDF5.ps1`, `CompileSundials.ps1`, etc. To use the scripts, the following requirements apply: Visual Studio 16 2019, CMake, PowerShell 5.0.
 - Open `Dyssol/Dyssol.sln` with Visual Studio and build the solution.
 
 ### Build documentation and installers on Windows
@@ -146,14 +146,14 @@ The compiled executable file and all the units' libraries will appear in `/path_
 
 ## Third-party tools and libraries
 
-- [Qt](https://www.qt.io/) – The Qt Company – [LGPL v3](https://doc.qt.io/qt-5/lgpl.html)
+- [Breathe](https://www.breathe-doc.org/) – Michael Jones – [Modified BSD](https://github.com/breathe-doc/breathe/blob/main/LICENSE)
+- [Doxygen](https://www.doxygen.nl) – Dimitri van Heesch – [GPL](https://github.com/doxygen/doxygen/blob/master/LICENSE)
 - [HDF5](https://www.hdfgroup.org/downloads/hdf5/) – HDF Group – [HDF license](https://support.hdfgroup.org/ftp/HDF5/releases/COPYING)
-- [zlib](https://www.zlib.net/) – Jean-loup Gailly and Mark Adler – [zlib license](https://www.zlib.net/zlib_license.html)
-- [SUNDIALS](https://computing.llnl.gov/projects/sundials/) – Lawrence Livermore National Security and Southern Methodist University – [BSD-3-Clause license](https://computing.llnl.gov/projects/sundials/license)
 - [Inno Setup](https://jrsoftware.org/isinfo.php) – Jordan Russell – [Inno Setup license](http://www.jrsoftware.org/files/is/license.txt)
 - [KISS FFT](https://github.com/mborgerding/kissfft) – Mark Borgerding – [BSD-3-Clause license](https://github.com/mborgerding/kissfft/blob/master/COPYING)
 - [Graphviz](https://graphviz.org/) – Graphviz contributors – [CPL v1.0 license](https://graphviz.org/license/)
-- [Doxygen](https://www.doxygen.nl) – Dimitri van Heesch – [GPL](https://github.com/doxygen/doxygen/blob/master/LICENSE)
+- [Qt](https://www.qt.io/) – The Qt Company – [LGPL v3](https://doc.qt.io/qt-5/lgpl.html)
 - [Sphinx](https://www.sphinx-doc.org/en/master/) – Sphinx team – [BSD-2-Clause license](https://github.com/sphinx-doc/sphinx/blob/master/LICENSE)
-- [Breathe](https://www.breathe-doc.org/) – Michael Jones – [Modified BSD](https://github.com/breathe-doc/breathe/blob/main/LICENSE)
 - [sphinx_rtd_theme](https://sphinx-rtd-theme.readthedocs.io/en/stable/) – Dave Snider, Read the Docs, Inc. & contributors – [MIT](https://github.com/readthedocs/sphinx_rtd_theme/blob/master/LICENSE)
+- [SUNDIALS](https://computing.llnl.gov/projects/sundials/) – Lawrence Livermore National Security and Southern Methodist University – [BSD-3-Clause license](https://computing.llnl.gov/projects/sundials/license)
+- [zlib](https://www.zlib.net/) – Jean-loup Gailly and Mark Adler – [zlib license](https://www.zlib.net/zlib_license.html)
