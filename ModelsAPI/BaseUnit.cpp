@@ -486,6 +486,17 @@ void CBaseUnit::AddParametersToGroup(const std::string& _unitParamNameSelector, 
 	m_unitParameters.AddParametersToGroup(_unitParamNameSelector, _unitParamSelectedValueName, _groupedParamNames);
 }
 
+void CBaseUnit::AddParametersToGroup(const std::string& _unitParamNameSelector, bool _unitParamSelectedValue, const std::vector<std::string>& _groupedParamNames)
+{
+	const auto* groupParameter = m_unitParameters.GetCheckboxParameter(_unitParamNameSelector);
+	if (!groupParameter)										// check that checkbox parameter exists
+		throw std::logic_error(StrConst::BUnit_ErrGroupParamBlock(m_unitName, _unitParamNameSelector, _unitParamSelectedValue ? "true" : "false", __func__));
+	for (const auto& name : _groupedParamNames)					// check that all grouped parameters exist
+		if (!m_unitParameters.GetParameter(name))
+			throw std::logic_error(StrConst::BUnit_ErrGroupParamParam(m_unitName, _unitParamNameSelector, _unitParamSelectedValue ? "true" : "false", name, __func__));
+	m_unitParameters.AddParametersToGroup(_unitParamNameSelector, _unitParamSelectedValue, _groupedParamNames);
+}
+
 void CBaseUnit::AddParametersToGroup(const CComboUnitParameter* _selector, size_t _selectedValue, const std::vector<CBaseUnitParameter*>& _groupedParams)
 {
 	if (!_selector)								// check that combo parameter exists
@@ -499,6 +510,19 @@ void CBaseUnit::AddParametersToGroup(const CComboUnitParameter* _selector, size_
 	for (const auto& p : _groupedParams)
 		paramNames.push_back(p->GetName());
 	m_unitParameters.AddParametersToGroup(_selector->GetName(), _selector->GetNameByItem(_selectedValue), paramNames);
+}
+
+void CBaseUnit::AddParametersToGroup(const CCheckBoxUnitParameter* _selector, bool _selectedValue, const std::vector<CBaseUnitParameter*>& _groupedParams)
+{
+	if (!_selector)								// check that checkbox parameter exists
+		throw std::logic_error(StrConst::BUnit_ErrGroupParamBlock(m_unitName, "Unknown", "Unknown", __func__));
+	for (const auto* param : _groupedParams)	// check that all parameters exist
+		if (!param)
+			throw std::logic_error(StrConst::BUnit_ErrGroupParamParam(m_unitName, _selector->GetName(), std::to_string(_selectedValue), "Unknown", __func__));
+	auto paramNames = ReservedVector<std::string>(_groupedParams.size());
+	for (const auto& p : _groupedParams)
+		paramNames.push_back(p->GetName());
+	m_unitParameters.AddParametersToGroup(_selector->GetName(), _selectedValue, paramNames);
 }
 
 double CBaseUnit::GetConstRealParameterValue(const std::string& _name) const

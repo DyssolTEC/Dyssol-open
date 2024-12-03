@@ -695,6 +695,15 @@ public:
 	void AddParametersToGroup(const std::string& _unitParamNameSelector, const std::string& _unitParamSelectedValueName, const std::vector<std::string>& _groupedParamNames);
 	/**
 	 * \brief Groups the specified unit parameters.
+	 * \details Allows to hide some parameters depending on the selected value of a checkbox unit parameter.
+	 * The parameter, its value and all the adding parameters must already exist. If something does not exist, logic_error exception is thrown.
+	 * \param _unitParamNameSelector Name of the target checkbox unit parameter.
+	 * \param _unitParamSelectedValue Selected value of the target checkbox unit parameter.
+	 * \param _groupedParamNames Names of other unit parameters that will be shown if \p _unitParamSelectedValue is selected.
+	 */
+	void AddParametersToGroup(const std::string& _unitParamNameSelector, bool _unitParamSelectedValue, const std::vector<std::string>& _groupedParamNames);
+	/**
+	 * \brief Groups the specified unit parameters.
 	 * \details Allows to hide some parameters depending on the selected value of a combobox unit parameter.
 	 * The parameter, its value and all the adding parameters must already exist. If something does not exist, logic_error exception is thrown.
 	 * \param _selector Pointer to the target combobox unit parameter.
@@ -712,6 +721,15 @@ public:
 	 */
 	template <typename T, typename = std::enable_if_t<std::is_enum_v<T>>>
 	void AddParametersToGroup(const CComboUnitParameter* _selector, T _selectedValue, const std::vector<CBaseUnitParameter*>& _groupedParams);
+	/**
+	 * \brief Groups the specified unit parameters.
+	 * \details Allows to hide some parameters depending on the selected value of a checkbox unit parameter.
+	 * The parameter, its value and all the adding parameters must already exist. If something does not exist, logic_error exception is thrown.
+	 * \param _selector Pointer to the target checkbox unit parameter.
+	 * \param _selectedValue Selected value of the target checkbox unit parameter.
+	 * \param _groupedParams Other unit parameters that will be shown if \p _selectedValue is selected.
+	 */
+	void AddParametersToGroup(const CCheckBoxUnitParameter* _selector, bool _selectedValue, const std::vector<CBaseUnitParameter*>& _groupedParams);
 
 	/**
 	 * \brief Returns value of the real constant unit parameter.

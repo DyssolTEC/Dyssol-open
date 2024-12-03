@@ -749,9 +749,14 @@ std::vector<double> CUnitParametersManager::GetAllTimePoints(double _tBeg, doubl
 
 void CUnitParametersManager::AddParametersToGroup(size_t _block, size_t _group, const std::vector<size_t>& _parameters)
 {
-	const auto* groupParam = dynamic_cast<const CComboUnitParameter*>(GetComboParameter(_block));
-	if (!groupParam) return;										// _block does not exist
-	if (!groupParam->HasItem(_group)) return;						// _group does not exist
+	const auto param = GetParameter(_group);
+	if (!param) return;											    // _block does not exist
+	if (param->GetType() == EUnitParameter::COMBO)
+	{
+		const auto* comboParam = dynamic_cast<CComboUnitParameter*>(param);
+		if (!comboParam) return;									// _block does not exist
+		if (!comboParam->HasItem(_group)) return;					// _group does not exist
+	}
 	for (const auto& i : _parameters) if (!GetParameter(i)) return;	// some of the parameters do not exist
 	for (const auto& i : _parameters)								// add all existing parameters to group
 		AddToGroup(i, _block, _group);
@@ -759,8 +764,14 @@ void CUnitParametersManager::AddParametersToGroup(size_t _block, size_t _group, 
 
 void CUnitParametersManager::AddParametersToGroup(const std::string& _block, const std::string& _group, const std::vector<std::string>& _parameters)
 {
-	if (const auto* groupParam = dynamic_cast<const CComboUnitParameter*>(GetComboParameter(_block)))
+	if (const auto* groupParam = GetComboParameter(_block))
 		AddParametersToGroup(Name2Index(_block), groupParam->GetItemByName(_group), Name2Index(_parameters));
+}
+
+void CUnitParametersManager::AddParametersToGroup(const std::string& _block, bool _group, const std::vector<std::string>& _parameters)
+{
+	if (GetCheckboxParameter(_block))
+		AddParametersToGroup(Name2Index(_block), _group, Name2Index(_parameters));
 }
 
 bool CUnitParametersManager::IsParameterActive(size_t _index) const
@@ -768,11 +779,20 @@ bool CUnitParametersManager::IsParameterActive(size_t _index) const
 	if (!MapContainsKey(m_groups, _index)) return true;												// does not belong to any group
 	if (m_groups.at(_index).empty()) return true;													// does not belong to any group
 	for (size_t i = 0; i < m_parameters.size(); ++i)												// for all group parameters
-		if (const auto& group = dynamic_cast<const CComboUnitParameter*>(m_parameters[i].get()))	// if group parameter
+		if (const auto& combo = dynamic_cast<const CComboUnitParameter*>(m_parameters[i].get()))	// if combo parameter
+		{
 			if (MapContainsKey(m_groups.at(_index), i) &&											// this parameter has selected group
-				VectorContains(m_groups.at(_index).at(i), group->GetValue()) &&						// this parameter is in selected group
-				IsParameterActive(i))																// the whole parameter block is active
+				VectorContains(m_groups.at(_index).at(i), combo->GetValue()) &&					// this parameter is in selected group
+				IsParameterActive(i))															// the whole parameter block is active
 				return true;
+		}
+		else if (const auto& checkbox = dynamic_cast<const CCheckBoxUnitParameter*>(m_parameters[i].get()))	// if checkbox parameter
+		{
+			if (MapContainsKey(m_groups.at(_index), i) &&													// this parameter has selected group
+				VectorContains(m_groups.at(_index).at(i), static_cast<size_t>(checkbox->GetValue())) &&	// this parameter is in selected group
+				IsParameterActive(i))																	// the whole parameter block is active
+				return true;
+		}
 	return false;
 }
 
@@ -781,7 +801,7 @@ bool CUnitParametersManager::IsParameterActive(const CBaseUnitParameter& _parame
 	return IsParameterActive(Name2Index(_parameter.GetName()));
 }
 
-bool CUnitParametersManager::IsGrouping(const CComboUnitParameter& _parameter) const
+bool CUnitParametersManager::IsGroupSelector(const CBaseUnitParameter& _parameter) const
 {
 	return std::any_of(m_groups.begin(), m_groups.end(), [&](const auto& _group)
 	{
