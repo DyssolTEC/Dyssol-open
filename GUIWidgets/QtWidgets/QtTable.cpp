@@ -38,6 +38,11 @@ void CQtTable::EnableAddRowsOnPaste(bool _flag)
 	m_addRowsOnPaste = _flag;
 }
 
+void CQtTable::EnableBlockOnPaste(bool _flag)
+{
+	m_blockOnPaste = _flag;
+}
+
 QString CQtTable::GetColHeaderItem(int _col) const
 {
 	if (const auto* itm = horizontalHeaderItem(_col))
@@ -698,7 +703,7 @@ void CQtTable::Paste()
 	emit PasteInitiated(iFirstRow, iFirstCol);
 	if (!m_pasteAllowed) return;
 
-	const bool oldBlock = blockSignals(true);
+	const bool oldBlock = blockSignals(m_blockOnPaste);
 	const auto data = ParseClipboardAsDoubles();
 	int rowMax = static_cast<int>(data.size());
 
