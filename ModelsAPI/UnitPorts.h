@@ -205,6 +205,11 @@ public:
 	void Clear();
 
 	/**
+	 * \brief Removes all ports.
+	 */
+	void Clear();
+
+	/**
 	 * \private
 	 * \brief Saves data to file.
 	 * \param _h5File Reference to the file handler.
