@@ -19,6 +19,7 @@ class CQtTable : public QTableWidget
 private:
 	bool m_pasteAllowed{ true };	/// Allow pasting from the clipboard.
 	bool m_addRowsOnPaste{ false }; /// Allow adding new rows to the table during pasting from the clipboard.
+	bool m_blockOnPaste{ true };	/// Block all signals from the table during pasting from the clipboard.
 	QString m_numberSeparator { " " };
 	QString m_decimalSeparator{ "." };
 
@@ -31,6 +32,11 @@ public:
 
 	void EnablePasting(bool _flag);
 	void EnableAddRowsOnPaste(bool _flag);
+	/**
+	 * \brief Block all signals from the table during pasting from the clipboard.
+	 * \param _flag Flag.
+	 */
+	void EnableBlockOnPaste(bool _flag);
 
 	QString GetColHeaderItem(int _col) const;
 	QString GetRowHeaderItem(int _row) const;
@@ -50,6 +56,16 @@ public:
 	std::vector<QString> GetItemsTextCol(int _startrow, int _col) const;
 	std::vector<QString> GetItemsTextRow(int _row, int _startcol) const;
 
+	/**
+	 * \brief Inserts a new cell widget item to the table and makes it editable.
+	 * \details Sets the given text and user data to the item.
+	 * If the item already exists, it is used to set the new data.
+	 * \param _row Row of the cell.
+	 * \param _col Column of the cell.
+	 * \param _text Text to set.
+	 * \param _userData User data to set.
+	 * \return Pointer to the cell widget item.
+	 */
 	QTableWidgetItem* SetItemEditable(int _row, int _col, const QString& _text, const QVariant& _userData = -1);
 	QTableWidgetItem* SetItemEditable(int _row, int _col, const std::string& _text, const QVariant& _userData = -1);
 	QTableWidgetItem* SetItemEditable(int _row, int _col, double _value, const QVariant& _userData = -1);
