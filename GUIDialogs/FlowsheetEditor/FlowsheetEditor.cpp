@@ -532,6 +532,9 @@ void CFlowsheetEditor::UnitParamValueChanged(int _row, int _col)
 		break;
 	}
 
+	// TODO: check that this update is necessary, e.g. add some flag to all UPs that should cause an update here
+	m_pSelectedModel->GetModel()->DoCreateStructure();
+
 	UpdateUnitParamTable();
 	UpdateListValuesTable();
 

@@ -17,17 +17,19 @@ void CScreenMultideck::CreateBasicInfo()
 
 void CScreenMultideck::CreateStructure()
 {
-	constexpr size_t decksNumber = 5;
-	m_decks.resize(decksNumber);
+	if (GetUnitParametersManager().GetConstUIntParameter("Decks"))
+		m_decksNumber = GetConstUIntParameterValue("Decks");
+	m_decks.resize(m_decksNumber);
 
 	/// Ports
 	m_portIn = AddPort("Input", EUnitPort::INPUT);
 	m_portsCoarse.clear();
-	for (size_t i = 0; i < decksNumber; ++i)
+	for (size_t i = 0; i < m_decksNumber; ++i)
 		m_portsCoarse.push_back(AddPort("Coarse " + std::to_string(i + 1), EUnitPort::OUTPUT));
 	m_portFines = AddPort("Fines",     EUnitPort::OUTPUT);
 
 	/// Unit parameters
+	AddConstUIntParameter("Decks", 1, "-", "Number of decks", 1, 20);
 	for (size_t i = 0; i < m_decks.size(); ++i)
 	{
 		// deck index as string
@@ -50,7 +52,7 @@ void CScreenMultideck::CreateStructure()
 	}
 
 	/// Internal streams
-	for (size_t i = 0; i < decksNumber - 1; ++i)
+	for (size_t i = 0; i < m_decksNumber - 1; ++i)
 	{
 		// create internal fines stream for each deck except the last one.
 		m_decks[i].streamOutF = AddStream("Deck " + std::to_string(i + 1) + " fine");

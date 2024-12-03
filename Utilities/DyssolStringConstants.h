@@ -314,7 +314,7 @@ namespace StrConst
 	inline std::string BUnit_ErrGetParam(const std::string& s1, const std::string& s2, const std::string& s3) {
 		return std::string("Error in unit '" + s1 + "', function call " + s3 + "('" + s2 + "'): unit parameter with such combination of name and type does not exist in this unit.");	}
 	inline std::string BUnit_ErrAddParam(const std::string& s1, const std::string& s2, const std::string& s3) {
-		return BUnit_Err1(s1, s3, s2) + "Unit parameter '" + s2 + "' has duplicates. Unit parameters names must be unique within the unit."; }
+		return BUnit_Err1(s1, s3, s2) + "Unit parameter '" + s2 + "' has a duplicate with the same name, but of a different type. Unit parameters must have unique names within the unit."; }
 	inline std::string BUnit_ErrAddComboParam(const std::string& s1, const std::string& s2, const std::string& s3) {
 		return BUnit_Err1(s1, s3, s2) + "Unit parameter '" + s2 + "' cannot be added. The number of items must be equal to the number of names."; }
 	inline std::string BUnit_ErrGroupParamBlock(const std::string& s1, const std::string& s2, const std::string& s3, const std::string& s4) {
