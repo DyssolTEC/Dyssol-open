@@ -11,6 +11,7 @@
 
 #include <cstdint>
 #include <cstddef>
+#include <iterator>
 
 // ========== Initial values
 
@@ -67,7 +68,6 @@ enum class EExtrapolationMethod : uint32_t
 };
 
 //======== SOLID DISTRIBUTIONS DATABASE [0; 50] ===============
-#define DISTRIBUTIONS_NUMBER 16
 
 // TODO: make enum class
 /**
@@ -98,21 +98,31 @@ enum EDistrTypes : uint32_t
  * \brief Names of all distributed properties.
  * \details Must be in the same order as DISTR_TYPES.
  */
-#define DISTR_NAMES { "Compounds", "Size", "Particle porosity", "Form factor", "Color", "Moisture", "Distribution 1", "Distribution 2", "Distribution 3", "Distribution 4", "Distribution 5", "Distribution 6", "Distribution 7", "Distribution 8", "Distribution 9", "Distribution 10" }
+inline static constexpr const char* const DISTR_NAMES[] = {	"Compounds", "Size", "Particle porosity", "Form factor",
+															"Color", "Moisture", "Distribution 1", "Distribution 2",
+															"Distribution 3", "Distribution 4", "Distribution 5",
+															"Distribution 6", "Distribution 7", "Distribution 8",
+															"Distribution 9", "Distribution 10" };
 /**
  * \brief Types of all distributed properties.
  * \details Must be in the same order as DISTR_NAMES.
  */
-#define DISTR_TYPES { DISTR_COMPOUNDS,  DISTR_SIZE, DISTR_PART_POROSITY, DISTR_FORM_FACTOR, DISTR_COLOR, DISTR_MOISTURE, DISTR_USER_DEFINED_01, DISTR_USER_DEFINED_02, DISTR_USER_DEFINED_03, DISTR_USER_DEFINED_04, DISTR_USER_DEFINED_05, DISTR_USER_DEFINED_06, DISTR_USER_DEFINED_07, DISTR_USER_DEFINED_08, DISTR_USER_DEFINED_09, DISTR_USER_DEFINED_10}
+inline static constexpr EDistrTypes DISTR_TYPES[] = { DISTR_COMPOUNDS,  DISTR_SIZE, DISTR_PART_POROSITY, DISTR_FORM_FACTOR,
+											DISTR_COLOR, DISTR_MOISTURE, DISTR_USER_DEFINED_01, DISTR_USER_DEFINED_02,
+											DISTR_USER_DEFINED_03, DISTR_USER_DEFINED_04, DISTR_USER_DEFINED_05,
+											DISTR_USER_DEFINED_06, DISTR_USER_DEFINED_07, DISTR_USER_DEFINED_08,
+											DISTR_USER_DEFINED_09, DISTR_USER_DEFINED_10 };
+
+static_assert(std::size(DISTR_NAMES) == std::size(DISTR_TYPES));
+
 /**
  * \brief Calculates index of the distributed property from its type.
  * \details Indices from DISTR_TYPES.
  */
 inline int GetDistributionTypeIndex(EDistrTypes _nType)
 {
-	EDistrTypes vTypes[] = DISTR_TYPES;
-	for (unsigned i = 0; i < DISTRIBUTIONS_NUMBER; ++i)
-		if (_nType == vTypes[i])
+	for (unsigned i = 0; i < std::size(DISTR_TYPES); ++i)
+		if (_nType == DISTR_TYPES[i])
 			return i;
 	return -1;
 }
