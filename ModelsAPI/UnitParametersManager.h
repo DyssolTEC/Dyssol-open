@@ -938,6 +938,12 @@ public:
 	 * \return Whether unit parameter is selected in one of the groups.
 	 */
 	bool IsParameterActive(const CBaseUnitParameter& _parameter) const;
+	/**
+	 * \brief Returns true if the given unit parameter defines a group of parameters.
+	 * \param _parameter Reference to unit parameter.
+	 * \return Whether unit parameter is selected in the group.
+	 */
+	[[nodiscard]] bool IsGrouping(const CComboUnitParameter& _parameter) const;
 
 	/**
 	 * \private
