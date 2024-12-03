@@ -975,6 +975,14 @@ bool CBaseUnit::IsCompoundNameDefined(const std::string& _compoundName) const
 	return VectorContains(GetAllCompoundsNames(), _compoundName);
 }
 
+std::vector<EOverall> CBaseUnit::GetAllOverallProperties() const
+{
+	auto res = ReservedVector<EOverall>(*m_overall);
+	for (const auto& overall : *m_overall)
+		res.push_back(overall.type);
+	return res;
+}
+
 void CBaseUnit::AddOverallProperty(EOverall _property, const std::string& _name, const std::string& _units)
 {
 	m_streams.AddOverallProperty(_property, _name, _units);

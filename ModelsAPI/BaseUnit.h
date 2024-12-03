@@ -1255,6 +1255,11 @@ public:
 	//
 
 	/**
+	 * \brief Returns keys of all overall properties.
+	 * \return Keys of all active overall properties.
+	 */
+	std::vector<EOverall> GetAllOverallProperties() const;
+	/**
 	 * \private
 	 * Adds new overall property to all feeds, holdups and streams in the unit, if it does not exist yet.
 	 */
