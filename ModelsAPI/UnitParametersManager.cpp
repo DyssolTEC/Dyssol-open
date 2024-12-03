@@ -781,6 +781,14 @@ bool CUnitParametersManager::IsParameterActive(const CBaseUnitParameter& _parame
 	return IsParameterActive(Name2Index(_parameter.GetName()));
 }
 
+bool CUnitParametersManager::IsGrouping(const CComboUnitParameter& _parameter) const
+{
+	return std::any_of(m_groups.begin(), m_groups.end(), [&](const auto& _group)
+	{
+		return MapContainsKey(_group.second, Name2Index(_parameter.GetName()));
+	});
+}
+
 void CUnitParametersManager::ClearGroups()
 {
 	m_groups.clear();
