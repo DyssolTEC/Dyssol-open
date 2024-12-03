@@ -2,6 +2,7 @@
  * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "QtDialog.h"
+
 #include "DyssolStringConstants.h"
 #include <QKeyEvent>
 #include <QMessageBox>
