@@ -124,6 +124,11 @@ size_t CStreamManager::GetFeedsNumber() const
 	return m_feedsWork.size();
 }
 
+size_t CStreamManager::GetFeedsInitNumber() const
+{
+	return m_feedsInit.size();
+}
+
 CStream* CStreamManager::AddFeed(const std::string& _name)
 {
 	if (GetFeed(_name)) return nullptr; // already exists
@@ -172,6 +177,11 @@ void CStreamManager::RemoveFeed(const std::string& _name)
 size_t CStreamManager::GetHoldupsNumber() const
 {
 	return m_holdupsWork.size();
+}
+
+size_t CStreamManager::GetHoldupsInitNumber() const
+{
+	return m_holdupsInit.size();
 }
 
 CHoldup* CStreamManager::AddHoldup(const std::string& _name)
