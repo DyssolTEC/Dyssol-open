@@ -148,7 +148,7 @@ void CGridEditor::RemDistributionClicked()
 	if (row <= 0 || row >= ui.listDims->count()) return;
 	const auto* widget = dynamic_cast<CDimensionParameters*>(ui.listDims->itemWidget(ui.listDims->currentItem()));
 	const int iName = GetDistributionTypeIndex(widget->GetDistributionType());
-	const auto name = iName != -1 ? std::vector<QString>(DISTR_NAMES)[iName] : "";
+	const auto name = iName != -1 ? DISTR_NAMES[iName] : "";
 	const auto reply = QMessageBox::question(this, "Confirm removal", tr("Remove distribution '%1'?").arg(name), QMessageBox::Yes | QMessageBox::No);
 	if (reply != QMessageBox::Yes) return;
 	delete ui.listDims->takeItem(row);

@@ -40,12 +40,12 @@ EDistrTypes CDimensionParameters::GetDistributionType() const
 void CDimensionParameters::SetupComboBoxDistribution() const
 {
 	[[maybe_unused]] CSignalBlocker blocker{ ui.comboDistribution };
-	const auto types = E2I(std::vector{ DISTR_TYPES });
-	const auto names = std::vector<QString>{ DISTR_NAMES };
+	const auto& types = E2I(std::vector<EDistrTypes>{ std::begin(DISTR_TYPES), std::end(DISTR_TYPES) });
+	std::vector<std::string> names{ std::begin(DISTR_NAMES), std::end(DISTR_NAMES) };;
 	ui.comboDistribution->addItem("", DISTR_UNDEFINED);
 	for (size_t i = 0; i < names.size(); ++i)
 	{
-		ui.comboDistribution->addItem(names[i], types[i]);
+		ui.comboDistribution->addItem(QString::fromStdString(names[i]), types[i]);
 		// disable compounds
 		if (types[i] == DISTR_COMPOUNDS)
 		{
@@ -54,7 +54,7 @@ void CDimensionParameters::SetupComboBoxDistribution() const
 		}
 	}
 	// always show all entries
-	ui.comboDistribution->setMaxVisibleItems(DISTRIBUTIONS_NUMBER + 1);
+	ui.comboDistribution->setMaxVisibleItems(std::size(DISTR_TYPES) + 1);
 }
 
 void CDimensionParameters::SetupComboBoxEntry() const
@@ -398,7 +398,7 @@ bool CDimensionParameters::IsValid() const
 	if (m_grid->DimensionType() == DISTR_UNDEFINED)
 		return SetMessageAndReturn(StrConst::GE_ErrorUndefined);
 	const auto iName = GetDistributionTypeIndex(static_cast<EDistrTypes>(ui.comboDistribution->currentData().toUInt()));
-	const auto distrName = iName != -1 ? std::vector<std::string>(DISTR_NAMES)[iName] : "";
+	const auto distrName = iName != -1 ? DISTR_NAMES[iName] : "";
 	if (m_grid->GridType() == EGridEntry::GRID_NUMERIC)
 	{
 		const auto& grid = dynamic_cast<CGridDimensionNumeric*>(m_grid.get())->Grid();
