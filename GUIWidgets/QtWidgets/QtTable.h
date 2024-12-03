@@ -62,7 +62,10 @@ public:
 	QTableWidgetItem* SetRowHeaderItem(int _row);
 	QTableWidgetItem* SetRowHeaderItem(int _row, const std::string& _text);
 	QTableWidgetItem* SetRowHeaderItem(int _row, const std::wstring& _text);
+
+	void SetColHeaderItems(int _startcol, const std::string* _text, size_t _size);
 	void SetColHeaderItems(int _startcol, const std::vector<std::string>& _text);
+	void SetRowHeaderItems(int _startrow, const std::string* _text, size_t _size);
 	void SetRowHeaderItems(int _startrow, const std::vector<std::string>& _text);
 
 	QString GetItemText(int _row, int _col) const;
