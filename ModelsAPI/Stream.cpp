@@ -70,6 +70,15 @@ double CStream::GetMassFlow(double _time) const
 	return GetMass(_time);
 }
 
+double CStream::GetAccumulatedMass(double _timeBeg, double _timeEnd) const
+{
+	const std::vector<double> tp = GetTimePointsClosed(_timeBeg, _timeEnd);
+	double res{ 0 };
+	for (size_t i = 0; i < tp.size() - 1; ++i)
+		res += (GetMassFlow(tp[i + 1]) + GetMassFlow(tp[i])) / 2. * (tp[i + 1] - tp[i]);
+	return res;
+}
+
 double CStream::GetMolFlow(double _time) const
 {
 	return GetMol(_time);
