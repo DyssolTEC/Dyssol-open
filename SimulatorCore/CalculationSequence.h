@@ -40,12 +40,12 @@ private:
 	static const unsigned m_saveVersion{ 2 };	// Current version of the saving procedure.
 
 
-	const std::vector<std::unique_ptr<CUnitContainer>>* m_models{};	// Non-owning pointer to a vector of existing models.
+	const std::vector<std::unique_ptr<CUnitContainer>>* m_models;	// Non-owning pointer to a vector of existing models.
 	const std::vector<std::shared_ptr<CStream>>* m_streams{};		// Non-owning pointer to a vector of existing streams.
 
 	std::vector<SPartitionKeys> m_partitions;       // List of defined partitions.
 
-	std::vector<std::vector<std::unique_ptr<CStream>>> m_initialTearStreams{};	// Streams needed for initialization of tear streams.
+	std::vector<std::vector<std::unique_ptr<CStream>>> m_initialTearStreams;	// Streams needed for initialization of tear streams.
 
 public:
 	CCalculationSequence() = default;
