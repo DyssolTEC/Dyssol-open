@@ -32,4 +32,12 @@ enum class EUnitParameter : uint8_t
 };
 
 template<EUnitParameter... Args>
-struct ParameterCollection {};
+struct UnitParameterCollection
+{
+	static constexpr EUnitParameter Find(EUnitParameter _param)
+	{
+		EUnitParameter result = EUnitParameter::UNKNOWN;
+		(((_param == Args) ? (result = Args) : result), ...);
+		return result;
+	}
+};

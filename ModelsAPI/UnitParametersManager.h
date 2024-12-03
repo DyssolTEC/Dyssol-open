@@ -174,7 +174,7 @@ public:
 	 * \return List of unit parameters.
 	 */
 	template<EUnitParameter... Args>
-	[[nodiscard]] std::vector<CBaseUnitParameter*> GetParameters(ParameterCollection<Args...>) const
+	std::vector<CBaseUnitParameter*> GetParameters(UnitParameterCollection<Args...>) const
 	{
 		std::vector<CBaseUnitParameter*> result;
 		(([&result, this]
