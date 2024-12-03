@@ -139,18 +139,28 @@ QTableWidgetItem* CQtTable::SetRowHeaderItem(int _row, const std::wstring& _text
 	return verticalHeaderItem(_row);
 }
 
+void CQtTable::SetColHeaderItems(int _startcol, const std::string* const _text, size_t _size)
+{
+	for (int i = 0; i < static_cast<int>(_size); ++i)
+		if (_startcol + i < columnCount())
+			SetColHeaderItem(_startcol + i, _text[i]);
+}
+
 void CQtTable::SetColHeaderItems(int _startcol, const std::vector<std::string>& _text)
 {
-	for(int i = 0; i < static_cast<int>(_text.size()); ++i)
-		if(_startcol + i < columnCount())
-			SetColHeaderItem(_startcol + i, _text[i]);
+	SetColHeaderItems(_startcol, _text.data(), _text.size());
+}
+
+void CQtTable::SetRowHeaderItems(int _startrow, const std::string* const _text, size_t _size)
+{
+	for (int i = 0; i < static_cast<int>(_size); ++i)
+		if (_startrow + i < rowCount())
+			SetRowHeaderItem(_startrow + i, _text[i]);
 }
 
 void CQtTable::SetRowHeaderItems(int _startrow, const std::vector<std::string>& _text)
 {
-	for (int i = 0; i < static_cast<int>(_text.size()); ++i)
-		if (_startrow + i < rowCount())
-			SetRowHeaderItem(_startrow + i, _text[i]);
+	SetRowHeaderItems(_startrow, _text.data(), _text.size());
 }
 
 QString CQtTable::GetItemText(int _row, int _col) const
