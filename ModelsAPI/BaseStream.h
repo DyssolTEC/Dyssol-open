@@ -595,7 +595,7 @@ public:
 	void SetCompoundsFractions(double _time, EPhase _phase, const std::vector<double>& _value);
 	/**
 	 * \brief Sets the mass of the specified compound in the specified phase at the given time point.
-	 * \details Total mass of the stream is correspondingly adjusted, masses of other compounds and phases remain the same.
+	 * \details Total mass of the stream and of the phase are correspondingly adjusted, masses of other compounds and phases remain the same.
 	 * \param _time Target time point.
 	 * \param _compoundKey Unique key of the compound.
 	 * \param _phase Phase type identifier.
