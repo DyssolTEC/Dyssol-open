@@ -6,6 +6,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QMessageBox>
+#include <filesystem>
 #include <vector>
 #include <locale>
 
@@ -57,4 +58,23 @@ inline QMessageBox::StandardButton AskYesAllNoAllCancel(QWidget* _parent, const 
 inline QMessageBox::StandardButton Notify(QWidget* _parent, const std::string& _title, const std::string& _text)
 {
 	return QMessageBox::information(_parent, _title.c_str(), _text.c_str(), QMessageBox::Ok);
+}
+
+inline std::filesystem::path QString2Path(const QString& _str)
+{
+#ifdef _WIN32
+	auto* ptr = reinterpret_cast<const wchar_t*>(_str.utf16());
+	return{ ptr, ptr + _str.size() };
+#else
+	return{ _str.toStdString() };
+#endif
+}
+
+inline QString Path2QString(const std::filesystem::path& _str)
+{
+#ifdef _WIN32
+	return QString::fromStdWString(_str.generic_wstring());
+#else
+	return QString::fromStdString(_str.native());
+#endif
 }
