@@ -17,9 +17,9 @@ class CQtTable : public QTableWidget
 	Q_OBJECT
 
 private:
-	bool m_pasteAllowed{ true };	/// Allow pasting from the clipboard.
-	bool m_addRowsOnPaste{ false }; /// Allow adding new rows to the table during pasting from the clipboard.
-	bool m_blockOnPaste{ true };	/// Block all signals from the table during pasting from the clipboard.
+	bool m_pasteAllowed{ true };	///< Allow pasting from the clipboard.
+	bool m_addRowsOnPaste{ false }; ///< Allow adding new rows to the table during pasting from the clipboard.
+	bool m_blockOnPaste{ true };	///< Block all signals from the table during pasting from the clipboard.
 	QString m_numberSeparator { " " };
 	QString m_decimalSeparator{ "." };
 
@@ -35,8 +35,9 @@ public:
 	/**
 	 * \brief Block all signals from the table during pasting from the clipboard.
 	 * \param _flag Flag.
+	 * \return Previous state of the flag.
 	 */
-	void EnableBlockOnPaste(bool _flag);
+	bool EnableBlockOnPaste(bool _flag);
 
 	QString GetColHeaderItem(int _col) const;
 	QString GetRowHeaderItem(int _row) const;
@@ -152,11 +153,26 @@ public slots:
 
 private:
 	void Clear();
-	void Copy();
+	void Copy() const;
 	void Paste();
 
 signals:
-	void PasteInitiated(int _row, int _col);
+	/**
+	 * \brief Is emitted when pasting from the clipboard starts.
+	 * \details Is emitted before any actual action is taken.
+	 * \param _row Row where the pasting starts.
+	 * \param _col Column where the pasting starts.
+	 */
+	void PasteStarted(int _row, int _col);
+	/**
+	 * \brief Is emitted after pasting from the clipboard is done.
+	 * \details Is emitted after all actions are taken.
+	 * \param _rowBeg Row where the pasting started.
+	 * \param _colBeg Column where the pasting started.
+	 * \param _rowEnd Row of the last pasted item.
+	 * \param _colEnd Column of the last pasted item.
+	 */
+	void PasteFinished(int _rowBeg, int _colBeg, int _rowEnd, int _colEnd);
 	void DataPasted();
 	void CheckBoxStateChanged(int _row, int _col, QCheckBox* _pCheckBox);
 	void RadioButtonStateChanged(int _row, int _col, QRadioButton* _radioButton);

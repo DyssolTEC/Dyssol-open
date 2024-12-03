@@ -38,9 +38,11 @@ void CQtTable::EnableAddRowsOnPaste(bool _flag)
 	m_addRowsOnPaste = _flag;
 }
 
-void CQtTable::EnableBlockOnPaste(bool _flag)
+bool CQtTable::EnableBlockOnPaste(bool _flag)
 {
+	const bool res = m_blockOnPaste;
 	m_blockOnPaste = _flag;
+	return res;
 }
 
 QString CQtTable::GetColHeaderItem(int _col) const
@@ -672,21 +674,22 @@ void CQtTable::Clear()
 	emit cellChanged(indexes.back().row(), indexes.back().column());
 }
 
-void CQtTable::Copy()
+void CQtTable::Copy() const
 {
-	QModelIndexList indexes = this->selectionModel()->selection().indexes();
+	QModelIndexList indexes = selectionModel()->selection().indexes();
 	QString str;
-
 	for (int i = indexes.front().row(); i <= indexes.back().row(); ++i)
 	{
 		for (int j = indexes.front().column(); j <= indexes.back().column(); ++j)
 		{
-			if (this->item(i, j))
+			if (item(i, j))
 			{
-				str += this->item(i, j)->text();
+				str += item(i, j)->text();
 				if (j != indexes.back().column())
 					str += m_numberSeparator;
 			}
+			else
+				str += m_numberSeparator;
 		}
 		if (i != indexes.back().row())
 			str += "\n";
@@ -697,42 +700,45 @@ void CQtTable::Copy()
 void CQtTable::Paste()
 {
 	const QModelIndexList indexes = selectionModel()->selection().indexes();
-	const int iFirstRow = indexes.count() ? indexes.at(0).row()    : 0;
-	const int iFirstCol = indexes.count() ? indexes.at(0).column() : 0;
+	const int iTableRowBeg = indexes.count() ? indexes.at(0).row()    : 0; // the table row from which pasting begins
+	const int iTableColBeg = indexes.count() ? indexes.at(0).column() : 0; // the table column from which pasting begins
 
-	emit PasteInitiated(iFirstRow, iFirstCol);
+	emit PasteStarted(iTableRowBeg, iTableColBeg);
 	if (!m_pasteAllowed) return;
 
 	const bool oldBlock = blockSignals(m_blockOnPaste);
 	const auto data = ParseClipboardAsDoubles();
-	int rowMax = static_cast<int>(data.size());
+	const int dataRowCount = static_cast<int>(data.size()); // number of rows in the pasting data
 
 	if (!m_addRowsOnPaste)
 	{
-		if (rowMax > rowCount() - iFirstRow)
-			rowMax = rowCount() - iFirstRow;
-		for (int i = 0; i < rowMax; ++i)
+		int iDataRow = 0;  // current data row to take the value from
+		for (int iTableRow = iTableRowBeg; iTableRow < rowCount() && iDataRow < dataRowCount; ++iTableRow, ++iDataRow)
 		{
-			int colMax = static_cast<int>(data[i].size());
-			if (colMax > columnCount() - iFirstCol)
-				colMax = columnCount() - iFirstCol;
-			for (int j = 0; j < colMax; ++j)
-				if (item(i, j + iFirstCol) && item(i, j + iFirstCol)->flags().testFlag(Qt::ItemIsEditable))
-					item(i + iFirstRow, j + iFirstCol)->setText(QString::number(data[i][j]));
+			int iDataCol = 0; // current column row to take the value from
+			const int dataColCount = static_cast<int>(data[iDataRow].size()); // number of columns in the row of pasting data
+			for (int iTableCol = iTableColBeg; iTableCol < columnCount() && iDataCol < dataColCount; ++iTableCol, ++iDataCol)
+			{
+				const auto* it = item(iTableRow, iTableCol);
+				if (!it) continue;
+				const bool editable = it->flags().testFlag(Qt::ItemIsEditable);
+				if (!editable) continue;
+				SetItemEditable(iTableRow, iTableCol, data[iDataRow][iDataCol]);
+			}
 		}
 	}
 	else
 	{
 		// update the size of the table according to the pasted data
-		SetGeometry(rowMax + iFirstRow, columnCount());
+		SetGeometry(dataRowCount + iTableRowBeg, columnCount());
 		// paste data
-		for (int i = 0; i < rowMax; ++i)
+		for (int i = 0; i < dataRowCount; ++i)
 		{
 			int colMax = static_cast<int>(data[i].size());
-			if (colMax > columnCount() - iFirstCol)
-				colMax = columnCount() - iFirstCol;
+			if (colMax > columnCount() - iTableColBeg)
+				colMax = columnCount() - iTableColBeg;
 			for (int j = 0; j < colMax; ++j)
-				SetItemEditable(i + iFirstRow, j + iFirstCol, data[i][j]);
+				SetItemEditable(i + iTableRowBeg, j + iTableColBeg, data[i][j]);
 		}
 		// create empty items if necessary
 		for (int i = 0; i < rowCount(); ++i)
@@ -743,5 +749,15 @@ void CQtTable::Paste()
 
 	blockSignals(oldBlock);
 	emit DataPasted();
-	emit cellChanged(rowMax - 1 + iFirstRow, static_cast<int>(data[rowMax - 1].size()) - 1 + iFirstCol);
+	if (!data.empty())
+		emit PasteFinished(iTableRowBeg, iTableColBeg, dataRowCount - 1 + iTableRowBeg, static_cast<int>(data[dataRowCount - 1].size()) - 1 + iTableColBeg);
+	else
+		emit PasteFinished(iTableRowBeg, iTableColBeg, iTableRowBeg, iTableColBeg);
+	if (!oldBlock && m_blockOnPaste)
+	{
+		if (!data.empty())
+			emit cellChanged(dataRowCount - 1 + iTableRowBeg, static_cast<int>(data[dataRowCount - 1].size()) - 1 + iTableColBeg);
+		else
+			emit cellChanged(iTableRowBeg, iTableColBeg);
+	}
 }

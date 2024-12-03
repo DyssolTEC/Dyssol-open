@@ -68,7 +68,7 @@ void CFlowsheetEditor::InitializeConnections()
 	connect(ui.buttonAddListValue,		&QPushButton::clicked,				this, &CFlowsheetEditor::AddUnitParamListItem);
 	connect(ui.buttonRemoveListValue,	&QPushButton::clicked,				this, &CFlowsheetEditor::DeleteUnitParamListItem);
 	connect(ui.tableListValues,			&QTableWidget::itemChanged,			this, &CFlowsheetEditor::ListValueChanged);
-	connect(ui.tableListValues,			&CQtTable::PasteInitiated,			this, &CFlowsheetEditor::PasteParamTable);
+	connect(ui.tableListValues,			&CQtTable::PasteStarted,			this, &CFlowsheetEditor::PasteParamTable);
 
 
 	connect(ui.tableUnitParams,		&QTableWidget::itemSelectionChanged,	this, &CFlowsheetEditor::NewUnitParameterSelected);
