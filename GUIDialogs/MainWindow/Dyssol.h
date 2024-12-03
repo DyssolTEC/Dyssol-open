@@ -60,35 +60,35 @@ private:
 	CFlowsheet m_Flowsheet{ &m_ModelsManager, &m_MaterialsDatabase };	// flowsheet
 	CSimulator m_Simulator;						// simulator
 
-	QSettings* m_pSettings;		// Config file.
+	QSettings* m_pSettings{};		// Config file.
 
 	CMainWindowHelpHelper* m_helpHelper{}; // Fake window to provide main window with functionality to show help files.
-	CCalculationSequenceEditor* m_pCalcSequenceEditor;
-	CMaterialsDatabaseTab *m_pMaterialsDatabaseTab;
-	CCompoundsManager *m_pCompoundsManager;
-	CFlowsheetEditor *m_pFlowsheetEditor;
-	CGridEditor *m_pGridEditor;
-	CHoldupsEditor *m_pHoldupsEditor;
-	CModulesManagerTab *m_pModelsManagerTab;
-	COptionsEditor *m_pOptionsEditor;
-	CPhasesEditor *m_pPhasesEditor;
-	CSimulatorTab *m_pSimulatorTab;
-	CStreamsViewer *m_pStreamsViewer;
-	CUnitsViewer *m_pUnitsViewer;
-	CTearStreamsEditor* m_pTearStreamsEditor;
-	CDustFormationTesterTab* m_pDustTesterTab;
-	CSettingsEditor* m_pSettingsEditor;
+	CCalculationSequenceEditor* m_pCalcSequenceEditor{};
+	CMaterialsDatabaseTab *m_pMaterialsDatabaseTab{};
+	CCompoundsManager *m_pCompoundsManager{};
+	CFlowsheetEditor *m_pFlowsheetEditor{};
+	CGridEditor *m_pGridEditor{};
+	CHoldupsEditor *m_pHoldupsEditor{};
+	CModulesManagerTab *m_pModelsManagerTab{};
+	COptionsEditor *m_pOptionsEditor{};
+	CPhasesEditor *m_pPhasesEditor{};
+	CSimulatorTab *m_pSimulatorTab{};
+	CStreamsViewer *m_pStreamsViewer{};
+	CUnitsViewer *m_pUnitsViewer{};
+	CTearStreamsEditor* m_pTearStreamsEditor{};
+	CDustFormationTesterTab* m_pDustTesterTab{};
+	CSettingsEditor* m_pSettingsEditor{};
 
 	std::vector<CDyssolBaseWidget*> m_dialogs{}; // List of all dialogs for unified access.
 
 	QList<QAction*> m_vRecentFilesActions;	// list of actions for recent files
 	bool m_bFlowsheetChanged;				// if the flowsheet has been changed after loading
 
-	CSaveLoadThread *m_pSavingThread;	// thread for saving of flowsheets
-	CSaveLoadThread *m_pLoadingThread;	// thread for loading of flowsheets
+	CSaveLoadThread *m_pSavingThread{};	// thread for saving of flowsheets
+	CSaveLoadThread *m_pLoadingThread{};	// thread for loading of flowsheets
 
-	CStatusWindow *m_pSavingWindow;		// status window for saving
-	CStatusWindow *m_pLoadingWindow;	// status window for loading
+	CStatusWindow *m_pSavingWindow{};		// status window for saving
+	CStatusWindow *m_pLoadingWindow{};	// status window for loading
 
 public:
 	Dyssol(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
