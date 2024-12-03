@@ -284,7 +284,7 @@ enum class EPhase : uint32_t
 	SOLID     = 1, ///< Solid phase.
 	LIQUID    = 2, ///< Liquid phase.
 	VAPOR     = 3, ///< Gas phase.
-	GAS       = 3, ///< Gas phase.
+	GAS       = VAPOR, ///< Gas phase.
 };
 
 /**
