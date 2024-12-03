@@ -886,6 +886,16 @@ std::vector<double> CBaseUnit::GetStreamsTimePointsClosed(double _timeBeg, doubl
 	return CloseInterval(GetStreamsTimePoints(_timeBeg, _timeEnd, _streams), _timeBeg, _timeEnd);
 }
 
+std::vector<double> CBaseUnit::GetTimePoints(double _timeBeg, double _timeEnd, const std::vector<CHoldup*>& _holdups, const std::vector<CStream*>& _streams) const
+{
+	std::vector<double> res;
+	for (const auto& stream : _streams)
+		res = VectorsUnionSorted(res, stream->GetTimePoints(_timeBeg, _timeEnd));
+	for (const auto& holdup : _holdups)
+		res = VectorsUnionSorted(res, holdup->GetTimePoints(_timeBeg, _timeEnd));
+	return res;
+}
+
 void CBaseUnit::ReduceTimePoints(double _timeBeg, double _timeEnd, double _step)
 {
 	m_streams.ReduceTimePoints(_timeBeg, _timeEnd, _step);

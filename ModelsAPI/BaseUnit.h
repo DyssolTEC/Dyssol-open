@@ -1154,7 +1154,15 @@ public:
 	 * \return Sorted vector of time points.
 	 */
 	std::vector<double> GetStreamsTimePointsClosed(double _timeBeg, double _timeEnd, const std::vector<CStream*>& _streams) const;
-
+	/**
+	* \brief Returns all time points in the time interval at which holdups and streams are defined.
+	* \param _timeBeg Begin of the time interval.
+	* \param _timeEnd End of the time interval.
+	* \param _holdups List of holdups.
+	* \param _streams List of streams.
+	* \return Sorted vector of time points.
+	*/
+	std::vector<double> GetTimePoints(double _timeBeg, double _timeEnd, const std::vector<CHoldup*>& _holdups, const std::vector<CStream*>& _streams) const;
 	/**
 	 * \private
 	 * \brief Removes time points within the specified interval [timeBeg; timeEnd) that are closer together than the step.
