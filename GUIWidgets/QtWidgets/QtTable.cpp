@@ -377,7 +377,7 @@ QComboBox* CQtTable::SetComboBox(const int _row, const int _col, const std::vect
 	for (size_t i = 0; i < _vNames.size(); ++i)
 		pComboBox->insertItem(pComboBox->count(), _vNames[i], i < _vData.size() ? _vData[i] : QVariant());
 	pComboBox->setCurrentIndex(_iSelected);
-	connect(pComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=] { ComboBoxIndexChanged(_row, _col, pComboBox); });
+	connect(pComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this, _row, _col, pComboBox] { ComboBoxIndexChanged(_row, _col, pComboBox); });
 	setCellWidget(_row, _col, pComboBox);
 	return pComboBox;
 }
@@ -448,7 +448,7 @@ QPushButton* CQtTable::SetPushButton(int _row, int _col, const QString& _text)
 	button->setText(_text);
 	button->setAutoDefault(false);
 	button->setObjectName("PushButton");
-	connect(button, &QPushButton::clicked, this, [=] { PushButtonClicked(_row, _col, button); });
+	connect(button, &QPushButton::clicked, this, [this, _row, _col, button] { PushButtonClicked(_row, _col, button); });
 	setCellWidget(_row, _col, widget);
 	return button;
 }
@@ -470,7 +470,7 @@ QToolButton* CQtTable::SetToolButton(int _row, int _col, const QString& _text)
 	pWidget->setLayout(pLayout);
 	pToolButton->setText(_text);
 	pToolButton->setObjectName("ToolButton");
-	connect(pToolButton, &QToolButton::clicked, this, [=] { ToolButtonClicked(_row, _col, pToolButton); });
+	connect(pToolButton, &QToolButton::clicked, this, [this, _row, _col, pToolButton] { ToolButtonClicked(_row, _col, pToolButton); });
 	setCellWidget(_row, _col, pWidget);
 	return pToolButton;
 }
@@ -567,10 +567,15 @@ void CQtTable::SetCurrentCellPos(int _row, int _col)
 	setCurrentCell(std::clamp(_row, 0, rowCount() - 1), std::clamp(_col, 0, columnCount() - 1), QItemSelectionModel::SelectCurrent);
 }
 
-QString CQtTable::GetCurrentItemUserDataQStr() const
+QVariant CQtTable::GetCurrentItemUserData() const
 {
 	if (!currentItem()) return {};
-	return currentItem()->data(Qt::UserRole).toString();
+	return currentItem()->data(Qt::UserRole);
+}
+
+QString CQtTable::GetCurrentItemUserDataQStr() const
+{
+	return GetCurrentItemUserData().toString();
 }
 
 std::string CQtTable::GetCurrentItemUserDataStr() const
@@ -578,13 +583,18 @@ std::string CQtTable::GetCurrentItemUserDataStr() const
 	return GetCurrentItemUserDataQStr().toStdString();
 }
 
-QString CQtTable::GetItemUserDataQStr(int _row /*= -1*/, int _col /*= -1*/) const
+QVariant CQtTable::GetItemUserData(int _row, int _col) const
 {
 	const int row = _row == -1 ? currentRow() : _row;
 	const int col = _col == -1 ? currentColumn() : _col;
-	if(const QTableWidgetItem* pItem = item(row, col))
-		return pItem->data(Qt::UserRole).toString();
+	if (const QTableWidgetItem* pItem = item(row, col))
+		return pItem->data(Qt::UserRole);
 	return {};
+}
+
+QString CQtTable::GetItemUserDataQStr(int _row, int _col) const
+{
+	return GetItemUserData(_row, _col).toString();
 }
 
 std::string CQtTable::GetItemUserDataStr(int _row, int _col) const

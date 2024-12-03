@@ -116,9 +116,11 @@ public:
 	void SetCurrentCellPos(const std::pair<int, int>& _cellPos);
 	void SetCurrentCellPos(int _row, int _col);
 
-	QString GetCurrentItemUserDataQStr() const;
+	[[nodiscard]] QVariant GetCurrentItemUserData() const;
+	[[nodiscard]] QString GetCurrentItemUserDataQStr() const;
 	[[nodiscard]] std::string GetCurrentItemUserDataStr() const;
-	QString GetItemUserDataQStr(int _row, int _col = -1) const;
+	[[nodiscard]] QVariant GetItemUserData(int _row, int _col = -1) const;
+	[[nodiscard]] QString GetItemUserDataQStr(int _row, int _col = -1) const;
 	[[nodiscard]] std::string GetItemUserDataStr(int _row, int _col = -1) const;
 
 	std::vector<double> GetRowValues(int _row) const;
