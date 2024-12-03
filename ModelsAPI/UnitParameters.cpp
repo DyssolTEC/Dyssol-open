@@ -444,6 +444,16 @@ void CCheckBoxUnitParameter::SetChecked(bool _checked)
 	m_checked = _checked;
 }
 
+bool CCheckBoxUnitParameter::GetValue() const
+{
+	return IsChecked();
+}
+
+void CCheckBoxUnitParameter::SetValue(bool _checked)
+{
+	SetChecked(_checked);
+}
+
 std::ostream& CCheckBoxUnitParameter::ValueToStream(std::ostream& _s)
 {
 	return _s << m_checked;
