@@ -708,6 +708,8 @@ std::string CFlowsheet::Initialize()
 				const auto& compounds = GetCompounds();
 				for (const auto& p : m_phases)
 				{
+					if (h->GetPhaseMass(t, p.state) == 0.0) // fractions are not important if the phase is empty
+						continue;
 					const double compSum = std::accumulate(compounds.begin(), compounds.end(), 0.0, [&](double a, const auto& c) { return a + h->GetCompoundFraction(t, c, p.state); });
 					if (std::fabs(compSum - 1.0) > 1e-10)
 						return StrConst::Flow_ErrCompoundFractions(unit->GetName(), h->GetName(), p.name, t);
