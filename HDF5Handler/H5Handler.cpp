@@ -26,16 +26,16 @@ void CH5Handler::Create(const std::filesystem::path& _sFileName, bool _bSingleFi
 {
 	Exception::dontPrint();
 
-	OpenH5File(_sFileName, false, _bSingleFile);
+	OpenH5File(_sFileName, false, _bSingleFile, false);
 }
 
-void CH5Handler::Open(const std::filesystem::path& _sFileName)
+void CH5Handler::Open(const std::filesystem::path& _sFileName, bool _write)
 {
 	Exception::dontPrint();
 
-	OpenH5File(_sFileName, true, true);
+	OpenH5File(_sFileName, true, true, _write);
 	if (!m_bFileValid)
-		OpenH5File(_sFileName, true, false);
+		OpenH5File(_sFileName, true, false, _write);
 }
 
 void CH5Handler::Close()
@@ -473,7 +473,7 @@ bool CH5Handler::ReadValue(const std::string& _sPath, const std::string& _sDatas
 	}
 }
 
-void CH5Handler::OpenH5File(const std::filesystem::path& _sFileName, bool _bOpen, bool _bSingleFile)
+void CH5Handler::OpenH5File(const std::filesystem::path& _sFileName, bool _bOpen, bool _bSingleFile, bool _write)
 {
 	Close();
 
@@ -483,7 +483,7 @@ void CH5Handler::OpenH5File(const std::filesystem::path& _sFileName, bool _bOpen
 	FileAccPropList h5AccPropList = CreateFileAccPropList(_bSingleFile);
 	try
 	{
-		m_ph5File = new H5File(_sFileName.string(), _bOpen ? H5F_ACC_RDONLY : H5F_ACC_TRUNC, H5P_DEFAULT, h5AccPropList);
+		m_ph5File = new H5File(_sFileName.string(), _bOpen ? _write? H5F_ACC_RDWR : H5F_ACC_RDONLY : H5F_ACC_TRUNC , H5P_DEFAULT, h5AccPropList);
 	}
 	catch (...)
 	{

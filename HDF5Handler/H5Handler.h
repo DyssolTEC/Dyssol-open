@@ -27,7 +27,7 @@ public:
 	~CH5Handler();
 
 	void Create(const std::filesystem::path& _sFileName, bool _bSingleFile = true);	/// Create new file with truncation.
-	void Open(const std::filesystem::path& _sFileName);								/// Open existing file.
+	void Open(const std::filesystem::path& _sFileName, bool _write = false);		/// Open existing file.
 	void Close();																	/// Close current file.
 	std::filesystem::path FileName() const;											/// Returns current file name.
 
@@ -78,7 +78,7 @@ private:
 	size_t ReadSize(const std::string& _sPath, const std::string& _sDatasetName) const;
 	bool ReadValue(const std::string& _sPath, const std::string& _sDatasetName, const H5::DataType& _type, void* _pRes) const;
 
-	void OpenH5File(const std::filesystem::path& _sFileName, bool _bOpen, bool _bSingleFile);
+	void OpenH5File(const std::filesystem::path& _sFileName, bool _bOpen, bool _bSingleFile, bool write);
 	static H5::FileAccPropList CreateFileAccPropList(bool _bSingleFile);
 
 	static H5::CompType& h5CPoint_type();	// Lazily initializes HDF5 type for CPoint and returns it.
