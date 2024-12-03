@@ -872,6 +872,17 @@ public:
 	 * \param _checked Flag.
 	 */
 	void SetChecked(bool _checked);
+	/**
+	 * \brief Returns check box unit parameter value.
+	 * \return Whether checkbox is checked.
+	 */
+	[[nodiscard]] bool GetValue() const;
+	/**
+	 * \private
+	 * \brief Sets check box unit parameter value.
+	 * \param _checked Flag.
+	 */
+	void SetValue(bool _checked);
 
 	/**
 	 * \private
