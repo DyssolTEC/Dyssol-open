@@ -206,6 +206,8 @@ void CBaseStream::RemoveAllTimePoints()
 
 void CBaseStream::ReduceTimePoints(double _timeBeg, double _timeEnd, double _step)
 {
+	if (_step <= 0) return;
+
 	std::vector<double> timePoints = GetTimePoints(_timeBeg, _timeEnd);
 	if (timePoints.size() <= 3) return;
 
