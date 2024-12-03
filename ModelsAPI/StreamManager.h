@@ -246,5 +246,11 @@ private:
 
 	// Returns pointers to all feeds, streams and holdups.
 	std::vector<CBaseStream*> AllObjects();
+
+	/**
+	 * \brief Ensure that all initial holdups and feeds have at least one time point.
+	 * \details If no time point is defined, a time point 0 is forcefully added with default values of overall parameters.
+	 */
+	void InitializeInitStreams() const;
 };
 
