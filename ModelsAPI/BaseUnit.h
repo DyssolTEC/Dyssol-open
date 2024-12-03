@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "UnitParameters.h"
+#include "UnitParametersManager.h"
 #include "AgglomerationSolver.h"
 #include "PBMSolver.h"
 #include "PlotManager.h"
