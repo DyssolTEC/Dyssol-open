@@ -45,24 +45,6 @@ bool CQtTable::EnableBlockOnPaste(bool _flag)
 	return res;
 }
 
-int CQtTable::AddRow(int _row)
-{
-	const int rowCount = QTableWidget::rowCount();
-	// If the row index is -1 or >= row count, add at the end
-	const int rowIndex = (_row == -1 || _row >= rowCount) ? rowCount : _row;
-	QTableWidget::insertRow(rowIndex);
-	return rowIndex;
-}
-
-void CQtTable::RemoveRow(int _row)
-{
-	const int rowCount = QTableWidget::rowCount();
-	if (rowCount == 0)
-		return;
-	const int rowIndex = (_row == -1 || _row >= rowCount) ? rowCount - 1 : _row;
-	QTableWidget::removeRow(rowIndex);
-}
-
 QString CQtTable::GetColHeaderItem(int _col) const
 {
 	if (const auto* itm = horizontalHeaderItem(_col))
