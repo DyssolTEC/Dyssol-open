@@ -323,13 +323,3 @@ enum EPhaseTypes : unsigned
 	SOA_LIQUID2,
 	SOA_UNDEFINED
 };
-
-/**
- * Identifiers of unit ports types.
- */
-enum EPortType
-{
-	INPUT_PORT = 0,
-	OUTPUT_PORT = 1,
-	UNDEFINED_PORT = 2
-};
