@@ -542,7 +542,7 @@ void CFlowsheet::RemoveOverallProperty(EOverall _property)
 	VectorDelete(m_overall, [&](const auto& o) { return o.type == _property; });
 }
 
-std::vector<SOverallDescriptor> CFlowsheet::GetOveralProperties() const
+std::vector<SOverallDescriptor> CFlowsheet::GetOverallProperties() const
 {
 	return m_overall;
 }
@@ -614,6 +614,22 @@ void CFlowsheet::SetPhases(const std::vector<SPhaseDescriptor>& _phases)
 std::vector<SPhaseDescriptor> CFlowsheet::GetPhases() const
 {
 	return m_phases;
+}
+
+std::vector<EPhase> CFlowsheet::GetPhaseTypes() const
+{
+	auto res = ReservedVector<EPhase>(m_phases);
+	for (const auto& p : m_phases)
+		res.push_back(p.state);
+	return res;
+}
+
+std::vector<std::string> CFlowsheet::GetPhaseNames() const
+{
+	auto res = ReservedVector<std::string>(m_phases);
+	for (const auto& p : m_phases)
+		res.push_back(p.name);
+	return res;
 }
 
 bool CFlowsheet::HasPhase(EPhase _phase)

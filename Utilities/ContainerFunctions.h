@@ -286,11 +286,26 @@ std::vector<T> VectorsUnionUnsorted(const std::vector<T>& _v1, const std::vector
 	return res;
 }
 
-// Returns a vector with reserved size.
+// Returns a vector with the reserved size.
 template<typename T> std::vector<T> ReservedVector(size_t _size)
 {
 	std::vector<T> res;
 	res.reserve(_size);
+	return res;
+}
+
+/**
+ * \brief Returns a vector with the reserved size.
+ * \detail The reserved size is set to the size of the input vector.
+ * \tparam Tout Type of the return vector value.
+ * \tparam Tin Type of the input vector value.
+ * \param _vec Input vector.
+ * \return Vector with the reserved size.
+ */
+template<typename Tout, typename Tin> std::vector<Tout> ReservedVector(const std::vector<Tin>& _vec)
+{
+	std::vector<Tout> res;
+	res.reserve(_vec.size());
 	return res;
 }
 

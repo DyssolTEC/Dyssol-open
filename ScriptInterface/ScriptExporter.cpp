@@ -283,7 +283,7 @@ namespace ScriptInterface
 						for (const auto& t : s->GetAllTimePoints())
 						{
 							entry.values.push_back(t);
-							for (const auto& p : _flowsheet.GetOveralProperties())
+							for (const auto& p : _flowsheet.GetOverallProperties())
 								entry.values.push_back(s->GetOverallProperty(t, p.type));
 						}
 						job.AddEntry(e.keyStr)->value = entry;
