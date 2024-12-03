@@ -486,6 +486,11 @@ void CBaseUnit::AddParametersToGroup(const std::string& _unitParamNameSelector, 
 	m_unitParameters.AddParametersToGroup(_unitParamNameSelector, _unitParamSelectedValueName, _groupedParamNames);
 }
 
+void CBaseUnit::AddParametersToGroup(const std::string& _unitParamNameSelector, const char* _unitParamSelectedValueName, const std::vector<std::string>& _groupedParamNames)
+{
+	AddParametersToGroup(_unitParamNameSelector, std::string(_unitParamSelectedValueName), _groupedParamNames);
+}
+
 void CBaseUnit::AddParametersToGroup(const std::string& _unitParamNameSelector, bool _unitParamSelectedValue, const std::vector<std::string>& _groupedParamNames)
 {
 	const auto* groupParameter = m_unitParameters.GetCheckboxParameter(_unitParamNameSelector);

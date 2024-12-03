@@ -695,6 +695,15 @@ public:
 	void AddParametersToGroup(const std::string& _unitParamNameSelector, const std::string& _unitParamSelectedValueName, const std::vector<std::string>& _groupedParamNames);
 	/**
 	 * \brief Groups the specified unit parameters.
+	 * \details Allows to hide some parameters depending on the selected value of a combobox unit parameter.
+	 * The parameter, its value and all the adding parameters must already exist. If something does not exist, logic_error exception is thrown.
+	 * \param _unitParamNameSelector Name of the target combobox unit parameter.
+	 * \param _unitParamSelectedValueName Selected value of the target combobox unit parameter.
+	 * \param _groupedParamNames Names of other unit parameters that will be shown if \p _unitParamSelectedValueName is selected.
+	 */
+	void AddParametersToGroup(const std::string& _unitParamNameSelector, const char* _unitParamSelectedValueName, const std::vector<std::string>& _groupedParamNames);
+	/**
+	 * \brief Groups the specified unit parameters.
 	 * \details Allows to hide some parameters depending on the selected value of a checkbox unit parameter.
 	 * The parameter, its value and all the adding parameters must already exist. If something does not exist, logic_error exception is thrown.
 	 * \param _unitParamNameSelector Name of the target checkbox unit parameter.
