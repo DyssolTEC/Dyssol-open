@@ -32,6 +32,7 @@ STREAM "Coarse 4" "Screen" "Coarse 4" "Coarse 4" "In"
 STREAM "Coarse 5" "Screen" "Coarse 5" "Coarse 5" "In"
 STREAM "Fines" "Screen" "Fines" "Fines" "In"
 
+UNIT_PARAMETER "Screen" "Decks" 5
 UNIT_PARAMETER "Screen" "Model 1" 1
 UNIT_PARAMETER "Screen" "Cut size 1" 0.003
 UNIT_PARAMETER "Screen" "Alpha 1" 8
