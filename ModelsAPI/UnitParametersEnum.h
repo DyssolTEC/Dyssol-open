@@ -40,4 +40,9 @@ struct UnitParameterCollection
 		(((_param == Args) ? (result = Args) : result), ...);
 		return result;
 	}
+
+	static constexpr bool Has(EUnitParameter _type)
+	{
+		return ((_type == Args) || ...);
+	}
 };
