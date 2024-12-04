@@ -22,7 +22,7 @@ env:
   # Versions
   QT_VERSION: 5.15.2
   QT_VS_VERSION: msvc2019_64
-  QT_VS_ADDIN_VERSION: 3.0.2
+  QT_VS_ADDIN_VERSION: 3.3.1
   ZLIB_VERSION: 1.3
   SUNDIALS_VERSION: 6.4.1
   HDF5_VERSION: 1.12.2
@@ -70,7 +70,7 @@ jobs:
       # Also, it installs them to %LOCALAPPDATA%\QtMsBuild, so they can not be used by other Windows users.
       # Download the extension and extract requited files to the project directory.
       run: |
-        Invoke-WebRequest -Uri https://ftp.fau.de/qtproject/archive/vsaddin/${{env.QT_VS_ADDIN_VERSION}}/qt-vsaddin-msvc2019-${{env.QT_VS_ADDIN_VERSION}}.vsix -MaximumRetryCount 10 -RetryIntervalSec 30 -OutFile vspackage.vsix
+        Invoke-WebRequest -Uri https://ftp.fau.de/qtproject/archive/vsaddin/${{env.QT_VS_ADDIN_VERSION}}/qt-vsaddin-msvc2019-x86-${{env.QT_VS_ADDIN_VERSION}}.vsix -MaximumRetryCount 10 -RetryIntervalSec 30 -OutFile vspackage.vsix
         Expand-Archive vspackage.vsix -DestinationPath ${{github.workspace}}/ExternalLibraries/qtvsaddin
 
     - name: Cache ZLib
@@ -270,7 +270,7 @@ jobs:
       # Also, it installs them to %LOCALAPPDATA%\QtMsBuild, so they can not be used by other Windows users.
       # Download the extension and extract requited files to the project directory.
       run: |
-        Invoke-WebRequest -Uri https://ftp.fau.de/qtproject/archive/vsaddin/${{env.QT_VS_ADDIN_VERSION}}/qt-vsaddin-msvc2019-${{env.QT_VS_ADDIN_VERSION}}.vsix -MaximumRetryCount 10 -RetryIntervalSec 30 -OutFile vspackage.vsix
+        Invoke-WebRequest -Uri https://ftp.fau.de/qtproject/archive/vsaddin/${{env.QT_VS_ADDIN_VERSION}}/qt-vsaddin-msvc2019-x86-${{env.QT_VS_ADDIN_VERSION}}.vsix -MaximumRetryCount 10 -RetryIntervalSec 30 -OutFile vspackage.vsix
         Expand-Archive vspackage.vsix -DestinationPath ${{github.workspace}}/ExternalLibraries/qtvsaddin
 
     - name: Cache ZLib
