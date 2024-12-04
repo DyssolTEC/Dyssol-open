@@ -10,7 +10,7 @@ on: [push]
 jobs:
   build:
     name: ${{ matrix.name }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         include:
@@ -73,7 +73,7 @@ jobs:
         
   docs:
     name: Docs
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build
     
     steps:
