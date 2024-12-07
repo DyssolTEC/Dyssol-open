@@ -9,26 +9,6 @@
 #include <set>
 #include <utility>
 
-template<>
-EUnitParameter DeduceTypeConst<double>() { return EUnitParameter::CONSTANT_DOUBLE; }
-
-template<>
-EUnitParameter DeduceTypeConst<int64_t>() { return EUnitParameter::CONSTANT_INT64; }
-
-template<>
-EUnitParameter DeduceTypeConst<uint64_t>() { return EUnitParameter::CONSTANT_UINT64; }
-
-///
-
-template<>
-EUnitParameter DeduceTypeList<double>() { return EUnitParameter::LIST_DOUBLE; }
-
-template<>
-EUnitParameter DeduceTypeList<int64_t>() { return EUnitParameter::LIST_INT64; }
-template<>
-EUnitParameter DeduceTypeList<uint64_t>() { return EUnitParameter::LIST_UINT64; }
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// CBaseUnitParameter
 

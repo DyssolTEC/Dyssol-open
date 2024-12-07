@@ -16,10 +16,30 @@
 #define UP_MAX  (std::numeric_limits<double>::max())
 
 template<typename T>
-constexpr EUnitParameter DeduceTypeConst();
+constexpr EUnitParameter DeduceTypeConst()
+{
+	if constexpr (std::is_same_v<T, double>)
+		return EUnitParameter::CONSTANT_DOUBLE;
+	else if constexpr (std::is_same_v<T, int64_t>)
+		return EUnitParameter::CONSTANT_INT64;
+	else if constexpr (std::is_same_v<T, uint64_t>)
+		return EUnitParameter::CONSTANT_UINT64;
+	else
+		return EUnitParameter::UNKNOWN;
+}
 
 template<typename T>
-constexpr EUnitParameter DeduceTypeList();
+constexpr EUnitParameter DeduceTypeList()
+{
+	if constexpr (std::is_same_v<T, double>)
+		return EUnitParameter::LIST_DOUBLE;
+	else if constexpr (std::is_same_v<T, int64_t>)
+		return EUnitParameter::LIST_INT64;
+	else if constexpr (std::is_same_v<T, uint64_t>)
+		return EUnitParameter::LIST_UINT64;
+	else
+		return EUnitParameter::UNKNOWN;
+}
 
 /**
  * \brief Base class for unit parameters.
