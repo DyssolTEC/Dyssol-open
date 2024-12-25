@@ -83,6 +83,8 @@ public:
 
 	// Returns the number of defined feeds.
 	size_t GetFeedsNumber() const;
+	// Returns the number of defined initial feeds.
+	[[nodiscard]] size_t GetFeedsInitNumber() const;
 	// Adds new feed, setups its structure (MD dimensions, phases, materials, etc.), and returns a pointer to it. If a feed with the given name already exists, does nothing, and returns nullptr.
 	CStream* AddFeed(const std::string& _name);
 	// Returns a feed with the specified name. If such feed does not exist, returns nullptr.
@@ -102,6 +104,8 @@ public:
 
 	// Returns the number of defined holdups.
 	size_t GetHoldupsNumber() const;
+	// Returns the number of defined initial holdups.
+	[[nodiscard]] size_t GetHoldupsInitNumber() const;
 	// Adds new holdup, setups its structure (MD dimensions, phases, materials, etc.), and returns a pointer to it. If a holdup with the given name already exists, does nothing, and returns nullptr.
 	CHoldup* AddHoldup(const std::string& _name);
 	// Returns a holdup with the specified name. If such holdup does not exist, returns nullptr.
@@ -246,5 +250,11 @@ private:
 
 	// Returns pointers to all feeds, streams and holdups.
 	std::vector<CBaseStream*> AllObjects();
+
+	/**
+	 * \brief Ensure that all initial holdups and feeds have at least one time point.
+	 * \details If no time point is defined, a time point 0 is forcefully added with default values of overall parameters.
+	 */
+	void InitializeInitStreams() const;
 };
 

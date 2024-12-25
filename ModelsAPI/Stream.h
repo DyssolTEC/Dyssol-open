@@ -117,6 +117,16 @@ public:
 	 */
 	double GetMassFlow(double _time) const;
 	/**
+	* \brief Returns the accumulated mass over time by linear integration.
+	* \details \f$\sum_{i = 2}^{T}{\frac{\dot{m}\left( t_{i} \right) + \dot{m}\left( t_{i - 1} \right)}{2}\left( t_{i} - t_{i - 1} \right)}\f$ with
+	* \f$\dot{m}\left( t \right)\f$ mass flow at time \f$t\f$,
+	* \f$T\f$ number of time points in the time interval.
+	* \param _timeBeg Begin of the time interval.
+	* \param _timeEnd End of the time interval.
+	* \return Mass.
+	*/
+	double GetAccumulatedMass(double _timeBeg, double _timeEnd) const;
+	/**
 	 * \brief Returns the molar flow of the material stream in [mol/s] at the given time point.
 	 * \details Uses function CBaseStream::GetMol(double) const.
 	 * \param _time Target time point.

@@ -483,7 +483,7 @@ void CH5Handler::OpenH5File(const std::filesystem::path& _sFileName, bool _bOpen
 	FileAccPropList h5AccPropList = CreateFileAccPropList(_bSingleFile);
 	try
 	{
-		m_ph5File = new H5File(_sFileName.string(), _bOpen ? H5F_ACC_RDONLY : H5F_ACC_TRUNC, H5P_DEFAULT, h5AccPropList);
+		m_ph5File = new H5File(_sFileName.string(), _bOpen ? H5F_ACC_RDONLY : H5F_ACC_TRUNC , H5P_DEFAULT, h5AccPropList);
 	}
 	catch (...)
 	{

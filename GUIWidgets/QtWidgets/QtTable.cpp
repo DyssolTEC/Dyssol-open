@@ -38,6 +38,13 @@ void CQtTable::EnableAddRowsOnPaste(bool _flag)
 	m_addRowsOnPaste = _flag;
 }
 
+bool CQtTable::EnableBlockOnPaste(bool _flag)
+{
+	const bool res = m_blockOnPaste;
+	m_blockOnPaste = _flag;
+	return res;
+}
+
 QString CQtTable::GetColHeaderItem(int _col) const
 {
 	if (const auto* itm = horizontalHeaderItem(_col))
@@ -114,18 +121,28 @@ QTableWidgetItem* CQtTable::SetRowHeaderItem(int _row, const std::wstring& _text
 	return verticalHeaderItem(_row);
 }
 
+void CQtTable::SetColHeaderItems(int _startcol, const std::string* const _text, size_t _size)
+{
+	for (int i = 0; i < static_cast<int>(_size); ++i)
+		if (_startcol + i < columnCount())
+			SetColHeaderItem(_startcol + i, _text[i]);
+}
+
 void CQtTable::SetColHeaderItems(int _startcol, const std::vector<std::string>& _text)
 {
-	for(int i = 0; i < static_cast<int>(_text.size()); ++i)
-		if(_startcol + i < columnCount())
-			SetColHeaderItem(_startcol + i, _text[i]);
+	SetColHeaderItems(_startcol, _text.data(), _text.size());
+}
+
+void CQtTable::SetRowHeaderItems(int _startrow, const std::string* const _text, size_t _size)
+{
+	for (int i = 0; i < static_cast<int>(_size); ++i)
+		if (_startrow + i < rowCount())
+			SetRowHeaderItem(_startrow + i, _text[i]);
 }
 
 void CQtTable::SetRowHeaderItems(int _startrow, const std::vector<std::string>& _text)
 {
-	for (int i = 0; i < static_cast<int>(_text.size()); ++i)
-		if (_startrow + i < rowCount())
-			SetRowHeaderItem(_startrow + i, _text[i]);
+	SetRowHeaderItems(_startrow, _text.data(), _text.size());
 }
 
 QString CQtTable::GetItemText(int _row, int _col) const
@@ -287,6 +304,18 @@ void CQtTable::SetItemsRowNotEditable(int _row, int _startcol, const std::vector
 			SetItemNotEditable(_row, _startcol + i, _val[i]);
 }
 
+void CQtTable::SetAllRowItemsNotEditable(int _row)
+{
+	for (int column = 0; column < QTableWidget::columnCount(); ++column)
+		SetItemNotEditable(_row, column);
+}
+
+void CQtTable::SetAllColItemsNotEditable(int _col)
+{
+	for (int row = 0; row < QTableWidget::rowCount(); ++row)
+		SetItemNotEditable(row, _col);
+}
+
 QTableWidgetItem* CQtTable::FindItem(const std::string& _userData) const
 {
 	if (!model()->index(0, 0).isValid()) return nullptr;
@@ -377,7 +406,7 @@ QComboBox* CQtTable::SetComboBox(const int _row, const int _col, const std::vect
 	for (size_t i = 0; i < _vNames.size(); ++i)
 		pComboBox->insertItem(pComboBox->count(), _vNames[i], i < _vData.size() ? _vData[i] : QVariant());
 	pComboBox->setCurrentIndex(_iSelected);
-	connect(pComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=] { ComboBoxIndexChanged(_row, _col, pComboBox); });
+	connect(pComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this, _row, _col, pComboBox] { ComboBoxIndexChanged(_row, _col, pComboBox); });
 	setCellWidget(_row, _col, pComboBox);
 	return pComboBox;
 }
@@ -414,6 +443,22 @@ QComboBox* CQtTable::SetComboBox(int _row, int _col, const std::vector<std::stri
 	return SetComboBox(_row, _col, names, data, iSelected);
 }
 
+QComboBox* CQtTable::SetComboBox(int _row, int _col, const std::vector<std::string>& _names, const std::vector<uint32_t>& _data, uint32_t _dataSelected)
+{
+	if (_names.size() != _data.size()) return nullptr;
+	std::vector<QString> names;
+	std::vector<QVariant> data;
+	int iSelected = -1;
+	for (int i = 0; i < static_cast<int>(_names.size()); ++i)
+	{
+		names.emplace_back(QString::fromStdString(_names[i]));
+		data.emplace_back(QVariant::fromValue(_data[i]));
+		if (_data[i] == _dataSelected)	// this one is selected
+			iSelected = i;
+	}
+	return SetComboBox(_row, _col, names, data, iSelected);
+}
+
 QComboBox* CQtTable::GetComboBox(int _row, int _col) const
 {
 	return dynamic_cast<QComboBox*>(cellWidget(_row, _col));
@@ -432,7 +477,7 @@ QPushButton* CQtTable::SetPushButton(int _row, int _col, const QString& _text)
 	button->setText(_text);
 	button->setAutoDefault(false);
 	button->setObjectName("PushButton");
-	connect(button, &QPushButton::clicked, this, [=] { PushButtonClicked(_row, _col, button); });
+	connect(button, &QPushButton::clicked, this, [this, _row, _col, button] { PushButtonClicked(_row, _col, button); });
 	setCellWidget(_row, _col, widget);
 	return button;
 }
@@ -454,7 +499,7 @@ QToolButton* CQtTable::SetToolButton(int _row, int _col, const QString& _text)
 	pWidget->setLayout(pLayout);
 	pToolButton->setText(_text);
 	pToolButton->setObjectName("ToolButton");
-	connect(pToolButton, &QToolButton::clicked, this, [=] { ToolButtonClicked(_row, _col, pToolButton); });
+	connect(pToolButton, &QToolButton::clicked, this, [this, _row, _col, pToolButton] { ToolButtonClicked(_row, _col, pToolButton); });
 	setCellWidget(_row, _col, pWidget);
 	return pToolButton;
 }
@@ -551,10 +596,15 @@ void CQtTable::SetCurrentCellPos(int _row, int _col)
 	setCurrentCell(std::clamp(_row, 0, rowCount() - 1), std::clamp(_col, 0, columnCount() - 1), QItemSelectionModel::SelectCurrent);
 }
 
-QString CQtTable::GetCurrentItemUserDataQStr() const
+QVariant CQtTable::GetCurrentItemUserData() const
 {
 	if (!currentItem()) return {};
-	return currentItem()->data(Qt::UserRole).toString();
+	return currentItem()->data(Qt::UserRole);
+}
+
+QString CQtTable::GetCurrentItemUserDataQStr() const
+{
+	return GetCurrentItemUserData().toString();
 }
 
 std::string CQtTable::GetCurrentItemUserDataStr() const
@@ -562,13 +612,18 @@ std::string CQtTable::GetCurrentItemUserDataStr() const
 	return GetCurrentItemUserDataQStr().toStdString();
 }
 
-QString CQtTable::GetItemUserDataQStr(int _row /*= -1*/, int _col /*= -1*/) const
+QVariant CQtTable::GetItemUserData(int _row, int _col) const
 {
 	const int row = _row == -1 ? currentRow() : _row;
 	const int col = _col == -1 ? currentColumn() : _col;
-	if(const QTableWidgetItem* pItem = item(row, col))
-		return pItem->data(Qt::UserRole).toString();
+	if (const QTableWidgetItem* pItem = item(row, col))
+		return pItem->data(Qt::UserRole);
 	return {};
+}
+
+QString CQtTable::GetItemUserDataQStr(int _row, int _col) const
+{
+	return GetItemUserData(_row, _col).toString();
 }
 
 std::string CQtTable::GetItemUserDataStr(int _row, int _col) const
@@ -641,21 +696,22 @@ void CQtTable::Clear()
 	emit cellChanged(indexes.back().row(), indexes.back().column());
 }
 
-void CQtTable::Copy()
+void CQtTable::Copy() const
 {
-	QModelIndexList indexes = this->selectionModel()->selection().indexes();
+	QModelIndexList indexes = selectionModel()->selection().indexes();
 	QString str;
-
 	for (int i = indexes.front().row(); i <= indexes.back().row(); ++i)
 	{
 		for (int j = indexes.front().column(); j <= indexes.back().column(); ++j)
 		{
-			if (this->item(i, j))
+			if (item(i, j))
 			{
-				str += this->item(i, j)->text();
+				str += item(i, j)->text();
 				if (j != indexes.back().column())
 					str += m_numberSeparator;
 			}
+			else
+				str += m_numberSeparator;
 		}
 		if (i != indexes.back().row())
 			str += "\n";
@@ -666,42 +722,45 @@ void CQtTable::Copy()
 void CQtTable::Paste()
 {
 	const QModelIndexList indexes = selectionModel()->selection().indexes();
-	const int iFirstRow = indexes.count() ? indexes.at(0).row()    : 0;
-	const int iFirstCol = indexes.count() ? indexes.at(0).column() : 0;
+	const int iTableRowBeg = indexes.count() ? indexes.at(0).row()    : 0; // the table row from which pasting begins
+	const int iTableColBeg = indexes.count() ? indexes.at(0).column() : 0; // the table column from which pasting begins
 
-	emit PasteInitiated(iFirstRow, iFirstCol);
+	emit PasteStarted(iTableRowBeg, iTableColBeg);
 	if (!m_pasteAllowed) return;
 
-	const bool oldBlock = blockSignals(true);
+	const bool oldBlock = blockSignals(m_blockOnPaste);
 	const auto data = ParseClipboardAsDoubles();
-	int rowMax = static_cast<int>(data.size());
+	const int dataRowCount = static_cast<int>(data.size()); // number of rows in the pasting data
 
 	if (!m_addRowsOnPaste)
 	{
-		if (rowMax > rowCount() - iFirstRow)
-			rowMax = rowCount() - iFirstRow;
-		for (int i = 0; i < rowMax; ++i)
+		int iDataRow = 0;  // current data row to take the value from
+		for (int iTableRow = iTableRowBeg; iTableRow < rowCount() && iDataRow < dataRowCount; ++iTableRow, ++iDataRow)
 		{
-			int colMax = static_cast<int>(data[i].size());
-			if (colMax > columnCount() - iFirstCol)
-				colMax = columnCount() - iFirstCol;
-			for (int j = 0; j < colMax; ++j)
-				if (item(i, j + iFirstCol) && item(i, j + iFirstCol)->flags().testFlag(Qt::ItemIsEditable))
-					item(i + iFirstRow, j + iFirstCol)->setText(QString::number(data[i][j]));
+			int iDataCol = 0; // current column row to take the value from
+			const int dataColCount = static_cast<int>(data[iDataRow].size()); // number of columns in the row of pasting data
+			for (int iTableCol = iTableColBeg; iTableCol < columnCount() && iDataCol < dataColCount; ++iTableCol, ++iDataCol)
+			{
+				const auto* it = item(iTableRow, iTableCol);
+				if (!it) continue;
+				const bool editable = it->flags().testFlag(Qt::ItemIsEditable);
+				if (!editable) continue;
+				SetItemEditable(iTableRow, iTableCol, data[iDataRow][iDataCol]);
+			}
 		}
 	}
 	else
 	{
 		// update the size of the table according to the pasted data
-		SetGeometry(rowMax + iFirstRow, columnCount());
+		SetGeometry(dataRowCount + iTableRowBeg, columnCount());
 		// paste data
-		for (int i = 0; i < rowMax; ++i)
+		for (int i = 0; i < dataRowCount; ++i)
 		{
 			int colMax = static_cast<int>(data[i].size());
-			if (colMax > columnCount() - iFirstCol)
-				colMax = columnCount() - iFirstCol;
+			if (colMax > columnCount() - iTableColBeg)
+				colMax = columnCount() - iTableColBeg;
 			for (int j = 0; j < colMax; ++j)
-				SetItemEditable(i + iFirstRow, j + iFirstCol, data[i][j]);
+				SetItemEditable(i + iTableRowBeg, j + iTableColBeg, data[i][j]);
 		}
 		// create empty items if necessary
 		for (int i = 0; i < rowCount(); ++i)
@@ -712,5 +771,15 @@ void CQtTable::Paste()
 
 	blockSignals(oldBlock);
 	emit DataPasted();
-	emit cellChanged(rowMax - 1 + iFirstRow, static_cast<int>(data[rowMax - 1].size()) - 1 + iFirstCol);
+	if (!data.empty())
+		emit PasteFinished(iTableRowBeg, iTableColBeg, dataRowCount - 1 + iTableRowBeg, static_cast<int>(data[dataRowCount - 1].size()) - 1 + iTableColBeg);
+	else
+		emit PasteFinished(iTableRowBeg, iTableColBeg, iTableRowBeg, iTableColBeg);
+	if (!oldBlock && m_blockOnPaste)
+	{
+		if (!data.empty())
+			emit cellChanged(dataRowCount - 1 + iTableRowBeg, static_cast<int>(data[dataRowCount - 1].size()) - 1 + iTableColBeg);
+		else
+			emit cellChanged(iTableRowBeg, iTableColBeg);
+	}
 }

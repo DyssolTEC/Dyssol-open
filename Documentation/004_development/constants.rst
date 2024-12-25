@@ -39,6 +39,9 @@ Dyssol constants
 .. doxygenenum:: EUnitPort
     :project: dyssol_models_api
 
+.. doxygenenum:: EUnitParameter
+    :project: dyssol_models_api
+
 .. doxygenenum:: EPhase
     :project: dyssol_models_api
 	

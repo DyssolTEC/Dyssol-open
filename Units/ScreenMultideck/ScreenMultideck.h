@@ -34,6 +34,7 @@ class CScreenMultideck : public CSteadyStateUnit
 	CTransformMatrix m_transformC;			// Transformation matrix for coarse.
 	CTransformMatrix m_transformF;			// Transformation matrix for fine.
 
+	size_t m_decksNumber{ 1 };				// Number of decks.
 	std::vector<SDeck> m_decks;				// Parameters for each deck.
 
 	size_t m_classesNum{};					// Number of classes for PSD

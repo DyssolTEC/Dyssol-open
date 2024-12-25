@@ -1,5 +1,7 @@
-# Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information.
+# Copyright (c) 2020, Dyssol Development Team. 
 # Copyright (c) 2021, Anton Gladky <Anton.Gladky@iart.tu-freiberg.de>, IART, Technical University Bergakademie Freiberg
+# Copyright (c) 2024, DyssolTEC GmbH. 
+# All rights reserved. This file is part of Dyssol. See LICENSE file for license information.
 
 # TODO: option to disable shared libs
 
@@ -222,6 +224,8 @@ IF(BUILD_DOCS)
     "ModelsAPI/Stream"
     "ModelsAPI/TransformMatrix"
     "ModelsAPI/UnitParameters"
+    "ModelsAPI/UnitParametersEnum"
+    "ModelsAPI/UnitParametersManager"
     "ModelsAPI/UnitPorts"
     "BaseSolvers/AgglomerationSolver"
     "BaseSolvers/BaseSolver"

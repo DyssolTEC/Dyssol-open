@@ -100,6 +100,11 @@ std::vector<CPoint> CCurve::GetPoints() const
 	return m_values;
 }
 
+void CCurve::RemovePoint(double _x)
+{
+	VectorDelete(m_values, [&](const CPoint& _p) { return _p.x == _x; });
+}
+
 void CCurve::ClearData()
 {
 	m_values.clear();

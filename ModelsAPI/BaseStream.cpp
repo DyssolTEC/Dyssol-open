@@ -206,6 +206,8 @@ void CBaseStream::RemoveAllTimePoints()
 
 void CBaseStream::ReduceTimePoints(double _timeBeg, double _timeEnd, double _step)
 {
+	if (_step <= 0) return;
+
 	std::vector<double> timePoints = GetTimePoints(_timeBeg, _timeEnd);
 	if (timePoints.size() <= 3) return;
 
@@ -258,6 +260,31 @@ double CBaseStream::GetPreviousTimePoint(double _time) const
 	auto pos = std::lower_bound(m_timePoints.begin(), m_timePoints.end(), _time);
 	if (pos == m_timePoints.begin()) return {};
 	return *--pos;
+}
+
+std::vector<EOverall> CBaseStream::GetAllOverallProperties() const
+{
+	auto res = ReservedVector<EOverall>(m_overall.size());
+	for (const auto& o : m_overall)
+		res.push_back(o.first);
+	return res;
+}
+
+std::string CBaseStream::GetOverallPropertyName(EOverall _property) const
+{
+	if (!HasOverallProperty(_property)) return {};
+	return m_overall.at(_property)->GetName();
+}
+
+std::string CBaseStream::GetOverallPropertyUnits(EOverall _property) const
+{
+	if (!HasOverallProperty(_property)) return {};
+	return m_overall.at(_property)->GetUnits();
+}
+
+bool CBaseStream::HasOverallProperty(EOverall _property) const
+{
+	return MapContainsKey(m_overall, _property);
 }
 
 CTimeDependentValue* CBaseStream::AddOverallProperty(EOverall _property, const std::string& _name, const std::string& _units)
@@ -1933,11 +1960,6 @@ bool CBaseStream::HasTime(double _time) const
 	const auto pos = std::lower_bound(m_timePoints.begin(), m_timePoints.end(), _time);
 	if (pos == m_timePoints.end()) return false;
 	return std::fabs(*pos - _time) <= m_epsilon;
-}
-
-bool CBaseStream::HasOverallProperty(EOverall _property) const
-{
-	return MapContainsKey(m_overall, _property);
 }
 
 bool CBaseStream::HasCompound(const std::string& _compoundKey) const

@@ -542,7 +542,7 @@ void CFlowsheet::RemoveOverallProperty(EOverall _property)
 	VectorDelete(m_overall, [&](const auto& o) { return o.type == _property; });
 }
 
-std::vector<SOverallDescriptor> CFlowsheet::GetOveralProperties() const
+std::vector<SOverallDescriptor> CFlowsheet::GetOverallProperties() const
 {
 	return m_overall;
 }
@@ -614,6 +614,22 @@ void CFlowsheet::SetPhases(const std::vector<SPhaseDescriptor>& _phases)
 std::vector<SPhaseDescriptor> CFlowsheet::GetPhases() const
 {
 	return m_phases;
+}
+
+std::vector<EPhase> CFlowsheet::GetPhaseTypes() const
+{
+	auto res = ReservedVector<EPhase>(m_phases);
+	for (const auto& p : m_phases)
+		res.push_back(p.state);
+	return res;
+}
+
+std::vector<std::string> CFlowsheet::GetPhaseNames() const
+{
+	auto res = ReservedVector<std::string>(m_phases);
+	for (const auto& p : m_phases)
+		res.push_back(p.name);
+	return res;
 }
 
 bool CFlowsheet::HasPhase(EPhase _phase)
@@ -692,6 +708,8 @@ std::string CFlowsheet::Initialize()
 				const auto& compounds = GetCompounds();
 				for (const auto& p : m_phases)
 				{
+					if (h->GetPhaseMass(t, p.state) == 0.0) // fractions are not important if the phase is empty
+						continue;
 					const double compSum = std::accumulate(compounds.begin(), compounds.end(), 0.0, [&](double a, const auto& c) { return a + h->GetCompoundFraction(t, c, p.state); });
 					if (std::fabs(compSum - 1.0) > 1e-10)
 						return StrConst::Flow_ErrCompoundFractions(unit->GetName(), h->GetName(), p.name, t);

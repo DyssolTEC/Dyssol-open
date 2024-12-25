@@ -1,8 +1,10 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2024, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
-#include "UnitParameters.h"
+#include "UnitParametersManager.h"
 #include "AgglomerationSolver.h"
 #include "PBMSolver.h"
 #include "PlotManager.h"
@@ -13,9 +15,9 @@
 #include <mutex>
 
 #ifdef _DEBUG
-#define DYSSOL_CREATE_MODEL_FUN CreateDYSSOLUnitV4_DEBUG
+#define DYSSOL_CREATE_MODEL_FUN CreateDYSSOLUnitV5_DEBUG
 #else
-#define DYSSOL_CREATE_MODEL_FUN CreateDYSSOLUnitV4
+#define DYSSOL_CREATE_MODEL_FUN CreateDYSSOLUnitV5
 #endif
 #define DYSSOL_CREATE_MODEL_FUN_NAME MACRO_TOSTRING(DYSSOL_CREATE_MODEL_FUN)
 
@@ -695,6 +697,24 @@ public:
 	 * \brief Groups the specified unit parameters.
 	 * \details Allows to hide some parameters depending on the selected value of a combobox unit parameter.
 	 * The parameter, its value and all the adding parameters must already exist. If something does not exist, logic_error exception is thrown.
+	 * \param _unitParamNameSelector Name of the target combobox unit parameter.
+	 * \param _unitParamSelectedValueName Selected value of the target combobox unit parameter.
+	 * \param _groupedParamNames Names of other unit parameters that will be shown if \p _unitParamSelectedValueName is selected.
+	 */
+	void AddParametersToGroup(const std::string& _unitParamNameSelector, const char* _unitParamSelectedValueName, const std::vector<std::string>& _groupedParamNames);
+	/**
+	 * \brief Groups the specified unit parameters.
+	 * \details Allows to hide some parameters depending on the selected value of a checkbox unit parameter.
+	 * The parameter, its value and all the adding parameters must already exist. If something does not exist, logic_error exception is thrown.
+	 * \param _unitParamNameSelector Name of the target checkbox unit parameter.
+	 * \param _unitParamSelectedValue Selected value of the target checkbox unit parameter.
+	 * \param _groupedParamNames Names of other unit parameters that will be shown if \p _unitParamSelectedValue is selected.
+	 */
+	void AddParametersToGroup(const std::string& _unitParamNameSelector, bool _unitParamSelectedValue, const std::vector<std::string>& _groupedParamNames);
+	/**
+	 * \brief Groups the specified unit parameters.
+	 * \details Allows to hide some parameters depending on the selected value of a combobox unit parameter.
+	 * The parameter, its value and all the adding parameters must already exist. If something does not exist, logic_error exception is thrown.
 	 * \param _selector Pointer to the target combobox unit parameter.
 	 * \param _selectedValue Selected value of the target combobox unit parameter.
 	 * \param _groupedParams Other unit parameters that will be shown if \p _selectedValue is selected.
@@ -710,6 +730,15 @@ public:
 	 */
 	template <typename T, typename = std::enable_if_t<std::is_enum_v<T>>>
 	void AddParametersToGroup(const CComboUnitParameter* _selector, T _selectedValue, const std::vector<CBaseUnitParameter*>& _groupedParams);
+	/**
+	 * \brief Groups the specified unit parameters.
+	 * \details Allows to hide some parameters depending on the selected value of a checkbox unit parameter.
+	 * The parameter, its value and all the adding parameters must already exist. If something does not exist, logic_error exception is thrown.
+	 * \param _selector Pointer to the target checkbox unit parameter.
+	 * \param _selectedValue Selected value of the target checkbox unit parameter.
+	 * \param _groupedParams Other unit parameters that will be shown if \p _selectedValue is selected.
+	 */
+	void AddParametersToGroup(const CCheckBoxUnitParameter* _selector, bool _selectedValue, const std::vector<CBaseUnitParameter*>& _groupedParams);
 
 	/**
 	 * \brief Returns value of the real constant unit parameter.
@@ -1152,7 +1181,15 @@ public:
 	 * \return Sorted vector of time points.
 	 */
 	std::vector<double> GetStreamsTimePointsClosed(double _timeBeg, double _timeEnd, const std::vector<CStream*>& _streams) const;
-
+	/**
+	* \brief Returns all time points in the time interval at which holdups and streams are defined.
+	* \param _timeBeg Begin of the time interval.
+	* \param _timeEnd End of the time interval.
+	* \param _holdups List of holdups.
+	* \param _streams List of streams.
+	* \return Sorted vector of time points.
+	*/
+	std::vector<double> GetTimePoints(double _timeBeg, double _timeEnd, const std::vector<CHoldup*>& _holdups, const std::vector<CStream*>& _streams) const;
 	/**
 	 * \private
 	 * \brief Removes time points within the specified interval [timeBeg; timeEnd) that are closer together than the step.
@@ -1252,6 +1289,11 @@ public:
 	// Overall properties
 	//
 
+	/**
+	 * \brief Returns keys of all overall properties.
+	 * \return Keys of all active overall properties.
+	 */
+	std::vector<EOverall> GetAllOverallProperties() const;
 	/**
 	 * \private
 	 * Adds new overall property to all feeds, holdups and streams in the unit, if it does not exist yet.

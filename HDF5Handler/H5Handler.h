@@ -27,7 +27,7 @@ public:
 	~CH5Handler();
 
 	void Create(const std::filesystem::path& _sFileName, bool _bSingleFile = true);	/// Create new file with truncation.
-	void Open(const std::filesystem::path& _sFileName);								/// Open existing file.
+	void Open(const std::filesystem::path& _sFileName);		/// Open existing file.
 	void Close();																	/// Close current file.
 	std::filesystem::path FileName() const;											/// Returns current file name.
 

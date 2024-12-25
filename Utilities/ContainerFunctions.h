@@ -26,9 +26,16 @@ bool VectorContainsSorted(const std::vector<T>& _vec, T _value)
 
 // Checks whether the vector contains a specified element.
 template<typename T, typename FUN>
+bool VectorContains(const T& begin, const T& end, const FUN& _fun)
+{
+	return std::find_if(begin, end, _fun) != end;
+}
+
+// Checks whether the vector contains a specified element.
+template<typename T, typename FUN>
 bool VectorContains(const std::vector<T>& _vec, const FUN& _fun)
 {
-	return std::find_if(_vec.begin(), _vec.end(), _fun) != _vec.end();
+	return VectorContains(_vec.begin(), _vec.end(), _fun);
 }
 
 // Returns index of a specified element or -1 if it does not exist.
@@ -279,11 +286,26 @@ std::vector<T> VectorsUnionUnsorted(const std::vector<T>& _v1, const std::vector
 	return res;
 }
 
-// Returns a vector with reserved size.
+// Returns a vector with the reserved size.
 template<typename T> std::vector<T> ReservedVector(size_t _size)
 {
 	std::vector<T> res;
 	res.reserve(_size);
+	return res;
+}
+
+/**
+ * \brief Returns a vector with the reserved size.
+ * \detail The reserved size is set to the size of the input vector.
+ * \tparam Tout Type of the return vector value.
+ * \tparam Tin Type of the input vector value.
+ * \param _vec Input vector.
+ * \return Vector with the reserved size.
+ */
+template<typename Tout, typename Tin> std::vector<Tout> ReservedVector(const std::vector<Tin>& _vec)
+{
+	std::vector<Tout> res;
+	res.reserve(_vec.size());
 	return res;
 }
 

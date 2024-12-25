@@ -145,8 +145,8 @@ void CBasicStreamsViewer::SetupComboBoxDims(QComboBox* _combo, int _defaultPos) 
 	{
 		const EDistrTypes type = gridDim->DimensionType();
 		const int iType = GetDistributionTypeIndex(type);
-		if (iType < DISTRIBUTIONS_NUMBER && gridDim->GridType() == EGridEntry::GRID_NUMERIC)
-			_combo->addItem(std::vector<QString>{ DISTR_NAMES }[iType], E2I(std::vector<EDistrTypes>{ DISTR_TYPES }[iType]));
+		if (iType < std::size(DISTR_TYPES) && gridDim->GridType() == EGridEntry::GRID_NUMERIC)
+			_combo->addItem(DISTR_NAMES[iType], E2I(DISTR_TYPES[iType]));
 	}
 
 	block.unblock();
@@ -536,7 +536,7 @@ QString CBasicStreamsViewer::DistrSymbolicName(EDistrTypes _distr) const
 		case EPSDGridType::DIAMETER:	return StrConst::BSV_HeaderDiameter + QString{ " " } + StrConst::FUN_DiameterUnits;
 		case EPSDGridType::VOLUME:		return StrConst::BSV_HeaderVolume + QString{ " " } + StrConst::FUN_VolumeUnits;
 		}
-	return QStringList{ DISTR_NAMES }[GetDistributionTypeIndex(_distr)] + QString{ " " } + StrConst::FUN_EmptyUnits;
+	return DISTR_NAMES[GetDistributionTypeIndex(_distr)] + QString{ " " } + StrConst::FUN_EmptyUnits;
 }
 
 void CBasicStreamsViewer::SetMTPToTable(int _type)

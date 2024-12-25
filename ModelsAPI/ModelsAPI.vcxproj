@@ -76,6 +76,7 @@
     <ClCompile Include="TDArray.cpp" />
     <ClCompile Include="TransformMatrix.cpp" />
     <ClCompile Include="UnitParameters.cpp" />
+    <ClCompile Include="UnitParametersManager.cpp" />
     <ClCompile Include="UnitPorts.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -104,7 +105,9 @@
     <ClInclude Include="TimeDependentValue.h" />
     <ClInclude Include="TransformMatrix.h" />
     <ClInclude Include="UnitDevelopmentDefines.h" />
+    <ClInclude Include="UnitParametersEnum.h" />
     <ClInclude Include="UnitParameters.h" />
+    <ClInclude Include="UnitParametersManager.h" />
     <ClInclude Include="UnitPorts.h" />
   </ItemGroup>
   <ItemGroup>

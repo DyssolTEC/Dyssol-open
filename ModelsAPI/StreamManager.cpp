@@ -124,6 +124,11 @@ size_t CStreamManager::GetFeedsNumber() const
 	return m_feedsWork.size();
 }
 
+size_t CStreamManager::GetFeedsInitNumber() const
+{
+	return m_feedsInit.size();
+}
+
 CStream* CStreamManager::AddFeed(const std::string& _name)
 {
 	if (GetFeed(_name)) return nullptr; // already exists
@@ -174,6 +179,11 @@ size_t CStreamManager::GetHoldupsNumber() const
 	return m_holdupsWork.size();
 }
 
+size_t CStreamManager::GetHoldupsInitNumber() const
+{
+	return m_holdupsInit.size();
+}
+
 CHoldup* CStreamManager::AddHoldup(const std::string& _name)
 {
 	if (GetHoldup(_name)) return nullptr; // already exists
@@ -181,6 +191,10 @@ CHoldup* CStreamManager::AddHoldup(const std::string& _name)
 	m_holdupsInit.emplace_back(CreateObject<CHoldup>(key, _name));
 	m_holdupsWork.emplace_back(CreateObject<CHoldup>(key, _name));
 	m_holdupsStored.emplace_back(CreateObject<CHoldup>(key, _name));
+
+	// ensure init holdups and feeds have at least one time point
+	InitializeInitStreams();
+
 	return m_holdupsWork.back().get();
 }
 
@@ -505,6 +519,9 @@ void CStreamManager::LoadFromFile(const CH5Handler& _h5File, const std::string& 
 	for (size_t i = 0; i < m_streamsStored.size(); ++i)
 		m_streamsStored[i]->SetupStructure(m_streamsWork[i].get());
 
+	// ensure init holdups and feeds have at least one time point
+	InitializeInitStreams();
+
 	// store number of variable objects
 	m_nVarHoldups = m_holdupsWork.size() - m_nFixHoldups;
 	m_nVarStreams = m_streamsWork.size() - m_nFixStreams;
@@ -581,6 +598,9 @@ void CStreamManager::LoadFromFile_v0(const CH5Handler& _h5File, const std::strin
 	for (size_t i = 0; i < m_streamsStored.size(); ++i)
 		m_streamsStored[i]->SetupStructure(m_streamsWork[i].get());
 
+	// ensure init holdups and feeds have at least one time point
+	InitializeInitStreams();
+
 	// store number of variable objects
 	m_nVarHoldups = m_holdupsWork.size() - m_nFixHoldups;
 	m_nVarStreams = m_streamsWork.size() - m_nFixStreams;
@@ -619,6 +639,9 @@ void CStreamManager::LoadFromFile_v00(const CH5Handler& _h5File, const std::stri
 		m_holdupsStored[i]->SetupStructure(m_holdupsWork[i].get());
 	for (size_t i = 0; i < m_streamsStored.size(); ++i)
 		m_streamsStored[i]->SetupStructure(m_streamsWork[i].get());
+
+	// ensure init holdups and feeds have at least one time point
+	InitializeInitStreams();
 
 	// store number of variable objects
 	m_nVarHoldups = m_holdupsWork.size() - m_nFixHoldups;
@@ -765,4 +788,25 @@ std::vector<CBaseStream*> CStreamManager::AllObjects()
 		for (auto& holdup : *holdups)
 			res.push_back(holdup.get());
 	return res;
+}
+
+void CStreamManager::InitializeInitStreams() const
+{
+	const auto CheckAndInit = [](CBaseStream* _stream)
+	{
+		if (_stream->GetAllTimePoints().empty())
+		{
+			_stream->AddTimePoint(0.0);
+			for (const auto& o : _stream->GetAllOverallProperties())
+			{
+				if (o == EOverall::OVERALL_TEMPERATURE)
+					_stream->SetOverallProperty(0.0, o, STANDARD_CONDITION_T);
+				else if (o == EOverall::OVERALL_PRESSURE)
+					_stream->SetOverallProperty(0.0, o, STANDARD_CONDITION_P);
+			}
+		}
+	};
+
+	for (const auto& h : m_holdupsInit)	CheckAndInit(h.get());
+	for (const auto& f : m_feedsInit)	CheckAndInit(f.get());
 }

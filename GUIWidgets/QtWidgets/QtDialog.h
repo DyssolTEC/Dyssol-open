@@ -7,8 +7,8 @@
 #include <QDialog>
 #include <QSettings>
 
-class QLabel;
 class CFlowsheet;
+class QLabel;
 class QLineEdit;
 class QTableWidgetItem;
 

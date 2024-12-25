@@ -104,6 +104,12 @@ public:
 	std::vector<CPoint> GetPoints() const;
 
 	/**
+	 * \brief Removes an existing point from the curve.
+	 * \details If the point does not exist, does nothing.
+	 * \param _x X-value of the point.
+	 */
+	void RemovePoint(double _x);
+	/**
 	 * \brief Removes all defined points from the curve.
 	 */
 	void ClearData();

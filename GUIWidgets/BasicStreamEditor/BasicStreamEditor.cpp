@@ -204,7 +204,7 @@ void CBasicStreamEditor::UpdateStreamMTPTab()
 	{
 		m_bAvoidSignal = true;
 		std::vector<CTimeDependentValue*> values;
-		for (const auto& overall : m_pFlowsheet->GetOveralProperties())
+		for (const auto& overall : m_pFlowsheet->GetOverallProperties())
 			values.push_back(m_pSelectedHoldup->GetOverallProperty(overall.type));
 		m_pDDTableMTP->SetDistribution(values);
 		m_bAvoidSignal = false;

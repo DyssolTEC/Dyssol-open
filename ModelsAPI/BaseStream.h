@@ -329,6 +329,34 @@ public:
 
 	/**
 	 * \private
+	 * \brief Returns all defined overall properties.
+	 * \return List of all defined overall properties.
+	 */
+	std::vector<EOverall> GetAllOverallProperties() const;
+	/**
+	 * \private
+	 * \brief Returns the name of the overall property.
+	 * \param _property Type of the overall property.
+	 * \return Name of the overall property.
+	 */
+	std::string GetOverallPropertyName(EOverall _property) const;
+	/**
+	 * \private
+	 * \brief Returns the measurement units of the overall property.
+	 * \param _property Type of the overall property.
+	 * \return Measurement units of the overall property.
+	 */
+	std::string GetOverallPropertyUnits(EOverall _property) const;
+	/**
+	 * \private
+	 * \brief Checks whether the specified overall property is defined in the stream.
+	 * \param _property Identifier of time-dependent overall parameter.
+	 * \return Whether the specified overall property is defined in the stream.
+	 */
+	bool HasOverallProperty(EOverall _property) const;
+
+	/**
+	 * \private
 	 * \brief Adds new overall property to the stream.
 	 * \details If the property already exists, returns a pointer to it.
 	 * \param _property Identifier of time-dependent overall property.
@@ -567,7 +595,7 @@ public:
 	void SetCompoundsFractions(double _time, EPhase _phase, const std::vector<double>& _value);
 	/**
 	 * \brief Sets the mass of the specified compound in the specified phase at the given time point.
-	 * \details Total mass of the stream is correspondingly adjusted, masses of other compounds and phases remain the same.
+	 * \details Total mass of the stream and of the phase are correspondingly adjusted, masses of other compounds and phases remain the same.
 	 * \param _time Target time point.
 	 * \param _compoundKey Unique key of the compound.
 	 * \param _phase Phase type identifier.
@@ -1479,14 +1507,6 @@ private:
 	 * \return Whether the given time point exists.
 	 */
 	bool HasTime(double _time) const;
-
-	/**
-	 * \private
-	 * \brief Checks whether the specified overall property is defined in the stream.
-	 * \param _property Identifier of time-dependent overall parameter.
-	 * \return Whether the specified overall property is defined in the stream.
-	 */
-	bool HasOverallProperty(EOverall _property) const;
 
 	/**
 	 * \private

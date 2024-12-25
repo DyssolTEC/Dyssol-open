@@ -68,7 +68,7 @@ void CFlowsheetEditor::InitializeConnections()
 	connect(ui.buttonAddListValue,		&QPushButton::clicked,				this, &CFlowsheetEditor::AddUnitParamListItem);
 	connect(ui.buttonRemoveListValue,	&QPushButton::clicked,				this, &CFlowsheetEditor::DeleteUnitParamListItem);
 	connect(ui.tableListValues,			&QTableWidget::itemChanged,			this, &CFlowsheetEditor::ListValueChanged);
-	connect(ui.tableListValues,			&CQtTable::PasteInitiated,			this, &CFlowsheetEditor::PasteParamTable);
+	connect(ui.tableListValues,			&CQtTable::PasteStarted,			this, &CFlowsheetEditor::PasteParamTable);
 
 
 	connect(ui.tableUnitParams,		&QTableWidget::itemSelectionChanged,	this, &CFlowsheetEditor::NewUnitParameterSelected);
@@ -531,6 +531,9 @@ void CFlowsheetEditor::UnitParamValueChanged(int _row, int _col)
 	case EUnitParameter::UNKNOWN:
 		break;
 	}
+
+	// TODO: check that this update is necessary, e.g. add some flag to all UPs that should cause an update here
+	//m_pSelectedModel->GetModel()->DoCreateStructure();
 
 	UpdateUnitParamTable();
 	UpdateListValuesTable();

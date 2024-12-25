@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2024, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -201,7 +203,7 @@ public:
 	// Remove an overall property with the specified type from the flowsheet.
 	void RemoveOverallProperty(EOverall _property);
 	// Returns descriptors of all defined overall properties.
-	std::vector<SOverallDescriptor> GetOveralProperties() const;
+	std::vector<SOverallDescriptor> GetOverallProperties() const;
 	// Checks whether the specified overall property is defined.
 	bool HasOverallProperty(EOverall _property) const;
 
@@ -218,7 +220,11 @@ public:
 	// Sets new set of phases.
 	void SetPhases(const std::vector<SPhaseDescriptor>& _phases);
 	// Returns descriptors of all defined phases.
-	std::vector<SPhaseDescriptor> GetPhases() const;
+	[[nodiscard]] std::vector<SPhaseDescriptor> GetPhases() const;
+	// Returns types of all defined phases.
+	[[nodiscard]] std::vector<EPhase> GetPhaseTypes() const;
+	// Returns names of all defined phases.
+	[[nodiscard]] std::vector<std::string> GetPhaseNames() const;
 	// Checks if a phase of the specified type exists in the flowsheet.
 	bool HasPhase(EPhase _phase);
 
