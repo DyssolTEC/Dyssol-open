@@ -1,34 +1,39 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2024, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
 #include "NLModel.h"
+#include <string>
+#include "DisableWarningHelper.h"
+PRAGMA_WARNING_PUSH
+PRAGMA_WARNING_DISABLE
+#include <nvector/nvector_serial.h>
+#if SUNDIALS_VERSION_MAJOR > 2
 #include <sundials/sundials_matrix.h>
 #include <sundials/sundials_linearsolver.h>
-#include <string>
+#endif
+PRAGMA_WARNING_POP
 
-#define ZERO RCONST(0.0)
-
-/** Solver of differential algebraic equations. Uses IDA solver from SUNDIALS package*/
+/**
+ * Solver of differential algebraic equations. Uses IDA solver from SUNDIALS package.
+ */
 class CNLSolver
 {
-#if SUNDIALS_VERSION_MAJOR <= 6
-	using sun_real = realtype;
-#else
-	using sun_real = sunrealtype;
-#endif
-
 private:
 	CNLModel* m_pModel;					///< Pointer to a DAE model
 	void* m_pKINmem;					///< KIN memory
+#if SUNDIALS_VERSION_MAJOR > 2
 	SUNMatrix m_A{};					///< Matrix.
 	SUNLinearSolver m_LS{};				///< Linear solver.
+#endif
 
 	N_Vector m_vectorVars;				///< Vector of variables
 	N_Vector m_vectorUScales;			///< Vector of uscales
 	N_Vector m_vectorFScales;			///< Vector of fscales
 
-	std::string m_sErrorDescription;	///< Text description of the last occurred error
+	std::string m_errorMessage;	        ///< Text description of the last occurred error
 
 	// Variables for storing
 	N_Vector m_StoreVectorVars;			///< Memory for storing of vector of variables
@@ -48,8 +53,7 @@ private:
 	double m_dDampingAA;				///< Anderson Acceleration damping parameter between 0 and 1
 	double m_dDamping{};				///< Damping parameter between 0 and 1
 
-#if SUNDIALS_VERSION_MAJOR < 6
-#else
+#if SUNDIALS_VERSION_MAJOR >= 6
 	SUNContext m_sunctx{};              ///< SUNDIALS simulation context.
 #endif
 
@@ -92,7 +96,7 @@ public:
 	/** Solve problem on a given time point.
 	 *	\param _dTime Time point
 	 *	\retval true No errors occurred*/
-	bool Calculate(sun_real _dTime);
+	bool Calculate(double _dTime);
 
 	/** Save current state of solver. Should be called during saving of unit.*/
 	void SaveState();
@@ -118,13 +122,15 @@ private:
 	 *	\param _src Pointer to the memory location to copy from*/
 	void CopyNVector(N_Vector _dst, N_Vector _src);
 
+#if SUNDIALS_VERSION_MAJOR < 7
 	/** Function to handle errors.
-	 *	\param _nErrorCode Error code
-	 *	\param _pModule Name of the ida module reporting the error.
-	 *	\param _pFunction Name of the function in which the error occurred
-	 *	\param _pMsg The error message
-	 *	\param _sOutString Pointer to a string to put error message*/
-	static void ErrorHandler(int _nErrorCode, const char *_pModule, const char *_pFunction, char *_pMsg, void *_sOutString);
+	 *	\param _errorCode Error code
+	 *	\param _module Name of the ida module reporting the error.
+	 *	\param _function Name of the function in which the error occurred
+	 *	\param _message The error message
+	 *	\param _outString Pointer to a string to put error message*/
+	static void ErrorHandler(int _errorCode, const char* _module, const char* _function, char* _message, void* _outString);
+#else
 	/**
 	 * \brief A callback function called by the solver to handle internal errors.
 	 * \details A version for SUNDIALS 7+.
@@ -137,6 +143,25 @@ private:
 	 * \param _sunctx Pointer to a valid SUNContext object.
 	 */
 	static void ErrorHandler(int _line, const char* _function, const char* _file, const char* _message, SUNErrCode _errCode, void* _outString, SUNContext _sunctx);
+#endif
+	/** Builds an error message from its parts.
+	*	\param _module Name of the module reporting the error
+	*	\param _function Name of the function in which the error occurred
+	*	\param _message The error message
+	*	\return Built error message*/
+	static std::string BuildErrorMessage(const std::string& _module, const std::string& _function, const std::string& _message);
+	/** Appends an error message to the given output string.
+	*	\param _module Name of the module reporting the error
+	*	\param _function Name of the function in which the error occurred
+	*	\param _message The error message
+	*	\param _out Output string */
+	static void AppendMessage(const std::string& _module, const std::string& _function, const std::string& _message, std::string& _out);
+	/** Appends an error message to the current error description.
+	*	\param _module Name of the module reporting the error
+	*	\param _function Name of the function in which the error occurred
+	*	\param _message The error message
+	*	\return false */
+	bool WriteError(const std::string& _module, const std::string& _function, const std::string& _message);
 
 public:
 	// ========== Functions to work with solver settings
