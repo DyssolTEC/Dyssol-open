@@ -328,7 +328,6 @@ public:
 	//
 
 	/**
-	 * \private
 	 * \brief Returns all defined overall properties.
 	 * \return List of all defined overall properties.
 	 */
@@ -498,6 +497,11 @@ public:
 	 * \return List of all defined compounds.
 	 */
 	std::vector<std::string> GetAllCompounds() const;
+	/**
+	 * \brief Returns the number of defined compounds.
+	 * \return Number of defined compounds.
+	 */
+	[[nodiscard]] size_t GetCompoundsNumber() const;
 
 	/**
 	 * \brief Returns the mass fraction of the compound in the total mixture at the given time point.
@@ -686,6 +690,16 @@ public:
 	 * \brief Removes all defined phases.
 	 */
 	void ClearPhases();
+	/**
+	 * \brief Returns all defined phases.
+	 * \return List of all defined phases.
+	 */
+	std::vector<EPhase> GetAllPhases() const;
+	/**
+	 * \brief Returns the number of defined phases.
+	 * \return Number of defined phases.
+	 */
+	[[nodiscard]] size_t GetPhasesNumber() const;
 
 	/**
 	 * \brief Returns the mass fraction of the specified phase at the given time point.
@@ -982,6 +996,12 @@ public:
 	////////////////////////////////////////////////////////////////////////////////
 	// Distributed properties of the solid phase
 	//
+
+	/**
+	 * \brief Returns the number of defined distributed parameters of the solid phase.
+	 * \return Number of defined distributed parameters of the solid phase.
+	 */
+	[[nodiscard]] size_t GetDistributionsNumber() const;
 
 	/**
 	 * \brief Returns mass fraction of the solid material at the specified multidimensional coordinates given for all defined dimensions.
@@ -1618,11 +1638,6 @@ public:
 	/**
 	 * \private
 	 */
-	[[deprecated("WARNING! GetCompoundsNumber() is deprecated. Use a unit-level version CBaseUnit::GetCompoundsNumber() instead.")]]
-	size_t GetCompoundsNumber() const;
-	/**
-	 * \private
-	 */
 	[[deprecated("WARNING! GetCompoundPhaseFraction(double, const std::string&, EPhaseTypes) is deprecated. Use GetCompoundFraction(double, const std::string&, EPhase) or GetCompoundsFractions(_time, EPhase) instead.")]]
 	double GetCompoundPhaseFraction(double _time, const std::string& _compoundKey, unsigned _soa) const;
 	/**
@@ -1655,11 +1670,6 @@ public:
 	 */
 	[[deprecated("WARNING! GetPhaseIndex(EPhaseTypes) is deprecated. Access phases by their type.")]]
 	unsigned GetPhaseIndex(unsigned _soa) const;
-	/**
-	 * \private
-	 */
-	[[deprecated("WARNING! GetPhasesNumber() is deprecated. Use a unit-level version CBaseUnit::GetPhasesNumber() instead.")]]
-	size_t GetPhasesNumber() const;
 	/**
 	 * \private
 	 */
