@@ -68,21 +68,7 @@ Also, other versions of Microsoft Visual Studio can be used, but additional prep
 
 ### Build on Linux
 
-#### Ubuntu 20/22 
-```sh
-cd /path_to_repo
-sudo add-apt-repository ppa:gladky-anton/sundials
-sudo apt install build-essential cmake libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev doxygen python3-sphinx python3-sphinx-rtd-theme python3-breathe texlive-latex-extra
-mkdir install
-mkdir build
-cd build
-cmake .. -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install
-cmake --build . --parallel
-make doc
-make install
-```
-
-#### Debian 12 
+#### Ubuntu 20/22/24, Debian 11/12/13
 ```sh
 cd /path_to_repo
 sudo apt install build-essential cmake libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev doxygen python3-sphinx python3-sphinx-rtd-theme python3-breathe texlive-latex-extra

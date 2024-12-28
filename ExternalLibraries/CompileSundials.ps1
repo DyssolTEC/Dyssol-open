@@ -15,7 +15,7 @@ if (-not (Get-Command Expand-7Zip -ErrorAction Ignore)) {
 ### Paths
 
 $SUNDIALS_MAJOR_VERSION    = "7"
-$SUNDIALS_MIDDLE_VERSION   = "1"
+$SUNDIALS_MIDDLE_VERSION   = "2"
 $SUNDIALS_MINOR_VERSION    = "1"
 $SUNDIALS_VERSION          = "$SUNDIALS_MAJOR_VERSION.$SUNDIALS_MIDDLE_VERSION.$SUNDIALS_MINOR_VERSION"
 $SUNDIALS_DOWNLOAD_ADDRESS = "https://github.com/LLNL/sundials/releases/download/v$SUNDIALS_VERSION/sundials-$SUNDIALS_VERSION.tar.gz"
@@ -69,29 +69,6 @@ cmake --build . --parallel --target INSTALL --config Release
 ################################################################################
 ### Copy additional files
 
-# Copy header files
-if ([int]$SUNDIALS_MAJOR_VERSION -le 3) {
-	Copy-Item "$SUNDIALS_SRC_PATH\src\ida\ida_impl.h"                   "$SUNDIALS_INSTALL_PATH\include\ida\ida_impl.h"
-}
-elseif ([int]$SUNDIALS_MAJOR_VERSION -le 5) {
-	Copy-Item "$SUNDIALS_SRC_PATH\src\ida\ida_impl.h"                   "$SUNDIALS_INSTALL_PATH\include\ida\ida_impl.h"
-	Copy-Item "$SUNDIALS_SRC_PATH\src\ida\ida_ls_impl.h"                "$SUNDIALS_INSTALL_PATH\include\ida\ida_ls_impl.h"
-}
-elseif ([int]$SUNDIALS_MAJOR_VERSION -eq 6) {
-	Copy-Item "$SUNDIALS_SRC_PATH\src\ida\ida_impl.h"                   "$SUNDIALS_INSTALL_PATH\include\ida\ida_impl.h"
-	Copy-Item "$SUNDIALS_SRC_PATH\src\ida\ida_ls_impl.h"                "$SUNDIALS_INSTALL_PATH\include\ida\ida_ls_impl.h"
-	Copy-Item "$SUNDIALS_SRC_PATH\src\sundials\sundials_context_impl.h" "$SUNDIALS_INSTALL_PATH\include\sundials_context_impl.h"
-	Copy-Item "$SUNDIALS_SRC_PATH\src\sundials\sundials_hashmap.h"      "$SUNDIALS_INSTALL_PATH\include\sundials_hashmap.h"
-	Copy-Item "$SUNDIALS_SRC_PATH\src\sundials\sundials_logger_impl.h"  "$SUNDIALS_INSTALL_PATH\include\sundials_logger_impl.h"
-}
-elseif ([int]$SUNDIALS_MAJOR_VERSION -ge 7) {
-	Copy-Item "$SUNDIALS_SRC_PATH\src\ida\ida_impl.h"                   "$SUNDIALS_INSTALL_PATH\include\ida\ida_impl.h"
-	Copy-Item "$SUNDIALS_SRC_PATH\src\sundials\sundials_hashmap_impl.h" "$SUNDIALS_INSTALL_PATH\include\sundials_hashmap_impl.h"
-	Copy-Item "$SUNDIALS_SRC_PATH\src\sundials\sundials_logger_impl.h"  "$SUNDIALS_INSTALL_PATH\include\sundials_logger_impl.h"
-	Copy-Item "$SUNDIALS_SRC_PATH\src\sundials\sundials_macros.h"       "$SUNDIALS_INSTALL_PATH\include\sundials_macros.h"
-	Copy-Item "$SUNDIALS_SRC_PATH\src\sundials\sundials_utils.h"        "$SUNDIALS_INSTALL_PATH\include\sundials_utils.h"
-}
-
 # Copy *.pdb files
 if ([int]$SUNDIALS_MAJOR_VERSION -le 4) {
 	Copy-Item "$SUNDIALS_BUILD_PATH\src\ida\Debug\*.pdb"    "$SUNDIALS_INSTALL_PATH\lib\"
@@ -112,9 +89,9 @@ elseif ([int]$SUNDIALS_MAJOR_VERSION -ge 7) {
 	Copy-Item "$SUNDIALS_BUILD_PATH\src\kinsol\sundials_kinsol_obj_static.dir\Debug\*.pdb"                          "$SUNDIALS_INSTALL_PATH\lib\"
 	Copy-Item "$SUNDIALS_BUILD_PATH\src\nvector\serial\sundials_nvecserial_obj_static.dir\Debug\*.pdb"              "$SUNDIALS_INSTALL_PATH\lib\"
 	Copy-Item "$SUNDIALS_BUILD_PATH\src\sundials\sundials_core_obj_static.dir\Debug\*.pdb"                          "$SUNDIALS_INSTALL_PATH\lib\"
-	Copy-Item "$SUNDIALS_BUILD_PATH\src\sundials\sundials_generic_obj_static.dir\Debug\*.pdb"                       "$SUNDIALS_INSTALL_PATH\lib\"
 	Copy-Item "$SUNDIALS_BUILD_PATH\src\sunlinsol\dense\sundials_sunlinsoldense_obj_static.dir\Debug\*.pdb"         "$SUNDIALS_INSTALL_PATH\lib\"
 	Copy-Item "$SUNDIALS_BUILD_PATH\src\sunmatrix\band\sundials_sunmatrixband_obj_static.dir\Debug\*.pdb"           "$SUNDIALS_INSTALL_PATH\lib\"
+	Copy-Item "$SUNDIALS_BUILD_PATH\src\sunmatrix\dense\sundials_sunmatrixdense_obj_static.dir\Debug\*.pdb"         "$SUNDIALS_INSTALL_PATH\lib\"
 	Copy-Item "$SUNDIALS_BUILD_PATH\src\sunnonlinsol\newton\sundials_sunnonlinsolnewton_obj_static.dir\Debug\*.pdb" "$SUNDIALS_INSTALL_PATH\lib\"
 }
 

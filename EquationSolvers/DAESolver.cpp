@@ -3,10 +3,16 @@
  * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "DAESolver.h"
-#include <cstring>
+#include "DyssolHelperDefines.h"
+#ifndef SUNDIALS_VERSION_MAJOR
+#define SUNDIALS_VERSION_MAJOR 2
+#define SUNDIALS_VERSION_MINOR 7
+#define SUNDIALS_VERSION_PATCH 0
+#endif
+#define DYSSOL_SUNDIALS_VERSION SUNDIALS_VERSION_MAJOR.SUNDIALS_VERSION_MINOR.SUNDIALS_VERSION_PATCH
 PRAGMA_WARNING_PUSH
 PRAGMA_WARNING_DISABLE
-#include <ida/ida_impl.h>
+#include MACRO_CONCAT_STR3(impl/,DYSSOL_SUNDIALS_VERSION,/ida_impl.h)
 #if SUNDIALS_VERSION_MAJOR <= 2
 #include <ida/ida_dense.h>
 #elif SUNDIALS_VERSION_MAJOR <= 3
@@ -16,8 +22,7 @@ PRAGMA_WARNING_DISABLE
 #include <sunlinsol/sunlinsol_dense.h>
 #endif
 PRAGMA_WARNING_POP
-
-
+#include <cstring>
 
 // Macros for convenient adding context to functions depending on the sundials version
 #if SUNDIALS_VERSION_MAJOR >= 6
