@@ -63,7 +63,7 @@ Also, other versions of Microsoft Visual Studio can be used, but additional prep
 
 ### Compilation requirements on Linux
 
-- gcc-9, g++-9
+- g++-9 or clang++-10
 - CMake 3.1.0 or higher
 
 ### Build on Linux
