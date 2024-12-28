@@ -23,6 +23,7 @@ env:
   QT_VERSION: 5.15.2
   QT_VS_VERSION: msvc2019_64
   QT_VS_ADDIN_VERSION: 3.3.1
+  MIKTEX_VERSION: 23.5
 
 jobs:
   build:
