@@ -62,7 +62,7 @@ void CMaterialsDatabaseTab::InitializeConnections()
 	connect(ui.tableProperties,			&QTableWidget::itemSelectionChanged,		this, &CMaterialsDatabaseTab::NewPropertySelected);
 	connect(ui.tableProperties,			&QTableWidget::cellChanged,					this, &CMaterialsDatabaseTab::PropertyValueChanged);
 	connect(ui.propertyEditorMain,		&CPropertyEditor::MDBPropertyChanged,		this, &CMaterialsDatabaseTab::MaterialDatabaseWasChanged);
-	connect(ui.propertyEditorMain,      &CPropertyEditor::MDBPropertyChanged,       this, [=] { SetMaterialsDatabaseModified(true); });
+	connect(ui.propertyEditorMain,      &CPropertyEditor::MDBPropertyChanged,       this, [this] { SetMaterialsDatabaseModified(true); });
 
 	// signals from interaction buttons
 	connect(ui.buttonAddInterProperty,       &QPushButton::clicked, this, &CMaterialsDatabaseTab::AddInterProperty);
@@ -76,7 +76,7 @@ void CMaterialsDatabaseTab::InitializeConnections()
 	connect(ui.tableInterProperties,	&QTableWidget::itemSelectionChanged,		this, &CMaterialsDatabaseTab::NewInteractionSelected);
 	connect(ui.tableInterProperties,	&QTableWidget::cellChanged,					this, &CMaterialsDatabaseTab::InteractionValueChanged);
 	connect(ui.propertyEditorInter,		&CPropertyEditor::MDBPropertyChanged,		this, &CMaterialsDatabaseTab::MaterialDatabaseWasChanged);
-	connect(ui.propertyEditorInter,     &CPropertyEditor::MDBPropertyChanged,       this, [=] { SetMaterialsDatabaseModified(true); });
+	connect(ui.propertyEditorInter,     &CPropertyEditor::MDBPropertyChanged,       this, [this] { SetMaterialsDatabaseModified(true); });
 }
 
 void CMaterialsDatabaseTab::SelectCompound(const std::string& _key) const
@@ -867,9 +867,9 @@ void CMaterialsDatabaseTab::AddCheckBoxOnTable(CQtTable* _pTable, const int _iRo
 	QCheckBox* pCheckBox = _pTable->SetCheckBox(_iRow, _iCol, _bChecked);
 	pCheckBox->setEnabled(_bEnabled);
 	if(_pTable == ui.tableProperties)
-		connect(pCheckBox, &QCheckBox::stateChanged, this, [=] { PropertyConstFlagChanged(_iRow); });
+		connect(pCheckBox, &QCheckBox::stateChanged, this, [this, _iRow] { PropertyConstFlagChanged(_iRow); });
 	else if(_pTable == ui.tableInterProperties)
-		connect(pCheckBox, &QCheckBox::stateChanged, this, [=] { InteractionConstFlagChanged(_iRow); });
+		connect(pCheckBox, &QCheckBox::stateChanged, this, [this, _iRow] { InteractionConstFlagChanged(_iRow); });
 	pCheckBox->setToolTip("Treat property as a constant");
 	pCheckBox->setWhatsThis("Treat property as a constant");
 }
@@ -878,9 +878,9 @@ void CMaterialsDatabaseTab::AddToolButtonOnTable(CQtTable* _pTable, int _iRow, i
 {
 	QToolButton* pToolButton = _pTable->SetToolButton(_iRow, _iCol, "i");
 	if (_pTable == ui.tableProperties)
-		connect(pToolButton, &QToolButton::clicked, this, [=] { PropertyInfoClicked(_iRow); });
+		connect(pToolButton, &QToolButton::clicked, this, [this, _iRow] { PropertyInfoClicked(_iRow); });
 	else if (_pTable == ui.tableInterProperties)
-		connect(pToolButton, &QToolButton::clicked, this, [=] { InteractionInfoClicked(_iRow); });
+		connect(pToolButton, &QToolButton::clicked, this, [this, _iRow] { InteractionInfoClicked(_iRow); });
 	pToolButton->setToolTip("User-defined description");
 	pToolButton->setWhatsThis("User-defined description");
 }

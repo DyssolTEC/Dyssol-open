@@ -337,7 +337,7 @@ QCheckBox* CQtTable::SetCheckBox(const int _row, const int _col, bool _checked /
 	pWidget->setLayout(pLayout);
 	pCheckBox->setChecked(_checked);
 	pCheckBox->setObjectName("CheckBox");
-	connect(pCheckBox, &QCheckBox::stateChanged, this, [=] { CheckBoxStateChanged(_row, _col, pCheckBox); });
+	connect(pCheckBox, &QCheckBox::stateChanged, this, [this, _row, _col, pCheckBox] { CheckBoxStateChanged(_row, _col, pCheckBox); });
 	setCellWidget(_row, _col, pWidget);
 	return pCheckBox;
 }
@@ -374,7 +374,7 @@ QRadioButton* CQtTable::SetRadioButton(int _row, int _col, bool _checked)
 	widget->setLayout(layout);
 	radio->setChecked(_checked);
 	radio->setObjectName("RadioButton");
-	connect(radio, &QRadioButton::toggled, this, [=] { RadioButtonStateChanged(_row, _col, radio); });
+	connect(radio, &QRadioButton::toggled, this, [this, _row, _col, radio] { RadioButtonStateChanged(_row, _col, radio); });
 	setCellWidget(_row, _col, widget);
 	return radio;
 }

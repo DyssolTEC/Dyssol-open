@@ -326,23 +326,23 @@ void CQtPlot::CreateFullDropMenu(QMenu* _pMenu)
 		QMenu* pCurvesSettingsMenu = pCurvesMenu->addMenu(m_vpCurves.at(i)->sCurveName);
 
 		QAction* pActionCurveName = pCurvesSettingsMenu->addAction(m_csMenuCurveName);
-		connect(pActionCurveName, &QAction::triggered, this, [=] { SetCurveNameSlot(i); });
+		connect(pActionCurveName, &QAction::triggered, this, [this, i] { SetCurveNameSlot(i); });
 
 		QAction* pActionCurveColor = pCurvesSettingsMenu->addAction(m_csMenuCurveColor);
-		connect(pActionCurveColor, &QAction::triggered, this, [=] { SetCurveColorSlot(i); });
+		connect(pActionCurveColor, &QAction::triggered, this, [this, i] { SetCurveColorSlot(i); });
 
 		QAction* pActionCurveWidth = pCurvesSettingsMenu->addAction(m_csMenuCurveWidth);
-		connect(pActionCurveWidth, &QAction::triggered, this, [=] { SetCurveWidthSlot(i); });
+		connect(pActionCurveWidth, &QAction::triggered, this, [this, i] { SetCurveWidthSlot(i); });
 
 		QAction* pActionCurveVisibility = pCurvesSettingsMenu->addAction(m_csMenuCurveVisibility);
 		pActionCurveVisibility->setCheckable(true);
 		pActionCurveVisibility->setChecked(m_vpCurves.at(i)->bVisibility);
-		connect(pActionCurveVisibility, &QAction::triggered, this, [=] { ToggleCurveVisibilitySlot(i); });
+		connect(pActionCurveVisibility, &QAction::triggered, this, [this, i] { ToggleCurveVisibilitySlot(i); });
 
 		QAction* pActionCurveLines = pCurvesSettingsMenu->addAction(m_csMenuCurveLines);
 		pActionCurveLines->setCheckable(true);
 		pActionCurveLines->setChecked(m_vpCurves.at(i)->bLinesVisibility);
-		connect(pActionCurveLines, &QAction::triggered, this, [=] { ToggleCurveLinesVisibilitySlot(i); });
+		connect(pActionCurveLines, &QAction::triggered, this, [this, i] { ToggleCurveLinesVisibilitySlot(i); });
 	}
 
 	_pMenu->addSeparator();
