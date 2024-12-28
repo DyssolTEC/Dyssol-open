@@ -59,8 +59,8 @@ QComboBox* CQtTree::SetComboBox(QTreeWidgetItem* _item, int _col, const std::vec
 	combo->setCurrentIndex(selected);
 	combo->installEventFilter(this);
 	_item->setSizeHint(_col, { combo->sizeHint().width() + 10, combo->sizeHint().height() });
-	connect(combo, QOverload<int>::of(&QComboBox::highlighted), this, [=] { setCurrentItem(_item); });
-	connect(combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=] { ComboBoxIndexChanged(combo, _item); });
+	connect(combo, QOverload<int>::of(&QComboBox::highlighted), this, [this, _item] { setCurrentItem(_item); });
+	connect(combo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this, combo, _item] { ComboBoxIndexChanged(combo, _item); });
 	setItemWidget(_item, _col, combo);
 	return combo;
 }
@@ -120,7 +120,7 @@ QCheckBox* CQtTree::SetCheckBox(QTreeWidgetItem* _item, int _col, const QString&
 	auto* check = new QCheckBox{ _text, this };
 	QSignalBlocker blocker{ check };
 	check->setChecked(_value);
-	connect(check, &QCheckBox::stateChanged, this, [=] { CheckBoxStateChanged(check, _item); });
+	connect(check, &QCheckBox::stateChanged, this, [this, check, _item] { CheckBoxStateChanged(check, _item); });
 	setItemWidget(_item, _col, check);
 	return check;
 }
