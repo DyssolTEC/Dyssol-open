@@ -92,7 +92,7 @@ IF(BUILD_BINARIES)
   TARGET_LINK_LIBRARIES(libdyssol_static ${HDF5_LIBRARIES} ${HDF5_HL_LIBRARIES} ${SUNDIALS_LIBRARIES})
   TARGET_LINK_LIBRARIES(DyssolC libdyssol_shared)
 
-  # link filesystem or experimantal/filesystem for gcc
+  # link filesystem or experimental/filesystem for gcc
   IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     IF (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 8.0)
   	TARGET_LINK_LIBRARIES(DyssolC -lstdc++fs)
