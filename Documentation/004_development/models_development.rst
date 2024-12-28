@@ -1593,7 +1593,7 @@ Now you need the following steps:
 Configure unit to work with MATLAB
 ----------------------------------
 
-You can use MATLAB Engine API in Dyssol during the development of solvers. It requires an installed 32-bit version of MATLAB. For API description please refer to `C Matrix API <http://de.mathworks.com/help/matlab/cc-mx-matrix-library.html>`_.
+You can use MATLAB Engine API in Dyssol during the development of solvers. It requires an installed 32-bit version of MATLAB. For API description please refer to `C Matrix API <https://www.mathworks.com/help/matlab/cc-mx-matrix-library.html>`_.
 
 To enable interaction with MATLAB configure template project with your unit, do as follows:
 
@@ -1755,7 +1755,7 @@ Solver‘s **finalization**. This function is called only once for each simulati
 Configure solver to work with MATLAB
 ------------------------------------
 
-You can use MATLAB Engine API in Dyssol during the development of solvers. It requires an installed 32-bit version of MATLAB. For API description please refer to `C Matrix API <http://de.mathworks.com/help/matlab/cc-mx-matrix-library.html>`_.
+You can use MATLAB Engine API in Dyssol during the development of solvers. It requires an installed 32-bit version of MATLAB. For API description please refer to `C Matrix API <https://www.mathworks.com/help/matlab/cc-mx-matrix-library.html>`_.
 
 
 To enable interaction with MATLAB configure template project with your solver, do as follows:
