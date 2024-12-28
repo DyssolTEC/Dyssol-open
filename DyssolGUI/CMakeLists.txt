@@ -1,5 +1,7 @@
-# Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information.
+# Copyright (c) 2020, Dyssol Development Team. 
 # Copyright (c) 2021, Anton Gladky <Anton.Gladky@iart.tu-freiberg.de>, IART, Technical University Bergakademie Freiberg
+# Copyright (c) 2024, DyssolTEC GmbH. 
+# All rights reserved. This file is part of Dyssol. See LICENSE file for license information.
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
@@ -48,7 +50,7 @@ target_compile_definitions(DyssolGUI PRIVATE INSTALL_DOCS_PATH="${INSTALL_DOCS_P
 target_compile_definitions(DyssolGUI PRIVATE INSTALL_CONFIG_PATH="${INSTALL_CONFIG_PATH}")
 
 TARGET_LINK_LIBRARIES(DyssolGUI Qt5::Widgets libdyssol_shared)
-# link filesystem or experimantal/filesystem for gcc
+# link filesystem or experimental/filesystem for gcc
 IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   IF (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 8.0)
     TARGET_LINK_LIBRARIES(DyssolGUI -lstdc++fs)
