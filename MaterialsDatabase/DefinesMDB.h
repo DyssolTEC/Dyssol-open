@@ -65,6 +65,7 @@ enum class ECorrelationTypes : unsigned
 	POLYNOMIAL_S     = 9,	// y = a·ln(T) + b·T + c·(T^2)/2 + d·(T^3)/3 − e/(2·T^2) + f
 	SUTHERLAND		 = 10,  // y = a·(b + c)/(T + c)·(T/b)^(3/2)
 	POW_2            = 11,	// y = a + b·(T)^c + d·((e·T + f)/(g·T + h))^i
+	IDEAL_GAS		 = 12,  // y = M·p/T/R
 	UNDEFINED		 = 63
 };
 
@@ -96,6 +97,7 @@ namespace MDBDescriptors
 		{ ECorrelationTypes::POLYNOMIAL_S ,		{ "Shomate standard entropy" ,	L"y = a*ln(T) + bT + cT<sup>2</sup>/2 + dT<sup>3</sup>/3 - e/(2T<sup>2</sup>) + f"                                  , 6 } },
 		{ ECorrelationTypes::SUTHERLAND,		{ "Sutherland's law"          ,	L"y = a(b + c)/(T + c)(T/b)<sup>3/2</sup>"                                                                          , 3 } },
 		{ ECorrelationTypes::POW_2,		        { "Power function 2"          ,	L"y = a + b(T)<sup>c</sup> + d((eT + f)/(gT + h))<sup>i</sup>"                                                      , 9 } },
+		{ ECorrelationTypes::IDEAL_GAS,		    { "Ideal gas"				,	L"y = a*p/T/R [with a = Molar mass]"																							, 1 } },
 	};
 }
 
