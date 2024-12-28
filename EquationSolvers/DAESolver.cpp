@@ -1,25 +1,28 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2024, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "DAESolver.h"
-#if defined(_MSC_VER)
-__pragma(warning(push))
-__pragma(warning(disable : 4305 4309))
+#include "DyssolHelperDefines.h"
+#ifndef SUNDIALS_VERSION_MAJOR
+#define SUNDIALS_VERSION_MAJOR 2
+#define SUNDIALS_VERSION_MINOR 7
+#define SUNDIALS_VERSION_PATCH 0
 #endif
-#include <ida/ida.h>
-#include <ida/ida_impl.h>
+#define DYSSOL_SUNDIALS_VERSION SUNDIALS_VERSION_MAJOR.SUNDIALS_VERSION_MINOR.SUNDIALS_VERSION_PATCH
+PRAGMA_WARNING_PUSH
+PRAGMA_WARNING_DISABLE
+#include MACRO_CONCAT_STR3(impl/,DYSSOL_SUNDIALS_VERSION,/ida_impl.h)
+#if SUNDIALS_VERSION_MAJOR <= 2
+#include <ida/ida_dense.h>
+#elif SUNDIALS_VERSION_MAJOR <= 3
+#include <ida/ida_direct.h>
+#endif
+#if SUNDIALS_VERSION_MAJOR > 2
 #include <sunlinsol/sunlinsol_dense.h>
-#include <nvector/nvector_serial.h>
-#if defined(_MSC_VER)
-__pragma(warning(pop))
 #endif
+PRAGMA_WARNING_POP
 #include <cstring>
-
-#ifdef _MSC_VER
-#else
-// To get rid of ErrorHandler() function, which must take char*  as a parameter.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wwrite-strings"
-#endif
 
 // Macros for convenient adding context to functions depending on the sundials version
 #if SUNDIALS_VERSION_MAJOR >= 6
@@ -51,7 +54,7 @@ bool CDAESolver::SetModel(CDAEModel* _model)
 	return true;
 }
 
-bool CDAESolver::Calculate(realtype _time)
+bool CDAESolver::Calculate(double _time)
 {
 	if (_time == 0.0)
 	{
@@ -70,7 +73,7 @@ bool CDAESolver::Calculate(realtype _time)
 	return true;
 }
 
-bool CDAESolver::Calculate(realtype _timeBeg, realtype _timeEnd)
+bool CDAESolver::Calculate(double _timeBeg, double _timeEnd)
 {
 	int res;
 
@@ -94,7 +97,7 @@ bool CDAESolver::Calculate(realtype _timeBeg, realtype _timeEnd)
 		return WriteError("IDA", "IDASetMaxStep", "Cannot set maximum absolute step size");
 
 	/* Get current integration step.*/
-	realtype currStep;
+	double currStep;
 	res = IDAGetCurrentStep(m_solverMem.idamem, &currStep);
 	if (res != IDA_SUCCESS)
 		return WriteError("IDA", "IDAGetCurrentStep", "Cannot read current time step.");
@@ -126,8 +129,9 @@ bool CDAESolver::CalculateInitialConditions()
 	if (res != IDA_SUCCESS)
 		return WriteError("IDA", "IDACalcIC", "Cannot calculate initial conditions.");
 
-	const N_Vector consistVars = N_VNew_Serial(static_cast<sunindextype>(m_model->GetVariablesNumber()) MAYBE_COMMA_CONTEXT(m_solverMem));
-	const N_Vector consistDers = N_VNew_Serial(static_cast<sunindextype>(m_model->GetVariablesNumber()) MAYBE_COMMA_CONTEXT(m_solverMem));
+	const size_t len = m_model->GetVariablesNumber();
+	const N_Vector consistVars = N_VNew_Serial(len MAYBE_COMMA_CONTEXT(m_solverMem));
+	const N_Vector consistDers = N_VNew_Serial(len MAYBE_COMMA_CONTEXT(m_solverMem));
 
 	res = IDAGetConsistentIC(m_solverMem.idamem, consistVars, consistDers);
 	if (res != IDA_SUCCESS)
@@ -140,7 +144,7 @@ bool CDAESolver::CalculateInitialConditions()
 	return true;
 }
 
-bool CDAESolver::IntegrateUntil(realtype _time)
+bool CDAESolver::IntegrateUntil(double _time)
 {
 	/* set integration limit */
 	int res = IDASetStopTime(m_solverMem.idamem, _time);
@@ -166,12 +170,12 @@ void CDAESolver::SaveState()
 	const size_t len = m_model->GetVariablesNumber();
 	const auto* src = static_cast<IDAMem>(m_solverMem.idamem);
 
-	std::memcpy(m_solverMem_store.vars.data(), N_VGetArrayPointer(m_solverMem.vars), sizeof(realtype) * len);
-	std::memcpy(m_solverMem_store.ders.data(), N_VGetArrayPointer(m_solverMem.ders), sizeof(realtype) * len);
+	std::memcpy(m_solverMem_store.vars.data(), N_VGetArrayPointer(m_solverMem.vars), sizeof(double) * len);
+	std::memcpy(m_solverMem_store.ders.data(), N_VGetArrayPointer(m_solverMem.ders), sizeof(double) * len);
 
 	for (size_t i = 0; i < MXORDP1; ++i)
-		std::memcpy(m_solverMem_store.ida_phi[i].data(), N_VGetArrayPointer(src->ida_phi[i]), sizeof(realtype) * len);
-	std::memcpy(m_solverMem_store.ida_psi.data(), src->ida_psi, sizeof(realtype) * MXORDP1);
+		std::memcpy(m_solverMem_store.ida_phi[i].data(), N_VGetArrayPointer(src->ida_phi[i]), sizeof(double) * len);
+	std::memcpy(m_solverMem_store.ida_psi.data(), src->ida_psi, sizeof(double) * MXORDP1);
 	m_solverMem_store.ida_kused = src->ida_kused;
 	m_solverMem_store.ida_ns    = src->ida_ns;
 	m_solverMem_store.ida_hh    = src->ida_hh;
@@ -187,12 +191,12 @@ void CDAESolver::LoadState() const
 	const size_t len = m_model->GetVariablesNumber();
 	auto* dst = static_cast<IDAMem>(m_solverMem.idamem);
 
-	std::memcpy(N_VGetArrayPointer(m_solverMem.vars), m_solverMem_store.vars.data(), sizeof(realtype) * len);
-	std::memcpy(N_VGetArrayPointer(m_solverMem.ders), m_solverMem_store.ders.data(), sizeof(realtype) * len);
+	std::memcpy(N_VGetArrayPointer(m_solverMem.vars), m_solverMem_store.vars.data(), sizeof(double) * len);
+	std::memcpy(N_VGetArrayPointer(m_solverMem.ders), m_solverMem_store.ders.data(), sizeof(double) * len);
 
 	for (size_t i = 0; i < MXORDP1; ++i)
-		std::memcpy(N_VGetArrayPointer(dst->ida_phi[i]), m_solverMem_store.ida_phi[i].data(), sizeof(realtype) * len);
-	std::memcpy(dst->ida_psi, m_solverMem_store.ida_psi.data(), sizeof(realtype) * MXORDP1);
+		std::memcpy(N_VGetArrayPointer(dst->ida_phi[i]), m_solverMem_store.ida_phi[i].data(), sizeof(double) * len);
+	std::memcpy(dst->ida_psi, m_solverMem_store.ida_psi.data(), sizeof(double) * MXORDP1);
 	dst->ida_kused = m_solverMem_store.ida_kused;
 	dst->ida_ns    = m_solverMem_store.ida_ns;
 	dst->ida_hh    = m_solverMem_store.ida_hh;
@@ -231,13 +235,17 @@ bool CDAESolver::InitSolverMemory(SSolverMemory& _mem)
 	int res; // return value
 
 	// create context
-#if SUNDIALS_VERSION_MAJOR >= 6
+#if SUNDIALS_VERSION_MAJOR == 6
 	res = SUNContext_Create(nullptr, &_mem.sunctx);
+#elif SUNDIALS_VERSION_MAJOR == 7
+	res = SUNContext_Create(SUN_COMM_NULL, &_mem.sunctx);
+#endif
+#if SUNDIALS_VERSION_MAJOR >= 6
 	if (res != IDA_SUCCESS)
 		return WriteError("IDA", "SUNContext_Create", "Cannot create SUNDIALS context.");
 #endif
 
-	const auto len = static_cast<sunindextype>(m_model->GetVariablesNumber());
+	const auto len = m_model->GetVariablesNumber();
 
 	// allocate vectors for y, y', tolerances, types, constraints
 	_mem.vars   = N_VNew_Serial(len MAYBE_COMMA_CONTEXT(m_solverMem));
@@ -249,21 +257,27 @@ bool CDAESolver::InitSolverMemory(SSolverMemory& _mem)
 		return WriteError("IDA", "N_VNew_Serial", "Cannot create vectors.");
 
 	// initialize vectors
-	std::memcpy(N_VGetArrayPointer(_mem.vars)  , m_model->GetVarInitValues()   .data(), sizeof(realtype) * len);
-	std::memcpy(N_VGetArrayPointer(_mem.ders)  , m_model->GetDerInitValues()   .data(), sizeof(realtype) * len);
-	std::memcpy(N_VGetArrayPointer(_mem.atols) , m_model->GetATols()           .data(), sizeof(realtype) * len);
-	std::memcpy(N_VGetArrayPointer(_mem.types) , m_model->GetVarTypes()        .data(), sizeof(realtype) * len);
-	std::memcpy(N_VGetArrayPointer(_mem.constr), m_model->GetConstraintValues().data(), sizeof(realtype) * len);
+	std::memcpy(N_VGetArrayPointer(_mem.vars)  , m_model->GetVarInitValues()   .data(), sizeof(double) * len);
+	std::memcpy(N_VGetArrayPointer(_mem.ders)  , m_model->GetDerInitValues()   .data(), sizeof(double) * len);
+	std::memcpy(N_VGetArrayPointer(_mem.atols) , m_model->GetATols()           .data(), sizeof(double) * len);
+	std::memcpy(N_VGetArrayPointer(_mem.types) , m_model->GetVarTypes()        .data(), sizeof(double) * len);
+	std::memcpy(N_VGetArrayPointer(_mem.constr), m_model->GetConstraintValues().data(), sizeof(double) * len);
 
+#if SUNDIALS_VERSION_MAJOR > 2
 	// create matrix object
 	_mem.sunmatr = SUNDenseMatrix(len, len MAYBE_COMMA_CONTEXT(m_solverMem));
 	if (!_mem.sunmatr)
 		return WriteError("IDA", "SUNDenseMatrix", "Cannot create matrix.");
 
 	// create linear solver object
+#if SUNDIALS_VERSION_MAJOR <= 3
+	_mem.linsol = SUNDenseLinearSolver(_mem.vars, _mem.sunmatr);
+#else
 	_mem.linsol = SUNLinSol_Dense(_mem.vars, _mem.sunmatr MAYBE_COMMA_CONTEXT(m_solverMem));
+#endif
 	if (!_mem.linsol)
 		return WriteError("IDA", "SUNLinSol_Dense", "Cannot create linear solver.");
+#endif
 
 	// create IDA object
 	_mem.idamem = IDACreate(MAYBE_CONTEXT(m_solverMem));
@@ -281,15 +295,27 @@ bool CDAESolver::InitSolverMemory(SSolverMemory& _mem)
 		return WriteError("IDA", "IDASVtolerances", "Cannot set tolerances.");
 
 	// attach linear solver
+#if SUNDIALS_VERSION_MAJOR <= 2
+	res = IDADense(_mem.idamem, len);
+#elif SUNDIALS_VERSION_MAJOR <= 3
+	res = IDADlsSetLinearSolver(_mem.idamem, _mem.linsol, _mem.sunmatr);
+#else
 	res = IDASetLinearSolver(_mem.idamem, _mem.linsol, _mem.sunmatr);
-	if (res != IDALS_SUCCESS)
+#endif
+	if (res != IDA_SUCCESS)
 		return WriteError("IDA", "IDASetLinearSolver", "Cannot set linear solver.");
 
 	// set optional inputs
 	// set error handler function
+#if SUNDIALS_VERSION_MAJOR < 7
 	res = IDASetErrHandlerFn(_mem.idamem, &CDAESolver::ErrorHandler, &m_errorMessage);
 	if (res != IDA_SUCCESS)
 		return WriteError("IDA", "IDASetErrHandlerFn", "Cannot setup error handler function.");
+#else
+	res = SUNContext_PushErrHandler(_mem.sunctx, &CDAESolver::ErrorHandler, &m_errorMessage);
+	if (res != IDA_SUCCESS)
+		return WriteError("IDA", "SUNContext_PushErrHandler", "Cannot setup error handler function.");
+#endif
 	// set model as user data
 	res = IDASetUserData(_mem.idamem, m_model);
 	if (res != IDA_SUCCESS)
@@ -312,13 +338,15 @@ bool CDAESolver::InitSolverMemory(SSolverMemory& _mem)
 
 void CDAESolver::ClearSolverMemory(SSolverMemory& _mem)
 {
-	N_VDestroy_Serial(_mem.vars);   _mem.vars    = nullptr;
-	N_VDestroy_Serial(_mem.ders);   _mem.ders    = nullptr;
-	N_VDestroy_Serial(_mem.atols);  _mem.atols   = nullptr;
-	N_VDestroy_Serial(_mem.types);  _mem.types   = nullptr;
-	N_VDestroy_Serial(_mem.constr); _mem.constr  = nullptr;
+	if (_mem.vars)   N_VDestroy_Serial(_mem.vars);   _mem.vars   = nullptr;
+	if (_mem.ders)   N_VDestroy_Serial(_mem.ders);   _mem.ders   = nullptr;
+	if (_mem.atols)  N_VDestroy_Serial(_mem.atols);  _mem.atols  = nullptr;
+	if (_mem.types)  N_VDestroy_Serial(_mem.types);  _mem.types  = nullptr;
+	if (_mem.constr) N_VDestroy_Serial(_mem.constr); _mem.constr = nullptr;
+#if SUNDIALS_VERSION_MAJOR > 2
 	SUNMatDestroy(_mem.sunmatr);    _mem.sunmatr = nullptr;
 	SUNLinSolFree(_mem.linsol);     _mem.linsol  = nullptr;
+#endif
 	IDAFree(&_mem.idamem);          _mem.idamem  = nullptr;
 #if SUNDIALS_VERSION_MAJOR >= 6
 	SUNContext_Free(&_mem.sunctx);  _mem.sunctx  = nullptr;
@@ -327,10 +355,10 @@ void CDAESolver::ClearSolverMemory(SSolverMemory& _mem)
 
 void CDAESolver::InitStoreMemory(SStoreMemory& _mem) const
 {
-	const auto len = static_cast<sunindextype>(m_model->GetVariablesNumber());
+	const auto len = m_model->GetVariablesNumber();
 	_mem.vars.resize(len);
 	_mem.ders.resize(len);
-	_mem.ida_phi.resize(MXORDP1, std::vector<realtype>(len));
+	_mem.ida_phi.resize(MXORDP1, std::vector<double>(len));
 	_mem.ida_psi.resize(MXORDP1);
 }
 
@@ -342,15 +370,16 @@ void CDAESolver::Clear()
 	ClearSolverMemory(m_solverMem);
 }
 
-int CDAESolver::ResidualFunction(realtype _time, N_Vector _vals, N_Vector _ders, N_Vector _ress, void* _model)
+int CDAESolver::ResidualFunction(double _time, N_Vector _vals, N_Vector _ders, N_Vector _ress, void* _model)
 {
-	realtype* vals = N_VGetArrayPointer(_vals);
-	realtype* ders = N_VGetArrayPointer(_ders);
-	realtype* ress = N_VGetArrayPointer(_ress);
+	double* vals = N_VGetArrayPointer(_vals);
+	double* ders = N_VGetArrayPointer(_ders);
+	double* ress = N_VGetArrayPointer(_ress);
 	const bool res = static_cast<CDAEModel*>(_model)->GetResiduals(_time, vals, ders, ress);
 	return res ? 0 : -1;
 }
 
+#if SUNDIALS_VERSION_MAJOR < 7
 void CDAESolver::ErrorHandler(int _errorCode, const char* _module, const char* _function, char* _message, void* _outString)
 {
 	if (!_outString) return;
@@ -358,6 +387,15 @@ void CDAESolver::ErrorHandler(int _errorCode, const char* _module, const char* _
 	std::string& out = *static_cast<std::string*>(_outString);
 	AppendMessage(_module, _function, _message, out);
 }
+#else
+void CDAESolver::ErrorHandler(int _line, const char* _function, const char* _file, const char* _message, SUNErrCode _errCode, void* _outString, [[maybe_unused]] SUNContext _sunctx)
+{
+	if (!_outString) return;
+	if (!_errCode) return;
+	std::string& out = *static_cast<std::string*>(_outString);
+	AppendMessage(_file, _function, _message, out);
+}
+#endif
 
 std::string CDAESolver::BuildErrorMessage(const std::string& _module, const std::string& _function, const std::string& _message)
 {
@@ -376,8 +414,3 @@ bool CDAESolver::WriteError(const std::string& _module, const std::string& _func
 	AppendMessage(_module, _function, _message, m_errorMessage);
 	return false;
 }
-
-#ifdef _MSC_VER
-#else
-#pragma GCC diagnostic pop
-#endif

@@ -54,7 +54,7 @@ void CDimensionParameters::SetupComboBoxDistribution() const
 		}
 	}
 	// always show all entries
-	ui.comboDistribution->setMaxVisibleItems(std::size(DISTR_TYPES) + 1);
+	ui.comboDistribution->setMaxVisibleItems((int)std::size(DISTR_TYPES) + 1);
 }
 
 void CDimensionParameters::SetupComboBoxEntry() const

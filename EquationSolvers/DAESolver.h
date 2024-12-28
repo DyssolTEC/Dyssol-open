@@ -1,13 +1,24 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2024, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
 #include "DAEModel.h"
 #include <string>
-#include <sundials/sundials_matrix.h>
+#include "DisableWarningHelper.h"
+PRAGMA_WARNING_PUSH
+PRAGMA_WARNING_DISABLE
+#include <nvector/nvector_serial.h>
+#if SUNDIALS_VERSION_MAJOR > 2
 #include <sundials/sundials_linearsolver.h>
+#include <sundials/sundials_matrix.h>
+#endif
+PRAGMA_WARNING_POP
 
-/** Solver of differential algebraic equations. Uses IDA solver from SUNDIALS package*/
+/**
+ * Solver of differential algebraic equations. Uses IDA solver from SUNDIALS package.
+ */
 class CDAESolver
 {
 	/** Memory needed for solver. */
@@ -17,8 +28,10 @@ class CDAESolver
 		SUNContext sunctx{};      ///< SUNDIALS simulation context.
 #endif
 		void* idamem{};			  ///< Pointer to IDA memory.
+#if SUNDIALS_VERSION_MAJOR > 2
 		SUNMatrix sunmatr{};      ///< Matrix object.
 		SUNLinearSolver linsol{}; ///< Linear solver object.
+#endif
 		N_Vector vars{};          ///< Vector of variables.
 		N_Vector ders{};          ///< Vector of derivatives.
 		N_Vector atols{};         ///< Vector of absolute tolerances.
@@ -29,15 +42,15 @@ class CDAESolver
 	/** Data field from IDA memory needed to be temporary stored. */
 	struct SStoreMemory
 	{
-		std::vector<realtype> vars;
-		std::vector<realtype> ders;
-		std::vector<std::vector<realtype>> ida_phi;
-		std::vector<realtype> ida_psi;
+		std::vector<double> vars;
+		std::vector<double> ders;
+		std::vector<std::vector<double>> ida_phi;
+		std::vector<double> ida_psi;
 		int ida_kused;
 		int ida_ns;
-		realtype ida_hh;
-		realtype ida_tn;
-		realtype ida_cj;
+		double ida_hh;
+		double ida_tn;
+		double ida_cj;
 		long int ida_nst;
 	};
 
@@ -46,8 +59,8 @@ class CDAESolver
 	SSolverMemory m_solverMem{};      ///< Solver-specific memory.
 	SStoreMemory m_solverMem_store{}; ///< Solver-specific memory for temporary storing.
 
-	realtype m_timeLast{};            ///< Last calculated time point.
-	realtype m_maxStep{};             ///< Maximum iteration time step.
+	double m_timeLast{};              ///< Last calculated time point.
+	double m_maxStep{};               ///< Maximum iteration time step.
 	size_t m_maxNumSteps{ 500 };      ///< Maximum number of allowed solver iterations.
 
 	std::string m_errorMessage;	      ///< Text description of the occurred errors.
@@ -66,12 +79,12 @@ public:
 	/** Solve problem on a given time point.
 	*	\param _time Time point.
 	*	\retval true No errors occurred. */
-	bool Calculate(realtype _time);
+	bool Calculate(double _time);
 	/** Solve problem on a given time interval.
 	*	\param _timeBeg Start of the time interval.
 	*	\param _timeEnd End of the time interval.
 	*	\retval true No errors occurred. */
-	bool Calculate(realtype _timeBeg, realtype _timeEnd);
+	bool Calculate(double _timeBeg, double _timeEnd);
 
 	/** Calculates and applies corrected initial conditions.
 	*	\retval true No errors occurred. */
@@ -79,7 +92,7 @@ public:
 	/** Integrates the problem until the given time point.
 	*	\param _time Final time of integration.
 	*	\retval true No errors occurred. */
-	bool IntegrateUntil(realtype _time);
+	bool IntegrateUntil(double _time);
 
 	/** Save current state of solver.
 	*	Should be called during saving of unit. */
@@ -128,8 +141,9 @@ private:
 	*	\param _ress Output residual vector F(t, y, y').
 	*	\param _model Pointer to a DAE model.
 	*	\return Error code. */
-	static int ResidualFunction(realtype _time, N_Vector _vals, N_Vector _ders, N_Vector _ress, void *_model);
+	static int ResidualFunction(double _time, N_Vector _vals, N_Vector _ders, N_Vector _ress, void *_model);
 
+#if SUNDIALS_VERSION_MAJOR < 7
 	/** A callback function called by the solver to handle internal errors.
 	*	\param _errorCode Error code
 	*	\param _module Name of the  module reporting the error
@@ -137,6 +151,20 @@ private:
 	*	\param _message The error message
 	*	\param _outString Pointer to a string to put error message*/
 	static void ErrorHandler(int _errorCode, const char* _module, const char* _function, char* _message, void* _outString);
+#else
+	/**
+	 * \brief A callback function called by the solver to handle internal errors.
+	 * \details A version for SUNDIALS 7+.
+	 * \param _line The line number at which the error occured.
+	 * \param _function The function in which the error occured.
+	 * \param _file The file in which the error occured.
+	 * \param _message The error message.
+	 * \param _errCode The error code for the error that occured.
+	 * \param _outString Pointer to a string to put error message.
+	 * \param _sunctx Pointer to a valid SUNContext object.
+	 */
+	static void ErrorHandler(int _line, const char* _function, const char* _file, const char* _message, SUNErrCode _errCode, void* _outString, SUNContext _sunctx);
+#endif
 	/** Builds an error message from its parts.
 	*	\param _module Name of the module reporting the error
 	*	\param _function Name of the function in which the error occurred

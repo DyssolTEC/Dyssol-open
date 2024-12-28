@@ -7,6 +7,7 @@
 #include "ScriptRunner.h"
 #include "ThreadPool.h"
 #include "DyssolSystemDefines.h"
+#include <iomanip>
 
 // Prints information about command line arguments.
 void PrintArgumentsInfo(const CArgumentsParser& _parser)

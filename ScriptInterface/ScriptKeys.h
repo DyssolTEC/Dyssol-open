@@ -210,7 +210,7 @@ namespace ScriptInterface
 	// Number of symbols to discard: length of 'EScriptKeys::'.
 	constexpr size_t DISCARD = 13;
 	// Converts a fully resolved name (e.g. EScriptKeys::SOURCE_FILE to a string (e.g. "SOURCE_FILE").
-	#define ARG2STR(X) std::string(MACRO_TOSTRING(X)).substr(DISCARD, std::string(MACRO_TOSTRING(X)).length())
+	#define ARG2STR(X) std::string(MACRO_STRINGIFY(X)).substr(DISCARD, std::string(MACRO_STRINGIFY(X)).length())
 	// Creates a new SScriptEntryDescriptor.
 	#define MAKE_SED(ARG_NAME, ARG_TYPE) { ARG_NAME, std::string{ARG2STR(ARG_NAME)}, ARG_TYPE }
 

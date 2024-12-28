@@ -168,22 +168,6 @@ public:
 
 		return result;
 	}
-	/**
-	 * \private
-	 * \brief Returns list of all defined unit parameters of the given type.
-	 * \return List of unit parameters.
-	 */
-	template<EUnitParameter... Args>
-	std::vector<CBaseUnitParameter*> GetParameters(UnitParameterCollection<Args...>) const
-	{
-		std::vector<CBaseUnitParameter*> result;
-		(([&result, this]
-			{
-				auto res = GetParameters<Args>();
-				result.insert(result.end(), res.begin(), res.end());
-			}()), ...);
-		return result;
-	}
 
 	/**
 	 * \brief Returns list of all active unit parameters.

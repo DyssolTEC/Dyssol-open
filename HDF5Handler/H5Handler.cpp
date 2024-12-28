@@ -432,7 +432,9 @@ size_t CH5Handler::ReadSize(const std::string& _sPath, const std::string& _sData
 	try
 	{
 		Group h5Group(m_ph5File->openGroup(_sPath));
-		if (!h5Group.nameExists(_sDatasetName))	return 0;
+#if H5_VERSION_GE(1, 10, 1) == true
+		if (!h5Group.nameExists(_sDatasetName)) return 0;
+#endif
 
 		DataSet h5Dataset = h5Group.openDataSet(_sDatasetName);
 		DataSpace h5Dataspace = h5Dataset.getSpace();
