@@ -148,6 +148,9 @@ double CCorrelation::GetValue(double _dT, double _dP) const
 	case ECorrelationTypes::POW_2:
 		res = m_vParameters[0] + m_vParameters[1] * pow(_dT, m_vParameters[2]) + m_vParameters[3] * pow((m_vParameters[4] * _dT + m_vParameters[5]) / (m_vParameters[6] * _dT + m_vParameters[7]), m_vParameters[8]);
 		break;
+	case ECorrelationTypes::IDEAL_GAS:
+		res = m_vParameters[0] * _dP / _dT / MOLAR_GAS_CONSTANT;
+		break;
 	case ECorrelationTypes::UNDEFINED:
 		break;
 	}
