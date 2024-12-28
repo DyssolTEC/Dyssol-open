@@ -420,6 +420,11 @@ std::vector<std::string> CBaseStream::GetAllCompounds() const
 	return m_grid.GetSymbolicGrid(DISTR_COMPOUNDS);
 }
 
+size_t CBaseStream::GetCompoundsNumber() const
+{
+	return m_grid.GetGridDimension(DISTR_COMPOUNDS)->ClassesNumber();
+}
+
 double CBaseStream::GetCompoundFraction(double _time, const std::string& _compoundKey) const
 {
 	if (!HasCompound(_compoundKey)) return {};
@@ -591,6 +596,16 @@ void CBaseStream::ClearPhases()
 {
 	for (const auto& p : MapKeys(m_phases))
 		RemovePhase(p);
+}
+
+std::vector<EPhase> CBaseStream::GetAllPhases() const
+{
+	return MapKeys(m_phases);
+}
+
+size_t CBaseStream::GetPhasesNumber() const
+{
+	return m_phases.size();
 }
 
 double CBaseStream::GetPhaseFraction(double _time, EPhase _phase) const
@@ -924,6 +939,11 @@ double CBaseStream::GetCompoundProperty(const std::string& _compoundKey1, const 
 double CBaseStream::GetCompoundProperty(double _time, const std::string& _compoundKey1, const std::string& _compoundKey2, EInteractionProperties _property) const
 {
 	return GetCompoundProperty(_compoundKey1, _compoundKey2, _property, GetTemperature(_time), GetPressure(_time));
+}
+
+size_t CBaseStream::GetDistributionsNumber() const
+{
+	return m_grid.GetDimensionsNumber();
 }
 
 double CBaseStream::GetFraction(double _time, const std::vector<size_t>& _coords) const
@@ -2186,11 +2206,6 @@ std::vector<std::string> CBaseStream::GetCompoundsNames() const
 	return res;
 }
 
-size_t CBaseStream::GetCompoundsNumber() const
-{
-	return m_grid.GetGridDimension(DISTR_COMPOUNDS)->ClassesNumber();
-}
-
 double CBaseStream::GetCompoundPhaseFraction(double _time, const std::string& _compoundKey, unsigned _soa) const
 {
 	return GetCompoundFraction(_time, _compoundKey, SOA2EPhase(_soa));
@@ -2232,11 +2247,6 @@ unsigned CBaseStream::GetPhaseSOA(unsigned _index) const
 unsigned CBaseStream::GetPhaseIndex(unsigned _soa) const
 {
 	return static_cast<unsigned>(std::distance(m_phases.begin(), m_phases.find(SOA2EPhase(_soa))));
-}
-
-size_t CBaseStream::GetPhasesNumber() const
-{
-	return m_phases.size();
 }
 
 double CBaseStream::GetCompoundConstant(const std::string& _compoundKey, unsigned _property) const
