@@ -30,35 +30,3 @@ enum class EUnitParameter : uint8_t
 	MDB_COMPOUND = 16,    ///< Compound from the materials database.
 	PARAM_DEPENDENT = 17, ///< Dependent unit parameter.
 };
-
-/**
- * \private
- * A helper class to hold a collection of unit parameters.
- */
-template<EUnitParameter... Args>
-struct UnitParameterCollection
-{
-	/**
-	 * \private
-	 * Finds the parameter of the specified type.
-	 * \param _param Type of the parameter to find.
-	 * \return Found parameter type.
-	 */
-	static constexpr EUnitParameter Find(EUnitParameter _param)
-	{
-		EUnitParameter result = EUnitParameter::UNKNOWN;
-		(((_param == Args) ? (result = Args) : result), ...);
-		return result;
-	}
-
-	/**
-	 * \private
-	 * Checks if the collection contains the specified parameter type.
-	 * \param _type Type of the parameter to check.
-	 * \return True if the collection contains the specified parameter type, false otherwise.
-	 */
-	static constexpr bool Has(EUnitParameter _type)
-	{
-		return ((_type == Args) || ...);
-	}
-};

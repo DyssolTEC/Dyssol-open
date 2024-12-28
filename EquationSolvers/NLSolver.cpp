@@ -14,6 +14,7 @@ PRAGMA_WARNING_DISABLE
 #include <sunlinsol/sunlinsol_dense.h>
 #endif
 PRAGMA_WARNING_POP
+#include <cstring>
 
 // Macros for convenient adding context to functions depending on the sundials version
 #if SUNDIALS_VERSION_MAJOR >= 6
@@ -134,7 +135,7 @@ bool CNLSolver::SetModel(CNLModel* _pModel)
 #if SUNDIALS_VERSION_MAJOR == 6
 	res = SUNContext_Create(nullptr, &m_sunctx);
 #elif SUNDIALS_VERSION_MAJOR == 7
-	SUNErrCode res = SUNContext_Create(SUN_COMM_NULL, &m_sunctx);
+	res = SUNContext_Create(SUN_COMM_NULL, &m_sunctx);
 #endif
 #if SUNDIALS_VERSION_MAJOR >= 6
 	if (!res)
@@ -208,7 +209,7 @@ bool CNLSolver::SetModel(CNLModel* _pModel)
 	else
 	{
 		KINSetMAA(m_pKINmem, m_nMAA);
-#if SUNDIALS_VERSION_MAJOR >= 5
+#if SUNDIALS_VERSION_MAJOR >= 5 && SUNDIALS_VERSION_MINOR >= 1
 		KINSetDampingAA(m_pKINmem, m_dDampingAA);
 		KINSetDamping(m_pKINmem, m_dDamping);
 #endif
