@@ -17,7 +17,7 @@ void CBunker::CreateBasicInfo()
 	SetUnitName("Solids bunker");
 	SetAuthorName("SPE TUHH");
 	SetUniqueID("A5D7F41322C949EC86C96C583A35501F");
-	SetHelpLink("003_models/unit_bunker.html");
+	SetHelpLink("003_models/unit_solidsbunker.html");
 }
 
 void CBunker::CreateStructure()

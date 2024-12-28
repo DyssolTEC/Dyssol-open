@@ -13,7 +13,7 @@ An operation unit performs one of the following tasks:
 
 - Dynamic simulation: examples are Granulator, Agglomerator and Bunker.
 
-You can also develope your own operation unit and refer to :ref:`label-unitDev` for more information.
+You can also develop your own operation unit and refer to :ref:`label-unitDev` for more information.
 
 |
 
@@ -21,7 +21,6 @@ You can also develope your own operation unit and refer to :ref:`label-unitDev` 
 	:maxdepth: 2
 
 	unit_agglomerator
-	unit_bunker
 	unit_crusher
 	unit_cyclone
 	unit_granulator
@@ -29,6 +28,7 @@ You can also develope your own operation unit and refer to :ref:`label-unitDev` 
 	unit_mixer
 	unit_outletflow
 	unit_screen
+	unit_solidsbunker
 	unit_splitter
 	unit_timedelay
 

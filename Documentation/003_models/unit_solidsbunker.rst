@@ -1,11 +1,11 @@
-.. _sec.units.bunker:
+.. _sec.units.solidsbunker:
 
-Bunker
-======
+Solids bunker
+=============
 
 Bunker unit performs accumulation of the solid part of the input material with ideal mixing, see figure below.
 
-.. image:: ../static/images/003_models/bunker.png
+.. image:: ../static/images/003_models/solidsbunker.png
    :width: 200px
    :alt:
    :align: center
