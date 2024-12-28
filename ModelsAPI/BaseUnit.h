@@ -19,7 +19,7 @@
 #else
 #define DYSSOL_CREATE_MODEL_FUN CreateDYSSOLUnitV5
 #endif
-#define DYSSOL_CREATE_MODEL_FUN_NAME MACRO_TOSTRING(DYSSOL_CREATE_MODEL_FUN)
+#define DYSSOL_CREATE_MODEL_FUN_NAME MACRO_STRINGIFY(DYSSOL_CREATE_MODEL_FUN)
 
 // TODO: move it somewhere
 ////////////////////////////////////////////////////////////////////////////////
