@@ -1,0 +1,1 @@
+powershell -executionpolicy bypass -File %~dp0\generate_units_list.ps1 %1 %2
