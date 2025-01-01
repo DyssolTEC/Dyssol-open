@@ -1,9 +1,13 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2024, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "UnitPorts.h"
-#include "H5Handler.h"
+
+#include "ContainerFunctions.h"
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
+#include "H5Handler.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // CUnitPort
@@ -82,11 +86,32 @@ void CUnitPort::LoadFromFile(CH5Handler& _h5File, const std::string& _path)
 // CPortsManager
 //
 
-void CPortsManager::CopyUserData(const CPortsManager& _ports) const
+CPortsManager::CPortsManager(const CPortsManager& _other)
 {
-	if (m_ports.size() != _ports.m_ports.size()) return;
-	for (size_t i = 0; i < m_ports.size(); ++i)
-		m_ports[i]->SetStreamKey(_ports.m_ports[i]->GetStreamKey());
+	m_ports = DeepCopy(_other.m_ports);
+}
+
+CPortsManager::CPortsManager(CPortsManager&& _other) noexcept
+{
+	swap(*this, _other);
+}
+
+CPortsManager& CPortsManager::operator=(CPortsManager _other)
+{
+	swap(*this, _other);
+	return *this;
+}
+
+CPortsManager& CPortsManager::operator=(CPortsManager&& _other) noexcept
+{
+	CPortsManager tmp{ std::move(_other) };
+	swap(tmp, _other);
+	return *this;
+}
+
+void swap(CPortsManager& _first, CPortsManager& _second) noexcept
+{
+	std::swap(_first.m_ports, _second.m_ports);
 }
 
 CUnitPort* CPortsManager::AddPort(const std::string& _name, EUnitPort _type)

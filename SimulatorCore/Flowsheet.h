@@ -72,10 +72,17 @@ public:
 	 */
 	CFlowsheet(CModelsManager* _modelsManager, const CMaterialsDatabase* _materialsDB);
 	CFlowsheet(const CFlowsheet& _other);
-	CFlowsheet(CFlowsheet&& _other) = delete;
-	CFlowsheet& operator=(const CFlowsheet& _other);
-	CFlowsheet& operator=(CFlowsheet&& _other) = delete;
+	CFlowsheet(CFlowsheet&& _other) noexcept;
+	CFlowsheet& operator=(CFlowsheet _other);
+	CFlowsheet& operator=(CFlowsheet&& _other) noexcept;
 	~CFlowsheet() = default;
+
+	/**
+	 * \brief Swaps the content of two flowsheets.
+	 * \param _first First flowsheet.
+	 * \param _second Second flowsheet.
+	 */
+	friend void swap(CFlowsheet& _first, CFlowsheet& _second) noexcept;
 
 	/**
 	 * Sets full name of the file, where the flowsheet is stored.

@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2024, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "MultidimensionalGrid.h"
 #include "H5Handler.h"
@@ -228,19 +230,33 @@ void CGridDimensionSymbolic::SetGrid(const std::vector<std::string>& _grid)
 
 CMultidimensionalGrid::CMultidimensionalGrid(const CMultidimensionalGrid& _other)
 {
-	for (const auto& d : _other.m_grids)
-		AddDimension(*d);
+	m_grids.reserve(_other.m_grids.size());
+	for (const auto& g : _other.m_grids)
+		m_grids.emplace_back(g->Clone());
 }
 
-CMultidimensionalGrid& CMultidimensionalGrid::operator=(const CMultidimensionalGrid& _other)
+CMultidimensionalGrid::CMultidimensionalGrid(CMultidimensionalGrid&& _other) noexcept
 {
-	if (this != &_other)
-	{
-		Clear();
-		for (const auto& d : _other.m_grids)
-			AddDimension(*d);
-	}
+	swap(*this, _other);
+}
+
+CMultidimensionalGrid& CMultidimensionalGrid::operator=(CMultidimensionalGrid _other)
+{
+	swap(*this, _other);
 	return *this;
+}
+
+CMultidimensionalGrid& CMultidimensionalGrid::operator=(CMultidimensionalGrid&& _other) noexcept
+{
+	CMultidimensionalGrid tmp{ std::move(_other) };
+	swap(tmp, _other);
+	return *this;
+}
+
+void swap(CMultidimensionalGrid& _first, CMultidimensionalGrid& _second) noexcept
+{
+	using std::swap;
+	swap(_first.m_grids, _second.m_grids);
 }
 
 void CMultidimensionalGrid::Clear()

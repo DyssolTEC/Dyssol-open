@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2024, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -15,7 +17,7 @@ class CH5Handler;
  * This is actually a Unit - an entity of the flowsheet. Each Unit is filled with a Model (CBaseUnit) that represents its structure and functionality. */
 class CUnitContainer
 {
-	static const unsigned m_saveVersion{ 2 }; // Current version of the saving procedure.
+	static constexpr unsigned m_saveVersion{ 2 }; // Current version of the saving procedure.
 
 	std::string m_name{ "Unit" };		// Name of the unit container - a unit name displayed in the flowsheet.
 	std::string m_uniqueID;				// The unique identifier of the unit.
@@ -38,16 +40,24 @@ class CUnitContainer
 	const SThermodynamicsSettings* m_thermodynamics{};	// Reference to thermodynamics settings.
 
 public:
+	CUnitContainer() = default;
 	// Basic constructor.
 	CUnitContainer(const std::string& _id, CModelsManager* _modelsManager,
 		const CMaterialsDatabase* _materialsDB, const CMultidimensionalGrid* _grid, const std::vector<SOverallDescriptor>* _overall,
 		const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics);
 	CUnitContainer(const CUnitContainer& _other);
-	CUnitContainer(CUnitContainer&& _other)                 = delete;
-	CUnitContainer& operator=(const CUnitContainer& _other) = delete;
-	CUnitContainer& operator=(CUnitContainer&& _other)      = delete;
+	CUnitContainer(CUnitContainer&& _other) noexcept;
+	CUnitContainer& operator=(CUnitContainer _other);
+	CUnitContainer& operator=(CUnitContainer&& _other) noexcept;
 	// Basic destructor.
 	~CUnitContainer();
+
+	/**
+	 * \brief Swaps the content of two unit containers.
+	 * \param _first First container.
+	 * \param _second Second container.
+	 */
+	friend void swap(CUnitContainer& _first, CUnitContainer& _second) noexcept;
 
 	// Returns a name of the unit.
 	[[nodiscard]] std::string GetName() const;

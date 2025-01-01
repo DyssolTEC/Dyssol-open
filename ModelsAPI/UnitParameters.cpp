@@ -94,6 +94,11 @@ CDependentUnitParameter::CDependentUnitParameter(std::string _valueName, double 
 	m_data.SetValue(_paramInit, _valueInit);
 }
 
+CDependentUnitParameter* CDependentUnitParameter::clone() const
+{
+	return new CDependentUnitParameter{ *this };
+}
+
 void CDependentUnitParameter::Clear()
 {
 	m_data.Clear();
@@ -294,6 +299,11 @@ CTDUnitParameter::CTDUnitParameter(std::string _name, std::wstring _units, std::
 	SetType(EUnitParameter::TIME_DEPENDENT);
 }
 
+CTDUnitParameter* CTDUnitParameter::clone() const
+{
+	return new CTDUnitParameter{ *this };
+}
+
 std::vector<double> CTDUnitParameter::GetTimes() const
 {
 	return GetParams();
@@ -341,6 +351,11 @@ CStringUnitParameter::CStringUnitParameter(std::string _name, std::string _descr
 	CBaseUnitParameter(EUnitParameter::STRING, std::move(_name), L"", std::move(_description)),
 	m_value(std::move(_value))
 {
+}
+
+CStringUnitParameter* CStringUnitParameter::clone() const
+{
+	return new CStringUnitParameter{ *this };
 }
 
 void CStringUnitParameter::Clear()
@@ -407,6 +422,11 @@ CCheckBoxUnitParameter::CCheckBoxUnitParameter(std::string _name, std::string _d
 	CBaseUnitParameter(EUnitParameter::CHECKBOX, std::move(_name), L"", std::move(_description)),
 	m_checked(_checked)
 {
+}
+
+CCheckBoxUnitParameter* CCheckBoxUnitParameter::clone() const
+{
+	return new CCheckBoxUnitParameter{ *this };
 }
 
 void CCheckBoxUnitParameter::Clear()
@@ -483,6 +503,11 @@ CSolverUnitParameter::CSolverUnitParameter(std::string _name, std::string _descr
 	CBaseUnitParameter(EUnitParameter::SOLVER, std::move(_name), L"", std::move(_description)),
 	m_solverType(_type)
 {
+}
+
+CSolverUnitParameter* CSolverUnitParameter::clone() const
+{
+	return new CSolverUnitParameter{ *this };
 }
 
 void CSolverUnitParameter::Clear()
@@ -575,6 +600,11 @@ CComboUnitParameter::CComboUnitParameter(std::string _name, std::string _descrip
 		m_selected = _itemDefault;
 	else if (!_items.empty())
 		m_selected = _items.front();
+}
+
+CComboUnitParameter* CComboUnitParameter::clone() const
+{
+	return new CComboUnitParameter{ *this };
 }
 
 void CComboUnitParameter::Clear()
@@ -690,6 +720,11 @@ CCompoundUnitParameter::CCompoundUnitParameter(std::string _name, std::string _d
 {
 }
 
+CCompoundUnitParameter* CCompoundUnitParameter::clone() const
+{
+	return new CCompoundUnitParameter{ *this };
+}
+
 void CCompoundUnitParameter::Clear()
 {
 	m_key.clear();
@@ -756,6 +791,11 @@ CMDBCompoundUnitParameter::CMDBCompoundUnitParameter(std::string _name, std::str
 	SetType(EUnitParameter::MDB_COMPOUND);
 }
 
+CMDBCompoundUnitParameter* CMDBCompoundUnitParameter::clone() const
+{
+	return new CMDBCompoundUnitParameter{ *this };
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// CReactionUnitParameter
 
@@ -769,6 +809,11 @@ CReactionUnitParameter::CReactionUnitParameter()
 CReactionUnitParameter::CReactionUnitParameter(std::string _name, std::string _description)
 	: CBaseUnitParameter(EUnitParameter::REACTION, std::move(_name), L"", std::move(_description))
 {
+}
+
+CReactionUnitParameter* CReactionUnitParameter::clone() const
+{
+	return new CReactionUnitParameter{ *this };
 }
 
 void CReactionUnitParameter::Clear()

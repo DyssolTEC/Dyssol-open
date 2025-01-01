@@ -1,9 +1,13 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2024, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "StateVariable.h"
-#include "H5Handler.h"
+
+#include "ContainerFunctions.h"
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
+#include "H5Handler.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // CStateVariable
@@ -124,11 +128,33 @@ void CStateVariable::AddToHistory(double _time, double _value)
 // CStateVariablesManager
 //
 
-void CStateVariablesManager::CopyUserData(const CStateVariablesManager& _stateVariables) const
+CStateVariablesManager::CStateVariablesManager(const CStateVariablesManager& _other)
+	: m_stateVariables{ DeepCopy(_other.m_stateVariables) }
 {
-	if (m_stateVariables.size() != _stateVariables.m_stateVariables.size()) return;
-	for (size_t i = 0; i < m_stateVariables.size(); ++i)
-		*m_stateVariables[i] = *_stateVariables.m_stateVariables[i];
+}
+
+CStateVariablesManager::CStateVariablesManager(CStateVariablesManager&& _other) noexcept
+{
+	swap(*this, _other);
+}
+
+CStateVariablesManager& CStateVariablesManager::operator=(CStateVariablesManager _other)
+{
+	swap(*this, _other);
+	return *this;
+}
+
+CStateVariablesManager& CStateVariablesManager::operator=(CStateVariablesManager&& _other) noexcept
+{
+	CStateVariablesManager tmp{ std::move(_other) };
+	swap(tmp, _other);
+	return *this;
+}
+
+void swap(CStateVariablesManager& _first, CStateVariablesManager& _second) noexcept
+{
+	using std::swap;
+	swap(_first.m_stateVariables, _second.m_stateVariables);
 }
 
 CStateVariable* CStateVariablesManager::AddStateVariable(const std::string& _name, double _initValue)

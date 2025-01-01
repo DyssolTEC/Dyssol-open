@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2024, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -13,7 +15,7 @@
    3. Temporary - added during simulation. Are removed right after the simulation is finished. */
 class CStreamManager
 {
-	static const unsigned m_saveVersion{ 1 };	// Current version of the saving procedure.
+	static constexpr unsigned m_saveVersion{ 1 };	// Current version of the saving procedure.
 
 	std::vector<std::unique_ptr<CStream>> m_feedsInit;		// Initial values of feeds defined in this unit. These will be displayed in holdups editor UI. Will not be changed during the simulation.
 	std::vector<std::unique_ptr<CStream>> m_feedsWork;		// Feeds defined in this unit that take part in the simulation, and are displayed in the results.
@@ -47,6 +49,20 @@ class CStreamManager
 	std::vector<std::vector<std::unique_ptr<CHoldup>>*> m_allHoldups{ &m_holdupsInit, &m_holdupsWork, &m_holdupsStored };
 
 public:
+	CStreamManager() = default;
+	CStreamManager(const CStreamManager& _other);
+	CStreamManager(CStreamManager&& _other) noexcept;
+	CStreamManager& operator=(CStreamManager _other);
+	CStreamManager& operator=(CStreamManager&& _other) noexcept;
+	~CStreamManager() = default;
+
+	/**
+	 * \brief Swaps the content of two managers.
+	 * \param _first First manager.
+	 * \param _second Second manager.
+	 */
+	friend void swap(CStreamManager& _first, CStreamManager& _second) noexcept;
+
 	// TODO: set it all in constructor and make them references when the same is done in BaseUnit.
 	// Sets pointers to all required data.
 	void SetPointers(const CMaterialsDatabase* _materialsDB, const CMultidimensionalGrid* _grid, const std::vector<SOverallDescriptor>* _overall,
@@ -58,13 +74,6 @@ public:
 	 * \param _materialsDB Pointer to materials database.
 	 */
 	void SetMaterialsDatabase(const CMaterialsDatabase* _materialsDB);
-	/**
-	 * \internal
-	 * \brief Copies user-defined data from _streams.
-	 * \details Copies information about configured and simulated feeds and holdups. Assumes the corresponding streams and holdups structure is the same.
-	 * \param _streams Reference to source streams manager.
-	 */
-	void CopyUserData(const CStreamManager& _streams) const;
 
 	// Is called when initial structure of the unit is configured.
 	void CreateStructure();

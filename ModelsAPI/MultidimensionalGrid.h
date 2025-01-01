@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2024, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -144,10 +146,17 @@ class CMultidimensionalGrid
 public:
 	CMultidimensionalGrid() = default;
 	CMultidimensionalGrid(const CMultidimensionalGrid& _other);
-	CMultidimensionalGrid& operator=(const CMultidimensionalGrid& _other);
-	CMultidimensionalGrid(CMultidimensionalGrid&& _other) = default;
-	CMultidimensionalGrid& operator=(CMultidimensionalGrid && _other) = default;
+	CMultidimensionalGrid(CMultidimensionalGrid&& _other) noexcept;
+	CMultidimensionalGrid& operator=(CMultidimensionalGrid _other);
+	CMultidimensionalGrid& operator=(CMultidimensionalGrid&& _other) noexcept;
 	~CMultidimensionalGrid() = default;
+
+	/**
+	 * \brief Swaps the content of two grids.
+	 * \param _first First grid.
+	 * \param _second Second grid.
+	 */
+	friend void swap(CMultidimensionalGrid& _first, CMultidimensionalGrid& _second) noexcept;
 
 	// Removes all.
 	void Clear();

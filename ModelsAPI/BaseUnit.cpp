@@ -12,8 +12,84 @@
 #include <stdexcept>
 #include <numeric>
 
+CBaseUnit::CBaseUnit(const CBaseUnit& _other)
+	: m_unitName{ _other.m_unitName }
+	, m_uniqueID{ _other.m_uniqueID }
+	, m_authorName{ _other.m_authorName }
+	, m_helpLink{_other.m_helpLink}
+	, m_version{_other.m_version}
+	, m_grid{ _other.m_grid }
+	, m_materialsDB{ _other.m_materialsDB }
+	, m_overall{ _other.m_overall }
+	, m_phases{ _other.m_phases }
+	, m_cache{ _other.m_cache }
+	, m_tolerances{ _other.m_tolerances }
+	, m_thermodynamics{ _other.m_thermodynamics }
+	, m_ports{ _other.m_ports }
+	, m_unitParameters{ _other.m_unitParameters }
+	, m_stateVariables{ _other.m_stateVariables }
+	, m_streams{ _other.m_streams }
+	, m_plots{ _other.m_plots }
+	, m_hasError{ _other.m_hasError }
+	, m_hasWarning{ _other.m_hasWarning }
+	, m_hasInfo{ _other.m_hasInfo }
+	, m_errorMessage{ _other.m_errorMessage }
+	, m_warningMessage{ _other.m_warningMessage }
+	, m_infoMessage{ _other.m_infoMessage }
+{
+	if (_other.m_enthalpyCalculator)
+		m_enthalpyCalculator = std::make_unique<CMixtureEnthalpyLookup>(*_other.m_enthalpyCalculator);
+}
+
+CBaseUnit::CBaseUnit(CBaseUnit&& _other) noexcept
+{
+	swap(*this, _other);
+}
+
+CBaseUnit& CBaseUnit::operator=(CBaseUnit _other)
+{
+	swap(*this, _other);
+	return *this;
+}
+
+CBaseUnit& CBaseUnit::operator=(CBaseUnit&& _other) noexcept
+{
+	CBaseUnit tmp{ std::move(_other) };
+	swap(tmp, _other);
+	return *this;
+}
+
+void swap(CBaseUnit& _first, CBaseUnit& _second) noexcept
+{
+	using std::swap;
+	swap(_first.m_unitName          , _second.m_unitName);
+	swap(_first.m_uniqueID          , _second.m_uniqueID);
+	swap(_first.m_authorName        , _second.m_authorName);
+	swap(_first.m_version           , _second.m_version);
+	swap(_first.m_helpLink          , _second.m_helpLink);
+	swap(_first.m_grid              , _second.m_grid);
+	swap(_first.m_materialsDB       , _second.m_materialsDB);
+	swap(_first.m_overall           , _second.m_overall);
+	swap(_first.m_phases            , _second.m_phases);
+	swap(_first.m_cache             , _second.m_cache);
+	swap(_first.m_tolerances        , _second.m_tolerances);
+	swap(_first.m_thermodynamics    , _second.m_thermodynamics);
+	swap(_first.m_ports             , _second.m_ports);
+	swap(_first.m_unitParameters    , _second.m_unitParameters);
+	swap(_first.m_stateVariables    , _second.m_stateVariables);
+	swap(_first.m_streams           , _second.m_streams);
+	swap(_first.m_plots             , _second.m_plots);
+	swap(_first.m_enthalpyCalculator, _second.m_enthalpyCalculator);
+	swap(_first.m_hasError          , _second.m_hasError);
+	swap(_first.m_hasWarning        , _second.m_hasWarning);
+	swap(_first.m_hasInfo           , _second.m_hasInfo);
+	swap(_first.m_errorMessage      , _second.m_errorMessage);
+	swap(_first.m_warningMessage    , _second.m_warningMessage);
+	swap(_first.m_infoMessage       , _second.m_infoMessage);
+}
+
 void CBaseUnit::ConfigureUnitStructures(const CMaterialsDatabase* _materialsDB, const CMultidimensionalGrid& _grid, const std::vector<SOverallDescriptor>* _overall,
-	const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics)
+										const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics)
 {
 	m_materialsDB    = _materialsDB;
 	m_grid           = _grid;
@@ -42,16 +118,6 @@ void CBaseUnit::SetMaterialsDatabase(const CMaterialsDatabase* _materialsDB)
 	m_materialsDB = _materialsDB;
 	m_streams.SetMaterialsDatabase(m_materialsDB);
 	ClearEnthalpyCalculator();
-}
-
-
-void CBaseUnit::CopyUserData(const CBaseUnit& _unit)
-{
-	m_ports.CopyUserData(_unit.m_ports);
-	m_unitParameters.CopyUserData(_unit.m_unitParameters);
-	m_stateVariables.CopyUserData(_unit.m_stateVariables);
-	m_streams.CopyUserData(_unit.m_streams);
-	m_plots.CopyUserData(_unit.m_plots);
 }
 
 std::string CBaseUnit::GetUnitName() const
@@ -1976,4 +2042,3 @@ unsigned CBaseUnit::EPhase2SOA(EPhase _phase)
 	}
 	return 4;
 }
-

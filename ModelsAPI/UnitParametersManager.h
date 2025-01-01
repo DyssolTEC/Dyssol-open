@@ -21,7 +21,7 @@
  */
 class CUnitParametersManager
 {
-	static const unsigned m_cnSaveVersion{ 1 };
+	static constexpr unsigned m_cnSaveVersion{ 1 };
 
 	using group_map_t = std::map<size_t, std::map<size_t, std::vector<size_t>>>; ///< map<iParameter, map<iBlock, vector<iGroups>>>
 
@@ -29,13 +29,19 @@ class CUnitParametersManager
 	group_map_t m_groups;                                          ///< List of group blocks and corresponding groups, to which parameters belong. Is used to determine activity of parameters.
 
 public:
+	CUnitParametersManager() = default;
+	CUnitParametersManager(const CUnitParametersManager& _other);
+	CUnitParametersManager(CUnitParametersManager&& _other) noexcept;
+	CUnitParametersManager& operator=(CUnitParametersManager _other);
+	CUnitParametersManager& operator=(CUnitParametersManager&& _other) noexcept;
+	~CUnitParametersManager() = default;
+
 	/**
-	 * \private
-	 * \brief Copies user-defined data from _other.
-	 * \details Copies information about selected parameters. Assumes the corresponding parameters structure is the same.
-	 * \param _other Reference to source unit parameters manager.
+	 * \brief Swaps the content of two managers.
+	 * \param _first First manager.
+	 * \param _second Second manager.
 	 */
-	void CopyUserData(const CUnitParametersManager& _other);
+	friend void swap(CUnitParametersManager& _first, CUnitParametersManager& _second) noexcept;
 
 	/**
 	 * \brief Returns number of specified unit parameters.

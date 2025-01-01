@@ -446,19 +446,25 @@ private:
  */
 class CPlotManager
 {
-	static const unsigned m_saveVersion{ 1 };	///< Current version of the saving procedure.
+	static constexpr unsigned m_saveVersion{ 1 };	///< Current version of the saving procedure.
 
 	std::vector<std::unique_ptr<CPlot>> m_plots;		///< Plots.
 	std::vector<std::unique_ptr<CPlot>> m_plotsStored;	///< A copy of plots used to store data during cyclic recalculations.
 
 public:
+	CPlotManager() = default;
+	CPlotManager(const CPlotManager& _other);
+	CPlotManager(CPlotManager&& _other) noexcept;
+	CPlotManager& operator=(CPlotManager _other);
+	CPlotManager& operator=(CPlotManager&& _other) noexcept;
+	~CPlotManager() = default;
+
 	/**
-	 * \private
-	 * \brief Copies user-defined data from _plots.
-	 * \details Copies information about generated plots. Assumes the corresponding plots structure is the same.
-	 * \param _plots Reference to source plots manager.
+	 * \brief Swaps the content of two managers.
+	 * \param _first First manager.
+	 * \param _second Second manager.
 	 */
-	void CopyUserData(const CPlotManager& _plots) const;
+	friend void swap(CPlotManager& _first, CPlotManager& _second) noexcept;
 
 	/**
 	 * \brief Adds a new 2D plot with the specified name.

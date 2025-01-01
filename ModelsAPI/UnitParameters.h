@@ -86,6 +86,11 @@ public:
 	 */
 	CBaseUnitParameter& operator=(CBaseUnitParameter&& _other)      = default;
 
+	/*
+	 * \brief Returns a non-managed pointer to a copy of this.
+	 */
+	[[nodiscard]] virtual CBaseUnitParameter* clone() const = 0;
+
 	/**
 	 * \private
 	 * \brief Clears all data.
@@ -213,6 +218,11 @@ public:
 		, m_max{ _max }
 	{
 	}
+
+	/*
+	 * \brief Returns a non-managed pointer to a copy of this.
+	 */
+	[[nodiscard]] CConstUnitParameter* clone() const override { return new CConstUnitParameter{ *this }; }
 
 	/**
 	 * \private
@@ -361,6 +371,12 @@ public:
 		, m_max{ _max }
 	{
 	}
+
+	/*
+	 * \brief Returns a non-managed pointer to a copy of this.
+	 */
+	[[nodiscard]] CListUnitParameter* clone() const override { return new CListUnitParameter{ *this }; }
+
 	/**
 	 * \private
 	 * \brief Clears all data.
@@ -552,6 +568,11 @@ public:
 	 * \private
 	 */
 	CDependentUnitParameter(std::string _valueName, double _valueInit, std::wstring _valueUnits, std::string _paramName, double _paramInit, std::wstring _paramUnits, std::string _description, double _valueMin, double _valueMax, double _paramMin, double _paramMax);
+
+	/*
+	 * \brief Returns a non-managed pointer to a copy of this.
+	 */
+	[[nodiscard]] CDependentUnitParameter* clone() const override;
 
 	/**
 	 * \private
@@ -763,6 +784,11 @@ public:
 	 */
 	CTDUnitParameter(std::string _name, std::wstring _units, std::string _description, double _min, double _max, double _value);
 
+	/*
+	 * \brief Returns a non-managed pointer to a copy of this.
+	 */
+	[[nodiscard]] CTDUnitParameter* clone() const override;
+
 	/**
 	* \brief Returns list of all defined time points.
 	* \details Refer to function CDependentUnitParameter::GetParams() const.
@@ -805,6 +831,11 @@ public:
 	 * \private
 	 */
 	CStringUnitParameter(std::string _name, std::string _description, std::string _value);
+
+	/*
+	 * \brief Returns a non-managed pointer to a copy of this.
+	 */
+	[[nodiscard]] CStringUnitParameter* clone() const override;
 
 	/**
 	 * \private
@@ -874,6 +905,11 @@ public:
 	 * \private
 	 */
 	CCheckBoxUnitParameter(std::string _name, std::string _description, bool _checked);
+
+	/*
+	 * \brief Returns a non-managed pointer to a copy of this.
+	 */
+	[[nodiscard]] CCheckBoxUnitParameter* clone() const override;
 
 	/**
 	 * \private
@@ -956,6 +992,11 @@ public:
 	 * \private
 	 */
 	CSolverUnitParameter(std::string _name, std::string _description, ESolverTypes _type);
+
+	/*
+	 * \brief Returns a non-managed pointer to a copy of this.
+	 */
+	[[nodiscard]] CSolverUnitParameter* clone() const override;
 
 	/**
 	 * \private
@@ -1049,6 +1090,11 @@ public:
 	 * \private
 	 */
 	CComboUnitParameter(std::string _name, std::string _description, size_t _itemDefault, const std::vector<size_t>& _items, const std::vector<std::string>& _itemsNames);
+
+	/*
+	 * \brief Returns a non-managed pointer to a copy of this.
+	 */
+	[[nodiscard]] CComboUnitParameter* clone() const override;
 
 	/**
 	 * \private
@@ -1160,6 +1206,11 @@ public:
 	 */
 	CCompoundUnitParameter(std::string _name, std::string _description);
 
+	/*
+	 * \brief Returns a non-managed pointer to a copy of this.
+	 */
+	[[nodiscard]] CCompoundUnitParameter* clone() const override;
+
 	/**
 	 * \private
 	 * \brief Resets compound's key.
@@ -1225,6 +1276,11 @@ public:
 	 * \private
 	 */
 	CMDBCompoundUnitParameter(std::string _name, std::string _description);
+
+	/*
+	 * \brief Returns a non-managed pointer to a copy of this.
+	 */
+	[[nodiscard]] CMDBCompoundUnitParameter* clone() const override;
 };
 
 
@@ -1246,6 +1302,11 @@ public:
 	 * \private
 	 */
 	CReactionUnitParameter(std::string _name, std::string _description);
+
+	/*
+	 * \brief Returns a non-managed pointer to a copy of this.
+	 */
+	[[nodiscard]] CReactionUnitParameter* clone() const override;
 
 	/**
 	 * \private
