@@ -56,7 +56,7 @@ class CStream;
  */
 class CBaseUnit
 {
-	static const unsigned m_saveVersion{ 4 };	// Current version of the saving procedure.
+	static constexpr unsigned m_saveVersion{ 4 };	// Current version of the saving procedure.
 
 protected:
 	////////////////////////////////////////////////////////////////////////////////
@@ -131,12 +131,19 @@ private:
 
 public:
 	// TODO: initialize all pointers in constructor and make them references.
-	CBaseUnit()                                    = default;
-	CBaseUnit(const CBaseUnit& _other)             = delete;
-	CBaseUnit(CBaseUnit && _other)                 = delete;
-	CBaseUnit& operator=(const CBaseUnit & _other) = delete;
-	CBaseUnit& operator=(CBaseUnit && _other)      = delete;
-	virtual ~CBaseUnit()                           = default;
+	CBaseUnit() = default;
+	CBaseUnit(const CBaseUnit& _other);
+	CBaseUnit(CBaseUnit&& _other) noexcept;
+	CBaseUnit& operator=(CBaseUnit _other);
+	CBaseUnit& operator=(CBaseUnit&& _other) noexcept;
+	virtual ~CBaseUnit() = default;
+
+	/**
+	 * \brief Swaps the content of two units.
+	 * \param _first First unit.
+	 * \param _second Second unit.
+	 */
+	friend void swap(CBaseUnit& _first, CBaseUnit& _second) noexcept;
 
 	/**
 	 * \private
@@ -164,14 +171,6 @@ public:
 	 * \param _materialsDB Pointer to global materials database.
 	*/
 	void SetMaterialsDatabase(const CMaterialsDatabase* _materialsDB);
-
-	/**
-	 * \private
-	 * \brief Copies user-defined data from _unit.
-	 * \details Copies such data as selected streams, unit parameters, initial holdup data. Assumes the corresponding unit structure is the same.
-	 * \param _unit Reference to source unit.
-	 */
-	void CopyUserData(const CBaseUnit& _unit);
 
 	////////////////////////////////////////////////////////////////////////////////
 	/// Basic unit information
@@ -1761,13 +1760,13 @@ public:
 	 * \details This function must be defined in each unit.
 	 * No information on the flowsheet structure and connected streams is available at this point.
 	 */
-	virtual void CreateBasicInfo() = 0;
+	virtual void CreateBasicInfo() {}
 	/**
 	 * \brief Setup the structure of the unit (ports, unit parameters, holdups, internal streams).
 	 * \details This function must be defined in each unit. Here, all GUI-relevant parts of the unit are described.
 	 * No information on the flowsheet structure and connected streams is available at this point.
 	 */
-	virtual void CreateStructure() = 0;
+	virtual void CreateStructure() {}
 	/**
 	 * \brief Initialize unit for at time point 0 before starting the simulation.
 	 * \details This function can be defined in each unit. It is called once for each simulation.

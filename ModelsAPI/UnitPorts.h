@@ -22,7 +22,7 @@ class CH5Handler;
  */
 class CUnitPort
 {
-	static const unsigned m_saveVersion{ 1 };	///< Current version of the saving procedure.
+	static constexpr unsigned m_saveVersion{ 1 };	///< Current version of the saving procedure.
 
 private:
 	std::string m_name;							///< The name of the port, should be unique for the unit.
@@ -37,6 +37,13 @@ public:
 	 * \param _type Type of the port.
 	 */
 	CUnitPort(std::string _name, EUnitPort _type);
+
+	CUnitPort() = default;
+	CUnitPort(const CUnitPort& _other) = default;
+	CUnitPort(CUnitPort&& _other) = default;
+	CUnitPort& operator=(const CUnitPort& _other) = default;
+	CUnitPort& operator=(CUnitPort&& _other) = default;
+	~CUnitPort() = default;
 
 	/**
 	 * Returns port's name.
@@ -107,18 +114,24 @@ public:
  */
 class CPortsManager
 {
-	static const unsigned m_saveVersion{ 1 };	// Current version of the saving procedure.
+	static constexpr unsigned m_saveVersion{ 1 };	// Current version of the saving procedure.
 
 	std::vector<std::unique_ptr<CUnitPort>> m_ports;	// All defined ports.
 
 public:
+	CPortsManager() = default;
+	CPortsManager(const CPortsManager& _other);
+	CPortsManager(CPortsManager&& _other) noexcept;
+	CPortsManager& operator=(CPortsManager _other);
+	CPortsManager& operator=(CPortsManager&& _other) noexcept;
+	~CPortsManager() = default;
+
 	/**
-	 * \private
-	 * \brief Copies user-defined data from _ports.
-	 * \details Copies information about selected streams. Assumes the corresponding ports structure is the same.
-	 * \param _ports Reference to source ports manager.
+	 * \brief Swaps the content of two managers.
+	 * \param _first First manager.
+	 * \param _second Second manager.
 	 */
-	void CopyUserData(const CPortsManager& _ports) const;
+	friend void swap(CPortsManager& _first, CPortsManager& _second) noexcept;
 
 	/**
 	 * Adds a port and returns a pointer to it. If a port with this name already exist, does nothing and return nullptr.

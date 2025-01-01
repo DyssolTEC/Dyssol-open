@@ -6,49 +6,37 @@
 
 #include "ContainerFunctions.h"
 
-template<typename T>
-void Assign(CBaseUnitParameter* _lhs, CBaseUnitParameter* _rhs)
+CUnitParametersManager::CUnitParametersManager(const CUnitParametersManager& _other)
+	: m_groups{ _other.m_groups }
 {
-	auto* lhsDerived = dynamic_cast<T*>(_lhs);
-	auto* rhsDerived = dynamic_cast<T*>(_rhs);
-	if (lhsDerived && rhsDerived)
-	{
-		*lhsDerived = *rhsDerived;
-	}
+	m_parameters.reserve(_other.m_parameters.size());
+	for (const auto& p : _other.m_parameters)
+		m_parameters.emplace_back(p->clone());
 }
 
-void CUnitParametersManager::CopyUserData(const CUnitParametersManager& _other)
+CUnitParametersManager::CUnitParametersManager(CUnitParametersManager&& _other) noexcept
 {
-	if (this == &_other || m_parameters.size() != _other.m_parameters.size()) return;
-	for (size_t i = 0; i < m_parameters.size(); ++i)
-	{
-		const auto thisType = m_parameters[i]->GetType();
-		const auto otherType = _other.m_parameters[i]->GetType();
-		if (thisType == otherType)
-		{
-			switch (thisType) {
-			case EUnitParameter::UNKNOWN: break;
-			case EUnitParameter::TIME_DEPENDENT:  Assign<CTDUnitParameter         >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
-			case EUnitParameter::CONSTANT:        Assign<CConstRealUnitParameter  >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
-			case EUnitParameter::STRING:          Assign<CStringUnitParameter     >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
-			case EUnitParameter::CHECKBOX:        Assign<CCheckBoxUnitParameter   >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
-			case EUnitParameter::SOLVER:          Assign<CSolverUnitParameter     >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
-			case EUnitParameter::COMBO:           Assign<CComboUnitParameter      >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
-			case EUnitParameter::GROUP:           Assign<CComboUnitParameter      >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
-			case EUnitParameter::COMPOUND:        Assign<CCompoundUnitParameter   >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
-			case EUnitParameter::CONSTANT_DOUBLE: Assign<CConstRealUnitParameter  >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
-			case EUnitParameter::CONSTANT_INT64:  Assign<CConstIntUnitParameter   >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
-			case EUnitParameter::CONSTANT_UINT64: Assign<CConstUIntUnitParameter  >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
-			case EUnitParameter::REACTION:        Assign<CReactionUnitParameter   >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
-			case EUnitParameter::LIST_DOUBLE:     Assign<CListRealUnitParameter   >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
-			case EUnitParameter::LIST_INT64:      Assign<CListIntUnitParameter    >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
-			case EUnitParameter::LIST_UINT64:     Assign<CListUIntUnitParameter   >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
-			case EUnitParameter::MDB_COMPOUND:    Assign<CMDBCompoundUnitParameter>(m_parameters[i].get(), _other.m_parameters[i].get()); break;
-			case EUnitParameter::PARAM_DEPENDENT: Assign<CDependentUnitParameter  >(m_parameters[i].get(), _other.m_parameters[i].get()); break;
-			}
-		}
-	}
-	m_groups = _other.m_groups;
+	swap(*this, _other);
+}
+
+CUnitParametersManager& CUnitParametersManager::operator=(CUnitParametersManager _other)
+{
+	swap(*this, _other);
+	return *this;
+}
+
+CUnitParametersManager& CUnitParametersManager::operator=(CUnitParametersManager&& _other) noexcept
+{
+	CUnitParametersManager tmp{ std::move(_other) };
+	swap(tmp, _other);
+	return *this;
+}
+
+void swap(CUnitParametersManager& _first, CUnitParametersManager& _second) noexcept
+{
+	using std::swap;
+	swap(_first.m_parameters, _second.m_parameters);
+	swap(_first.m_groups    , _second.m_groups);
 }
 
 size_t CUnitParametersManager::ParametersNumber() const

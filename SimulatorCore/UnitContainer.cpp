@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2024, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "UnitContainer.h"
 #include "BaseUnit.h"
@@ -34,14 +36,49 @@ CUnitContainer::CUnitContainer(const CUnitContainer& _other)
 	if (_other.m_model)
 	{
 		SetModel(_other.m_model->GetUniqueID());
-		m_model->CopyUserData(*_other.m_model);
+		if (m_model)
+			*m_model = *_other.m_model;
 	}
+}
+
+CUnitContainer::CUnitContainer(CUnitContainer&& _other) noexcept
+{
+	swap(*this, _other);
+}
+
+CUnitContainer& CUnitContainer::operator=(CUnitContainer _other)
+{
+	swap(*this, _other);
+	return *this;
+}
+
+CUnitContainer& CUnitContainer::operator=(CUnitContainer&& _other) noexcept
+{
+	CUnitContainer tmp{ std::move(_other) };
+	swap(tmp, _other);
+	return *this;
 }
 
 CUnitContainer::~CUnitContainer()
 {
 	ClearExternalSolvers();
 	m_modelsManager->FreeUnit(m_model);
+}
+
+void swap(CUnitContainer& _first, CUnitContainer& _second) noexcept
+{
+	using std::swap;
+	swap(_first.m_name          , _second.m_name);
+	swap(_first.m_uniqueID      , _second.m_uniqueID);
+	swap(_first.m_model         , _second.m_model);
+	swap(_first.m_modelsManager , _second.m_modelsManager);
+	swap(_first.m_materialsDB   , _second.m_materialsDB);
+	swap(_first.m_grid          , _second.m_grid);
+	swap(_first.m_overall       , _second.m_overall);
+	swap(_first.m_phases        , _second.m_phases);
+	swap(_first.m_cache         , _second.m_cache);
+	swap(_first.m_tolerance     , _second.m_tolerance);
+	swap(_first.m_thermodynamics, _second.m_thermodynamics);
 }
 
 std::string CUnitContainer::GetName() const

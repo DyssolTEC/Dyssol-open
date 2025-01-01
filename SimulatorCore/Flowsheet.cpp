@@ -27,49 +27,53 @@ CFlowsheet::CFlowsheet(const CFlowsheet& _other)
 	, m_cacheHoldups{ _other.m_cacheHoldups }
 	, m_tolerance{ _other.m_tolerance }
 	, m_thermodynamics{ _other.m_thermodynamics }
+	, m_units{ DeepCopy(_other.m_units) }
+	, m_streams{ DeepCopy(_other.m_streams) }
+	, m_streamsI{ DeepCopy(_other.m_streamsI) }
 	, m_calculationSequence{ _other.m_calculationSequence }
 	, m_topologyModified{ _other.m_topologyModified }
 {
-	for (const auto& unit : _other.m_units)
-		m_units.emplace_back(new CUnitContainer{ *unit });
-	for (const auto& stream : _other.m_streams)
-		m_streams.emplace_back(new CStream{ *stream });
-	for (const auto& stream : _other.m_streamsI)
-		m_streamsI.emplace_back(new CStream{ *stream });
 	m_calculationSequence.SetPointers(&m_units, &m_streams);
 	m_calculationSequence.SetSequence(_other.m_calculationSequence.GetModelsKeys(), _other.m_calculationSequence.GetStreamsKeys());
 }
 
-CFlowsheet& CFlowsheet::operator=(const CFlowsheet& _other)
+CFlowsheet::CFlowsheet(CFlowsheet&& _other) noexcept
 {
-	if (this != &_other)
-	{
-		m_fileName = _other.m_fileName;
-		m_materialsDB = _other.m_materialsDB;
-		m_modelsManager = _other.m_modelsManager;
-		m_parameters = _other.m_parameters;
-		m_mainGrid = _other.m_mainGrid;
-		m_overall = _other.m_overall;
-		m_phases = _other.m_phases;
-		m_cacheStreams = _other.m_cacheStreams;
-		m_cacheHoldups = _other.m_cacheHoldups;
-		m_tolerance = _other.m_tolerance;
-		m_thermodynamics = _other.m_thermodynamics;
-		m_calculationSequence = _other.m_calculationSequence;
-		m_units.clear();
-		for (const auto& unit : _other.m_units)
-			m_units.emplace_back(new CUnitContainer{ *unit });
-		m_streams.clear();
-		for (const auto& stream : _other.m_streams)
-			m_streams.emplace_back(new CStream{ *stream });
-		m_streamsI.clear();
-		for (const auto& stream : _other.m_streamsI)
-			m_streamsI.emplace_back(new CStream{ *stream });
-		m_calculationSequence.SetPointers(&m_units, &m_streams);
-		m_calculationSequence.SetSequence(_other.m_calculationSequence.GetModelsKeys(), _other.m_calculationSequence.GetStreamsKeys());
-		m_topologyModified = _other.m_topologyModified;
-	}
+	swap(*this, _other);
+}
+
+CFlowsheet& CFlowsheet::operator=(CFlowsheet _other)
+{
+	swap(*this, _other);
 	return *this;
+}
+
+CFlowsheet& CFlowsheet::operator=(CFlowsheet&& _other) noexcept
+{
+	CFlowsheet tmp{ std::move(_other) };
+	swap(*this, _other);
+	return *this;
+}
+
+void swap(CFlowsheet& _first, CFlowsheet& _second) noexcept
+{
+	using std::swap;
+	swap(_first.m_fileName           , _second.m_fileName);
+	swap(_first.m_materialsDB        , _second.m_materialsDB);
+	swap(_first.m_modelsManager      , _second.m_modelsManager);
+	swap(_first.m_parameters         , _second.m_parameters);
+	swap(_first.m_mainGrid           , _second.m_mainGrid);
+	swap(_first.m_overall            , _second.m_overall);
+	swap(_first.m_phases             , _second.m_phases);
+	swap(_first.m_cacheStreams       , _second.m_cacheStreams);
+	swap(_first.m_cacheHoldups       , _second.m_cacheHoldups);
+	swap(_first.m_tolerance          , _second.m_tolerance);
+	swap(_first.m_thermodynamics     , _second.m_thermodynamics);
+	swap(_first.m_units              , _second.m_units);
+	swap(_first.m_streams            , _second.m_streams);
+	swap(_first.m_streamsI           , _second.m_streamsI);
+	swap(_first.m_calculationSequence, _second.m_calculationSequence);
+	swap(_first.m_topologyModified   , _second.m_topologyModified);
 }
 
 void CFlowsheet::SetFileName(const std::filesystem::path& _path)

@@ -7,6 +7,7 @@
 #include "DyssolTypes.h"
 #include <algorithm>
 #include <map>
+#include <memory>
 #include <set>
 #include <vector>
 
@@ -426,4 +427,34 @@ inline void SetSlice(double* _data, const std::vector<std::vector<std::vector<si
 	if (_ind.empty()) return;
 	for (size_t i = 0; i < _ind.size(); ++i)
 		SetSlice(_data, _ind[i], _val[i]);
+}
+
+/**
+ * \brief Creates a deep copy of a vector of unique pointers.
+ * \param _vec Vector of unique pointers to be copied.
+ * \return Deep copy of the input vector.
+ */
+template<typename T>
+std::vector<std::unique_ptr<T>> DeepCopy(const std::vector<std::unique_ptr<T>>& _vec)
+{
+	std::vector<std::unique_ptr<T>> res;
+	res.reserve(_vec.size());
+	for (const auto& ptr : _vec)
+		res.push_back(std::make_unique<T>(*ptr));
+	return res;
+}
+
+/**
+ * \brief Creates a deep copy of a vector of shared pointers.
+ * \param _vec Vector of shared pointers to be copied.
+ * \return Deep copy of the input vector.
+ */
+template<typename T>
+std::vector<std::shared_ptr<T>> DeepCopy(const std::vector<std::shared_ptr<T>>& _vec)
+{
+	std::vector<std::shared_ptr<T>> res;
+	res.reserve(_vec.size());
+	for (const auto& ptr : _vec)
+		res.push_back(std::make_shared<T>(*ptr));
+	return res;
 }

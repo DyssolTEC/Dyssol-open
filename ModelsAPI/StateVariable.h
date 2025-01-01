@@ -139,18 +139,24 @@ private:
 */
 class CStateVariablesManager
 {
-	static const unsigned m_saveVersion{ 1 };	// Current version of the saving procedure.
+	static constexpr unsigned m_saveVersion{ 1 };	// Current version of the saving procedure.
 
 	std::vector<std::unique_ptr<CStateVariable>> m_stateVariables;	// Defined state variables.
 
 public:
+	CStateVariablesManager() = default;
+	CStateVariablesManager(const CStateVariablesManager& _other);
+	CStateVariablesManager(CStateVariablesManager&& _other) noexcept;
+	CStateVariablesManager& operator=(CStateVariablesManager _other);
+	CStateVariablesManager& operator=(CStateVariablesManager&& _other) noexcept;
+	~CStateVariablesManager() = default;
+
 	/**
-	 * \private
-	 * \brief Copies user-defined data from \p _stateVariables.
-	 * \details Copies information about state variables. Assumes the corresponding state variables structure is the same.
-	 * \param _stateVariables Reference to state variables manager.
+	 * \brief Swaps the content of two managers.
+	 * \param _first First manager.
+	 * \param _second Second manager.
 	 */
-	void CopyUserData(const CStateVariablesManager& _stateVariables) const;
+	friend void swap(CStateVariablesManager& _first, CStateVariablesManager& _second) noexcept;
 
 	/**
 	 * \private

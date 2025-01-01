@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2024, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "StreamManager.h"
 #include "MaterialsDatabase.h"
@@ -6,9 +8,80 @@
 #include "ContainerFunctions.h"
 #include "DyssolStringConstants.h"
 
+CStreamManager::CStreamManager(const CStreamManager& _other)
+	: m_feedsInit{ DeepCopy(_other.m_feedsInit) }
+	, m_feedsWork{ DeepCopy(_other.m_feedsWork) }
+	, m_holdupsInit{ DeepCopy(_other.m_holdupsInit) }
+	, m_holdupsWork{ DeepCopy(_other.m_holdupsWork) }
+	, m_holdupsStored{ DeepCopy(_other.m_holdupsStored) }
+	, m_streamsWork{ DeepCopy(_other.m_streamsWork) }
+	, m_streamsStored{ DeepCopy(_other.m_streamsStored) }
+	, m_nFixHoldups{ _other.m_nFixHoldups }
+	, m_nFixStreams{ _other.m_nFixStreams }
+	, m_nVarHoldups{ _other.m_nVarHoldups }
+	, m_nVarStreams{ _other.m_nVarStreams }
+	, m_timeBegStored{ _other.m_timeBegStored }
+	, m_timeEndStored{ _other.m_timeEndStored }
+	, m_materialsDB{ _other.m_materialsDB }
+	, m_grid{ _other.m_grid }
+	, m_overall{ _other.m_overall }
+	, m_phases{ _other.m_phases }
+	, m_cache{ _other.m_cache }
+	, m_tolerances{ _other.m_tolerances }
+	, m_thermodynamics{ _other.m_thermodynamics }
+	, m_allStreams{ _other.m_allStreams }
+	, m_allHoldups{ _other.m_allHoldups }
+{
+}
+
+CStreamManager::CStreamManager(CStreamManager&& _other) noexcept
+{
+	swap(*this, _other);
+}
+
+CStreamManager& CStreamManager::operator=(CStreamManager _other)
+{
+	swap(*this, _other);
+	return *this;
+}
+
+CStreamManager& CStreamManager::operator=(CStreamManager&& _other) noexcept
+{
+	CStreamManager tmp{ std::move(_other) };
+	swap(tmp, _other);
+	return *this;
+}
+
+void swap(CStreamManager& _first, CStreamManager& _second) noexcept
+{
+	using std::swap;
+	swap(_first.m_feedsInit     , _second.m_feedsInit);
+	swap(_first.m_feedsWork     , _second.m_feedsWork);
+	swap(_first.m_holdupsInit   , _second.m_holdupsInit);
+	swap(_first.m_holdupsWork   , _second.m_holdupsWork);
+	swap(_first.m_holdupsStored , _second.m_holdupsStored);
+	swap(_first.m_streamsWork   , _second.m_streamsWork);
+	swap(_first.m_streamsStored , _second.m_streamsStored);
+	swap(_first.m_nFixHoldups   , _second.m_nFixHoldups);
+	swap(_first.m_nFixStreams   , _second.m_nFixStreams);
+	swap(_first.m_nVarHoldups   , _second.m_nVarHoldups);
+	swap(_first.m_nVarStreams   , _second.m_nVarStreams);
+	swap(_first.m_timeBegStored , _second.m_timeBegStored);
+	swap(_first.m_timeEndStored , _second.m_timeEndStored);
+	swap(_first.m_materialsDB   , _second.m_materialsDB);
+	swap(_first.m_grid          , _second.m_grid);
+	swap(_first.m_overall       , _second.m_overall);
+	swap(_first.m_phases        , _second.m_phases);
+	swap(_first.m_cache         , _second.m_cache);
+	swap(_first.m_tolerances    , _second.m_tolerances);
+	swap(_first.m_thermodynamics, _second.m_thermodynamics);
+	swap(_first.m_allStreams    , _second.m_allStreams);
+	swap(_first.m_allHoldups    , _second.m_allHoldups);
+}
+
 void CStreamManager::SetPointers(const CMaterialsDatabase* _materialsDB, const CMultidimensionalGrid* _grid,
-	const std::vector<SOverallDescriptor>* _overall, const std::vector<SPhaseDescriptor>* _phases,
-	const SCacheSettings* _cache, const SToleranceSettings* _tolerances, const SThermodynamicsSettings* _thermodynamics)
+								 const std::vector<SOverallDescriptor>* _overall, const std::vector<SPhaseDescriptor>* _phases,
+								 const SCacheSettings* _cache, const SToleranceSettings* _tolerances, const SThermodynamicsSettings* _thermodynamics)
 {
 	m_materialsDB    = _materialsDB;
 	m_grid           = _grid;
@@ -22,22 +95,6 @@ void CStreamManager::SetPointers(const CMaterialsDatabase* _materialsDB, const C
 void CStreamManager::SetMaterialsDatabase(const CMaterialsDatabase* _materialsDB)
 {
 	m_materialsDB = _materialsDB;
-}
-
-void CStreamManager::CopyUserData(const CStreamManager& _streams) const
-{
-	if (m_feedsInit.size() > _streams.m_feedsInit.size()) return;
-	if (m_feedsWork.size() > _streams.m_feedsWork.size()) return;
-	if (m_holdupsInit.size() > _streams.m_holdupsInit.size()) return;
-	if (m_holdupsWork.size() > _streams.m_holdupsWork.size()) return;
-	for (size_t i = 0; i < m_feedsInit.size(); ++i)
-		m_feedsInit[i]->CopyFromStream(0.0, _streams.m_feedsInit[i]->GetLastTimePoint(), _streams.m_feedsInit[i].get());
-	for (size_t i = 0; i < m_feedsWork.size(); ++i)
-		m_feedsWork[i]->CopyFromStream(0.0, _streams.m_feedsWork[i]->GetLastTimePoint(), _streams.m_feedsWork[i].get());
-	for (size_t i = 0; i < m_holdupsInit.size(); ++i)
-		m_holdupsInit[i]->CopyFromHoldup(0.0, _streams.m_holdupsInit[i].get());
-	for (size_t i = 0; i < m_holdupsWork.size(); ++i)
-		m_holdupsWork[i]->CopyFromHoldup(0.0, _streams.m_holdupsWork[i].get());
 }
 
 void CStreamManager::CreateStructure()

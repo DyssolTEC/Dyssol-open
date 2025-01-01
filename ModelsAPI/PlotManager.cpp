@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2024, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "PlotManager.h"
 #include "H5Handler.h"
@@ -468,11 +470,35 @@ CCurve* CPlot::AddEmptyCurve(double _z)
 // CPlotManager
 //
 
-void CPlotManager::CopyUserData(const CPlotManager& _plots) const
+CPlotManager::CPlotManager(const CPlotManager& _other)
+	: m_plots{ DeepCopy(_other.m_plots) }
+	, m_plotsStored{ DeepCopy(_other.m_plotsStored) }
 {
-	if (m_plots.size() != _plots.m_plots.size()) return;
-	for (size_t i = 0; i < m_plots.size(); ++i)
-		*m_plots[i] = *_plots.m_plots[i];
+}
+
+CPlotManager::CPlotManager(CPlotManager&& _other) noexcept
+{
+	swap(*this, _other);
+}
+
+CPlotManager& CPlotManager::operator=(CPlotManager _other)
+{
+	swap(*this, _other);
+	return *this;
+}
+
+CPlotManager& CPlotManager::operator=(CPlotManager&& _other) noexcept
+{
+	CPlotManager tmp{ std::move(_other) };
+	swap(tmp, _other);
+	return *this;
+}
+
+void swap(CPlotManager& _first, CPlotManager& _second) noexcept
+{
+	using std::swap;
+	swap(_first.m_plots      , _second.m_plots);
+	swap(_first.m_plotsStored, _second.m_plotsStored);
 }
 
 CPlot* CPlotManager::AddPlot(const std::string& _name)
@@ -647,4 +673,3 @@ void CPlotManager::LoadFromFile_v0(const CH5Handler& _h5File, const std::string&
 		}
 	}
 }
-
