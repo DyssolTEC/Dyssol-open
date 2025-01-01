@@ -32,17 +32,41 @@ private:
 
 public:
 	/**
+	 * \private
+	 * \brief Default constructor.
+	 */
+	CUnitPort() = default;
+	/**
+	 * \private
 	 * \brief Constructs unit port with the given name and type.
 	 * \param _name Name of the port.
 	 * \param _type Type of the port.
 	 */
 	CUnitPort(std::string _name, EUnitPort _type);
-
-	CUnitPort() = default;
+	/**
+	 * \private
+	 * \brief Copy constructor.
+	 */
 	CUnitPort(const CUnitPort& _other) = default;
+	/**
+	 * \private
+	 * \brief Move constructor.
+	 */
 	CUnitPort(CUnitPort&& _other) = default;
+	/**
+	 * \private
+	 * \brief Copy assignment operator.
+	 */
 	CUnitPort& operator=(const CUnitPort& _other) = default;
+	/**
+	 * \private
+	 * \brief Move assignment operator.
+	 */
 	CUnitPort& operator=(CUnitPort&& _other) = default;
+	/**
+	 * \private
+	 * \brief Destructor.
+	 */
 	~CUnitPort() = default;
 
 	/**
@@ -119,11 +143,35 @@ class CPortsManager
 	std::vector<std::unique_ptr<CUnitPort>> m_ports;	// All defined ports.
 
 public:
+	/**
+	 * \private
+	 * \brief Default constructor.
+	 */
 	CPortsManager() = default;
+	/**
+	 * \private
+	 * \brief Copy constructor.
+	 */
 	CPortsManager(const CPortsManager& _other);
+	/**
+	 * \private
+	 * \brief Move constructor.
+	 */
 	CPortsManager(CPortsManager&& _other) noexcept;
+	/**
+	 * \private
+	 * \brief Copy assignment operator.
+	 */
 	CPortsManager& operator=(CPortsManager _other);
+	/**
+	 * \private
+	 * \brief Move assignment operator.
+	 */
 	CPortsManager& operator=(CPortsManager&& _other) noexcept;
+	/**
+	 * \private
+	 * \brief Destructor.
+	 */
 	~CPortsManager() = default;
 
 	/**

@@ -40,6 +40,9 @@ public:
 	 * \param _intervalsNumber Number of temperature intervals.
 	 */
 	CMixtureEnthalpyLookup(const CMaterialsDatabase* _materialsDB, std::vector<std::string> _compounds, const SInterval& _limits, size_t _intervalsNumber);
+	/**
+	 * \brief Copy constructor.
+	 */
 	CMixtureEnthalpyLookup(const CMixtureEnthalpyLookup& _other) = default;
 
 	/**

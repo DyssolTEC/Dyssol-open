@@ -86,7 +86,8 @@ public:
 	 */
 	CBaseUnitParameter& operator=(CBaseUnitParameter&& _other)      = default;
 
-	/*
+	/**
+	 * \private
 	 * \brief Returns a non-managed pointer to a copy of this.
 	 */
 	[[nodiscard]] virtual CBaseUnitParameter* clone() const = 0;
@@ -219,7 +220,8 @@ public:
 	{
 	}
 
-	/*
+	/**
+	 * \private
 	 * \brief Returns a non-managed pointer to a copy of this.
 	 */
 	[[nodiscard]] CConstUnitParameter* clone() const override { return new CConstUnitParameter{ *this }; }
@@ -372,7 +374,8 @@ public:
 	{
 	}
 
-	/*
+	/**
+	 * \private
 	 * \brief Returns a non-managed pointer to a copy of this.
 	 */
 	[[nodiscard]] CListUnitParameter* clone() const override { return new CListUnitParameter{ *this }; }
@@ -569,7 +572,8 @@ public:
 	 */
 	CDependentUnitParameter(std::string _valueName, double _valueInit, std::wstring _valueUnits, std::string _paramName, double _paramInit, std::wstring _paramUnits, std::string _description, double _valueMin, double _valueMax, double _paramMin, double _paramMax);
 
-	/*
+	/**
+	 * \private
 	 * \brief Returns a non-managed pointer to a copy of this.
 	 */
 	[[nodiscard]] CDependentUnitParameter* clone() const override;
@@ -784,7 +788,8 @@ public:
 	 */
 	CTDUnitParameter(std::string _name, std::wstring _units, std::string _description, double _min, double _max, double _value);
 
-	/*
+	/**
+	 * \private
 	 * \brief Returns a non-managed pointer to a copy of this.
 	 */
 	[[nodiscard]] CTDUnitParameter* clone() const override;
@@ -832,7 +837,8 @@ public:
 	 */
 	CStringUnitParameter(std::string _name, std::string _description, std::string _value);
 
-	/*
+	/**
+	 * \private
 	 * \brief Returns a non-managed pointer to a copy of this.
 	 */
 	[[nodiscard]] CStringUnitParameter* clone() const override;
@@ -906,7 +912,8 @@ public:
 	 */
 	CCheckBoxUnitParameter(std::string _name, std::string _description, bool _checked);
 
-	/*
+	/**
+	 * \private
 	 * \brief Returns a non-managed pointer to a copy of this.
 	 */
 	[[nodiscard]] CCheckBoxUnitParameter* clone() const override;
@@ -993,7 +1000,8 @@ public:
 	 */
 	CSolverUnitParameter(std::string _name, std::string _description, ESolverTypes _type);
 
-	/*
+	/**
+	 * \private
 	 * \brief Returns a non-managed pointer to a copy of this.
 	 */
 	[[nodiscard]] CSolverUnitParameter* clone() const override;
@@ -1091,7 +1099,8 @@ public:
 	 */
 	CComboUnitParameter(std::string _name, std::string _description, size_t _itemDefault, const std::vector<size_t>& _items, const std::vector<std::string>& _itemsNames);
 
-	/*
+	/**
+	 * \private
 	 * \brief Returns a non-managed pointer to a copy of this.
 	 */
 	[[nodiscard]] CComboUnitParameter* clone() const override;
@@ -1206,7 +1215,8 @@ public:
 	 */
 	CCompoundUnitParameter(std::string _name, std::string _description);
 
-	/*
+	/**
+	 * \private
 	 * \brief Returns a non-managed pointer to a copy of this.
 	 */
 	[[nodiscard]] CCompoundUnitParameter* clone() const override;
@@ -1277,7 +1287,8 @@ public:
 	 */
 	CMDBCompoundUnitParameter(std::string _name, std::string _description);
 
-	/*
+	/**
+	 * \private
 	 * \brief Returns a non-managed pointer to a copy of this.
 	 */
 	[[nodiscard]] CMDBCompoundUnitParameter* clone() const override;
@@ -1303,7 +1314,8 @@ public:
 	 */
 	CReactionUnitParameter(std::string _name, std::string _description);
 
-	/*
+	/**
+	 * \private
 	 * \brief Returns a non-managed pointer to a copy of this.
 	 */
 	[[nodiscard]] CReactionUnitParameter* clone() const override;

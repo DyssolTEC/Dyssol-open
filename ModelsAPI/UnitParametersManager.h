@@ -29,11 +29,35 @@ class CUnitParametersManager
 	group_map_t m_groups;                                          ///< List of group blocks and corresponding groups, to which parameters belong. Is used to determine activity of parameters.
 
 public:
+	/**
+	 * \private
+	 * \brief Default constructor.
+	 */
 	CUnitParametersManager() = default;
+	/**
+	 * \private
+	 * \brief Copy constructor.
+	 */
 	CUnitParametersManager(const CUnitParametersManager& _other);
+	/**
+	 * \private
+	 * \brief Move constructor.
+	 */
 	CUnitParametersManager(CUnitParametersManager&& _other) noexcept;
+	/**
+	 * \private
+	 * \brief Copy assignment operator.
+	 */
 	CUnitParametersManager& operator=(CUnitParametersManager _other);
+	/**
+	 * \private
+	 * \brief Move assignment operator.
+	 */
 	CUnitParametersManager& operator=(CUnitParametersManager&& _other) noexcept;
+	/**
+	 * \private
+	 * \brief Destructor.
+	 */
 	~CUnitParametersManager() = default;
 
 	/**

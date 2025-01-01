@@ -452,11 +452,35 @@ class CPlotManager
 	std::vector<std::unique_ptr<CPlot>> m_plotsStored;	///< A copy of plots used to store data during cyclic recalculations.
 
 public:
+	/**
+	 * \private
+	 * \brief Default constructor.
+	 */
 	CPlotManager() = default;
+	/**
+	 * \private
+	 * \brief Copy constructor.
+	 */
 	CPlotManager(const CPlotManager& _other);
+	/**
+	 * \private
+	 * \brief Move constructor.
+	 */
 	CPlotManager(CPlotManager&& _other) noexcept;
+	/**
+	 * \private
+	 * \brief Copy assignment operator.
+	 */
 	CPlotManager& operator=(CPlotManager _other);
+	/**
+	 * \private
+	 * \brief Move assignment operator.
+	 */
 	CPlotManager& operator=(CPlotManager&& _other) noexcept;
+	/**
+	 * \private
+	 * \brief Destructor.
+	 */
 	~CPlotManager() = default;
 
 	/**
