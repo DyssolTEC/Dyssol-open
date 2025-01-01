@@ -131,11 +131,35 @@ private:
 
 public:
 	// TODO: initialize all pointers in constructor and make them references.
+	/**
+	 * \private
+	 * \brief Default constructor.
+	 */
 	CBaseUnit() = default;
+	/**
+	 * \private
+	 * \brief Copy constructor.
+	 */
 	CBaseUnit(const CBaseUnit& _other);
+	/**
+	 * \private
+	 * \brief Move constructor.
+	 */
 	CBaseUnit(CBaseUnit&& _other) noexcept;
+	/**
+	 * \private
+	 * \brief Copy assignment operator.
+	 */
 	CBaseUnit& operator=(CBaseUnit _other);
+	/**
+	 * \private
+	 * \brief Move assignment operator.
+	 */
 	CBaseUnit& operator=(CBaseUnit&& _other) noexcept;
+	/**
+	 * \private
+	 * \brief Destructor.
+	 */
 	virtual ~CBaseUnit() = default;
 
 	/**

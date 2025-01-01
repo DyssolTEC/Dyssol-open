@@ -22,7 +22,7 @@ class CH5Handler;
  */
 class CStateVariable
 {
-	static const unsigned m_saveVersion{ 1 };	// Current version of the saving procedure.
+	static constexpr unsigned m_saveVersion{ 1 };	// Current version of the saving procedure.
 
 	inline static const double m_eps{ 16 * std::numeric_limits<double>::epsilon() };
 
@@ -144,11 +144,35 @@ class CStateVariablesManager
 	std::vector<std::unique_ptr<CStateVariable>> m_stateVariables;	// Defined state variables.
 
 public:
+	/**
+	 * \private
+	 * \brief Default constructor.
+	 */
 	CStateVariablesManager() = default;
+	/**
+	 * \private
+	 * \brief Copy constructor.
+	 */
 	CStateVariablesManager(const CStateVariablesManager& _other);
+	/**
+	 * \private
+	 * \brief Move constructor.
+	 */
 	CStateVariablesManager(CStateVariablesManager&& _other) noexcept;
+	/**
+	 * \private
+	 * \brief Copy assignment operator.
+	 */
 	CStateVariablesManager& operator=(CStateVariablesManager _other);
+	/**
+	 * \private
+	 * \brief Move assignment operator.
+	 */
 	CStateVariablesManager& operator=(CStateVariablesManager&& _other) noexcept;
+	/**
+	 * \private
+	 * \brief Destructor.
+	 */
 	~CStateVariablesManager() = default;
 
 	/**
