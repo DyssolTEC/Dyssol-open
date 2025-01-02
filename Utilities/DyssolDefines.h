@@ -17,6 +17,7 @@
 
 // Simulator
 #define DEFAULT_MAX_ITERATIONS_NUMBER		500     ///< Default value.
+#define DEFAULT_SIMULATION_TIME_BEGIN		0       ///< Default value.
 #define DEFAULT_SIMULATION_TIME				60      ///< Default value.
 #define DEFAULT_INIT_TIME_WINDOW			1		///< Default value.
 #define DEFAULT_MIN_TIME_WINDOW				1e-9	///< Default value.
