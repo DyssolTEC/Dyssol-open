@@ -205,6 +205,16 @@ CStream* CStreamManager::GetFeed(const std::string& _name)
 	return GetObject(m_feedsWork, _name);
 }
 
+const CStream* CStreamManager::GetFeedInit(const std::string& _name) const
+{
+	return GetObject(m_feedsInit, _name);
+}
+
+CStream* CStreamManager::GetFeedInit(const std::string& _name)
+{
+	return GetObject(m_feedsInit, _name);
+}
+
 std::vector<const CStream*> CStreamManager::GetFeedsInit() const
 {
 	return GetObjects(m_feedsInit);

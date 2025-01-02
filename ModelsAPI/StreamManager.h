@@ -100,6 +100,10 @@ public:
 	const CStream* GetFeed(const std::string& _name) const;
 	// Returns a feed with the specified name. If such feed does not exist, returns nullptr.
 	CStream* GetFeed(const std::string& _name);
+	// Returns an inital feed with the specified name. If such feed does not exist, returns nullptr.
+	const CStream* GetFeedInit(const std::string& _name) const;
+	// Returns an inital feed with the specified name. If such feed does not exist, returns nullptr.
+	CStream* GetFeedInit(const std::string& _name);
 	// Returns all defined initial feeds.
 	std::vector<const CStream*> GetFeedsInit() const;
 	// Returns all defined initial feeds.
