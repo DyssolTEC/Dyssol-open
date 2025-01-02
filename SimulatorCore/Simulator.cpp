@@ -83,7 +83,7 @@ void CSimulator::Simulate()
 		if (m_nCurrentStatus == ESimulatorState::TO_BE_STOPPED) break;
 
 		// remove excessive data
-		ReduceData(partitions[iPart], 0, m_pParams->endSimulationTime);
+		ReduceData(partitions[iPart], m_pParams->startSimulationTime, m_pParams->endSimulationTime);
 
 		// Finalize all units within partition
 		for (auto& model : partitions[iPart].models)
@@ -145,9 +145,9 @@ void CSimulator::InitializePartitionsStatus()
 void CSimulator::SimulateUntilEndSimulationTime(size_t _iPartition, const CCalculationSequence::SPartition& _partition)
 {
 	if (_partition.tearStreams.empty())	// step without cycles
-		SimulateUnits(_partition, 0, m_pParams->endSimulationTime);		// simulation on time interval itself
+		SimulateUnits(_partition, m_pParams->startSimulationTime, m_pParams->endSimulationTime);		// simulation on time interval itself
 	else															// step with recycles
-		SimulateUnitsWithRecycles(_iPartition, _partition, 0, m_pParams->endSimulationTime);		// waveform relaxation on time interval
+		SimulateUnitsWithRecycles(_iPartition, _partition, m_pParams->startSimulationTime, m_pParams->endSimulationTime);		// waveform relaxation on time interval
 }
 
 void CSimulator::SimulateUnitsWithRecycles(size_t _iPartition, const CCalculationSequence::SPartition& _partition, double _t1, double _t2)

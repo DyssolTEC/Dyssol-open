@@ -491,6 +491,7 @@ namespace StrConst
 	const char* const FlPar_H5ATol		              = "AbsTolerance";
 	const char* const FlPar_H5RTol		              = "RelTolerance";
 	const char* const FlPar_H5MinFrac	              = "MinimalFraction";
+	const char* const FlPar_H5SimTimeStart	          = "SimulationTimeStart";
 	const char* const FlPar_H5SimTime                 = "SimulationTime";
 	const char* const FlPar_H5InitTimeWin             = "InitialTimeWindow";
 	const char* const FlPar_H5MinTimeWin	          = "MinTimeWindow";

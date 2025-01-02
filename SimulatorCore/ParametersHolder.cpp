@@ -3,7 +3,7 @@
 #include "ParametersHolder.h"
 #include "DyssolStringConstants.h"
 
-const unsigned CParametersHolder::m_cnSaveVersion = 6;
+const unsigned CParametersHolder::m_cnSaveVersion = 7;
 
 CParametersHolder::CParametersHolder()
 {
@@ -18,6 +18,7 @@ void CParametersHolder::SetDefaultValues()
 
 	minFraction = DEFAULT_MIN_FRACTION;
 
+	startSimulationTime = DEFAULT_SIMULATION_TIME_BEGIN;
 	endSimulationTime = DEFAULT_SIMULATION_TIME;
 
 	initTimeWindow = DEFAULT_INIT_TIME_WINDOW;
@@ -69,6 +70,7 @@ void CParametersHolder::SaveToFile(CH5Handler& _h5File, const std::string& _sPat
 	_h5File.WriteData(_sPath, StrConst::FlPar_H5MinFrac, minFraction);
 
 	// save simulation time
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5SimTimeStart, startSimulationTime);
 	_h5File.WriteData(_sPath, StrConst::FlPar_H5SimTime, endSimulationTime);
 
 	// save time window parameters
@@ -107,7 +109,6 @@ void CParametersHolder::SaveToFile(CH5Handler& _h5File, const std::string& _sPat
 	_h5File.WriteData(_sPath, StrConst::FlPar_H5EnthalpyMinT     , enthalpyMinT);
 	_h5File.WriteData(_sPath, StrConst::FlPar_H5EnthalpyMaxT     , enthalpyMaxT);
 	_h5File.WriteData(_sPath, StrConst::FlPar_H5EnthalpyIntervals, enthalpyInt);
-
 }
 
 void CParametersHolder::LoadFromFile(CH5Handler& _h5File, const std::string& _sPath)
@@ -123,6 +124,10 @@ void CParametersHolder::LoadFromFile(CH5Handler& _h5File, const std::string& _sP
 	_h5File.ReadData(_sPath, StrConst::FlPar_H5MinFrac, minFraction.data);
 
 	// load simulation time
+	if (nVer < 7)
+		startSimulationTime = DEFAULT_SIMULATION_TIME_BEGIN;
+	else
+		_h5File.ReadData(_sPath, StrConst::FlPar_H5SimTimeStart, startSimulationTime.data);
 	_h5File.ReadData(_sPath, StrConst::FlPar_H5SimTime, endSimulationTime.data);
 
 	// load time window parameters
@@ -209,6 +214,11 @@ void CParametersHolder::RelTol(double val)
 void CParametersHolder::MinFraction(double val)
 {
 	minFraction = val > 0. ? val : 0.;
+}
+
+void CParametersHolder::StartSimulationTime(double val)
+{
+	startSimulationTime = val > 0. ? val : 0.;
 }
 
 void CParametersHolder::EndSimulationTime(double val)

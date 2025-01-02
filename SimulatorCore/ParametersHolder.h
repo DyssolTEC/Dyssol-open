@@ -43,6 +43,8 @@ public:
 	void MinFraction(double val);
 
 	// == Time
+	proxy<double> startSimulationTime;		// the first time point which must be simulated.
+	void StartSimulationTime(double val);
 	proxy<double> endSimulationTime;		// the last time point which must be simulated.
 	void EndSimulationTime(double val);
 
