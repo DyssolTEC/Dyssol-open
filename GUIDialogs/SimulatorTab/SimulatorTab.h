@@ -51,15 +51,16 @@ public:
 
 	void InitializeConnections() const;
 
-public slots:
+public:
 	void setVisible(bool _visible) override;
 
 	void UpdateWholeView() const;
 	void OnNewFlowsheet() const;
 
+	void StartStopSimulation();
+
 private slots:
 	void SetSimulationTime();
-	void StartSimulation();
 	void SimulationFinished();
 
 	void ClearSimulationResults();
@@ -77,5 +78,9 @@ private:
 
 signals:
 	void DataChanged();	// User has made some changes
-	void SimulatorStateToggled(bool _running); // Emitted when the simulation is started or finished.
+	/**
+	 * \brief Emitted when the state of the simulator changes to IDLE or RUNNING.
+	 * \param _state New state.
+	 */
+	void SimulatorStateChanged(ESimulatorState _state);
 };

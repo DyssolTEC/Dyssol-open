@@ -27,7 +27,7 @@ CSimulatorTab::~CSimulatorTab()
 void CSimulatorTab::InitializeConnections() const
 {
 	connect(ui.lineEditTime,		          &QLineEdit::editingFinished, this, &CSimulatorTab::SetSimulationTime);
-	connect(ui.buttonRun,			          &QPushButton::clicked,	   this, &CSimulatorTab::StartSimulation);
+	connect(ui.buttonRun,			          &QPushButton::clicked,	   this, &CSimulatorTab::StartStopSimulation);
 	connect(ui.buttonClearResults,	          &QPushButton::clicked,	   this, &CSimulatorTab::ClearSimulationResults);
 	connect(ui.buttonClearRecycles,	          &QPushButton::clicked,	   this, &CSimulatorTab::ClearInitialRecycleStreams);
 	connect(ui.buttonClearResultsAndRecycles, &QPushButton::clicked,	   this, &CSimulatorTab::ClearAll);
@@ -60,9 +60,9 @@ void CSimulatorTab::SetSimulationTime()
 	emit DataChanged();
 }
 
-void CSimulatorTab::StartSimulation()
+void CSimulatorTab::StartStopSimulation()
 {
-	if (m_pSimulator->GetCurrentStatus() == ESimulatorStatus::SIMULATOR_RUNNED)
+	if (m_pSimulator->GetCurrentStatus() == ESimulatorState::RUNNING)
 		AbortSimulation();
 	else
 	{
@@ -94,7 +94,7 @@ void CSimulatorTab::StartSimulation()
 
 		// run simulation
 		BlockUI(true);
-		emit SimulatorStateToggled(true);
+		emit SimulatorStateChanged(ESimulatorState::RUNNING);
 		m_simulationThread->Run();
 		m_logTimer.start(100);
 	}
@@ -132,7 +132,7 @@ void CSimulatorTab::SimulationFinished()
 	ui.buttonRun->setText(StrConst::ST_ButtonRunTextRun);
 
 	BlockUI(false);
-	emit SimulatorStateToggled(false);
+	emit SimulatorStateChanged(ESimulatorState::IDLE);
 }
 
 void CSimulatorTab::ClearSimulationResults()
