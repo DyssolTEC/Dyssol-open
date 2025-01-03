@@ -249,7 +249,7 @@ CMultidimensionalGrid& CMultidimensionalGrid::operator=(CMultidimensionalGrid _o
 CMultidimensionalGrid& CMultidimensionalGrid::operator=(CMultidimensionalGrid&& _other) noexcept
 {
 	CMultidimensionalGrid tmp{ std::move(_other) };
-	swap(tmp, _other);
+	swap(*this, tmp);
 	return *this;
 }
 

@@ -55,7 +55,7 @@ CBaseUnit& CBaseUnit::operator=(CBaseUnit _other)
 CBaseUnit& CBaseUnit::operator=(CBaseUnit&& _other) noexcept
 {
 	CBaseUnit tmp{ std::move(_other) };
-	swap(tmp, _other);
+	swap(*this, tmp);
 	return *this;
 }
 

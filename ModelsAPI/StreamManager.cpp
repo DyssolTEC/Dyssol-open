@@ -48,7 +48,7 @@ CStreamManager& CStreamManager::operator=(CStreamManager _other)
 CStreamManager& CStreamManager::operator=(CStreamManager&& _other) noexcept
 {
 	CStreamManager tmp{ std::move(_other) };
-	swap(tmp, _other);
+	swap(*this, tmp);
 	return *this;
 }
 

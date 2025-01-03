@@ -490,7 +490,7 @@ CPlotManager& CPlotManager::operator=(CPlotManager _other)
 CPlotManager& CPlotManager::operator=(CPlotManager&& _other) noexcept
 {
 	CPlotManager tmp{ std::move(_other) };
-	swap(tmp, _other);
+	swap(*this, tmp);
 	return *this;
 }
 

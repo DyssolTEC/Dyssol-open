@@ -1,23 +1,13 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2025, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "CalculationSequence.h"
 #include "UnitContainer.h"
 #include "Stream.h"
-#include "TimeDependentValue.h"
 #include "Phase.h"
 #include "ContainerFunctions.h"
 #include "DyssolStringConstants.h"
-
-CCalculationSequence::CCalculationSequence(const CCalculationSequence& _other)
-	: m_partitions{ _other.m_partitions }
-{
-	m_initialTearStreams.resize(_other.m_initialTearStreams.size());
-	for (size_t i = 0; i < _other.m_initialTearStreams.size(); ++i)
-		for (size_t j = 0; j < _other.m_initialTearStreams[i].size(); ++j)
-		{
-			m_initialTearStreams[i].emplace_back(std::make_unique<CStream>(*_other.m_initialTearStreams[i][j]));
-		}
-}
 
 CCalculationSequence::CCalculationSequence(const std::vector<std::unique_ptr<CUnitContainer>>* _allModels, const std::vector<std::shared_ptr<CStream>>* _allStreams)
 {
@@ -25,22 +15,40 @@ CCalculationSequence::CCalculationSequence(const std::vector<std::unique_ptr<CUn
 	m_streams = _allStreams;
 }
 
-CCalculationSequence& CCalculationSequence::operator=(const CCalculationSequence& _other)
+CCalculationSequence::CCalculationSequence(const CCalculationSequence& _other)
+	: m_partitions{ _other.m_partitions }
 {
-	if (this != &_other)
-	{
-		m_partitions = _other.m_partitions;
-		m_initialTearStreams.clear();
-		for (size_t i = 0; i < _other.m_initialTearStreams.size(); ++i)
-		{
-			m_initialTearStreams.emplace_back();
-			for (size_t j = 0; j < _other.m_initialTearStreams[i].size(); ++j)
-			{
-				m_initialTearStreams[i].emplace_back(std::make_unique<CStream>(*_other.m_initialTearStreams[i][j]));
-			}
-		}
-	}
+	m_initialTearStreams.reserve(_other.m_initialTearStreams.size());
+	for (const auto& vec : _other.m_initialTearStreams)
+		m_initialTearStreams.push_back(DeepCopy(vec));
+}
+
+CCalculationSequence::CCalculationSequence(CCalculationSequence&& _other) noexcept
+{
+	swap(*this, _other);
+}
+
+CCalculationSequence& CCalculationSequence::operator=(CCalculationSequence _other)
+{
+	swap(*this, _other);
 	return *this;
+}
+
+CCalculationSequence& CCalculationSequence::operator=(CCalculationSequence&& _other) noexcept
+{
+	CCalculationSequence tmp{ std::move(_other) };
+	swap(*this, tmp);
+	return *this;
+}
+
+void swap(CCalculationSequence& _first, CCalculationSequence& _second) noexcept
+{
+	using std::swap;
+	// these two are set by the flowsheet
+	//swap(_first.m_models            , _second.m_models);
+	//swap(_first.m_streams           , _second.m_streams);
+	swap(_first.m_partitions        , _second.m_partitions);
+	swap(_first.m_initialTearStreams, _second.m_initialTearStreams);
 }
 
 void CCalculationSequence::SetPointers(const std::vector<std::unique_ptr<CUnitContainer>>* _allModels, const std::vector<std::shared_ptr<CStream>>* _allStreams)
