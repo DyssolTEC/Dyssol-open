@@ -105,7 +105,7 @@ CPortsManager& CPortsManager::operator=(CPortsManager _other)
 CPortsManager& CPortsManager::operator=(CPortsManager&& _other) noexcept
 {
 	CPortsManager tmp{ std::move(_other) };
-	swap(tmp, _other);
+	swap(*this, tmp);
 	return *this;
 }
 

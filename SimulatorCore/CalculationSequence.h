@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2025, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -37,11 +39,10 @@ private:
 		std::vector<std::string> tearStreams; // List of tear streams' keys for each partition.
 	};
 
-	static const unsigned m_saveVersion{ 2 };	// Current version of the saving procedure.
+	static constexpr unsigned m_saveVersion{ 2 };	// Current version of the saving procedure.
 
-
-	const std::vector<std::unique_ptr<CUnitContainer>>* m_models;	// Non-owning pointer to a vector of existing models.
-	const std::vector<std::shared_ptr<CStream>>* m_streams{};		// Non-owning pointer to a vector of existing streams.
+	const std::vector<std::unique_ptr<CUnitContainer>>* m_models{ nullptr };	// Non-owning pointer to a vector of existing models.
+	const std::vector<std::shared_ptr<CStream>>* m_streams{ nullptr };			// Non-owning pointer to a vector of existing streams.
 
 	std::vector<SPartitionKeys> m_partitions;       // List of defined partitions.
 
@@ -49,10 +50,20 @@ private:
 
 public:
 	CCalculationSequence() = default;
-	CCalculationSequence(const CCalculationSequence& _other);
 	// Sets pointers to all existing models and streams.
 	CCalculationSequence(const std::vector<std::unique_ptr<CUnitContainer>>* _allModels, const std::vector<std::shared_ptr<CStream>>* _allStreams);
-	CCalculationSequence& operator=(const CCalculationSequence& _other);
+	CCalculationSequence(const CCalculationSequence& _other);
+	CCalculationSequence(CCalculationSequence&& _other) noexcept;
+	CCalculationSequence& operator=(CCalculationSequence _other);
+	CCalculationSequence& operator=(CCalculationSequence&& _other) noexcept;
+
+	/**
+	 * \brief Swaps the content of two sequences.
+	 * \param _first First sequence.
+	 * \param _second Second sequence.
+	 */
+	friend void swap(CCalculationSequence& _first, CCalculationSequence& _second) noexcept;
+
 	/**
 	 * Sets pointers to all existing models and streams.
 	 * \param _allModels Pointer to models.

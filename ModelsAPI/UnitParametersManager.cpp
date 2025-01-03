@@ -28,7 +28,7 @@ CUnitParametersManager& CUnitParametersManager::operator=(CUnitParametersManager
 CUnitParametersManager& CUnitParametersManager::operator=(CUnitParametersManager&& _other) noexcept
 {
 	CUnitParametersManager tmp{ std::move(_other) };
-	swap(tmp, _other);
+	swap(*this, tmp);
 	return *this;
 }
 

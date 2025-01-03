@@ -34,7 +34,6 @@ CFlowsheet::CFlowsheet(const CFlowsheet& _other)
 	, m_topologyModified{ _other.m_topologyModified }
 {
 	m_calculationSequence.SetPointers(&m_units, &m_streams);
-	m_calculationSequence.SetSequence(_other.m_calculationSequence.GetModelsKeys(), _other.m_calculationSequence.GetStreamsKeys());
 }
 
 CFlowsheet::CFlowsheet(CFlowsheet&& _other) noexcept
@@ -51,7 +50,7 @@ CFlowsheet& CFlowsheet::operator=(CFlowsheet _other)
 CFlowsheet& CFlowsheet::operator=(CFlowsheet&& _other) noexcept
 {
 	CFlowsheet tmp{ std::move(_other) };
-	swap(*this, _other);
+	swap(*this, tmp);
 	return *this;
 }
 

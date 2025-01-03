@@ -55,7 +55,7 @@ CUnitContainer& CUnitContainer::operator=(CUnitContainer _other)
 CUnitContainer& CUnitContainer::operator=(CUnitContainer&& _other) noexcept
 {
 	CUnitContainer tmp{ std::move(_other) };
-	swap(tmp, _other);
+	swap(*this, tmp);
 	return *this;
 }
 
