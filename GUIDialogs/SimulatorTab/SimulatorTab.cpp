@@ -64,7 +64,7 @@ void CSimulatorTab::StartStopSimulation()
 {
 	if (m_pSimulator->GetCurrentStatus() == ESimulatorState::RUNNING)
 		AbortSimulation();
-	else
+	else if (m_pSimulator->GetCurrentStatus() == ESimulatorState::IDLE)
 	{
 		// run timer
 		const QDateTime now = QDateTime::currentDateTime();
