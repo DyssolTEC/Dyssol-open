@@ -247,7 +247,7 @@ void Dyssol::InitializeConnections() const
 	connect(m_pModelsManagerTab,     &CModulesManagerTab::ModelsListWasChanged,          m_pFlowsheetEditor,    &CFlowsheetEditor::UpdateAvailableUnits);
 	connect(m_pModelsManagerTab,     &CModulesManagerTab::ModelsListWasChanged,          m_pFlowsheetEditor,    &CFlowsheetEditor::UpdateAvailableSolvers);
 
-	connect(m_pSimulatorTab,         &CSimulatorTab::SimulatorStateToggled,              this,                  &Dyssol::BlockUI);
+	connect(m_pSimulatorTab,         &CSimulatorTab::SimulatorStateChanged,              this,                  &Dyssol::OnSimulationStateChanged);
 	connect(m_pOptionsEditor,        &COptionsEditor::NeedSaveAndReopen,                 this,                  &Dyssol::SlotSaveAndReopen);
 	connect(m_pSettingsEditor,       &CSettingsEditor::NeedRestart,                      this,                  &Dyssol::SlotRestart);
 	connect(m_pSettingsEditor,       &CSettingsEditor::NeedCacheClear,                   this,                  &Dyssol::SlotClearCache);
@@ -308,7 +308,7 @@ void Dyssol::OpenDyssol() const
 
 void Dyssol::closeEvent(QCloseEvent* event)
 {
-	if (m_Simulator.GetCurrentStatus() != ESimulatorStatus::SIMULATOR_IDLE)
+	if (m_Simulator.GetCurrentStatus() != ESimulatorState::IDLE)
 	{
 		const QMessageBox::StandardButtons buttons = QMessageBox::Yes | QMessageBox::Cancel | QMessageBox::No;
 		const QMessageBox::StandardButton reply = QMessageBox::question(this, StrConst::Dyssol_MainWindowName, StrConst::Dyssol_AbortMessage, buttons);
@@ -725,6 +725,11 @@ void Dyssol::SlotClearCache()
 void Dyssol::FlowsheetStateChanged()
 {
 	SetFlowsheetModified(true);
+}
+
+void Dyssol::OnSimulationStateChanged(ESimulatorState _state) const
+{
+	BlockUI(_state == ESimulatorState::RUNNING);
 }
 
 void Dyssol::BlockUI(bool _block) const

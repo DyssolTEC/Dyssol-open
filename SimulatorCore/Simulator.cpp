@@ -16,7 +16,7 @@ CSimulator::CSimulator()
 	ClearLogState();
 	m_pFlowsheet = nullptr;
 	m_pParams = nullptr;
-	m_nCurrentStatus = ESimulatorStatus::SIMULATOR_IDLE;
+	m_nCurrentStatus = ESimulatorState::IDLE;
 }
 
 void CSimulator::SetFlowsheet(CFlowsheet* _pFlowsheet)
@@ -27,12 +27,12 @@ void CSimulator::SetFlowsheet(CFlowsheet* _pFlowsheet)
 	m_hasError = false;
 }
 
-void CSimulator::SetCurrentStatus(ESimulatorStatus _nStatus)
+void CSimulator::SetCurrentStatus(ESimulatorState _nStatus)
 {
 	m_nCurrentStatus = _nStatus;
 }
 
-ESimulatorStatus CSimulator::GetCurrentStatus() const
+ESimulatorState CSimulator::GetCurrentStatus() const
 {
 	return m_nCurrentStatus;
 }
@@ -50,7 +50,7 @@ CSimulator::SPartitionStatus CSimulator::GetCurrentPartitionStatus() const
 
 void CSimulator::Simulate()
 {
-	m_nCurrentStatus = ESimulatorStatus::SIMULATOR_RUNNED;
+	m_nCurrentStatus = ESimulatorState::RUNNING;
 	m_hasError = false;
 
 	// Prepare
@@ -80,7 +80,7 @@ void CSimulator::Simulate()
 		m_iCurrentPartition = iPart;
 		SimulateUntilEndSimulationTime(iPart, partitions[iPart]);
 
-		if (m_nCurrentStatus == ESimulatorStatus::SIMULATOR_SHOULD_BE_STOPPED) break;
+		if (m_nCurrentStatus == ESimulatorState::TO_BE_STOPPED) break;
 
 		// remove excessive data
 		ReduceData(partitions[iPart], 0, m_pParams->endSimulationTime);
@@ -112,13 +112,13 @@ void CSimulator::Simulate()
 
 	// stop logger updater
 	m_logUpdater.Stop();
-	m_nCurrentStatus = ESimulatorStatus::SIMULATOR_IDLE;
+	m_nCurrentStatus = ESimulatorState::IDLE;
 }
 
 void CSimulator::Stop()
 {
-	if (GetCurrentStatus() != ESimulatorStatus::SIMULATOR_IDLE)
-		SetCurrentStatus(ESimulatorStatus::SIMULATOR_SHOULD_BE_STOPPED);
+	if (GetCurrentStatus() != ESimulatorState::IDLE)
+		SetCurrentStatus(ESimulatorState::TO_BE_STOPPED);
 }
 
 void CSimulator::InitializePartitionsStatus()
@@ -177,7 +177,7 @@ void CSimulator::SimulateUnitsWithRecycles(size_t _iPartition, const CCalculatio
 			RaiseError(StrConst::Sim_ErrMinTWLength);
 		if (partVars.iTWIterationFull == m_pParams->maxItersNumber)
 			RaiseError(StrConst::Sim_ErrMaxTWIterations);
-		if (m_nCurrentStatus == ESimulatorStatus::SIMULATOR_SHOULD_BE_STOPPED)
+		if (m_nCurrentStatus == ESimulatorState::TO_BE_STOPPED)
 			break;
 
 		// write log
@@ -292,7 +292,7 @@ void CSimulator::SimulateUnits(const CCalculationSequence::SPartition& _partitio
 		}
 
 		// check for stopping flag
-		if (m_nCurrentStatus == ESimulatorStatus::SIMULATOR_SHOULD_BE_STOPPED) break;
+		if (m_nCurrentStatus == ESimulatorState::TO_BE_STOPPED) break;
 
 		// write log
 		m_log.WriteInfo(StrConst::Sim_InfoUnitSimulation(m_unitName, model->GetModel()->GetUnitName(), _t1, _t2));
@@ -320,7 +320,7 @@ void CSimulator::SimulateUnits(const CCalculationSequence::SPartition& _partitio
 			for (auto t : vTimePoints)
 			{
 				// check for stopping flag
-				if (m_nCurrentStatus == ESimulatorStatus::SIMULATOR_SHOULD_BE_STOPPED) break;
+				if (m_nCurrentStatus == ESimulatorState::TO_BE_STOPPED) break;
 				// simulate
 				SimulateUnit(*model, t);
 			}
@@ -409,7 +409,7 @@ bool CSimulator::CompareStreams(const CStream& _str1, const CStream& _str2, doub
 void CSimulator::RaiseError(const std::string& _sError)
 {
 	m_log.WriteError(_sError);
-	m_nCurrentStatus = ESimulatorStatus::SIMULATOR_SHOULD_BE_STOPPED;
+	m_nCurrentStatus = ESimulatorState::TO_BE_STOPPED;
 	m_hasError = true;
 }
 

@@ -13,11 +13,11 @@ class CParametersHolder;
 class CUnitContainer;
 class CStream;
 
-enum class ESimulatorStatus
+enum class ESimulatorState
 {
-	SIMULATOR_IDLE              = 0,
-	SIMULATOR_RUNNED            = 1,
-	SIMULATOR_SHOULD_BE_STOPPED = 2
+	IDLE          = 0,
+	RUNNING       = 1,
+	TO_BE_STOPPED = 2
 };
 
 class CSimulator
@@ -43,7 +43,7 @@ private:
 	CFlowsheet* m_pFlowsheet;
 	const CCalculationSequence* m_pSequence; // Calculation sequence.
 	CParametersHolder* m_pParams;
-	ESimulatorStatus m_nCurrentStatus;
+	ESimulatorState m_nCurrentStatus;
 	std::map<std::string, bool> m_vInitialized;
 
 	/// Data for logging
@@ -65,9 +65,9 @@ public:
 	void SetFlowsheet(CFlowsheet* _pFlowsheet);
 
 	// Change status of simulator.
-	void SetCurrentStatus(ESimulatorStatus _nStatus);
+	void SetCurrentStatus(ESimulatorState _nStatus);
 	// Returns current status of the simulator.
-	ESimulatorStatus GetCurrentStatus() const;
+	ESimulatorState GetCurrentStatus() const;
 	/**
 	 * Checks if current simulation finished with error.
 	 * \return Whether current simulation finished with error.

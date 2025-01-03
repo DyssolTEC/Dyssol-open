@@ -148,6 +148,11 @@ private slots:
 	void SlotClearCache();
 
 	void FlowsheetStateChanged();
+	/**
+	 * \brief Is called when state of the simulator changes between IDLE and RUNNING.
+	 * \param _state New state of the simulator.
+	 */
+	void OnSimulationStateChanged(ESimulatorState _state) const;
 	void BlockUI(bool _block) const;
 
 signals:
