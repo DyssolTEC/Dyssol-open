@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2024, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -19,7 +21,7 @@ class CSaveLoadThread : public CBasicThread
 	bool m_isBlocked{};
 
 public:
-	CSaveLoadThread(CFlowsheet* _flowsheet, bool _saver, QObject* _parent = nullptr);
+	CSaveLoadThread(const SSaveLoadData& _data, bool _saver, QObject* _parent = nullptr);
 	void SetFileName(const QString& _fileName);
 	[[nodiscard]] QString GetFileName() const;
 	[[nodiscard]] QString GetFinalFileName() const; // Returns possibly transformed file name that was really used during saving/loading.

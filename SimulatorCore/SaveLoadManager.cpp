@@ -4,8 +4,8 @@
 #include "DyssolStringConstants.h"
 #include "Flowsheet.h"
 
-CSaveLoadManager::CSaveLoadManager(CFlowsheet* _flowsheet)
-	: m_flowsheet{ _flowsheet }
+CSaveLoadManager::CSaveLoadManager(const SSaveLoadData& _data)
+	: m_data{ _data }
 {
 }
 
@@ -31,11 +31,11 @@ bool CSaveLoadManager::SaveToFile(const std::filesystem::path& _fileName)
 	bool success = true;
 
 	// save flowsheet
-	if (m_flowsheet && success)
+	if (m_data.flowsheet && success)
 	{
 		const std::string flowsheetGroup = m_fileHandler.CreateGroup(root, StrConst::SLM_H5GroupFlowsheet);
-		success &= m_flowsheet->SaveToFile(m_fileHandler, flowsheetGroup);
-		if (success) m_flowsheet->SetFileName(_fileName);
+		success &= m_data.flowsheet->SaveToFile(m_fileHandler, flowsheetGroup);
+		if (success) m_data.flowsheet->SetFileName(_fileName);
 	}
 
 	m_fileHandler.Close();
@@ -62,8 +62,13 @@ bool CSaveLoadManager::LoadFromFile(const std::filesystem::path& _fileName)
 	const auto rootPath = version <= 5 ? root : StrConst::SLM_H5GroupFlowsheet;
 
 	// load flowsheet
-	if (m_flowsheet && success) success &= m_flowsheet->LoadFromFile(m_fileHandler, rootPath);
-	if (m_flowsheet && success) m_flowsheet->SetFileName(_fileName);
+	if (m_data.flowsheet && success)
+	{
+		success &= m_data.flowsheet->LoadFromFile(m_fileHandler, rootPath);
+
+		if(success)
+			m_data.flowsheet->SetFileName(_fileName);
+	}
 
 	m_fileHandler.Close();
 

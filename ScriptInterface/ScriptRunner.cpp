@@ -79,7 +79,11 @@ bool CScriptRunner::LoadFiles(const CScriptJob& _job)
 	{
 		const auto srcFile = fs::absolute(_job.GetValue<fs::path>(EScriptKeys::SOURCE_FILE)).make_preferred();
 		PrintMessage(DyssolC_LoadFlowsheet(srcFile.string()));
-		CSaveLoadManager loader{ &m_flowsheet };
+
+		SSaveLoadData data;
+		data.flowsheet = &m_flowsheet;
+
+		CSaveLoadManager loader{ data };
 		if (!loader.LoadFromFile(srcFile))
 			return PrintMessage(DyssolC_ErrorLoad());
 	}
@@ -482,7 +486,11 @@ bool CScriptRunner::SaveFlowsheet(const CScriptJob& _job)
 	const auto dstFile = fs::absolute(_job.HasKey(EScriptKeys::RESULT_FILE) ? _job.GetValue<fs::path>(EScriptKeys::RESULT_FILE) : _job.GetValue<fs::path>(EScriptKeys::SOURCE_FILE)).make_preferred();
 	fs::create_directories(dstFile.parent_path());
 	PrintMessage(DyssolC_SaveFlowsheet(dstFile.string()));
-	CSaveLoadManager saver{ &m_flowsheet };
+
+	SSaveLoadData data;
+	data.flowsheet = &m_flowsheet;
+
+	CSaveLoadManager saver{ data };
 	if (!saver.SaveToFile(dstFile))
 		return PrintMessage(DyssolC_ErrorSave());
 	return true;

@@ -6,6 +6,11 @@
 
 class CFlowsheet;
 
+struct SSaveLoadData
+{
+	CFlowsheet* flowsheet{};                        /// Pointer to global flowsheet.
+};
+
 /**
  * This class is responsible for saving and loading of data about the flowsheet and all modules into an HDF5 file.
  */
@@ -13,13 +18,13 @@ class CSaveLoadManager
 {
 	static constexpr unsigned m_saveVersion{ 6 }; /// Current version of the saving procedure.
 
-	CFlowsheet* m_flowsheet{};                    /// Pointer to global flowsheet.
+	SSaveLoadData m_data{};
 
 	CH5Handler m_fileHandler{}; /// Handler of data file in HDF5 format.
 
 public:
 	CSaveLoadManager() = default;
-	CSaveLoadManager(CFlowsheet* _flowsheet);
+	CSaveLoadManager(const SSaveLoadData& _data);
 
 	/**
 	 * Returns current file name.

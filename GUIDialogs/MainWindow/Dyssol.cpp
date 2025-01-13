@@ -121,8 +121,8 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	m_pSavingWindow  = new CStatusWindow(StrConst::Dyssol_StatusSavingTitle,  StrConst::Dyssol_StatusSavingText,  StrConst::Dyssol_StatusSavingQuestion,  false);
 
 	// threads for saving and loading
-	m_pLoadingThread = new CSaveLoadThread(&m_Flowsheet, false);
-	m_pSavingThread  = new CSaveLoadThread(&m_Flowsheet, true);
+	m_pLoadingThread = new CSaveLoadThread(SSaveLoadData{ &m_Flowsheet }, false);
+	m_pSavingThread  = new CSaveLoadThread(SSaveLoadData{ &m_Flowsheet }, true );
 
 	// create and setup menu
 	CreateMenu();
