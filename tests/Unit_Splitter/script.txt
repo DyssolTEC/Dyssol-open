@@ -15,10 +15,10 @@ COMPOUNDS         "Sand"
 PHASES            "Solids" SOLID 
 DISTRIBUTION_GRID "GLOBAL" SIZE NUMERIC EQUIDISTANT DIAMETER 300 0 30e-3
 
-UNIT "Input" "InletFlow" 
+UNIT "Input" "Inlet flow" 
 UNIT "Splitter" "Splitter" 
-UNIT "Output1" "OutletFlow" 
-UNIT "Output2" "OutletFlow" 
+UNIT "Output1" "Outlet flow" 
+UNIT "Output2" "Outlet flow" 
 
 STREAM "In" "Input" "InletMaterial" "Splitter" "In"
 STREAM "Out1" "Splitter" "Out1" "Output1" "In"

@@ -30,15 +30,15 @@ PHASES            "PhaseS" SOLID
 DISTRIBUTION_GRID "GLOBAL" SIZE NUMERIC EQUIDISTANT VOLUME 20 0 500e-9
 DISTRIBUTION_GRID "GLOBAL" USER_DEFINED_01 NUMERIC EQUIDISTANT 10 0 0.5
 
-UNIT "Inlet1" "InletFlow" 
-UNIT "Inlet2" "InletFlow" 
+UNIT "Inlet1" "Inlet flow" 
+UNIT "Inlet2" "Inlet flow" 
 UNIT "MixerIn" "Mixer3" 
 UNIT "Screen1" "Screen" 
 UNIT "Screen2" "Screen" 
 UNIT "Mill1" "Crusher PBM TM" 
 UNIT "MixerCoarse" "Mixer" 
 UNIT "Mill2" "Crusher PBM TM" 
-UNIT "Outlet" "OutletFlow" 
+UNIT "Outlet" "Outlet flow" 
 
 STREAM "In1" "Inlet1" "InletMaterial" "MixerIn" "In1"
 STREAM "In2" "Inlet2" "InletMaterial" "MixerIn" "In2"

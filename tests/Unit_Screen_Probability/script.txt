@@ -15,10 +15,10 @@ COMPOUNDS         "Sand"
 PHASES            "Phase1" SOLID 
 DISTRIBUTION_GRID "GLOBAL" SIZE NUMERIC EQUIDISTANT DIAMETER 300 0 4e-3
 
-UNIT "Inlet" "InletFlow" 
+UNIT "Inlet" "Inlet flow" 
 UNIT "Screen" "Screen" 
-UNIT "OutletCoarse" "OutletFlow" 
-UNIT "OutletFines" "OutletFlow" 
+UNIT "OutletCoarse" "Outlet flow" 
+UNIT "OutletFines" "Outlet flow" 
 
 STREAM "In" "Inlet" "InletMaterial" "Screen" "Input"
 STREAM "Coarse" "Screen" "Coarse" "OutletCoarse" "In"

@@ -15,10 +15,10 @@ COMPOUNDS         "Sand" "Coal" "H2O"
 PHASES            "Solids" SOLID "Liquid" LIQUID 
 DISTRIBUTION_GRID "GLOBAL" SIZE NUMERIC EQUIDISTANT DIAMETER 300 0 30e-3
 
-UNIT "Input1" "InletFlow" 
-UNIT "Input2" "InletFlow" 
+UNIT "Input1" "Inlet flow" 
+UNIT "Input2" "Inlet flow" 
 UNIT "Mixer" "Mixer" 
-UNIT "Output" "OutletFlow" 
+UNIT "Output" "Outlet flow" 
 
 STREAM "In1" "Input1" "InletMaterial" "Mixer" "In1"
 STREAM "In2" "Input2" "InletMaterial" "Mixer" "In2"

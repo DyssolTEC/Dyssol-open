@@ -27,17 +27,17 @@ COMPOUNDS         "H2O" "Air" "Urea"
 PHASES            "Phase solid" SOLID "Phase liquid" LIQUID "Phase vapor" GAS 
 DISTRIBUTION_GRID "GLOBAL" SIZE NUMERIC EQUIDISTANT DIAMETER 100 0 4e-3
 
-UNIT "FeedSusp" "InletFlow" 
-UNIT "FeedNucl" "InletFlow" 
-UNIT "FeedGas" "InletFlow" 
+UNIT "FeedSusp" "Inlet flow" 
+UNIT "FeedNucl" "Inlet flow" 
+UNIT "FeedGas" "Inlet flow" 
 UNIT "Mixer1" "Mixer" 
 UNIT "Granulator" "Granulator" 
 UNIT "Screen1" "Screen" 
 UNIT "Screen2" "Screen" 
 UNIT "Crusher" "Crusher" 
 UNIT "Mixer2" "Mixer" 
-UNIT "OutDust" "OutletFlow" 
-UNIT "Product" "OutletFlow" 
+UNIT "OutDust" "Outlet flow" 
+UNIT "Product" "Outlet flow" 
 
 STREAM "InSusp" "FeedSusp" "InletMaterial" "Granulator" "Solution"
 STREAM "InNucl" "FeedNucl" "InletMaterial" "Mixer1" "In1"

@@ -15,10 +15,10 @@ COMPOUNDS         "Sand" "Air"
 PHASES            "Phase solids" SOLID "Phase gas" GAS 
 DISTRIBUTION_GRID "GLOBAL" SIZE NUMERIC EQUIDISTANT DIAMETER 100 0 0.001
 
-UNIT "Feed"      "InletFlow" 
+UNIT "Feed"      "Inlet flow" 
 UNIT "Cyclone"   "Cyclone Muschelknautz" 
-UNIT "OutCoarse" "OutletFlow" 
-UNIT "OutFines"  "OutletFlow" 
+UNIT "OutCoarse" "Outlet flow" 
+UNIT "OutFines"  "Outlet flow" 
 
 STREAM "In"   "Feed"    "InletMaterial" "Cyclone"   "Inlet"
 STREAM "OutC" "Cyclone" "Outlet solids" "OutCoarse" "In"

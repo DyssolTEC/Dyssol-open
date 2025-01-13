@@ -16,9 +16,9 @@ PHASES            "Solid" SOLID "Liquid" LIQUID
 DISTRIBUTION_GRID "GLOBAL" SIZE NUMERIC EQUIDISTANT DIAMETER 100 1e-6 2e-3
 DISTRIBUTION_GRID "GLOBAL" PARTICLE_POROSITY NUMERIC EQUIDISTANT 4 0 1
 
-UNIT "Inlet" "InletFlow" 
+UNIT "Inlet" "Inlet flow" 
 UNIT "TimeDelay" "Time delay" 
-UNIT "Outlet" "OutletFlow" 
+UNIT "Outlet" "Outlet flow" 
 
 STREAM "In" "Inlet" "InletMaterial" "TimeDelay" "In"
 STREAM "Out" "TimeDelay" "Out" "Outlet" "In"

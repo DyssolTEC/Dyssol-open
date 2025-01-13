@@ -27,14 +27,14 @@ COMPOUNDS         "Urea"
 PHASES            "Phase solid" SOLID 
 DISTRIBUTION_GRID "GLOBAL" SIZE NUMERIC EQUIDISTANT VOLUME 120 0 2.14466e-6
 
-UNIT "Feed" "InletFlow" 
+UNIT "Feed" "Inlet flow" 
 UNIT "Agglomerator" "Agglomerator" 
 UNIT "Screen1" "Screen" 
 UNIT "Screen2" "Screen" 
 UNIT "Mill" "Crusher" 
 UNIT "Mixer1" "Mixer" 
 UNIT "Mixer2" "Mixer" 
-UNIT "Outlet" "OutletFlow" 
+UNIT "Outlet" "Outlet flow" 
 
 STREAM "In" "Feed" "InletMaterial" "Mixer2" "In1"
 STREAM "MixIn" "Mixer2" "Out" "Agglomerator" "Input"

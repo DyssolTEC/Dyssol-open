@@ -16,9 +16,9 @@ PHASES            "Solid" SOLID "Liquid" LIQUID "Gas" GAS
 DISTRIBUTION_GRID "GLOBAL" SIZE NUMERIC EQUIDISTANT DIAMETER 100 1e-6 2e-3
 DISTRIBUTION_GRID "GLOBAL" PARTICLE_POROSITY NUMERIC EQUIDISTANT 4 0 1
 
-UNIT "Inlet" "InletFlow" 
+UNIT "Inlet" "Inlet flow" 
 UNIT "Bunker" "Solids bunker" 
-UNIT "Outlet" "OutletFlow" 
+UNIT "Outlet" "Outlet flow" 
 
 STREAM "In" "Inlet" "InletMaterial" "Bunker" "Inflow"
 STREAM "Out" "Bunker" "Outflow" "Outlet" "In"

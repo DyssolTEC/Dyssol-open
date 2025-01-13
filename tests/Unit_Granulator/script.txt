@@ -15,12 +15,12 @@ COMPOUNDS         "Air" "Sand" "H2O"
 PHASES            "PhaseSol" SOLID "PhaseLiq" LIQUID "PhaseVap" GAS 
 DISTRIBUTION_GRID "GLOBAL" SIZE NUMERIC EQUIDISTANT DIAMETER 100 0 3e-6
 
-UNIT "InSuspension" "InletFlow" 
-UNIT "InNuclei" "InletFlow" 
-UNIT "InGas" "InletFlow" 
+UNIT "InSuspension" "Inlet flow" 
+UNIT "InNuclei" "Inlet flow" 
+UNIT "InGas" "Inlet flow" 
 UNIT "Granulator" "Granulator" 
-UNIT "OutProduct" "OutletFlow" 
-UNIT "OutDust" "OutletFlow" 
+UNIT "OutProduct" "Outlet flow" 
+UNIT "OutDust" "Outlet flow" 
 
 STREAM "Suspension" "InSuspension" "InletMaterial" "Granulator" "Solution"
 STREAM "Nuclei" "InNuclei" "InletMaterial" "Granulator" "ExternalNuclei"

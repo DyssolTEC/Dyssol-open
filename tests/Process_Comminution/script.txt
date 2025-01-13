@@ -27,12 +27,12 @@ COMPOUNDS         "Sand"
 PHASES            "Solids" SOLID 
 DISTRIBUTION_GRID "GLOBAL" SIZE NUMERIC EQUIDISTANT DIAMETER 100 0 2e-3
 
-UNIT "Inlet" "InletFlow" 
+UNIT "Inlet" "Inlet flow" 
 UNIT "Mixer" "Mixer" 
 UNIT "Crusher" "Crusher" 
 UNIT "Splitter" "Splitter" 
 UNIT "Delay" "Time delay" 
-UNIT "Outlet" "OutletFlow" 
+UNIT "Outlet" "Outlet flow" 
 
 STREAM "Inflow" "Inlet" "InletMaterial" "Mixer" "In1"
 STREAM "Delayed" "Delay" "Out" "Mixer" "In2"
