@@ -75,7 +75,7 @@ void CGridEditor::UpdateGridsList() const
 	ui.treeGrids->SetText(global, 1, "Global", "global");
 	// add unit grids
 	bool allSame = true;
-	auto* units = ui.treeGrids->CreateItem(0, "Unit-specific", CQtTree::EFlags::NoEdit | CQtTree::EFlags::NoSelect, "unit-specific");
+	auto* units = ui.treeGrids->CreateItem(0, "Unit-specific", CQtTree::ItemNotSelectabledNotEditable, "unit-specific");
 	for (const auto& u : m_flowsheet->GetAllUnits())
 	{
 		const bool exist = u->GetModel() != nullptr;
@@ -84,7 +84,7 @@ void CGridEditor::UpdateGridsList() const
 		auto* item = ui.treeGrids->CreateItem(units);
 		ui.treeGrids->SetCheckBox(item, 0, "", activ)->setEnabled(exist);
 		ui.treeGrids->SetText(item, 1, u->GetName(), QString::fromStdString(u->GetKey()));
-		ui.treeGrids->SetItemFlags(item, exist ? CQtTree::EFlags::Enabled : CQtTree::EFlags::Disabled);
+		CQtTree::SetItemFlags(item, exist ? CQtTree::EFlags::ENABLED : CQtTree::EFlags::DISABLED);
 	}
 	// resize columns and expand/contract rows
 	for (int i = 0; i < ui.treeGrids->columnCount(); ++i)

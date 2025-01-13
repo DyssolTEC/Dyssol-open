@@ -89,7 +89,7 @@ void swap(CBaseUnit& _first, CBaseUnit& _second) noexcept
 }
 
 void CBaseUnit::ConfigureUnitStructures(const CMaterialsDatabase* _materialsDB, const CMultidimensionalGrid& _grid, const std::vector<SOverallDescriptor>* _overall,
-										const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics)
+	const std::vector<SPhaseDescriptor>* _phases, const SCacheSettings* _cache, const SToleranceSettings* _tolerance, const SThermodynamicsSettings* _thermodynamics)
 {
 	m_materialsDB    = _materialsDB;
 	m_grid           = _grid;

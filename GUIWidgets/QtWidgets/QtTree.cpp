@@ -3,6 +3,9 @@
 #include "QtTree.h"
 #include <QEvent>
 
+#include "SignalBlocker.h"
+
+
 CQtTree::CQtTree(QWidget* _parent)
 	: QTreeWidget{ _parent }
 {
@@ -142,12 +145,12 @@ bool CQtTree::GetCheckBoxValue(QTreeWidgetItem* _item, int _col) const
 
 void CQtTree::SetItemFlags(QTreeWidgetItem* _item, EFlags _flags)
 {
-	if (Contains(_flags, EFlags::Edit))		_item->setFlags(_item->flags() | Qt::ItemIsEditable);
-	if (Contains(_flags, EFlags::NoEdit))	_item->setFlags(_item->flags() & ~Qt::ItemIsEditable);
-	if (Contains(_flags, EFlags::Select))	_item->setFlags(_item->flags() | Qt::ItemIsSelectable);
-	if (Contains(_flags, EFlags::NoSelect))	_item->setFlags(_item->flags() & ~Qt::ItemIsSelectable);
-	if (Contains(_flags, EFlags::Enabled))	_item->setFlags(_item->flags() | Qt::ItemIsEnabled);
-	if (Contains(_flags, EFlags::Disabled))	_item->setFlags(_item->flags() & ~Qt::ItemIsEnabled);
+	if (QtTreeAction::Contains(_flags, EFlags::EDIT))		_item->setFlags(_item->flags() | Qt::ItemIsEditable);
+	if (QtTreeAction::Contains(_flags, EFlags::NO_EDIT))	_item->setFlags(_item->flags() & ~Qt::ItemIsEditable);
+	if (QtTreeAction::Contains(_flags, EFlags::SELECT))		_item->setFlags(_item->flags() | Qt::ItemIsSelectable);
+	if (QtTreeAction::Contains(_flags, EFlags::NO_SELECT))	_item->setFlags(_item->flags() & ~Qt::ItemIsSelectable);
+	if (QtTreeAction::Contains(_flags, EFlags::ENABLED))	_item->setFlags(_item->flags() | Qt::ItemIsEnabled);
+	if (QtTreeAction::Contains(_flags, EFlags::DISABLED))	_item->setFlags(_item->flags() & ~Qt::ItemIsEnabled);
 }
 
 void CQtTree::SetCurrentItem(const std::vector<size_t>& _indices)
@@ -233,19 +236,7 @@ QTreeWidgetItem* CQtTree::CreateItem(T* _parent, int _col, const std::string& _t
 		item->setData(_col, Qt::UserRole, _data);
 	if (_col != -1 && !_text.empty())
 		item->setText(_col, QString::fromStdString(_text));
-	if (_flags != EFlags::Default)
+	if (_flags != EFlags::DEFAULT)
 		SetItemFlags(item, _flags);
 	return item;
-}
-
-bool CQtTree::Contains(EFlags _composition, EFlags _flag)
-{
-	using type = std::underlying_type_t<EFlags>;
-	return static_cast<type>(_composition) & static_cast<type>(_flag);
-}
-
-CQtTree::EFlags operator|(CQtTree::EFlags _f1, CQtTree::EFlags _f2)
-{
-	using type = std::underlying_type_t<CQtTree::EFlags>;
-	return static_cast<CQtTree::EFlags>(static_cast<type>(_f1) | static_cast<type>(_f2));
 }

@@ -6,36 +6,63 @@
 #include <QTreeWidget>
 #include <QComboBox>
 
+namespace QtTreeAction
+{
+	enum class EFlag : uint8_t
+	{
+		DEFAULT = 1 << 0,
+		EDIT = 1 << 1,
+		NO_EDIT = 1 << 2,
+		SELECT = 1 << 3,
+		NO_SELECT = 1 << 4,
+		ENABLED = 1 << 5,
+		DISABLED = 1 << 6,
+	};
+
+	inline constexpr EFlag operator|(EFlag _lhs, EFlag _rhs)
+	{
+		using type = std::underlying_type_t<EFlag>;
+		return static_cast<EFlag>(static_cast<type>(_lhs) | static_cast<type>(_rhs));
+	}
+
+	inline constexpr EFlag operator&(EFlag _lhs, EFlag _rhs)
+	{
+		using type = std::underlying_type_t<EFlag>;
+		return static_cast<EFlag>(static_cast<type>(_lhs) & static_cast<type>(_rhs));
+	}
+
+	// True if lhs contains rhs
+	inline constexpr bool Contains(EFlag _lhs, EFlag _rhs)
+	{
+		return (_lhs & _rhs) == _rhs;
+	}
+}
+
 class CQtTree : public QTreeWidget
 {
 	Q_OBJECT
 
 public:
-	enum class EFlags
-	{
-		Default  = 1 << 0,
-		Edit     = 1 << 1,
-		NoEdit   = 1 << 2,
-		Select   = 1 << 3,
-		NoSelect = 1 << 4,
-		Enabled  = 1 << 5,
-		Disabled = 1 << 6,
-	};
+	using EFlags = QtTreeAction::EFlag;
+	inline static constexpr auto ItemSelectableEditable = (EFlags::EDIT | EFlags::SELECT);
+	inline static constexpr auto ItemSelectableNotEditable = (EFlags::NO_EDIT | EFlags::SELECT);
+	inline static constexpr auto ItemSelectableEnabledNotEditable = (EFlags::NO_EDIT | EFlags::SELECT | EFlags::ENABLED);
+	inline static constexpr auto ItemNotSelectabledNotEditable = (EFlags::NO_EDIT | EFlags::NO_SELECT);
 
 	CQtTree(QWidget* _parent = nullptr);
 
 	// Creates a new item as a child of the tree.
-	QTreeWidgetItem* CreateItem(EFlags _flags = EFlags::Default);
+	QTreeWidgetItem* CreateItem(EFlags _flags = EFlags::DEFAULT);
 	// Creates a new item as a child of the widget.
-	static QTreeWidgetItem* CreateItem(QTreeWidgetItem* _parent, EFlags _flags = EFlags::Default);
+	static QTreeWidgetItem* CreateItem(QTreeWidgetItem* _parent, EFlags _flags = EFlags::DEFAULT);
 	// Creates a new item as a child of the tree and sets the given text and data to the specified column.
-	QTreeWidgetItem* CreateItem(int _col, const std::string& _text, EFlags _flags = EFlags::Default, const QVariant& _data = -1);
+	QTreeWidgetItem* CreateItem(int _col, const std::string& _text, EFlags _flags = EFlags::DEFAULT, const QVariant& _data = -1);
 	// Creates a new item as a child of the tree and sets the given text and data to the specified column.
-	static QTreeWidgetItem * CreateItem(QTreeWidget * _parent, int _col, const std::string & _text, EFlags _flags = EFlags::Default, const QVariant & _data = -1);
+	static QTreeWidgetItem* CreateItem(QTreeWidget* _parent, int _col, const std::string& _text, EFlags _flags = EFlags::DEFAULT, const QVariant& _data = -1);
 	// Creates a new item as a child of the widget and sets the given text and data to the specified column.
-	static QTreeWidgetItem* CreateItem(QTreeWidgetItem* _parent, int _col, const std::string& _text, EFlags _flags = EFlags::Default, const QVariant& _data = -1);
+	static QTreeWidgetItem* CreateItem(QTreeWidgetItem* _parent, int _col, const std::string& _text, EFlags _flags = EFlags::DEFAULT, const QVariant& _data = -1);
 	// Creates a new item as a child of the widget and sets the given text and data to the specified column.
-	static QTreeWidgetItem* CreateItem(QTreeWidgetItem* _parent, int _col, const std::string& _text, EFlags _flags = EFlags::Default, const std::string& _data = {});
+	static QTreeWidgetItem* CreateItem(QTreeWidgetItem* _parent, int _col, const std::string& _text, EFlags _flags = EFlags::DEFAULT, const std::string& _data = {});
 
 	// Sets new text and data to the selected column of the given existing item.
 	static void SetText(QTreeWidgetItem* _item, int _col, const std::string& _text, const QVariant& _data = -1);
@@ -91,15 +118,9 @@ public:
 private:
 	// Creates a new item as a child of the widget.
 	template<typename T>
-	static QTreeWidgetItem* CreateItem(T* _parent, int _col, const std::string& _text, EFlags _flags = EFlags::Default, const QVariant& _data = -1);
-
-	// Checks whether the composition of flags contains a flag.
-	static bool Contains(EFlags _composition, EFlags _flag);
+	static QTreeWidgetItem* CreateItem(T* _parent, int _col, const std::string& _text, EFlags _flags = EFlags::DEFAULT, const QVariant& _data = -1);
 
 signals:
 	void ComboBoxIndexChanged(QComboBox* _combo, QTreeWidgetItem* _item);
 	void CheckBoxStateChanged(QCheckBox* _check, QTreeWidgetItem* _item);
 };
-
-CQtTree::EFlags operator|(CQtTree::EFlags _f1, CQtTree::EFlags _f2);
-

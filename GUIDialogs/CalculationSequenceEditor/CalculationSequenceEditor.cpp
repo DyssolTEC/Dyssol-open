@@ -73,15 +73,15 @@ void CCalculationSequenceEditor::UpdatePartitionsList() const
 	for (size_t i = 0; i < m_pSequence->PartitionsNumber(); ++i)
 	{
 		// partition
-		QTreeWidgetItem* partitionItem = ui.treeWidget->CreateItem(0, StrConst::CSE_Partition + std::to_string(i + 1), CQtTree::EFlags::NoEdit | CQtTree::EFlags::Select, QVariant::fromValue(i));
+		QTreeWidgetItem* partitionItem = ui.treeWidget->CreateItem(0, StrConst::CSE_Partition + std::to_string(i + 1), CQtTree::ItemSelectableNotEditable, QVariant::fromValue(i));
 
 		// models
-		QTreeWidgetItem* modelsItem = ui.treeWidget->CreateItem(partitionItem, 0, StrConst::CSE_Models, CQtTree::EFlags::NoEdit | CQtTree::EFlags::NoSelect, QVariant::fromValue(i));
+		QTreeWidgetItem* modelsItem = ui.treeWidget->CreateItem(partitionItem, 0, StrConst::CSE_Models, CQtTree::ItemNotSelectabledNotEditable, QVariant::fromValue(i));
 		for (const auto& model : m_pSequence->PartitionModels(i))
 			ui.treeWidget->SetComboBox(ui.treeWidget->CreateItem(modelsItem), 0, modelsNames, modelsKeys, model ? QString::fromStdString(model->GetKey()) : "");
 
 		// tear streams
-		QTreeWidgetItem* streamsItem = ui.treeWidget->CreateItem(partitionItem, 0, StrConst::CSE_Streams, CQtTree::EFlags::NoEdit | CQtTree::EFlags::NoSelect, QVariant::fromValue(i));
+		QTreeWidgetItem* streamsItem = ui.treeWidget->CreateItem(partitionItem, 0, StrConst::CSE_Streams, CQtTree::ItemNotSelectabledNotEditable, QVariant::fromValue(i));
 		for (const auto& stream : m_pSequence->PartitionTearStreams(i))
 			ui.treeWidget->SetComboBox(ui.treeWidget->CreateItem(streamsItem), 0, streamsNames, streamsKeys, stream ? QString::fromStdString(stream->GetKey()) : "");
 	}
