@@ -19,22 +19,27 @@ namespace QtTreeUtils
 		DISABLED = 1 << 6,
 	};
 
-	inline constexpr EFlag operator|(EFlag _lhs, EFlag _rhs)
+	constexpr EFlag operator|(EFlag _lhs, EFlag _rhs)
 	{
 		using type = std::underlying_type_t<EFlag>;
 		return static_cast<EFlag>(static_cast<type>(_lhs) | static_cast<type>(_rhs));
 	}
 
-	inline constexpr EFlag operator&(EFlag _lhs, EFlag _rhs)
+	constexpr EFlag operator&(EFlag _lhs, EFlag _rhs)
 	{
 		using type = std::underlying_type_t<EFlag>;
 		return static_cast<EFlag>(static_cast<type>(_lhs) & static_cast<type>(_rhs));
 	}
 
-	// True if lhs contains rhs
-	inline constexpr bool Contains(EFlag _lhs, EFlag _rhs)
+	/**
+	 * \brief Checks if the group of flags contains the target one.
+	 * \param _group Group of flags to search in.
+	 * \param _flag Target flag to search for.
+	 * \return True if \p _group contains \p _flag.
+	 */
+	constexpr bool Contains(EFlag _group, EFlag _flag)
 	{
-		return (_lhs & _rhs) == _rhs;
+		return (_group & _flag) == _flag;
 	}
 }
 
