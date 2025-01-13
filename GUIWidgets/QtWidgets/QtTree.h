@@ -6,7 +6,7 @@
 #include <QTreeWidget>
 #include <QComboBox>
 
-namespace QtTreeAction
+namespace QtTreeUtils
 {
 	enum class EFlag : uint8_t
 	{
@@ -43,7 +43,7 @@ class CQtTree : public QTreeWidget
 	Q_OBJECT
 
 public:
-	using EFlags = QtTreeAction::EFlag;
+	using EFlags = QtTreeUtils::EFlag;
 	inline static constexpr auto ItemSelectableEditable = (EFlags::EDIT | EFlags::SELECT);
 	inline static constexpr auto ItemSelectableNotEditable = (EFlags::NO_EDIT | EFlags::SELECT);
 	inline static constexpr auto ItemSelectableEnabledNotEditable = (EFlags::NO_EDIT | EFlags::SELECT | EFlags::ENABLED);

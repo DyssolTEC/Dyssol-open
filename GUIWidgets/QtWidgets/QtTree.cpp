@@ -145,12 +145,12 @@ bool CQtTree::GetCheckBoxValue(QTreeWidgetItem* _item, int _col) const
 
 void CQtTree::SetItemFlags(QTreeWidgetItem* _item, EFlags _flags)
 {
-	if (QtTreeAction::Contains(_flags, EFlags::EDIT))		_item->setFlags(_item->flags() | Qt::ItemIsEditable);
-	if (QtTreeAction::Contains(_flags, EFlags::NO_EDIT))	_item->setFlags(_item->flags() & ~Qt::ItemIsEditable);
-	if (QtTreeAction::Contains(_flags, EFlags::SELECT))		_item->setFlags(_item->flags() | Qt::ItemIsSelectable);
-	if (QtTreeAction::Contains(_flags, EFlags::NO_SELECT))	_item->setFlags(_item->flags() & ~Qt::ItemIsSelectable);
-	if (QtTreeAction::Contains(_flags, EFlags::ENABLED))	_item->setFlags(_item->flags() | Qt::ItemIsEnabled);
-	if (QtTreeAction::Contains(_flags, EFlags::DISABLED))	_item->setFlags(_item->flags() & ~Qt::ItemIsEnabled);
+	if (QtTreeUtils::Contains(_flags, EFlags::EDIT))		_item->setFlags(_item->flags() | Qt::ItemIsEditable);
+	if (QtTreeUtils::Contains(_flags, EFlags::NO_EDIT))		_item->setFlags(_item->flags() & ~Qt::ItemIsEditable);
+	if (QtTreeUtils::Contains(_flags, EFlags::SELECT))		_item->setFlags(_item->flags() | Qt::ItemIsSelectable);
+	if (QtTreeUtils::Contains(_flags, EFlags::NO_SELECT))	_item->setFlags(_item->flags() & ~Qt::ItemIsSelectable);
+	if (QtTreeUtils::Contains(_flags, EFlags::ENABLED))		_item->setFlags(_item->flags() | Qt::ItemIsEnabled);
+	if (QtTreeUtils::Contains(_flags, EFlags::DISABLED))	_item->setFlags(_item->flags() & ~Qt::ItemIsEnabled);
 }
 
 void CQtTree::SetCurrentItem(const std::vector<size_t>& _indices)
