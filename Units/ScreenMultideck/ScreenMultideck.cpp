@@ -10,7 +10,7 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 
 void CScreenMultideck::CreateBasicInfo()
 {
-	SetUnitName("Screen Multi-deck");
+	SetUnitName("Screen multi-deck");
 	SetAuthorName("SPE TUHH, TU Bergakademie Freiberg IART");
 	SetUniqueID("AAAFADC1877B46629B07A456C7FA22A1");
 }

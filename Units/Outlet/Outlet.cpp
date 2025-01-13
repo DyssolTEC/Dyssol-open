@@ -10,7 +10,7 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 
 void COutlet::CreateBasicInfo()
 {
-	SetUnitName("OutletFlow");
+	SetUnitName("Outlet flow");
 	SetAuthorName("SPE TUHH");
 	SetUniqueID("40A70301168D4F9F84DF08918DA6F5E2");
 	SetHelpLink("003_models/unit_outletflow.html");

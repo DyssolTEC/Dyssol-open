@@ -14,7 +14,7 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 void CUnit::CreateBasicInfo()
 {
 	/// Basic unit's info ///
-	SetUnitName  ("DummyUnit5");
+	SetUnitName  ("Template unit steady-state with solver");
 	SetAuthorName("Author");
 	SetUniqueID  ("00000000000000000000000000000500");
 }

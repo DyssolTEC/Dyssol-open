@@ -14,7 +14,7 @@ extern "C" DECLDIR CBaseUnit* DYSSOL_CREATE_MODEL_FUN()
 void CHeatExchanger::CreateBasicInfo()
 {
 	/// Basic unit's info ///
-	SetUnitName("HeatExchanger");
+	SetUnitName("Heat exchanger");
 	SetAuthorName("TUHH SPE");
 	SetUniqueID("DB2C399331AA4F309DF63A819911251F");
 }
