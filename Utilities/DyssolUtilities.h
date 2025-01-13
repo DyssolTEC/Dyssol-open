@@ -302,10 +302,10 @@ std::vector<std::underlying_type_t<T>> E2I(const std::initializer_list<T>& _enum
 template <typename TO, typename TI>
 std::vector<TO> vector_cast(const std::vector<TI>& _ints)
 {
-	if (_ints.empty()) return {};
-	std::vector<TO> res;
-	for (const auto& i : _ints)
-		res.push_back(static_cast<TO>(i));
+	if (_ints.empty())
+		return {};
+	std::vector<TO> res(_ints.size());
+	std::transform(_ints.begin(), _ints.end(), res.begin(), [](const auto& _elem) { return static_cast<TO>(_elem); });
 	return res;
 }
 

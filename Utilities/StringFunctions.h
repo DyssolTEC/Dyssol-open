@@ -86,4 +86,21 @@ namespace StringFunctions
 	std::string GenerateUniqueKey(const std::string& _init, const std::vector<std::string>& _existing, size_t _length = 20);
 	// Returns a name consisting of _namingBase + number not yet in _existing
 	std::string GenerateUniqueName(const std::string& _namingBase, const std::vector<std::string>& _existing);
+
+	/**
+	 * Returns a unique name by appending a numeric suffix to the provided \p _namingBase if it's already used
+	 * \param _namingBase The base name.
+	 * \param _isNameAlreadyUsed A callable that checks if the given name is already in use.
+	 */
+	template <typename FUNC, typename = std::enable_if_t<std::is_invocable_v<FUNC, const std::string&>>>
+	std::string GenerateUniqueName(const std::string& _namingBase, FUNC& _isNameAlreadyUsed)
+	{
+		auto nameToUse = _namingBase;
+		int suffix = 1;
+
+		while (_isNameAlreadyUsed(nameToUse))
+			nameToUse = _namingBase + " " + std::to_string(suffix++);
+
+		return nameToUse;
+	}
 }

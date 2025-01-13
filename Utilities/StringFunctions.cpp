@@ -360,11 +360,11 @@ namespace StringFunctions
 	// Returns a name consisting of _namingBase + number not yet in _existing
 	std::string GenerateUniqueName(const std::string& _namingBase, const std::vector<std::string>& _existing)
 	{
-		int i = 1;
-		while (true)
+		const auto isNameAlreadyUsed = [&_existing](const std::string& _name)
 		{
-			std::string name = _namingBase + " " + std::to_string(i++);
-			if (std::find(_existing.begin(), _existing.end(), name) == _existing.end()) return name;
-		}
+			return std::find(_existing.begin(), _existing.end(), _name) != _existing.end();
+		};
+
+		return GenerateUniqueName(_namingBase, isNameAlreadyUsed);
 	}
 }
