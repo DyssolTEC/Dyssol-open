@@ -196,13 +196,18 @@ QString CQtTree::GetCurrentDataQStr(int _col) const
 
 bool CQtTree::IsSuccessor(const QTreeWidgetItem* _parent, const QTreeWidgetItem* _child)
 {
+	if (_parent == _child)
+		return true;
+
 	for (int i = 0; i < _parent->childCount(); ++i)
 	{
-		if (_parent->child(i) == _child)
+		const QTreeWidgetItem* currChild = _parent->child(i);
+		if (currChild == _child)
 			return true;
-		if (IsSuccessor(_parent->child(i), _child))
+		if (CQtTree::IsSuccessor(currChild, _child))
 			return true;
 	}
+
 	return false;
 }
 
