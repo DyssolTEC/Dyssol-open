@@ -48,6 +48,8 @@ public:
 
 	// Returns message from the current read position and advances this position. Returns empty string if the end of log is reached.
 	std::string Read();
+	// Returns the complete log as a single string, containing all valid messages from start to current write position
+	std::string GetFullLog() const;
 	// Returns color from the current read position.
 	ELogColor GetReadColor() const;
 

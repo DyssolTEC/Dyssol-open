@@ -58,6 +58,39 @@ std::string CSimulatorLog::Read()
 	return m_log[iPos].text;
 }
 
+std::string CSimulatorLog::GetFullLog() const
+{
+	std::string result;
+
+	// Iterate through all valid entries up to write position
+	for (size_t i = 0; i < m_iWritePos && i < MAX_LOG_SIZE; ++i)
+	{
+		const size_t iPos = i % MAX_LOG_SIZE;
+		if (!m_log[iPos].text.empty())
+		{
+			if (!result.empty())
+				result += "\n";
+
+			// Add color-specific prefix
+			switch (m_log[iPos].color)
+			{
+			case ELogColor::RED:
+				result += "Error! ";
+				break;
+			case ELogColor::ORANGE:
+				result += "Warning! ";
+				break;
+			case ELogColor::DEFAULT:
+			default:
+				break;
+			}
+			result += m_log[iPos].text;
+		}
+	}
+
+	return result;
+}
+
 CSimulatorLog::ELogColor CSimulatorLog::GetReadColor() const
 {
 	return m_log[m_iReadPos % MAX_LOG_SIZE].color;
