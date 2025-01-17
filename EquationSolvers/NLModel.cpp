@@ -100,11 +100,11 @@ bool CNLModel::GetFunctions(double* _pVars, double* _pFunc)
 		if( ( _pVars[0] <= DBL_MAX ) && ( _pVars[0] >= -DBL_MAX ) )
 				bRet = true;
 
-		//if (m_eStrategy == ENLSolverStrategy::Newton || m_eStrategy == ENLSolverStrategy::Linesearch)
-		//{
-		//	for (size_t i = 0; i < m_vVariables.size(); ++i)
-		//		_pFunc[i] = _pFunc[i] - _pVars[i];
-		//}
+		if (m_eStrategy == ENLSolverStrategy::Newton || m_eStrategy == ENLSolverStrategy::Linesearch)
+		{
+			for (size_t i = 0; i < m_vVariables.size(); ++i)
+				_pFunc[i] = _pFunc[i] - _pVars[i];
+		}
 	}
 	return bRet;
 }
