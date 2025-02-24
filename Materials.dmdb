@@ -109,10 +109,8 @@ DyssolMaterialsDatabase 3
 27 208 8 290 1700 1000 1e+09 1670.36 0.379262 0.000377093 -1.40685e-07 4.5594e+06 -1.3926e+07 -1.34234e+07  	$ Enthalpy [J/kg]; Shomate standard enthalpy
 27 208 8 1700 6000 1000 1e+09 2329.37 0.478596 -8.32503e-05 5.44643e-09 -6.19342e+08 -1.51083e+07 -1.34234e+07  	$ Enthalpy [J/kg]; Shomate standard enthalpy
 27 222 0 273 1273 1000 1e+09 273 0.0169995 373.12 0.025093 473 0.033276 573 0.043409 673 0.054744 773 0.066961 873 0.079877 973 0.093362 1073 0.10731 1173 0.12165 1273 0.13631  	$ Thermal conductivity [W/(m·K)]; List of T-values
-27 224 4 255.9 373 1000 1e+09 100000 10 4.6543 0 0 -1435.26 1 -64.848 0  	$ Vapor pressure [Pa]; Exponential
+27 224 4 255.9 573 1000 1e+09 100000 10 4.6543 0 0 -1435.26 1 -64.848 0  	$ Vapor pressure [Pa]; Exponential
 43 224 0 https://webbook.nist.gov/cgi/cbook.cgi?ID=C7732185&Type=ANTOINE&Plot=on#ANTOINE%@#https://dx.doi.org/10.1021/ie50448a022 	$ User provided description for correlation
-27 224 4 379 573 1000 1e+09 100000 10 3.55959 0 0 -643.748 1 -198.043 0  	$ Vapor pressure [Pa]; Exponential
-43 224 1 https://webbook.nist.gov/cgi/cbook.cgi?ID=C7732185&Type=ANTOINE&Plot=on#ANTOINE%@#https://dx.doi.org/10.1021/je60047a015 	$ User provided description for correlation
 42 224 https://webbook.nist.gov/cgi/cbook.cgi?ID=C7732185&Type=ANTOINE&Plot=on#ANTOINE 	$ User provided description for dependent property
 27 226 2 10 10000 1000 1e+09 9.6e-08  	$ Dynamic Viscosity [Pa·s]; Constant
 27 234 0 273 1973 1000 1e+09 273 0.804195 373 0.588593 473 0.464155 573 0.383151 673 0.326219 773 0.284017 873 0.251484 973 0.225637 1073 0.204609 1173 0.187166 1273 0.172463 1373 0.159902 1473 0.149046 1573 0.139571 1673 0.131228 1773 0.123827 1873 0.117216 1973 0.111275  	$ Density [kg/m<sup>3</sup>]; List of T-values
