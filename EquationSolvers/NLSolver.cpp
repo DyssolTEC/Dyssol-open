@@ -138,7 +138,7 @@ bool CNLSolver::SetModel(CNLModel* _pModel)
 	res = SUNContext_Create(SUN_COMM_NULL, &m_sunctx);
 #endif
 #if SUNDIALS_VERSION_MAJOR >= 6
-	if (!res)
+	if (res != KIN_SUCCESS)
 		return WriteError("KIN", "SUNContext_Create", "Cannot create SUNDIALS context.");
 #endif
 
