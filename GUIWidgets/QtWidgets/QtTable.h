@@ -83,12 +83,12 @@ public:
 	void SetItemsRowEditable(int _row, int _startcol, const std::vector<double>& _val);
 	void SetItemsRowEditable(int _row, int _startcol, const std::vector<std::string>& _val);
 
-	void SetItemNotEditable(int _row, int _col, const QString& _text, const QVariant& _userData = -1);
-	void SetItemNotEditable(int _row, int _col, const std::string& _text, const QVariant& _userData = -1);
-	void SetItemNotEditable(int _row, int _col, const std::string& _text, const std::string& _userData);
-	void SetItemNotEditable(int _row, int _col, const std::wstring& _text, const QVariant& _userData = -1);
-	void SetItemNotEditable(int _row, int _col, double _value, const QVariant& _userData = -1);
-	void SetItemNotEditable(int _row, int _col);
+	QTableWidgetItem* SetItemNotEditable(int _row, int _col, const QString& _text, const QVariant& _userData = -1);
+	QTableWidgetItem* SetItemNotEditable(int _row, int _col, const std::string& _text, const QVariant& _userData = -1);
+	QTableWidgetItem* SetItemNotEditable(int _row, int _col, const std::string& _text, const std::string& _userData);
+	QTableWidgetItem* SetItemNotEditable(int _row, int _col, const std::wstring& _text, const QVariant& _userData = -1);
+	QTableWidgetItem* SetItemNotEditable(int _row, int _col, double _value, const QVariant& _userData = -1);
+	QTableWidgetItem* SetItemNotEditable(int _row, int _col);
 
 	void SetItemsColNotEditable(int _startrow, int _col, const std::vector<double>& _val);
 	void SetItemsColNotEditable(int _startrow, int _col, const std::string& _val);

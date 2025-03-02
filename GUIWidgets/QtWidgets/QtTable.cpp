@@ -237,7 +237,7 @@ void CQtTable::SetItemsRowEditable(int _row, int _startcol, const std::vector<st
 			SetItemEditable(_row, _startcol + i, _val[i]);
 }
 
-void CQtTable::SetItemNotEditable(const int _row, const int _col, const QString& _text, const QVariant& _userData /*= -1*/)
+QTableWidgetItem* CQtTable::SetItemNotEditable(const int _row, const int _col, const QString& _text, const QVariant& _userData /*= -1*/)
 {
 	const bool bExist = item(_row, _col) != nullptr;
 	QTableWidgetItem* pItem = bExist ? item(_row, _col) : new QTableWidgetItem(_text);
@@ -249,31 +249,32 @@ void CQtTable::SetItemNotEditable(const int _row, const int _col, const QString&
 	pItem->setFlags(pItem->flags() & ~Qt::ItemIsEditable);
 	if (!bExist)
 		setItem(_row, _col, pItem);
+	return pItem;
 }
 
-void CQtTable::SetItemNotEditable(int _row, int _col, const std::string& _text, const QVariant& _userData)
+QTableWidgetItem* CQtTable::SetItemNotEditable(int _row, int _col, const std::string& _text, const QVariant& _userData)
 {
-	SetItemNotEditable(_row, _col, QString::fromStdString(_text), _userData);
+	return SetItemNotEditable(_row, _col, QString::fromStdString(_text), _userData);
 }
 
-void CQtTable::SetItemNotEditable(int _row, int _col, const std::string& _text, const std::string& _userData)
+QTableWidgetItem* CQtTable::SetItemNotEditable(int _row, int _col, const std::string& _text, const std::string& _userData)
 {
-	SetItemNotEditable(_row, _col, QString::fromStdString(_text), QString::fromStdString(_userData));
+	return SetItemNotEditable(_row, _col, QString::fromStdString(_text), QString::fromStdString(_userData));
 }
 
-void CQtTable::SetItemNotEditable(int _row, int _col, const std::wstring& _text, const QVariant& _userData)
+QTableWidgetItem* CQtTable::SetItemNotEditable(int _row, int _col, const std::wstring& _text, const QVariant& _userData)
 {
-	SetItemNotEditable(_row, _col, QString::fromStdWString(_text), _userData);
+	return SetItemNotEditable(_row, _col, QString::fromStdWString(_text), _userData);
 }
 
-void CQtTable::SetItemNotEditable(int _row, int _col, double _value, const QVariant& _userData)
+QTableWidgetItem* CQtTable::SetItemNotEditable(int _row, int _col, double _value, const QVariant& _userData)
 {
-	SetItemNotEditable(_row, _col, QString::number(_value), _userData);
+	return SetItemNotEditable(_row, _col, QString::number(_value), _userData);
 }
 
-void CQtTable::SetItemNotEditable(int _row, int _col)
+QTableWidgetItem* CQtTable::SetItemNotEditable(int _row, int _col)
 {
-	SetItemNotEditable(_row, _col, QString{});
+	return SetItemNotEditable(_row, _col, QString{});
 }
 
 void CQtTable::SetItemsColNotEditable(int _startrow, int _col, const std::vector<double>& _val)
