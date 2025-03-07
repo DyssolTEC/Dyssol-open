@@ -39,6 +39,9 @@ Source: "..\..\x64\Release\{#CppProjects[I]}*.lib";   DestDir: "{app}\{code:DirM
 #endsub
 #for {I = 0; I < DimOf(CppProjects); I++} CppProjectsFileEntry
 
+; Additional sources
+Source: "..\..\EquationSolvers\impl\*"; DestDir: "{app}\{code:DirModelsCreator}\EquationSolvers\impl"; Flags: ignoreversion createallsubdirs recursesubdirs
+
 ; Solvers templates
 #sub SolverTemplatesFileEntry
 Source: "..\..\Solvers\Templates\{#SolverTemplates[I]}\*.vcxproj"; DestDir: "{app}\{code:DirModelsCreator}\{code:DirSolverTemplates}\{#SolverTemplates[I]}"; Flags: ignoreversion
