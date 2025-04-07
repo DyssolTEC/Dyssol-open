@@ -115,10 +115,10 @@ public:
 	CH5Handler();
 	~CH5Handler();
 
-	void Create(const std::filesystem::path& _fileName, bool _isSingleFile = true);	/// Create new file with truncation.
-	void Open(const std::filesystem::path& _fileName);								/// Open existing file.
-	void Close();																	/// Close current file.
-	[[nodiscard]] std::filesystem::path FileName() const;							/// Returns current file name.
+	void Create(const std::filesystem::path& _fileName, bool _isSingleFile = true);	///< Create new file with truncation.
+	void Open(const std::filesystem::path& _fileName);								///< Open existing file.
+	void Close();																	///< Close current file.
+	[[nodiscard]] std::filesystem::path FileName() const;							///< Returns current file name.
 
 	[[nodiscard]] std::string CreateGroup(const std::string& _path, const std::string& _groupName) const;
 	[[nodiscard]] std::string OpenGroup(const std::string& _path, const std::string& _groupName) const;
@@ -216,6 +216,39 @@ public:
 			ReadValue(_path, _dataset, GetType<decltype(value)>(), &value);
 			_data = static_cast<T>(value);
 		}
+		else if constexpr (is_map<T>::value)
+		{
+			using K = typename T::key_type;
+			using V = typename T::mapped_type;
+
+			_data.clear();
+
+			std::vector<K> keys;
+			std::vector<typename type_identity<V>::type> values;
+			std::vector<size_t> sizes;
+
+			ReadData(_path, _dataset + "K", keys);
+			ReadData(_path, _dataset + "V", values);
+
+			const auto& datasetNameSize = _dataset + "S";
+			if (ReadSize(_path, datasetNameSize) > 0)
+				ReadData(_path, datasetNameSize, sizes);
+
+			auto it = values.begin();
+			for (size_t i = 0; i < keys.size(); ++i)
+			{
+				if constexpr (is_vector<V>::value)
+				{
+					_data[keys[i]] = V(it, it + sizes[i]);
+					it += sizes[i];
+				}
+				else
+				{
+					_data[keys[i]] = *it;
+					++it;
+				}
+			}
+		}
 		else
 		{
 			ReadValue(_path, _dataset, GetType<T>(), &_data);
@@ -241,41 +274,6 @@ public:
 		{
 			if (!_data.empty())
 				ReadValue(_path, _dataset, GetType<T>(), &_data.front());
-		}
-	}
-
-	template <typename M, typename = std::enable_if_t<is_map<M>::value>>
-	void ReadData(const std::string& _path, const std::string& _dataset, M& _data)
-	{
-		using K = typename M::key_type;
-		using V = typename M::mapped_type;
-
-		_data.clear();
-
-		std::vector<K> keys;
-		std::vector<typename type_identity<V>::type> values;
-		std::vector<size_t> sizes;
-
-		ReadData(_path, _dataset + "K", keys);
-		ReadData(_path, _dataset + "V", values);
-
-		const auto& datasetNameSize = _dataset + "S";
-		if (ReadSize(_path, datasetNameSize) > 0)
-			ReadData(_path, datasetNameSize, sizes);
-
-		auto it = values.begin();
-		for (size_t i = 0; i < keys.size(); ++i)
-		{
-			if constexpr (is_vector<V>::value)
-			{
-				_data[keys[i]] = V(it, it + sizes[i]);
-				it += sizes[i];
-			}
-			else
-			{
-				_data[keys[i]] = *it;
-				++it;
-			}
 		}
 	}
 
