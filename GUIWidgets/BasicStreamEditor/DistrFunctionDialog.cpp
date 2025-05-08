@@ -57,11 +57,11 @@ void CDistrFunctionDialog::CreateDistrFunCombo() const
 
 	for (int i = 0; i < static_cast<int>(EDistributionFunction::COUNT_); ++i)
 	{
-		if (i == static_cast<int>(EDistributionFunction::MANUAL)) 
+		if (i == static_cast<int>(EDistributionFunction::MANUAL))
 			continue;
 
-		const auto descriptor = DistributionFunctionDescriptor(static_cast<EDistributionFunction>(i));
-		ui.comboBox->insertItem(i, QString::fromStdString(descriptor.name), i);
+		const auto& descriptor = details::GetFunctionDescriptor(static_cast<EDistributionFunction>(i));
+		ui.comboBox->insertItem(i, QString::fromStdString(std::string(descriptor.name)), i);
 	}
 
 	ui.comboBox->setCurrentIndex(static_cast<int>(m_distrFun));
@@ -92,11 +92,11 @@ void CDistrFunctionDialog::UpdateUnits() const
 
 void CDistrFunctionDialog::UpdateParamLabels() const
 {
-	const auto descriptor = DistributionFunctionDescriptor(m_distrFun);
-	if (descriptor.paramNames.size() > 0)
-		ui.labelParam1->setText(QString::fromStdString(descriptor.paramNames[0]));
-	if (descriptor.paramNames.size() > 1)
-		ui.labelParam2->setText(QString::fromStdString(descriptor.paramNames[1]));
+	const auto& descriptor = details::GetFunctionDescriptor(m_distrFun);
+	if (descriptor.params.size() > 0)
+		ui.labelParam1->setText(QString::fromStdString(std::string(descriptor.params[0].name)));
+	if (descriptor.params.size() > 1)
+		ui.labelParam2->setText(QString::fromStdString(std::string(descriptor.params[1].name)));
 }
 
 void CDistrFunctionDialog::UpdateParams() const
@@ -118,25 +118,45 @@ void CDistrFunctionDialog::OKClicked()
 	m_dParam2 = ui.lineEditParam2->text().toDouble();
 	m_distrFun = static_cast<EDistributionFunction>(ui.comboBox->currentIndex() + 1);
 
-	const auto descriptor = DistributionFunctionDescriptor(m_distrFun);
+	const auto& descriptor = details::GetFunctionDescriptor(m_distrFun);
+
+	auto criticalMessage = [&](double _value, int _idx)
+		{
+			const QString& message = QString::fromStdString(StrConst::FUN_ErrorZeroParameter(descriptor.params[_idx].name.data()));
+			if (_value == 0.0)
+			{
+				QMessageBox::critical(this, StrConst::FUN_ErrorName, message);
+				return true;
+			}
+			return false;
+		};
+
 	switch (m_distrFun)
 	{
 	case EDistributionFunction::NORMAL:
-		if (m_dParam2 == 0.0) {	QMessageBox::critical(this, StrConst::FUN_ErrorName, QString::fromStdString(StrConst::FUN_ErrorZeroParameter(descriptor.paramNames[1])));	return; }
-		break;
-	case EDistributionFunction::RRSB:
-		if (m_dParam1 == 0.0) {	QMessageBox::critical(this, StrConst::FUN_ErrorName, QString::fromStdString(StrConst::FUN_ErrorZeroParameter(descriptor.paramNames[0])));	return;	}
-		break;
-	case EDistributionFunction::GGS:
-		if (m_dParam1 == 0.0) {	QMessageBox::critical(this, StrConst::FUN_ErrorName, QString::fromStdString(StrConst::FUN_ErrorZeroParameter(descriptor.paramNames[0])));	return;	}
-		break;
 	case EDistributionFunction::LOG_NORMAL:
-		if (m_dParam2 == 0.0) {	QMessageBox::critical(this, StrConst::FUN_ErrorName, QString::fromStdString(StrConst::FUN_ErrorZeroParameter(descriptor.paramNames[1])));	return;	}
+	{
+		if (criticalMessage(m_dParam2, 1))
+			return;
+
 		break;
+	}
+	case EDistributionFunction::RRSB:
+	case EDistributionFunction::GGS:
+	{
+		if (criticalMessage(m_dParam1, 0))
+			return;
+
+		break;
+	}
 	case EDistributionFunction::MANUAL:
+	{
 		break;
+	}
 	case EDistributionFunction::COUNT_:
+	{
 		assert(false);
+	}
 	}
 
 	m_vDistr = CreateDistribution(m_distrFun, m_gridMeans, m_dParam1, m_dParam2);
