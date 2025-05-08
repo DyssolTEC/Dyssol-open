@@ -50,7 +50,7 @@ jobs:
         # Directory to install.
         dir: ${{github.workspace}}/ExternalLibraries/qt
         # Whether or not to automatically run setup-python to find a valid python version.
-        setup-python: 'false'
+        setup-python: 'true'
 
     - name: Cache QtMsBuild tools
       id: cache-qt-ms-build-tools
@@ -250,7 +250,7 @@ jobs:
         # Directory to install.
         dir: ${{github.workspace}}/ExternalLibraries/qt
         # Whether or not to automatically run setup-python to find a valid python version.
-        setup-python: 'false'
+        setup-python: 'true'
         
     - name: Cache QtMsBuild tools
       id: cache-qt-ms-build-tools
