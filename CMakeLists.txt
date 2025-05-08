@@ -149,7 +149,6 @@ IF(BUILD_TESTS)
     "Unit_GranulatorSimpleBatch"
     "Unit_Mixer"
     "Unit_Screen_Molerus"
-    "Unit_Screen_Multideck"
     "Unit_Screen_Plitt"
     "Unit_Screen_Probability"
     "Unit_Screen_Teipel"
