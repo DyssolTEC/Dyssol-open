@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2025, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
@@ -78,7 +80,7 @@ namespace StringFunctions
 	template<> std::vector<std::string> GetValueFromStream(std::istream& _is);
 	// Returns the next value from the stream and advances stream's iterator correspondingly. Version for enum types.
 	template<typename T>
-	inline std::enable_if_t<std::is_enum_v<T>, T> GetEnumFromStream(std::istream& _is)
+	std::enable_if_t<std::is_enum_v<T>, T> GetEnumFromStream(std::istream& _is)
 	{
 		return static_cast<T>(GetValueFromStream<std::underlying_type_t<T>>(_is));
 	}
@@ -101,23 +103,27 @@ namespace StringFunctions
 	/**
 	 * Returns a unique name by appending a numeric suffix to the provided \p _namingBase if it's already used
 	 * \param _namingBase The base name.
-	 * \param _isNameAlreadyUsed A callable that checks if the given name is already in use.
+	 * \param _isNameUsed A callable that checks if the given name is already in use.
 	 */
 	template <typename FUNC, typename = std::enable_if_t<std::is_invocable_v<FUNC, const std::string&>>>
-	inline std::string GenerateUniqueName(const std::string& _namingBase, FUNC&& _isNameAlreadyUsed)
+	std::string GenerateUniqueName(const std::string& _namingBase, FUNC&& _isNameUsed)
 	{
 		auto nameToUse = _namingBase;
 		int suffix = 1;
 
-		while (_isNameAlreadyUsed(nameToUse))
+		while (_isNameUsed(nameToUse))
 			nameToUse = _namingBase + " " + std::to_string(suffix++);
 
 		return nameToUse;
 	}
 
-	// Returns a name consisting of _namingBase + number not yet in _existing
+	/**
+	 * Returns a unique name by appending a numeric suffix to the provided \p _namingBase if it's already used
+	 * \param _namingBase The base name.
+	 * \param _existing List of already used names.
+	 */
 	template<typename T, typename = std::enable_if_t<std::is_convertible_v<T, std::string_view>>>
-	inline std::string GenerateUniqueName(const std::string& _namingBase, const std::vector<T>& _existing)
+	std::string GenerateUniqueName(const std::string& _namingBase, const std::vector<T>& _existing)
 	{
 		const auto isNameAlreadyUsed = [&_existing](const std::string& _name)
 			{

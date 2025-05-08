@@ -134,9 +134,8 @@ public:
 	[[nodiscard]] std::vector<CCompound*> GetCompounds();
 	// Returns const pointers to all defined compounds.
 	[[nodiscard]] std::vector<const CCompound*> GetCompounds() const;
-
-	// Returns pointers of compounds with the specified unique keys.
-	std::vector<const CCompound*> GetCompounds(const std::vector<std::string>& _keys) const;
+	// Returns pointers of compounds (or nullptr) with the specified unique keys.
+	[[nodiscard]] std::vector<const CCompound*> GetCompounds(const std::vector<std::string>& _keys) const;
 
 	// Returns names of compounds with the specified unique keys.
 	std::vector<std::string> GetCompoundsNames(const std::vector<std::string>& _keys) const;

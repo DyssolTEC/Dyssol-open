@@ -1,4 +1,5 @@
-/* Copyright (c) 2023, DyssolTEC. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2023, DyssolTEC.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "SaveLoadManager.h"
 #include "DyssolStringConstants.h"

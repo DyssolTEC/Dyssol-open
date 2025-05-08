@@ -5,7 +5,6 @@
 #include "UnitParametersManager.h"
 
 #include "ContainerFunctions.h"
-
 #include "H5Handler.h"
 
 CUnitParametersManager::CUnitParametersManager(const CUnitParametersManager& _other)
