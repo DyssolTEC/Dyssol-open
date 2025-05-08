@@ -12,6 +12,7 @@
 #include <locale>
 #include <cctype>
 #include <iomanip>
+#include <iostream>
 #include <random>
 #include <iterator>
 
@@ -258,7 +259,21 @@ namespace StringFunctions
 	double GetValueFromStream<double>(std::istream& _is)
 	{
 		if (const std::string str = GetValueFromStream<std::string>(_is); !str.empty())
-			return std::stod(str);
+		{
+			try
+			{
+				return std::stod(str);
+			}
+			catch (const std::invalid_argument& e)
+			{
+				std::cerr << "std::invalid_argument: " << e.what() << " " << str << "\n";
+			}
+			catch (const std::out_of_range& e)
+			{
+				std::cerr << "std::out_of_range: " << e.what() << " " << str << "\n";
+			}
+			return {};
+		}
 		return {};
 	}
 
