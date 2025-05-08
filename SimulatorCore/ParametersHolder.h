@@ -3,7 +3,10 @@
 #pragma once
 
 #include "DyssolDefines.h"
-#include "H5Handler.h"
+
+#include <string>
+
+class CH5Handler;
 
 class CParametersHolder
 {

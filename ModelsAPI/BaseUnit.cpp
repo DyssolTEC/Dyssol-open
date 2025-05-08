@@ -9,6 +9,8 @@
 #include "ContainerFunctions.h"
 #include "DyssolUtilities.h"
 #include "DyssolStringConstants.h"
+#include "H5Handler.h"
+
 #include <stdexcept>
 #include <numeric>
 

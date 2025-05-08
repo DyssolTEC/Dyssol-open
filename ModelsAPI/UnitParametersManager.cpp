@@ -6,6 +6,8 @@
 
 #include "ContainerFunctions.h"
 
+#include "H5Handler.h"
+
 CUnitParametersManager::CUnitParametersManager(const CUnitParametersManager& _other)
 	: m_groups{ _other.m_groups }
 {

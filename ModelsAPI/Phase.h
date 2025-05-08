@@ -7,6 +7,7 @@
 #include "TimeDependentValue.h"
 
 class CMultidimensionalGrid;
+class CH5Handler;
 
 class CPhase
 {

@@ -5,6 +5,8 @@
 #include "ContainerFunctions.h"
 #include "DyssolUtilities.h"
 #include "DyssolStringConstants.h"
+#include "H5Handler.h"
+
 #include <utility>
 
 // TODO: remove all reinterpret_cast and static_cast for MDMatrix

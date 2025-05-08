@@ -3,7 +3,11 @@
 #pragma once
 
 #include "DyssolTypes.h"
-#include "H5Handler.h"
+
+#include <vector>
+#include <limits>
+
+class CH5Handler;
 
 /**
 * \brief Class for time-dependent value.

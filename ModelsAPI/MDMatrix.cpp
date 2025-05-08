@@ -3,6 +3,8 @@
 #include "MDMatrix.h"
 #include "ContainerFunctions.h"
 #include "DyssolStringConstants.h"
+#include "H5Handler.h"
+
 #include <cmath>
 
 CMDMatrix::CMDMatrix(const CMDMatrix& _other) :
