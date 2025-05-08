@@ -3,6 +3,8 @@
 #include "TimeDependentValue.h"
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
+#include "H5Handler.h"
+
 #include <utility>
 
 CTimeDependentValue::CTimeDependentValue(std::string _name, std::string _units) :

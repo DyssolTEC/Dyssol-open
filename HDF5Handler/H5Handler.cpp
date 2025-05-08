@@ -2,7 +2,6 @@
  * Copyright (c) 2023, DyssolTEC GmbH.
  * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
-#include "H5Cpp.h"
 #include "H5Handler.h"
 #include "PacketTable.h"
 #include "DyssolStringConstants.h"
@@ -102,49 +101,6 @@ namespace
 
 		return (_bOpen) ? MultiFileReadName(_sFileName) : MultiFileWriteName(_sFileName);
 	}
-}
-
-template<> const H5::DataType& GetType<double>() { return H5::PredType::NATIVE_DOUBLE; }
-template<> const H5::DataType& GetType<uint32_t>() { return H5::PredType::NATIVE_UINT32; }
-template<> const H5::DataType& GetType<uint64_t>() { return H5::PredType::NATIVE_UINT64; }
-template<> const H5::DataType& GetType<int32_t>() { return H5::PredType::NATIVE_INT32; };
-template<> const H5::DataType& GetType<int64_t>() { return H5::PredType::NATIVE_INT64; }
-template<> const H5::DataType& GetType<bool>() { return H5::PredType::NATIVE_HBOOL; }
-
-template<>
-const H5::DataType& GetType<CPoint>()
-{
-	static std::unique_ptr<H5::CompType> type{};
-
-	if (!type)
-	{
-		type = std::make_unique<H5::CompType>(sizeof(CPoint));
-		type->insertMember("x", HOFFSET(CPoint, x), H5::PredType::NATIVE_DOUBLE);
-		type->insertMember("y", HOFFSET(CPoint, y), H5::PredType::NATIVE_DOUBLE);
-	}
-	return *type;
-}
-
-template<>
-const H5::DataType& GetType<STDValue>()
-{
-	static std::unique_ptr<H5::CompType> type{};
-
-	if (!type)
-	{
-		type = std::make_unique<H5::CompType>(sizeof(STDValue));
-		type->insertMember("time", HOFFSET(STDValue, time), H5::PredType::NATIVE_DOUBLE);
-		type->insertMember("value", HOFFSET(STDValue, value), H5::PredType::NATIVE_DOUBLE);
-	}
-	return *type;
-}
-
-template<>
-const H5::DataType& GetType<std::string>()
-{
-	static H5::StrType type{ H5::PredType::C_S1, H5T_VARIABLE };
-
-	return type;
 }
 
 CH5Handler::CH5Handler()
@@ -410,7 +366,8 @@ size_t CH5Handler::ReadSize(const std::string& _sPath, const std::string& _sData
 	{
 		H5::Group h5Group(m_ph5File->openGroup(_sPath));
 #if H5_VERSION_GE(1, 10, 1) == true
-		if (!h5Group.nameExists(_sDatasetName)) return 0;
+		if (!h5Group.nameExists(_sDatasetName))
+			return 0;
 #endif
 
 		H5::DataSet h5Dataset = h5Group.openDataSet(_sDatasetName);

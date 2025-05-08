@@ -6,10 +6,11 @@
 #include "DenseMDMatrix.h"
 #include "Matrix2D.h"
 #include "TransformMatrix.h"
-#include "H5Handler.h"
 #include "MDMatrCacher.h"
 
 #define DATA_SAVE_BLOCK	100
+
+class CH5Handler;
 
 struct sFraction
 {

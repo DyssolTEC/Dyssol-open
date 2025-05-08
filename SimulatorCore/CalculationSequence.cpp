@@ -8,6 +8,7 @@
 #include "Phase.h"
 #include "ContainerFunctions.h"
 #include "DyssolStringConstants.h"
+#include "H5Handler.h"
 
 CCalculationSequence::CCalculationSequence(const std::vector<std::unique_ptr<CUnitContainer>>* _allModels, const std::vector<std::shared_ptr<CStream>>* _allStreams)
 {

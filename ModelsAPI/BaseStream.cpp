@@ -8,6 +8,7 @@
 #include "MultidimensionalGrid.h"
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
+#include "H5Handler.h"
 
 // TODO: remove all reinterpret_cast and static_cast for MDMatrix.
 

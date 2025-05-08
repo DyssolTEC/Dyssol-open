@@ -47,6 +47,7 @@
 #define m_pMaterialsDB	GetMaterialsDBRef()
 
 class CStream;
+class CH5Handler;
 
 // TODO: rename to CBaseModel and create a type alias to CBaseUnit.
 

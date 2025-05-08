@@ -2,6 +2,8 @@
 
 #include "ParametersHolder.h"
 #include "DyssolStringConstants.h"
+#include "H5Handler.h"
+
 
 const unsigned CParametersHolder::m_cnSaveVersion = 7;
 

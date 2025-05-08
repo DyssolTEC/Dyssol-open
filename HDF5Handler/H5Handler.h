@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "H5Cpp.h"
 #include "DyssolTypes.h"
 #include "DyssolFilesystem.h"
 
@@ -12,28 +13,65 @@
 #include <unordered_map>
 #include <algorithm>
 
-namespace H5
-{
-	class H5File;
-	class DataType;
-}
-
 template<typename T>
-const H5::DataType& GetType()
+inline const H5::DataType& GetType() { static_assert(sizeof(T) == 0, "No specialization found"); return H5::PredType::PREDTYPE_CONST; }
+
+template<> inline const H5::DataType& GetType<double>() { return H5::PredType::NATIVE_DOUBLE; }
+template<> inline const H5::DataType& GetType<uint32_t>() { return H5::PredType::NATIVE_UINT32; }
+template<> inline const H5::DataType& GetType<uint64_t>() { return H5::PredType::NATIVE_UINT64; }
+template<> inline const H5::DataType& GetType<int32_t>() { return H5::PredType::NATIVE_INT32; };
+template<> inline const H5::DataType& GetType<int64_t>() { return H5::PredType::NATIVE_INT64; }
+template<> inline const H5::DataType& GetType<bool>() { return H5::PredType::NATIVE_HBOOL; }
+
+template<>
+inline const H5::DataType& GetType<CPoint>()
 {
-	static_assert(sizeof(T) == 0, "No specialization found");
-	return {};
+	static std::unique_ptr<H5::CompType> type{};
+
+	if (!type)
+	{
+		type = std::make_unique<H5::CompType>(sizeof(CPoint));
+		type->insertMember("x", HOFFSET(CPoint, x), H5::PredType::NATIVE_DOUBLE);
+		type->insertMember("y", HOFFSET(CPoint, y), H5::PredType::NATIVE_DOUBLE);
+	}
+	return *type;
 }
 
-template<> const H5::DataType& GetType<double>();
-template<> const H5::DataType& GetType<uint32_t>();
-template<> const H5::DataType& GetType<uint64_t>();
-template<> const H5::DataType& GetType<int32_t>();
-template<> const H5::DataType& GetType<int64_t>();
-template<> const H5::DataType& GetType<bool>();
-template<> const H5::DataType& GetType<std::string>();
-template<> const H5::DataType& GetType<CPoint>();
-template<> const H5::DataType& GetType<STDValue>();
+template<>
+inline const H5::DataType& GetType<STDValue>()
+{
+	static std::unique_ptr<H5::CompType> type{};
+
+	if (!type)
+	{
+		type = std::make_unique<H5::CompType>(sizeof(STDValue));
+		type->insertMember("time", HOFFSET(STDValue, time), H5::PredType::NATIVE_DOUBLE);
+		type->insertMember("value", HOFFSET(STDValue, value), H5::PredType::NATIVE_DOUBLE);
+	}
+	return *type;
+}
+
+template<>
+inline const H5::DataType& GetType<SInterval>()
+{
+	static std::unique_ptr<H5::CompType> type{};
+
+	if (!type)
+	{
+		type = std::make_unique<H5::CompType>(sizeof(SInterval));
+		type->insertMember("min", HOFFSET(SInterval, min), H5::PredType::NATIVE_DOUBLE);
+		type->insertMember("max", HOFFSET(SInterval, max), H5::PredType::NATIVE_DOUBLE);
+	}
+	return *type;
+}
+
+template<>
+inline const H5::DataType& GetType<std::string>()
+{
+	static H5::StrType type{ H5::PredType::C_S1, H5T_VARIABLE };
+
+	return type;
+}
 
 /**
  *	IO with HDF5 files. Two modes:

@@ -7,6 +7,7 @@
 #include "ContainerFunctions.h"
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
+#include "H5Handler.h"
 
 CFlowsheet::CFlowsheet(CModelsManager* _modelsManager, const CMaterialsDatabase* _materialsDB)
 	: m_materialsDB{ _materialsDB }
