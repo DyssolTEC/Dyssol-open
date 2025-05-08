@@ -2,19 +2,157 @@
  * Copyright (c) 2023, DyssolTEC GmbH.
  * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
+#include "H5Cpp.h"
 #include "H5Handler.h"
 #include "PacketTable.h"
 #include "DyssolStringConstants.h"
 #include "FileSystem.h"
 
-using namespace H5;
+#include <regex>
 
-CH5Handler::CH5Handler() :
-	m_sFileName(""),
-	m_bFileValid(false),
-	m_ph5File(nullptr)
+namespace
 {
-	Exception::dontPrint();
+	H5::FileAccPropList CreateFileAccPropList(bool _bSingleFile)
+	{
+		const hsize_t cChunkSize = 500;
+		const hsize_t cCacheSize = 1024 * 1024 * 50;		// in bytes
+		const hsize_t cMaxH5FileSize = 1024 * 1024 * 2000;	// in bytes
+
+		H5::FileAccPropList h5AccPropList;
+		if (!_bSingleFile)
+			h5AccPropList.setFamily(cMaxH5FileSize, H5P_DEFAULT);
+		h5AccPropList.setFcloseDegree(H5F_CLOSE_STRONG);
+		h5AccPropList.setCache(cChunkSize, cChunkSize, cCacheSize, 0.5);
+
+		return h5AccPropList;
+	}
+
+	// Returns results of the regex search.
+	std::smatch FindSuffix(const std::filesystem::path& _str, const std::string_view& _regexStr)
+	{
+		const auto& str = _str.string();                       // Convert path to string
+		const std::regex r(_regexStr.begin(), _regexStr.end()); // Compile regex expression
+
+		std::smatch m;                                         // Results of regex search
+		std::regex_search(str, m, r);                          // Perform regex search
+
+		return m;
+	}
+
+	// Replaces _len symbols starting from _pos in _str with a multi-file suffix.
+	std::filesystem::path ReplaceMultiFileSuffix(const std::filesystem::path& _str, size_t _pos, size_t _len)
+	{
+		std::string copy = _str.string();
+		copy.replace(_pos, _len, StrConst::HDF5H_FileExtSpec); // Replace existing digits with multi-file extension
+
+		return copy;
+	}
+
+	// Transforms the file name to the form needed to read from multi-file.
+	std::filesystem::path MultiFileReadName(const std::filesystem::path& _sFileName)
+	{
+		if (_sFileName.empty())
+			return {};
+
+		// Already in proper multi-file format, i.e., contains [[%d]]
+		if (FindSuffix(_sFileName, StrConst::HDF5H_FileExtFinalRegex).size() == 2)
+			return _sFileName;
+
+		// Search for a multi-file suffix in the form [[N]], where N is any number
+		const auto& m = FindSuffix(_sFileName, StrConst::HDF5H_FileExtInitRegex);
+		if (m.size() < 2)
+			return _sFileName;	// No valid multi-file suffix found
+
+		// Replace existing digits with a multi-file suffix %d
+		return ReplaceMultiFileSuffix(_sFileName, m.position(1), m[1].length());
+	}
+
+	// Transforms the file name to the form needed to write to multi-file.
+	std::filesystem::path MultiFileWriteName(std::filesystem::path _sFileName)
+	{
+		if (_sFileName.empty())
+			return {};
+
+		// Check if the extension is missing or incorrect
+		if (!StringFunctions::CompareCaseInsensitive(_sFileName.extension().string(), StrConst::HDF5H_DotFileExt))
+			_sFileName += StrConst::HDF5H_DotFileExt; // Add proper extension
+
+		// Already in proper multi-file format, i.e., contains [[%d]]
+		if (FindSuffix(_sFileName, StrConst::HDF5H_FileExtFinalRegex).size() == 2)
+			return _sFileName;
+
+		// Search for a multi-file suffix in the form [[N]], where N is any number
+		const auto& m = FindSuffix(_sFileName, StrConst::HDF5H_FileExtInitRegex);
+		// Found valid multi-file suffix
+		if (m.size() == 2)
+			return ReplaceMultiFileSuffix(_sFileName, m.position(1), m[1].length()); // Replace existing digits with a multi-file suffix %d
+
+		std::string copy = _sFileName.string();
+		const size_t dotPos = copy.rfind('.');					// Find a dot before extension
+		copy.insert(dotPos, StrConst::HDF5H_DotFileExtMult);	// Insert a multi-file suffix .[[%d]]
+
+		return copy;
+	}
+
+	// Converts the file name to a Dyssol format.
+	std::filesystem::path ConvertFileName(const std::filesystem::path& _sFileName, bool _bOpen, bool _bSingleFile)
+	{
+		if (_bSingleFile)
+			return _sFileName;
+
+		return (_bOpen) ? MultiFileReadName(_sFileName) : MultiFileWriteName(_sFileName);
+	}
+}
+
+template<> const H5::DataType& GetType<double>() { return H5::PredType::NATIVE_DOUBLE; }
+template<> const H5::DataType& GetType<uint32_t>() { return H5::PredType::NATIVE_UINT32; }
+template<> const H5::DataType& GetType<uint64_t>() { return H5::PredType::NATIVE_UINT64; }
+template<> const H5::DataType& GetType<int32_t>() { return H5::PredType::NATIVE_INT32; };
+template<> const H5::DataType& GetType<int64_t>() { return H5::PredType::NATIVE_INT64; }
+template<> const H5::DataType& GetType<bool>() { return H5::PredType::NATIVE_HBOOL; }
+
+template<>
+const H5::DataType& GetType<CPoint>()
+{
+	static std::unique_ptr<H5::CompType> type{};
+
+	if (!type)
+	{
+		type = std::make_unique<H5::CompType>(sizeof(CPoint));
+		type->insertMember("x", HOFFSET(CPoint, x), H5::PredType::NATIVE_DOUBLE);
+		type->insertMember("y", HOFFSET(CPoint, y), H5::PredType::NATIVE_DOUBLE);
+	}
+	return *type;
+}
+
+template<>
+const H5::DataType& GetType<STDValue>()
+{
+	static std::unique_ptr<H5::CompType> type{};
+
+	if (!type)
+	{
+		type = std::make_unique<H5::CompType>(sizeof(STDValue));
+		type->insertMember("time", HOFFSET(STDValue, time), H5::PredType::NATIVE_DOUBLE);
+		type->insertMember("value", HOFFSET(STDValue, value), H5::PredType::NATIVE_DOUBLE);
+	}
+	return *type;
+}
+
+template<>
+const H5::DataType& GetType<std::string>()
+{
+	static H5::StrType type{ H5::PredType::C_S1, H5T_VARIABLE };
+
+	return type;
+}
+
+CH5Handler::CH5Handler()
+	: m_sFileName("")
+	, m_bFileValid(false)
+	, m_ph5File(nullptr)
+{
+	H5::Exception::dontPrint();
 }
 
 CH5Handler::~CH5Handler()
@@ -24,23 +162,22 @@ CH5Handler::~CH5Handler()
 
 void CH5Handler::Create(const std::filesystem::path& _sFileName, bool _bSingleFile /*= true*/)
 {
-	Exception::dontPrint();
+	H5::Exception::dontPrint();
 
 	OpenH5File(_sFileName, false, _bSingleFile);
 }
 
 void CH5Handler::Open(const std::filesystem::path& _sFileName)
 {
-	Exception::dontPrint();
+	H5::Exception::dontPrint();
 
-	OpenH5File(_sFileName, true, true);
-	if (!m_bFileValid)
-		OpenH5File(_sFileName, true, false);
+	OpenH5File(_sFileName, true, !m_bFileValid);
 }
 
 void CH5Handler::Close()
 {
-	if (!m_ph5File) return;
+	if (!m_ph5File)
+		return;
 
 	m_ph5File->close();
 	delete m_ph5File;
@@ -55,10 +192,36 @@ std::filesystem::path CH5Handler::FileName() const
 
 std::string CH5Handler::CreateGroup(const std::string& _sPath, const std::string& _sGroupName) const
 {
-	if (!m_bFileValid) return "";
+	if (!m_bFileValid)
+		return "";
 
-	std::string sPath = _sPath + "/" + _sGroupName;
-	m_ph5File->createGroup(sPath);
+	const std::string& sPath = _sPath + "/" + _sGroupName;
+	try
+	{
+		m_ph5File->createGroup(sPath);
+	}
+	catch (...)
+	{
+		return "";
+	}
+
+	return sPath;
+}
+
+std::string CH5Handler::OpenGroup(const std::string& _sPath, const std::string& _sGroupName) const
+{
+	if (!m_bFileValid)
+		return "";
+
+	const std::string& sPath = _sPath + "/" + _sGroupName;
+	try
+	{
+		m_ph5File->openGroup(sPath);
+	}
+	catch (...)
+	{
+		return "";
+	}
 
 	return sPath;
 }
@@ -67,11 +230,11 @@ void CH5Handler::WriteAttribute(const std::string& _sPath, const std::string& _s
 {
 	if (!m_bFileValid) return;
 
-	DataSpace h5Dataspace(H5S_SCALAR);
-	Group h5Group(m_ph5File->openGroup(_sPath));
-	Attribute h5Attribute(h5Group.createAttribute(_sAttrName, PredType::NATIVE_INT, h5Dataspace, PropList::DEFAULT));
+	H5::DataSpace h5Dataspace(H5S_SCALAR);
+	H5::Group h5Group(m_ph5File->openGroup(_sPath));
+	H5::Attribute h5Attribute(h5Group.createAttribute(_sAttrName, H5::PredType::NATIVE_INT, h5Dataspace, H5::PropList::DEFAULT));
 
-	h5Attribute.write(PredType::NATIVE_INT, &_nValue);
+	h5Attribute.write(H5::PredType::NATIVE_INT, &_nValue);
 
 	h5Attribute.close();
 	h5Group.close();
@@ -85,11 +248,11 @@ int CH5Handler::ReadAttribute(const std::string& _sPath, const std::string& _sAt
 	int nAttrValue;
 	try
 	{
-		Group h5Group(m_ph5File->openGroup(_sPath));
+		H5::Group h5Group(m_ph5File->openGroup(_sPath));
 		if (h5Group.getId() == -1) return 0;
 
-		Attribute h5Attribute(h5Group.openAttribute(_sAttrName));
-		h5Attribute.read(PredType::NATIVE_INT, &nAttrValue);
+		H5::Attribute h5Attribute(h5Group.openAttribute(_sAttrName));
+		h5Attribute.read(H5::PredType::NATIVE_INT, &nAttrValue);
 
 		h5Attribute.close();
 		h5Group.close();
@@ -102,203 +265,32 @@ int CH5Handler::ReadAttribute(const std::string& _sPath, const std::string& _sAt
 	return nAttrValue;
 }
 
-void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::string& _sData) const
-{
-	const char* pCString = _sData.c_str();
-	WriteValue(_sPath, _sDatasetName, 1, h5String_type(), &pCString);
-}
-
-void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, double _dData) const
-{
-	WriteValue(_sPath, _sDatasetName, 1, PredType::NATIVE_DOUBLE, &_dData);
-}
-
-void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, uint32_t _nData) const
-{
-	WriteValue(_sPath, _sDatasetName, 1, PredType::NATIVE_UINT32, &_nData);
-}
-
-void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, uint64_t _nData) const
-{
-	WriteValue(_sPath, _sDatasetName, 1, PredType::NATIVE_UINT64, &_nData);
-}
-
-void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, int64_t _nData) const
-{
-	WriteValue(_sPath, _sDatasetName, 1, PredType::NATIVE_INT64, &_nData);
-}
-
-void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, bool _bData) const
-{
-	WriteValue(_sPath, _sDatasetName, 1, PredType::NATIVE_HBOOL, &_bData);
-}
-
-void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<std::string>& _vData) const
-{
-	if (_vData.empty()) return;
-
-	std::vector<const char*> vCStrings(_vData.size());
-	for (size_t i = 0; i < _vData.size(); ++i)
-		vCStrings[i] = _vData[i].c_str();
-
-	WriteValue(_sPath, _sDatasetName, _vData.size(), h5String_type(), &vCStrings.front());
-}
-
-void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<uint32_t>& _vData) const
-{
-	if (_vData.empty()) return;
-	WriteValue(_sPath, _sDatasetName, _vData.size(), PredType::NATIVE_UINT32, &_vData.front());
-}
-
-void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<uint64_t>& _vData) const
-{
-	if (_vData.empty()) return;
-	WriteValue(_sPath, _sDatasetName, _vData.size(), PredType::NATIVE_UINT64, &_vData.front());
-}
-
-void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<int32_t>& _vData) const
-{
-	if (_vData.empty()) return;
-	WriteValue(_sPath, _sDatasetName, _vData.size(), PredType::NATIVE_INT32, &_vData.front());
-}
-
-void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<int64_t>& _vData) const
-{
-	if (_vData.empty()) return;
-	WriteValue(_sPath, _sDatasetName, _vData.size(), PredType::NATIVE_INT64, &_vData.front());
-}
-
-void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<double>& _vData) const
-{
-	if (_vData.empty()) return;
-	WriteValue(_sPath, _sDatasetName, _vData.size(), PredType::NATIVE_DOUBLE, &_vData.front());
-}
-
 void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<std::vector<double>>& _vvData) const
 {
 	if (!m_bFileValid) return;
 	if (_vvData.empty()) return;
 
-	const hsize_t size{ _vvData.size() };
+	const size_t size{ _vvData.size() };
 
-	Group h5Group(m_ph5File->openGroup(_sPath));
-	DataSpace h5Dataspace(1, &size);
+	H5::Group h5Group(m_ph5File->openGroup(_sPath));
+	H5::DataSpace h5Dataspace(1, &static_cast<const hsize_t>(size));
+
 	auto itemtype = H5::PredType::NATIVE_DOUBLE;
 	auto h5Varlentype = H5::VarLenType(&itemtype);
-	DataSet h5Dataset = h5Group.createDataSet(_sDatasetName, h5Varlentype, h5Dataspace);
+	H5::DataSet h5Dataset = h5Group.createDataSet(_sDatasetName, h5Varlentype, h5Dataspace);
 
-	auto* buffer = new hvl_t[static_cast<size_t>(size)];
+	std::vector<hvl_t> buffer(size);
 	for (size_t i = 0; i < size; ++i)
 	{
 		buffer[i].len = _vvData[i].size();
 		buffer[i].p = !_vvData[i].empty() ? const_cast<double*>(&_vvData[i].front()) : nullptr;
 	}
-	h5Dataset.write(buffer, h5Varlentype);
-	delete[] buffer;
+	h5Dataset.write(buffer.data(), h5Varlentype);
 
 	h5Dataset.close();
 	h5Varlentype.close();
 	h5Dataspace.close();
 	h5Group.close();
-}
-
-void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<STDValue>& _data) const
-{
-	WriteValue(_sPath, _sDatasetName, _data.size(), h5STDValue_type(), _data.data());
-}
-
-void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<CPoint>& _data) const
-{
-	WriteValue(_sPath, _sDatasetName, _data.size(), h5CPoint_type(), _data.data());
-}
-
-void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::string& _sData) const
-{
-	char* buf{ nullptr };
-	if (ReadValue(_sPath, _sDatasetName, h5String_type(), &buf))
-		_sData = buf;
-	else
-		_sData.clear();
-	free(buf);		// use free() since malloc is used internally by HDF5
-}
-
-void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, double& _dData) const
-{
-	(void)ReadValue(_sPath, _sDatasetName, PredType::NATIVE_DOUBLE, &_dData);
-}
-
-void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, uint32_t& _nData) const
-{
-	(void)ReadValue(_sPath, _sDatasetName, PredType::NATIVE_UINT32, &_nData);
-}
-
-void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, uint64_t& _nData) const
-{
-	(void)ReadValue(_sPath, _sDatasetName, PredType::NATIVE_UINT64, &_nData);
-}
-
-void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, int64_t& _nData) const
-{
-	(void)ReadValue(_sPath, _sDatasetName, PredType::NATIVE_INT64, &_nData);
-}
-
-void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, bool& _bData) const
-{
-	(void)ReadValue(_sPath, _sDatasetName, PredType::NATIVE_HBOOL, &_bData);
-}
-
-void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<std::string>& _vData) const
-{
-	_vData.resize(ReadSize(_sPath, _sDatasetName));
-	if (_vData.empty()) return;
-	std::vector<char*> buf(_vData.size(), nullptr);
-	if (ReadValue(_sPath, _sDatasetName, h5String_type(), buf.data()))
-		std::copy(buf.begin(), buf.end(), _vData.begin());
-	else
-		_vData.clear();
-
-	for (void* v : buf)
-		free(v);	// use free() since malloc is used internally by HDF5
-}
-
-void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<uint32_t>& _vData) const
-{
-	_vData.resize(ReadSize(_sPath, _sDatasetName));
-	if (!_vData.empty())
-		if (!ReadValue(_sPath, _sDatasetName, PredType::NATIVE_UINT32, &_vData.front()))
-			_vData.clear();
-}
-
-void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<uint64_t>& _vData) const
-{
-	_vData.resize(ReadSize(_sPath, _sDatasetName));
-	if (!_vData.empty())
-		if (!ReadValue(_sPath, _sDatasetName, PredType::NATIVE_UINT64, &_vData.front()))
-			_vData.clear();
-}
-
-void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<int32_t>& _vData) const
-{
-	_vData.resize(ReadSize(_sPath, _sDatasetName));
-	if (!_vData.empty())
-		if (!ReadValue(_sPath, _sDatasetName, PredType::NATIVE_INT32, &_vData.front()))
-			_vData.clear();
-}
-
-void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<int64_t>& _vData) const
-{
-	_vData.resize(ReadSize(_sPath, _sDatasetName));
-	if (!_vData.empty())
-		if (!ReadValue(_sPath, _sDatasetName, PredType::NATIVE_INT64, &_vData.front()))
-			_vData.clear();
-}
-
-void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<double>& _vData) const
-{
-	_vData.resize(ReadSize(_sPath, _sDatasetName));
-	if (!_vData.empty())
-		if (!ReadValue(_sPath, _sDatasetName, PredType::NATIVE_DOUBLE, &_vData.front()))
-			_vData.clear();
 }
 
 void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<std::vector<double>>& _vvData) const
@@ -307,9 +299,9 @@ void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatase
 
 	try
 	{
-		Group h5Group(m_ph5File->openGroup(_sPath));
-		DataSet h5Dataset = h5Group.openDataSet(_sDatasetName);
-		DataSpace h5Dataspace = h5Dataset.getSpace();
+		H5::Group h5Group(m_ph5File->openGroup(_sPath));
+		H5::DataSet h5Dataset = h5Group.openDataSet(_sDatasetName);
+		H5::DataSpace h5Dataspace = h5Dataset.getSpace();
 		auto itemtype = H5::PredType::NATIVE_DOUBLE;
 		auto h5Varlentype = H5::VarLenType(&itemtype);
 		const auto nRows = static_cast<size_t>(h5Dataspace.getSimpleExtentNpoints());
@@ -348,7 +340,7 @@ void CH5Handler::ReadDataOld(const std::string& _sPath, const std::string& _sDat
 
 	try
 	{
-		Group h5Group(m_ph5File->openGroup(_sPath));
+		H5::Group h5Group(m_ph5File->openGroup(_sPath));
 		CH5PacketTable h5PacketTable(h5Group, _sDatasetName);
 		if (h5PacketTable.getId() == -1)
 		{
@@ -390,33 +382,18 @@ void CH5Handler::ReadDataOld(const std::string& _sPath, const std::string& _sDat
 	}
 }
 
-void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<STDValue>& _data) const
-{
-	_data.resize(ReadSize(_sPath, _sDatasetName));
-	if (_data.empty()) return;
-	(void)ReadValue(_sPath, _sDatasetName, h5STDValue_type(), _data.data());
-}
-
-void CH5Handler::ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<CPoint>& _data) const
-{
-	_data.resize(ReadSize(_sPath, _sDatasetName));
-	if (_data.empty()) return;
-
-	(void)ReadValue(_sPath, _sDatasetName, h5CPoint_type(), _data.data());
-}
-
 bool CH5Handler::IsValid() const
 {
 	return m_bFileValid;
 }
 
-void CH5Handler::WriteValue(const std::string& _sPath, const std::string& _sDatasetName, const hsize_t _size, const DataType& _type, const void* _pValue) const
+void CH5Handler::WriteValue(const std::string& _sPath, const std::string& _sDatasetName, size_t _size, const H5::DataType& _type, const void* _pValue) const
 {
 	if (!m_bFileValid) return;
 
-	Group h5Group(m_ph5File->openGroup(_sPath));
-	DataSpace h5Dataspace(1, &_size);
-	DataSet h5Dataset = h5Group.createDataSet(_sDatasetName, _type, h5Dataspace);
+	H5::Group h5Group(m_ph5File->openGroup(_sPath));
+	H5::DataSpace h5Dataspace(1, &static_cast<hsize_t>(_size));
+	H5::DataSet h5Dataset = h5Group.createDataSet(_sDatasetName, _type, h5Dataspace);
 
 	h5Dataset.write(_pValue, _type);
 
@@ -431,13 +408,13 @@ size_t CH5Handler::ReadSize(const std::string& _sPath, const std::string& _sData
 
 	try
 	{
-		Group h5Group(m_ph5File->openGroup(_sPath));
+		H5::Group h5Group(m_ph5File->openGroup(_sPath));
 #if H5_VERSION_GE(1, 10, 1) == true
 		if (!h5Group.nameExists(_sDatasetName)) return 0;
 #endif
 
-		DataSet h5Dataset = h5Group.openDataSet(_sDatasetName);
-		DataSpace h5Dataspace = h5Dataset.getSpace();
+		H5::DataSet h5Dataset = h5Group.openDataSet(_sDatasetName);
+		H5::DataSpace h5Dataspace = h5Dataset.getSpace();
 
 		const auto nElemNum = static_cast<size_t>(h5Dataspace.getSimpleExtentNpoints());
 
@@ -459,8 +436,8 @@ bool CH5Handler::ReadValue(const std::string& _sPath, const std::string& _sDatas
 
 	try
 	{
-		Group h5Group(m_ph5File->openGroup(_sPath));
-		DataSet h5Dataset = h5Group.openDataSet(_sDatasetName);
+		H5::Group h5Group(m_ph5File->openGroup(_sPath));
+		H5::DataSet h5Dataset = h5Group.openDataSet(_sDatasetName);
 
 		h5Dataset.read(_pRes, _type);
 
@@ -482,10 +459,10 @@ void CH5Handler::OpenH5File(const std::filesystem::path& _sFileName, bool _bOpen
 	m_sFileName = ConvertFileName(_sFileName, _bOpen, _bSingleFile);
 	if (m_ph5File || m_sFileName.empty()) return;
 
-	FileAccPropList h5AccPropList = CreateFileAccPropList(_bSingleFile);
+	H5::FileAccPropList h5AccPropList = CreateFileAccPropList(_bSingleFile);
 	try
 	{
-		m_ph5File = new H5File(_sFileName.string(), _bOpen ? H5F_ACC_RDONLY : H5F_ACC_TRUNC , H5P_DEFAULT, h5AccPropList);
+		m_ph5File = new H5::H5File(_sFileName.string(), _bOpen ? H5F_ACC_RDONLY : H5F_ACC_TRUNC , H5P_DEFAULT, h5AccPropList);
 	}
 	catch (...)
 	{
@@ -495,108 +472,6 @@ void CH5Handler::OpenH5File(const std::filesystem::path& _sFileName, bool _bOpen
 
 	if (m_ph5File && m_ph5File->getId() != -1)
 		m_bFileValid = true;
-}
-
-FileAccPropList CH5Handler::CreateFileAccPropList(bool _bSingleFile)
-{
-	const hsize_t cChunkSize = 500;
-	const hsize_t cCacheSize = 1024 * 1024 * 50;		// in bytes
-	const hsize_t cMaxH5FileSize = 1024 * 1024 * 2000;	// in bytes
-
-	FileAccPropList h5AccPropList;
-	if (!_bSingleFile)
-		h5AccPropList.setFamily(cMaxH5FileSize, H5P_DEFAULT);
-	h5AccPropList.setFcloseDegree(H5F_CLOSE_STRONG);
-	h5AccPropList.setCache(cChunkSize, cChunkSize, cCacheSize, 0.5);
-	return h5AccPropList;
-}
-
-CompType& CH5Handler::h5CPoint_type()
-{
-	static std::unique_ptr<CompType> type{};
-
-	if (!type)
-	{
-		type = std::make_unique<CompType>(sizeof(CPoint));
-		type->insertMember("x", HOFFSET(CPoint, x), PredType::NATIVE_DOUBLE);
-		type->insertMember("y", HOFFSET(CPoint, y), PredType::NATIVE_DOUBLE);
-	}
-	return *type;
-}
-
-H5::CompType& CH5Handler::h5STDValue_type()
-{
-	static std::unique_ptr<CompType> type{};
-
-	if (!type)
-	{
-		type = std::make_unique<CompType>(sizeof(STDValue));
-		type->insertMember("time" , HOFFSET(STDValue, time ), PredType::NATIVE_DOUBLE);
-		type->insertMember("value", HOFFSET(STDValue, value), PredType::NATIVE_DOUBLE);
-	}
-	return *type;
-}
-
-H5::StrType& CH5Handler::h5String_type()
-{
-	static std::unique_ptr<StrType> type{};
-
-	if (!type)
-	{
-		type = std::make_unique<StrType>(PredType::C_S1, H5T_VARIABLE);
-	}
-	return *type;
-}
-
-std::filesystem::path CH5Handler::ConvertFileName(const std::filesystem::path& _sFileName, bool _bOpen, bool _bSingleFile)
-{
-	if (_bSingleFile) return _sFileName;
-	else if (_bOpen)  return MultiFileReadName(_sFileName);
-	else			  return MultiFileWriteName(_sFileName);
-}
-
-std::filesystem::path CH5Handler::MultiFileReadName(const std::filesystem::path& _sFileName)
-{
-	if (_sFileName.empty()) return {};
-	if (FindSuffix(_sFileName, StrConst::HDF5H_FileExtFinalRegex).size() == 2)       // already in proper multi-file format, i.e. contains [[%d]]
-		return _sFileName;
-	const std::smatch m = FindSuffix(_sFileName, StrConst::HDF5H_FileExtInitRegex);	 // apply a regex search of a multi-file suffix in form [[N]], where N is any number
-	if (m.size() < 2) return _sFileName;									         // no valid multi-file suffix found
-	return ReplaceMultiFileSuffix(_sFileName, m.position(1), m[1].length());         // replace existing digits with a multi-file suffix %d
-}
-
-std::filesystem::path CH5Handler::MultiFileWriteName(std::filesystem::path _sFileName)
-{
-	if (_sFileName.empty()) return {};
-	if (!StringFunctions::CompareCaseInsensitive(_sFileName.extension().string(), StrConst::HDF5H_DotFileExt)) // no proper extension
-		_sFileName += StrConst::HDF5H_DotFileExt;                                                              // add proper extension
-	if (FindSuffix(_sFileName, StrConst::HDF5H_FileExtFinalRegex).size() == 2)                                 // already in proper multi-file format, i.e. contains [[%d]]
-		return _sFileName;
-	const std::smatch m = FindSuffix(_sFileName, StrConst::HDF5H_FileExtInitRegex);                            // apply a regex search of a multi-file suffix in form [[N]], where N is any number
-	if (m.size() == 2)                                                                                         // found valid multi-file suffix in form [[N]], where N is any number
-		return ReplaceMultiFileSuffix(_sFileName, m.position(1), m[1].length());                               // replace existing digits with a multi-file suffix %d
-	std::string copy = _sFileName.string();
-	const std::size_t dotPos = copy.rfind('.');                                                                // find a dot before extension
-	copy.insert(dotPos, StrConst::HDF5H_DotFileExtMult);                                                       // insert a multi-file suffix .[[%d]]
-	return copy;
-}
-
-std::smatch CH5Handler::FindSuffix(const std::filesystem::path& _str, const std::string& _regexStr)
-{
-	const std::regex r(_regexStr);							// regex expression
-	std::smatch m;											// results of regex search
-	std::string copy = _str.string();
-	std::sregex_iterator it(copy.begin(), copy.end(), r);	// apply regex
-	for (; it != std::sregex_iterator(); ++it) m = *it;		// find the last occurrence
-	return m;
-}
-
-std::filesystem::path CH5Handler::ReplaceMultiFileSuffix(std::filesystem::path _str, size_t _pos, size_t _len)
-{
-	std::string copy = _str.string();
-	copy.erase(_pos, _len);				            // remove digits
-	copy.insert(_pos, StrConst::HDF5H_FileExtSpec); // insert multi-file extension
-	return copy;
 }
 
 std::filesystem::path CH5Handler::DisplayFileName(std::filesystem::path _fileName)
