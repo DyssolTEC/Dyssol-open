@@ -428,7 +428,7 @@ QComboBox* CQtTable::SetComboBox(int _row, int _col, const std::vector<std::stri
 	return SetComboBox(_row, _col, names, data, iSelected);
 }
 
-QComboBox* CQtTable::SetComboBox(int _row, int _col, const std::vector<std::string>& _names, const std::vector<size_t>& _data, size_t _dataSelected)
+QComboBox* CQtTable::SetComboBox(int _row, int _col, const std::vector<std::string>& _names, const std::vector<uint64_t>& _data, size_t _dataSelected)
 {
 	if (_names.size() != _data.size()) return nullptr;
 	std::vector<QString> names;
