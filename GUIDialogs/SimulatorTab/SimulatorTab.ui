@@ -1,291 +1,286 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-  <class>CSimulatorTabClass</class>
-  <widget class="QWidget" name="CSimulatorTabClass">
-    <property name="geometry">
-      <rect>
-        <x>0</x>
-        <y>0</y>
+ <class>CSimulatorTabClass</class>
+ <widget class="QWidget" name="CSimulatorTabClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
         <width>800</width>
-        <height>600</height>
-      </rect>
-    </property>
-    <property name="windowTitle">
-      <string>CSimulatorTab</string>
-    </property>
-    <property name="windowIcon">
-      <iconset resource="../../DyssolGUI/Resources.qrc">
-        <normaloff>:/Icons/WinIcon</normaloff>:/Icons/WinIcon</iconset>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
-          <item>
-            <widget class="QLabel" name="label_4">
-              <property name="text">
-                <string>End simulation time [s]</string>
-              </property>
-              <property name="toolTip">
-                <string>End time point of the simulation interval</string>
-              </property>
-              
-              <property name="whatsThis">
-                <string>End time point of the simulation interval</string>
-              </property>
-            </widget>
-          </item>
-          <item>
-            <widget class="QLineEdit" name="lineEditTime">
-              <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                </sizepolicy>
-              </property>
-              <property name="maximumSize">
-                <size>
-                  <width>100</width>
-                  <height>16777215</height>
-                </size>
-              </property>
-              <property name="toolTip">
-                <string>End time point of the simulation interval</string>
-              </property>
-              
-              <property name="whatsThis">
-                <string>End time point of the simulation interval</string>
-              </property>
-            </widget>
-          </item>
-          <item>
-            <widget class="QPushButton" name="buttonRun">
-              <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                </sizepolicy>
-              </property>
-              <property name="text">
-                <string>Start simulation</string>
-              </property>
-              <property name="toolTip">
-                <string>Run the simulation</string>
-              </property>
-              
-              <property name="whatsThis">
-                <string>Run the simulation</string>
-              </property>
-            </widget>
-          </item>
-          <item>
-            <spacer name="horizontalSpacer_2">
-              <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-                <enum>QSizePolicy::Expanding</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-                <size>
-                  <width>40</width>
-                  <height>20</height>
-                </size>
-              </property>
-            </spacer>
-          </item>
-        </layout>
-      </item>
-      <item>
-        <widget class="QLabel" name="label_5">
-          <property name="text">
-            <string>Simulation log</string>
-          </property>
-        </widget>
-      </item>
-      <item>
-        <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
-          <item>
-            <widget class="QTextBrowser" name="textBrowserLog">
-              <property name="minimumSize">
-                <size>
-                  <width>800</width>
-                  <height>0</height>
-                </size>
-              </property>
-              <property name="toolTip">
-                <string>Simulation log and report</string>
-              </property>
-              
-              <property name="whatsThis">
-                <string>Simulation log and report</string>
-              </property>
-            </widget>
-          </item>
-          <item>
-            <widget class="QFrame" name="frame">
-              <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_2">
-                <property name="topMargin">
-                  <number>0</number>
-                </property>
-                <item>
-                  <widget class="CQtTable" name="tableLog">
-                    <property name="sizePolicy">
-                      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                      </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                      <size>
-                        <width>300</width>
-                        <height>0</height>
-                      </size>
-                    </property>
-                    <property name="sizeAdjustPolicy">
-                      <enum>QAbstractScrollArea::AdjustIgnored</enum>
-                    </property>
-                    <attribute name="horizontalHeaderVisible">
-                      <bool>false</bool>
-                    </attribute>
-                    <attribute name="horizontalHeaderStretchLastSection">
-                      <bool>true</bool>
-                    </attribute>
-                    <row>
-                      <property name="text">
-                        <string>Time window start [s]</string>
-                      </property>
-                    </row>
-                    <row>
-                      <property name="text">
-                        <string>Time window end [s]</string>
-                      </property>
-                    </row>
-                    <row>
-                      <property name="text">
-                        <string>Time window length [s]</string>
-                      </property>
-                    </row>
-                    <row>
-                      <property name="text">
-                        <string>Iteration number</string>
-                      </property>
-                    </row>
-                    <row>
-                      <property name="text">
-                        <string>Window number</string>
-                      </property>
-                    </row>
-                    <row>
-                      <property name="text">
-                        <string>Unit</string>
-                      </property>
-                    </row>
-                    <row>
-                      <property name="text">
-                        <string>Simulation started [h:m:s]</string>
-                      </property>
-                    </row>
-                    <row>
-                      <property name="text">
-                        <string>Elapsed time [h:m:s]</string>
-                      </property>
-                    </row>
-                    <column>
-                      <property name="text">
-                        <string />
-                      </property>
-                    </column>
-                    <property name="toolTip">
-                      <string>Simulation progress info</string>
-                    </property>
-                    
-                    <property name="whatsThis">
-                      <string>Simulation progress info</string>
-                    </property>
-                  </widget>
-                </item>
-                <item>
-                  <spacer name="verticalSpacer">
-                    <property name="orientation">
-                      <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                      <size>
-                        <width>20</width>
-                        <height>40</height>
-                      </size>
-                    </property>
-                  </spacer>
-                </item>
-                <item>
-                  <layout class="QGridLayout" name="gridLayout">
-                    <item row="0" column="0">
-                      <widget class="QPushButton" name="buttonClearResults">
-                        <property name="text">
-                          <string>Clear simulation results</string>
-                        </property>
-                        <property name="toolTip">
-                          <string>Remove simulation results</string>
-                        </property>
-                        
-                        <property name="whatsThis">
-                          <string>Remove simulation results</string>
-                        </property>
-                      </widget>
-                    </item>
-                    <item row="0" column="1">
-                      <widget class="QPushButton" name="buttonClearRecycles">
-                        <property name="text">
-                          <string>Clear recycle streams</string>
-                        </property>
-                        <property name="toolTip">
-                          <string>Clear initial values of tear streams</string>
-                        </property>
-                        
-                        <property name="whatsThis">
-                          <string>Clear initial values of tear streams</string>
-                        </property>
-                      </widget>
-                    </item>
-                    <item row="1" column="0" colspan="2">
-                      <widget class="QPushButton" name="buttonClearResultsAndRecycles">
-                        <property name="text">
-                          <string>Clear simulation results and recycle streams</string>
-                        </property>
-                        <property name="toolTip">
-                          <string>Clear simulation results and tear streams</string>
-                        </property>
-                        
-                        <property name="whatsThis">
-                          <string>Clear simulation results and tear streams</string>
-                        </property>
-                      </widget>
-                    </item>
-                  </layout>
-                </item>
-              </layout>
-            </widget>
-          </item>
-        </layout>
-      </item>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>CSimulatorTab</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../DyssolGUI/Resources.qrc">
+    <normaloff>:/Icons/WinIcon</normaloff>:/Icons/WinIcon</iconset>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QLabel" name="label_4">
+       <property name="toolTip">
+        <string>End time point of the simulation interval</string>
+       </property>
+       <property name="whatsThis">
+        <string>End time point of the simulation interval</string>
+       </property>
+       <property name="text">
+        <string>End simulation time [s]</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEditTime">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>End time point of the simulation interval</string>
+       </property>
+       <property name="whatsThis">
+        <string>End time point of the simulation interval</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonRun">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Run the simulation</string>
+       </property>
+       <property name="whatsThis">
+        <string>Run the simulation</string>
+       </property>
+       <property name="text">
+        <string>Start simulation</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
     </layout>
-  </widget>
-  <layoutdefault spacing="6" margin="11" />
-  <customwidgets>
-    <customwidget>
-      <class>CQtTable</class>
-      <extends>QTableWidget</extends>
-      <header>QtTable.h</header>
-    </customwidget>
-  </customwidgets>
-  <resources>
-    <include location="../../DyssolGUI/Resources.qrc" />
-  </resources>
-  <connections />
+   </item>
+   <item>
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>Simulation log</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
+     <item>
+      <widget class="QTextBrowser" name="textBrowserLog">
+       <property name="minimumSize">
+        <size>
+         <width>800</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Simulation log and report</string>
+       </property>
+       <property name="whatsThis">
+        <string>Simulation log and report</string>
+       </property>
+       <property name="lineWrapMode">
+        <enum>QTextEdit::NoWrap</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QFrame" name="frame">
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="CQtTable" name="tableLog">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>300</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Simulation progress info</string>
+          </property>
+          <property name="whatsThis">
+           <string>Simulation progress info</string>
+          </property>
+          <property name="sizeAdjustPolicy">
+           <enum>QAbstractScrollArea::AdjustIgnored</enum>
+          </property>
+          <attribute name="horizontalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="horizontalHeaderStretchLastSection">
+           <bool>true</bool>
+          </attribute>
+          <row>
+           <property name="text">
+            <string>Time window start [s]</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Time window end [s]</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Time window length [s]</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Iteration number</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Window number</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Unit</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Simulation started [h:m:s]</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Elapsed time [h:m:s]</string>
+           </property>
+          </row>
+          <column>
+           <property name="text">
+            <string/>
+           </property>
+          </column>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <widget class="QPushButton" name="buttonClearResults">
+            <property name="toolTip">
+             <string>Remove simulation results</string>
+            </property>
+            <property name="whatsThis">
+             <string>Remove simulation results</string>
+            </property>
+            <property name="text">
+             <string>Clear simulation results</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QPushButton" name="buttonClearRecycles">
+            <property name="toolTip">
+             <string>Clear initial values of tear streams</string>
+            </property>
+            <property name="whatsThis">
+             <string>Clear initial values of tear streams</string>
+            </property>
+            <property name="text">
+             <string>Clear recycle streams</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <widget class="QPushButton" name="buttonClearResultsAndRecycles">
+            <property name="toolTip">
+             <string>Clear simulation results and tear streams</string>
+            </property>
+            <property name="whatsThis">
+             <string>Clear simulation results and tear streams</string>
+            </property>
+            <property name="text">
+             <string>Clear simulation results and recycle streams</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>CQtTable</class>
+   <extends>QTableWidget</extends>
+   <header>QtTable.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../../DyssolGUI/Resources.qrc"/>
+ </resources>
+ <connections/>
 </ui>
