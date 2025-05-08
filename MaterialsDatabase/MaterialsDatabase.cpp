@@ -683,15 +683,11 @@ std::vector<const CCompound*> CMaterialsDatabase::GetCompounds() const
 
 std::vector<const CCompound*> CMaterialsDatabase::GetCompounds(const std::vector<std::string>& _keys) const
 {
-	std::vector<const CCompound*> result;
-
+	std::vector<const CCompound*> res;
+	res.reserve(_keys.size());
 	for (const auto& key : _keys)
-	{
-		if (const auto* compound = GetCompound(key); compound)
-			result.emplace_back(compound);
-	}
-
-	return result;
+		res.emplace_back(GetCompound(key));
+	return res;
 }
 
 std::vector<std::string> CMaterialsDatabase::GetCompoundsNames(const std::vector<std::string>& _keys) const

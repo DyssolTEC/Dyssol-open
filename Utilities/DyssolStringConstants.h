@@ -591,18 +591,6 @@ namespace StrConst
 	const char* const H5GroupDistrGrid  = "DistrGrid";
 
 //////////////////////////////////////////////////////////////////////////
-/// CH5Handler
-//////////////////////////////////////////////////////////////////////////
-	const std::string HDF5H_FileExt		       = "dflw";
-	const std::string HDF5H_DotFileExt		   = "." + HDF5H_FileExt;
-	const std::string HDF5H_FileExtSpec	       = "%d";
-	const std::string HDF5H_FileExtInitRegex   = R"(\[\[([0-9]+)\]\])";
-	const std::string HDF5H_FileExtFinalRegex  = R"(\[\[(%d)\]\])";
-	const std::string HDF5H_FileExtMult	       = "[[" + HDF5H_FileExtSpec + "]]";
-	const std::string HDF5H_DotFileExtMult	   = "." + HDF5H_FileExtMult;
-
-
-//////////////////////////////////////////////////////////////////////////
 /// CFlowsheetEditor
 //////////////////////////////////////////////////////////////////////////
 	const char* const FE_PortTypeInput       = "Input";

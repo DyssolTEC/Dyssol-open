@@ -1,11 +1,11 @@
-/* Copyright (c) 2023, DyssolTEC. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2023, DyssolTEC.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
 
 #include "H5Handler.h"
 
 class CFlowsheet;
-
 struct SSaveLoadData
 {
 	CFlowsheet* flowsheet{};                        /// Pointer to global flowsheet.

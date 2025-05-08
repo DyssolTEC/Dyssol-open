@@ -217,7 +217,7 @@ CStream* CStreamManager::GetFeedInit(const std::string& _name)
 
 const CStream* CStreamManager::GetFeedInitByKey(const std::string& _key) const
 {
-	auto found = std::find_if(m_feedsInit.begin(), m_feedsInit.end(), [&_key](const auto& _feed)
+	const auto found = std::find_if(m_feedsInit.begin(), m_feedsInit.end(), [&_key](const auto& _feed)
 		{
 			return _feed->GetKey() == _key;
 		});
@@ -266,21 +266,6 @@ size_t CStreamManager::GetHoldupsInitNumber() const
 	return m_holdupsInit.size();
 }
 
-const CHoldup* CStreamManager::GetHoldupInitByKey(const std::string& _key) const
-{
-	auto found = std::find_if(m_holdupsInit.begin(), m_holdupsInit.end(), [&_key](const auto& _holdup)
-		{
-			return _holdup->GetKey() == _key;
-		});
-
-	return (found != m_holdupsInit.end()) ? found->get() : nullptr;
-}
-
-CHoldup* CStreamManager::GetHoldupInitByKey(const std::string& _key)
-{
-	return const_cast<CHoldup*>(std::as_const(*this).GetHoldupInitByKey(_key));
-}
-
 CHoldup* CStreamManager::AddHoldup(const std::string& _name)
 {
 	if (GetHoldup(_name)) return nullptr; // already exists
@@ -307,7 +292,7 @@ CHoldup* CStreamManager::GetHoldup(const std::string& _name)
 
 const CHoldup* CStreamManager::GetHoldupByKey(const std::string& _key) const
 {
-	auto found = std::find_if(m_holdupsWork.begin(), m_holdupsWork.end(), [&_key](const auto& _holdup)
+	const auto found = std::find_if(m_holdupsWork.begin(), m_holdupsWork.end(), [&_key](const auto& _holdup)
 		{
 			return _holdup->GetKey() == _key;
 		});
@@ -318,6 +303,21 @@ const CHoldup* CStreamManager::GetHoldupByKey(const std::string& _key) const
 CHoldup* CStreamManager::GetHoldupByKey(const std::string& _key)
 {
 	return const_cast<CHoldup*>(std::as_const(*this).GetHoldupByKey(_key));
+}
+
+const CHoldup* CStreamManager::GetHoldupInitByKey(const std::string& _key) const
+{
+	const auto found = std::find_if(m_holdupsInit.begin(), m_holdupsInit.end(), [&_key](const auto& _holdup)
+	{
+		return _holdup->GetKey() == _key;
+	});
+
+	return (found != m_holdupsInit.end()) ? found->get() : nullptr;
+}
+
+CHoldup* CStreamManager::GetHoldupInitByKey(const std::string& _key)
+{
+	return const_cast<CHoldup*>(std::as_const(*this).GetHoldupInitByKey(_key));
 }
 
 std::vector<const CHoldup*> CStreamManager::GetHoldupsInit() const

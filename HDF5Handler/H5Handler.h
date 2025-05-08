@@ -9,24 +9,24 @@
 #include "DyssolTypes.h"
 #include "DyssolFilesystem.h"
 
-#include <vector>
+#include <algorithm>
 #include <map>
 #include <unordered_map>
-#include <algorithm>
+#include <vector>
 
 template<typename T>
-inline const H5::DataType& GetType()
+const H5::DataType& GetType()
 {
 	static_assert(sizeof(T) == 0, "No specialization found");
 	return H5::PredType::PREDTYPE_CONST;
 }
 
-template<> inline const H5::DataType& GetType<double>() { return H5::PredType::NATIVE_DOUBLE; }
+template<> inline const H5::DataType& GetType<double>()   { return H5::PredType::NATIVE_DOUBLE; }
 template<> inline const H5::DataType& GetType<uint32_t>() { return H5::PredType::NATIVE_UINT32; }
 template<> inline const H5::DataType& GetType<uint64_t>() { return H5::PredType::NATIVE_UINT64; }
-template<> inline const H5::DataType& GetType<int32_t>() { return H5::PredType::NATIVE_INT32; };
-template<> inline const H5::DataType& GetType<int64_t>() { return H5::PredType::NATIVE_INT64; }
-template<> inline const H5::DataType& GetType<bool>() { return H5::PredType::NATIVE_HBOOL; }
+template<> inline const H5::DataType& GetType<int32_t>()  { return H5::PredType::NATIVE_INT32; };
+template<> inline const H5::DataType& GetType<int64_t>()  { return H5::PredType::NATIVE_INT64; }
+template<> inline const H5::DataType& GetType<bool>()     { return H5::PredType::NATIVE_HBOOL; }
 
 template<>
 inline const H5::DataType& GetType<CPoint>()
@@ -85,9 +85,9 @@ inline const H5::DataType& GetType<std::string>()
  */
 class CH5Handler
 {
-	std::filesystem::path m_sFileName;
-	bool m_bFileValid;
-	H5::H5File* m_ph5File;
+	std::filesystem::path m_fileName{};
+	bool m_isFileValid{ false };
+	H5::H5File* m_h5File{ nullptr };
 
 	template <typename T>
 	struct is_vector : std::false_type {};
@@ -115,57 +115,56 @@ public:
 	CH5Handler();
 	~CH5Handler();
 
-	void Create(const std::filesystem::path& _sFileName, bool _bSingleFile = true);	/// Create new file with truncation.
-	void Open(const std::filesystem::path& _sFileName);								/// Open existing file.
+	void Create(const std::filesystem::path& _fileName, bool _isSingleFile = true);	/// Create new file with truncation.
+	void Open(const std::filesystem::path& _fileName);								/// Open existing file.
 	void Close();																	/// Close current file.
-	std::filesystem::path FileName() const;											/// Returns current file name.
+	[[nodiscard]] std::filesystem::path FileName() const;							/// Returns current file name.
 
-	std::string CreateGroup(const std::string& _sPath, const std::string& _sGroupName) const;
-	std::string OpenGroup(const std::string& _sPath, const std::string& _sGroupName) const;
+	[[nodiscard]] std::string CreateGroup(const std::string& _path, const std::string& _groupName) const;
+	[[nodiscard]] std::string OpenGroup(const std::string& _path, const std::string& _groupName) const;
 
-	void WriteAttribute(const std::string& _sPath, const std::string& _sAttrName, int _nValue) const;
-	int ReadAttribute(const std::string& _sPath, const std::string& _sAttrName) const;
+	void WriteAttribute(const std::string& _path, const std::string& _attrName, int _value) const;
+	[[nodiscard]] int ReadAttribute(const std::string& _path, const std::string& _attrName) const;
 
 	template<typename T>
-	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const T& _data) const
+	void WriteData(const std::string& _path, const std::string& _dataset, const T& _data) const
 	{
 		if constexpr (std::is_convertible_v<T, std::string_view>)
 		{
-			const char* ptr = _data.c_str();
-			WriteValue(_sPath, _sDatasetName, 1, GetType<std::string>(), &ptr);
+			const char* value = _data.c_str();
+			WriteValue(_path, _dataset, 1, GetType<std::string>(), &value);
 		}
 		else if constexpr (std::is_enum_v<T>)
 		{
 			auto value = static_cast<int64_t>(_data);
-			WriteValue(_sPath, _sDatasetName, 1, GetType<decltype(value)>(), &value);
+			WriteValue(_path, _dataset, 1, GetType<decltype(value)>(), &value);
 		}
 		else
 		{
-			WriteValue(_sPath, _sDatasetName, 1, GetType<T>(), &_data);
+			WriteValue(_path, _dataset, 1, GetType<T>(), &_data);
 		}
 	}
 
 	template<typename T, typename = std::enable_if_t<!is_vector<T>::value>>
-	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<T>& _data) const
+	void WriteData(const std::string& _path, const std::string& _dataset, const std::vector<T>& _data) const
 	{
 		if (_data.empty())
 			return;
 
 		if constexpr (std::is_convertible_v<T, std::string_view>)
 		{
-			std::vector<const char*> vCStrings(_data.size());
-			std::transform(_data.begin(), _data.end(), vCStrings.begin(), [](const auto& _str) { return _str.c_str(); });
-
-			WriteValue(_sPath, _sDatasetName, vCStrings.size(), GetType<std::string>(), &vCStrings.front());
+			std::vector<const char*> strings(_data.size());
+			std::transform(_data.begin(), _data.end(), strings.begin(), [](const auto& _str) { return _str.c_str(); });
+			WriteValue(_path, _dataset, strings.size(), GetType<std::string>(), &strings.front());
 		}
 		else
 		{
-			WriteValue(_sPath, _sDatasetName, _data.size(), GetType<T>(), &_data.front());
+			WriteValue(_path, _dataset, _data.size(), GetType<T>(), &_data.front());
 		}
 	}
 
 	template <typename M, typename = std::enable_if_t<is_map<M>::value>>
-	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const M& _data)
+	void WriteData(const std::string& _path, const std::string& _dataset, const M& _data)
 	{
 		using K = typename M::key_type;
 		using V = typename M::mapped_type;
@@ -189,51 +188,50 @@ public:
 			}
 		}
 
-		WriteData(_sPath, _sDatasetName + "K", keys);
-		WriteData(_sPath, _sDatasetName + "V", values);
+		WriteData(_path, _dataset + "K", keys);
+		WriteData(_path, _dataset + "V", values);
 
 		if (!sizes.empty())
-			WriteData(_sPath, _sDatasetName + "S", sizes);
+			WriteData(_path, _dataset + "S", sizes);
 	}
 
-	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<std::vector<double>>& _vvData) const;
+	void WriteData(const std::string& _path, const std::string& _dataset, const std::vector<std::vector<double>>& _data) const;
 
 	template<typename T>
-	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, T& _data) const
+	void ReadData(const std::string& _path, const std::string& _dataset, T& _data) const
 	{
 		if constexpr (std::is_same_v<T, std::string>)
 		{
 			_data.clear();
 
 			char* buffer{ nullptr };
-			if (ReadValue(_sPath, _sDatasetName, GetType<std::string>(), &buffer))
+			if (ReadValue(_path, _dataset, GetType<std::string>(), &buffer))
 				_data = buffer;
 
-			free(buffer);	// use free() since malloc is used internally by HDF5
+			free(buffer); // use free() since malloc is used internally by HDF5
 		}
 		else if constexpr (std::is_enum_v<T>)
 		{
 			int64_t value{ ~0 };
-			ReadValue(_sPath, _sDatasetName, GetType<decltype(value)>(), &value);
+			ReadValue(_path, _dataset, GetType<decltype(value)>(), &value);
 			_data = static_cast<T>(value);
 		}
 		else
 		{
-			ReadValue(_sPath, _sDatasetName, GetType<T>(), &_data);
+			ReadValue(_path, _dataset, GetType<T>(), &_data);
 		}
 	}
 
 	template<typename T, typename = std::enable_if_t<!is_vector<T>::value>>
-	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<T>& _data) const
+	void ReadData(const std::string& _path, const std::string& _dataset, std::vector<T>& _data) const
 	{
 		_data.clear();
-
-		_data.resize(ReadSize(_sPath, _sDatasetName));
+		_data.resize(ReadSize(_path, _dataset));
 
 		if constexpr (std::is_same_v<T, std::string>)
 		{
 			std::vector<char*> buffer(_data.size(), nullptr);
-			if (ReadValue(_sPath, _sDatasetName, GetType<std::string>(), buffer.data()))
+			if (ReadValue(_path, _dataset, GetType<std::string>(), buffer.data()))
 				std::copy(buffer.begin(), buffer.end(), _data.begin());
 
 			// use free() since malloc is used internally by HDF5
@@ -242,12 +240,12 @@ public:
 		else
 		{
 			if (!_data.empty())
-				ReadValue(_sPath, _sDatasetName, GetType<T>(), &_data.front());
+				ReadValue(_path, _dataset, GetType<T>(), &_data.front());
 		}
 	}
 
 	template <typename M, typename = std::enable_if_t<is_map<M>::value>>
-	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, M& _data)
+	void ReadData(const std::string& _path, const std::string& _dataset, M& _data)
 	{
 		using K = typename M::key_type;
 		using V = typename M::mapped_type;
@@ -258,12 +256,12 @@ public:
 		std::vector<typename type_identity<V>::type> values;
 		std::vector<size_t> sizes;
 
-		ReadData(_sPath, _sDatasetName + "K", keys);
-		ReadData(_sPath, _sDatasetName + "V", values);
+		ReadData(_path, _dataset + "K", keys);
+		ReadData(_path, _dataset + "V", values);
 
-		const auto& datasetNameSize = _sDatasetName + "S";
-		if (ReadSize(_sPath, datasetNameSize) > 0)
-			ReadData(_sPath, datasetNameSize, sizes);
+		const auto& datasetNameSize = _dataset + "S";
+		if (ReadSize(_path, datasetNameSize) > 0)
+			ReadData(_path, datasetNameSize, sizes);
 
 		auto it = values.begin();
 		for (size_t i = 0; i < keys.size(); ++i)
@@ -281,19 +279,20 @@ public:
 		}
 	}
 
-	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<std::vector<double>>& _vvData) const;
-	void ReadDataOld(const std::string& _sPath, const std::string& _sDatasetName, std::vector<std::vector<double>>& _vvData) const;
+	void ReadData(const std::string& _path, const std::string& _dataset, std::vector<std::vector<double>>& _data) const;
+	// TODO: Remove
+	void ReadDataOld(const std::string& _path, const std::string& _dataset, std::vector<std::vector<double>>& _data) const;
 
-	bool IsValid() const;
+	[[nodiscard]] bool IsValid() const;
 
 	// Returns displayable file name in form "path/FileName.dflw", removing all [[%d]] and [[N]] from it
 	static std::filesystem::path DisplayFileName(std::filesystem::path _fileName);
 
 private:
-	void WriteValue(const std::string& _sPath, const std::string& _sDatasetName, size_t _size, const H5::DataType& _type, const void* _pValue) const;
+	void WriteValue(const std::string& _path, const std::string& _dataset, size_t _size, const H5::DataType& _type, const void* _value) const;
 	// Read element count
-	size_t ReadSize(const std::string& _sPath, const std::string& _sDatasetName) const;
-	bool ReadValue(const std::string& _sPath, const std::string& _sDatasetName, const H5::DataType& _type, void* _pRes) const;
+	[[nodiscard]] size_t ReadSize(const std::string& _path, const std::string& _dataset) const;
+	bool ReadValue(const std::string& _path, const std::string& _dataset, const H5::DataType& _type, void* _value) const;
 
-	void OpenH5File(const std::filesystem::path& _sFileName, bool _bOpen, bool _bSingleFile);
+	void OpenH5File(const std::filesystem::path& _fileName, bool _isOpen, bool _isSingleFile);
 };
