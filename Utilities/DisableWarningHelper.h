@@ -9,6 +9,7 @@
 #define PRAGMA_WARNING_PUSH    _Pragma("clang diagnostic push")
 #define PRAGMA_WARNING_POP     _Pragma("clang diagnostic pop")
 #define PRAGMA_WARNING_DISABLE _Pragma("clang diagnostic ignored \"-Winconsistent-missing-override\"")
+#define PRAGMA_WARNING_DISABLE _Pragma("clang diagnostic ignored \"-Wdeprecated-declarations\"")
 #else
 #define PRAGMA_WARNING_PUSH
 #define PRAGMA_WARNING_POP
