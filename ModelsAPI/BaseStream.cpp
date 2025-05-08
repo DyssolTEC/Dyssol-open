@@ -898,13 +898,46 @@ double CBaseStream::GetMixtureProperty(double _time, ECompoundTPProperties _prop
 	{
 		for (const auto& [state, phase] : m_phases)
 			res += phase->GetFraction(_time) / GetPhaseProperty(_time, state, _property);
-		return 1./res;
+		res = 1./res;
+		break;
 	}
-	//case VISCOSITY:
+	case HEAT_CAPACITY_CP:
+	case ENTHALPY:
+	case THERMAL_CONDUCTIVITY:
+	case EQUILIBRIUM_MOISTURE_CONTENT:
+	case VAPOR_PRESSURE:
+	case VISCOSITY:
+	case PERMITTIVITY:
+	case MASS_DIFFUSION_COEFFICIENT:
+	case TP_PROP_USER_DEFINED_01:
+	case TP_PROP_USER_DEFINED_02:
+	case TP_PROP_USER_DEFINED_03:
+	case TP_PROP_USER_DEFINED_04:
+	case TP_PROP_USER_DEFINED_05:
+	case TP_PROP_USER_DEFINED_06:
+	case TP_PROP_USER_DEFINED_07:
+	case TP_PROP_USER_DEFINED_08:
+	case TP_PROP_USER_DEFINED_09:
+	case TP_PROP_USER_DEFINED_10:
+	case TP_PROP_USER_DEFINED_11:
+	case TP_PROP_USER_DEFINED_12:
+	case TP_PROP_USER_DEFINED_13:
+	case TP_PROP_USER_DEFINED_14:
+	case TP_PROP_USER_DEFINED_15:
+	case TP_PROP_USER_DEFINED_16:
+	case TP_PROP_USER_DEFINED_17:
+	case TP_PROP_USER_DEFINED_18:
+	case TP_PROP_USER_DEFINED_19:
+	case TP_PROP_USER_DEFINED_20:
+	{
+		for (const auto& [state, phase] : m_phases)
+			res += GetPhaseProperty(_time, state, _property) * phase->GetFraction(_time);
+		break;
+	}
+	case TP_PROP_NO_PROERTY:
+		break;
 	}
 
-	for (const auto& [state, phase] : m_phases)
-		res += GetPhaseProperty(_time, state, _property) * phase->GetFraction(_time);
 	return res;
 }
 

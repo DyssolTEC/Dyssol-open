@@ -756,12 +756,10 @@ public:
 	 *	\f$\rho = \sum_{i,j} \rho_i (1 - \varepsilon_j) f_{i,j}\f$ with
 	 *	\f$\varepsilon_j\f$ porosity in interval \f$j\f$,
 	 *	\f$f_{i,j}\f$ mass fraction of compound \f$i\f$ with porosity \f$j\f$.
-	 *	- For solid and liquid phase:
-	 *	\f$\rho = \sum_i w_i \cdot \rho_i \f$ with
+	 *	- For solid, liquid, and gas phase:
+	 *	\f$\rho = \frac{1}{\sum_i \frac{w_i}{\rho_i}}\f$ with
+	 *	\f$\rho_i\f$ density of compound \f$i\f$,
 	 *	\f$w_i\f$ mass fraction of compound \f$i\f$ in \p _phase.
-	 *  - For vapor phase:
-	 *  \f$\rho = \sum x_i \cdot \rho_i \f$ with
-	 *  \f$x_i\f$ as the mole fraction of component \f$i\f$ in \p _phase.
 	 * - ::HEAT_CAPACITY_CP:
 	 * \f$C_p = \sum_i w_i \cdot C_{p,i}\f$ with
 	 * \f$C_{p,i}\f$ heat capacity of compound \f$i\f$,
@@ -918,10 +916,16 @@ public:
 	double GetMixtureProperty(double _time, ECompoundConstProperties _property) const;
 	/**
 	 * \brief Returns the value of the temperature/pressure-dependent physical property of the total mixture in the stream at the given time point.
-	 * \details \f$v = \sum_i v_i w_i\f$ with
-	 * \f$v\f$ value of the temperature/pressure-dependent physical property of the total mixture,
-	 * \f$v_i\f$ value of the temperature/pressure-dependent physical property of phase \f$i\f$,
-	 * \f$w_i\f$ mass fraction of phase \f$i\f$.
+	 * \details
+	 * - ::DENSITY:
+	 *   \f$\rho = \frac{1}{\sum_i \frac{w_i}{\rho_i}}\f$ with
+	 *   \f$\rho_i\f$ density of phase \f$i\f$,
+	 *   \f$w_i\f$ mass fraction of phase \f$i\f$.
+	 * - Other:
+	 *   \f$v = \sum_i v_i w_i\f$ with
+	 *   \f$v\f$ value of the temperature/pressure-dependent physical property of the total mixture,
+	 *   \f$v_i\f$ value of the temperature/pressure-dependent physical property of phase \f$i\f$,
+	 *   \f$w_i\f$ mass fraction of phase \f$i\f$.
 	 * \param _time Target time point.
 	 * \param _property Identifier of temperature/pressure-dependent property.
 	 * \return Value of the temperature/pressure-dependent physical property of the total mixture.
