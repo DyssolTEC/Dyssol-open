@@ -30,7 +30,8 @@ All functions, classes, their member variables and methods, needed to develop ne
 	class_matrix2d
 	class_densemdmatrix
 	class_transformmatrix
-	distr_functions
+	psd_functions
+	distribution_functions
 	thermodynamics
 	solver_dae
 	solver_kinsol

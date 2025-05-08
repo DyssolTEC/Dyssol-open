@@ -11,7 +11,7 @@
 #include "Phase.h"
 #include "TimeDependentValue.h"
 #include "MaterialsDatabase.h"
-#include "DistributionsFunctions.h"
+#include "PSDFunctions.h"
 #include "StringFunctions.h"
 #include "DyssolUtilities.h"
 #include "ThreadPool.h"

@@ -12,7 +12,7 @@ CDistrFunctionDialog::CDistrFunctionDialog(QWidget* parent /*= nullptr*/) : QDia
 	ui.setupUi(this);
 	setModal(true);
 
-	m_distrFun = EDistrFunction::Normal;
+	m_distrFun = EDistributionFunction::NORMAL;
 	m_PSDGridType = EPSDGridType::DIAMETER;
 	m_nDimType = DISTR_SIZE;
 	m_pGrid = nullptr;
@@ -41,9 +41,9 @@ void CDistrFunctionDialog::SetDistributionsGrid(const CMultidimensionalGrid* _pG
 	m_pGrid = _pGrid;
 	m_PSDGridType = _nPSDGridType;
 	if (m_nDimType != DISTR_SIZE)
-		m_grid = _pGrid->GetGridDimensionNumeric(_nType)->Grid();
+		m_gridMeans = _pGrid->GetGridDimensionNumeric(_nType)->GetClassesMeans();
 	else
-		m_grid = _pGrid->GetPSDGrid(_nPSDGridType);
+		m_gridMeans = _pGrid->GetPSDMeans(_nPSDGridType);
 }
 
 std::vector<double> CDistrFunctionDialog::GetDistribution() const
@@ -55,10 +55,14 @@ void CDistrFunctionDialog::CreateDistrFunCombo() const
 {
 	QSignalBlocker blocker(ui.comboBox);
 
-	ui.comboBox->insertItem(static_cast<int>(EDistrFunction::Normal),		StrConst::FUN_NormalName);
-	ui.comboBox->insertItem(static_cast<int>(EDistrFunction::RRSB),			StrConst::FUN_RRSBName);
-	ui.comboBox->insertItem(static_cast<int>(EDistrFunction::GGS),			StrConst::FUN_GGSName);
-	ui.comboBox->insertItem(static_cast<int>(EDistrFunction::LogNormal),	StrConst::FUN_LogNormalName);
+	for (int i = 0; i < static_cast<int>(EDistributionFunction::COUNT_); ++i)
+	{
+		if (i == static_cast<int>(EDistributionFunction::MANUAL)) 
+			continue;
+
+		const auto descriptor = DistributionFunctionDescriptor(static_cast<EDistributionFunction>(i));
+		ui.comboBox->insertItem(i, QString::fromStdString(descriptor.name), i);
+	}
 
 	ui.comboBox->setCurrentIndex(static_cast<int>(m_distrFun));
 }
@@ -80,7 +84,7 @@ void CDistrFunctionDialog::UpdateUnits() const
 {
 	const QString sUnits = m_nDimType != DISTR_SIZE ? StrConst::FUN_EmptyUnits : m_PSDGridType == EPSDGridType::DIAMETER ? StrConst::FUN_DiameterUnits : StrConst::FUN_VolumeUnits;
 	ui.labelUnits1->setText(sUnits);
-	if (m_distrFun == EDistrFunction::Normal)
+	if (m_distrFun == EDistributionFunction::NORMAL)
 		ui.labelUnits2->setText(sUnits);
 	else
 		ui.labelUnits2->setText(QString(StrConst::FUN_EmptyUnits));
@@ -88,29 +92,11 @@ void CDistrFunctionDialog::UpdateUnits() const
 
 void CDistrFunctionDialog::UpdateParamLabels() const
 {
-	switch (m_distrFun)
-	{
-	case EDistrFunction::Normal:
-		ui.labelParam1->setText(StrConst::FUN_NormalParam1);
-		ui.labelParam2->setText(StrConst::FUN_NormalParam2);
-		break;
-	case EDistrFunction::RRSB:
-		ui.labelParam1->setText(StrConst::FUN_RRSBParam1);
-		ui.labelParam2->setText(StrConst::FUN_RRSBParam2);
-		break;
-	case EDistrFunction::GGS:
-		ui.labelParam1->setText(StrConst::FUN_GGSParam1);
-		ui.labelParam2->setText(StrConst::FUN_GGSParam2);
-		break;
-	case EDistrFunction::LogNormal:
-		ui.labelParam1->setText(StrConst::FUN_LogNormalParam1);
-		ui.labelParam2->setText(StrConst::FUN_LogNormalParam2);
-		break;
-	case EDistrFunction::Manual:
-		ui.labelParam1->setText(StrConst::FUN_UndefinedParam);
-		ui.labelParam2->setText(StrConst::FUN_UndefinedParam);
-		break;
-	}
+	const auto descriptor = DistributionFunctionDescriptor(m_distrFun);
+	if (descriptor.paramNames.size() > 0)
+		ui.labelParam1->setText(QString::fromStdString(descriptor.paramNames[0]));
+	if (descriptor.paramNames.size() > 1)
+		ui.labelParam2->setText(QString::fromStdString(descriptor.paramNames[1]));
 }
 
 void CDistrFunctionDialog::UpdateParams() const
@@ -121,7 +107,7 @@ void CDistrFunctionDialog::UpdateParams() const
 
 void CDistrFunctionDialog::FunctionChanged(int _index)
 {
-	m_distrFun = static_cast<EDistrFunction>(_index + 1);
+	m_distrFun = static_cast<EDistributionFunction>(_index + 1);
 	UpdateParamLabels();
 	UpdateUnits();
 }
@@ -130,27 +116,30 @@ void CDistrFunctionDialog::OKClicked()
 {
 	m_dParam1 = ui.lineEditParam1->text().toDouble();
 	m_dParam2 = ui.lineEditParam2->text().toDouble();
-	m_distrFun = static_cast<EDistrFunction>(ui.comboBox->currentIndex() + 1);
+	m_distrFun = static_cast<EDistributionFunction>(ui.comboBox->currentIndex() + 1);
 
+	const auto descriptor = DistributionFunctionDescriptor(m_distrFun);
 	switch (m_distrFun)
 	{
-	case EDistrFunction::Normal:
-		if (m_dParam2 == 0) {	QMessageBox::critical(this, StrConst::FUN_ErrorName, QString::fromStdString(StrConst::FUN_ErrorZeroParameter(StrConst::FUN_NormalParam2)));		return;	}
+	case EDistributionFunction::NORMAL:
+		if (m_dParam2 == 0.0) {	QMessageBox::critical(this, StrConst::FUN_ErrorName, QString::fromStdString(StrConst::FUN_ErrorZeroParameter(descriptor.paramNames[1])));	return; }
 		break;
-	case EDistrFunction::RRSB:
-		if (m_dParam1 == 0) {	QMessageBox::critical(this, StrConst::FUN_ErrorName, QString::fromStdString(StrConst::FUN_ErrorZeroParameter(StrConst::FUN_RRSBParam1)));		return;	}
+	case EDistributionFunction::RRSB:
+		if (m_dParam1 == 0.0) {	QMessageBox::critical(this, StrConst::FUN_ErrorName, QString::fromStdString(StrConst::FUN_ErrorZeroParameter(descriptor.paramNames[0])));	return;	}
 		break;
-	case EDistrFunction::GGS:
-		if (m_dParam1 == 0) {	QMessageBox::critical(this, StrConst::FUN_ErrorName, QString::fromStdString(StrConst::FUN_ErrorZeroParameter(StrConst::FUN_GGSParam1)));		return;	}
+	case EDistributionFunction::GGS:
+		if (m_dParam1 == 0.0) {	QMessageBox::critical(this, StrConst::FUN_ErrorName, QString::fromStdString(StrConst::FUN_ErrorZeroParameter(descriptor.paramNames[0])));	return;	}
 		break;
-	case EDistrFunction::LogNormal:
-		if (m_dParam2 == 0) {	QMessageBox::critical(this, StrConst::FUN_ErrorName, QString::fromStdString(StrConst::FUN_ErrorZeroParameter(StrConst::FUN_LogNormalParam2)));	return;	}
+	case EDistributionFunction::LOG_NORMAL:
+		if (m_dParam2 == 0.0) {	QMessageBox::critical(this, StrConst::FUN_ErrorName, QString::fromStdString(StrConst::FUN_ErrorZeroParameter(descriptor.paramNames[1])));	return;	}
 		break;
-	case EDistrFunction::Manual:
+	case EDistributionFunction::MANUAL:
 		break;
+	case EDistributionFunction::COUNT_:
+		assert(false);
 	}
 
-	m_vDistr = CreateDistribution(m_distrFun, m_grid, m_dParam1, m_dParam2);
+	m_vDistr = CreateDistribution(m_distrFun, m_gridMeans, m_dParam1, m_dParam2);
 	Normalize(m_vDistr);
 
 	QDialog::accept();

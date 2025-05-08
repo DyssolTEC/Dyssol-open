@@ -192,7 +192,7 @@ namespace ScriptInterface
 					entry.unit.name = _unit;
 					entry.distrType = SNamedEnum{ _d.DimensionType() };
 					entry.entryType = SNamedEnum{ _d.GridType() };
-					entry.function = SNamedEnum{ EDistrFunction::Manual };
+					entry.function = SNamedEnum{ EDistributionFunction::MANUAL };
 					entry.psdMeans = SNamedEnum{ EPSDGridType::DIAMETER };
 					entry.classes = _d.ClassesNumber();
 					if (_d.GridType() == EGridEntry::GRID_NUMERIC)

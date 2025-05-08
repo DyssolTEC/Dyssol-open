@@ -255,17 +255,6 @@ enum eValueBasises
 //////////////////////////////////////////////////////////////////////////
 /// Common enumerators
 //////////////////////////////////////////////////////////////////////////
-/**
- * Types of distribution functions.
- */
-enum class EDistrFunction : unsigned
-{
-	Manual = 0,
-	Normal = 1,
-	RRSB = 2,
-	GGS = 3,
-	LogNormal = 4
-};
 
 /**
  * \brief Identifiers of grid unit types.

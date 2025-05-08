@@ -1,7 +1,7 @@
 /* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "DustFormationTester.h"
-#include "DistributionsFunctions.h"
+#include "PSDFunctions.h"
 #include <numeric>
 #include <algorithm>
 

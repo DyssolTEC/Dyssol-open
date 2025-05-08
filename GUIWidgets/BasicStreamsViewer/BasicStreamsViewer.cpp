@@ -9,7 +9,7 @@
 #include "MDMatrix.h"
 #include "MultidimensionalGrid.h"
 #include "MaterialsDatabase.h"
-#include "DistributionsFunctions.h"
+#include "PSDFunctions.h"
 #include "DyssolStringConstants.h"
 #include "DyssolUtilities.h"
 #include "ContainerFunctions.h"

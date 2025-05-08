@@ -56,6 +56,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseUnit.cpp" />
+    <ClCompile Include="DistributionFunctions.cpp" />
     <ClCompile Include="MultidimensionalGrid.cpp" />
     <ClCompile Include="ChemicalReaction.cpp" />
     <ClCompile Include="MixtureEnthalpyLookup.cpp" />
@@ -82,6 +83,7 @@
   <ItemGroup>
     <ClInclude Include="BaseUnit.h" />
     <ClInclude Include="ChemicalReaction.h" />
+    <ClInclude Include="DistributionFunctions.h" />
     <ClInclude Include="MultidimensionalGrid.h" />
     <ClInclude Include="Holdup.h" />
     <ClInclude Include="MixtureLookup.h" />
@@ -94,7 +96,7 @@
     <ClInclude Include="Matrix2D.h" />
     <ClInclude Include="DenseMDMatrix.h" />
     <ClInclude Include="DependentValues.h" />
-    <ClInclude Include="DistributionsFunctions.h" />
+    <ClInclude Include="PSDFunctions.h" />
     <ClInclude Include="DynamicUnit.h" />
     <ClInclude Include="MDMatrix.h" />
     <ClInclude Include="Phase.h" />
