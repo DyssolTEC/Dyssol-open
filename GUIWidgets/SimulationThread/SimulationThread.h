@@ -8,17 +8,23 @@
 class CSimulationThread : public CBasicThread
 {
 	Q_OBJECT
-
-	bool m_aborted{ false }; // Whether the simulation was aborted.
-	std::function<void()> m_run; // Function to run simulation
-	std::function<void()> m_stop; // Function to abort simulation
+public:
+	using RunFunc = std::function<void()>;
+	using StopFunc = std::function<void()>;
 
 public:
-	CSimulationThread(std::function<void()> _run, std::function<void()> _stop, QObject* _parent = nullptr);
+	CSimulationThread(const RunFunc& _run, const StopFunc& _stop, QObject* _parent = nullptr);
+	CSimulationThread(QObject* _parent = nullptr);
 
-	bool WasAborted() const;	// Returns whether the simulation was aborted by user.
+	void SetFunctions(const RunFunc& _run, const StopFunc& _stop);
 
-public slots:
+	bool WasAborted() const; // Returns whether the simulation was aborted by user.
+
 	void StartTask() override;
 	void RequestStop() override;
+
+private:
+	bool m_aborted{ false }; // Whether the simulation was aborted.
+	RunFunc m_run;           // Function to run simulation
+	StopFunc m_stop;         // Function to abort simulation
 };

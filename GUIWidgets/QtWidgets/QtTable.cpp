@@ -636,6 +636,7 @@ std::vector<double> CQtTable::GetRowValues(const int _row) const
 {
 	if (_row >= rowCount()) return std::vector<double>{};
 	std::vector<double> res;
+	res.reserve(columnCount());
 	for (int i = 0; i < columnCount(); ++i)
 		res.push_back(item(_row, i)->text().toDouble());
 	return res;
@@ -645,6 +646,7 @@ std::vector<double> CQtTable::GetColumnValues(const int _col) const
 {
 	if (_col >= columnCount()) return std::vector<double>{};
 	std::vector<double> res;
+	res.reserve(rowCount());
 	for (int i = 0; i < rowCount(); ++i)
 		res.push_back(item(i, _col)->text().toDouble());
 	return res;
