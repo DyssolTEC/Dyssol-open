@@ -60,7 +60,7 @@ void CDistrFunctionDialog::CreateDistrFunCombo() const
 		if (i == static_cast<int>(EDistributionFunction::MANUAL))
 			continue;
 
-		const auto& descriptor = details::GetFunctionDescriptor(static_cast<EDistributionFunction>(i));
+		const auto& descriptor = DistributionFunction::GetFunctionDescriptor(static_cast<EDistributionFunction>(i));
 		ui.comboBox->insertItem(i, QString::fromStdString(std::string(descriptor.name)), i);
 	}
 
@@ -92,7 +92,7 @@ void CDistrFunctionDialog::UpdateUnits() const
 
 void CDistrFunctionDialog::UpdateParamLabels() const
 {
-	const auto& descriptor = details::GetFunctionDescriptor(m_distrFun);
+	const auto& descriptor = DistributionFunction::GetFunctionDescriptor(m_distrFun);
 	if (descriptor.params.size() > 0)
 		ui.labelParam1->setText(QString::fromStdString(std::string(descriptor.params[0].name)));
 	if (descriptor.params.size() > 1)
@@ -118,7 +118,7 @@ void CDistrFunctionDialog::OKClicked()
 	m_dParam2 = ui.lineEditParam2->text().toDouble();
 	m_distrFun = static_cast<EDistributionFunction>(ui.comboBox->currentIndex() + 1);
 
-	const auto& descriptor = details::GetFunctionDescriptor(m_distrFun);
+	const auto& descriptor = DistributionFunction::GetFunctionDescriptor(m_distrFun);
 
 	auto criticalMessage = [&](double _value, int _idx)
 		{
@@ -135,28 +135,18 @@ void CDistrFunctionDialog::OKClicked()
 	{
 	case EDistributionFunction::NORMAL:
 	case EDistributionFunction::LOG_NORMAL:
-	{
 		if (criticalMessage(m_dParam2, 1))
 			return;
-
 		break;
-	}
 	case EDistributionFunction::RRSB:
 	case EDistributionFunction::GGS:
-	{
 		if (criticalMessage(m_dParam1, 0))
 			return;
-
 		break;
-	}
 	case EDistributionFunction::MANUAL:
-	{
 		break;
-	}
 	case EDistributionFunction::COUNT_:
-	{
 		assert(false);
-	}
 	}
 
 	m_vDistr = CreateDistribution(m_distrFun, m_gridMeans, m_dParam1, m_dParam2);

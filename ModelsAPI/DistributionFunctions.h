@@ -4,7 +4,6 @@
 #pragma once
 
 #include <cstdint>
-#include <array>
 #include <functional>
 #include <string_view>
 
@@ -24,22 +23,30 @@ enum class EDistributionFunction : uint8_t
 	/// \endcond
 };
 
-namespace details
+/**
+ * \cond <- to hide in the Doxygen output
+ * \brief Implementation details for distribution functions.
+ */
+namespace DistributionFunction
 {
 	struct SFunctionParam
 	{
-		std::string_view name;
-		double initValue;
+		std::string_view name;	///< Name of the function parameter.
+		double initValue;		///< Initial value of the function parameter.
 	};
 
 	struct SFunctionDescriptor
 	{
-		std::string_view name;
-		std::vector<SFunctionParam> params;
+		std::string_view name;				///< Name of the function.
+		std::vector<SFunctionParam> params; ///< Parameters of the function.
 	};
 
 	const SFunctionDescriptor& GetFunctionDescriptor(EDistributionFunction _type);
+	std::vector<std::string> GetFunctionParameterNames(EDistributionFunction _type);
 }
+/**
+ * \endcond
+ */
 
 /**
  * Returns the given probability density function.
