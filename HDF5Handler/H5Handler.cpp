@@ -5,7 +5,6 @@
 #include "H5Handler.h"
 #include "PacketTable.h"
 #include "DyssolStringConstants.h"
-#include "FileSystem.h"
 
 #include <regex>
 
@@ -419,7 +418,7 @@ void CH5Handler::OpenH5File(const std::filesystem::path& _sFileName, bool _bOpen
 	H5::FileAccPropList h5AccPropList = CreateFileAccPropList(_bSingleFile);
 	try
 	{
-		m_ph5File = new H5::H5File(_sFileName.string(), _bOpen ? H5F_ACC_RDONLY : H5F_ACC_TRUNC , H5P_DEFAULT, h5AccPropList);
+		m_ph5File = new H5::H5File(_sFileName.string(), _bOpen ? H5F_ACC_RDONLY : H5F_ACC_TRUNC, H5P_DEFAULT, h5AccPropList);
 	}
 	catch (...)
 	{
@@ -441,7 +440,7 @@ std::filesystem::path CH5Handler::DisplayFileName(std::filesystem::path _fileNam
 	const size_t pos = m.position(0);                                          // position of a multi-file suffix
 	std::string copy = _fileName.string();
 	copy.erase(m.position(0), m[0].length());                                  // remove multi-file suffix
-	if(pos - 1 < copy.size() && copy[pos - 1] == '.')                          // a dot before multi-file suffix
+	if (pos - 1 < copy.size() && copy[pos - 1] == '.')                         // a dot before multi-file suffix
 		copy.erase(pos - 1, 1);						                           // remove dot
 	return copy;
 }
