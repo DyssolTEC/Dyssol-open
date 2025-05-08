@@ -89,7 +89,7 @@ namespace ScriptInterface
 			_obj.psdType  = GetValueFromStream<SNamedEnum>(_s).FillAndWarn<EPSDTypes>();
 			_obj.psdMeans = GetValueFromStream<SNamedEnum>(_s).FillAndWarn<EPSDGridType>();
 		}
-		_obj.function = GetValueFromStream<SNamedEnum>(_s).FillAndWarn<EDistrFunction>();
+		_obj.function = GetValueFromStream<SNamedEnum>(_s).FillAndWarn<EDistributionFunction>();
 		_obj.values   = GetValueFromStream<std::vector<double>>(_s);
 		return _s;
 	}

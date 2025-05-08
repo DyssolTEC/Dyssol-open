@@ -432,16 +432,17 @@ bool CScriptRunner::SetupHoldupsDistributions(const CScriptJob& _job)
 		if (!holdup) return false;
 		// read required values for ease of use
 		const auto distr = static_cast<EDistrTypes>(entry.distrType.key);					// distribution type
-		const auto fun = static_cast<EDistrFunction>(entry.function.key);					// distribution function type
+		const auto fun = static_cast<EDistributionFunction>(entry.function.key);			// distribution function type
 		const auto mean = static_cast<EPSDGridType>(entry.psdMeans.key);					// mean values type for PSD
 		const auto psd = static_cast<EPSDTypes>(entry.psdType.key);							// PSD type
-		const bool manual = fun == EDistrFunction::Manual;									// whether manual distribution defined
+		const bool manual = fun == EDistributionFunction::MANUAL;							// whether manual distribution defined
 		const size_t len = entry.values.size();												// length of the values vector
 		const auto gridDescr = holdup->GetGrid();											// descriptor of the distributions grid
 		if (!gridDescr.HasDimension(distr))
 			return PrintMessage(DyssolC_ErrorNoDistribution(StrKey(EScriptKeys::HOLDUP_DISTRIBUTION), unit->GetName(), entry.holdup.name, entry.holdup.index, entry.distrType.name, entry.distrType.key));
 		const size_t classes = gridDescr.GetGridDimension(distr)->ClassesNumber();			// number of classes in the distribution
 		const auto grid = distr != DISTR_SIZE ? gridDescr.GetGridDimensionNumeric(distr)->Grid() : gridDescr.GetPSDGrid(mean); // current grid
+		const auto means = distr != DISTR_SIZE ? gridDescr.GetGridDimensionNumeric(distr)->GetClassesMeans() : gridDescr.GetPSDMeans(mean); // mean values of the current grid
 		const bool hasTime = manual && len % (classes + 1) == 0 || !manual && len % 3 == 0;	// whether time is defined
 		const bool mix = entry.compound == "MIXTURE";										// whether the distribution is defined for the total mixture of for a single compound
 		// check the number of passed arguments
@@ -467,15 +468,40 @@ bool CScriptRunner::SetupHoldupsDistributions(const CScriptJob& _job)
 			for (auto& value : values)
 			{
 				if (distr == DISTR_SIZE)
-					value = ConvertDistribution(EPSDTypes::PSD_MassFrac, psd, grid, Normalized(CreateDistribution(fun, grid, value[0], value[1])));
+				{
+					switch (psd)
+					{
+					case PSD_q0:
+					case PSD_q2:
+					case PSD_q3:
+					case PSD_MassFrac:
+					case PSD_Number:
+						value = CreateDistribution(fun, means, value[0], value[1]);
+						break;
+					case PSD_Q0:
+						value = ConvertDistribution(EPSDTypes::PSD_q0, psd, grid, CreateDistribution(fun, means, value[0], value[1]));
+						break;
+					case PSD_Q2:
+						value = ConvertDistribution(EPSDTypes::PSD_q2, psd, grid, CreateDistribution(fun, means, value[0], value[1]));
+						break;
+					case PSD_Q3:
+						value = ConvertDistribution(EPSDTypes::PSD_q3, psd, grid, CreateDistribution(fun, means, value[0], value[1]));
+						break;
+					}
+				}
 				else
-					value = Normalized(CreateDistribution(fun, grid, value[0], value[1]));
+					value = Normalized(CreateDistribution(fun, means, value[0], value[1]));
 			}
 		// set values
 		for (size_t i = 0; i < times.size(); ++i)
-			if (distr == DISTR_SIZE)	holdup->SetPSD(times[i], psd, key, values[i], mean);
-			else if (mix)				holdup->SetDistribution(times[i], distr, values[i]);
-			else					holdup->SetDistribution(times[i], distr, key, values[i]);
+		{
+			if (distr == DISTR_SIZE)
+				holdup->SetPSD(times[i], psd, key, values[i], mean);
+			else if (mix)
+				holdup->SetDistribution(times[i], distr, values[i]);
+			else
+				holdup->SetDistribution(times[i], distr, key, values[i]);
+		}
 	}
 
 	return true;

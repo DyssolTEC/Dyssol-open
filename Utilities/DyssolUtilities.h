@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "DistributionsFunctions.h"
+#include "PSDFunctions.h"
 #include "DyssolTypes.h"
 #include <vector>
 #include <numeric>
@@ -336,115 +336,6 @@ template<typename E, typename T>
 constexpr E V2E(T v)
 {
 	return static_cast<E>(static_cast<std::underlying_type_t<E>>(v));
-}
-
-/**
- * Returns normally distributed probability density function.
- * \param _grid Grid of the distribution parameter.
- * \param _d50 Mean value.
- * \param _sigma Standard deviation.
- * \return Distribution.
- */
-std::vector<double> inline CreateDistributionNormal(const std::vector<double>& _grid, double _d50, double _sigma)
-{
-	std::vector<double> res;
-	if (_grid.size() <= 1) return res;
-	std::vector<double> x(_grid.size() - 1);
-	for (size_t i = 0; i < _grid.size() - 1; ++i)
-		x[i] = (_grid[i] + _grid[i + 1]) / 2;
-	res.resize(x.size());
-	const double A = 1 / (_sigma * std::sqrt(2 * MATH_PI));
-	for (size_t i = 0; i < x.size(); ++i)
-		res[i] = A * std::exp(-std::pow(x[i] - _d50, 2) / (2 * _sigma * _sigma));
-	return Convertq3ToMassFractions(_grid, res);
-}
-
-/**
- * Returns log-normally distributed probability density function.
- * \param _grid Grid of the distribution parameter.
- * \param _d50 Mean value.
- * \param _deviation Standard deviation.
- * \return Distribution.
- */
-std::vector<double> inline CreateDistributionLogNormal(const std::vector<double>& _grid, double _d50, double _deviation)
-{
-	std::vector<double> res;
-	if (_grid.size() <= 1) return res;
-	if (_deviation == 0.0) return res;
-	std::vector<double> x(_grid.size() - 1);
-	for (size_t i = 0; i < _grid.size() - 1; ++i)
-		x[i] = (_grid[i] + _grid[i + 1]) / 2;
-	res.resize(x.size());
-	const double A = 1 / (_deviation * std::sqrt(2 * MATH_PI));
-	for (size_t i = 0; i < x.size(); ++i)
-		res[i] = A / x[i] * std::exp(-std::pow(std::log(x[i]) - std::log(_d50), 2) / (2 * _deviation * _deviation));
-	return Convertq3ToMassFractions(_grid, res);
-}
-
-/**
- * Returns Rosin-Rammler-Sperling-Bennett distributed probability density function.
- * \param _grid Grid of the distribution parameter.
- * \param _d63 Scale.
- * \param _dispersion Shape.
- * \return Distribution.
- */
-std::vector<double> inline CreateDistributionRRSB(const std::vector<double>& _grid, double _d63, double _dispersion)
-{
-	std::vector<double> res;
-	if (_grid.size() <= 1) return res;
-	if (_d63 == 0.0) return res;
-	std::vector<double> x(_grid.size() - 1);
-	for (size_t i = 0; i < _grid.size() - 1; ++i)
-		x[i] = (_grid[i] + _grid[i + 1]) / 2;
-	res.resize(x.size());
-	for (size_t i = 0; i < x.size(); ++i)
-		res[i] = 1 - std::exp(-std::pow(x[i] / _d63, _dispersion));
-	return ConvertQ3ToMassFractions(res);
-}
-
-/**
- * Returns Gates-Gaudin-Schumann distributed probability density function.
- * \param _grid Grid of the distribution parameter.
- * \param _dmax Scale.
- * \param _dispersion Shape.
- * \return Distribution.
- */
-std::vector<double> inline CreateDistributionGGS(const std::vector<double>& _grid, double _dmax, double _dispersion)
-{
-	std::vector<double> res;
-	if (_grid.size() <= 1) return res;
-	if (_dmax == 0.0) return res;
-	std::vector<double> x(_grid.size() - 1);
-	for (size_t i = 0; i < _grid.size() - 1; ++i)
-		x[i] = (_grid[i] + _grid[i + 1]) / 2;
-	res.resize(x.size());
-	for (size_t i = 0; i < x.size(); ++i)
-		if (x[i] <= _dmax)
-			res[i] = std::pow(x[i] / _dmax, _dispersion);
-		else
-			res[i] = 1.;
-	return ConvertQ3ToMassFractions(res);
-}
-
-/**
- * Returns given probability density function.
- * \param _type Distribution function.
- * \param _grid Grid of the distribution parameter.
- * \param _param1 Parameter of the distribution function.
- * \param _param2 Parameter of the distribution function.
- * \return Distribution.
- */
-std::vector<double> inline CreateDistribution(EDistrFunction _type, const std::vector<double>& _grid, double _param1, double _param2)
-{
-	switch (_type)
-	{
-	case EDistrFunction::Manual:    return std::vector(_grid.size(), 0.0);
-	case EDistrFunction::Normal:    return CreateDistributionNormal(_grid, _param1, _param2);
-	case EDistrFunction::RRSB:      return CreateDistributionRRSB(_grid, _param1, _param2);
-	case EDistrFunction::GGS:       return CreateDistributionGGS(_grid, _param1, _param2);
-	case EDistrFunction::LogNormal: return CreateDistributionLogNormal(_grid, _param1, _param2);
-	}
-	return std::vector(_grid.size(), 0.0);
 }
 
 /**

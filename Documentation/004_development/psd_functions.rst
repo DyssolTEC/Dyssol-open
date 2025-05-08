@@ -1,9 +1,9 @@
-.. _sec.development.api.distr_functions:
+.. _sec.development.api.psd_functions:
 
-Distributions functions
-=======================
+PSD functions
+=============
 
-.. doxygenfile:: DistributionsFunctions.h
+.. doxygenfile:: PSDFunctions.h
 	:project: dyssol_models_api
 ..    :members:
 ..    :protected-members:

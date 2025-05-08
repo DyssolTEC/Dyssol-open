@@ -84,6 +84,9 @@
     <ClCompile Include="UnitParametersManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DistributionFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DenseMDMatrix.h">
@@ -92,7 +95,7 @@
     <ClInclude Include="DependentValues.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DistributionsFunctions.h">
+    <ClInclude Include="PSDFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DynamicUnit.h">
@@ -171,6 +174,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UnitParametersManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DistributionFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

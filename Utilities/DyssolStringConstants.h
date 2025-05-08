@@ -714,19 +714,6 @@ namespace StrConst
 	const char* const  FUN_VolumeUnits	    = "[m3]";
 	const char* const  FUN_DiameterUnitsInv = "[1/m]";
 	const char* const  FUN_VolumeUnitsInv   = "[1/m3]";
-	const char* const  FUN_ManualName		= "Manual";
-	const char* const  FUN_NormalName       = "Normal";
-	const char* const  FUN_RRSBName         = "RRSB";
-	const char* const  FUN_GGSName          = "GGS";
-	const char* const  FUN_LogNormalName    = "LogNormal";
-	const char* const  FUN_NormalParam1	    = "D50";
-	const char* const  FUN_NormalParam2	    = "Standard deviation";
-	const char* const  FUN_RRSBParam1	    = "D63";
-	const char* const  FUN_RRSBParam2	    = "Dispersion";
-	const char* const  FUN_GGSParam1	    = "Dmax";
-	const char* const  FUN_GGSParam2	    = "Dispersion";
-	const char* const  FUN_LogNormalParam1  = "D50";
-	const char* const  FUN_LogNormalParam2  = "Geometric mean deviation";
 	const char* const  FUN_UndefinedParam   = "Undefined";
 	const char* const  FUN_ErrorName        = "Wrong parameters";
 	inline std::string FUN_ErrorZeroParameter(const std::string& s1) {

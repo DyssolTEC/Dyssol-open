@@ -2,7 +2,7 @@
 
 #define DLL_EXPORT
 #include "Agglomerator.h"
-#include "DistributionsFunctions.h"
+#include "PSDFunctions.h"
 #include "DyssolUtilities.h"
 #include "ContainerFunctions.h"
 

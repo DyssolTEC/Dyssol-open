@@ -3,6 +3,7 @@
  * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #pragma once
+#include "DistributionFunctions.h"
 #include "DyssolDefines.h"
 #include <vector>
 #include <string>
@@ -83,13 +84,13 @@ namespace
 		{ EPSDGridType::VOLUME  , { "VOLUME"   } },
 	};
 
-	template<> std::map<EDistrFunction, std::vector<std::string>>SEnumStrings<EDistrFunction>::data
+	template<> std::map<EDistributionFunction, std::vector<std::string>>SEnumStrings<EDistributionFunction>::data
 	{
-		{ EDistrFunction::Normal   , { "NORMAL"     } },
-		{ EDistrFunction::Manual   , { "MANUAL"     } },
-		{ EDistrFunction::LogNormal, { "LOG_NORMAL" } },
-		{ EDistrFunction::RRSB     , { "RRSB"       } },
-		{ EDistrFunction::GGS      , { "GGS"        } },
+		{ EDistributionFunction::NORMAL    , { "NORMAL"     } },
+		{ EDistributionFunction::MANUAL    , { "MANUAL"     } },
+		{ EDistributionFunction::LOG_NORMAL, { "LOG_NORMAL" } },
+		{ EDistributionFunction::RRSB      , { "RRSB"       } },
+		{ EDistributionFunction::GGS       , { "GGS"        } },
 	};
 
 	template<> std::map<EGridEntry, std::vector<std::string>>SEnumStrings<EGridEntry>::data
