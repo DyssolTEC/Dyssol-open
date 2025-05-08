@@ -19,7 +19,11 @@ namespace H5
 }
 
 template<typename T>
-const H5::DataType& GetType() { static_assert(sizeof(T) == 0, "No specialization found"); }
+const H5::DataType& GetType()
+{
+	static_assert(sizeof(T) == 0, "No specialization found");
+	return {};
+}
 
 template<> const H5::DataType& GetType<double>();
 template<> const H5::DataType& GetType<uint32_t>();

@@ -270,10 +270,10 @@ void CH5Handler::WriteData(const std::string& _sPath, const std::string& _sDatas
 	if (!m_bFileValid) return;
 	if (_vvData.empty()) return;
 
-	const size_t size{ _vvData.size() };
+	const hsize_t size{ _vvData.size() };
 
 	H5::Group h5Group(m_ph5File->openGroup(_sPath));
-	H5::DataSpace h5Dataspace(1, &static_cast<const hsize_t>(size));
+	H5::DataSpace h5Dataspace(1, &size);
 
 	auto itemtype = H5::PredType::NATIVE_DOUBLE;
 	auto h5Varlentype = H5::VarLenType(&itemtype);
@@ -392,7 +392,7 @@ void CH5Handler::WriteValue(const std::string& _sPath, const std::string& _sData
 	if (!m_bFileValid) return;
 
 	H5::Group h5Group(m_ph5File->openGroup(_sPath));
-	H5::DataSpace h5Dataspace(1, &static_cast<hsize_t>(_size));
+	H5::DataSpace h5Dataspace(1, &static_cast<const hsize_t&>(_size));
 	H5::DataSet h5Dataset = h5Group.createDataSet(_sDatasetName, _type, h5Dataspace);
 
 	h5Dataset.write(_pValue, _type);
