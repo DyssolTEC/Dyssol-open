@@ -124,7 +124,7 @@ public:
 	bool GetRadioButtonChecked(int _row, int _col) const;
 	QComboBox* SetComboBox(int _row, int _col, const std::vector<QString>& _vNames, const std::vector<QVariant>& _vData, int _iSelected);
 	QComboBox* SetComboBox(int _row, int _col, const std::vector<std::string>& _names, const std::vector<std::string>& _data, const std::string& _dataSelected);
-	QComboBox* SetComboBox(int _row, int _col, const std::vector<std::string>& _names, const std::vector<size_t>& _data, size_t _dataSelected);
+	QComboBox* SetComboBox(int _row, int _col, const std::vector<std::string>& _names, const std::vector<uint64_t>& _data, uint64_t _dataSelected);
 	QComboBox* SetComboBox(int _row, int _col, const std::vector<std::string>& _names, const std::vector<uint32_t>& _data, uint32_t _dataSelected);
 	QComboBox* GetComboBox(int _row, int _col) const;
 	QPushButton* SetPushButton(int _row, int _col, const QString& _text);
