@@ -26,6 +26,14 @@ CModelsManager::SModelDir::SModelDir(std::filesystem::path _path, std::string _k
 		pathFull = path;
 }
 
+CModelsManager::~CModelsManager()
+{
+	for (const auto& [pUnit, hLibrary] : m_loadedUnits)
+		CloseDyssolLibrary(hLibrary);
+	for (const auto& [pSolver, hLibrary] : m_loadedSolvers)
+		CloseDyssolLibrary(hLibrary);
+}
+
 size_t CModelsManager::DirsNumber() const
 {
 	return m_dirsList.size();
@@ -200,14 +208,14 @@ void CModelsManager::FreeUnit(CBaseUnit* _unit)
 	// test if such unit exists
 	if (m_loadedUnits.find(_unit) == m_loadedUnits.end()) return;
 	// copy entry
-	const DYSSOL_LIBRARY_INSTANCE hLibrary = m_loadedUnits[_unit];
+	//const DYSSOL_LIBRARY_INSTANCE hLibrary = m_loadedUnits[_unit];
 	// remove it from the list
 	m_loadedUnits.erase(_unit);
 	// delete unit
 	delete _unit;
 	_unit = nullptr;
 	// close the library
-	CloseDyssolLibrary(hLibrary);
+	//CloseDyssolLibrary(hLibrary);
 }
 
 void CModelsManager::FreeSolver(CBaseSolver* _solver)
@@ -216,14 +224,14 @@ void CModelsManager::FreeSolver(CBaseSolver* _solver)
 	// test if such solver exists
 	if (m_loadedSolvers.find(_solver) == m_loadedSolvers.end()) return;
 	// copy entry
-	const DYSSOL_LIBRARY_INSTANCE hLibrary = m_loadedSolvers[_solver];
+	//const DYSSOL_LIBRARY_INSTANCE hLibrary = m_loadedSolvers[_solver];
 	// remove it from the list
 	m_loadedSolvers.erase(_solver);
 	// delete unit
 	delete _solver;
 	_solver = nullptr;
 	// close the library
-	CloseDyssolLibrary(hLibrary);
+	//CloseDyssolLibrary(hLibrary);
 }
 
 std::vector<std::string> CModelsManager::AllDirsKeys() const
@@ -304,7 +312,8 @@ std::pair<std::vector<SUnitDescriptor>, std::vector<SSolverDescriptor>> CModelsM
 				resUnits.push_back(unit);
 			else if (const SSolverDescriptor solver = TryGetSolverDescriptor(f, lib)) // try to load solver from library
 				resSolvers.push_back(solver);
-			CloseDyssolLibrary(lib);
+			else
+				CloseDyssolLibrary(lib);
 		}
 	return std::make_pair(resUnits, resSolvers);
 }
