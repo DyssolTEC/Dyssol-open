@@ -10,10 +10,10 @@ COMPOUNDS "Air" "H2O" "Urea"
 PHASES "Solid" SOLID "Liquid" LIQUID "Gas" GAS 
 KEEP_EXISTING_GRIDS_VALUES NO
 DISTRIBUTION_GRID "GLOBAL" SIZE NUMERIC EQUIDISTANT DIAMETER 17 0.000875 0.005125
-UNIT "Inlet solution" "InletFlow" 
-UNIT "Inlet fluidization gas" "InletFlow" 
+UNIT "Inlet solution" "Inlet flow" 
+UNIT "Inlet fluidization gas" "Inlet flow" 
 UNIT "Granulator batch" "Granulator simple batch" 
-UNIT "Outlet exhaust gas" "OutletFlow" 
+UNIT "Outlet exhaust gas" "Outlet flow" 
 STREAM "Suspension" "Inlet solution" "InletMaterial" "Granulator batch" "Suspension"
 STREAM "Fluidization gas" "Inlet fluidization gas" "InletMaterial" "Granulator batch" "FluidizationGas"
 STREAM "Exhaust gas" "Granulator batch" "ExhaustGasOutput" "Outlet exhaust gas" "In"
