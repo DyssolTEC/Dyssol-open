@@ -78,6 +78,8 @@ class CModelsManager
 	std::map<CBaseSolver*, DYSSOL_LIBRARY_INSTANCE> m_loadedSolvers; // List of loaded solvers with their libraries. Used for proper resource management.
 
 public:
+	~CModelsManager();
+
 	// Returns number of defined paths to look for models.
 	size_t DirsNumber() const;
 	// Add new path to look for models. Returns true on success.
