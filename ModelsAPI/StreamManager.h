@@ -104,6 +104,8 @@ public:
 	const CStream* GetFeedInit(const std::string& _name) const;
 	// Returns an inital feed with the specified name. If such feed does not exist, returns nullptr.
 	CStream* GetFeedInit(const std::string& _name);
+	const CStream* GetFeedInitByKey(const std::string& _key) const;
+	CStream* GetFeedInitByKey(const std::string& _key);
 	// Returns all defined initial feeds.
 	std::vector<const CStream*> GetFeedsInit() const;
 	// Returns all defined initial feeds.
@@ -119,12 +121,16 @@ public:
 	size_t GetHoldupsNumber() const;
 	// Returns the number of defined initial holdups.
 	[[nodiscard]] size_t GetHoldupsInitNumber() const;
+	const CHoldup* GetHoldupInitByKey(const std::string& _key) const;
+	CHoldup* GetHoldupInitByKey(const std::string& _key);
 	// Adds new holdup, setups its structure (MD dimensions, phases, materials, etc.), and returns a pointer to it. If a holdup with the given name already exists, does nothing, and returns nullptr.
 	CHoldup* AddHoldup(const std::string& _name);
 	// Returns a holdup with the specified name. If such holdup does not exist, returns nullptr.
 	const CHoldup* GetHoldup(const std::string& _name) const;
 	// Returns a holdup with the specified name. If such holdup does not exist, returns nullptr.
 	CHoldup* GetHoldup(const std::string& _name);
+	const CHoldup* GetHoldupByKey(const std::string& _key) const;
+	CHoldup* GetHoldupByKey(const std::string& _key);
 	// Returns all defined initial holdups for fixed holdups.
 	std::vector<const CHoldup*> GetHoldupsInit() const;
 	// Returns all defined initial holdups for fixed holdups.
