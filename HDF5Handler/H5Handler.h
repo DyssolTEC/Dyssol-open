@@ -8,6 +8,8 @@
 #include "DyssolFilesystem.h"
 
 #include <vector>
+#include <map>
+#include <unordered_map>
 #include <algorithm>
 
 namespace H5
@@ -41,10 +43,26 @@ class CH5Handler
 	H5::H5File* m_ph5File;
 
 	template <typename T>
-	struct is_container { static const bool value = false; };
+	struct is_vector : std::false_type {};
 
 	template <typename T>
-	struct is_container<std::vector<T>> { static const bool value = true; };
+	struct is_vector<std::vector<T>> : std::true_type {};
+
+	template <typename T>
+	struct is_map : std::false_type {};
+
+	template <typename K, typename V>
+	struct is_map<std::map<K, V>> : std::true_type {};
+
+	template <typename K, typename V>
+	struct is_map<std::unordered_map<K, V>> : std::true_type {};
+
+	// C++20 std::type_identity
+	template <typename T>
+	struct type_identity { using type = T; };
+
+	template <typename T>
+	struct type_identity<std::vector<T>> { using type = T; };
 
 public:
 	CH5Handler();
@@ -80,7 +98,7 @@ public:
 		}
 	}
 
-	template<typename T, typename = std::enable_if_t<!is_container<T>::value>>
+	template<typename T, typename = std::enable_if_t<!is_vector<T>::value>>
 	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<T>& _data) const
 	{
 		if (_data.empty())
@@ -97,6 +115,36 @@ public:
 		{
 			WriteValue(_sPath, _sDatasetName, _data.size(), GetType<T>(), &_data.front());
 		}
+	}
+
+	template <typename M, typename = std::enable_if_t<is_map<M>::value>>
+	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const M& _data)
+	{
+		using K = typename M::key_type;
+		using V = typename M::mapped_type;
+
+		std::vector<K> keys;
+		std::vector<typename type_identity<V>::type> values;
+		std::vector<size_t> sizes;
+
+		for (const auto& [key, value] : _data)
+		{
+			keys.emplace_back(key);
+
+			if constexpr (is_vector<V>::value)
+			{
+				values.insert(values.end(), value.begin(), value.end());
+				sizes.emplace_back(value.size());
+			}
+			else
+			{
+				values.emplace_back(value);
+			}
+		}
+
+		WriteData(_sPath, _sDatasetName + "K", keys);
+		WriteData(_sPath, _sDatasetName + "V", values);
+		WriteData(_sPath, _sDatasetName + "S", sizes);
 	}
 
 	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<std::vector<double>>& _vvData) const;
@@ -126,7 +174,7 @@ public:
 		}
 	}
 
-	template<typename T, typename = std::enable_if_t<!is_container<T>::value>>
+	template<typename T, typename = std::enable_if_t<!is_vector<T>::value>>
 	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<T>& _data) const
 	{
 		_data.clear();
@@ -146,6 +194,38 @@ public:
 		{
 			if(!_data.empty())
 				ReadValue(_sPath, _sDatasetName, GetType<T>(), &_data.front());
+		}
+	}
+
+	template <typename M, typename = std::enable_if_t<is_map<M>::value>>
+	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, M& _data)
+	{
+		using K = typename M::key_type;
+		using V = typename M::mapped_type;
+
+		_data.clear();
+
+		std::vector<K> keys;
+		std::vector<typename type_identity<V>::type> values;
+		std::vector<size_t> sizes;
+
+		ReadData(_sPath, _sDatasetName + "K", keys);
+		ReadData(_sPath, _sDatasetName + "V", values);
+		ReadData(_sPath, _sDatasetName + "S", sizes);
+
+		auto it = values.begin();
+		for (size_t i = 0; i < keys.size(); ++i)
+		{
+			if constexpr (is_vector<V>::value)
+			{
+				_data[keys[i]] = V(it, it + sizes[i]);
+				it += sizes[i];
+			}
+			else
+			{
+				_data[keys[i]] = *it;
+				++it;
+			}
 		}
 	}
 
