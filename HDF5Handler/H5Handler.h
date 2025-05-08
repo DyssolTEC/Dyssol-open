@@ -5,6 +5,7 @@
 #pragma once
 
 #include "H5Cpp.h"
+
 #include "DyssolTypes.h"
 #include "DyssolFilesystem.h"
 
@@ -14,7 +15,11 @@
 #include <algorithm>
 
 template<typename T>
-inline const H5::DataType& GetType() { static_assert(sizeof(T) == 0, "No specialization found"); return H5::PredType::PREDTYPE_CONST; }
+inline const H5::DataType& GetType()
+{
+	static_assert(sizeof(T) == 0, "No specialization found");
+	return H5::PredType::PREDTYPE_CONST;
+}
 
 template<> inline const H5::DataType& GetType<double>() { return H5::PredType::NATIVE_DOUBLE; }
 template<> inline const H5::DataType& GetType<uint32_t>() { return H5::PredType::NATIVE_UINT32; }
@@ -124,7 +129,7 @@ public:
 	template<typename T>
 	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const T& _data) const
 	{
-		if constexpr (std::is_same_v<T, std::string>)
+		if constexpr (std::is_convertible_v<T, std::string_view>)
 		{
 			const char* ptr = _data.c_str();
 			WriteValue(_sPath, _sDatasetName, 1, GetType<std::string>(), &ptr);
@@ -146,7 +151,7 @@ public:
 		if (_data.empty())
 			return;
 
-		if constexpr (std::is_same_v<T, std::string>)
+		if constexpr (std::is_convertible_v<T, std::string_view>)
 		{
 			std::vector<const char*> vCStrings(_data.size());
 			std::transform(_data.begin(), _data.end(), vCStrings.begin(), [](const auto& _str) { return _str.c_str(); });
@@ -186,7 +191,9 @@ public:
 
 		WriteData(_sPath, _sDatasetName + "K", keys);
 		WriteData(_sPath, _sDatasetName + "V", values);
-		WriteData(_sPath, _sDatasetName + "S", sizes);
+
+		if (!sizes.empty())
+			WriteData(_sPath, _sDatasetName + "S", sizes);
 	}
 
 	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<std::vector<double>>& _vvData) const;
@@ -206,7 +213,7 @@ public:
 		}
 		else if constexpr (std::is_enum_v<T>)
 		{
-			int64_t value{};
+			int64_t value{ ~0 };
 			ReadValue(_sPath, _sDatasetName, GetType<decltype(value)>(), &value);
 			_data = static_cast<T>(value);
 		}
@@ -234,7 +241,7 @@ public:
 		}
 		else
 		{
-			if(!_data.empty())
+			if (!_data.empty())
 				ReadValue(_sPath, _sDatasetName, GetType<T>(), &_data.front());
 		}
 	}
@@ -253,7 +260,10 @@ public:
 
 		ReadData(_sPath, _sDatasetName + "K", keys);
 		ReadData(_sPath, _sDatasetName + "V", values);
-		ReadData(_sPath, _sDatasetName + "S", sizes);
+
+		const auto& datasetNameSize = _sDatasetName + "S";
+		if (ReadSize(_sPath, datasetNameSize) > 0)
+			ReadData(_sPath, datasetNameSize, sizes);
 
 		auto it = values.begin();
 		for (size_t i = 0; i < keys.size(); ++i)
