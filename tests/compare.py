@@ -80,7 +80,12 @@ if __name__ == "__main__":
                     sys.exit(
                         f"Words number {c+1} in line {l+1} differ in reference ({wr}) and in compare ({wc}) files!")
 
-                calculatedTolerance = abs(wrf - wrc)/min(abs(wrf), abs(wrc))
+                reference = min(abs(wrf), abs(wrc))
+                calculatedTolerance = 0
+                if reference != 0:
+                    calculatedTolerance = abs(wrf - wrc)/reference
+                else:
+                    calculatedTolerance = abs(wrf - wrc)
                 if (calculatedTolerance > tolerance):
                     sys.exit(
                         f"Calculated tolerance ({calculatedTolerance}) is higher as required ({tolerance}), word number {c+1} in line {l+1}: reference ({wr}) and compare ({wc})!")
