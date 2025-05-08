@@ -7,7 +7,6 @@
 #include <codecvt>
 #endif
 #include <sstream>
-#include <algorithm>
 #include <locale>
 #include <cctype>
 #include <iomanip>
@@ -355,16 +354,5 @@ namespace StringFunctions
 		if (std::find(_existing.begin(), _existing.end(), _init) == _existing.end())
 			return _init;
 		return GenerateUniqueKey(_existing, _length);
-	}
-
-	// Returns a name consisting of _namingBase + number not yet in _existing
-	std::string GenerateUniqueName(const std::string& _namingBase, const std::vector<std::string>& _existing)
-	{
-		const auto isNameAlreadyUsed = [&_existing](const std::string& _name)
-		{
-			return std::find(_existing.begin(), _existing.end(), _name) != _existing.end();
-		};
-
-		return GenerateUniqueName(_namingBase, isNameAlreadyUsed);
 	}
 }

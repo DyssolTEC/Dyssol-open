@@ -3,8 +3,10 @@
 #pragma once
 
 #include <string>
+#include <string_view>
 #include <vector>
 #include <set>
+#include <algorithm>
 #include <cstdint>
 
 namespace StringFunctions
@@ -59,16 +61,27 @@ namespace StringFunctions
 	std::string ToUpperCase(const std::string& _s); // Returns a copy of the string _s with all characters in upper case.
 
 	std::string GetRestOfLine(std::istream& _is);												// Returns the full string until the end-of-line without trailing whitespaces.
-	template<typename T> T GetValueFromStream(std::istream& _is) { T v{}; _is >> v; return v; }	// Returns the next value from the stream and advances stream's iterator correspondingly.
-	template<> bool GetValueFromStream(std::istream& _is);										// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for bool type.
-	template<> double GetValueFromStream(std::istream& _is);									// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for double type.
-	template<> std::string GetValueFromStream(std::istream& _is);								// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for string type.
-	template<> std::vector<double> GetValueFromStream(std::istream& _is);						// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for vector<double>.
-	template<> std::vector<uint64_t> GetValueFromStream(std::istream& _is);						// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for vector<uint64_t>.
-	template<> std::vector<std::string> GetValueFromStream(std::istream& _is);					// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for vector<string>.
+
+	// Returns the next value from the stream and advances stream's iterator correspondingly.
+	template<typename T> inline T GetValueFromStream(std::istream& _is) { T v{}; _is >> v; return v; }
+	// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for bool type.
+	template<> bool GetValueFromStream(std::istream& _is);
+	// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for double type.
+	template<> double GetValueFromStream(std::istream& _is);
+	// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for string type.
+	template<> std::string GetValueFromStream(std::istream& _is);
+	// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for vector<double>.
+	template<> std::vector<double> GetValueFromStream(std::istream& _is);
+	// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for vector<uint64_t>.
+	template<> std::vector<uint64_t> GetValueFromStream(std::istream& _is);
+	// Returns the next value from the stream and advances stream's iterator correspondingly. Overload for vector<string>.
+	template<> std::vector<std::string> GetValueFromStream(std::istream& _is);
+	// Returns the next value from the stream and advances stream's iterator correspondingly. Version for enum types.
 	template<typename T>
-	std::enable_if_t<std::is_enum_v<T>, T> GetEnumFromStream(std::istream& _is)					// Returns the next value from the stream and advances stream's iterator correspondingly. Version for enum types.
-	{ return static_cast<T>(GetValueFromStream<std::underlying_type_t<T>>(_is)); }
+	inline std::enable_if_t<std::is_enum_v<T>, T> GetEnumFromStream(std::istream& _is)
+	{
+		return static_cast<T>(GetValueFromStream<std::underlying_type_t<T>>(_is));
+	}
 
 	std::string ToString(const std::set<double>& _set); // Returns a comma separated string representation of the set.
 
@@ -84,8 +97,6 @@ namespace StringFunctions
 	std::string GenerateUniqueKey(const std::vector<std::string>& _existing, size_t _length = 20);
 	// Returns a string with the specified length, which will be unique among the set of existing strings.
 	std::string GenerateUniqueKey(const std::string& _init, const std::vector<std::string>& _existing, size_t _length = 20);
-	// Returns a name consisting of _namingBase + number not yet in _existing
-	std::string GenerateUniqueName(const std::string& _namingBase, const std::vector<std::string>& _existing);
 
 	/**
 	 * Returns a unique name by appending a numeric suffix to the provided \p _namingBase if it's already used
@@ -93,7 +104,7 @@ namespace StringFunctions
 	 * \param _isNameAlreadyUsed A callable that checks if the given name is already in use.
 	 */
 	template <typename FUNC, typename = std::enable_if_t<std::is_invocable_v<FUNC, const std::string&>>>
-	std::string GenerateUniqueName(const std::string& _namingBase, FUNC& _isNameAlreadyUsed)
+	inline std::string GenerateUniqueName(const std::string& _namingBase, FUNC&& _isNameAlreadyUsed)
 	{
 		auto nameToUse = _namingBase;
 		int suffix = 1;
@@ -102,5 +113,17 @@ namespace StringFunctions
 			nameToUse = _namingBase + " " + std::to_string(suffix++);
 
 		return nameToUse;
+	}
+
+	// Returns a name consisting of _namingBase + number not yet in _existing
+	template<typename T, typename = std::enable_if_t<std::is_convertible_v<T, std::string_view>>>
+	inline std::string GenerateUniqueName(const std::string& _namingBase, const std::vector<T>& _existing)
+	{
+		const auto isNameAlreadyUsed = [&_existing](const std::string& _name)
+			{
+				return std::find(_existing.begin(), _existing.end(), _name) != _existing.end();
+			};
+
+		return GenerateUniqueName(_namingBase, isNameAlreadyUsed);
 	}
 }
