@@ -14,7 +14,7 @@ if (-not (Get-Command Expand-7Zip -ErrorAction Ignore)) {
 ################################################################################
 ### Paths
 
-$ZLIB_VERSION          = "1.3"
+$ZLIB_VERSION          = "1.3.1"
 $ZLIB_NAME             = "zlib-$ZLIB_VERSION"
 $ZLIB_TAR_NAME         = "$ZLIB_NAME.tar"
 $ZLIB_ZIP_NAME         = "$ZLIB_TAR_NAME.gz"
