@@ -63,52 +63,52 @@ void CParametersHolder::SaveToFile(CH5Handler& _h5File, const std::string& _sPat
 	_h5File.WriteAttribute(_sPath, StrConst::FlPar_H5AttrSaveVersion, m_cnSaveVersion);
 
 	// save tolerances
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5ATol, absTol);
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5RTol, relTol);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5ATol, absTol.data);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5RTol, relTol.data);
 
 	// save minimal fraction
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5MinFrac, minFraction);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5MinFrac, minFraction.data);
 
 	// save simulation time
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5SimTimeStart, startSimulationTime);
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5SimTime, endSimulationTime);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5SimTimeStart, startSimulationTime.data);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5SimTime, endSimulationTime.data);
 
 	// save time window parameters
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5InitTimeWin, initTimeWindow);
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5MinTimeWin, minTimeWindow);
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5MaxTimeWin, maxTimeWindow);
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5MaxStepsNum, maxItersNumber);
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5MagnificRatio, magnificationRatio);
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5UpperLimit, itersUpperLimit);
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5LowerLimit, itersLowerLimit);
-	_h5File.WriteData(_sPath, StrConst::FlPar_H51stUpperLimit, iters1stUpperLimit);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5InitTimeWin, initTimeWindow.data);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5MinTimeWin, minTimeWindow.data);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5MaxTimeWin, maxTimeWindow.data);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5MaxStepsNum, maxItersNumber.data);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5MagnificRatio, magnificationRatio.data);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5UpperLimit, itersUpperLimit.data);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5LowerLimit, itersLowerLimit.data);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H51stUpperLimit, iters1stUpperLimit.data);
 
 	// save convergence and extrapolation parameters
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5ConvMethod, static_cast<uint32_t>(static_cast<EConvergenceMethod>(convergenceMethod)));
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5WegsteinParam, wegsteinAccelParam);
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5RelaxParam, relaxationParam);
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5ExtrapMethod, static_cast<uint32_t>(static_cast<EExtrapolationMethod>(extrapolationMethod)));
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5ConvMethod, static_cast<uint32_t>(static_cast<EConvergenceMethod>(convergenceMethod.data)));
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5WegsteinParam, wegsteinAccelParam.data);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5RelaxParam, relaxationParam.data);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5ExtrapMethod, static_cast<uint32_t>(static_cast<EExtrapolationMethod>(extrapolationMethod.data)));
 
 	// save compression
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5SaveTimeStep, saveTimeStep);
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5SaveTimeStepFlagHoldups, saveTimeStepFlagHoldups);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5SaveTimeStep, saveTimeStep.data);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5SaveTimeStepFlagHoldups, saveTimeStepFlagHoldups.data);
 
 	// save cache parameters
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5CacheFlagStreams, cacheFlagStreamsAfterReload);
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5CacheFlagHoldups, cacheFlagHoldupsAfterReload);
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5CacheFlagInternal, cacheFlagInternalAfterReload);
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5CacheWindow, cacheWindowAfterReload);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5CacheFlagStreams, cacheFlagStreamsAfterReload.data);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5CacheFlagHoldups, cacheFlagHoldupsAfterReload.data);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5CacheFlagInternal, cacheFlagInternalAfterReload.data);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5CacheWindow, cacheWindowAfterReload.data);
 
 	// save file saving parameters
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5FileSingleFlag, fileSingleFlag);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5FileSingleFlag, fileSingleFlag.data);
 
 	// save tear streams initialization parameters
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5InitTearStreamsFlag, initializeTearStreamsAutoFlag);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5InitTearStreamsFlag, initializeTearStreamsAutoFlag.data);
 
 	// enthalpy calculator
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5EnthalpyMinT     , enthalpyMinT);
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5EnthalpyMaxT     , enthalpyMaxT);
-	_h5File.WriteData(_sPath, StrConst::FlPar_H5EnthalpyIntervals, enthalpyInt);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5EnthalpyMinT     , enthalpyMinT.data);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5EnthalpyMaxT     , enthalpyMaxT.data);
+	_h5File.WriteData(_sPath, StrConst::FlPar_H5EnthalpyIntervals, enthalpyInt.data);
 }
 
 void CParametersHolder::LoadFromFile(CH5Handler& _h5File, const std::string& _sPath)

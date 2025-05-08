@@ -5,11 +5,29 @@
 #pragma once
 
 #include "DyssolTypes.h"
-#include <vector>
-#include "H5Cpp.h"
 #include "DyssolFilesystem.h"
-#include <regex>
 
+#include <vector>
+#include <algorithm>
+
+namespace H5
+{
+	class H5File;
+	class DataType;
+}
+
+template<typename T>
+const H5::DataType& GetType() { static_assert(sizeof(T) == 0, "No specialization found"); }
+
+template<> const H5::DataType& GetType<double>();
+template<> const H5::DataType& GetType<uint32_t>();
+template<> const H5::DataType& GetType<uint64_t>();
+template<> const H5::DataType& GetType<int32_t>();
+template<> const H5::DataType& GetType<int64_t>();
+template<> const H5::DataType& GetType<bool>();
+template<> const H5::DataType& GetType<std::string>();
+template<> const H5::DataType& GetType<CPoint>();
+template<> const H5::DataType& GetType<STDValue>();
 
 /**
  *	IO with HDF5 files. Two modes:
@@ -22,72 +40,128 @@ class CH5Handler
 	bool m_bFileValid;
 	H5::H5File* m_ph5File;
 
+	template <typename T>
+	struct is_container { static const bool value = false; };
+
+	template <typename T>
+	struct is_container<std::vector<T>> { static const bool value = true; };
+
 public:
 	CH5Handler();
 	~CH5Handler();
 
 	void Create(const std::filesystem::path& _sFileName, bool _bSingleFile = true);	/// Create new file with truncation.
-	void Open(const std::filesystem::path& _sFileName);		/// Open existing file.
+	void Open(const std::filesystem::path& _sFileName);								/// Open existing file.
 	void Close();																	/// Close current file.
 	std::filesystem::path FileName() const;											/// Returns current file name.
 
 	std::string CreateGroup(const std::string& _sPath, const std::string& _sGroupName) const;
+	std::string OpenGroup(const std::string& _sPath, const std::string& _sGroupName) const;
 
 	void WriteAttribute(const std::string& _sPath, const std::string& _sAttrName, int _nValue) const;
 	int ReadAttribute(const std::string& _sPath, const std::string& _sAttrName) const;
 
-	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::string& _sData) const;
-	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, double _dData) const;
-	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, uint32_t _nData) const;
-	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, uint64_t _nData) const;
-	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, int64_t _nData) const;
-	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, bool _bData) const;
-	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<std::string>& _vData) const;
-	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<uint32_t>& _vData) const;
-	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<uint64_t>& _vData) const;
-	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<int32_t>& _vData) const;
-	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<int64_t>& _vData) const;
-	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<double>& _vData) const;
-	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<std::vector<double>>& _vvData) const;
-	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<STDValue>& _data) const;
-	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<CPoint>& _data) const;
+	template<typename T>
+	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const T& _data) const
+	{
+		if constexpr (std::is_same_v<T, std::string>)
+		{
+			const char* ptr = _data.c_str();
+			WriteValue(_sPath, _sDatasetName, 1, GetType<std::string>(), &ptr);
+		}
+		else if constexpr (std::is_enum_v<T>)
+		{
+			auto value = static_cast<int64_t>(_data);
+			WriteValue(_sPath, _sDatasetName, 1, GetType<decltype(value)>(), &value);
+		}
+		else
+		{
+			WriteValue(_sPath, _sDatasetName, 1, GetType<T>(), &_data);
+		}
+	}
 
-	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::string& _sData) const;
-	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, double& _dData) const;
-	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, uint32_t& _nData) const;
-	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, uint64_t& _nData) const;
-	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, int64_t& _nData) const;
-	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, bool& _bData) const;
-	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<std::string>& _vData) const;
-	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<uint32_t>& _vData) const;
-	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<uint64_t>& _vData) const;
-	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<int32_t>& _vData) const;
-	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<int64_t>& _vData) const;
-	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<double>& _vData) const;
+	template<typename T, typename = std::enable_if_t<!is_container<T>::value>>
+	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<T>& _data) const
+	{
+		if (_data.empty())
+			return;
+
+		if constexpr (std::is_same_v<T, std::string>)
+		{
+			std::vector<const char*> vCStrings(_data.size());
+			std::transform(_data.begin(), _data.end(), vCStrings.begin(), [](const auto& _str) { return _str.c_str(); });
+
+			WriteValue(_sPath, _sDatasetName, vCStrings.size(), GetType<std::string>(), &vCStrings.front());
+		}
+		else
+		{
+			WriteValue(_sPath, _sDatasetName, _data.size(), GetType<T>(), &_data.front());
+		}
+	}
+
+	void WriteData(const std::string& _sPath, const std::string& _sDatasetName, const std::vector<std::vector<double>>& _vvData) const;
+
+	template<typename T>
+	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, T& _data) const
+	{
+		if constexpr (std::is_same_v<T, std::string>)
+		{
+			_data.clear();
+
+			char* buffer{ nullptr };
+			if (ReadValue(_sPath, _sDatasetName, GetType<std::string>(), &buffer))
+				_data = buffer;
+
+			free(buffer);	// use free() since malloc is used internally by HDF5
+		}
+		else if constexpr (std::is_enum_v<T>)
+		{
+			int64_t value{};
+			ReadValue(_sPath, _sDatasetName, GetType<decltype(value)>(), &value);
+			_data = static_cast<T>(value);
+		}
+		else
+		{
+			ReadValue(_sPath, _sDatasetName, GetType<T>(), &_data);
+		}
+	}
+
+	template<typename T, typename = std::enable_if_t<!is_container<T>::value>>
+	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<T>& _data) const
+	{
+		_data.clear();
+
+		_data.resize(ReadSize(_sPath, _sDatasetName));
+
+		if constexpr (std::is_same_v<T, std::string>)
+		{
+			std::vector<char*> buffer(_data.size(), nullptr);
+			if (ReadValue(_sPath, _sDatasetName, GetType<std::string>(), buffer.data()))
+				std::copy(buffer.begin(), buffer.end(), _data.begin());
+
+			// use free() since malloc is used internally by HDF5
+			std::for_each(buffer.begin(), buffer.end(), [](auto* _ptr) { free(_ptr); });
+		}
+		else
+		{
+			if(!_data.empty())
+				ReadValue(_sPath, _sDatasetName, GetType<T>(), &_data.front());
+		}
+	}
+
 	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<std::vector<double>>& _vvData) const;
 	void ReadDataOld(const std::string& _sPath, const std::string& _sDatasetName, std::vector<std::vector<double>>& _vvData) const;
-	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<STDValue>& _data) const;
-	void ReadData(const std::string& _sPath, const std::string& _sDatasetName, std::vector<CPoint>& _data) const;
 
 	bool IsValid() const;
 
-	static std::filesystem::path DisplayFileName(std::filesystem::path _fileName);	        // Returns displayable file name in form "path/FileName.dflw", removing all [[%d]] and [[N]] from it
+	// Returns displayable file name in form "path/FileName.dflw", removing all [[%d]] and [[N]] from it
+	static std::filesystem::path DisplayFileName(std::filesystem::path _fileName);
 
 private:
-	void WriteValue(const std::string& _sPath, const std::string& _sDatasetName, hsize_t _size, const H5::DataType& _type, const void* _pValue) const;
+	void WriteValue(const std::string& _sPath, const std::string& _sDatasetName, size_t _size, const H5::DataType& _type, const void* _pValue) const;
+	// Read element count
 	size_t ReadSize(const std::string& _sPath, const std::string& _sDatasetName) const;
 	bool ReadValue(const std::string& _sPath, const std::string& _sDatasetName, const H5::DataType& _type, void* _pRes) const;
 
 	void OpenH5File(const std::filesystem::path& _sFileName, bool _bOpen, bool _bSingleFile);
-	static H5::FileAccPropList CreateFileAccPropList(bool _bSingleFile);
-
-	static H5::CompType& h5CPoint_type();	// Lazily initializes HDF5 type for CPoint and returns it.
-	static H5::CompType& h5STDValue_type(); // Lazily initializes HDF5 type for STDValue and returns it.
-	static H5::StrType& h5String_type();	// Lazily initializes HDF5 type for std::string representation and returns it.
-
-	static std::filesystem::path ConvertFileName(const std::filesystem::path& _sFileName, bool _bOpen, bool _bSingleFile);	// Converts the file name to a Dyssol format.
-	static std::filesystem::path MultiFileReadName(const std::filesystem::path& _sFileName);								// Transforms the file name to the form needed to read from multi-file.
-	static std::filesystem::path MultiFileWriteName(std::filesystem::path _sFileName);										// Transforms the file name to the form needed to write to multi-file.
-	static std::smatch FindSuffix(const std::filesystem::path& _str, const std::string& _regexStr);							// Returns results of the regex search.
-	static std::filesystem::path ReplaceMultiFileSuffix(std::filesystem::path _str, size_t _pos, size_t _len);				// Replaces _len symbols starting from _pos in _str with a multi-file suffix.
 };

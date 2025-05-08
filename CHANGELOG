@@ -1,58 +1,16 @@
 UI:
-- Allowed installation for a single user on Windows.
-- In command line mode, time is written in s.ms format.
 
 Models:
-- Added residual moisture of granules to the Granulator model.
-- Models from old DLL/SO files cannot be loaded in the current version (!).
-- Some units were renamed: HeatExchanger -> Heat exchanger, InletFlow -> Inlet flow, OutletFlow -> Outlet flow, Screen Multi-deck -> Screen multi-deck. Old CLI scripts might be updated (!).
 
 Models API:
-- Added function CBaseUnit::AddNLVariables() to KINSOL solver to add multiple state variables.
-- Added function CBaseUnit::ConfigureUnitStructures() to setup all the internal settings of the units from an existing one.
-- Added another version of function CBaseUnit::GetTimePoints() to get the time points from the list of holdups and streams.
-- Allowed to use CCheckBoxUnitParameter as grouping parameter (see CBaseUnit::AddParametersToGroup()).
-- Added functions CBaseStream::GetAllOverallProperties()/CBaseUnit::GetAllOverallProperties() to obtain the list of all defined overall properties.
-- Added function CStream::GetAccumulatedMass() to calculate the accumulated mass in the stream.
-- Changed the algorithm for calculation of HEAT_CAPACITY_CP in CBaseStream::GetPhaseProperty().
-- Added function CBaseStream::GetAllPhases() to obtain all defined phases.
-- Added function CBaseStream::GetCompoundsNumber() to obtain the number of defined compounds.
-- Added function CBaseStream::GetPhasesNumber() to get the number of defined phases.
-- Added function CBaseStream::GetDistributionsNumber() to get the number of defined distributed parameters.
-- Added function CNLSolver::GetSolverMaxIter() to set max iterations to NL solver.
-- Added functions CPortsManager::GetInputPortsNames()/GetOutputPortsNames() to access port names.
-- Added functions DiameterToMass() to calculate masses from particle diameters. 
-- Added function AddVector() to add a value to all entries of the vector.
-- Added functions Slice() and SetSlice() to simplify extraction and setting of _vars,  _ders, and _res in the solvers.
-- Added functions GetDistributionMean(), GetDistributionVariance(), GetDistributionStdDev().
-- Added functions to obtain limits of CDependentUnitParameter.
-- Added function == to compare CChemicalReaction.
-- Added function VectorContains() to check whether the vector contains a specified element.
 
 Core:
-- Drop support for Win32/x86 version.
 
 Materials database:
-- Add lactose to the default materials database.
-- Added TP-dependent mass diffusion coefficient.
-- Set the mass diffusion coefficient for H2O_gas in the default materials database.
-- Added another power function as the correlation type.
-- Added Ideal Gas function as the correlation type.
-- Updated the density of Air in the default materials database to use the Ideal Gas correlation.
 
 Documentation:
 
 Fixes:
-- Fixed a possible crash when saving a file in a write-protected directory.
-- In some cases simulation wasn't stop after pressing the stop button.
-- Fixed the work of Save Time Step setting in some cases.
-- Fixed calculation of density for a mixture of compounds with the function CBaseStream::GetPhaseProperty.
-- Fixed potential crash at program start.
-- Defining unit parameters with the same name does not result in crash.
-- Fixed possible crash when using internal streams from Initialize().
-- Holdups and feeds will always have at least one time point upon creation.
-- Fixed a rare bug if the Run button is double-clicked.
 
 Other:
-- Update default SUNDIALS library to v7.2.1.
 - Other minor bug fixes and performance improvements.
