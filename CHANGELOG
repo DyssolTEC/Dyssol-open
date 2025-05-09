@@ -1,16 +1,17 @@
-UI:
-
 Models:
+- ScreenMultideck removed from installer.
 
 Models API:
-
-Core:
+- Reworked API for distribution functions (!).
+- Fixed calculation of density in streams.
 
 Materials database:
-
-Documentation:
+- Adjusted H2Og vapor pressure.
 
 Fixes:
+- Fixed build in ModelsCreatorSDK.
 
 Other:
-- Other minor bug fixes and performance improvements.
+- Improvements in saving/loading subsystem.
+- Fixed flowsheet examples.
+- Other bug fixes and performance improvements.
