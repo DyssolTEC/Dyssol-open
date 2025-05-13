@@ -5,6 +5,7 @@
 #pragma once
 #include "BaseSolver.h"
 #include <functional>
+#include <vector>
 
 /**
  * \brief Agglomeration solver.

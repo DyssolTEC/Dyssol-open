@@ -32,8 +32,13 @@ CFlowsheetViewer::~CFlowsheetViewer()
 	try
 	{
 		// remove image
+#ifdef _WIN32
 		if (fs::exists(m_imageFullName.toStdU16String()))
 			fs::remove(m_imageFullName.toStdU16String());
+#else
+		if (fs::exists(m_imageFullName.toStdString()))
+			fs::remove(m_imageFullName.toStdString());
+#endif
 	}
 	catch (...)
 	{
@@ -50,7 +55,11 @@ void CFlowsheetViewer::SetPointers(CFlowsheet* _flowsheet, CModelsManager* _mode
 	if (!fs::exists(cachePath))
 		fs::create_directory(cachePath);
 	const fs::path path = fs::exists(cachePath) ? cachePath : fs::current_path();
+#ifdef _WIN32
 	m_imageFullName = QString::fromStdU16String((path / (StringFunctions::GenerateRandomKey() + ".png")).u16string());
+#else
+	m_imageFullName = QString::fromStdString((path / (StringFunctions::GenerateRandomKey() + ".png")).string());
+#endif
 
 	LoadSettings();
 	CreateMenu();
