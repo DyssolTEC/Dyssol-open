@@ -39,7 +39,7 @@ To install, run the [installer](https://github.com/DyssolTEC/Dyssol-open/release
 
 - Make sure all programs and tools from the [list](#compilation-requirements-on-windows) are installed.
 - Setup Qt Visual Studio Tools extension to point to the installed Qt libraries. In Visual Studio 2019, go to Extensions → Qt VS Tools → Qt Versions → add new Qt version → ... → Navigate in the Qt installation directory to `Qt/5.15.0/msvc2019/bin/qmake.exe` → rename Version to `msvc2019` → OK. Repeat for `Qt/5.15.0/msvc2019_64/bin/qmake.exe` and rename Version to `msvc2019_64`.
-- Compile and build external libraries: HDF5, graphviz, SUNDIALS, zlib. To do this, navigate to `Dyssol/ExternalLibraries/` and execute file `RunAll.bat`. It will start building all the required libraries by executing files `CompileZLib.ps1`, `CompileHDF5.ps1`, `CompileSundials.ps1`, etc. To use the scripts, the following requirements apply: Visual Studio 16 2019, CMake, PowerShell 5.0.
+- Compile and build external libraries: HDF5, SUNDIALS, zlib, etc. To do this, navigate to `Dyssol/ExternalLibraries/` and execute file `CompileAll.bat`. It will start building all the required libraries by executing files `CompileZLib.ps1`, `CompileHDF5.ps1`, `CompileSundials.ps1`, etc. To use the scripts, the following tools are necessary: Visual Studio, CMake, PowerShell, Python.
 - Open `Dyssol/Dyssol.sln` with Visual Studio and build the solution.
 
 ### Build documentation and installers on Windows
@@ -56,7 +56,7 @@ pip install -U sphinx sphinx-rtd-theme breathe
 Also, other versions of Microsoft Visual Studio can be used, but additional preparations may be required:
 
 - Install build tools for the corresponding Visual Studio.
-- Configure all *.ps1 scripts to use the required version of Visual Studio build tools before running `Dyssol/ExternalLibraries/RunAll.bat`.
+- Configure all *.ps1 scripts to use the required version of Visual Studio build tools before running `Dyssol/ExternalLibraries/CompileAll.bat`.
 - If the Models Creator SDK tool is required, files associated with it may need to be updated. They to be found in `Dyssol/DyssolInstallers/Data/ModelsCreatorSDK/`.
 
 ## Compilation on Linux

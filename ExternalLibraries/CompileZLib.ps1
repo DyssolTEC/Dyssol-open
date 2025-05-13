@@ -6,22 +6,31 @@
 ### Initializing
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+# Obtain path to this script
 $CURRENT_PATH = (Get-Item -Path ".\" -Verbose).FullName
-if (-not (Get-Command Expand-7Zip -ErrorAction Ignore)) {
-	Install-Package -Scope CurrentUser -Force -ProviderName PowerShellGet 7Zip4Powershell > $null
+# Check git is available
+try { $null = git --version }
+catch [System.Management.Automation.CommandNotFoundException] { 
+	throw "Git is not available. Install it and add to PATH." 
+}
+# Check CMake is available
+try { $null = cmake --version }
+catch [System.Management.Automation.CommandNotFoundException] { 
+	throw "CMake is not available. Install it and add to PATH." 
 }
 
 ################################################################################
 ### Paths
 
-$ZLIB_VERSION          = "1.3.1"
-$ZLIB_NAME             = "zlib-$ZLIB_VERSION"
-$ZLIB_TAR_NAME         = "$ZLIB_NAME.tar"
-$ZLIB_ZIP_NAME         = "$ZLIB_TAR_NAME.gz"
-$ZLIB_DOWNLOAD_ADDRESS = "https://github.com/madler/zlib/releases/download/v$ZLIB_VERSION/$ZLIB_ZIP_NAME"
-$ZLIB_INSTALL_PATH     = "$CURRENT_PATH\zlib"
-$ZLIB_SRC_PATH         = "$CURRENT_PATH\$ZLIB_NAME"
-$ZLIB_BUILD_PATH       = "$ZLIB_SRC_PATH\build"
+$ZLIB_MAJOR_VERSION  = "1"
+$ZLIB_MIDDLE_VERSION = "3"
+$ZLIB_MINOR_VERSION  = "1"
+$ZLIB_VERSION        = "v$ZLIB_MAJOR_VERSION.$ZLIB_MIDDLE_VERSION.$ZLIB_MINOR_VERSION"
+$ZLIB_GIT_ADDRESS    = "https://github.com/madler/zlib.git"
+$ZLIB_NAME           = "zlib-$ZLIB_VERSION"
+$ZLIB_INSTALL_PATH   = "$CURRENT_PATH\zlib"
+$ZLIB_SRC_PATH       = "$CURRENT_PATH\$ZLIB_NAME"
+$ZLIB_BUILD_PATH     = "$ZLIB_SRC_PATH\build"
 
 ################################################################################
 ### Clear old
@@ -33,8 +42,8 @@ Remove-Item $ZLIB_SRC_PATH -Force -Recurse -ErrorAction Ignore
 ################################################################################
 ### Download
 
-Invoke-WebRequest $ZLIB_DOWNLOAD_ADDRESS -OutFile $ZLIB_ZIP_NAME
-Expand-7Zip $ZLIB_ZIP_NAME . | Expand-7Zip $ZLIB_TAR_NAME .
+# Clone selected version
+git -c advice.detachedHead=false clone --branch $ZLIB_VERSION --depth 1 $ZLIB_GIT_ADDRESS $ZLIB_SRC_PATH
 
 ################################################################################
 ### Build and install
@@ -43,18 +52,20 @@ Expand-7Zip $ZLIB_ZIP_NAME . | Expand-7Zip $ZLIB_TAR_NAME .
 New-Item $ZLIB_BUILD_PATH -ItemType directory
 Set-Location $ZLIB_BUILD_PATH
 cmake -G "Visual Studio 16 2019" -A x64 $ZLIB_SRC_PATH `
-	-DCMAKE_INSTALL_PREFIX:PATH=$ZLIB_INSTALL_PATH
+	-DCMAKE_INSTALL_PREFIX:PATH=$ZLIB_INSTALL_PATH `
+	-DZLIB_BUILD_EXAMPLES=NO
 cmake --build . --parallel --target INSTALL --config Debug
 cmake --build . --parallel --target INSTALL --config Release
 
 ################################################################################
 ### Copy *.pdb files
 
-Copy-Item "$ZLIB_BUILD_PATH\Debug\zlibstaticd.pdb" "$ZLIB_INSTALL_PATH\lib\zlibstaticd.pdb"
+Copy-Item "$ZLIB_BUILD_PATH\Debug\*.pdb" "$ZLIB_INSTALL_PATH\lib\"
 
 ################################################################################
 ### Clean installation directory
 
+# Need to clean up to avoid putting unnecessary files into the installer
 $REM_ZLIB_ROOT_LIST = @(
 	"bin",
 	"share",
@@ -79,5 +90,5 @@ Set-Location $CURRENT_PATH
 
 Remove-Item $ZLIB_BUILD_PATH -Force -Recurse
 Remove-Item $ZLIB_SRC_PATH -Force -Recurse
-Remove-Item $ZLIB_ZIP_NAME -Force -Recurse
-Remove-Item $ZLIB_TAR_NAME -Force -Recurse
+
+Write-Host "Completed! $ZLIB_NAME library is installed at: $ZLIB_INSTALL_PATH" -ForegroundColor Green
