@@ -27,9 +27,9 @@ catch [System.Management.Automation.CommandNotFoundException] {
 ################################################################################
 ### Paths
 
-$GRAPHVIZ_MAJOR_VERSION  = "7"
-$GRAPHVIZ_MIDDLE_VERSION = "0"
-$GRAPHVIZ_MINOR_VERSION  = "4"
+$GRAPHVIZ_MAJOR_VERSION  = "12"
+$GRAPHVIZ_MIDDLE_VERSION = "2"
+$GRAPHVIZ_MINOR_VERSION  = "1"
 $GRAPHVIZ_VERSION        = "$GRAPHVIZ_MAJOR_VERSION.$GRAPHVIZ_MIDDLE_VERSION.$GRAPHVIZ_MINOR_VERSION"
 $GRAPHVIZ_GIT_ADDRESS    = "https://gitlab.com/graphviz/graphviz.git"
 $GRAPHVIZ_NAME           = "graphviz-$GRAPHVIZ_VERSION"
@@ -70,39 +70,42 @@ New-Item $GRAPHVIZ_BUILD_PATH -ItemType directory
 Set-Location $GRAPHVIZ_BUILD_PATH
 cmake -G "Visual Studio 17 2022" -A x64 $GRAPHVIZ_SRC_PATH `
 	-DCMAKE_INSTALL_PREFIX:PATH=$GRAPHVIZ_INSTALL_PATH `
-	-DCMAKE_DISABLE_FIND_PACKAGE_ANN=YES `
-	-DCMAKE_DISABLE_FIND_PACKAGE_CAIRO=YES `
-	-DCMAKE_DISABLE_FIND_PACKAGE_GD=YES `
-	-DCMAKE_DISABLE_FIND_PACKAGE_GTK2=YES `
-	-DCMAKE_DISABLE_FIND_PACKAGE_Freetype=YES `
-	-DCMAKE_DISABLE_FIND_PACKAGE_NSIS=YES `
-	-DCMAKE_DISABLE_FIND_PACKAGE_PANGOCAIRO=YES `
+	-DCMAKE_DISABLE_FIND_PACKAGE_ANN=ON `
+	-DCMAKE_DISABLE_FIND_PACKAGE_CAIRO=ON `
+	-DCMAKE_DISABLE_FIND_PACKAGE_GD=ON `
+	-DCMAKE_DISABLE_FIND_PACKAGE_GTK2=ON `
+	-DCMAKE_DISABLE_FIND_PACKAGE_Freetype=ON `
+	-DCMAKE_DISABLE_FIND_PACKAGE_NSIS=ON `
+	-DCMAKE_DISABLE_FIND_PACKAGE_PANGOCAIRO=ON `
+	-DBUILD_TESTING=OFF `
 	-DPKG_CONFIG_EXECUTABLE="" `
 	-DBISON_EXECUTABLE="$DEPEND_UTILS\winflexbison\win_bison.exe" `
-	-DBUILD_TESTING=NO `
-	-DEXPAT_INCLUDE_DIR="$DEPEND_LIBS\include" `
-	-DEXPAT_LIBRARY="$DEPEND_LIBS\lib\expat.lib" `
-	-DEXPAT_RUNTIME_LIBRARIES="$DEPEND_LIBS\bin\expat.dll" `
 	-DFLEX_EXECUTABLE="$DEPEND_UTILS\winflexbison\win_flex.exe" `
-	-DFLEX_INCLUDE_DIR="$DEPEND_UTILS\winflexbison" `
-	-DLTDL_INCLUDE_DIR="$DEPEND_LIBS\include" `
+	-DWITH_ZLIB=ON `
 	-DZLIB_INCLUDE_DIR="$ZLIB_INSTALL_PATH\include" `
 	-DZLIB_LIBRARY_DEBUG="$ZLIB_INSTALL_PATH\lib\zlibstaticd.lib" `
 	-DZLIB_LIBRARY_RELEASE="$ZLIB_INSTALL_PATH\lib\zlibstatic.lib" `
-	-Denable_ltdl=YES `
-	-Duse_coverage=NO `
-	-Duse_sanitizers=NO `
-	-Duse_win_pre_inst_libs=YES `
-	-Dwith_cxx_api=NO `
-	-Dwith_cxx_tests=NO `
-	-Dwith_digcola=NO `
-	-Dwith_expat=YES `
-	-Dwith_gvedit=NO `
-	-Dwith_ipsepcola=NO `
-	-Dwith_ortho=NO `
-	-Dwith_sfdp=NO `
-	-Dwith_smyrna=NO `
-	-Dwith_zlib=YES
+	-DENABLE_D=OFF `
+	-DENABLE_GO=OFF `
+	-DENABLE_GUILE=OFF `
+	-DENABLE_JAVA=OFF `
+	-DENABLE_JAVASCRIPT=OFF `
+	-DENABLE_LTDL=ON `
+	-DENABLE_LUA=OFF `
+	-DENABLE_PERL=OFF `
+	-DENABLE_PHP=OFF `
+	-DENABLE_R=OFF `
+	-DENABLE_SHARP=OFF `
+	-DENABLE_SWIG=OFF `
+	-DENABLE_TCL=OFF `
+	-Duse_coverage=OFF `
+	-Duse_win_pre_inst_libs=ON `
+	-Dwith_cxx_api=OFF `
+	-Dwith_cxx_tests=OFF `
+	-Dwith_digcola=OFF `
+	-Dwith_ipsepcola=OFF `
+	-Dwith_ortho=OFF `
+	-Dwith_sfdp=OFF
 cmake --build . --parallel --target INSTALL --config Release
 Copy-Item -Path "$CURRENT_PATH\graphviz_config" -Destination "$GRAPHVIZ_INSTALL_PATH\bin\config6"
 
@@ -111,33 +114,28 @@ Copy-Item -Path "$CURRENT_PATH\graphviz_config" -Destination "$GRAPHVIZ_INSTALL_
 
 # Need to clean up to avoid putting unnecessary files into the installer
 $REM_GRAPHVIZ_ROOT_LIST = @(
+	"bin\dot_sandbox",
+	"lib\graphviz",
 	"lib\pkgconfig",
 	"share"
 )
 $REM_GRAPHVIZ_DLL_LIST = @(
-	"cairo", 
 	"concrt140", 
-	"fontconfig", 
 	"getopt", 
-	"glib-2", 
-	"gobject-2", 
-	"gvplugin_gd", 
 	"gvplugin_neato_layout", 
-	"gvplugin_pango", 
-	"libgd", 
-	"libharfbuzz-0", 
+	"gvplugin_vt", 
 	"msvcp140", 
 	"msvcp140_1",
 	"msvcp140_2",
 	"msvcp140_atomic_wait",
 	"msvcp140_codecvt_ids",
-	"pango-1",
-	"pangocairo-1",
-	"pangoft2-1",
-	"pangowin32-1",
-	"pixman-1",
-	"vcruntime140"
-	"vcruntime140_1"
+	"tcl86t",
+	"tcldot",
+	"tcldot_builtin",
+	"tclplan",
+	"vcruntime140",
+	"vcruntime140_1",
+	"zlib1"
 )
 $REM_GRAPHVIZ_INCLUDE_LIST = @(
 	"color",
@@ -157,10 +155,9 @@ $REM_GRAPHVIZ_INCLUDE_LIST = @(
 $REM_GRAPHVIZ_LIB_LIST = @(
 	"gvplugin_core", 
 	"gvplugin_dot_layout", 
-	"gvplugin_gd", 
 	"gvplugin_gdiplus", 
 	"gvplugin_neato_layout", 
-	"gvplugin_pango", 
+	"gvplugin_vt", 
 	"pathplan", 
 	"xdot"
 )

@@ -80,7 +80,7 @@ Agraph_t* CGraphvizHandler::CreateGraph() const
 	char valShapePlain[] = "plaintext";
 
 	// create directed graph
-	constexpr Agdesc_t directed{ 1,0,0,1,0,0,0,0 };
+	constexpr Agdesc_t directed{ 1,0,0,1,0,0,0 };
 	Agraph_t* graph = agopen(empty, directed, nullptr);
 	agsafeset(graph, attrNodesep, valNodesep, empty);
 	agsafeset(graph, attrFontsize, valFontsize, empty);
