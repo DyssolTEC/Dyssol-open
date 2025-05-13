@@ -27,7 +27,7 @@ env:
 
 jobs:
   build:
-    runs-on: windows-2019
+    runs-on: windows-2022
 
     steps:
     - name: Checkout
@@ -145,7 +145,7 @@ jobs:
           ${{github.workspace}}/${{env.BUILD_PLATFORM}}/${{env.BUILD_CONFIGURATION}}/*.dll
 
   tests:
-    runs-on: windows-2019
+    runs-on: windows-2022
     needs: build
 
     steps:
@@ -167,7 +167,7 @@ jobs:
       run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:TestsPreBuild=false ${{env.TESTS_PROJECT_PATH}}
 
   docs:
-    runs-on: windows-2019
+    runs-on: windows-2022
 
     steps:
     - name: Checkout
@@ -222,7 +222,7 @@ jobs:
         path: ${{github.workspace}}/install/windows
 
   installer:
-    runs-on: windows-2019
+    runs-on: windows-2022
     needs: [build, docs]
     if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
 
@@ -378,7 +378,7 @@ jobs:
         Start-Process -FilePath $UnInstallerFile -ArgumentList "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /skipaskconfig=yes" -Wait
 
   release:
-    runs-on: windows-2019
+    runs-on: windows-2022
     needs: [tests, installer]
     if: startsWith(github.ref, 'refs/tags/v')
 
@@ -429,7 +429,7 @@ jobs:
           Dyssol.${{steps.get-version.outputs.VERSION}}.open.portable.zip
 
   cleanup:
-    runs-on: windows-2019
+    runs-on: windows-2022
     needs: [tests, installer, release]
     if: ${{always()}}
 

@@ -51,7 +51,7 @@ git -c advice.detachedHead=false clone --branch $ZLIB_VERSION --depth 1 $ZLIB_GI
 # Build
 New-Item $ZLIB_BUILD_PATH -ItemType directory
 Set-Location $ZLIB_BUILD_PATH
-cmake -G "Visual Studio 16 2019" -A x64 $ZLIB_SRC_PATH `
+cmake -G "Visual Studio 17 2022" -A x64 $ZLIB_SRC_PATH `
 	-DCMAKE_INSTALL_PREFIX:PATH=$ZLIB_INSTALL_PATH `
 	-DZLIB_BUILD_EXAMPLES=NO
 cmake --build . --parallel --target INSTALL --config Debug

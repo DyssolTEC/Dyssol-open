@@ -14,9 +14,10 @@ OPTION(BUILD_BINARIES "Whether to build binary files" ON)
 OPTION(BUILD_DOCS "Whether to build documentation" ON)
 OPTION(BUILD_TESTS "Whether to build tests" ON)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_C_STANDARD 17)
 
 project(Dyssol VERSION ${VERSION} LANGUAGES CXX)
 

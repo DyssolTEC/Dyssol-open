@@ -20,16 +20,16 @@ Dyssol® is a registered trade mark of DyssolTEC GmbH.
 ## Installation on Windows
 
 Dyssol should install and work on all latest versions of Windows.
-Requires Visual C++ Redistributable for Visual Studio 2019 to run.
+Requires Visual C++ Redistributable for Visual Studio 2022 to run.
 To install, run the [installer](https://github.com/DyssolTEC/Dyssol-open/releases) and follow the instructions.
 
 ## Compilation on Windows
 
 ### Compilation requirements on Windows
 
-- [Microsoft Visual Studio 2019](https://visualstudio.microsoft.com/vs/older-downloads/), Desktop development with C++ workload.
-- [Qt 5.15.2](https://www.qt.io/download-qt-installer) msvc2019 / msvc2019_64
-- [Qt Visual Studio Tools](https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools2019) for Visual Studio 2019
+- [Microsoft Visual Studio 2022](https://visualstudio.microsoft.com/downloads/), Desktop development with C++ workload.
+- [Qt 5.15.2](https://www.qt.io/download-qt-installer) msvc2019_64
+- [Qt Visual Studio Tools](https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools2022) for Visual Studio 2022
 - [CMake](https://cmake.org/download/) 3.1.0 or higher
 - [Python](https://www.python.org/downloads/) 3.8 or higher
 - [Git](https://git-scm.com/download/win)
@@ -38,7 +38,7 @@ To install, run the [installer](https://github.com/DyssolTEC/Dyssol-open/release
 ### Build on Windows
 
 - Make sure all programs and tools from the [list](#compilation-requirements-on-windows) are installed.
-- Setup Qt Visual Studio Tools extension to point to the installed Qt libraries. In Visual Studio 2019, go to Extensions → Qt VS Tools → Qt Versions → add new Qt version → ... → Navigate in the Qt installation directory to `Qt/5.15.0/msvc2019/bin/qmake.exe` → rename Version to `msvc2019` → OK. Repeat for `Qt/5.15.0/msvc2019_64/bin/qmake.exe` and rename Version to `msvc2019_64`.
+- Setup Qt Visual Studio Tools extension to point to the installed Qt libraries. In Visual Studio, go to Extensions → Qt VS Tools → Qt Versions → add new Qt version → ... → Navigate in the Qt installation directory to `Qt/5.15.2/msvc2019_64/bin/qmake.exe` → rename Version to `msvc2019_64` → OK.
 - Compile and build external libraries: HDF5, SUNDIALS, zlib, etc. To do this, navigate to `Dyssol/ExternalLibraries/` and execute file `CompileAll.bat`. It will start building all the required libraries by executing files `CompileZLib.ps1`, `CompileHDF5.ps1`, `CompileSundials.ps1`, etc. To use the scripts, the following tools are necessary: Visual Studio, CMake, PowerShell, Python.
 - Open `Dyssol/Dyssol.sln` with Visual Studio and build the solution.
 
