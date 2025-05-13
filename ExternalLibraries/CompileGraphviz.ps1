@@ -6,16 +6,23 @@
 ### Initializing
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+# Obtain path to this script
 $CURRENT_PATH = (Get-Item -Path ".\" -Verbose).FullName
 # Check git is available
 try { $null = git --version }
-catch [System.Management.Automation.CommandNotFoundException] { Throw "Git is not available. Install it and add to PATH." }
-# Check cmake is available
+catch [System.Management.Automation.CommandNotFoundException] { 
+	throw "Git is not available. Install it and add to PATH." 
+}
+# Check CMake is available
 try { $null = cmake --version }
-catch [System.Management.Automation.CommandNotFoundException] { Throw "CMake is not available. Install it and add to PATH." }
+catch [System.Management.Automation.CommandNotFoundException] { 
+	throw "CMake is not available. Install it and add to PATH." 
+}
 # Check python3 is available
 try { $null = py --version }
-catch [System.Management.Automation.CommandNotFoundException] { Throw "python3 is not available. Install it and add to PATH." }
+catch [System.Management.Automation.CommandNotFoundException] { 
+	throw "python3 is not available. Install it and add to PATH." 
+}
 
 ################################################################################
 ### Paths
@@ -44,14 +51,14 @@ Remove-Item $GRAPHVIZ_SRC_PATH     -Force -Recurse -ErrorAction Ignore
 ### Download
 
 # Clone selected version
-git clone --branch $GRAPHVIZ_VERSION --depth 1 $GRAPHVIZ_GIT_ADDRESS $GRAPHVIZ_SRC_PATH
-
-################################################################################
-### Build and install
+git -c advice.detachedHead=false clone --branch $GRAPHVIZ_VERSION --depth 1 $GRAPHVIZ_GIT_ADDRESS $GRAPHVIZ_SRC_PATH
 
 # Download and initialize dependencies
 Set-Location $GRAPHVIZ_SRC_PATH
 git submodule update --init
+
+################################################################################
+### Build and install
 
 # Paths to dependencies
 $DEPEND_PATH  = "$GRAPHVIZ_SRC_PATH\windows\dependencies"
@@ -102,6 +109,7 @@ Copy-Item -Path "$CURRENT_PATH\graphviz_config" -Destination "$GRAPHVIZ_INSTALL_
 ################################################################################
 ### Clean installation directory
 
+# Need to clean up to avoid putting unnecessary files into the installer
 $REM_GRAPHVIZ_ROOT_LIST = @(
 	"lib\pkgconfig",
 	"share"
@@ -185,3 +193,5 @@ Set-Location $CURRENT_PATH
 
 Remove-Item $GRAPHVIZ_BUILD_PATH -Force -Recurse
 Remove-Item $GRAPHVIZ_SRC_PATH   -Force -Recurse
+
+Write-Host "Completed! $GRAPHVIZ_NAME library is installed at: $GRAPHVIZ_INSTALL_PATH" -ForegroundColor Green

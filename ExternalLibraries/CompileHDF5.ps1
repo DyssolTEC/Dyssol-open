@@ -6,9 +6,17 @@
 ### Initializing
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+# Obtain path to this script
 $CURRENT_PATH = (Get-Item -Path ".\" -Verbose).FullName
-if (-not (Get-Command Expand-7Zip -ErrorAction Ignore)) {
-	Install-Package -Scope CurrentUser -Force -ProviderName PowerShellGet 7Zip4Powershell > $null
+# Check git is available
+try { $null = git --version }
+catch [System.Management.Automation.CommandNotFoundException] { 
+	throw "Git is not available. Install it and add to PATH." 
+}
+# Check CMake is available
+try { $null = cmake --version }
+catch [System.Management.Automation.CommandNotFoundException] { 
+	throw "CMake is not available. Install it and add to PATH." 
 }
 
 ################################################################################
@@ -17,10 +25,9 @@ if (-not (Get-Command Expand-7Zip -ErrorAction Ignore)) {
 $HDF5_MAJOR_VERSION    = "1"
 $HDF5_MIDDLE_VERSION   = "12"
 $HDF5_MINOR_VERSION    = "2"
-$HDF5_VERSION          = "$HDF5_MAJOR_VERSION.$HDF5_MIDDLE_VERSION.$HDF5_MINOR_VERSION"
-$HDF5_DOWNLOAD_ADDRESS = "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-$HDF5_MAJOR_VERSION.$HDF5_MIDDLE_VERSION/hdf5-$HDF5_VERSION/src/hdf5-$HDF5_VERSION.zip"
+$HDF5_VERSION          = "$HDF5_MAJOR_VERSION`_$HDF5_MIDDLE_VERSION`_$HDF5_MINOR_VERSION"
+$HDF5_GIT_ADDRESS      = "https://github.com/HDFGroup/hdf5.git"
 $HDF5_NAME             = "hdf5-$HDF5_VERSION"
-$HDF5_ZIP_NAME         = "$HDF5_NAME.zip"
 $HDF5_INSTALL_PATH     = "$CURRENT_PATH\hdf5"
 $HDF5_SRC_PATH         = "$CURRENT_PATH\$HDF5_NAME"
 $HDF5_BUILD_PATH       = "$HDF5_SRC_PATH\build"
@@ -38,8 +45,8 @@ Remove-Item $HDF5_SRC_PATH -Force -Recurse -ErrorAction Ignore
 ################################################################################
 ### Download
 
-Invoke-WebRequest $HDF5_DOWNLOAD_ADDRESS -OutFile $HDF5_ZIP_NAME
-Expand-Archive -Path $HDF5_ZIP_NAME -DestinationPath .
+# Clone selected version
+git -c advice.detachedHead=false clone --branch $HDF5_NAME --depth 1 $HDF5_GIT_ADDRESS $HDF5_SRC_PATH
 
 ################################################################################
 ### Build and install
@@ -55,8 +62,10 @@ cmake -G "Visual Studio 16 2019" -A x64 $HDF5_SRC_PATH `
 	-DHDF5_BUILD_HL_LIB=YES `
 	-DHDF5_BUILD_EXAMPLES=NO `
 	-DHDF5_BUILD_TOOLS=NO `
+	-DHDF5_BUILD_UTILS=NO `
+	-DHDF5_ENABLE_ALL_WARNINGS=NO `
 	-DHDF5_ENABLE_Z_LIB_SUPPORT=YES `
-	-DZLIB_DIR="" `
+	-DZLIB_DIR="$ZLIB_INSTALL_PATH" `
 	-DZLIB_INCLUDE_DIR="$ZLIB_INSTALL_PATH/include" `
 	-DZLIB_LIBRARY_DEBUG="$ZLIB_INSTALL_PATH/lib/zlibstaticd.lib" `
 	-DZLIB_LIBRARY_RELEASE="$ZLIB_INSTALL_PATH/lib/zlibstatic.lib"
@@ -66,14 +75,12 @@ cmake --build . --parallel --target INSTALL --config Release
 ################################################################################
 ### Copy *.pdb files
 
-Copy-Item "$HDF5_BUILD_PATH\bin\Debug\libhdf5_D.pdb"        "$HDF5_INSTALL_PATH\lib\libhdf5_D.pdb"
-Copy-Item "$HDF5_BUILD_PATH\bin\Debug\libhdf5_hl_D.pdb"     "$HDF5_INSTALL_PATH\lib\libhdf5_hl_D.pdb"
-Copy-Item "$HDF5_BUILD_PATH\bin\Debug\libhdf5_cpp_D.pdb"    "$HDF5_INSTALL_PATH\lib\libhdf5_cpp_D.pdb"
-Copy-Item "$HDF5_BUILD_PATH\bin\Debug\libhdf5_hl_cpp_D.pdb" "$HDF5_INSTALL_PATH\lib\libhdf5_hl_cpp_D.pdb"
+Copy-Item "$HDF5_BUILD_PATH\bin\Debug\*.pdb"        "$HDF5_INSTALL_PATH\lib\"
 
 ################################################################################
 ### Clean installation directory
 
+# Need to clean up to avoid putting unnecessary files into the installer
 $REM_HDF5_ROOT_LIST = @(
 	"bin",
 	"cmake",
@@ -158,4 +165,5 @@ Set-Location $CURRENT_PATH
 
 Remove-Item $HDF5_BUILD_PATH -Force -Recurse
 Remove-Item $HDF5_SRC_PATH -Force -Recurse
-Remove-Item $HDF5_ZIP_NAME -Force -Recurse
+
+Write-Host "Completed! $HDF5_NAME library is installed at: $HDF5_INSTALL_PATH" -ForegroundColor Green
