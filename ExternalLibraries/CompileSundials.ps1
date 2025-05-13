@@ -23,8 +23,8 @@ catch [System.Management.Automation.CommandNotFoundException] {
 ### Paths
 
 $SUNDIALS_MAJOR_VERSION    = "7"
-$SUNDIALS_MIDDLE_VERSION   = "2"
-$SUNDIALS_MINOR_VERSION    = "1"
+$SUNDIALS_MIDDLE_VERSION   = "3"
+$SUNDIALS_MINOR_VERSION    = "0"
 $SUNDIALS_VERSION          = "v$SUNDIALS_MAJOR_VERSION.$SUNDIALS_MIDDLE_VERSION.$SUNDIALS_MINOR_VERSION"
 $SUNDIALS_GIT_ADDRESS      = "https://github.com/LLNL/sundials.git"
 $SUNDIALS_NAME             = "sundials-$SUNDIALS_VERSION"
@@ -107,6 +107,7 @@ elseif ([int]$SUNDIALS_MAJOR_VERSION -ge 7) {
 # Need to clean up to avoid putting unnecessary files into the installer
 $REM_ROOT_LIST = @(
 	"include\sunadaptcontroller"
+	"include\sunadjointcheckpointscheme"
 	"include\sunmemory"
 	"include\sunnonlinsol"
 	"include\sundials\LICENSE"
@@ -136,7 +137,6 @@ $REM_INCLUDE_LIST = @(
 	"sundials\sundials_band",
 	"sundials\sundials_futils",
 	"sundials\sundials_mpi_types",
-	"sundials\sundials_stepper",
 	"sundials\sundials_types_deprecated",
 	"sundials\priv\sundials_errors_impl",
 	"sunlinsol\sunlinsol_band",

@@ -33,17 +33,17 @@ CAboutWindow::CAboutWindow(QWidget* parent)	: QDialog(parent)
 	};
 
 	m_libraries = {
-		{ "Breathe"         , "https://www.breathe-doc.org/"                 , "Copyright 2009, Michael Jones"                                                         , "Modified BSD license", "https://github.com/breathe-doc/breathe/blob/main/LICENSE"           },
-		{ "Doxygen"         , "https://www.doxygen.nl"                       , "Copyright 1997, Dimitri van Heesch"                                                    , "GPL license"         , "https://github.com/doxygen/doxygen/blob/master/LICENSE"             },
-		{ "Graphviz"        , "https://graphviz.org/"                        , "Copyright 2021, Graphviz contributors"                                                 , "CPL v1.0 license"    , "https://graphviz.org/license/"                                      },
-		{ "HDF5"            , "https://www.hdfgroup.org/solutions/hdf5/"     , "Copyright 2018, The HDF Group"                                                         , "BSD-like license"    , "https://support.hdfgroup.org/ftp/HDF5/releases/COPYING"             },
-		{ "Inno Setup"      , "http://www.jrsoftware.org/isinfo.php"         , "Copyright 2020, Jordan Russell"                                                        , "Modified BSD license", "https://jrsoftware.org/files/is/license.txt"                        },
-		{ "KISS FFT"        , "https://github.com/mborgerding/kissfft"       , "Copyright 2010, Mark Borgerding"                                                       , "BSD-3-Clause license", "https://github.com/mborgerding/kissfft/blob/master/COPYING"         },
-		{ "Qt"              , "http://www.qt.io/"                            , "Copyright 2020, The Qt Company"                                                        , "LGPL v3 license"     , "https://doc.qt.io/qt-5/lgpl.html"                                   },
-		{ "Sphinx"          , "https://www.sphinx-doc.org/en/master/"        , "Copyright 2007, Sphinx team"                                                           , "BSD-2-Clause license", "https://github.com/sphinx-doc/sphinx/blob/master/LICENSE"           },
-		{ "sphinx_rtd_theme", "https://sphinx-rtd-theme.readthedocs.io"      , "Copyright 2013, Dave Snider, Read the Docs, Inc. & contributors"                       , "MIT license"         , "https://github.com/readthedocs/sphinx_rtd_theme/blob/master/LICENSE"},
-		{ "SUNDIALS"        , "https://computing.llnl.gov/projects/sundials/", "Copyright 2019, Lawrence Livermore National Security and Southern Methodist University", "BSD-3-Clause license", "https://computing.llnl.gov/projects/sundials/license"               },
-		{ "zlib"            , "http://www.zlib.net/"                         , "Copyright 2017, Jean-loup Gailly and Mark Adler"                                       , "zlib license"        , "https://www.zlib.net/zlib_license.html"                             },
+		{ "Breathe"         , "https://www.breathe-doc.org/"                , "Copyright 2009, Michael Jones"                                                         , "Modified BSD license", "https://github.com/breathe-doc/breathe/blob/main/LICENSE"           },
+		{ "Doxygen"         , "https://www.doxygen.nl"                      , "Copyright 1997, Dimitri van Heesch"                                                    , "GPL license"         , "https://github.com/doxygen/doxygen/blob/master/LICENSE"             },
+		{ "Graphviz"        , "https://graphviz.org"                        , "Copyright 2021, Graphviz contributors"                                                 , "CPL v1.0 license"    , "https://graphviz.org/license/"                                      },
+		{ "HDF5"            , "https://www.hdfgroup.org/solutions/hdf5/"    , "Copyright 2018, The HDF Group"                                                         , "BSD-like license"    , "https://github.com/HDFGroup/hdf5/?tab=License-1-ov-file#readme"     },
+		{ "Inno Setup"      , "http://www.jrsoftware.org/isinfo.php"        , "Copyright 2020, Jordan Russell"                                                        , "Modified BSD license", "https://jrsoftware.org/files/is/license.txt"                        },
+		{ "KISS FFT"        , "https://github.com/mborgerding/kissfft"      , "Copyright 2010, Mark Borgerding"                                                       , "BSD-3-Clause license", "https://github.com/mborgerding/kissfft/blob/master/COPYING"         },
+		{ "Qt"              , "http://www.qt.io/"                           , "Copyright 2020, The Qt Company"                                                        , "LGPL v3 license"     , "https://doc.qt.io/qt-5/lgpl.html"                                   },
+		{ "Sphinx"          , "https://www.sphinx-doc.org/en/master/"       , "Copyright 2007, Sphinx team"                                                           , "BSD-2-Clause license", "https://github.com/sphinx-doc/sphinx/blob/master/LICENSE"           },
+		{ "sphinx_rtd_theme", "https://sphinx-rtd-theme.readthedocs.io"     , "Copyright 2013, Dave Snider, Read the Docs, Inc. & contributors"                       , "MIT license"         , "https://github.com/readthedocs/sphinx_rtd_theme/blob/master/LICENSE"},
+		{ "SUNDIALS"        , "https://computing.llnl.gov/projects/sundials", "Copyright 2019, Lawrence Livermore National Security and Southern Methodist University", "BSD-3-Clause license", "https://computing.llnl.gov/projects/sundials/license"               },
+		{ "zlib"            , "http://www.zlib.net/"                        , "Copyright 1995, Jean-loup Gailly and Mark Adler"                                       , "zlib license"        , "https://www.zlib.net/zlib_license.html"                             },
 	};
 
 	SetHeaderText();
@@ -103,6 +103,7 @@ void CAboutWindow::SetContributors() const
 	text.append(StyledString("Other developers and contributors:"));
 	for (const auto& name : m_otherDevelopers)
 		text.append(StyledString("- " + name));
+	text.append(StyledString("and others"));
 
 	ui.textBrowserDevelopers->setHtml(text);
 	QTextCursor textCursor = ui.textBrowserDevelopers->textCursor();
