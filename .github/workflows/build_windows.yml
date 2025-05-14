@@ -345,7 +345,7 @@ jobs:
       env:
         QtToolsPath: ${{env.QT_ROOT_DIR}}/bin
         QtMsBuild: ${{github.workspace}}/ExternalLibraries/qtvsaddin/QtMsBuild
-      run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:QtInstallDir=${{github.workspace}}/ExternalLibraries/qt/Qt/${{env.QT_VERSION}}/${{env.QT_VS_VERSION}}/ -property:InstallerDocumentation=true -property:InstallerSDK=true -property:InstallerSDKLibs=Sources -property:InstallerPreBuild=false -property:InstallerPreDocs=false ${{env.INSTALLER_PROJECT_PATH}}
+      run: msbuild -maxCpuCount -verbosity:minimal -property:Configuration=${{env.BUILD_CONFIGURATION}} -property:Platform=${{env.BUILD_PLATFORM}} -property:SolutionDir=${{github.workspace}}/ -property:SolutionPath=${{github.workspace}}/${{env.SOLUTION_FILE_NAME}} -property:QtInstallDir=${{github.workspace}}/ExternalLibraries/qt/Qt/${{env.QT_VERSION}}/${{env.QT_VS_VERSION}}/ -property:InstallerDocumentation=true -property:InstallerSDK=true -property:InstallerSDKLibs=Sources -property:InstallerUpdateVersion=true -property:InstallerPreBuild=true -property:InstallerPreDocs=false ${{env.INSTALLER_PROJECT_PATH}}
 
     - name: Run Installer
       shell: pwsh

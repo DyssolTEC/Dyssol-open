@@ -4,6 +4,7 @@
     <InstallerDocumentation>true</InstallerDocumentation>
     <InstallerSDK>true</InstallerSDK>
     <InstallerSDKLibs>Precompiled</InstallerSDKLibs>
+    <InstallerUpdateVersion>true</InstallerUpdateVersion>
     <InstallerPreBuild>true</InstallerPreBuild>
     <InstallerPreDocs>true</InstallerPreDocs>
   </PropertyGroup>
