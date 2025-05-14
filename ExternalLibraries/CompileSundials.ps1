@@ -52,6 +52,8 @@ git -c advice.detachedHead=false clone --branch $SUNDIALS_VERSION --depth 1 $SUN
 New-Item $SUNDIALS_BUILD_PATH -ItemType directory
 Set-Location $SUNDIALS_BUILD_PATH
 cmake -G "Visual Studio 17 2022" -A x64 $SUNDIALS_SRC_PATH `
+	-DCMAKE_C_FLAGS="/W0" `
+	-DCMAKE_CXX_FLAGS="/W0" `
 	-DCMAKE_INSTALL_PREFIX:PATH=$SUNDIALS_INSTALL_PATH `
 	-DBUILD_ARKODE=NO `
 	-DBUILD_BENCHMARKS=NO `
