@@ -30,8 +30,8 @@ public:
 	CDustFormationTesterTab(const CFlowsheet* _pFlowsheet, const CMaterialsDatabase* _matrialsDB, QWidget* _parent = nullptr);
 
 	void InitializeConnections();
-	void UpdateFromFlowsheet();
-	void UpdateWholeView();
+	void UpdateFromFlowsheet() override;
+	void UpdateWholeView() override;
 
 public slots:
 	void setVisible(bool _bVisible) override;

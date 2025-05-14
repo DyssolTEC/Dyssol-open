@@ -4,7 +4,6 @@
 
 #include "NLSolver.h"
 #include "DyssolUtilities.h"
-PRAGMA_WARNING_PUSH
 PRAGMA_WARNING_DISABLE
 #include <kinsol/kinsol.h>
 #if SUNDIALS_VERSION_MAJOR <= 3
@@ -13,7 +12,7 @@ PRAGMA_WARNING_DISABLE
 #if SUNDIALS_VERSION_MAJOR > 2
 #include <sunlinsol/sunlinsol_dense.h>
 #endif
-PRAGMA_WARNING_POP
+PRAGMA_WARNING_RESTORE
 #include <cstring>
 
 // Macros for convenient adding context to functions depending on the sundials version

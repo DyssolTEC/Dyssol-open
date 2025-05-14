@@ -28,8 +28,8 @@ public:
 
 public slots:
 	void setVisible(bool _bVisible) override;
-	void UpdateFromFlowsheet();
-	void UpdateWholeView();
+	void UpdateFromFlowsheet() override;
+	void UpdateWholeView() override;
 	void UpdateUnitsList() const;
 	void UpdateHoldupsList(); // update the list of holdups of specified unit
 
