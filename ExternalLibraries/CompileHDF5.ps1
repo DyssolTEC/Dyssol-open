@@ -55,6 +55,8 @@ git -c advice.detachedHead=false clone --branch $HDF5_NAME --depth 1 $HDF5_GIT_A
 New-Item $HDF5_BUILD_PATH -ItemType directory
 Set-Location $HDF5_BUILD_PATH
 cmake -G "Visual Studio 17 2022" -A x64 $HDF5_SRC_PATH `
+	-DCMAKE_C_FLAGS="/W0" `
+	-DCMAKE_CXX_FLAGS="/W0" `
 	-DCMAKE_INSTALL_PREFIX:PATH=$HDF5_INSTALL_PATH `
 	-DBUILD_SHARED_LIBS=NO `
 	-DBUILD_TESTING=NO `
