@@ -54,8 +54,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64' OR '$(Configuration)|$(Platform)'=='Release|x64'">
     <CustomBuildStep>
       <Command>
-      call run_generate_units_list.bat $(SolutionDir)\DyssolInstallers\Scripts\_UnitsToAddToInstaller.txt $(SolutionDir)\DyssolInstallers\Scripts\UnitsList.iss
-      call run_create_installer.bat $(SolutionDir) $(SolutionPath) $(QtInstallDir) $(InstallerDocumentation) $(InstallerSDK) $(InstallerSDKLibs) $(InstallerPreBuild) $(InstallerPreDocs)
+      call generate_units_list.bat $(SolutionDir)\DyssolInstallers\Scripts\_UnitsToAddToInstaller.txt $(SolutionDir)\DyssolInstallers\Scripts\UnitsList.iss
+      call create_installer.bat $(SolutionDir) $(SolutionPath) $(QtInstallDir) $(InstallerDocumentation) $(InstallerSDK) $(InstallerSDKLibs) $(InstallerUpdateVersion) $(InstallerPreBuild) $(InstallerPreDocs)
       </Command>
       <Message>Building required projects and packing the installer...</Message>
       <Outputs>Fake</Outputs>

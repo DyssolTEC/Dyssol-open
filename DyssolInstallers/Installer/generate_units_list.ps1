@@ -1,3 +1,6 @@
+# Copyright (c) 2025, DyssolTEC GmbH. 
+# All rights reserved. This file is part of Dyssol. See LICENSE file for license information.
+
 # paths to files
 $inputFilePath  = $args[0]
 $outputFilePath = $args[1]

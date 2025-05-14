@@ -1,43 +1,54 @@
-# Copyright (c) 2020, Dyssol Development Team. All Rights Reserved. This file is part of Dyssol. See LICENSE file for license information.
+# Copyright (c) 2020, Dyssol Development Team. 
+# Copyright (c) 2025, DyssolTEC GmbH. 
+# All Rights Reserved. This file is part of Dyssol. See LICENSE file for license information.
 
 ### read arguments
 
-$solution_dir   = $args[0]
-$solution_path  = $args[1]
-$qt_install_dir = $args[2]
-$documentation  = $args[3]
-$sdk            = $args[4]
-$sdk_type       = $args[5]
-$pre_build      = $args[6]
-$pre_docs       = $args[7]
+$solution_dir     = $args[0]
+$solution_path    = $args[1]
+$qt_install_dir   = $args[2]
+$documentation    = $args[3]
+$sdk              = $args[4]
+$sdk_type         = $args[5]
+$update_build_ver = $args[6]
+$pre_build        = $args[7]
+$pre_docs         = $args[8]
 
-Write-Host "solution_dir   " $solution_dir
-Write-Host "solution_path  " $solution_path
-Write-Host "qt_install_dir " $qt_install_dir
-Write-Host "documentation  " $documentation
-Write-Host "sdk            " $sdk
-Write-Host "sdk_type       " $sdk_type
-Write-Host "pre_build      " $pre_build
-Write-Host "pre_docs       " $pre_docs
+Write-Host "solution_dir    " $solution_dir
+Write-Host "solution_path   " $solution_path
+Write-Host "qt_install_dir  " $qt_install_dir
+Write-Host "documentation   " $documentation
+Write-Host "sdk             " $sdk
+Write-Host "sdk_type        " $sdk_type
+Write-Host "update_build_ver" $update_build_ver
+Write-Host "pre_build       " $pre_build
+Write-Host "pre_docs        " $pre_docs
+
+### generate build version info
+
+if ($update_build_ver -eq "true") {
+	Write-Host Generating build version info...
+	& ".\generate_build_version.ps1"
+}
 
 ### compile projects
 
 if ($pre_build -eq "true" -Or $pre_build -eq "") {
-	Write-Host Compiling Release x64
+	Write-Host Compiling Release x64...
 	devenv $solution_path /build "Release|x64"
-	Write-Host Compiling Debug x64
+	Write-Host Compiling Debug x64...
 	devenv $solution_path /build "Debug|x64"
 }
 if ($pre_docs -eq "true" -Or $pre_docs -eq "") {
 	if ($documentation -eq "true") {
-		Write-Host Compiling Documentation
+		Write-Host Compiling Documentation...
 		devenv $solution_path /build "Release|x64" /Project "Documentation"
 	}
 }
 
 ### get additional version information
 
-Write-Host Getting additional version information
+Write-Host Getting additional version information...
 # check if git is installed and accessible
 [bool] $is_git_installed = $false
 try {
@@ -45,7 +56,7 @@ try {
 	$is_git_installed = $true
 }
 catch [System.Management.Automation.CommandNotFoundException] {
-    Write-Warning "Git not found. No additional version information will be generated"
+    Write-Warning "Git not found. No additional version information will be generated."
 }
 # check if it is a git repository
 [bool] $is_git_repo = $false
@@ -55,15 +66,16 @@ if ($is_git_installed -eq $true) {
 		$is_git_repo = $true
 	}
 	else {
-		Write-Warning "Not a git repository. No additional version information will be generated"
+		Write-Warning "Not a git repository. No additional version information will be generated."
 	}
 }
 # get name of the current git branch
 $branch = ""
 if ($is_git_repo -eq $true) {
-	try { $branch = git rev-parse --abbrev-ref HEAD }
+	try { 
+		$branch = git rev-parse --abbrev-ref HEAD }
 	catch {
-		Write-Warning "Can not determine branch name. No additional version information will be generated"
+		Write-Warning "Can not determine branch name. No additional version information will be generated."
 	}
 }
 
