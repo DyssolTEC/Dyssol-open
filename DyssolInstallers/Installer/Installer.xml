@@ -30,13 +30,18 @@
     <EnumValue Name="Sources"     DisplayName="Sources"     Description="Models Creator with source files of SDK libraries."/>
   </EnumProperty>
   <BoolProperty
+    Name="InstallerUpdateVersion"
+    Category="General"
+    DisplayName="Update build version"
+    Description="Update build version info before building binaries."/>
+  <BoolProperty
     Name="InstallerPreBuild"
     Category="General"
-    DisplayName="Pre-build"
+    DisplayName="Build binaries"
     Description="Build binary files before building installer."/>
   <BoolProperty
     Name="InstallerPreDocs"
     Category="General"
-    DisplayName="Pre-build docs"
+    DisplayName="Build docs"
     Description="Build documentation before building installer."/>
 </Rule>
