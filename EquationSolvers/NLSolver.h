@@ -7,14 +7,13 @@
 #include "NLModel.h"
 #include <string>
 #include "DisableWarningHelper.h"
-PRAGMA_WARNING_PUSH
 PRAGMA_WARNING_DISABLE
 #include <nvector/nvector_serial.h>
 #if SUNDIALS_VERSION_MAJOR > 2
 #include <sundials/sundials_matrix.h>
 #include <sundials/sundials_linearsolver.h>
 #endif
-PRAGMA_WARNING_POP
+PRAGMA_WARNING_RESTORE
 
 /**
  * Solver of differential algebraic equations. Uses IDA solver from SUNDIALS package.

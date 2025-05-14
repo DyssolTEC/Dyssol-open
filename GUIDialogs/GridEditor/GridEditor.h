@@ -32,9 +32,9 @@ public:
 	// Tries to apply all changes and closes the dialog on success.
 	void accept() override;
 
-	void UpdateFromFlowsheet();
+	void UpdateFromFlowsheet() override;
 	// Updates all widgets.
-	void UpdateWholeView();
+	void UpdateWholeView() override;
 
 private:
 	// Updates the list of grids sources.

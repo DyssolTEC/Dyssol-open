@@ -24,8 +24,8 @@ public:
 	CTearStreamsEditor(CFlowsheet* _pFlowsheet, CMaterialsDatabase* _materialsDB, QWidget* _parent = nullptr);
 
 	void InitializeConnections();
-	void UpdateFromFlowsheet();
-	void UpdateWholeView();
+	void UpdateFromFlowsheet() override;
+	void UpdateWholeView() override;
 
 private slots:
 	void setVisible(bool _bVisible) override;

@@ -37,7 +37,7 @@ public:
 
 public slots:
 	void setVisible(bool _bVisible) override;
-	void UpdateWholeView();
+	void UpdateWholeView() override;
 
 private slots:
 	void NewDatabase();

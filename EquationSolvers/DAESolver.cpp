@@ -10,7 +10,6 @@
 #define SUNDIALS_VERSION_PATCH 0
 #endif
 #define DYSSOL_SUNDIALS_VERSION SUNDIALS_VERSION_MAJOR.SUNDIALS_VERSION_MINOR.SUNDIALS_VERSION_PATCH
-PRAGMA_WARNING_PUSH
 PRAGMA_WARNING_DISABLE
 #include MACRO_CONCAT_STR3(impl/,DYSSOL_SUNDIALS_VERSION,/ida_impl.h)
 #if SUNDIALS_VERSION_MAJOR <= 2
@@ -21,7 +20,7 @@ PRAGMA_WARNING_DISABLE
 #if SUNDIALS_VERSION_MAJOR > 2
 #include <sunlinsol/sunlinsol_dense.h>
 #endif
-PRAGMA_WARNING_POP
+PRAGMA_WARNING_RESTORE
 #include <cstring>
 
 // Macros for convenient adding context to functions depending on the sundials version
