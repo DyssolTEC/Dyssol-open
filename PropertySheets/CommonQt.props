@@ -12,7 +12,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)GUIWidgets\BasicStreamEditor;$(SolutionDir)$(Platform)\$(Configuration)\BasicStreamEditor\uic;$(SolutionDir)GUIWidgets\BasicStreamsViewer;$(SolutionDir)$(Platform)\$(Configuration)\BasicStreamsViewer\uic;$(SolutionDir)GUIWidgets\BasicThread;$(SolutionDir)GUIWidgets\StatusWindow;$(SolutionDir)$(Platform)\$(Configuration)\StatusWindow\uic;$(SolutionDir)GUIWidgets\QtPlot;$(SolutionDir)$(Platform)\$(Configuration)\QtPlot\uic;$(SolutionDir)GUIWidgets\QtWidgets;$(SolutionDir)GUIWidgets\SimulationThread;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)GUIWidgets\BasicStreamEditor;$(SolutionDir)$(Platform)\$(Configuration)\BasicStreamEditor\qt\uic;$(SolutionDir)GUIWidgets\BasicStreamsViewer;$(SolutionDir)$(Platform)\$(Configuration)\BasicStreamsViewer\qt\uic;$(SolutionDir)GUIWidgets\BasicThread;$(SolutionDir)GUIWidgets\StatusWindow;$(SolutionDir)$(Platform)\$(Configuration)\StatusWindow\qt\uic;$(SolutionDir)GUIWidgets\QtPlot;$(SolutionDir)$(Platform)\$(Configuration)\QtPlot\qt\uic;$(SolutionDir)GUIWidgets\QtWidgets;$(SolutionDir)GUIWidgets\SimulationThread;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <QtMoc>
       <IncludePath>
