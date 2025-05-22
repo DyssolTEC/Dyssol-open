@@ -206,7 +206,7 @@ You need the following steps:
 
 5. Rename added project in Visual Studio from ``UnitT_SteadyState`` to ``Unit_MySplitter``.
 
-6. Open ``Unit_MySplitter`` → ``Unit.cpp`` in the Visual Studio’s *Solution Explorer* and extend the unit with the following functionality (please refer to :ref:`sec.development.api.class_baseunit`, :ref:`sec.development.api.class_stream` and :ref:`label-PSD` when necessary):
+6. Open ``Unit_MySplitter`` → ``Unit.cpp`` in the Visual Studio’s *Solution Explorer* and extend the unit with the following functionality (please refer to :ref:`sec.development.api.class_baseunit`, :ref:`sec.development.api.class_stream` and :ref:`sec.development.api.psd_functions` when necessary):
 
 - Modify constructor ``CUnit()``:
 
@@ -371,7 +371,7 @@ In this function, variables of all ``NLModels`` should be specified by using fun
 
 	Unit::SaveState()
 
-For flowsheets containing **recycled streams**, ``SaveState()`` function is called when the convergence on the current time interval is reached, this also ensures the return to the previous state of the unit if convergence fails during the calculation. Here all internal time-dependent variables which weren’t added to the unit by using :ref:`AddStateVariable <label-AddStateVariable>` and :ref:`AddMaterialStream <label-AddMaterialStream>` functions should be manually saved. Implementation of this function is not obligatory and can be skipped.
+For flowsheets containing **recycled streams**, ``SaveState()`` function is called when the convergence on the current time interval is reached, this also ensures the return to the previous state of the unit if convergence fails during the calculation. Here all internal time-dependent variables which weren’t added to the unit by using :ref:`AddStateVariable <sec.development.api.class_baseunit>` and :ref:`AddMaterialStream <sec.development.api.class_baseunit>` functions should be manually saved. Implementation of this function is not obligatory and can be skipped.
 
 |
 
@@ -845,7 +845,7 @@ Unit‘s **initialization**. This function is called only once at the start of t
 
 	Unit::SaveState()
 
-For flowsheets containing **recycled streams**, ``SaveState()`` function is called when the convergence on the current time interval is reached, this also ensures the return to the previous state of the unit if convergence fails during the calculation. Here all internal time-dependent variables which weren’t added to the unit by using :ref:`AddStateVariable <label-AddStateVariable>`, :ref:`AddMaterialStream <label-AddMaterialStream>` or :ref:`AddHoldup <label-AddHoldup>` functions should be manually saved. Implementation of this function is not obligatory and can be skipped.
+For flowsheets containing **recycled streams**, ``SaveState()`` function is called when the convergence on the current time interval is reached, this also ensures the return to the previous state of the unit if convergence fails during the calculation. Here all internal time-dependent variables which weren’t added to the unit by using :ref:`AddStateVariable <sec.development.api.class_baseunit>`, :ref:`AddMaterialStream <sec.development.api.class_baseunit>` or :ref:`AddHoldup <sec.development.api.class_baseunit>` functions should be manually saved. Implementation of this function is not obligatory and can be skipped.
 
 |
 
@@ -884,7 +884,7 @@ Do the following steps:
 
 5. Rename added project in Visual Studio from ``UnitT_Dynamic`` to ``Unit_Basics``.
 
-6. Open ``Unit_Basics`` → ``Unit.cpp`` in the Visual Studio’s *Solution Explorer* and develop your unit as shown follows. You can use :ref:`sec.development.api.class_baseunit`, :ref:`sec.development.api.class_stream` and :ref:`label-PSD` for references.
+6. Open ``Unit_Basics`` → ``Unit.cpp`` in the Visual Studio’s *Solution Explorer* and develop your unit as shown follows. You can use :ref:`sec.development.api.class_baseunit`, :ref:`sec.development.api.class_stream` and :ref:`sec.development.api.psd_functions` for references.
 
 - Modify constructor ``CUnit()``:
 
@@ -1213,7 +1213,7 @@ In this function, variables of all DAEModels should be specified by using functi
 
 	Unit::SaveState()
 
-For flowsheets containing **recycled streams**, ``SaveState()`` function is called when the convergence on the current time interval is reached, this also ensures the return to the previous state of the unit if convergence fails during the calculation. Here all internal time-dependent variables which weren’t added to the unit by using :ref:`AddStateVariable <label-AddStateVariable>`, :ref:`AddMaterialStream <label-AddMaterialStream>` or :ref:`AddHoldup <label-AddHoldup>` functions should be manually saved. Implementation of this function is not obligatory and can be skipped.
+For flowsheets containing **recycled streams**, ``SaveState()`` function is called when the convergence on the current time interval is reached, this also ensures the return to the previous state of the unit if convergence fails during the calculation. Here all internal time-dependent variables which weren’t added to the unit by using :ref:`AddStateVariable <sec.development.api.class_baseunit>`, :ref:`AddMaterialStream <sec.development.api.class_baseunit>` or :ref:`AddHoldup <sec.development.api.class_baseunit>` functions should be manually saved. Implementation of this function is not obligatory and can be skipped.
 
 |
 
@@ -1633,17 +1633,17 @@ You must do the following in order to develop your new solver (plese refer to :r
 
 	2.	Configure template project ``ModelsCreatorSDK``.
 
-After builiding your own new solvers, the functionality of them can be applied in all units by adding them as :ref:`unit parameters <label-unitParameters>`.
+After builiding your own new solvers, the functionality of them can be applied in all units by adding them as :ref:`unit parameters <sec.development.api.class_up>`.
 
-Basically, all solvers have a set of constant functions and parameters, which are available in each new solver (:ref:`label-externalSolver`). and a set of specific ones, which depend on the solver’s type. New types of solvers can be added upon request and will include a set of parameters and functions that are needed to solve a specific problem.
+Basically, all solvers have a set of constant functions and parameters, which are available in each new solver (:ref:`sec.development.api.class_basesolver`). and a set of specific ones, which depend on the solver’s type. New types of solvers can be added upon request and will include a set of parameters and functions that are needed to solve a specific problem.
 
-You can implement several solvers of one type (e.g. with different models) and then choose a specific one to use it in unit by user interface, please refer to section :ref:`label-unitParameters` in :ref:`sec.development.api`.
+You can implement several solvers of one type (e.g. with different models) and then choose a specific one to use it in unit by user interface, please refer to section :ref:`sec.development.api.class_up` in :ref:`sec.development.api`.
 
 .. There is also detailed information about :ref:`label-DAE`, with which you can solve systems of differential-algebraic equations automatically.
 
 Please notice that in the current version of Dyssol, only :ref:`label-agg-solvers` is available for solver development. The following solvers are implemented by means of :ref:`open-source libraries <label-equationSolvers>` connected to Dyssol and thus cannot be developed by yourself.
 
-	- :ref:`label-externalSolver`
+	- :ref:`sec.development.api.class_basesolver`
 
 	- :ref:`label-DAEsolver` for dynamic units
 
@@ -1698,7 +1698,7 @@ In general, usual configuration of *Model manager* should include following path
 Development of agglomeration solver
 -----------------------------------
 
-Please refer to the background information :ref:`label-agg` and :ref:`label-agg-solvers` when necessary.
+Please refer to the background information :ref:`sec.development.api.class_agglomerationsolver` and :ref:`label-agg-solvers` when necessary.
 
 |
 

@@ -406,7 +406,7 @@ void Dyssol::CreateMenu()
 	// Units
 	QMenu* menuUnits = ui.menuDocumentation->addMenu("Units");
 	AddHelpAction(menuUnits, "Agglomerator", "003_models/unit_agglomerator.html", "Agglomerator model");
-	AddHelpAction(menuUnits, "Bunker"      , "003_models/unit_bunker.html"      , "Bunker model");
+	AddHelpAction(menuUnits, "Bunker"      , "003_models/unit_solidsbunker.html", "Bunker model");
 	AddHelpAction(menuUnits, "Crusher"     , "003_models/unit_crusher.html"     , "Crusher model");
 	AddHelpAction(menuUnits, "Granulator"  , "003_models/unit_granulator.html"  , "Granulator model");
 	AddHelpAction(menuUnits, "Inlet Flow"  , "003_models/unit_inletflow.html"   , "Inlet flow model");
@@ -437,7 +437,7 @@ void Dyssol::CreateMenu()
 	AddHelpAction(menuInterfaces, "TransformMatrix"     , "004_development/class_transformmatrix.html", "API of CTransformMatrix class");
 	AddHelpAction(menuInterfaces, "MDMatrix"            , "004_development/class_densemdmatrix.html"  , "API of CDenseMDMatrix class");
 	AddHelpAction(menuInterfaces, "Matrix2D"            , "004_development/class_matrix2d.html"       , "API of CMatrix2D class");
-	AddHelpAction(menuInterfaces, "PSD Functions"       , "004_development/distr_functions.html"      , "API of functions to work with distributions");
+	AddHelpAction(menuInterfaces, "PSD Functions"       , "004_development/psd_functions.html"        , "API of functions to work with distributions");
 	AddHelpAction(menuInterfaces, "Predefined Constants", "004_development/constants.html"            , "List of constants");
 
 	// Main
