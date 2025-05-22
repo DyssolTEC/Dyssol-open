@@ -5,7 +5,7 @@ Time delay
 
 Constant delay of input signal
 
-.. image:: ../static/images/003_models/timedelay.png
+.. image:: ../images/003_models/timedelay.png
    :width: 300px
    :alt:
    :align: center

@@ -25,7 +25,7 @@ Currently, following distrubution parameters are available in Dyssol:
 
 In the example below, you can find how the particle parameter distribution is described with 3-dimensional (size, compound and shape) matrices.
 
-.. image:: ../static/images/002_theory/3d-example.png
+.. image:: ../images/002_theory/3d-example.png
    :width: 400px
    :alt: 
    :align: center
@@ -34,7 +34,7 @@ In the example below, you can find how the particle parameter distribution is de
 
 We can find many entries of these matrices are equal to zero. Therefore, in Dyssol, the multidimensional distribution is represented with a **tree data structure** instead. The parameters are analyzed level by level, if an element is zero, it will not be considered further (sparse data formats), as you can see in the example below. 
 
-.. image:: ../static/images/002_theory/tree-example.png
+.. image:: ../images/002_theory/tree-example.png
    :width: 600px
    :alt: 
    :align: center
@@ -55,7 +55,7 @@ Transformation matrices
 
 Let's first see an example of a screening process with **explicit calculation**, which is illustrated in the figure below. 
 
-.. image:: ../static/images/002_theory/explicit.png
+.. image:: ../images/002_theory/explicit.png
    :width: 600px
    :alt: 
    :align: center
@@ -68,7 +68,7 @@ To avoid such mistake, the **transformation matrices (TM)** is applied for calcu
 
 You can find another example for the screen unit showing the application of TM in Dyssol. 
 
-.. image:: ../static/images/002_theory/transMat.png
+.. image:: ../images/002_theory/transMat.png
    :width: 800px
    :alt: approach with transformation matrices
    :align: center
@@ -97,7 +97,7 @@ The output is calculated by the tensor product of input and :abbr:`TM (Transform
 	
 Transformation matrix is written in tree structure form. ...	
 
-.. image:: ../static/images/002_theory/transMat-apply.png
+.. image:: ../images/002_theory/transMat-apply.png
    :width: 800px
    :alt: approach with transformation matrices
    :align: center
@@ -111,14 +111,14 @@ As an example, the calculation of the particle size distribution in outlet strea
 
 The input stream information - particle size and form factor distribution - is listed in the table below. The form factor and size values are reprensented by indices from 1 to 5 and 1 to 6, respectively.
 
-.. image:: ../static/images/002_theory/exampleInput.png
+.. image:: ../images/002_theory/exampleInput.png
    :width: 300px
    :alt: approach with transformation matrices
    :align: center
 
 Form factor is not influenced during the crush process. Only the particle size disstribution is considered. The transformation matrix below shows the size reduction. For example, a size reduction fractinon from index 1 to 1 is 1.00 means all size-1-particles remains the same; the size reduction fraction from index 2 to 1 is 0.50, indicating half of size-2-particles will be crushed in to size 1, and the other half remains the same.
 
-.. image:: ../static/images/002_theory/exampleTM.png
+.. image:: ../images/002_theory/exampleTM.png
    :width: 300px
    :alt: approach with transformation matrices
    :align: center
@@ -147,21 +147,21 @@ The corresponding result considers all particles of size 3 after crushing, meanw
 									
 									input(size\,6, form\,factor\,3) \times TM(6\,to\,3)
 
-.. image:: ../static/images/002_theory/exampleCalc3.png
+.. image:: ../images/002_theory/exampleCalc3.png
    :width: 500px
    :alt: approach with transformation matrices
    :align: center
 
 In the similar way, we can calculate the output result for :math:`input(size\,1, form\,factor\,1)` and :math:`input(size\,1, form\,factor\,2)`:
 
-.. image:: ../static/images/002_theory/exampleCalc12.png
+.. image:: ../images/002_theory/exampleCalc12.png
    :width: 500px
    :alt: approach with transformation matrices
    :align: center
 
 The overall output result is shown below.
 
-.. image:: ../static/images/002_theory/exampleOutput.png
+.. image:: ../images/002_theory/exampleOutput.png
    :width: 300px
    :alt: approach with transformation matrices
    :align: center

@@ -5,7 +5,7 @@ Mixer
 
 A mixer mixes two input material streams (:math:`In1`, :math:`In2`) into the one output stream (:math:`Out`), as shown in the scheme below.
 
-.. image:: ../static/images/003_models/mixer.png
+.. image:: ../images/003_models/mixer.png
    :width: 300px
    :alt: mixer
    :align: center
@@ -61,14 +61,14 @@ All secondary attributes of output stream, such as phase fractions, compounds fr
 
 .. Simulation result for mass flows:
 
-.. .. image:: ../static/images/003_models/mixer-egMass.png
+.. .. image:: ../images/003_models/mixer-egMass.png
    :width: 700px
    :alt: mixer example
    :align: center
 
 .. Simulation result for temperatures:
 
-.. .. image:: ../static/images/003_models/mixer-egTemp.png
+.. .. image:: ../images/003_models/mixer-egTemp.png
    :width: 700px
    :alt: mixer example
    :align: center

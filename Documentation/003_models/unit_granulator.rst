@@ -9,7 +9,7 @@ The model does not take into account attrition of particles inside the apparatus
 Continuous granulator
 ^^^^^^^^^^^^^^^^^^^^^
 
-.. image:: ../static/images/003_models/granulator.png
+.. image:: ../images/003_models/granulator.png
    :width: 500px
    :alt:
    :align: center
@@ -53,7 +53,7 @@ Continuous granulator
 Batch granulator
 ^^^^^^^^^^^^^^^^^^^^^
 
-.. image:: ../static/images/003_models/granulator_batch.png
+.. image:: ../images/003_models/granulator_batch.png
    :width: 500px
    :alt:
    :align: center
