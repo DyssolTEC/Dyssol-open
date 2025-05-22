@@ -6,31 +6,31 @@ List of constants
 Universal physical constants
 ----------------------------
 
-.. doxygendefine:: AVOGADRO_CONSTANT
+.. doxygenvariable:: AVOGADRO_CONSTANT
    :project: dyssol_models_api
 
-.. doxygendefine:: BOLTZMANN_CONSTANT
+.. doxygenvariable:: BOLTZMANN_CONSTANT
    :project: dyssol_models_api
 
-.. doxygendefine:: MOLAR_GAS_CONSTANT
+.. doxygenvariable:: MOLAR_GAS_CONSTANT
    :project: dyssol_models_api
 
-.. doxygendefine:: SPEED_OF_LIGHT_IN_VACUUM
+.. doxygenvariable:: SPEED_OF_LIGHT_IN_VACUUM
    :project: dyssol_models_api
 
-.. doxygendefine:: STANDARD_ACCELERATION_OF_GRAVITY
+.. doxygenvariable:: STANDARD_ACCELERATION_OF_GRAVITY
    :project: dyssol_models_api
 
-.. doxygendefine:: STANDARD_CONDITION_T
+.. doxygenvariable:: STANDARD_CONDITION_T
    :project: dyssol_models_api
 
-.. doxygendefine:: STANDARD_CONDITION_P
+.. doxygenvariable:: STANDARD_CONDITION_P
    :project: dyssol_models_api
 
-.. doxygendefine:: STEFAN_BOLTZMANN_CONSTANT
+.. doxygenvariable:: STEFAN_BOLTZMANN_CONSTANT
    :project: dyssol_models_api
 
-.. doxygendefine:: MATH_PI
+.. doxygenvariable:: MATH_PI
    :project: dyssol_models_api
 
 Dyssol constants
