@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2025, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "Simulator.h"
 #include "Flowsheet.h"
@@ -543,16 +545,5 @@ void CSimulator::ReduceData(const CCalculationSequence::SPartition& _partition, 
 				if (m_pParams->saveTimeStepFlagHoldups)
 					model->GetModel()->ReduceTimePoints(dStart, _t2, m_pParams->saveTimeStep);
 			}
-	}
-}
-
-EPhase CSimulator::PhaseSOA2EPhase(unsigned _soa)
-{
-	switch (_soa)
-	{
-	case SOA_SOLID:		return EPhase::SOLID;
-	case SOA_LIQUID:	return EPhase::LIQUID;
-	case SOA_VAPOR:		return EPhase::VAPOR;
-	default:			return EPhase::UNDEFINED;
 	}
 }

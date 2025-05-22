@@ -52,16 +52,16 @@ bool CPhasesEditor::ValidateInput()
 	{
 		switch( m_vCombos[i]->currentIndex() )
 		{
-		case SOA_SOLID:
+		case 0:
 			nSolidCounter++;
 			break;
-		case SOA_VAPOR:
+		case 2:
 			nVaporCounter++;
 			break;
-		case SOA_LIQUID:
+		case 1:
 			nLiquid1Counter++;
 			break;
-		case SOA_LIQUID2:
+		case 3:
 			nLiquid2Counter++;
 			break;
 		}

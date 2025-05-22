@@ -90,7 +90,6 @@
     <ClInclude Include="MixtureLookup.h" />
     <ClInclude Include="MixtureEnthalpyLookup.h" />
     <ClInclude Include="TwoWayMap.h" />
-    <ClInclude Include="MaterialStream.h" />
     <ClInclude Include="PlotManager.h" />
     <ClInclude Include="StateVariable.h" />
     <ClInclude Include="Stream.h" />

@@ -222,55 +222,6 @@ public:
 	 * \param _value Molar flow of the specified phase.
 	 */
 	void SetPhaseMolFlow(double _time, EPhase _phase, double _value);
-
-	// TODO: move it somewhere
-	////////////////////////////////////////////////////////////////////////////////
-	// Deprecated functions
-	/**
-	 * \private
-	 */
-	[[deprecated("WARNING! CopyFromStream(const CStream*, double) is deprecated. Use CopyFromStream(double, const CStream*) instead.")]]
-	void CopyFromStream(const CStream* _source, double _time, bool _deleteDataAfter = true);
-	/**
-	 * \private
-	 */
-	[[deprecated("WARNING! CopyFromStream(const CStream*, double, double) is deprecated. Use CopyFromStream(double, double, const CStream*) instead.")]]
-	void CopyFromStream(const CStream* _source, double _timeBeg, double _timeEnd);
-	/**
-	 * \private
-	 */
-	[[deprecated("WARNING! CopyFromHoldup(const CHoldup*, double, double, bool) is deprecated. Use CopyFromHoldup(double, const CHoldup*, double) instead.")]]
-	void CopyFromHoldup(const CHoldup* _source, double _time, double _massFlow, bool _deleteDataAfter = true);
-	/**
-	 * \private
-	 */
-	[[deprecated("WARNING! AddStream(const CStream*, double) is deprecated. Use AddStream(double, const CStream*) instead.")]]
-	void AddStream(const CStream* _source, double _time);
-	/**
-	 * \private
-	 */
-	[[deprecated("WARNING! GetMassFlow(double, eValueBasises) is deprecated. Use GetMassFlow(double) or GetMolFlow(double) instead.")]]
-	double GetMassFlow(double _time, unsigned _basis) const;
-	/**
-	 * \private
-	 */
-	[[deprecated("WARNING! SetMassFlow(double, _value, eValueBasises) is deprecated. Use SetMassFlow(double, double) or SetMolFlow(double, double) instead.")]]
-	void SetMassFlow(double _time, double _value, unsigned _basis);
-	/**
-	 * \private
-	 */
-	[[deprecated("WARNING! GetCompoundMassFlow(double, const std::string&, unsigned, eValueBasises) is deprecated. Use GetCompoundMassFlow(double, const std::string&, EPhase) or GetCompoundMolFlow(double, const std::string&, EPhase) instead.")]]
-	double GetCompoundMassFlow(double _time, const std::string& _compound, unsigned _soa, unsigned _basis = BASIS_MASS) const;
-	/**
-	 * \private
-	 */
-	[[deprecated("WARNING! GetPhaseMassFlow(double, unsigned, eValueBasises) is deprecated. Use GetPhaseMassFlow(double, EPhase) or GetPhaseMolFlow(double, EPhase) instead.")]]
-	double GetPhaseMassFlow(double _time, unsigned _soa, unsigned _basis = BASIS_MASS) const;
-	/**
-	 * \private
-	 */
-	[[deprecated("WARNING! SetPhaseMassFlow(double, unsigned, double, eValueBasises) is deprecated. Use SetPhaseMassFlow(double, EPhase, double) or SetPhaseMolFlow(double, EPhase, double) instead.")]]
-	void SetPhaseMassFlow(double _time, unsigned _soa, double _value, unsigned _basis = BASIS_MASS);
 };
 
 using CMaterialStream = CStream;

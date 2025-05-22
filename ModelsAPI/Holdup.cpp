@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2025, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #define _USE_MATH_DEFINES
 #include "Holdup.h"
@@ -108,69 +110,4 @@ void CHoldup::AddHoldup(double _time, const CHoldup* _source)
 void CHoldup::AddHoldup(double _timeBeg, double _timeEnd, const CHoldup* _source)
 {
 	Add(_timeBeg, _timeEnd, *_source);
-}
-
-
-// TODO: move it somewhere
-////////////////////////////////////////////////////////////////////////////////
-/// Deprecated functions
-
-void CHoldup::CopyFromHoldup(const CHoldup* _source, double _time)
-{
-	CopyFromHoldup(_time, _source);
-}
-
-void CHoldup::AddHoldup(const CHoldup* _source, double _time)
-{
-	AddHoldup(_time, _source);
-}
-
-void CHoldup::AddStream(const CStream* _source, double _timeBeg, double _timeEnd)
-{
-	AddStream(_timeBeg, _timeEnd, _source);
-}
-
-void CHoldup::AddStream2(const CStream* _source, double _timeBeg, double _timeEnd)
-{
-	AddStream(_timeBeg, _timeEnd, _source);
-}
-
-double CHoldup::GetMass(double _time, unsigned _basis) const
-{
-	if (_basis == 0)
-		return GetMass(_time);
-	else
-		return GetMol(_time);
-}
-
-void CHoldup::SetMass(double _time, double _value, unsigned _basis)
-{
-	if (_basis == 0)
-		SetMass(_time, _value);
-	else
-		SetMol(_time, _value);
-}
-
-double CHoldup::GetCompoundMass(double _time, const std::string& _compoundKey, unsigned _soa, unsigned _basis) const
-{
-	if (_basis == 0)
-		return GetCompoundMass(_time, _compoundKey, SOA2EPhase(_soa));
-	else
-		return GetCompoundMol(_time, _compoundKey, SOA2EPhase(_soa));
-}
-
-double CHoldup::GetPhaseMass(double _time, unsigned _soa, unsigned _basis) const
-{
-	if (_basis == 0)
-		return GetPhaseMass(_time, SOA2EPhase(_soa));
-	else
-		return GetPhaseMol(_time, SOA2EPhase(_soa));
-}
-
-void CHoldup::SetPhaseMass(double _time, unsigned _soa, double _value, unsigned _basis)
-{
-	if (_basis == 0)
-		SetPhaseMass(_time, SOA2EPhase(_soa), _value);
-	else
-		SetPhaseMol(_time, SOA2EPhase(_soa), _value);
 }

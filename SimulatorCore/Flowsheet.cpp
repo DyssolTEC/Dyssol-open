@@ -1052,10 +1052,10 @@ bool CFlowsheet::LoadFromFile_v3(CH5Handler& _h5File, const std::string& _path)
 	{
 		switch (_soa)
 		{
-		case SOA_SOLID:		return EPhase::SOLID;
-		case SOA_LIQUID:	return EPhase::LIQUID;
-		case SOA_VAPOR:		return EPhase::VAPOR;
-		default:			return EPhase::UNDEFINED;
+		case 0:  return EPhase::SOLID;
+		case 1:  return EPhase::LIQUID;
+		case 2:  return EPhase::VAPOR;
+		default: return EPhase::UNDEFINED;
 		}
 	};
 	std::vector<std::string> names;

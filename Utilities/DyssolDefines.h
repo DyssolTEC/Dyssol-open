@@ -10,42 +10,41 @@
 #pragma once
 
 #include <cstdint>
-#include <cstddef>
 #include <iterator>
 
 // ========== Initial values
 
 // Simulator
-#define DEFAULT_MAX_ITERATIONS_NUMBER		500     ///< Default value.
-#define DEFAULT_SIMULATION_TIME_BEGIN		0       ///< Default value.
-#define DEFAULT_SIMULATION_TIME				60      ///< Default value.
-#define DEFAULT_INIT_TIME_WINDOW			1		///< Default value.
-#define DEFAULT_MIN_TIME_WINDOW				1e-9	///< Default value.
-#define DEFAULT_MAX_TIME_WINDOW				1000000	///< Default value.
-#define DEFAULT_ITERS_UPPER_LIMIT			7		///< Default value.
-#define DEFAULT_ITERS_LOWER_LIMIT			3		///< Default value.
-#define DEFAULT_ITERS_1ST_UPPER_LIMIT		20		///< Default value.
-#define DEFAULT_WINDOW_MAGNIFICATION_RATIO	1.2		///< Default value.
-#define	DEFAULT_WEGSTEIN_ACCEL_PARAM		-0.5	///< Default value.
-#define DEFAULT_RELAXATION_PARAM			1		///< Default value.
+constexpr double   DEFAULT_SIMULATION_TIME_BEGIN      = 0;       ///< Default value.
+constexpr double   DEFAULT_SIMULATION_TIME            = 60;      ///< Default value.
+constexpr double   DEFAULT_INIT_TIME_WINDOW           = 1;       ///< Default value.
+constexpr double   DEFAULT_MIN_TIME_WINDOW            = 1e-9;    ///< Default value.
+constexpr double   DEFAULT_MAX_TIME_WINDOW            = 1000000; ///< Default value.
+constexpr double   DEFAULT_WINDOW_MAGNIFICATION_RATIO = 1.2;     ///< Default value.
+constexpr double   DEFAULT_WEGSTEIN_ACCEL_PARAM       = -0.5;    ///< Default value.
+constexpr double   DEFAULT_RELAXATION_PARAM           = 1;       ///< Default value.
+constexpr uint32_t DEFAULT_MAX_ITERATIONS_NUMBER      = 500;     ///< Default value.
+constexpr uint32_t DEFAULT_ITERS_UPPER_LIMIT          = 7;       ///< Default value.
+constexpr uint32_t DEFAULT_ITERS_LOWER_LIMIT          = 3;       ///< Default value.
+constexpr uint32_t DEFAULT_ITERS_1ST_UPPER_LIMIT      = 20;      ///< Default value.
 
 // Initial tolerances
-#define DEFAULT_A_TOL	1e-6                        ///< Default value.
-#define DEFAULT_R_TOL	1e-3                        ///< Default value.
+constexpr double DEFAULT_A_TOL = 1e-6; ///< Default value.
+constexpr double DEFAULT_R_TOL = 1e-3; ///< Default value.
 
 // Cache
-#define DEFAULT_CACHE_FLAG_STREAMS		true        ///< Default value.
-#define DEFAULT_CACHE_FLAG_HOLDUPS		false       ///< Default value.
-#define DEFAULT_CACHE_FLAG_INTERNAL		false       ///< Default value.
-#define DEFAULT_CACHE_WINDOW			100	        ///< Default value.
+constexpr bool     DEFAULT_CACHE_FLAG_STREAMS  = true;  ///< Default value.
+constexpr bool     DEFAULT_CACHE_FLAG_HOLDUPS  = false; ///< Default value.
+constexpr bool     DEFAULT_CACHE_FLAG_INTERNAL = false; ///< Default value.
+constexpr uint32_t DEFAULT_CACHE_WINDOW      = 100;     ///< Default value.
 
 // Initial minimal fraction
-#define DEFAULT_MIN_FRACTION	0                   ///< Default value.
+constexpr double DEFAULT_MIN_FRACTION = 0; ///< Default value.
 
 // Enthalpy calculator
-#define DEFAULT_ENTHALPY_MIN_T     173              ///< Default value.
-#define DEFAULT_ENTHALPY_MAX_T     1273             ///< Default value.
-#define DEFAULT_ENTHALPY_INTERVALS 100              ///< Default value.
+constexpr double   DEFAULT_ENTHALPY_MIN_T     = 173;  ///< Default value.
+constexpr double   DEFAULT_ENTHALPY_MAX_T     = 1273; ///< Default value.
+constexpr uint32_t DEFAULT_ENTHALPY_INTERVALS = 100;  ///< Default value.
 
 
 /**
@@ -127,12 +126,6 @@ inline int GetDistributionTypeIndex(EDistrTypes _nType)
 			return i;
 	return -1;
 }
-
-// TODO: Remove
-// ========== m_StreamMTP indexes
-#define MTP_MASS		0 ///< Index of mass in MTP.
-#define MTP_TEMPERATURE	1 ///< Index of temperature in MTP.
-#define MTP_PRESSURE	2 ///< Index of pressure in MTP.
 
 /**
  * \brief Types of grid entries for distributed properties of the solid phase.
@@ -218,38 +211,17 @@ enum class EDependencyTypes
 	DEPENDENCE_PRES = 2
 };
 
-// ========== Non-constant single-phase mixture properties and overall properties [300..399]
-
-// TODO: remove them
-//#define ENTHALPY				308 ///< overall
-#define FLOW					320	///< overall (stream)
-#define MASS					320	///< overall (holdup)
-#define FRACTION				321 ///< phase fraction
-#define PHASE_FRACTION			327	///< phase fraction
-#define PRESSURE				338	///< overall
-#define TEMPERATURE				340	///< overall
-#define TOTAL_FLOW				342	///< overall (stream)
-#define TOTAL_MASS				342	///< overall (holdup)
-
 // ========== Universal constants
 
-#define AVOGADRO_CONSTANT					6.022141994747e+23     ///< Avogadro constant [1/mol].
-#define BOLTZMANN_CONSTANT					1.38065032424e-23	   ///< Boltzmann constant [J/K].
-#define MOLAR_GAS_CONSTANT					8.314459848			   ///< Molar gas constant [J/mol/K].
-#define SPEED_OF_LIGHT_IN_VACUUM			2.9979245811e+8		   ///< Speed of light in vacuum [m/s].
-#define STANDARD_ACCELERATION_OF_GRAVITY	9.80665				   ///< Standard acceleration of gravity [m/s<sup>2</sup>].
-#define STANDARD_CONDITION_T				298.15	               ///< Standard condition temperature [K].
-#define STANDARD_CONDITION_P				101325	               ///< Standard condition pressure [Pa].
-#define STEFAN_BOLTZMANN_CONSTANT			5.670374419e-8		   ///< Stefan-Boltzmann constant [W/m<sup>2</sup>/K<sup>4</sup>].
-#define MATH_PI								3.14159265358979323846 ///< \f$\pi\f$ constant.
-
-/**
- * Value basis.
- */
-enum eValueBasises
-{
-	BASIS_MASS, BASIS_MOLL
-};
+constexpr double AVOGADRO_CONSTANT                = 6.022141994747e+23;     ///< Avogadro constant [1/mol].
+constexpr double BOLTZMANN_CONSTANT               = 1.38065032424e-23;      ///< Boltzmann constant [J/K].
+constexpr double MOLAR_GAS_CONSTANT               = 8.314459848;            ///< Molar gas constant [J/mol/K].
+constexpr double SPEED_OF_LIGHT_IN_VACUUM         = 2.9979245811e+8;        ///< Speed of light in vacuum [m/s].
+constexpr double STANDARD_ACCELERATION_OF_GRAVITY = 9.80665;                ///< Standard acceleration of gravity [m/s<sup>2</sup>].
+constexpr double STANDARD_CONDITION_T             = 298.15;                 ///< Standard condition temperature [K].
+constexpr double STANDARD_CONDITION_P             = 101325;                 ///< Standard condition pressure [Pa].
+constexpr double STEFAN_BOLTZMANN_CONSTANT        = 5.670374419e-8;         ///< Stefan-Boltzmann constant [W/m<sup>2</sup>/K<sup>4</sup>].
+constexpr double MATH_PI                          = 3.14159265358979323846; ///< \f$\pi\f$ constant.
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -282,7 +254,6 @@ enum class EPhase : uint32_t
  */
 enum class EOverall : uint32_t
 {
-	// TODO: rename when corresponding defines are removed
 	OVERALL_MASS,					///< Overall mass or mass flow.
 	OVERALL_TEMPERATURE,			///< Overall temperature.
 	OVERALL_PRESSURE,				///< Overall pressure.
@@ -306,20 +277,4 @@ enum class EUnitPort : uint32_t
 	INPUT     = 0, ///< Input port.
 	OUTPUT    = 1, ///< Output port.
 	UNDEFINED = 2  ///< Undefined.
-};
-
-
-////////////////////////////////////////////////////////////////////////////////
-/// Deprecated types
-
-/**
- * Identifiers of phase types.
- */
-enum EPhaseTypes : unsigned
-{
-	SOA_SOLID,
-	SOA_LIQUID,
-	SOA_VAPOR,
-	SOA_LIQUID2,
-	SOA_UNDEFINED
 };

@@ -311,9 +311,9 @@ void CBasicStreamsViewer::UpdateTableTab()
 
 	switch (ChosenProperty())
 	{
-	case EPropertyType::Mass:			SetMTPToTable(MTP_MASS);		break;
-	case EPropertyType::Temperatue:		SetMTPToTable(MTP_TEMPERATURE);	break;
-	case EPropertyType::Pressure:		SetMTPToTable(MTP_PRESSURE);	break;
+	case EPropertyType::Mass:			SetMTPToTable(0);				break;
+	case EPropertyType::Temperatue:		SetMTPToTable(1);				break;
+	case EPropertyType::Pressure:		SetMTPToTable(2);				break;
 	case EPropertyType::PhaseFraction:	SetPhaseFractionsToTable();		break;
 	case EPropertyType::Phase1:			SetPhaseCompoundsToTable();		break;
 	case EPropertyType::Phase2:			SetPhaseCompoundsToTable();		break;
@@ -333,9 +333,9 @@ void CBasicStreamsViewer::UpdatePlotTab()
 
 	switch (ChosenProperty())
 	{
-	case EPropertyType::Mass:			SetMTPToPlot(MTP_MASS);			break;
-	case EPropertyType::Temperatue:		SetMTPToPlot(MTP_TEMPERATURE);	break;
-	case EPropertyType::Pressure:		SetMTPToPlot(MTP_PRESSURE);		break;
+	case EPropertyType::Mass:			SetMTPToPlot(0);				break;
+	case EPropertyType::Temperatue:		SetMTPToPlot(1);				break;
+	case EPropertyType::Pressure:		SetMTPToPlot(2);				break;
 	case EPropertyType::PhaseFraction:	SetPhaseFractionsToPlot();		break;
 	case EPropertyType::Phase1:			SetPhaseCompoundsToPlot();		break;
 	case EPropertyType::Phase2:			SetPhaseCompoundsToPlot();		break;
@@ -541,7 +541,7 @@ QString CBasicStreamsViewer::DistrSymbolicName(EDistrTypes _distr) const
 
 void CBasicStreamsViewer::SetMTPToTable(int _type)
 {
-	if (m_vSelected2D.empty() || _type < MTP_MASS || _type > MTP_PRESSURE) return;
+	if (m_vSelected2D.empty() || _type < 0 || _type > 2) return;
 
 	ui.tabTable->SetGeometry(static_cast<int>(m_vSelectedTP.size()), static_cast<int>(m_vSelected2D.size()) + 1);
 	ui.tabTable->SetColHeaderItem(0, StrConst::BSV_TableHeaderTime);
@@ -796,15 +796,15 @@ void CBasicStreamsViewer::SetSolidDistrsToTableData(EDistrCombination _type)
 
 void CBasicStreamsViewer::SetMTPToPlot(int _type)
 {
-	if (m_vSelected2D.empty() || _type < MTP_MASS || _type > MTP_PRESSURE) return;
+	if (m_vSelected2D.empty() || _type < 0 || _type > 2) return;
 
 	QtPlot::LabelTypes labelType;
 	switch (_type)
 	{
-	case MTP_MASS:			labelType = dynamic_cast<const CStream*>(m_vSelectedStreams.front()) ? QtPlot::LABEL_MASS_FLOW : QtPlot::LABEL_MASS;	break;
-	case MTP_TEMPERATURE:	labelType = QtPlot::LABEL_TEMPERATURE;									break;
-	case MTP_PRESSURE:		labelType = QtPlot::LABEL_PRESSURE;										break;
-	default:				labelType = QtPlot::LABEL_NONE;											break;
+	case 0:  labelType = dynamic_cast<const CStream*>(m_vSelectedStreams.front()) ? QtPlot::LABEL_MASS_FLOW : QtPlot::LABEL_MASS;	break;
+	case 1:  labelType = QtPlot::LABEL_TEMPERATURE;									break;
+	case 2:  labelType = QtPlot::LABEL_PRESSURE;									break;
+	default: labelType = QtPlot::LABEL_NONE;										break;
 	}
 
 	for (int i = 0; i < static_cast<int>(m_vSelected2D.size()); ++i)
