@@ -5,7 +5,7 @@ Agglomerator
 
 This unit represents a simplified model of agglomeration process, see figure below.
 
-.. image:: ../static/images/003_models/agglomerator.png
+.. image:: ../images/003_models/agglomerator.png
    :width: 400px
    :alt:
    :align: center

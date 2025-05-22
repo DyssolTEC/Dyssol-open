@@ -5,7 +5,7 @@ Splitter
 
 A splitter divides input stream (:math:`In`) into two output streams (:math:`Out1` and :math:`Out2`), as shown in the figure below.
 
-.. image:: ../static/images/003_models/splitter.png
+.. image:: ../images/003_models/splitter.png
    :width: 300px
    :alt: mixer
    :align: center

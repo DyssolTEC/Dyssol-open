@@ -5,7 +5,7 @@ Screen
 
 Screen unit is designed for classification of input material into two fractions according to particle size distribution (PSD), as shown below.
 
-.. image:: ../static/images/003_models/screen.png
+.. image:: ../images/003_models/screen.png
    :width: 300px
    :alt: screen
    :align: center
@@ -22,7 +22,7 @@ In the following figure, several grade efficiency curves for different parameter
 
 .. note:: This figure only applies to the Plitt's model and Molerus & Hoffmann model.
 
-.. image:: ../static/images/003_models/splitter-alpha.png
+.. image:: ../images/003_models/splitter-alpha.png
    :width: 500px
    :alt: splitter-alpha
    :align: center

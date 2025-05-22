@@ -15,7 +15,7 @@ You can find :ref:`File<sec.gui.menu_file>`, :ref:`Setup<sec.gui.menu_setup>`, :
 File
 ^^^^
 
-.. image:: ../static/images/001_ui/menu_file.png
+.. image:: ../images/001_ui/menu_file.png
 	:width: 960px
 	:alt: menu_file.png
 	:align: center
@@ -30,7 +30,7 @@ File
 Setup
 ^^^^^
 
-.. image:: ../static/images/001_ui/menu_setup.png
+.. image:: ../images/001_ui/menu_setup.png
 	:width: 960px
 	:alt: menu_setup.png
 	:align: center
@@ -50,7 +50,7 @@ Setup
 Compounds editor
 ~~~~~~~~~~~~~~~~
 
-.. image:: ../static/images/001_ui/setup_compounds.png
+.. image:: ../images/001_ui/setup_compounds.png
 	:width: 411px
 	:alt: compounds.png
 	:align: center
@@ -65,7 +65,7 @@ Compounds editor
 Phases editor
 ~~~~~~~~~~~~~
 
-.. image:: ../static/images/001_ui/setup_phases.png
+.. image:: ../images/001_ui/setup_phases.png
 	:width: 206px
 	:alt: phases.png
 	:align: center
@@ -81,7 +81,7 @@ Phases editor
 Grids specification
 ~~~~~~~~~~~~~~~~~~~
 
-.. image:: ../static/images/001_ui/setup_grids.png
+.. image:: ../images/001_ui/setup_grids.png
 	:width: 960px
 	:alt: setup_grids.png
 	:align: center
@@ -107,7 +107,7 @@ Holdups editor
 
 Here, material in inlet streams and holdups can be configured.
 
-.. image:: ../static/images/001_ui/setup_holdups_main.png
+.. image:: ../images/001_ui/setup_holdups_main.png
 	:width: 960px
 	:alt: setup_holdups_main.png
 	:align: center
@@ -126,7 +126,7 @@ Here, material in inlet streams and holdups can be configured.
 
 Overall stream properties:
 
-.. image:: ../static/images/001_ui/setup_holdups_overall.png
+.. image:: ../images/001_ui/setup_holdups_overall.png
 	:width: 960px
 	:alt: setup_holdups_overall.png
 	:align: center
@@ -140,7 +140,7 @@ Overall stream properties:
 
 Phase fractions:
 	
-.. image:: ../static/images/001_ui/setup_holdups_phases.png
+.. image:: ../images/001_ui/setup_holdups_phases.png
 	:width: 960px
 	:alt: setup_holdups_phases.png
 	:align: center
@@ -152,7 +152,7 @@ Phase fractions:
 
 Compound fractions of the liquid phase:
 
-.. image:: ../static/images/001_ui/setup_holdups_phase_liquid.png
+.. image:: ../images/001_ui/setup_holdups_phase_liquid.png
 	:width: 960px
 	:alt: setup_holdups_phase_liquid.png
 	:align: center
@@ -164,7 +164,7 @@ Compound fractions of the liquid phase:
 
 Compound fractions of the gas phase:
 
-.. image:: ../static/images/001_ui/setup_holdups_phase_gas.png
+.. image:: ../images/001_ui/setup_holdups_phase_gas.png
 	:width: 960px
 	:alt: setup_holdups_phase_gas.png
 	:align: center
@@ -176,7 +176,7 @@ Compound fractions of the gas phase:
 
 Compound fractions and distributed properties of the solid phase:
 	
-.. image:: ../static/images/001_ui/setup_holdups_phase_solid.png
+.. image:: ../images/001_ui/setup_holdups_phase_solid.png
 	:width: 960px
 	:alt: setup_holdups_phase_solid.png
 	:align: center
@@ -203,7 +203,7 @@ Options
 
 General options:
 
-.. image:: ../static/images/001_ui/setup_options_general.png
+.. image:: ../images/001_ui/setup_options_general.png
 	:width: 324px
 	:alt: setup_options_general.png
 	:align: center
@@ -217,7 +217,7 @@ General options:
 
 Options for :ref:`label-waveRelax`, :ref:`label-extrapolation` and :ref:`sec.theory.convergence`: 
 
-.. image:: ../static/images/001_ui/setup_options_convergence.png
+.. image:: ../images/001_ui/setup_options_convergence.png
 	:width: 324px
 	:alt: setup_options_convergence.png
 	:align: center
@@ -235,7 +235,7 @@ Options for :ref:`label-waveRelax`, :ref:`label-extrapolation` and :ref:`sec.the
 
 Additional options:
 	
-.. image:: ../static/images/001_ui/setup_options_service.png
+.. image:: ../images/001_ui/setup_options_service.png
 	:width: 324px
 	:alt: setup_options_service.png
 	:align: center
@@ -253,7 +253,7 @@ Calculation sequence
 
 Here, one can adjust automatically calculated simulation sequence. See also :ref:`label-partition`.
 
-.. image:: ../static/images/001_ui/setup_sequence.png
+.. image:: ../images/001_ui/setup_sequence.png
 	:width: 200px
 	:alt: setup_sequence.png
 	:align: center
@@ -270,7 +270,7 @@ Recycle streams
 
 Here, one can adjust automatically calculated initial values of tear streams
 
-.. image:: ../static/images/001_ui/setup_recycles.png
+.. image:: ../images/001_ui/setup_recycles.png
 	:width: 960px
 	:alt: setup_recycles.png
 	:align: center
@@ -289,7 +289,7 @@ Here, one can adjust automatically calculated initial values of tear streams
 Modules
 ^^^^^^^
 
-.. image:: ../static/images/001_ui/menu_modules.png
+.. image:: ../images/001_ui/menu_modules.png
 	:width: 960px
 	:alt: menu_modules.png
 	:align: center
@@ -301,7 +301,7 @@ Modules
 Tools
 ^^^^^
 
-.. image:: ../static/images/001_ui/menu_tools.png
+.. image:: ../images/001_ui/menu_tools.png
 	:width: 960px
 	:alt: menu_tools.png
 	:align: center
@@ -318,7 +318,7 @@ Models manager
 
 Configuration of the models library 
 
-.. image:: ../static/images/001_ui/tools_models.png
+.. image:: ../images/001_ui/tools_models.png
 	:width: 960px
 	:alt: tools_models.png
 	:align: center
@@ -336,7 +336,7 @@ Materials database
 
 Configuration of compounds in the global :ref:`sec.mdb`.
 
-.. image:: ../static/images/001_ui/tools_mdb.png
+.. image:: ../images/001_ui/tools_mdb.png
 	:width: 960px
 	:alt: tools_mdb.png
 	:align: center
@@ -381,7 +381,7 @@ Settings
 
 Application-wide settings.
 
-.. image:: ../static/images/001_ui/tools_settings.png
+.. image:: ../images/001_ui/tools_settings.png
 	:width: 284px
 	:alt: tools_settings.png
 	:align: center
@@ -397,7 +397,7 @@ Application-wide settings.
 Help
 ^^^^
 	
-.. image:: ../static/images/001_ui/menu_about.png
+.. image:: ../images/001_ui/menu_about.png
 	:width: 960px
 	:alt: menu_about.png
 	:align: center
@@ -410,7 +410,7 @@ Help
 About
 ~~~~~
 
-.. image:: ../static/images/001_ui/help_about.png
+.. image:: ../images/001_ui/help_about.png
 	:width: 354px
 	:alt: help_about.png
 	:align: center
@@ -429,7 +429,7 @@ Tabs
 
 Tabs are used to build a flowsheet, run a simulation, and analyze the results. There are :ref:`Flowsheet<sec.gui.tabs.flowsheet>`, :ref:`Simulator<sec.gui.tabs.simulator>`, :ref:`Streams<sec.gui.tabs.streams>` and :ref:`Units<sec.gui.tabs.units>` tabs.
 	
-.. image:: ../static/images/001_ui/tabs.png
+.. image:: ../images/001_ui/tabs.png
 	:width: 960px
 	:alt: tabs.png
 	:align: center
@@ -444,7 +444,7 @@ Tabs are used to build a flowsheet, run a simulation, and analyze the results. T
 Flowsheet
 ^^^^^^^^^
 
-.. image:: ../static/images/001_ui/tab_flowsheet.png
+.. image:: ../images/001_ui/tab_flowsheet.png
 	:width: 960px
 	:alt: tab_flowsheet.png
 	:align: center
@@ -473,7 +473,7 @@ Simulator
 
 Here you can start your simulation based on your time input.
 
-.. image:: ../static/images/001_ui/tab_simulator.png
+.. image:: ../images/001_ui/tab_simulator.png
 	:width: 960px
 	:alt: tab_simulator.png
 	:align: center
@@ -495,7 +495,7 @@ Here, parameters of streams can be found after simulation.
 
 Table view:
 
-.. image:: ../static/images/001_ui/tab_streams_table.png
+.. image:: ../images/001_ui/tab_streams_table.png
 	:width: 960px
 	:alt: tab_streams_table.png
 	:align: center
@@ -507,7 +507,7 @@ Table view:
 
 Plot view:
 
-.. image:: ../static/images/001_ui/tab_streams_plot.png
+.. image:: ../images/001_ui/tab_streams_plot.png
 	:width: 960px
 	:alt: tab_streams_plot.png
 	:align: center
@@ -530,7 +530,7 @@ Units
 
 Here, parameters of units can be found after simulation.
 
-.. image:: ../static/images/001_ui/tab_units.png
+.. image:: ../images/001_ui/tab_units.png
 	:width: 960px
 	:alt: tab_units.png
 	:align: center

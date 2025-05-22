@@ -142,8 +142,8 @@ html_css_files = [
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'Dyssol'
 
-html_logo = './static/images/logo_doc.png'
-html_favicon = './static/images/logo.png'
+html_logo = './images/logo_doc.png'
+html_favicon = './images/logo.png'
 
 # -- Extension configuration -------------------------------------------------
 

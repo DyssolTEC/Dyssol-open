@@ -5,7 +5,7 @@ Crusher
 
 A crusher comminutes the input material stream and reduces the average particle size. The schema is illustrated below.
 
-.. image:: ../static/images/003_models/crusher.png
+.. image:: ../images/003_models/crusher.png
    :width: 200px
    :alt: splitter
    :align: center

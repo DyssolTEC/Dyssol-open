@@ -80,7 +80,7 @@ Here you can find a detailed guide for creating and running the screen process.
 
 A flowsheet of this example is shown below with all stream names.
 
-.. image:: ../static/images/000_get_started/flowsheet.png
+.. image:: ../images/000_get_started/flowsheet.png
    :width: 500px
    :alt: flowsheet.png
    :align: center
@@ -100,7 +100,7 @@ Follow these steps to complete the simulation and analyze the result.
         - Out coarse
         - Out fine
   
-	.. image:: ../static/images/000_get_started/step01_1.png
+	.. image:: ../images/000_get_started/step01_1.png
 		:width: 960px
 		:alt: step01_1.png
 		:align: center
@@ -115,7 +115,7 @@ Follow these steps to complete the simulation and analyze the result.
         - Coarse
         - Fine
 
-	.. image:: ../static/images/000_get_started/step02_1.png
+	.. image:: ../images/000_get_started/step02_1.png
 	   :width: 960px
 	   :alt: step02_1.png
 	   :align: center
@@ -131,7 +131,7 @@ Follow these steps to complete the simulation and analyze the result.
         - Out coarse : OutletFlow
         - Out fine : OutletFlow
 
-	.. image:: ../static/images/000_get_started/step03_1.png
+	.. image:: ../images/000_get_started/step03_1.png
 	   :width: 960px
 	   :alt: step03_1.png
 	   :align: center
@@ -147,7 +147,7 @@ Follow these steps to complete the simulation and analyze the result.
         - Out coarse : In - Coarse
         - Out fine : In - Fine
 
-	.. image:: ../static/images/000_get_started/step04_1.png
+	.. image:: ../images/000_get_started/step04_1.png
 	   :width: 960px
 	   :alt: step04_1.png
 	   :align: center
@@ -166,7 +166,7 @@ Follow these steps to complete the simulation and analyze the result.
 
 	5.6. Set Alpha values to 10, 9, 8
 
-	.. image:: ../static/images/000_get_started/step05_1.png
+	.. image:: ../images/000_get_started/step05_1.png
 	   :width: 960px
 	   :alt: step05_1.png
 	   :align: center
@@ -182,7 +182,7 @@ Follow these steps to complete the simulation and analyze the result.
 	
 	6.4. Apply and close Compounds editor
 
-	.. image:: ../static/images/000_get_started/step06_1.png
+	.. image:: ../images/000_get_started/step06_1.png
 	   :width: 960px
 	   :alt: step06_1.png
 	   :align: center
@@ -199,7 +199,7 @@ Follow these steps to complete the simulation and analyze the result.
 	
 	7.5. Apply and close Phases editor
 
-	.. image:: ../static/images/000_get_started/step07_1.png
+	.. image:: ../images/000_get_started/step07_1.png
 	   :width: 960px
 	   :alt: step07_1.png
 	   :align: center
@@ -220,7 +220,7 @@ Follow these steps to complete the simulation and analyze the result.
 	
 	8.7. Apply and close Grid editor
 
-	.. image:: ../static/images/000_get_started/step08_1.png
+	.. image:: ../images/000_get_started/step08_1.png
 	   :width: 960px
 	   :alt: step08_1.png
 	   :align: center
@@ -255,17 +255,17 @@ Follow these steps to complete the simulation and analyze the result.
 	
 	9.14. Apply and close Holdups editor
 
-	.. image:: ../static/images/000_get_started/step09_1.png
+	.. image:: ../images/000_get_started/step09_1.png
 	   :width: 960px
 	   :alt: step09_1.png
 	   :align: center
 	   
-	.. image:: ../static/images/000_get_started/step09_2.png
+	.. image:: ../images/000_get_started/step09_2.png
 	   :width: 960px
 	   :alt: step09_2.png
 	   :align: center
 
-	.. image:: ../static/images/000_get_started/step09_3.png
+	.. image:: ../images/000_get_started/step09_3.png
 	   :width: 960px
 	   :alt: step09_3.png
 	   :align: center
@@ -276,7 +276,7 @@ Follow these steps to complete the simulation and analyze the result.
 
 	10.2. Set End simulation time to 240 s
 
-	.. image:: ../static/images/000_get_started/step10_1.png
+	.. image:: ../images/000_get_started/step10_1.png
 	   :width: 960px
 	   :alt: step10_1.png
 	   :align: center
@@ -287,7 +287,7 @@ Follow these steps to complete the simulation and analyze the result.
 
 	11.2. Wait until the simulation is finished
 
-	.. image:: ../static/images/000_get_started/step11_1.png
+	.. image:: ../images/000_get_started/step11_1.png
 	   :width: 960px
 	   :alt: step11_1.png
 	   :align: center
@@ -310,12 +310,12 @@ Follow these steps to complete the simulation and analyze the result.
 
 	12.8. Check the results
 
-	.. image:: ../static/images/000_get_started/step12_1.png
+	.. image:: ../images/000_get_started/step12_1.png
 	   :width: 960px
 	   :alt: step12_1.png
 	   :align: center
 	   
-	.. image:: ../static/images/000_get_started/step12_2.png
+	.. image:: ../images/000_get_started/step12_2.png
 	   :width: 960px
 	   :alt: step12_2.png
 	   :align: center 

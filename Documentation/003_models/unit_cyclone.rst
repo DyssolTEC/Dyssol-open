@@ -5,7 +5,7 @@ Cyclone
 
 Solids-gas separation according to Muschelknautz
 
-.. image:: ../static/images/003_models/cyclone.png
+.. image:: ../images/003_models/cyclone.png
    :width: 200px
    :alt: cyclone
    :align: center
