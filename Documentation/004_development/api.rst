@@ -22,7 +22,6 @@ All functions, classes, their member variables and methods, needed to develop ne
 	class_basesolver
 	class_statevariablesmanager
 	class_statevariable
-	class_point
 	class_curve
 	class_plot
 	class_plotmanager
@@ -30,6 +29,7 @@ All functions, classes, their member variables and methods, needed to develop ne
 	class_matrix2d
 	class_densemdmatrix
 	class_transformmatrix
+	auxiliary_classes
 	psd_functions
 	distribution_functions
 	thermodynamics

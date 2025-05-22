@@ -10,7 +10,6 @@
 #include <utility>
 
 /**
- * \private
  * \brief Time dependent value.
  */
 struct STDValue
@@ -29,13 +28,12 @@ struct STDValue
 };
 
 /**
- * \private
  * \brief Describes an interval between two values.
  */
 struct SInterval
 {
-	double min;
-	double max;
+	double min; ///< Start of the interval.
+	double max; ///< End of the interval.
 	friend std::ostream& operator << (std::ostream& os, const SInterval& val) { os << val.min << ' ' << val.max;	return os; }
 	friend std::istream& operator >> (std::istream& is, SInterval& val) { is >> val.min >> val.max; return is; }
 	bool operator==(const SInterval& _i) const { return min == _i.min && max == _i.max; }

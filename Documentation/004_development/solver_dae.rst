@@ -224,7 +224,7 @@ Other functions
 
 	void SaveState()
 
-Saves current state of the solver. Should be called in function :ref:`SaveState <label-SaveState>` of the unit.
+Saves current state of the solver. Should be called in function :ref:`SaveState <sec.development.api.class_baseunit>` of the unit.
 
 |
 
@@ -232,7 +232,7 @@ Saves current state of the solver. Should be called in function :ref:`SaveState 
 
 	void LoadState()
 
-Loads last saved state of the solver. Should be called in function :ref:`LoadState <label-LoadState>` of the unit.
+Loads last saved state of the solver. Should be called in function :ref:`LoadState <sec.development.api.class_baseunit>` of the unit.
 
 |
 

@@ -6,9 +6,12 @@
 
 [Files]
 #ifdef IsDocs
-Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\index.html";        DestDir: "{app}\{code:DirHelp}";                 Flags: ignoreversion
 Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\genindex.html";     DestDir: "{app}\{code:DirHelp}";                 Flags: ignoreversion
+Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\index.html";        DestDir: "{app}\{code:DirHelp}";                 Flags: ignoreversion
 Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\search.html";       DestDir: "{app}\{code:DirHelp}";                 Flags: ignoreversion
+Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\searchindex.js";    DestDir: "{app}\{code:DirHelp}";                 Flags: ignoreversion
+Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\objects.inv";       DestDir: "{app}\{code:DirHelp}";                 Flags: ignoreversion
+Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\_images\*";         DestDir: "{app}\{code:DirHelp}\_images";         Flags: ignoreversion recursesubdirs
 Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\_static\*";         DestDir: "{app}\{code:DirHelp}\_static";         Flags: ignoreversion recursesubdirs
 Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\000_get_started\*"; DestDir: "{app}\{code:DirHelp}\000_get_started"; Flags: ignoreversion recursesubdirs
 Source: "..\..\install\windows\share\Dyssol\docs\sphinx\html\001_ui\*";          DestDir: "{app}\{code:DirHelp}\001_ui";          Flags: ignoreversion recursesubdirs

@@ -130,6 +130,7 @@ public:
 	 */
 	void Add(double _value);
 	/**
+	 * \private
 	 * \brief Adds a component with some weight to each right (dependent) entry of the mixture table.
 	 * \param _component New component.
 	 * \param _weight Weight of the component.
