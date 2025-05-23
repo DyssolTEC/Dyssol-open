@@ -17,7 +17,7 @@ Compilation requirements
 - `Qt 6.x.x <https://www.qt.io/download-qt-installer>`_ MSVC 2022 64-bit component
 - `Qt Visual Studio Tools <https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools2022>`_ for Visual Studio 2022
 - `CMake <https://cmake.org/download>`_ 3.5.0 or higher
-- `Python <https://www.python.org/downloads>`_ 3.8 or higher
+- `Python <https://www.python.org/downloads>`_ 3.11 or higher
 - `Git <https://git-scm.com/download/win>`_
 - PowerShell 5.0 (usually shipped with Windows)
 
@@ -64,7 +64,7 @@ Compilation requirements
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 - g++-9 or clang++-10
-- CMake 3.5.0 or higher
+- CMake 3.11.0 or higher
 
 .. _sec.development.compilation.linux.build:
 

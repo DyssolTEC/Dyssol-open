@@ -5,7 +5,7 @@
 
 # TODO: option to disable shared libs
 
-cmake_minimum_required(VERSION 3.5.0)
+cmake_minimum_required(VERSION 3.11.0)
 
 set (VERSION 1.5.0)
 set (SOVERSION 1.5)
