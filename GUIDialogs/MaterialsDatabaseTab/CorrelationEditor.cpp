@@ -109,7 +109,7 @@ void CCorrelationEditor::UpdateParameters() const
 		ui.tableParams->setVerticalHeaderItem(1, new QTableWidgetItem("Value"));
 		for (int i = 0; i < static_cast<int>(vParams.size()); ++i)
 		{
-			ui.tableParams->SetItemNotEditable(0, i, QString('a' + i));
+			ui.tableParams->SetItemNotEditable(0, i, QString(static_cast<char>('a' + i)));
 			ui.tableParams->SetItemEditablePrecise(1, i, vParams[i], 30);
 		}
 	}

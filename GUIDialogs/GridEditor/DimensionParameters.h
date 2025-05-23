@@ -4,9 +4,9 @@
 
 #include "ui_DimensionParameters.h"
 #include "DyssolDefines.h"
+#include "MultidimensionalGrid.h"
 #include <memory>
 
-class CGridDimension;
 class CMaterialsDatabase;
 
 class CDimensionParameters : public QWidget

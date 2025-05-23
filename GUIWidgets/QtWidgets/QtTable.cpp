@@ -338,7 +338,11 @@ QCheckBox* CQtTable::SetCheckBox(const int _row, const int _col, bool _checked /
 	pWidget->setLayout(pLayout);
 	pCheckBox->setChecked(_checked);
 	pCheckBox->setObjectName("CheckBox");
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+	connect(pCheckBox, &QCheckBox::checkStateChanged, this, [this, _row, _col, pCheckBox] { CheckBoxStateChanged(_row, _col, pCheckBox); });
+#else
 	connect(pCheckBox, &QCheckBox::stateChanged, this, [this, _row, _col, pCheckBox] { CheckBoxStateChanged(_row, _col, pCheckBox); });
+#endif
 	setCellWidget(_row, _col, pWidget);
 	return pCheckBox;
 }

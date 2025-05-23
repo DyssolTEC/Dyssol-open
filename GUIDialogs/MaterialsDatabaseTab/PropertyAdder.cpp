@@ -15,7 +15,7 @@ CPropertyAdder::CPropertyAdder(MDBDescriptors::SPropertyDescriptor* _property, s
 	ui.setupUi(this);
 
 	// set regular expression for limitation of input to floating point numbers
-	ui.lineEditValue->setValidator(new QRegExpValidator(QRegExp{ "^[0-9]*[.]?[0-9]+(?:[eE][-+]?[0-9]+)?$" }, this));
+	ui.lineEditValue->setValidator(new QRegularExpressionValidator(QRegularExpression{ "^[0-9]*[.]?[0-9]+(?:[eE][-+]?[0-9]+)?$" }, this));
 
 	SetupTypeCombo();
 	SetupKeyCombo();

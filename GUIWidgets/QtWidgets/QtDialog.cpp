@@ -10,6 +10,7 @@
 #include <QDesktopServices>
 #include <QLabel>
 #include <QLineEdit>
+#include <QRegularExpression>
 
 void CDyssolBaseWidget::SetChildWidgets(std::initializer_list<CDyssolBaseWidget*> _widgets)
 {
@@ -44,7 +45,7 @@ QSettings* CDyssolBaseWidget::GetSettings() const
 
 void CDyssolBaseWidget::ShowLabel(QLabel* _labelWidget) const
 {
-	const QString text = _labelWidget->text().remove(QRegExp{ R"(\[[^\]]*\])" }).trimmed();
+	const QString text = _labelWidget->text().remove(QRegularExpression{ R"(\[[^\]]*\])" }).trimmed();
 	_labelWidget->setText(text);
 }
 

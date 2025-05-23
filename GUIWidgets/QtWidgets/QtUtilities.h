@@ -21,7 +21,7 @@ inline std::vector<std::vector<double>> ParseClipboardAsDoubles()
 	// parse pasted text
 	const QString text = QApplication::clipboard()->text();
 	// split by rows
-	QStringList rows = text.split(QRegExp(QLatin1String("\n")));
+	QStringList rows = text.split(QRegularExpression(QLatin1String("\n")));
 	// remove trailing whitespaces
 	while (!rows.empty() && rows.back().size() == 0)
 		rows.pop_back();
@@ -34,7 +34,7 @@ inline std::vector<std::vector<double>> ParseClipboardAsDoubles()
 		constexpr auto skipEmptyParts = QString::SkipEmptyParts;
 #endif
 		// split by columns
-		QStringList data = rows[irow].split(QRegExp(regExp), skipEmptyParts);
+		QStringList data = rows[irow].split(QRegularExpression(regExp), skipEmptyParts);
 		// remove trailing whitespaces
 		while (!data.empty() && data.back().size() == 0)
 			data.pop_back();

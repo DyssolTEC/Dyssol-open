@@ -74,7 +74,7 @@ See the [documentation](https://dyssoltec.github.io/Dyssol-open/004_development/
 - ExampleConfigFile.txt – example configuration file for command-line utility
 - LICENSE - license agreement
 - Materials.dmdb – default materials database
-- Qt5*.dll - Qt libraries to support GUI
+- Qt6*.dll - Qt libraries to support GUI
 - *.dll - Other external libraries
 - unins000.exe – Dyssol uninstaller
 

@@ -1,667 +1,659 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-  <class>CFlowsheetEditorClass</class>
-  <widget class="QWidget" name="CFlowsheetEditorClass">
-    <property name="geometry">
-      <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>1000</width>
-        <height>789</height>
-      </rect>
-    </property>
-    <property name="windowTitle">
-      <string>CFlowsheetEditor</string>
-    </property>
-    <property name="windowIcon">
-      <iconset resource="../../DyssolGUI/Resources.qrc">
-        <normaloff>:/Icons/WinIcon</normaloff>:/Icons/WinIcon</iconset>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-        <layout class="QVBoxLayout" name="verticalLayout_10">
-          <property name="spacing">
-            <number>6</number>
-          </property>
-          <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
-              <item>
-                <widget class="QLabel" name="label_8">
-                  <property name="text">
-                    <string>Units:</string>
-                  </property>
-                </widget>
-              </item>
-              <item>
-                <widget class="QPushButton" name="buttonAddModel">
-                  <property name="sizePolicy">
-                    <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                    </sizepolicy>
-                  </property>
-                  <property name="toolTip">
-                    <string>Add a new unit to the flowsheet</string>
-                  </property>
-                  <property name="statusTip">
-                    <string>Add new unit to the flowsheet</string>
-                  </property>
-                  <property name="whatsThis">
-                    <string>Add a new unit to the flowsheet</string>
-                  </property>
-                  <property name="text">
-                    <string>+</string>
-                  </property>
-                </widget>
-              </item>
-              <item>
-                <widget class="QPushButton" name="buttonDeleteModel">
-                  <property name="sizePolicy">
-                    <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                    </sizepolicy>
-                  </property>
-                  <property name="toolTip">
-                    <string>Remove selected unit from the flowsheet</string>
-                  </property>
-                  <property name="statusTip">
-                    <string>Remove the selected unit from the flowsheet</string>
-                  </property>
-                  <property name="whatsThis">
-                    <string>Remove selected unit from the flowsheet</string>
-                  </property>
-                  <property name="text">
-                    <string>-</string>
-                  </property>
-                </widget>
-              </item>
-              <item>
-                <widget class="QPushButton" name="buttonUpModel">
-                  <property name="sizePolicy">
-                    <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                    </sizepolicy>
-                  </property>
-                  <property name="toolTip">
-                    <string>Move selected unit upwards in the list</string>
-                  </property>
-                  <property name="statusTip">
-                    <string>Move the selected unit upwards in the units sequence</string>
-                  </property>
-                  <property name="whatsThis">
-                    <string>Move selected unit upwards in the list</string>
-                  </property>
-                  <property name="text">
-                    <string>▲</string>
-                  </property>
-                </widget>
-              </item>
-              <item>
-                <widget class="QPushButton" name="buttonDownModel">
-                  <property name="sizePolicy">
-                    <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                    </sizepolicy>
-                  </property>
-                  <property name="toolTip">
-                    <string>Move selected unit downwards in the list</string>
-                  </property>
-                  <property name="statusTip">
-                    <string>Move the selected unit downwards in the units sequence</string>
-                  </property>
-                  <property name="whatsThis">
-                    <string>Move selected unit downwards in the list</string>
-                  </property>
-                  <property name="text">
-                    <string>▼</string>
-                  </property>
-                </widget>
-              </item>
-            </layout>
-          </item>
-          <item>
-            <widget class="CQtTable" name="listModels">
-              <property name="selectionMode">
-                <enum>QAbstractItemView::SingleSelection</enum>
-              </property>
-              <attribute name="horizontalHeaderVisible">
-                <bool>false</bool>
-              </attribute>
-              <attribute name="horizontalHeaderStretchLastSection">
-                <bool>true</bool>
-              </attribute>
-              <column>
-                <property name="text">
-                  <string>Unit</string>
-                </property>
-              </column>
-              <property name="toolTip">
-                <string>List of units on the flowsheet</string>
-              </property>
-              
-              <property name="whatsThis">
-                <string>List of units on the flowsheet</string>
-              </property>
-            </widget>
-          </item>
-          <item>
-            <widget class="Line" name="line">
-              <property name="lineWidth">
-                <number>3</number>
-              </property>
-              <property name="midLineWidth">
-                <number>1</number>
-              </property>
-              <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-              </property>
-            </widget>
-          </item>
-          <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
-              <item>
-                <widget class="QLabel" name="label_9">
-                  <property name="text">
-                    <string>Streams:</string>
-                  </property>
-                </widget>
-              </item>
-              <item>
-                <widget class="QPushButton" name="buttonAddStream">
-                  <property name="sizePolicy">
-                    <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                    </sizepolicy>
-                  </property>
-                  <property name="toolTip">
-                    <string>Add a new stream to the flowsheet</string>
-                  </property>
-                  <property name="statusTip">
-                    <string>Add new material stream to the flowsheet</string>
-                  </property>
-                  <property name="whatsThis">
-                    <string>Add a new stream to the flowsheet</string>
-                  </property>
-                  <property name="text">
-                    <string>+</string>
-                  </property>
-                </widget>
-              </item>
-              <item>
-                <widget class="QPushButton" name="buttonDeleteStream">
-                  <property name="sizePolicy">
-                    <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                    </sizepolicy>
-                  </property>
-                  <property name="toolTip">
-                    <string>Remove selected stream from the flowsheet</string>
-                  </property>
-                  <property name="statusTip">
-                    <string>Remove the selected material stream from the flowsheet</string>
-                  </property>
-                  <property name="whatsThis">
-                    <string>Remove selected stream from the flowsheet</string>
-                  </property>
-                  <property name="text">
-                    <string>-</string>
-                  </property>
-                </widget>
-              </item>
-              <item>
-                <widget class="QPushButton" name="buttonUpStream">
-                  <property name="sizePolicy">
-                    <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                    </sizepolicy>
-                  </property>
-                  <property name="toolTip">
-                    <string>Move selected stream upwards in the list</string>
-                  </property>
-                  <property name="statusTip">
-                    <string>Move the selected material stream upwards in the streams sequence</string>
-                  </property>
-                  <property name="whatsThis">
-                    <string>Move selected stream upwards in the list</string>
-                  </property>
-                  <property name="text">
-                    <string>▲</string>
-                  </property>
-                </widget>
-              </item>
-              <item>
-                <widget class="QPushButton" name="buttonDownStream">
-                  <property name="sizePolicy">
-                    <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                    </sizepolicy>
-                  </property>
-                  <property name="toolTip">
-                    <string>Move selected stream downwards in the list</string>
-                  </property>
-                  <property name="statusTip">
-                    <string>Move the selected material stream downwards in the streams sequence</string>
-                  </property>
-                  <property name="whatsThis">
-                    <string>Move selected stream downwards in the list</string>
-                  </property>
-                  <property name="text">
-                    <string>▼</string>
-                  </property>
-                </widget>
-              </item>
-            </layout>
-          </item>
-          <item>
-            <widget class="CQtTable" name="listStreams">
-              <property name="selectionMode">
-                <enum>QAbstractItemView::SingleSelection</enum>
-              </property>
-              <attribute name="horizontalHeaderVisible">
-                <bool>false</bool>
-              </attribute>
-              <attribute name="horizontalHeaderStretchLastSection">
-                <bool>true</bool>
-              </attribute>
-              <column>
-                <property name="text">
-                  <string>Stream</string>
-                </property>
-              </column>
-              <property name="toolTip">
-                <string>List of streams on the flowsheet</string>
-              </property>
-              
-              <property name="whatsThis">
-                <string>List of streams on the flowsheet</string>
-              </property>
-            </widget>
-          </item>
-        </layout>
-      </item>
-      <item>
-        <layout class="QVBoxLayout" name="verticalLayout_7">
-          <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,4,2">
-              <item>
-                <widget class="QLabel" name="label_4">
-                  <property name="text">
-                    <string>Model</string>
-                  </property>
-                  <property name="toolTip">
-                    <string>Model selection for the chosen unit</string>
-                  </property>
-                  
-                  <property name="whatsThis">
-                    <string>Model selection for the chosen unit</string>
-                  </property>
-                </widget>
-              </item>
-              <item>
-                <widget class="QComboBox" name="comboUnits">
-                  <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                    </sizepolicy>
-                  </property>
-                  <property name="maxVisibleItems">
-                    <number>30</number>
-                  </property>
-                  <property name="insertPolicy">
-                    <enum>QComboBox::InsertAlphabetically</enum>
-                  </property>
-                  <property name="duplicatesEnabled">
-                    <bool>true</bool>
-                  </property>
-                  <property name="toolTip">
-                    <string>Model selection for the chosen unit</string>
-                  </property>
-                  
-                  <property name="whatsThis">
-                    <string>Model selection for the chosen unit</string>
-                  </property>
-                </widget>
-              </item>
-              <item>
-                <spacer name="horizontalSpacer_2">
-                  <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                    <size>
-                      <width>40</width>
-                      <height>20</height>
-                    </size>
-                  </property>
-                </spacer>
-              </item>
-            </layout>
-          </item>
-          <item>
-            <widget class="Line" name="line_2">
-              <property name="lineWidth">
-                <number>3</number>
-              </property>
-              <property name="midLineWidth">
-                <number>1</number>
-              </property>
-              <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-              </property>
-            </widget>
-          </item>
-          <item>
-            <widget class="QFrame" name="framePorts">
-              <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_2">
-                <property name="leftMargin">
-                  <number>0</number>
-                </property>
-                <property name="topMargin">
-                  <number>0</number>
-                </property>
-                <property name="rightMargin">
-                  <number>0</number>
-                </property>
-                <property name="bottomMargin">
-                  <number>0</number>
-                </property>
-                <item>
-                  <widget class="QLabel" name="labelPorts">
-                    <property name="text">
-                      <string>Ports</string>
-                    </property>
-                  </widget>
-                </item>
-                <item>
-                  <widget class="CQtTable" name="tablePorts">
-                    <attribute name="horizontalHeaderStretchLastSection">
-                      <bool>true</bool>
-                    </attribute>
-                    <column>
-                      <property name="text">
-                        <string>Port name</string>
-                      </property>
-                    </column>
-                    <column>
-                      <property name="text">
-                        <string>Type</string>
-                      </property>
-                    </column>
-                    <column>
-                      <property name="text">
-                        <string>Connected stream</string>
-                      </property>
-                    </column>
-                    <property name="toolTip">
-                      <string>List of ports of the selected unit</string>
-                    </property>
-                    
-                    <property name="whatsThis">
-                      <string>List of ports of the selected unit to connect streams</string>
-                    </property>
-                  </widget>
-                </item>
-              </layout>
-            </widget>
-          </item>
-          <item>
-            <widget class="QPushButton" name="buttonShowFlowsheet">
-              <property name="text">
-                <string>Show flowsheet</string>
-              </property>
-              <property name="toolTip">
-                <string>Show visual representation of the current flowsheet</string>
-              </property>
-              
-              <property name="whatsThis">
-                <string>Show visual representation of the current flowsheet</string>
-              </property>
-            </widget>
-          </item>
-        </layout>
-      </item>
-      <item>
-        <widget class="QGroupBox" name="groupBoxUnitParams">
-          <property name="title">
-            <string>Unit parameters</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
-            <item>
-              <widget class="QFrame" name="frameUnitParams">
-                <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
-                </property>
-                <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
-                </property>
-                <layout class="QVBoxLayout" name="verticalLayout_4" stretch="1,0,0">
-                  <property name="leftMargin">
-                    <number>0</number>
-                  </property>
-                  <property name="topMargin">
-                    <number>0</number>
-                  </property>
-                  <property name="rightMargin">
-                    <number>0</number>
-                  </property>
-                  <property name="bottomMargin">
-                    <number>0</number>
-                  </property>
-                  <item>
-                    <widget class="CQtTable" name="tableUnitParams">
-                      <property name="selectionMode">
-                        <enum>QAbstractItemView::SingleSelection</enum>
-                      </property>
-                      <attribute name="horizontalHeaderStretchLastSection">
-                        <bool>true</bool>
-                      </attribute>
-                      <attribute name="verticalHeaderVisible">
-                        <bool>true</bool>
-                      </attribute>
-                      <column>
-                        <property name="text">
-                          <string>Parameter</string>
-                        </property>
-                      </column>
-                      <column>
-                        <property name="text">
-                          <string>Units</string>
-                        </property>
-                      </column>
-                      <column>
-                        <property name="text">
-                          <string>Value</string>
-                        </property>
-                      </column>
-                      <property name="toolTip">
-                        <string>List of model parameters </string>
-                      </property>
-                      
-                      <property name="whatsThis">
-                        <string>List of user-defined model parameters of the selected unit</string>
-                      </property>
-                    </widget>
-                  </item>
-                  <item>
-                    <widget class="QTextBrowser" name="textParamDescr">
-                      <property name="enabled">
-                        <bool>true</bool>
-                      </property>
-                      <property name="sizePolicy">
-                        <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-                          <horstretch>0</horstretch>
-                          <verstretch>0</verstretch>
-                        </sizepolicy>
-                      </property>
-                      <property name="maximumSize">
-                        <size>
-                          <width>16777215</width>
-                          <height>50</height>
-                        </size>
-                      </property>
-                      <property name="toolTip">
-                        <string>Description of the selected model parameter</string>
-                      </property>
-                      
-                      <property name="whatsThis">
-                        <string>Description of the selected model parameter</string>
-                      </property>
-                    </widget>
-                  </item>
-                  <item>
-                    <widget class="QFrame" name="frameListValues">
-                      <property name="frameShape">
-                        <enum>QFrame::StyledPanel</enum>
-                      </property>
-                      <property name="frameShadow">
-                        <enum>QFrame::Raised</enum>
-                      </property>
-                      <layout class="QVBoxLayout" name="verticalLayout">
-                        <property name="leftMargin">
-                          <number>0</number>
-                        </property>
-                        <property name="topMargin">
-                          <number>0</number>
-                        </property>
-                        <property name="rightMargin">
-                          <number>0</number>
-                        </property>
-                        <property name="bottomMargin">
-                          <number>0</number>
-                        </property>
-                        <item>
-                          <widget class="CQtTable" name="tableListValues">
-                            <property name="selectionMode">
-                              <enum>QAbstractItemView::SingleSelection</enum>
-                            </property>
-                            <attribute name="horizontalHeaderStretchLastSection">
-                              <bool>true</bool>
-                            </attribute>
-                            <attribute name="verticalHeaderVisible">
-                              <bool>false</bool>
-                            </attribute>
-                            <column>
-                              <property name="text">
-                                <string>Parameter</string>
-                              </property>
-                            </column>
-                            <column>
-                              <property name="text">
-                                <string>Value</string>
-                              </property>
-                            </column>
-                            <property name="toolTip">
-                              <string>Time-dependent values of the selected model parameter</string>
-                            </property>
-                            
-                            <property name="whatsThis">
-                              <string>Time-dependent values of the selected model parameter</string>
-                            </property>
-                          </widget>
-                        </item>
-                        <item>
-                          <layout class="QHBoxLayout" name="horizontalLayout_15">
-                            <item>
-                              <widget class="QPushButton" name="buttonAddListValue">
-                                <property name="sizePolicy">
-                                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                  </sizepolicy>
-                                </property>
-                                <property name="toolTip">
-                                  <string>Add time point to the time-dependent model parameter</string>
-                                </property>
-                                <property name="statusTip">
-                                  <string>Add new item to the selected unit parameter</string>
-                                </property>
-                                <property name="whatsThis">
-                                  <string>Add time point to the time-dependent model parameter</string>
-                                </property>
-                                <property name="text">
-                                  <string>+</string>
-                                </property>
-                              </widget>
-                            </item>
-                            <item>
-                              <widget class="QPushButton" name="buttonRemoveListValue">
-                                <property name="sizePolicy">
-                                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                  </sizepolicy>
-                                </property>
-                                <property name="toolTip">
-                                  <string>Remove selected time point from the time-dependent model parameter</string>
-                                </property>
-                                <property name="statusTip">
-                                  <string>Remove the selected item from the selected unit parameter</string>
-                                </property>
-                                <property name="whatsThis">
-                                  <string>Remove selected time point from the time-dependent model parameter</string>
-                                </property>
-                                <property name="text">
-                                  <string>-</string>
-                                </property>
-                              </widget>
-                            </item>
-                          </layout>
-                        </item>
-                      </layout>
-                    </widget>
-                  </item>
-                </layout>
-              </widget>
-            </item>
-          </layout>
+ <class>CFlowsheetEditorClass</class>
+ <widget class="QWidget" name="CFlowsheetEditorClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1000</width>
+    <height>789</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>CFlowsheetEditor</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../DyssolGUI/Resources.qrc">
+    <normaloff>:/Icons/WinIcon</normaloff>:/Icons/WinIcon</iconset>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout_10">
+     <property name="spacing">
+      <number>6</number>
+     </property>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Units:</string>
+         </property>
         </widget>
-      </item>
+       </item>
+       <item>
+        <widget class="QPushButton" name="buttonAddModel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Add a new unit to the flowsheet</string>
+         </property>
+         <property name="statusTip">
+          <string>Add new unit to the flowsheet</string>
+         </property>
+         <property name="whatsThis">
+          <string>Add a new unit to the flowsheet</string>
+         </property>
+         <property name="text">
+          <string>+</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="buttonDeleteModel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Remove selected unit from the flowsheet</string>
+         </property>
+         <property name="statusTip">
+          <string>Remove the selected unit from the flowsheet</string>
+         </property>
+         <property name="whatsThis">
+          <string>Remove selected unit from the flowsheet</string>
+         </property>
+         <property name="text">
+          <string>-</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="buttonUpModel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Move selected unit upwards in the list</string>
+         </property>
+         <property name="statusTip">
+          <string>Move the selected unit upwards in the units sequence</string>
+         </property>
+         <property name="whatsThis">
+          <string>Move selected unit upwards in the list</string>
+         </property>
+         <property name="text">
+          <string>▲</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="buttonDownModel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Move selected unit downwards in the list</string>
+         </property>
+         <property name="statusTip">
+          <string>Move the selected unit downwards in the units sequence</string>
+         </property>
+         <property name="whatsThis">
+          <string>Move selected unit downwards in the list</string>
+         </property>
+         <property name="text">
+          <string>▼</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="CQtTable" name="listModels">
+       <property name="toolTip">
+        <string>List of units on the flowsheet</string>
+       </property>
+       <property name="whatsThis">
+        <string>List of units on the flowsheet</string>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+       </property>
+       <attribute name="horizontalHeaderVisible">
+        <bool>false</bool>
+       </attribute>
+       <attribute name="horizontalHeaderStretchLastSection">
+        <bool>true</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string>Unit</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="line">
+       <property name="lineWidth">
+        <number>3</number>
+       </property>
+       <property name="midLineWidth">
+        <number>1</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Streams:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="buttonAddStream">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Add a new stream to the flowsheet</string>
+         </property>
+         <property name="statusTip">
+          <string>Add new material stream to the flowsheet</string>
+         </property>
+         <property name="whatsThis">
+          <string>Add a new stream to the flowsheet</string>
+         </property>
+         <property name="text">
+          <string>+</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="buttonDeleteStream">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Remove selected stream from the flowsheet</string>
+         </property>
+         <property name="statusTip">
+          <string>Remove the selected material stream from the flowsheet</string>
+         </property>
+         <property name="whatsThis">
+          <string>Remove selected stream from the flowsheet</string>
+         </property>
+         <property name="text">
+          <string>-</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="buttonUpStream">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Move selected stream upwards in the list</string>
+         </property>
+         <property name="statusTip">
+          <string>Move the selected material stream upwards in the streams sequence</string>
+         </property>
+         <property name="whatsThis">
+          <string>Move selected stream upwards in the list</string>
+         </property>
+         <property name="text">
+          <string>▲</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="buttonDownStream">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Move selected stream downwards in the list</string>
+         </property>
+         <property name="statusTip">
+          <string>Move the selected material stream downwards in the streams sequence</string>
+         </property>
+         <property name="whatsThis">
+          <string>Move selected stream downwards in the list</string>
+         </property>
+         <property name="text">
+          <string>▼</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="CQtTable" name="listStreams">
+       <property name="toolTip">
+        <string>List of streams on the flowsheet</string>
+       </property>
+       <property name="whatsThis">
+        <string>List of streams on the flowsheet</string>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+       </property>
+       <attribute name="horizontalHeaderVisible">
+        <bool>false</bool>
+       </attribute>
+       <attribute name="horizontalHeaderStretchLastSection">
+        <bool>true</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string>Stream</string>
+        </property>
+       </column>
+      </widget>
+     </item>
     </layout>
-  </widget>
-  <layoutdefault spacing="6" margin="11" />
-  <customwidgets>
-    <customwidget>
-      <class>CQtTable</class>
-      <extends>QTableWidget</extends>
-      <header>QtTable.h</header>
-      <container>1</container>
-    </customwidget>
-  </customwidgets>
-  <tabstops>
-    <tabstop>buttonAddModel</tabstop>
-    <tabstop>buttonDeleteModel</tabstop>
-    <tabstop>buttonUpModel</tabstop>
-    <tabstop>buttonDownModel</tabstop>
-    <tabstop>listModels</tabstop>
-    <tabstop>buttonAddStream</tabstop>
-    <tabstop>buttonDeleteStream</tabstop>
-    <tabstop>buttonUpStream</tabstop>
-    <tabstop>buttonDownStream</tabstop>
-    <tabstop>listStreams</tabstop>
-    <tabstop>comboUnits</tabstop>
-    <tabstop>tablePorts</tabstop>
-    <tabstop>tableUnitParams</tabstop>
-    <tabstop>textParamDescr</tabstop>
-    <tabstop>tableListValues</tabstop>
-    <tabstop>buttonAddListValue</tabstop>
-    <tabstop>buttonRemoveListValue</tabstop>
-  </tabstops>
-  <resources>
-    <include location="../../DyssolGUI/Resources.qrc" />
-  </resources>
-  <connections />
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout_7">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,4,2">
+       <item>
+        <widget class="QLabel" name="label_4">
+         <property name="toolTip">
+          <string>Model selection for the chosen unit</string>
+         </property>
+         <property name="whatsThis">
+          <string>Model selection for the chosen unit</string>
+         </property>
+         <property name="text">
+          <string>Model</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboUnits">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Model selection for the chosen unit</string>
+         </property>
+         <property name="whatsThis">
+          <string>Model selection for the chosen unit</string>
+         </property>
+         <property name="maxVisibleItems">
+          <number>30</number>
+         </property>
+         <property name="insertPolicy">
+          <enum>QComboBox::InsertPolicy::InsertAlphabetically</enum>
+         </property>
+         <property name="duplicatesEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="Line" name="line_2">
+       <property name="lineWidth">
+        <number>3</number>
+       </property>
+       <property name="midLineWidth">
+        <number>1</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QFrame" name="framePorts">
+       <property name="frameShape">
+        <enum>QFrame::Shape::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Shadow::Raised</enum>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="labelPorts">
+          <property name="text">
+           <string>Ports</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="CQtTable" name="tablePorts">
+          <property name="toolTip">
+           <string>List of ports of the selected unit</string>
+          </property>
+          <property name="whatsThis">
+           <string>List of ports of the selected unit to connect streams</string>
+          </property>
+          <attribute name="horizontalHeaderStretchLastSection">
+           <bool>true</bool>
+          </attribute>
+          <column>
+           <property name="text">
+            <string>Port name</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Type</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Connected stream</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonShowFlowsheet">
+       <property name="toolTip">
+        <string>Show visual representation of the current flowsheet</string>
+       </property>
+       <property name="whatsThis">
+        <string>Show visual representation of the current flowsheet</string>
+       </property>
+       <property name="text">
+        <string>Show flowsheet</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBoxUnitParams">
+     <property name="title">
+      <string>Unit parameters</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="QFrame" name="frameUnitParams">
+        <property name="frameShape">
+         <enum>QFrame::Shape::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Shadow::Raised</enum>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_4" stretch="1,0,0">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="CQtTable" name="tableUnitParams">
+           <property name="toolTip">
+            <string>List of model parameters </string>
+           </property>
+           <property name="whatsThis">
+            <string>List of user-defined model parameters of the selected unit</string>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+           </property>
+           <attribute name="horizontalHeaderStretchLastSection">
+            <bool>true</bool>
+           </attribute>
+           <attribute name="verticalHeaderVisible">
+            <bool>true</bool>
+           </attribute>
+           <column>
+            <property name="text">
+             <string>Parameter</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Units</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Value</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTextBrowser" name="textParamDescr">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>50</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Description of the selected model parameter</string>
+           </property>
+           <property name="whatsThis">
+            <string>Description of the selected model parameter</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QFrame" name="frameListValues">
+           <property name="frameShape">
+            <enum>QFrame::Shape::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Shadow::Raised</enum>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="CQtTable" name="tableListValues">
+              <property name="toolTip">
+               <string>Time-dependent values of the selected model parameter</string>
+              </property>
+              <property name="whatsThis">
+               <string>Time-dependent values of the selected model parameter</string>
+              </property>
+              <property name="selectionMode">
+               <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+              </property>
+              <attribute name="horizontalHeaderStretchLastSection">
+               <bool>true</bool>
+              </attribute>
+              <attribute name="verticalHeaderVisible">
+               <bool>false</bool>
+              </attribute>
+              <column>
+               <property name="text">
+                <string>Parameter</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Value</string>
+               </property>
+              </column>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_15">
+              <item>
+               <widget class="QPushButton" name="buttonAddListValue">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Add time point to the time-dependent model parameter</string>
+                </property>
+                <property name="statusTip">
+                 <string>Add new item to the selected unit parameter</string>
+                </property>
+                <property name="whatsThis">
+                 <string>Add time point to the time-dependent model parameter</string>
+                </property>
+                <property name="text">
+                 <string>+</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="buttonRemoveListValue">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Remove selected time point from the time-dependent model parameter</string>
+                </property>
+                <property name="statusTip">
+                 <string>Remove the selected item from the selected unit parameter</string>
+                </property>
+                <property name="whatsThis">
+                 <string>Remove selected time point from the time-dependent model parameter</string>
+                </property>
+                <property name="text">
+                 <string>-</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>CQtTable</class>
+   <extends>QTableWidget</extends>
+   <header>QtTable.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>buttonAddModel</tabstop>
+  <tabstop>buttonDeleteModel</tabstop>
+  <tabstop>buttonUpModel</tabstop>
+  <tabstop>buttonDownModel</tabstop>
+  <tabstop>listModels</tabstop>
+  <tabstop>buttonAddStream</tabstop>
+  <tabstop>buttonDeleteStream</tabstop>
+  <tabstop>buttonUpStream</tabstop>
+  <tabstop>buttonDownStream</tabstop>
+  <tabstop>listStreams</tabstop>
+  <tabstop>comboUnits</tabstop>
+  <tabstop>tablePorts</tabstop>
+  <tabstop>buttonShowFlowsheet</tabstop>
+  <tabstop>tableUnitParams</tabstop>
+  <tabstop>textParamDescr</tabstop>
+  <tabstop>tableListValues</tabstop>
+  <tabstop>buttonAddListValue</tabstop>
+  <tabstop>buttonRemoveListValue</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../../DyssolGUI/Resources.qrc"/>
+ </resources>
+ <connections/>
 </ui>
