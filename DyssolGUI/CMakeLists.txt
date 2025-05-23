@@ -3,13 +3,14 @@
 # Copyright (c) 2024, DyssolTEC GmbH. 
 # All rights reserved. This file is part of Dyssol. See LICENSE file for license information.
 
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
+find_package(Qt6 COMPONENTS Widgets)
+if (NOT Qt6_FOUND)
+    find_package(Qt5 REQUIRED COMPONENTS Widgets)
+endif()
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
-
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
 MACRO(SUBDIRLIST result curdir)
   FILE(GLOB children RELATIVE ${curdir} ${curdir}/*)
@@ -49,7 +50,7 @@ add_executable(DyssolGUI ${DyssolGUIsrc})
 target_compile_definitions(DyssolGUI PRIVATE INSTALL_DOCS_PATH="${INSTALL_DOCS_PATH}")
 target_compile_definitions(DyssolGUI PRIVATE INSTALL_CONFIG_PATH="${INSTALL_CONFIG_PATH}")
 
-TARGET_LINK_LIBRARIES(DyssolGUI Qt5::Widgets libdyssol_shared)
+TARGET_LINK_LIBRARIES(DyssolGUI Qt::Widgets libdyssol_shared)
 # link filesystem or experimental/filesystem for gcc
 IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   IF (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 8.0)

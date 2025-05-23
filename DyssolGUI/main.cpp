@@ -4,6 +4,7 @@
 
 #include "Dyssol.h"
 #include <QApplication>
+#include <QStyleFactory>
 
 #ifdef _MSC_VER
 // Print message to the VS Output window.
@@ -39,8 +40,25 @@ int main(int argc, char* argv[])
 	do
 	{
 		QApplication a(argc, argv);
+
+#ifdef _MSC_VER
+		// force Qt6 to look in ./styles folder for style libraries
+		QCoreApplication::addLibraryPath(QCoreApplication::applicationDirPath() + "/styles");
+
+		const QStringList available = QStyleFactory::keys();
+		if (available.contains("windowsvista", Qt::CaseInsensitive))
+			QApplication::setStyle("windowsvista");
+		else if (available.contains("fusion", Qt::CaseInsensitive))
+			QApplication::setStyle("fusion");
+		else if (available.contains("windows11", Qt::CaseInsensitive))
+			QApplication::setStyle("windows11");
+#endif
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 		QApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
 		qRegisterMetaTypeStreamOperators<QList<bool>>("QList<bool>");
+#endif
+
 		QStringList args = a.arguments();
 
 		for (int i = 0; i < args.size(); ++i)

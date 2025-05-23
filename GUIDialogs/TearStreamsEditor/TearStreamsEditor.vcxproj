@@ -32,11 +32,11 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <Import Project="$(QtMsBuild)\qt_defaults.props" Condition="Exists('$(QtMsBuild)\qt_defaults.props')" />
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <QtInstall>msvc2019_64</QtInstall>
+    <QtInstall>qt_msvc_dyssol</QtInstall>
     <QtModules>widgets</QtModules>
   </PropertyGroup>
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <QtInstall>msvc2019_64</QtInstall>
+    <QtInstall>qt_msvc_dyssol</QtInstall>
     <QtModules>widgets</QtModules>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') OR !Exists('$(QtMsBuild)\Qt.props')">
@@ -64,10 +64,12 @@
     <ClCompile Include="TearStreamsEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="TearStreamsEditor.h"></QtMoc>
+    <QtMoc Include="TearStreamsEditor.h">
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <QtUic Include="TearStreamsEditor.ui"></QtUic>
+    <QtUic Include="TearStreamsEditor.ui">
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)GUIWidgets\BasicStreamEditor\BasicStreamEditor.vcxproj">
@@ -85,5 +87,6 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="$(QtMsBuild)\qt.targets" Condition="Exists('$(QtMsBuild)\qt.targets')" />
-  <ImportGroup Label="ExtensionTargets"></ImportGroup>
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
 </Project>

@@ -867,9 +867,17 @@ void CMaterialsDatabaseTab::AddCheckBoxOnTable(CQtTable* _pTable, const int _iRo
 	QCheckBox* pCheckBox = _pTable->SetCheckBox(_iRow, _iCol, _bChecked);
 	pCheckBox->setEnabled(_bEnabled);
 	if(_pTable == ui.tableProperties)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+		connect(pCheckBox, &QCheckBox::checkStateChanged, this, [this, _iRow] { PropertyConstFlagChanged(_iRow); });
+#else
 		connect(pCheckBox, &QCheckBox::stateChanged, this, [this, _iRow] { PropertyConstFlagChanged(_iRow); });
+#endif
 	else if(_pTable == ui.tableInterProperties)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+		connect(pCheckBox, &QCheckBox::checkStateChanged, this, [this, _iRow] { InteractionConstFlagChanged(_iRow); });
+#else
 		connect(pCheckBox, &QCheckBox::stateChanged, this, [this, _iRow] { InteractionConstFlagChanged(_iRow); });
+#endif
 	pCheckBox->setToolTip("Treat property as a constant");
 	pCheckBox->setWhatsThis("Treat property as a constant");
 }

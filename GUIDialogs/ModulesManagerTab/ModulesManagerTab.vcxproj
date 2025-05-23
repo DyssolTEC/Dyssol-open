@@ -14,10 +14,12 @@
     <ClCompile Include="ModulesManagerTab.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="ModulesManagerTab.h"></QtMoc>
+    <QtMoc Include="ModulesManagerTab.h">
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <QtUic Include="ModulesManagerTab.ui"></QtUic>
+    <QtUic Include="ModulesManagerTab.ui">
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)SimulatorCore\SimulatorCore.vcxproj">
@@ -46,17 +48,18 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <Import Project="$(QtMsBuild)\qt_defaults.props" Condition="Exists('$(QtMsBuild)\qt_defaults.props')" />
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <QtInstall>msvc2019_64</QtInstall>
+    <QtInstall>qt_msvc_dyssol</QtInstall>
     <QtModules>widgets</QtModules>
   </PropertyGroup>
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <QtInstall>msvc2019_64</QtInstall>
+    <QtInstall>qt_msvc_dyssol</QtInstall>
     <QtModules>widgets</QtModules>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') OR !Exists('$(QtMsBuild)\Qt.props')">
     <Message Importance="High" Text="QtMsBuild: could not locate qt.targets, qt.props; project may not build correctly." />
   </Target>
-  <ImportGroup Label="ExtensionSettings"></ImportGroup>
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(SolutionDir)PropertySheets\CommonQt.props" />
     <Import Project="$(SolutionDir)PropertySheets\CommonDebug.props" />
@@ -78,5 +81,6 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="$(QtMsBuild)\qt.targets" Condition="Exists('$(QtMsBuild)\qt.targets')" />
-  <ImportGroup Label="ExtensionTargets"></ImportGroup>
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
 </Project>

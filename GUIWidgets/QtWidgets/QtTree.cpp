@@ -1,4 +1,6 @@
-/* Copyright (c) 2020, Dyssol Development Team. All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
+/* Copyright (c) 2020, Dyssol Development Team.
+ * Copyright (c) 2025, DyssolTEC GmbH.
+ * All rights reserved. This file is part of Dyssol. See LICENSE file for license information. */
 
 #include "QtTree.h"
 #include <QEvent>
@@ -123,7 +125,11 @@ QCheckBox* CQtTree::SetCheckBox(QTreeWidgetItem* _item, int _col, const QString&
 	auto* check = new QCheckBox{ _text, this };
 	QSignalBlocker blocker{ check };
 	check->setChecked(_value);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+	connect(check, &QCheckBox::checkStateChanged, this, [this, check, _item] { CheckBoxStateChanged(check, _item); });
+#else
 	connect(check, &QCheckBox::stateChanged, this, [this, check, _item] { CheckBoxStateChanged(check, _item); });
+#endif
 	setItemWidget(_item, _col, check);
 	return check;
 }

@@ -14,7 +14,7 @@ Compilation requirements
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 - `Microsoft Visual Studio 2022 <https://visualstudio.microsoft.com/downloads>`_, Desktop development with C++ workload.
-- `Qt 5.15.2 <https://www.qt.io/download-qt-installer>`_ MSVC 2019 64-bit component
+- `Qt 6.x.x <https://www.qt.io/download-qt-installer>`_ MSVC 2022 64-bit component
 - `Qt Visual Studio Tools <https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools2022>`_ for Visual Studio 2022
 - `CMake <https://cmake.org/download>`_ 3.5.0 or higher
 - `Python <https://www.python.org/downloads>`_ 3.8 or higher
@@ -27,7 +27,7 @@ Build
 ^^^^^
 
 - Make sure all programs and tools from the :ref:`list<sec.development.compilation.windows.requirements>` are installed.
-- Setup Qt Visual Studio Tools extension to point to the installed Qt libraries. In Visual Studio, go to Extensions → Qt VS Tools → Qt Versions → add new Qt version → ... → Navigate in the Qt installation directory to ``Qt/5.15.2/msvc2019_64/bin/qmake.exe`` → rename Version to ``msvc2019_64`` → OK.
+- Setup Qt Visual Studio Tools extension to point to the installed Qt libraries. In Visual Studio, go to Extensions → Qt VS Tools → Qt Versions → add new Qt version → ... → Navigate in the Qt installation directory to ``Qt/6.x.x/msvc2022_64/`` → rename Version to ``qt_msvc_dyssol`` → OK.
 - Compile and build external libraries: HDF5, SUNDIALS, zlib, etc. To do this, navigate to ``Dyssol/ExternalLibraries/`` and execute file ``CompileAll.bat``. It will start building all the required libraries by executing files ``CompileZLib.ps1``, ``CompileHDF5.ps1``, ``CompileSundials.ps1``, etc. To use the scripts, the following tools are necessary: Visual Studio, CMake, PowerShell, Python.
 - Open ``Dyssol/Dyssol.sln`` with Visual Studio and build the solution.
 
@@ -75,7 +75,7 @@ Tested on Ubuntu 20/22/24, Debian 11/12/13
 
 ..  code-block:: shell
 
-	sudo apt install build-essential cmake libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev libopenmpi-dev doxygen python3-sphinx python3-sphinx-rtd-theme python3-breathe texlive-latex-extra
+	sudo apt install build-essential cmake libsundials-dev libhdf5-serial-dev libgl1-mesa-dev qt6-base-dev libgraphviz-dev libopenmpi-dev doxygen python3-sphinx python3-sphinx-rtd-theme python3-breathe texlive-latex-extra
 	cd /path_to_repo
 	mkdir install
 	mkdir build

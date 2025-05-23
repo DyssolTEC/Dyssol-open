@@ -32,11 +32,11 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <Import Project="$(QtMsBuild)\qt_defaults.props" Condition="Exists('$(QtMsBuild)\qt_defaults.props')" />
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <QtInstall>msvc2019_64</QtInstall>
+    <QtInstall>qt_msvc_dyssol</QtInstall>
     <QtModules>widgets</QtModules>
   </PropertyGroup>
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <QtInstall>msvc2019_64</QtInstall>
+    <QtInstall>qt_msvc_dyssol</QtInstall>
     <QtModules>widgets</QtModules>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') OR !Exists('$(QtMsBuild)\Qt.props')">
@@ -69,23 +69,32 @@
     <ClCompile Include="SolidDistributionsEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="BasicStreamEditor.h"></QtMoc>
+    <QtMoc Include="BasicStreamEditor.h">
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <QtUic Include="BasicStreamEditor.ui"></QtUic>
+    <QtUic Include="BasicStreamEditor.ui">
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="SolidDistributionsEditor.h"></QtMoc>
-    <QtMoc Include="ParamsItem.h"></QtMoc>
-    <QtMoc Include="MDMTable.h"></QtMoc>
-    <QtMoc Include="DistrFunctionDialog.h"></QtMoc>
-    <QtMoc Include="DDTable.h"></QtMoc>
+    <QtMoc Include="SolidDistributionsEditor.h">
+    </QtMoc>
+    <QtMoc Include="ParamsItem.h">
+    </QtMoc>
+    <QtMoc Include="MDMTable.h">
+    </QtMoc>
+    <QtMoc Include="DistrFunctionDialog.h">
+    </QtMoc>
+    <QtMoc Include="DDTable.h">
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <QtUic Include="Functional.ui"></QtUic>
+    <QtUic Include="Functional.ui">
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
-    <QtUic Include="SolidDistributionsEditor.ui"></QtUic>
+    <QtUic Include="SolidDistributionsEditor.ui">
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)ModelsAPI\ModelsAPI.vcxproj">
@@ -103,5 +112,6 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="$(QtMsBuild)\qt.targets" Condition="Exists('$(QtMsBuild)\qt.targets')" />
-  <ImportGroup Label="ExtensionTargets"></ImportGroup>
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
 </Project>

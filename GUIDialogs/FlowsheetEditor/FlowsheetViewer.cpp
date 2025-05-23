@@ -6,6 +6,7 @@
 #include "Flowsheet.h"
 #include "DyssolUtilities.h"
 #include "DyssolStringConstants.h"
+#include <QActionGroup>
 #include <QImageReader>
 #include <QMenuBar>
 #include <QFileDialog>
@@ -126,8 +127,9 @@ void CFlowsheetViewer::SaveAs()
 
 void CFlowsheetViewer::FitToWindow()
 {
-	const auto factorW = static_cast<double>(ui.scrollArea->viewport()->width () - 2 * ui.gridLayout->margin()) / static_cast<double>(m_image.width ());
-	const auto factorH = static_cast<double>(ui.scrollArea->viewport()->height() - 2 * ui.gridLayout->margin()) / static_cast<double>(m_image.height());
+	const auto margins = ui.gridLayout->contentsMargins();
+	const auto factorW = static_cast<double>(ui.scrollArea->viewport()->width () - (margins.left() + margins.right())) / static_cast<double>(m_image.width ());
+	const auto factorH = static_cast<double>(ui.scrollArea->viewport()->height() - (margins.top() + margins.bottom())) / static_cast<double>(m_image.height());
 	m_scaleFactor = std::min(factorW, factorH);
 	ShowImage();
 }
@@ -181,8 +183,13 @@ void CFlowsheetViewer::mouseMoveEvent(QMouseEvent* _event)
 
 	if (_event->buttons() & Qt::LeftButton)
 	{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+		const auto dx = _event->position().x() - m_lastMousePos.x();
+		const auto dy = _event->position().y() - m_lastMousePos.y();
+#else
 		const auto dx = _event->x() - m_lastMousePos.x();
 		const auto dy = _event->y() - m_lastMousePos.y();
+#endif
 		ui.scrollArea->horizontalScrollBar()->setValue(ui.scrollArea->horizontalScrollBar()->value() - dx);
 		ui.scrollArea->verticalScrollBar()  ->setValue(ui.scrollArea->verticalScrollBar()  ->value() - dy);
 	}

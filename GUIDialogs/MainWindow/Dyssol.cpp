@@ -10,10 +10,9 @@
 #include "DyssolStringConstants.h"
 #include "DyssolSystemFunctions.h"
 #include "ThreadPool.h"
-#include <QDesktopWidget>
 #include <QCloseEvent>
 #include <QFileDialog>
-#include <QDesktopServices>
+#include <QScreen>
 #include <fstream>
 #include <QWhatsThis>
 
@@ -24,7 +23,7 @@ Dyssol::Dyssol(QWidget *parent /*= 0*/, Qt::WindowFlags flags /*= {}*/)
 	: QMainWindow(parent, flags)
 {
 	ui.setupUi(this);
-	resize(QDesktopWidget().availableGeometry(this).size() * 0.7);
+	resize(QGuiApplication::primaryScreen()->availableGeometry().size() * 0.7);
 	SetFlowsheetModified(false);
 
 	InitializeThreadPool();

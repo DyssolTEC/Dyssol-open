@@ -5,15 +5,15 @@
 #include "CommonConstants.iss"
 
 #dim QtLibs[3]
-#define QtLibs[0] "Qt5Core"
-#define QtLibs[1] "Qt5Gui"
-#define QtLibs[2] "Qt5Widgets"
+#define QtLibs[0] "Qt6Core"
+#define QtLibs[1] "Qt6Gui"
+#define QtLibs[2] "Qt6Widgets"
 
 #dim QtLibsPlatforms[1]
 #define QtLibsPlatforms[0] "qwindows"
 
 #dim QtLibsStyles[1]
-#define QtLibsStyles[0] "qwindowsvistastyle"
+#define QtLibsStyles[0] "qmodernwindowsstyle"
 
 #define I
 

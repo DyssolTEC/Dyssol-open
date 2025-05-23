@@ -5,7 +5,7 @@ stages:
 .compile_template: &compile_definition
   stage: build
   script:
-    - apt-get update && apt-get install -y cmake ccache build-essential libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev clang doxygen python3-sphinx python3-sphinx-rtd-theme python3-breathe
+    - apt-get update && apt-get install -y cmake ccache build-essential libsundials-dev libhdf5-serial-dev libgl1-mesa-dev qt6-base-dev libgraphviz-dev clang doxygen python3-sphinx python3-sphinx-rtd-theme python3-breathe
     - export PATH="/usr/lib/ccache:$PATH"
     - export CCACHE_BASEDIR="$PWD"
     - export CCACHE_DIR="$PWD/ccache"

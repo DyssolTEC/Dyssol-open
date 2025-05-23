@@ -32,11 +32,11 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <Import Project="$(QtMsBuild)\qt_defaults.props" Condition="Exists('$(QtMsBuild)\qt_defaults.props')" />
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <QtInstall>msvc2019_64</QtInstall>
+    <QtInstall>qt_msvc_dyssol</QtInstall>
     <QtModules>widgets</QtModules>
   </PropertyGroup>
   <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <QtInstall>msvc2019_64</QtInstall>
+    <QtInstall>qt_msvc_dyssol</QtInstall>
     <QtModules>widgets</QtModules>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') OR !Exists('$(QtMsBuild)\Qt.props')">
@@ -61,7 +61,8 @@
     <CAExcludePath>$(Qt_INCLUDEPATH_);.\GeneratedFiles;$(CAExcludePath)</CAExcludePath>
   </PropertyGroup>
   <ItemGroup>
-    <QtMoc Include="MaterialsDatabaseTab.h"></QtMoc>
+    <QtMoc Include="MaterialsDatabaseTab.h">
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CorrelationEditor.cpp" />
@@ -71,18 +72,26 @@
     <ClCompile Include="PropertyEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <QtUic Include="MaterialsDatabaseTab.ui"></QtUic>
+    <QtUic Include="MaterialsDatabaseTab.ui">
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="PropertyAdder.h"></QtMoc>
-    <QtMoc Include="CorrelationEditor.h"></QtMoc>
-    <QtMoc Include="DescriptionEditor.h"></QtMoc>
-    <QtMoc Include="PropertyEditor.h"></QtMoc>
+    <QtMoc Include="PropertyAdder.h">
+    </QtMoc>
+    <QtMoc Include="CorrelationEditor.h">
+    </QtMoc>
+    <QtMoc Include="DescriptionEditor.h">
+    </QtMoc>
+    <QtMoc Include="PropertyEditor.h">
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <QtUic Include="PropertyAdder.ui"></QtUic>
-    <QtUic Include="PropertyEditor.ui"></QtUic>
-    <QtUic Include="CorrelationEditor.ui"></QtUic>
+    <QtUic Include="PropertyAdder.ui">
+    </QtUic>
+    <QtUic Include="PropertyEditor.ui">
+    </QtUic>
+    <QtUic Include="CorrelationEditor.ui">
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)GUIWidgets\QtPlot\QtPlot.vcxproj">
@@ -99,9 +108,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <QtUic Include="DescriptionEditor.ui"></QtUic>
+    <QtUic Include="DescriptionEditor.ui">
+    </QtUic>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="$(QtMsBuild)\qt.targets" Condition="Exists('$(QtMsBuild)\qt.targets')" />
-  <ImportGroup Label="ExtensionTargets"></ImportGroup>
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
 </Project>
