@@ -1,0 +1,14 @@
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get upgrade
+RUN apt-get install -y sudo rsync git
+RUN apt-get install -y build-essential clang cmake libsundials-dev libhdf5-serial-dev qt6-base-dev libgraphviz-dev
+RUN apt-get install -y doxygen python3-sphinx python3-sphinx-rtd-theme python3-breathe texlive-latex-extra
+
+RUN useradd -m -s /bin/bash dyssol && echo "dyssol ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+USER dyssol
+WORKDIR /home/dyssol
+
+CMD ["/bin/bash"]
