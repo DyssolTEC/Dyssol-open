@@ -63,26 +63,39 @@ Linux
 Compilation requirements
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-- g++-9 or clang++-10
+- g++-9.4.0 or clang++-10.0.0
 - CMake 3.11.0 or higher
 
 .. _sec.development.compilation.linux.build:
 
-Build
-^^^^^
+Install build environment
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Tested on Ubuntu 20/22/24, Debian 11/12/13
+Ubuntu 20, Debian 11
+~~~~~~~~~~~~~~~~~~~~
 
 ..  code-block:: shell
 
-	sudo apt install build-essential cmake libsundials-dev libhdf5-serial-dev libgl1-mesa-dev qt6-base-dev libgraphviz-dev libopenmpi-dev doxygen python3-sphinx python3-sphinx-rtd-theme python3-breathe texlive-latex-extra
-	cd /path_to_repo
-	mkdir install
-	mkdir build
-	cd build
+	sudo apt install build-essential cmake libsundials-dev libhdf5-serial-dev libqt5opengl5-dev libgraphviz-dev doxygen python3-sphinx python3-sphinx-rtd-theme python3-breathe texlive-latex-extra
+
+Ubuntu 22/24, Debian 12
+~~~~~~~~~~~~~~~~~~~~~~~
+
+..  code-block:: shell
+
+	sudo apt install build-essential cmake libsundials-dev libhdf5-serial-dev qt6-base-dev libgraphviz-dev doxygen python3-sphinx python3-sphinx-rtd-theme python3-breathe texlive-latex-extra
+
+Build
+^^^^^
+
+..  code-block:: shell
+
+	git clone https://github.com/DyssolTEC/Dyssol-open.git
+	cd Dyssol-open
+	mkdir build && cd build
 	cmake .. -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install
 	cmake --build . --parallel
 	make doc
 	make install
 
-The compiled executable file and all the units' libraries will appear in ``/path_to_repo/install``
+The compiled executable files and all the units' libraries will appear in ``Dyssol-open/install/``
