@@ -1,93 +1,143 @@
 # Dyssol
 
-Dyssol is a tool for dynamic flowsheet simulation of complex production processes with advanced treatment of granular materials.
+[![License: BSD-3-Clause](https://img.shields.io/badge/License-BSD--3--Clause-blue.svg)](LICENSE)
+[![Website](https://img.shields.io/badge/Website-dyssoltec.com-brightgreen)](https://www.dyssoltec.com/)
+[![Documentation](https://img.shields.io/badge/Docs-dyssoltec.github.io-blue)](https://dyssoltec.github.io/Dyssol-open/)
+[![Releases](https://img.shields.io/github/v/release/DyssolTEC/Dyssol-open?include_prereleases)](https://github.com/DyssolTEC/Dyssol-open/releases)
 
-To contact developers, visit [dyssoltec.com](https://www.dyssoltec.com/).
+**Dyssol** is an open-source simulation framework for dynamic flowsheet modeling of complex particulate processes. It provides advanced capabilities for simulating granular materials with multidimensional distributed properties and interconnected unit operations.
 
-For more information and documentation, check [dyssoltec.github.io](https://dyssoltec.github.io/Dyssol-open/).
+**Note**: *Dyssol®* is a registered trademark of DyssolTEC GmbH.
 
-Video introductions: [Basics](https://youtu.be/IHzr0NVYW6M) and [Simulation of granulation process](https://youtu.be/ni54JwvCVDc).
+---
 
-New versions and updates on our [github page](https://github.com/DyssolTEC/Dyssol-open/releases).
+## 🔗 Project Links
 
-To cite Dyssol please use the following:
+- 🌐 Official website: [dyssoltec.com](https://www.dyssoltec.com/)
+- 📘 Documentation: [dyssoltec.github.io](https://dyssoltec.github.io/Dyssol-open/)
+- 🎥 Video tutorials: [Basics](https://youtu.be/IHzr0NVYW6M) | [Granulation simulation](https://youtu.be/ni54JwvCVDc)
+- 🚀 Latest release: [GitHub Releases](https://github.com/DyssolTEC/Dyssol-open/releases)
 
-- Skorych, V., Dosta, M., Hartge, E.-U., Heinrich, S. (2017). Novel system for dynamic flowsheet simulation of solids processes. Powder Technology, 314, 665-679. [doi.org/10.1016/j.powtec.2017.01.061](https://doi.org/10.1016/j.powtec.2017.01.061).
-- Skorych, V., Dosta, M., Heinrich, S. (2020). Dyssol — An open-source flowsheet simulation framework for particulate materials. SoftwareX, 12, 100572. [doi.org/10.1016/j.softx.2020.100572](https://doi.org/10.1016/j.softx.2020.100572).
+---
 
-Dyssol® is a registered trade mark of DyssolTEC GmbH.
+## 📥 Installation
 
-## Installation on Windows
+### Windows
 
-Dyssol should install and work on all latest versions of Windows.
-Requires Visual C++ Redistributable for Visual Studio 2022 to run.
-To install, run the [installer](https://github.com/DyssolTEC/Dyssol-open/releases) and follow the instructions.
+- Download and run the installer from the [Releases page](https://github.com/DyssolTEC/Dyssol-open/releases).
+- Requires: Visual C++ Redistributable for Visual Studio 2022.
 
-## Compilation on Windows
+### Ubuntu / Debian
 
-See the [documentation](https://dyssoltec.github.io/Dyssol-open/004_development/compilation.html#windows) for instructions.
+```bash
+sudo apt install dyssol
+```
 
-## Compilation on Linux
+---
 
-See the [documentation](https://dyssoltec.github.io/Dyssol-open/004_development/compilation.html#linux) for instructions.
+## 📦 Compilation
 
-## Code organization
+- **Windows**: See [build instructions](https://dyssoltec.github.io/Dyssol-open/004_development/compilation.html#windows)
+- **Linux**: See [build instructions](https://dyssoltec.github.io/Dyssol-open/004_development/compilation.html#linux)
 
-- BaseSolvers - interfaces for equation solvers
-- CahceHandlers - dynamic data caching
-- Documentation - manuals
-- DyssolCLI - main project for command-line version of Dyssol
-- DyssolGUI - main project for GUI version of Dyssol
-- DyssolInstallers - scripts and data needed to build installers for Windows
-- EquationSolvers - built-in equation solvers based on SUNDIALS library
-- ExternalLibraries - all third-party libraries and scripts to build them
-- GUIDialogs - main GUI components
-- GUIWidgets - auxiliary GUI components and tools
-- HDF5Handler - wrapper for HDF5 library
-- MaterialsDatabase - database of materials
-- ModelsAPI - part of the core components needed to develop units
-- Modules - additional modules
-- PropertySheets - projects settings for Visual Studio
-- SimulatorCore - core components
-- Solvers - all solvers and templates for them
-- Units - all units and templates for them
-- Utilities - auxiliary program components
-- Dyssol.sln - main file of the Visual Studio solution
-- LICENSE - license agreement
-- Materials.dmdb - exemplary database of materials
-- README.md - this file
+---
 
-## Installation directory organization
+## 📚 Code Organization
 
-- Example flowsheets – flowsheet examples
-- Example solvers – source code of solvers (C++)
-- Example units – source code of units (C++)
-- Help – documentation files (pdf)
-- Licenses – information about licenses 
-- platforms - Qt libraries to support GUI
-- Solvers – libraries of developed solvers
-- styles - Qt libraries to support GUI
-- Units – libraries of developed units
-- ModelsCreatorSDK – Models Creator tool: template project for Microsoft Visual Studio 
-- Dyssol.exe – main executable of Dyssol
-- DyssolC.exe – command-line utility
-- ExampleConfigFile.txt – example configuration file for command-line utility
-- LICENSE - license agreement
-- Materials.dmdb – default materials database
-- Qt6*.dll - Qt libraries to support GUI
-- *.dll - Other external libraries
-- unins000.exe – Dyssol uninstaller
+| Folder / File     | Description                                           |
+|:------------------|:------------------------------------------------------|
+| BaseSolvers       | Interfaces for equation solvers                       |
+| build             | Build directory (internal use only)                   |
+| CahceHandlers     | Dynamic data caching mechanisms                       |
+| cmake             | CMake configuration scripts                           |
+| Documentation     | Manuals and docs                                      |
+| DyssolCLI         | Command-line interface main project                   |
+| DyssolGUI         | GUI-based simulator main project                      |
+| DyssolInstallers  | Scripts and data for creating Windows installers      |
+| EquationSolvers   | Built-in solvers using the SUNDIALS library           |
+| ExternalLibraries | Third-party dependencies and build scripts            |
+| GUIDialogs        | Main GUI dialog components                            |
+| GUIWidgets        | Auxiliary widgets and GUI tools                       |
+| HDF5Handler       | Wrapper for handling HDF5 file formats                |
+| MaterialsDatabase | APIs to the database of materials                     |
+| ModelsAPI         | APIs to create custom unit models                     |
+| Modules           | Additional processing modules                         |
+| PropertySheets    | Visual Studio project settings                        |
+| ScriptInterface   | Library support for scripting the CLI version         |
+| scripts           | Collection of helpful utility scripts                 |
+| SimulatorCore     | Core simulation engine                                |
+| Solvers           | All solvers and templates for them                    |
+| test              | System and integration test cases                     |
+| Units             | All units and templates for them                      |
+| Utilities         | Supporting program utilities and helpers              |
+| Materials.dmdb    | Example material database file                        |
+| CHANGELOG         | List of changes since the last version                |
+| CITATION          | Citation information for Dyssol                       |
+| LICENSE           | Software license                                      |
+| README.md         | This file                                             |
+| Dyssol.sln        | Main Visual Studio solution file                      |
 
-## Third-party tools and libraries
+---
 
-- [Breathe](https://www.breathe-doc.org) – Michael Jones – [Modified BSD license](https://github.com/breathe-doc/breathe/blob/master/LICENSE)
-- [Doxygen](https://www.doxygen.nl) – Dimitri van Heesch – [GPL](https://github.com/doxygen/doxygen/blob/master/LICENSE)
-- [Graphviz](https://graphviz.org) – Graphviz contributors – [CPL v1.0 license](https://graphviz.org/license)
-- [HDF5](https://www.hdfgroup.org/solutions/hdf5) – The HDF Group – [BSD-like license](https://github.com/HDFGroup/hdf5/blob/master/LICENSE)
-- [Inno Setup](https://jrsoftware.org/isinfo.php) – Jordan Russell – [Inno Setup license](http://www.jrsoftware.org/files/is/license.txt)
-- [KISS FFT](https://github.com/mborgerding/kissfft) – Mark Borgerding – [BSD-3-Clause license](https://github.com/mborgerding/kissfft/blob/master/COPYING)
-- [Qt](https://www.qt.io) – The Qt Company – [LGPL v3](https://doc.qt.io/qt-5/lgpl.html)
-- [Sphinx](https://www.sphinx-doc.org) – Sphinx team – [BSD-2-Clause license](https://github.com/sphinx-doc/sphinx/blob/master/LICENSE.rst)
-- [sphinx_rtd_theme](https://sphinx-rtd-theme.readthedocs.io) – Dave Snider, Read the Docs, Inc. & contributors – [MIT](https://github.com/readthedocs/sphinx_rtd_theme/blob/master/LICENSE)
-- [SUNDIALS](https://computing.llnl.gov/projects/sundials) – Lawrence Livermore National Laboratory – [BSD-3-Clause license](https://computing.llnl.gov/projects/sundials/license)
-- [zlib](https://www.zlib.net) – Jean-loup Gailly and Mark Adler – [zlib license](https://www.zlib.net/zlib_license.html)
+## 📂 Installation Directory
+
+| Folder / File      | Description                                          |
+|:-------------------|:-----------------------------------------------------|
+| Example Flowsheets | Example GUI-based flowsheets                         |
+| Example Scripts    | Example simulation scripts for CLI                   |
+| Example solvers    | C++ source code examples for custom solvers          |
+| Example units      | C++ source code examples for custom unit models      |
+| Help               | User guides and documentation                        |
+| Licenses           | License details of included third-party libraries    |
+| ModelsCreatorSDK   | Visual Studio template project for model development |
+| Solvers            | Precompiled libraries of available solvers           |
+| Units              | Precompiled libraries of available unit models       |
+| Dyssol.exe         | GUI version of the simulator                         |
+| DyssolC.exe        | Command-line version of the simulator                |
+| LICENSE            | License agreement file                               |
+| Materials.dmdb     | Default materials database file                      |
+| unins000.exe       | Uninstaller for Dyssol                               |
+
+---
+
+## 📖 Citations
+
+If you use Dyssol in your work, please cite:
+
+1. **Skorych, V., Dosta, M., Hartge, E.-U., Heinrich, S.** (2017). Novel system for dynamic flowsheet simulation of solids processes. *Powder Technology*, 314, 665–679. [doi:10.1016/j.powtec.2017.01.061](https://doi.org/10.1016/j.powtec.2017.01.061)
+2. **Skorych, V., Dosta, M., Heinrich, S.** (2020). Dyssol — An open-source flowsheet simulation framework for particulate materials. *SoftwareX*, 12, 100572. [doi:10.1016/j.softx.2020.100572](https://doi.org/10.1016/j.softx.2020.100572)
+
+---
+
+## 🧩 Third-Party Tools and Libraries
+
+Dyssol uses and integrates several open-source components, including:
+
+- [Breathe](https://www.breathe-doc.org) – Doxygen-to-Sphinx bridge.
+- [Doxygen](https://www.doxygen.nl) – Code documentation generator.
+- [Graphviz](https://graphviz.org) – Graph rendering.
+- [HDF5](https://www.hdfgroup.org/solutions/hdf5) – Data storage.
+- [Inno Setup](https://jrsoftware.org/isinfo.php) – Windows installer creator.
+- [KISS FFT](https://github.com/mborgerding/kissfft) – FFT computations.
+- [Qt](https://www.qt.io) – GUI framework.
+- [Sphinx](https://www.sphinx-doc.org) – Documentation generator.
+- [sphinx_rtd_theme](https://sphinx-rtd-theme.readthedocs.io) – Sphinx theme.
+- [SUNDIALS](https://computing.llnl.gov/projects/sundials) – Equation solvers.
+- [zlib](https://www.zlib.net) – Data compression.
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions!
+
+---
+
+## 📫 Contact
+
+- 🌐 Website: [www.dyssoltec.com](https://www.dyssoltec.com)
+- 🐞 Issues: [GitHub Issue Tracker](https://github.com/DyssolTEC/Dyssol-open/issues)
+
+---
+
+© DyssolTEC GmbH
