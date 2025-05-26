@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cyclone &mdash; Dyssol latest documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dyssol_style.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/logo.png"/>
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script defer="defer" src="../_static/./mathjax/tex-svg.js"></script>
+        <script>window.MathJax = {"options": {"enableMenu": true, "menuOptions": {"settings": {"renderer": "SVG"}}}}</script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Granulator" href="unit_granulator.html" />
+    <link rel="prev" title="Crusher" href="unit_crusher.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #0E70B6" >
+            <a href="../index.html">
+            <img src="../_static/logo_doc.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Get started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../000_get_started/get_started.html">Get started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../000_get_started/get_started.html#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../000_get_started/get_started.html#windows">Windows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../000_get_started/get_started.html#linux">Linux</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../000_get_started/get_started.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../000_get_started/get_started.html#run-your-first-simulation">Run your first simulation</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User interface</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../001_ui/gui.html">Graphical user interfaced</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../001_ui/gui.html#menu">Menu</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#file">File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#setup">Setup</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#compounds-editor">Compounds editor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#phases-editor">Phases editor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#grids-specification">Grids specification</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#holdups-editor">Holdups editor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#options">Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#calculation-sequence">Calculation sequence</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#recycle-streams">Recycle streams</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#modules">Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#tools">Tools</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#models-manager">Models manager</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#materials-database">Materials database</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#settings">Settings</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#help">Help</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#about">About</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../001_ui/gui.html#tabs">Tabs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#flowsheet">Flowsheet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#simulator">Simulator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#streams">Streams</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#units">Units</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../001_ui/cli.html">Command line interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../001_ui/cli.html#main">Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../001_ui/cli.html#simulation">Simulation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#simulation-options">Simulation options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#phases">Phases</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#compounds">Compounds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#grids">Grids</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#flowsheet-structure">Flowsheet structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#unit-parameters">Unit parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#holdups">Holdups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#export">Export</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Structure and algorithms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/brief.html">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/brief.html#flowsheet-simulation-of-solids">Flowsheet simulation of solids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/brief.html#approaches-and-methods">Approaches and methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/brief.html#software-system-architecture">Software system architecture</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/simulation.html">Simulation core</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/simulation.html#material-streams">Material streams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/simulation.html#units">Units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/simulation.html#simulator">Simulator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/simulation.html#main-method-and-approaches">Main method and approaches</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/simulation.html#built-in-equation-solvers">Built-in equation solvers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/data.html">Data storage subsystem</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/data.html#hdf5-data-format">HDF5 data format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/data.html#data-caching">Data caching</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/materials.html">Material database</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#dmdb-file">DMDB file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#constant-parameters">Constant parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#dependent-parameters">Dependent parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#interaction-properties">Interaction properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#correlations">Correlations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/materials.html#correlation-search">Correlation search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/materials.html#correlation-functions">Correlation functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/multiDim.html">Multidimentional distributed parameters of solids</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/multiDim.html#tree-data-structures">Tree data structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/multiDim.html#treatment-of-dependent-parameters">Treatment of dependent parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/multiDim.html#transformation-matrices">Transformation matrices</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../002_theory/multiDim.html#application-of-transformation-matrices">Application of transformation matrices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../002_theory/multiDim.html#application-example">Application example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/time.html">Time point management</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/time.html#data-interpolation">Data interpolation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/time.html#interpolation-of-distributed-parameters">Interpolation of distributed parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/time.html#steady-state-units">Steady state units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/time.html#dynamic-units-with-recycle">Dynamic units with recycle</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/theory.html">Theoretical background</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/theory.html#discretization">Discretization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/theory.html#process-systems">Process systems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#sequential-modular-approach">Sequential-modular approach</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#equation-oriented-approach">Equation-oriented approach</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#partitioning-and-tearing">Partitioning and tearing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/theory.html#numerical-methods">Numerical methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#waveform-relaxation-method">Waveform relaxation method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#data-extrapolation">Data extrapolation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#convergence-methods">Convergence methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Libraries</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="units.html">Unit library</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="unit_agglomerator.html">Agglomerator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="unit_agglomerator.html#kernels">Kernels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unit_agglomerator.html#solvers">Solvers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="unit_crusher.html">Crusher</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="unit_crusher.html#bond-s-model">Bond’s model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="unit_crusher.html#average-bond-work-indices-for-various-materials">Average Bond Work Indices for various materials</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="unit_crusher.html#cone-model">Cone model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unit_crusher.html#const-output-model">Const output model</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Cyclone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_granulator.html">Granulator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="unit_granulator.html#continuous-granulator">Continuous granulator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unit_granulator.html#batch-granulator">Batch granulator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="unit_inletflow.html">Inlet flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_mixer.html">Mixer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_outletflow.html">Outlet flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_screen.html">Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="unit_screen.html#plitt-s-model">Plitt’s model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unit_screen.html#molerus-hoffmann-model">Molerus &amp; Hoffmann model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unit_screen.html#probability-model">Probability model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unit_screen.html#teipel-hennig-model">Teipel / Hennig model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="unit_solidsbunker.html">Solids bunker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_splitter.html">Splitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_timedelay.html">Time delay</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="unit_timedelay.html#simple-shift">Simple shift</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unit_timedelay.html#norm-based">Norm-based</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="solvers.html">Solver library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="solvers.html#agglomeration-solvers">Agglomeration solvers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solver_cellaverage.html">Cell average</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solver_fft.html">FFT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solver_fixedpivot.html">Fixed pivot</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">For developers</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../004_development/compilation.html">Compilation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/compilation.html#windows">Windows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/compilation.html#compilation-requirements">Compilation requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/compilation.html#build">Build</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/compilation.html#build-documentation-and-installers">Build documentation and installers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/compilation.html#linux">Linux</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/compilation.html#sec-development-compilation-linux-requirements">Compilation requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/compilation.html#install-build-environment">Install build environment</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/compilation.html#ubuntu-20-debian-11">Ubuntu 20, Debian 11</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/compilation.html#ubuntu-22-24-debian-12">Ubuntu 22/24, Debian 12</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/compilation.html#id2">Build</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../004_development/models_development.html">For models developers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/models_development.html#configuration-of-visual-studio-project-template">Configuration of Visual Studio project template</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/models_development.html#unit-development">Unit development</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/models_development.html#add-new-unit-to-the-template-project">Add new unit to the template project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/models_development.html#configure-dyssol-to-work-with-implemented-units">Configure Dyssol to work with implemented units</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/models_development.html#development-of-steady-state-units">Development of steady-state units</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/models_development.html#application-example">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/models_development.html#development-of-steady-state-units-with-internal-non-linear-solver">Development of steady-state units with internal non-linear solver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/models_development.html#id1">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/models_development.html#development-of-dynamic-units">Development of dynamic units</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/models_development.html#label-basics">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/models_development.html#development-of-dynamic-units-with-internal-dae-solver">Development of dynamic units with internal DAE solver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/models_development.html#id3">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/models_development.html#configure-unit-to-work-with-matlab">Configure unit to work with MATLAB</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/models_development.html#solver-development">Solver development</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/models_development.html#add-new-solver-to-the-template-project">Add new solver to the template project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/models_development.html#configure-dyssol-to-work-with-implemented-solvers">Configure Dyssol to work with implemented solvers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/models_development.html#development-of-agglomeration-solver">Development of agglomeration solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/models_development.html#configure-solver-to-work-with-matlab">Configure solver to work with MATLAB</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../004_development/api.html">Models API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_baseunit.html">Basic unit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_basestream.html">Basic stream</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_stream.html">Stream</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_holdup.html">Holdup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_portsmanager.html">Ports manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_unitport.html">Unit port</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_unitparametersmanager.html">Unit parameters manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_unitparameters.html">Unit parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upbase.html">Base class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upconst.html">Const</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upconstreal.html">Const real</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upconstint.html">Const int</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upconstuint.html">Const uint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_updependent.html">Dependent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_uptd.html">Time-dependent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upstring.html">String</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upcheckbox.html">Check box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upcombobox.html">Combo box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upcompound.html">Compound</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upcompoundmdb.html">MDB compound</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upreaction.html">Reaction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_uplist.html">List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_uplistreal.html">List real</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_uplistint.html">List int</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_uplistuint.html">List uint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upsolver.html">Solver</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_chemicalreaction.html">Chemical reaction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_agglomerationsolver.html">Agglomeration solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_basesolver.html">Base solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_statevariablesmanager.html">State variables manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_statevariable.html">State variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_curve.html">Curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_plot.html">Plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_plotmanager.html">Plot manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_mixtureenthalpylookup.html">Enthalpy lookup table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_matrix2d.html">Two-mensional matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_densemdmatrix.html">Multidimensional matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_transformmatrix.html">Transformation matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/auxiliary_classes.html">Auxiliary classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/psd_functions.html">PSD functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/distribution_functions.html">Distribution functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/thermodynamics.html">Thermodynamics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/thermodynamics.html#for-material-stream-and-holdup">For material stream and holdup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/thermodynamics.html#for-base-unit">For base unit</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/solver_dae.html">DAE Systems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/solver_dae.html#dae-model">DAE model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/solver_dae.html#variables">Variables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/solver_dae.html#tolerance">Tolerance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/solver_dae.html#virtual-functions">Virtual functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/solver_dae.html#other-functions">Other functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/solver_dae.html#dae-solver">DAE solver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/solver_dae.html#model">Model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/solver_dae.html#id1">Other functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/solver_dae.html#application-example">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/solver_kinsol.html">NL Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/solver_external.html">External solver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/solver_external.html#basic-information">Basic information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/solver_external.html#virtual-functions">Virtual functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/constants.html">List of constants</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/constants.html#universal-physical-constants">Universal physical constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/constants.html#dyssol-constants">Dyssol constants</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #0E70B6" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Dyssol</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="units.html">Unit library</a> &raquo;</li>
+      <li>Cyclone</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="cyclone">
+<span id="sec-units-cyclone"></span><h1>Cyclone<a class="headerlink" href="#cyclone" title="Permalink to this headline"></a></h1>
+<p>Solids-gas separation according to Muschelknautz</p>
+<a class="reference internal image-reference" href="../_images/cyclone.png"><img alt="cyclone" class="align-center" src="../_images/cyclone.png" style="width: 200px;" /></a>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Constant geometric parameters</p>
+<div class="math notranslate nohighlight">
+\[r_{o} = 0.5d_{o}\]</div>
+<div class="math notranslate nohighlight">
+\[r_{f} = 0.5d_{f}\]</div>
+<div class="math notranslate nohighlight">
+\[r_{exit} = 0.5d_{exit}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}b_{e} =
+\begin{cases}
+\text{user-defined} &amp; \text{rect slot, full/half spiral entry} \\
+r_{o} - r_{core}    &amp; \text{axial entry}
+\end{cases}\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}r_{e} =
+\begin{cases}
+r_{o} - 0.5b_{e} &amp; \text{rect slot, axial entry} \\
+r_{o} + 0.5b_{e} &amp; \text{full spiral entry} \\
+r_{o} &amp; \text{half spiral entry} \\
+\end{cases}\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[{\overline{r}}_{con} = 0.5\left( r_{o} + r_{exit} \right)\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}r_{exit,eff} =
+\begin{cases}
+r_{f} &amp; r_{exit} \leq r_{f} \\
+r_{exit} &amp; r_{exit} &gt; r_{f} \\
+\end{cases}\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\beta = \frac{b_{e}}{r_{o}}\]</div>
+<div class="math notranslate nohighlight">
+\[h_{con} = h_{tot} - h_{cyl}\]</div>
+<div class="math notranslate nohighlight">
+\[h_{con,eff} = \left( \frac{r_{o} - r_{exit,eff}}{r_{o} - r_{exit}} \right)h_{con}\]</div>
+<div class="math notranslate nohighlight">
+\[h_{sep} = h_{cyl} + h_{con,eff} - h_{f}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}a =
+\begin{cases}
+\text{-} &amp; \text{rect slot, full/half spiral entry} \\
+\sin(\delta)\frac{\pi\left( r_{o} + r_{core} \right)}{N_{b}} - d_{b} &amp; \text{axial entry} \\
+\end{cases}\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[A_{cyl} = 2\pi r_{o}h_{cyl}\]</div>
+<div class="math notranslate nohighlight">
+\[A_{con} = \pi\left( r_{o} + r_{exit,eff} \right)\sqrt{h_{con,eff}^{2} + \left( r_{o} - r_{exit,eff} \right)^{2}}\]</div>
+<div class="math notranslate nohighlight">
+\[A_{top} = \pi r_{o}^{2} - \pi r_{f}^{2}\]</div>
+<div class="math notranslate nohighlight">
+\[A_{f} = 2\pi r_{f}h_{f}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}A_{tot} =
+\begin{cases}
+A_{cyl} + A_{con} + A_{f} + A_{top} &amp; \text{rect slot, axial entry} \\
+A_{cyl} + A_{con} + A_{f} + A_{top} - \varepsilon r_{o}h_{e} &amp; \text{full/half spiral entry} \\
+\end{cases}\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[A_{con/2} = \pi\left( r_{o} + {\overline{r}}_{con} \right)\sqrt{\left( \frac{h_{con}}{2} \right)^{2} + \left( r_{o} - {\overline{r}}_{con} \right)^{2}}\]</div>
+<div class="math notranslate nohighlight">
+\[A_{sed} = A_{cyl} + A_{con/2}\]</div>
+<div class="math notranslate nohighlight">
+\[A_{e1} = \frac{2\pi r_{o}h_{e}}{2}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}A_{sp} =
+\begin{cases}
+\text{-} &amp; \text{rect slot, axial entry} \\
+\varepsilon\left( \frac{b + 2r_{o}}{2}\left( b_{e} + h_{e} \right) \right) &amp; \text{full spiral entry} \\
+\varepsilon r_{o}\left( b_{e} + h_{e} \right) &amp; \text{half spiral entry} \\
+\end{cases}\end{split}\]</div>
+<p>Operational parameters</p>
+<div class="math notranslate nohighlight">
+\[{\dot{V}}_{in,g} = \frac{{\dot{m}}_{in,g}}{\rho_{g}}\]</div>
+<div class="math notranslate nohighlight">
+\[\mu_{in} = \frac{{\dot{m}}_{in,s}}{{\dot{m}}_{in,g}}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}\lambda_{s} =
+\begin{cases}
+\lambda_{0}\left( 1 + 2\sqrt{\mu_{in}} \right) &amp; \mu_{in} \leq 1 \\
+\lambda_{0}\left( 1 + 3\sqrt{\mu_{in}} \right) &amp; \mu_{in} &gt; 1 \\
+\end{cases}\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}\alpha =
+\begin{cases}
+\frac{1}{\beta}\left( 1 - \sqrt{1 + 4\left\lbrack \left( \frac{\beta}{2} \right)^{2} - \left( \frac{\beta}{2} \right) \right\rbrack\sqrt{1 - \frac{1 - \beta^{2}}{1 + \mu_{in}}\left( 2\beta - \beta^{2} \right)}} \right) &amp; \text{rect slot, full/half spiral entry} \\
+\begin{cases}
+0.85 &amp; \text{simple straight blades} \\
+0.95 &amp; \text{curved blades} \\
+1.05 &amp; \text{curved and twisted blades} \\
+\end{cases} &amp; \text{axial entry} \\
+\end{cases}\end{split}\]</div>
+<p>Geometric parameters</p>
+<div class="math notranslate nohighlight">
+\[{\overline{r}}_{e} = r_{o} - \frac{\alpha b_{e}}{2}\]</div>
+<div class="math notranslate nohighlight">
+\[{\overline{r}}_{z} = \sqrt{{\overline{r}}_{e}{\overline{r}}_{con}}\]</div>
+<p>Velocities</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}v_{e} =
+\begin{cases}
+{\dot{V}}_{in,g}/\left( b_{e}h_{e} \right) &amp; \text{rect slot, full/half spiral entry} \\
+{\dot{V}}_{in,g}/\left( ab_{e}N_{b} \right) &amp; \text{axial entry} \\
+\end{cases}\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[w_{50} = \frac{0.5\left( 0.9{\dot{V}}_{in,g} \right)}{A_{sed}}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}u_{o} =
+\begin{cases}
+\frac{v_{e}\frac{r_{e}}{r_{o}}}{\alpha} &amp; \text{rect slot entry} \\
+\frac{v_{e}\frac{r_{e}}{r_{o}}}{1 + \frac{\lambda_{s}}{2}\frac{A_{sp}}{{\dot{V}}_{in,g}}v_{e}\sqrt{\frac{r_{e}}{r_{o}}}\ } &amp; \text{full/half spiral entry} \\
+\frac{v_{e}\cos(\delta)\frac{r_{e}}{r_{o}}}{\alpha} &amp; \text{axial entry} \\
+\end{cases}\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[u_{f} = \frac{u_{o}\frac{r_{o}}{r_{f}}}{1 + \frac{\lambda_{s}}{2}\frac{A_{tot}}{{\dot{V}}_{in,g}}u_{o}\sqrt{\frac{r_{o}}{r_{f}}}}\]</div>
+<div class="math notranslate nohighlight">
+\[u_{e} = \frac{u_{o}\frac{r_{o}}{{\overline{r}}_{e}}\ }{1 + \frac{\lambda_{s}}{2}\frac{A_{e1}}{0.9{\dot{V}}_{in,g}}u_{o}\sqrt{\frac{r_{o}}{{\overline{r}}_{e}}}}\]</div>
+<div class="math notranslate nohighlight">
+\[u_{con} = \frac{u_{o}\frac{r_{o}}{{\overline{r}}_{con}}\ }{1 + \frac{\lambda_{s}}{2}\frac{A_{sed}}{0.9{\dot{V}}_{in,g}}u_{o}\sqrt{\frac{r_{o}}{{\overline{r}}_{con}}}}\]</div>
+<p>Mass separation between main and secondary streams</p>
+<div class="math notranslate nohighlight">
+\[n = \frac{\ln\frac{u_{f}}{u_{o}}}{\ln\frac{r_{o}}{r_{f}\ }}\]</div>
+<div class="math notranslate nohighlight">
+\[{\dot{V}}_{\sec} = {\dot{V}}_{in,g}\left( 0.0497 + 0.0684n + 0.0949n^{2} \right)\]</div>
+<div class="math notranslate nohighlight">
+\[w_{split} = 1 - \frac{{\dot{V}}_{\sec}}{{\dot{V}}_{in,g}}\]</div>
+<p>Separation at wall due to exceeding the loading limit in main stream</p>
+<div class="math notranslate nohighlight">
+\[{\overline{z}}_{e} = \frac{u_{e}u_{con}}{{\overline{r}}_{z}}\]</div>
+<div class="math notranslate nohighlight">
+\[d_{main,l}^{*} = \sqrt{w_{50}\frac{18\eta_{visc}}{\left( \rho_{s} - \rho_{g} \right){\overline{z}}_{e}}}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}k =
+\begin{cases}
+0.81 &amp; \mu_{in} &lt; 2.2 \cdot 10^{- 5} \\
+0.15 + 0.66\exp\left( - \left( \frac{\mu_{in} - 2.2 \cdot 10^{- 5}}{0.015 - 2.2 \cdot 10^{- 5}} \right)^{0.6} \right) &amp; 2.2 \cdot 10^{- 5} \leq \mu_{in} &lt; 0.015 \\
+0.15 + 0.66\exp\left( - \left( \frac{0.1 - 0.015}{0.1 - \mu_{in}} \right)^{0.1}\left( \frac{\mu_{in}}{0.015} \right)^{0.6} \right) &amp; 0.015 \leq \mu_{in} \leq 0.1 \\
+0.15 &amp; \mu_{in} &gt; 0.1 \\
+\end{cases}\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\mu_{main} = K_{main}\left( \frac{d_{main,l}^{*}}{d_{50}} \right)\left( 10\mu_{in} \right)^{k}\]</div>
+<div class="math notranslate nohighlight">
+\[\eta_{main,l} = 1 - \frac{\mu_{main}}{\mu_{in}}\]</div>
+<p>Separation in the internal vortex of main stream</p>
+<div class="math notranslate nohighlight">
+\[d_{main,v}^{*} = \sqrt{\frac{18\eta_{visc}0.9{\dot{V}}_{in,g}}{\left( \rho_{s} - \rho_{g} \right)u_{f}^{2}2\pi h_{sep}}}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}\eta_{main,v}(d) =
+\begin{cases}
+0 &amp; \frac{d}{d_{main,v}^{*}} &lt; D^{- 1} \\
+0.5\left\{ 1 + \cos\left\lbrack 0.5\pi\left( 1 - \frac{\log\left( \frac{d}{d_{main,v}^{*}} \right)}{\log D} \right) \right\rbrack\  \right\} &amp; D^{- 1} \leq \frac{d}{d_{main,v}^{*}} \leq D \\
+1 &amp; \frac{d}{d_{main,v}^{*}} &gt; D \\
+\end{cases}\end{split}\]</div>
+<p>Separation at wall due to exceeding the loading limit in secondary stream</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\mu_{\sec} =
+\begin{cases}
+6\mu_{main} &amp; \mu_{in} \geq 6\mu_{main} \\
+\mu_{in} &amp; \mu_{in} &lt; 6\mu_{main} \\
+\end{cases}\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\eta_{sec,l} = 1 - \frac{\mu_{\sec}}{\mu_{in}}\]</div>
+<p>Separation at vortex finder of secondary stream</p>
+<div class="math notranslate nohighlight">
+\[d_{sec,v}^{*} = \sqrt{\frac{18\eta_{visc}{\dot{V}}_{\sec}}{\left( \rho_{s} - \rho_{g} \right)\left( \frac{2}{3}u_{f} \right)^{2}2\pi h_{f}}}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}\eta_{sec,v}(d) =
+\begin{cases}
+0 &amp; \frac{d}{d_{sec,v}^{*}} &lt; D^{- 1} \\
+0.5\left\{ 1 + \cos\left\lbrack 0.5\pi\left( 1 - \frac{\log\left( \frac{d}{d_{sec,v}^{*}} \right)}{\log D} \right) \right\rbrack\  \right\} &amp; D^{- 1} \leq \frac{d}{d_{sec,v}^{*}} \leq D \\
+1 &amp; \frac{d}{d_{sec,v}^{*}} &gt; D \\
+\end{cases}, \text{with } D = 3\end{split}\]</div>
+<p>Overall separation</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\eta_{main}(d) =
+\begin{cases}
+\eta_{main,l} + \left( 1 - \eta_{main,l} \right)\eta_{main,v}(d) &amp; \mu_{in} &gt; \mu_{main} \\
+\eta_{main,v}(d) &amp; \mu_{in} \leq \mu_{main} \\
+\end{cases}\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}\eta_{\sec}(d) =
+\begin{cases}
+\eta_{sec,l} + \left( 1 - \eta_{sec,l} \right)\eta_{sec,v}(d) &amp; \mu_{in} &gt; \mu_{\sec} \\
+\eta_{sec,v}(d) &amp; \mu_{in} \leq \mu_{\sec} \\
+\end{cases}\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\eta_{tot}(d) = \eta_{adj}\left( w_{split}\eta_{main}(d) + \left( 1 - w_{split} \right)\eta_{\sec}(d) \right)\]</div>
+<div class="math notranslate nohighlight">
+\[{\dot{m}}_{s,out,s} = {\dot{m}}_{in,s}\sum_{d}^{}{R_{in}(d)\eta_{tot}(d)}\]</div>
+<div class="math notranslate nohighlight">
+\[{\dot{m}}_{s,out,g} = 0\]</div>
+<div class="math notranslate nohighlight">
+\[{\dot{m}}_{g,out,s} = {\dot{m}}_{in,s}\left( 1 - \sum_{d}^{}{R_{in}(d)\eta_{tot}(d)} \right)\]</div>
+<div class="math notranslate nohighlight">
+\[{\dot{m}}_{g,out,g} = {\dot{m}}_{in,g}\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Notations:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 10%" />
+<col style="width: 3%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Units</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\beta\)</span></p></td>
+<td><p>[-]</p></td>
+<td></td>
+<td><p>Relative width of cyclone gas entry</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\delta\)</span></p></td>
+<td><p>[°]</p></td>
+<td><p>UP</p></td>
+<td><p>Angle of attack of blades in axial gas entry</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\varepsilon\)</span></p></td>
+<td><p>[°]</p></td>
+<td><p>UP</p></td>
+<td><p>Spiral angle in spiral gas entry</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\lambda_{0}\)</span></p></td>
+<td><p>[-]</p></td>
+<td><p>UP</p></td>
+<td><p>Wall friction coefficient of pure gas</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\lambda_{s}\)</span></p></td>
+<td><p>[-]</p></td>
+<td></td>
+<td><p>Wall friction coefficient of solids-containing gas</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\mu_{in}\)</span></p></td>
+<td><p>[kg/kg]</p></td>
+<td></td>
+<td><p>Solids loading at inlet</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\mu_{main}\)</span></p></td>
+<td><p>[kg/kg]</p></td>
+<td></td>
+<td><p>Threshold for solids loading in main stream</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\mu_{\sec}\)</span></p></td>
+<td><p>[kg/kg]</p></td>
+<td></td>
+<td><p>Threshold for solids loading in secondary stream</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\eta_{adj}\)</span></p></td>
+<td><p>[-]</p></td>
+<td><p>UP</p></td>
+<td><p>Separation efficiency adjustment factor</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\eta_{main}\)</span></p></td>
+<td><p>[-]</p></td>
+<td></td>
+<td><p>Overall separation efficiency in main stream</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\eta_{main,l}\)</span></p></td>
+<td><p>[-]</p></td>
+<td></td>
+<td><p>Separation efficiency due to exceeding of solids loading limit in main stream (from main stream to solids output)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\eta_{main,v}\)</span></p></td>
+<td><p>[-]</p></td>
+<td></td>
+<td><p>Separation efficiency in internal vortex (from internal vortex to solids output)</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\eta_{\sec}\)</span></p></td>
+<td><p>[-]</p></td>
+<td></td>
+<td><p>Overall separation efficiency in secondary stream</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\eta_{sec,l}\)</span></p></td>
+<td><p>[-]</p></td>
+<td></td>
+<td><p>Separation efficiency due to exceeding of solids loading limit in secondary stream (from secondary stream to solids output)</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\eta_{sec,v}\)</span></p></td>
+<td><p>[-]</p></td>
+<td></td>
+<td><p>Separation efficiency at vortex finder (from vortex finder to solids output)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\eta_{tot}\)</span></p></td>
+<td><p>[-]</p></td>
+<td></td>
+<td><p>Total separation efficiency of cyclone</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\eta_{visc}\)</span></p></td>
+<td><p>[Pa s]</p></td>
+<td><p>MDB</p></td>
+<td><p>Dynamic viscosity of gas at inlet</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\rho_{g}\)</span></p></td>
+<td><p>[kg/m<sup>3</sup>]</p></td>
+<td><p>MDB</p></td>
+<td><p>Gas density at inlet</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\rho_{s}\)</span></p></td>
+<td><p>[kg/m<sup>3</sup>]</p></td>
+<td><p>MDB</p></td>
+<td><p>Solids density at inlet</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(a\)</span></p></td>
+<td><p>[m]</p></td>
+<td></td>
+<td><p>Height of blades channel in axial gas entry</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(A_{con}\)</span></p></td>
+<td><p>[m<sup>2</sup>]</p></td>
+<td></td>
+<td><p>Lateral area of the conical part</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(A_{con/2}\)</span></p></td>
+<td><p>[m<sup>2</sup>]</p></td>
+<td></td>
+<td><p>Lateral area of the top half of conical part</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(A_{cyl}\)</span></p></td>
+<td><p>[m<sup>2</sup>]</p></td>
+<td></td>
+<td><p>Lateral area of the cylindrical part</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(A_{e1}\)</span></p></td>
+<td><p>[m<sup>2</sup>]</p></td>
+<td></td>
+<td><p>Average wall area considered for the first revolution after entry</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(A_{f}\)</span></p></td>
+<td><p>[m<sup>2</sup>]</p></td>
+<td></td>
+<td><p>Lateral area of vortex finder</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(A_{sed}\)</span></p></td>
+<td><p>[m<sup>2</sup>]</p></td>
+<td></td>
+<td><p>Sedimentation area</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(A_{sp}\)</span></p></td>
+<td><p>[m<sup>2</sup>]</p></td>
+<td></td>
+<td><p>Frictional area of the spiral in spiral gas entry</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(A_{top}\)</span></p></td>
+<td><p>[m<sup>2</sup>]</p></td>
+<td></td>
+<td><p>Area of upper wall</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(A_{tot}\)</span></p></td>
+<td><p>[m<sup>2</sup>]</p></td>
+<td></td>
+<td><p>Total wall friction area</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(b_{e}\)</span></p></td>
+<td><p>[m]</p></td>
+<td><p>UP/</p></td>
+<td><p>Width of gas entry/blade channel</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(d\)</span></p></td>
+<td><p>[m]</p></td>
+<td><p>SP</p></td>
+<td><p>Particle diameter</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(d_{50}\)</span></p></td>
+<td><p>[m]</p></td>
+<td><p>SP</p></td>
+<td><p>Particle size median</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(d_{b}\)</span></p></td>
+<td><p>[m]</p></td>
+<td><p>UP</p></td>
+<td><p>Thickness of blades in axial gas entry</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(d_{exit}\)</span></p></td>
+<td><p>[m]</p></td>
+<td><p>UP</p></td>
+<td><p>Diameter of particles exit</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(d_{f}\)</span></p></td>
+<td><p>[m]</p></td>
+<td><p>UP</p></td>
+<td><p>Diameter of vortex finder</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(d_{o}\)</span></p></td>
+<td><p>[m]</p></td>
+<td><p>UP</p></td>
+<td><p>Outer diameter of cyclone</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(d_{main,l}^{*}\)</span></p></td>
+<td><p>[m]</p></td>
+<td></td>
+<td><p>Cut size of separation on the first revolution due to exceeding the loading limit</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(d_{main,v}^{*}\)</span></p></td>
+<td><p>[m]</p></td>
+<td></td>
+<td><p>Cut size of separation in internal vortex of main stream</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(d_{sec,v}^{*}\)</span></p></td>
+<td><p>[m]</p></td>
+<td></td>
+<td><p>Cut size of separation at vortex finder in secondary stream</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(D\)</span></p></td>
+<td><p>[-]</p></td>
+<td><p>UP</p></td>
+<td><p>Coefficient for grid efficiency curve calculation according to Muschelknautz</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(h_{con}\)</span></p></td>
+<td><p>[m]</p></td>
+<td></td>
+<td><p>Height of the cone part of cyclone</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(h_{con,eff}\)</span></p></td>
+<td><p>[m]</p></td>
+<td></td>
+<td><p>Effective height of the cone part of cyclone</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(h_{cyl}\)</span></p></td>
+<td><p>[m]</p></td>
+<td><p>UP</p></td>
+<td><p>Height of the cylindrical part of cyclone</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(h_{e}\)</span></p></td>
+<td><p>[m]</p></td>
+<td><p>UP</p></td>
+<td><p>Height of gas entry</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(h_{f}\)</span></p></td>
+<td><p>[m]</p></td>
+<td><p>UP</p></td>
+<td><p>Height (depth) of vortex finder</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(h_{sep}\)</span></p></td>
+<td><p>[m]</p></td>
+<td></td>
+<td><p>Height of separation zone</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(h_{tot}\)</span></p></td>
+<td><p>[m]</p></td>
+<td><p>UP</p></td>
+<td><p>Total height of cyclone</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(k\)</span></p></td>
+<td><p>[-]</p></td>
+<td></td>
+<td><p>Exponent for solids loading threshold in main stream</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(K_{main}\)</span></p></td>
+<td><p>[-]</p></td>
+<td><p>UP</p></td>
+<td><p>Constant for solids loading threshold in main stream</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\({\dot{m}}_{in,g}\)</span></p></td>
+<td><p>[kg/s]</p></td>
+<td><p>SP</p></td>
+<td><p>Gas mass flow at inlet</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\({\dot{m}}_{in,s}\)</span></p></td>
+<td><p>[kg/s]</p></td>
+<td><p>SP</p></td>
+<td><p>Solids mass flow at inlet</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\({\dot{m}}_{out,s,s}\)</span></p></td>
+<td><p>[kg/s]</p></td>
+<td></td>
+<td><p>Solids mass flow at solids outlet</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\({\dot{m}}_{out,s,g}\)</span></p></td>
+<td><p>[kg/s]</p></td>
+<td></td>
+<td><p>Gas mass flow at solids outlet</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\({\dot{m}}_{out,g,s}\)</span></p></td>
+<td><p>[kg/s]</p></td>
+<td></td>
+<td><p>Solids mass flow at gas outlet</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\({\dot{m}}_{out,g,g}\)</span></p></td>
+<td><p>[kg/s]</p></td>
+<td></td>
+<td><p>Gas mass flow at gas outlet</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(n\)</span></p></td>
+<td><p>[-]</p></td>
+<td></td>
+<td><p>Parameter for calculating secondary stream</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(N_{b}\)</span></p></td>
+<td><p>[#]</p></td>
+<td><p>UP</p></td>
+<td><p>Number of blades in axial gas entry</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\({\overline{r}}_{con}\)</span></p></td>
+<td><p>[m]</p></td>
+<td></td>
+<td><p>Mean radius of the conical part</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(r_{core}\)</span></p></td>
+<td><p>[m]</p></td>
+<td><p>UP</p></td>
+<td><p>Core radius of blades in axial gas entry</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(r_{e}\)</span></p></td>
+<td><p>[m]</p></td>
+<td></td>
+<td><p>Radius of the middle gas streamline at gas entry</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\({\overline{r}}_{e}\)</span></p></td>
+<td><p>[m]</p></td>
+<td></td>
+<td><p>Mean radius of the gas streamline at gas entry</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(r_{exit}\)</span></p></td>
+<td><p>[m]</p></td>
+<td></td>
+<td><p>Radius of the particles exit</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(r_{exit,eff}\)</span></p></td>
+<td><p>[m]</p></td>
+<td></td>
+<td><p>Effective radius of the particles exit</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(r_{f}\)</span></p></td>
+<td><p>[m]</p></td>
+<td></td>
+<td><p>Radius of vortex finder</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(r_{o}\)</span></p></td>
+<td><p>[m]</p></td>
+<td></td>
+<td><p>Outer radius of cyclone</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\({\overline{r}}_{z}\)</span></p></td>
+<td><p>[m]</p></td>
+<td></td>
+<td><p>Reference mean radius</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(R_{in}(d)\)</span></p></td>
+<td><p>[-]</p></td>
+<td></td>
+<td><p>Mass fraction of particles with size <span class="math notranslate nohighlight">\(d\)</span> at inlet</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(u_{con}\)</span></p></td>
+<td><p>[m/s]</p></td>
+<td></td>
+<td><p>Tangential velocity at mean cone radius</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(u_{e}\)</span></p></td>
+<td><p>[m/s]</p></td>
+<td></td>
+<td><p>Tangential velocity at gas streamline radius at gas entry</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(u_{f}\)</span></p></td>
+<td><p>[m/s]</p></td>
+<td></td>
+<td><p>Tangential velocity at vortex finder</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(u_{o}\)</span></p></td>
+<td><p>[m/s]</p></td>
+<td></td>
+<td><p>Tangential velocity at outer cyclone radius</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(v_{e}\)</span></p></td>
+<td><p>[m/s]</p></td>
+<td></td>
+<td><p>Inlet velocity in the middle gas streamline at gas entry</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\({\dot{V}}_{in,g}\)</span></p></td>
+<td><p>[m<sup>3</sup>/s]</p></td>
+<td></td>
+<td><p>Gas volume flow at inlet</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\({\dot{V}}_{\sec}\)</span></p></td>
+<td><p>[m<sup>3</sup>/s]</p></td>
+<td></td>
+<td><p>Gas volume flow of secondary stream</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(w_{50}\)</span></p></td>
+<td><p>[m/s]</p></td>
+<td></td>
+<td><p>Sinking speed at which 50% of particles are sedimented at wall</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(w_{split}\)</span></p></td>
+<td><p>[-]</p></td>
+<td></td>
+<td><p>Fraction of material going to main stream</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\({\overline{z}}_{e}\)</span></p></td>
+<td><p>[m<sup>2</sup>/s]</p></td>
+<td></td>
+<td><p>Mean centrifugal acceleration along streamline</p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p>UP: User-defined model parameters</p></li>
+<li><p>MDB: Value from materials database</p></li>
+<li><p>SP: Value from the input stream</p></li>
+</ul>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Model parameters:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 13%" />
+<col style="width: 4%" />
+<col style="width: 47%" />
+<col style="width: 29%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Symbol</p></th>
+<th class="head"><p>Units</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Values</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>d_o</p></td>
+<td><p><span class="math notranslate nohighlight">\(d_{o}\)</span></p></td>
+<td><p>[m]</p></td>
+<td><p>Outer diameter of cyclone</p></td>
+<td><p>≥0.01</p></td>
+</tr>
+<tr class="row-odd"><td><p>h_tot</p></td>
+<td><p><span class="math notranslate nohighlight">\(h_{tot}\)</span></p></td>
+<td><p>[m]</p></td>
+<td><p>Total height of cyclone</p></td>
+<td><p>≥0.01</p></td>
+</tr>
+<tr class="row-even"><td><p>h_cyl</p></td>
+<td><p><span class="math notranslate nohighlight">\(h_{cyl}\)</span></p></td>
+<td><p>[m]</p></td>
+<td><p>Height of the cylindrical part of cyclone</p></td>
+<td><p>≥0.01</p></td>
+</tr>
+<tr class="row-odd"><td><p>d_f</p></td>
+<td><p><span class="math notranslate nohighlight">\(d_{f}\)</span></p></td>
+<td><p>[m]</p></td>
+<td><p>Diameter of vortex finder</p></td>
+<td><p>≥0.01</p></td>
+</tr>
+<tr class="row-even"><td><p>h_f</p></td>
+<td><p><span class="math notranslate nohighlight">\(h_{f}\)</span></p></td>
+<td><p>[m]</p></td>
+<td><p>Height (depth) of vortex finder</p></td>
+<td><p>≥0.01</p></td>
+</tr>
+<tr class="row-odd"><td><p>d_exit</p></td>
+<td><p><span class="math notranslate nohighlight">\(d_{exit}\)</span></p></td>
+<td><p>[m]</p></td>
+<td><p>Diameter of particle exit</p></td>
+<td><p>≥0.01</p></td>
+</tr>
+<tr class="row-even"><td><p>Entry shape</p></td>
+<td></td>
+<td></td>
+<td><p>Gas entry shape</p></td>
+<td><p>Rectangular slot/Full spiral/Half spiral/Axial</p></td>
+</tr>
+<tr class="row-odd"><td><p>b_e</p></td>
+<td><p><span class="math notranslate nohighlight">\(b_{e}\)</span></p></td>
+<td><p>[m]</p></td>
+<td><p>Width of gas entry</p></td>
+<td><p>≥0.01</p></td>
+</tr>
+<tr class="row-even"><td><p>h_e</p></td>
+<td><p><span class="math notranslate nohighlight">\(h_{e}\)</span></p></td>
+<td><p>[m]</p></td>
+<td><p>Height of gas entry</p></td>
+<td><p>≥0.01</p></td>
+</tr>
+<tr class="row-odd"><td><p>epsilon</p></td>
+<td><p><span class="math notranslate nohighlight">\(\varepsilon\)</span></p></td>
+<td><p>[°]</p></td>
+<td><p>Spiral angle in spiral gas entry</p></td>
+<td><p>[0…360]</p></td>
+</tr>
+<tr class="row-even"><td><p>N_b</p></td>
+<td><p><span class="math notranslate nohighlight">\(N_{b}\)</span></p></td>
+<td><p>[#]</p></td>
+<td><p>Number of blades in axial gas entry</p></td>
+<td><p>≥1</p></td>
+</tr>
+<tr class="row-odd"><td><p>d_b</p></td>
+<td><p><span class="math notranslate nohighlight">\(d_{b}\)</span></p></td>
+<td><p>[m]</p></td>
+<td><p>Thickness of blades in axial gas entry</p></td>
+<td><p>≥0</p></td>
+</tr>
+<tr class="row-even"><td><p>r_core</p></td>
+<td><p><span class="math notranslate nohighlight">\(r_{core}\)</span></p></td>
+<td><p>[m]</p></td>
+<td><p>Core radius of blades in axial entry</p></td>
+<td><p>≥0</p></td>
+</tr>
+<tr class="row-odd"><td><p>Blade shape</p></td>
+<td></td>
+<td></td>
+<td><p>Blades shapes in axial gas entry</p></td>
+<td><p>Simple straight/Curved/Curved and twisted</p></td>
+</tr>
+<tr class="row-even"><td><p>delta</p></td>
+<td><p><span class="math notranslate nohighlight">\(\delta\)</span></p></td>
+<td><p>[°]</p></td>
+<td><p>Angle of attack of blades in axial gas entry</p></td>
+<td><p>[15…30]</p></td>
+</tr>
+<tr class="row-odd"><td><p>lambda_0</p></td>
+<td><p><span class="math notranslate nohighlight">\(\lambda_{0}\)</span></p></td>
+<td><p>[-]</p></td>
+<td><p>Wall friction coefficient of pure gas</p></td>
+<td><p>≥0</p></td>
+</tr>
+<tr class="row-even"><td><p>D</p></td>
+<td><p><span class="math notranslate nohighlight">\(D\)</span></p></td>
+<td><p>[-]</p></td>
+<td><p>Coefficient for grid efficiency curve calculation according to Muschelknautz</p></td>
+<td><p>[2…4]</p></td>
+</tr>
+<tr class="row-odd"><td><p>K_main</p></td>
+<td><p><span class="math notranslate nohighlight">\(K_{main}\)</span></p></td>
+<td><p>[-]</p></td>
+<td><p>Constant for solids loading threshold in main stream</p></td>
+<td><p>[0.02…0.03]</p></td>
+</tr>
+<tr class="row-even"><td><p>eta_adj</p></td>
+<td><p><span class="math notranslate nohighlight">\(\eta_{adj}\)</span></p></td>
+<td><p>[-]</p></td>
+<td><p>Separation efficiency adjustment factor</p></td>
+<td><p>[0…1]</p></td>
+</tr>
+<tr class="row-odd"><td><p>Plot</p></td>
+<td></td>
+<td></td>
+<td><p>Whether to generate plots</p></td>
+<td><p>YES/NO</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p>Muschelknautz, U. (2019). L3.4 Zyklone zum Abscheiden fester Partikel aus Gasen. In: Stephan, P., Kabelac, S., Kind, M., Mewes, D., Schaber, K., Wetzel, T. (eds) VDI-Wärmeatlas. Springer Reference Technik. Springer Vieweg, Berlin, Heidelberg. <a class="reference external" href="https://doi.org/10.1007/978-3-662-52989-8_91">https://doi.org/10.1007/978-3-662-52989-8_91</a></p></li>
+<li><p>A demostration file at <code class="docutils literal notranslate"><span class="pre">Example</span> <span class="pre">Flowsheets/Units/Cyclone</span> <span class="pre">Muschelknautz.dlfw</span></code>.</p></li>
+</ul>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="unit_crusher.html" class="btn btn-neutral float-left" title="Crusher" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="unit_granulator.html" class="btn btn-neutral float-right" title="Granulator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, DyssolTEC GmbH.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

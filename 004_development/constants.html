@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>List of constants &mdash; Dyssol latest documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dyssol_style.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/logo.png"/>
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script defer="defer" src="../_static/./mathjax/tex-svg.js"></script>
+        <script>window.MathJax = {"options": {"enableMenu": true, "menuOptions": {"settings": {"renderer": "SVG"}}}}</script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="External solver" href="solver_external.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #0E70B6" >
+            <a href="../index.html">
+            <img src="../_static/logo_doc.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Get started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../000_get_started/get_started.html">Get started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../000_get_started/get_started.html#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../000_get_started/get_started.html#windows">Windows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../000_get_started/get_started.html#linux">Linux</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../000_get_started/get_started.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../000_get_started/get_started.html#run-your-first-simulation">Run your first simulation</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User interface</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../001_ui/gui.html">Graphical user interfaced</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../001_ui/gui.html#menu">Menu</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#file">File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#setup">Setup</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#compounds-editor">Compounds editor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#phases-editor">Phases editor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#grids-specification">Grids specification</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#holdups-editor">Holdups editor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#options">Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#calculation-sequence">Calculation sequence</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#recycle-streams">Recycle streams</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#modules">Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#tools">Tools</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#models-manager">Models manager</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#materials-database">Materials database</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#settings">Settings</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#help">Help</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#about">About</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../001_ui/gui.html#tabs">Tabs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#flowsheet">Flowsheet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#simulator">Simulator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#streams">Streams</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#units">Units</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../001_ui/cli.html">Command line interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../001_ui/cli.html#main">Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../001_ui/cli.html#simulation">Simulation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#simulation-options">Simulation options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#phases">Phases</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#compounds">Compounds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#grids">Grids</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#flowsheet-structure">Flowsheet structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#unit-parameters">Unit parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#holdups">Holdups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#export">Export</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Structure and algorithms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/brief.html">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/brief.html#flowsheet-simulation-of-solids">Flowsheet simulation of solids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/brief.html#approaches-and-methods">Approaches and methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/brief.html#software-system-architecture">Software system architecture</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/simulation.html">Simulation core</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/simulation.html#material-streams">Material streams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/simulation.html#units">Units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/simulation.html#simulator">Simulator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/simulation.html#main-method-and-approaches">Main method and approaches</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/simulation.html#built-in-equation-solvers">Built-in equation solvers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/data.html">Data storage subsystem</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/data.html#hdf5-data-format">HDF5 data format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/data.html#data-caching">Data caching</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/materials.html">Material database</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#dmdb-file">DMDB file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#constant-parameters">Constant parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#dependent-parameters">Dependent parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#interaction-properties">Interaction properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#correlations">Correlations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/materials.html#correlation-search">Correlation search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/materials.html#correlation-functions">Correlation functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/multiDim.html">Multidimentional distributed parameters of solids</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/multiDim.html#tree-data-structures">Tree data structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/multiDim.html#treatment-of-dependent-parameters">Treatment of dependent parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/multiDim.html#transformation-matrices">Transformation matrices</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../002_theory/multiDim.html#application-of-transformation-matrices">Application of transformation matrices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../002_theory/multiDim.html#application-example">Application example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/time.html">Time point management</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/time.html#data-interpolation">Data interpolation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/time.html#interpolation-of-distributed-parameters">Interpolation of distributed parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/time.html#steady-state-units">Steady state units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/time.html#dynamic-units-with-recycle">Dynamic units with recycle</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/theory.html">Theoretical background</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/theory.html#discretization">Discretization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/theory.html#process-systems">Process systems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#sequential-modular-approach">Sequential-modular approach</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#equation-oriented-approach">Equation-oriented approach</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#partitioning-and-tearing">Partitioning and tearing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/theory.html#numerical-methods">Numerical methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#waveform-relaxation-method">Waveform relaxation method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#data-extrapolation">Data extrapolation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#convergence-methods">Convergence methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Libraries</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../003_models/units.html">Unit library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_agglomerator.html">Agglomerator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_agglomerator.html#kernels">Kernels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_agglomerator.html#solvers">Solvers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_crusher.html">Crusher</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_crusher.html#bond-s-model">Bond’s model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../003_models/unit_crusher.html#average-bond-work-indices-for-various-materials">Average Bond Work Indices for various materials</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_crusher.html#cone-model">Cone model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_crusher.html#const-output-model">Const output model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_cyclone.html">Cyclone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_granulator.html">Granulator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_granulator.html#continuous-granulator">Continuous granulator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_granulator.html#batch-granulator">Batch granulator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_inletflow.html">Inlet flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_mixer.html">Mixer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_outletflow.html">Outlet flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_screen.html">Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_screen.html#plitt-s-model">Plitt’s model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_screen.html#molerus-hoffmann-model">Molerus &amp; Hoffmann model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_screen.html#probability-model">Probability model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_screen.html#teipel-hennig-model">Teipel / Hennig model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_solidsbunker.html">Solids bunker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_splitter.html">Splitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_timedelay.html">Time delay</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_timedelay.html#simple-shift">Simple shift</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_timedelay.html#norm-based">Norm-based</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../003_models/solvers.html">Solver library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/solvers.html#agglomeration-solvers">Agglomeration solvers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/solver_cellaverage.html">Cell average</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/solver_fft.html">FFT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/solver_fixedpivot.html">Fixed pivot</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">For developers</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="compilation.html">Compilation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="compilation.html#windows">Windows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="compilation.html#compilation-requirements">Compilation requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compilation.html#build">Build</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compilation.html#build-documentation-and-installers">Build documentation and installers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="compilation.html#linux">Linux</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="compilation.html#sec-development-compilation-linux-requirements">Compilation requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compilation.html#install-build-environment">Install build environment</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="compilation.html#ubuntu-20-debian-11">Ubuntu 20, Debian 11</a></li>
+<li class="toctree-l4"><a class="reference internal" href="compilation.html#ubuntu-22-24-debian-12">Ubuntu 22/24, Debian 12</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="compilation.html#id2">Build</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="models_development.html">For models developers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="models_development.html#configuration-of-visual-studio-project-template">Configuration of Visual Studio project template</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models_development.html#unit-development">Unit development</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#add-new-unit-to-the-template-project">Add new unit to the template project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#configure-dyssol-to-work-with-implemented-units">Configure Dyssol to work with implemented units</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#development-of-steady-state-units">Development of steady-state units</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="models_development.html#application-example">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#development-of-steady-state-units-with-internal-non-linear-solver">Development of steady-state units with internal non-linear solver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="models_development.html#id1">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#development-of-dynamic-units">Development of dynamic units</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="models_development.html#label-basics">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#development-of-dynamic-units-with-internal-dae-solver">Development of dynamic units with internal DAE solver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="models_development.html#id3">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#configure-unit-to-work-with-matlab">Configure unit to work with MATLAB</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="models_development.html#solver-development">Solver development</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#add-new-solver-to-the-template-project">Add new solver to the template project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#configure-dyssol-to-work-with-implemented-solvers">Configure Dyssol to work with implemented solvers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#development-of-agglomeration-solver">Development of agglomeration solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#configure-solver-to-work-with-matlab">Configure solver to work with MATLAB</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">Models API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="class_baseunit.html">Basic unit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_basestream.html">Basic stream</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_stream.html">Stream</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_holdup.html">Holdup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_portsmanager.html">Ports manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_unitport.html">Unit port</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_unitparametersmanager.html">Unit parameters manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_unitparameters.html">Unit parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="class_upbase.html">Base class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upconst.html">Const</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upconstreal.html">Const real</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upconstint.html">Const int</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upconstuint.html">Const uint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_updependent.html">Dependent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_uptd.html">Time-dependent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upstring.html">String</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upcheckbox.html">Check box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upcombobox.html">Combo box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upcompound.html">Compound</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upcompoundmdb.html">MDB compound</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upreaction.html">Reaction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_uplist.html">List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_uplistreal.html">List real</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_uplistint.html">List int</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_uplistuint.html">List uint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upsolver.html">Solver</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="class_chemicalreaction.html">Chemical reaction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_agglomerationsolver.html">Agglomeration solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_basesolver.html">Base solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_statevariablesmanager.html">State variables manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_statevariable.html">State variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_curve.html">Curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_plot.html">Plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_plotmanager.html">Plot manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_mixtureenthalpylookup.html">Enthalpy lookup table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_matrix2d.html">Two-mensional matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_densemdmatrix.html">Multidimensional matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_transformmatrix.html">Transformation matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auxiliary_classes.html">Auxiliary classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="psd_functions.html">PSD functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="distribution_functions.html">Distribution functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermodynamics.html">Thermodynamics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="thermodynamics.html#for-material-stream-and-holdup">For material stream and holdup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="thermodynamics.html#for-base-unit">For base unit</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="solver_dae.html">DAE Systems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solver_dae.html#dae-model">DAE model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="solver_dae.html#variables">Variables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="solver_dae.html#tolerance">Tolerance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="solver_dae.html#virtual-functions">Virtual functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="solver_dae.html#other-functions">Other functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="solver_dae.html#dae-solver">DAE solver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="solver_dae.html#model">Model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="solver_dae.html#id1">Other functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="solver_dae.html#application-example">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="solver_kinsol.html">NL Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solver_external.html">External solver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solver_external.html#basic-information">Basic information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solver_external.html#virtual-functions">Virtual functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">List of constants</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#universal-physical-constants">Universal physical constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dyssol-constants">Dyssol constants</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #0E70B6" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Dyssol</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="api.html">Models API</a> &raquo;</li>
+      <li>List of constants</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="list-of-constants">
+<span id="sec-development-api-constants"></span><h1>List of constants<a class="headerlink" href="#list-of-constants" title="Permalink to this headline"></a></h1>
+<section id="universal-physical-constants">
+<h2>Universal physical constants<a class="headerlink" href="#universal-physical-constants" title="Permalink to this headline"></a></h2>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv417AVOGADRO_CONSTANT">
+<span id="_CPPv317AVOGADRO_CONSTANT"></span><span id="_CPPv217AVOGADRO_CONSTANT"></span><span id="AVOGADRO_CONSTANT__double"></span><span class="target" id="DyssolDefines_8h_1a95220a1ce0b2a476e57bf21d3ceaabc7"></span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AVOGADRO_CONSTANT</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">6.022141994747e+23</span></span><a class="headerlink" href="#_CPPv417AVOGADRO_CONSTANT" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Avogadro constant [1/mol]. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv418BOLTZMANN_CONSTANT">
+<span id="_CPPv318BOLTZMANN_CONSTANT"></span><span id="_CPPv218BOLTZMANN_CONSTANT"></span><span id="BOLTZMANN_CONSTANT__double"></span><span class="target" id="DyssolDefines_8h_1adc5d561124122af182e52a0d791a6372"></span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">BOLTZMANN_CONSTANT</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1.38065032424e-23</span></span><a class="headerlink" href="#_CPPv418BOLTZMANN_CONSTANT" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Boltzmann constant [J/K]. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv418MOLAR_GAS_CONSTANT">
+<span id="_CPPv318MOLAR_GAS_CONSTANT"></span><span id="_CPPv218MOLAR_GAS_CONSTANT"></span><span id="MOLAR_GAS_CONSTANT__double"></span><span class="target" id="DyssolDefines_8h_1a18c1fdca0eb2d94d7e8b9799b058a6bf"></span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MOLAR_GAS_CONSTANT</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">8.314459848</span></span><a class="headerlink" href="#_CPPv418MOLAR_GAS_CONSTANT" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Molar gas constant [J/mol/K]. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv424SPEED_OF_LIGHT_IN_VACUUM">
+<span id="_CPPv324SPEED_OF_LIGHT_IN_VACUUM"></span><span id="_CPPv224SPEED_OF_LIGHT_IN_VACUUM"></span><span id="SPEED_OF_LIGHT_IN_VACUUM__double"></span><span class="target" id="DyssolDefines_8h_1a333e4907dd812b44ee5208534fb814fb"></span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SPEED_OF_LIGHT_IN_VACUUM</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">2.9979245811e+8</span></span><a class="headerlink" href="#_CPPv424SPEED_OF_LIGHT_IN_VACUUM" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Speed of light in vacuum [m/s]. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv432STANDARD_ACCELERATION_OF_GRAVITY">
+<span id="_CPPv332STANDARD_ACCELERATION_OF_GRAVITY"></span><span id="_CPPv232STANDARD_ACCELERATION_OF_GRAVITY"></span><span id="STANDARD_ACCELERATION_OF_GRAVITY__double"></span><span class="target" id="DyssolDefines_8h_1a337142fc5840fdb8272c5bfaa81311f8"></span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">STANDARD_ACCELERATION_OF_GRAVITY</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">9.80665</span></span><a class="headerlink" href="#_CPPv432STANDARD_ACCELERATION_OF_GRAVITY" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Standard acceleration of gravity [m/s<sup>2</sup>]. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv420STANDARD_CONDITION_T">
+<span id="_CPPv320STANDARD_CONDITION_T"></span><span id="_CPPv220STANDARD_CONDITION_T"></span><span id="STANDARD_CONDITION_T__double"></span><span class="target" id="DyssolDefines_8h_1ae22525020f61b2e049c418bb8f06d00e"></span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">STANDARD_CONDITION_T</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">298.15</span></span><a class="headerlink" href="#_CPPv420STANDARD_CONDITION_T" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Standard condition temperature [K]. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv420STANDARD_CONDITION_P">
+<span id="_CPPv320STANDARD_CONDITION_P"></span><span id="_CPPv220STANDARD_CONDITION_P"></span><span id="STANDARD_CONDITION_P__double"></span><span class="target" id="DyssolDefines_8h_1af92af348e66cfbbea106d86a10419564"></span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">STANDARD_CONDITION_P</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">101325</span></span><a class="headerlink" href="#_CPPv420STANDARD_CONDITION_P" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Standard condition pressure [Pa]. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv425STEFAN_BOLTZMANN_CONSTANT">
+<span id="_CPPv325STEFAN_BOLTZMANN_CONSTANT"></span><span id="_CPPv225STEFAN_BOLTZMANN_CONSTANT"></span><span id="STEFAN_BOLTZMANN_CONSTANT__double"></span><span class="target" id="DyssolDefines_8h_1a2b8528c1c9cf39a4cf96ba265191b803"></span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">STEFAN_BOLTZMANN_CONSTANT</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">5.670374419e-8</span></span><a class="headerlink" href="#_CPPv425STEFAN_BOLTZMANN_CONSTANT" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Stefan-Boltzmann constant [W/m<sup>2</sup>/K<sup>4</sup>]. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv47MATH_PI">
+<span id="_CPPv37MATH_PI"></span><span id="_CPPv27MATH_PI"></span><span id="MATH_PI__double"></span><span class="target" id="DyssolDefines_8h_1ae48627374a13c599957512f5b7dddcf9"></span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MATH_PI</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">3.14159265358979323846</span></span><a class="headerlink" href="#_CPPv47MATH_PI" title="Permalink to this definition"></a><br /></dt>
+<dd><p><span class="math notranslate nohighlight">\(\pi\)</span> constant. </p>
+</dd></dl>
+
+</section>
+<section id="dyssol-constants">
+<h2>Dyssol constants<a class="headerlink" href="#dyssol-constants" title="Permalink to this headline"></a></h2>
+<dl class="cpp enum-class">
+<dt class="sig sig-object cpp" id="_CPPv49EUnitPort">
+<span id="_CPPv39EUnitPort"></span><span id="_CPPv29EUnitPort"></span><span class="target" id="DyssolDefines_8h_1a4b4394ec6796b3f1e4dd14afbc480a9d"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">EUnitPort</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><a class="headerlink" href="#_CPPv49EUnitPort" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Types of unit ports. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N9EUnitPort5INPUTE">
+<span id="_CPPv3N9EUnitPort5INPUTE"></span><span id="_CPPv2N9EUnitPort5INPUTE"></span><span class="target" id="DyssolDefines_8h_1a4b4394ec6796b3f1e4dd14afbc480a9daa84cc046d48610b05c21fd3670d0c829"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INPUT</span></span></span><a class="headerlink" href="#_CPPv4N9EUnitPort5INPUTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Input port. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N9EUnitPort6OUTPUTE">
+<span id="_CPPv3N9EUnitPort6OUTPUTE"></span><span id="_CPPv2N9EUnitPort6OUTPUTE"></span><span class="target" id="DyssolDefines_8h_1a4b4394ec6796b3f1e4dd14afbc480a9da50a87f0d71f7221582dad4bf507a0f34"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">OUTPUT</span></span></span><a class="headerlink" href="#_CPPv4N9EUnitPort6OUTPUTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Output port. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N9EUnitPort9UNDEFINEDE">
+<span id="_CPPv3N9EUnitPort9UNDEFINEDE"></span><span id="_CPPv2N9EUnitPort9UNDEFINEDE"></span><span class="target" id="DyssolDefines_8h_1a4b4394ec6796b3f1e4dd14afbc480a9da0db45d2a4141101bdfe48e3314cfbca3"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UNDEFINED</span></span></span><a class="headerlink" href="#_CPPv4N9EUnitPort9UNDEFINEDE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Undefined. </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum-class">
+<dt class="sig sig-object cpp" id="_CPPv414EUnitParameter">
+<span id="_CPPv314EUnitParameter"></span><span id="_CPPv214EUnitParameter"></span><span class="target" id="UnitParametersEnum_8h_1a9994a152b39458a6966a11327e29071b"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">EUnitParameter</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">uint8_t</span></span><a class="headerlink" href="#_CPPv414EUnitParameter" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Types of unit parameters. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N14EUnitParameter7UNKNOWNE">
+<span id="_CPPv3N14EUnitParameter7UNKNOWNE"></span><span id="_CPPv2N14EUnitParameter7UNKNOWNE"></span><span class="target" id="UnitParametersEnum_8h_1a9994a152b39458a6966a11327e29071ba696b031073e74bf2cb98e5ef201d4aa3"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UNKNOWN</span></span></span><a class="headerlink" href="#_CPPv4N14EUnitParameter7UNKNOWNE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type is undefined. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N14EUnitParameter14TIME_DEPENDENTE">
+<span id="_CPPv3N14EUnitParameter14TIME_DEPENDENTE"></span><span id="_CPPv2N14EUnitParameter14TIME_DEPENDENTE"></span><span class="target" id="UnitParametersEnum_8h_1a9994a152b39458a6966a11327e29071ba494a28955aa7ec98e6ae40c34f66e39e"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TIME_DEPENDENT</span></span></span><a class="headerlink" href="#_CPPv4N14EUnitParameter14TIME_DEPENDENTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Time-dependent unit parameter. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N14EUnitParameter8CONSTANTE">
+<span id="_CPPv3N14EUnitParameter8CONSTANTE"></span><span id="_CPPv2N14EUnitParameter8CONSTANTE"></span><span class="target" id="UnitParametersEnum_8h_1a9994a152b39458a6966a11327e29071ba8d6b5cada83510220f59e00ce86d4d92"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONSTANT</span></span></span><a class="headerlink" href="#_CPPv4N14EUnitParameter8CONSTANTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Real constant unit parameter. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N14EUnitParameter6STRINGE">
+<span id="_CPPv3N14EUnitParameter6STRINGE"></span><span id="_CPPv2N14EUnitParameter6STRINGE"></span><span class="target" id="UnitParametersEnum_8h_1a9994a152b39458a6966a11327e29071ba63b588d5559f64f89a416e656880b949"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">STRING</span></span></span><a class="headerlink" href="#_CPPv4N14EUnitParameter6STRINGE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>String unit parameter. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N14EUnitParameter8CHECKBOXE">
+<span id="_CPPv3N14EUnitParameter8CHECKBOXE"></span><span id="_CPPv2N14EUnitParameter8CHECKBOXE"></span><span class="target" id="UnitParametersEnum_8h_1a9994a152b39458a6966a11327e29071ba22ab9eebdf3d8e32268c02e577520333"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CHECKBOX</span></span></span><a class="headerlink" href="#_CPPv4N14EUnitParameter8CHECKBOXE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Check box unit parameter. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N14EUnitParameter6SOLVERE">
+<span id="_CPPv3N14EUnitParameter6SOLVERE"></span><span id="_CPPv2N14EUnitParameter6SOLVERE"></span><span class="target" id="UnitParametersEnum_8h_1a9994a152b39458a6966a11327e29071ba2ee251ae5f7d7270df0280c58924cf93"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOLVER</span></span></span><a class="headerlink" href="#_CPPv4N14EUnitParameter6SOLVERE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Solver unit parameter. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N14EUnitParameter5COMBOE">
+<span id="_CPPv3N14EUnitParameter5COMBOE"></span><span id="_CPPv2N14EUnitParameter5COMBOE"></span><span class="target" id="UnitParametersEnum_8h_1a9994a152b39458a6966a11327e29071baa2516d5f167277f017fd39de97d82603"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">COMBO</span></span></span><a class="headerlink" href="#_CPPv4N14EUnitParameter5COMBOE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Combo-box unit parameter. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N14EUnitParameter5GROUPE">
+<span id="_CPPv3N14EUnitParameter5GROUPE"></span><span id="_CPPv2N14EUnitParameter5GROUPE"></span><span class="target" id="UnitParametersEnum_8h_1a9994a152b39458a6966a11327e29071ba720909a4b948fc9e33633b61960d6b3c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GROUP</span></span></span><a class="headerlink" href="#_CPPv4N14EUnitParameter5GROUPE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Combo-box unit parameter. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N14EUnitParameter8COMPOUNDE">
+<span id="_CPPv3N14EUnitParameter8COMPOUNDE"></span><span id="_CPPv2N14EUnitParameter8COMPOUNDE"></span><span class="target" id="UnitParametersEnum_8h_1a9994a152b39458a6966a11327e29071ba756a113833040dfb33e27830fba5e901"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">COMPOUND</span></span></span><a class="headerlink" href="#_CPPv4N14EUnitParameter8COMPOUNDE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Compound unit parameter. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N14EUnitParameter15CONSTANT_DOUBLEE">
+<span id="_CPPv3N14EUnitParameter15CONSTANT_DOUBLEE"></span><span id="_CPPv2N14EUnitParameter15CONSTANT_DOUBLEE"></span><span class="target" id="UnitParametersEnum_8h_1a9994a152b39458a6966a11327e29071baaa0b169dba23dc63fc7717f8112d262e"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONSTANT_DOUBLE</span></span></span><a class="headerlink" href="#_CPPv4N14EUnitParameter15CONSTANT_DOUBLEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Real constant unit parameter. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N14EUnitParameter14CONSTANT_INT64E">
+<span id="_CPPv3N14EUnitParameter14CONSTANT_INT64E"></span><span id="_CPPv2N14EUnitParameter14CONSTANT_INT64E"></span><span class="target" id="UnitParametersEnum_8h_1a9994a152b39458a6966a11327e29071ba192e47b78ebe2392dd7f3671c83b81be"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONSTANT_INT64</span></span></span><a class="headerlink" href="#_CPPv4N14EUnitParameter14CONSTANT_INT64E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Signed integer constant unit parameter. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N14EUnitParameter15CONSTANT_UINT64E">
+<span id="_CPPv3N14EUnitParameter15CONSTANT_UINT64E"></span><span id="_CPPv2N14EUnitParameter15CONSTANT_UINT64E"></span><span class="target" id="UnitParametersEnum_8h_1a9994a152b39458a6966a11327e29071bab545409d268890b06e8d169e3c425588"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONSTANT_UINT64</span></span></span><a class="headerlink" href="#_CPPv4N14EUnitParameter15CONSTANT_UINT64E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Unsigned integer constant unit parameter. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N14EUnitParameter8REACTIONE">
+<span id="_CPPv3N14EUnitParameter8REACTIONE"></span><span id="_CPPv2N14EUnitParameter8REACTIONE"></span><span class="target" id="UnitParametersEnum_8h_1a9994a152b39458a6966a11327e29071ba90e689638cb78f78b40ddb4bfa8ead7c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">REACTION</span></span></span><a class="headerlink" href="#_CPPv4N14EUnitParameter8REACTIONE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Reaction unit parameter. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N14EUnitParameter11LIST_DOUBLEE">
+<span id="_CPPv3N14EUnitParameter11LIST_DOUBLEE"></span><span id="_CPPv2N14EUnitParameter11LIST_DOUBLEE"></span><span class="target" id="UnitParametersEnum_8h_1a9994a152b39458a6966a11327e29071ba6bd30eb0cf7a9478d933cb158c817943"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LIST_DOUBLE</span></span></span><a class="headerlink" href="#_CPPv4N14EUnitParameter11LIST_DOUBLEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>List of real unit parameters. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N14EUnitParameter10LIST_INT64E">
+<span id="_CPPv3N14EUnitParameter10LIST_INT64E"></span><span id="_CPPv2N14EUnitParameter10LIST_INT64E"></span><span class="target" id="UnitParametersEnum_8h_1a9994a152b39458a6966a11327e29071baf447066ce99b68af488ccbec4b1de9e0"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LIST_INT64</span></span></span><a class="headerlink" href="#_CPPv4N14EUnitParameter10LIST_INT64E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>List of signed integer unit parameters. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N14EUnitParameter11LIST_UINT64E">
+<span id="_CPPv3N14EUnitParameter11LIST_UINT64E"></span><span id="_CPPv2N14EUnitParameter11LIST_UINT64E"></span><span class="target" id="UnitParametersEnum_8h_1a9994a152b39458a6966a11327e29071ba45e2ac82ee320084111f4238d2bae0ce"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LIST_UINT64</span></span></span><a class="headerlink" href="#_CPPv4N14EUnitParameter11LIST_UINT64E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>List of unsigned integer unit parameters. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N14EUnitParameter12MDB_COMPOUNDE">
+<span id="_CPPv3N14EUnitParameter12MDB_COMPOUNDE"></span><span id="_CPPv2N14EUnitParameter12MDB_COMPOUNDE"></span><span class="target" id="UnitParametersEnum_8h_1a9994a152b39458a6966a11327e29071babb2d912870bc191e8d28318bf1acb0e5"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MDB_COMPOUND</span></span></span><a class="headerlink" href="#_CPPv4N14EUnitParameter12MDB_COMPOUNDE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Compound from the materials database. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N14EUnitParameter15PARAM_DEPENDENTE">
+<span id="_CPPv3N14EUnitParameter15PARAM_DEPENDENTE"></span><span id="_CPPv2N14EUnitParameter15PARAM_DEPENDENTE"></span><span class="target" id="UnitParametersEnum_8h_1a9994a152b39458a6966a11327e29071bacb39f6bae3ddd343c47c19830ff09ff4"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PARAM_DEPENDENT</span></span></span><a class="headerlink" href="#_CPPv4N14EUnitParameter15PARAM_DEPENDENTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Dependent unit parameter. </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum-class">
+<dt class="sig sig-object cpp" id="_CPPv46EPhase">
+<span id="_CPPv36EPhase"></span><span id="_CPPv26EPhase"></span><span class="target" id="DyssolDefines_8h_1a35b79e14c747bd8be13c94154747ad2b"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">EPhase</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><a class="headerlink" href="#_CPPv46EPhase" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Identifiers of phase types. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N6EPhase9UNDEFINEDE">
+<span id="_CPPv3N6EPhase9UNDEFINEDE"></span><span id="_CPPv2N6EPhase9UNDEFINEDE"></span><span class="target" id="DyssolDefines_8h_1a35b79e14c747bd8be13c94154747ad2ba0db45d2a4141101bdfe48e3314cfbca3"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UNDEFINED</span></span></span><a class="headerlink" href="#_CPPv4N6EPhase9UNDEFINEDE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Type is undefined. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N6EPhase5SOLIDE">
+<span id="_CPPv3N6EPhase5SOLIDE"></span><span id="_CPPv2N6EPhase5SOLIDE"></span><span class="target" id="DyssolDefines_8h_1a35b79e14c747bd8be13c94154747ad2bad0dea69649a83749aa6bdf176092e8c9"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOLID</span></span></span><a class="headerlink" href="#_CPPv4N6EPhase5SOLIDE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Solid phase. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N6EPhase6LIQUIDE">
+<span id="_CPPv3N6EPhase6LIQUIDE"></span><span id="_CPPv2N6EPhase6LIQUIDE"></span><span class="target" id="DyssolDefines_8h_1a35b79e14c747bd8be13c94154747ad2ba5918e24870f0ea98b9978dae8a69c533"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LIQUID</span></span></span><a class="headerlink" href="#_CPPv4N6EPhase6LIQUIDE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Liquid phase. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N6EPhase5VAPORE">
+<span id="_CPPv3N6EPhase5VAPORE"></span><span id="_CPPv2N6EPhase5VAPORE"></span><span class="target" id="DyssolDefines_8h_1a35b79e14c747bd8be13c94154747ad2ba7c5f78522fb9737133be0ef8876a68a7"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">VAPOR</span></span></span><a class="headerlink" href="#_CPPv4N6EPhase5VAPORE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Gas phase. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N6EPhase3GASE">
+<span id="_CPPv3N6EPhase3GASE"></span><span id="_CPPv2N6EPhase3GASE"></span><span class="target" id="DyssolDefines_8h_1a35b79e14c747bd8be13c94154747ad2ba505273a0a2bba0111a40f6cccbc55d69"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GAS</span></span></span><a class="headerlink" href="#_CPPv4N6EPhase3GASE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Gas phase. </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv411EDistrTypes">
+<span id="_CPPv311EDistrTypes"></span><span id="_CPPv211EDistrTypes"></span><span class="target" id="DyssolDefines_8h_1a6165ddec8608fb375df64f3a4a5ad740"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">EDistrTypes</span></span></span><a class="headerlink" href="#_CPPv411EDistrTypes" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Types of distributed properties of the solid phase. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11EDistrTypes15DISTR_COMPOUNDSE">
+<span id="_CPPv3N11EDistrTypes15DISTR_COMPOUNDSE"></span><span id="_CPPv2N11EDistrTypes15DISTR_COMPOUNDSE"></span><span class="target" id="DyssolDefines_8h_1a6165ddec8608fb375df64f3a4a5ad740ae97f69dd47eb5bf1224286ce928bcb72"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DISTR_COMPOUNDS</span></span></span><a class="headerlink" href="#_CPPv4N11EDistrTypes15DISTR_COMPOUNDSE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Distribution by compounds. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11EDistrTypes10DISTR_SIZEE">
+<span id="_CPPv3N11EDistrTypes10DISTR_SIZEE"></span><span id="_CPPv2N11EDistrTypes10DISTR_SIZEE"></span><span class="target" id="DyssolDefines_8h_1a6165ddec8608fb375df64f3a4a5ad740adcd66023c54dd011a86c99d79d4ecac0"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DISTR_SIZE</span></span></span><a class="headerlink" href="#_CPPv4N11EDistrTypes10DISTR_SIZEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Distribution by particle size. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11EDistrTypes19DISTR_PART_POROSITYE">
+<span id="_CPPv3N11EDistrTypes19DISTR_PART_POROSITYE"></span><span id="_CPPv2N11EDistrTypes19DISTR_PART_POROSITYE"></span><span class="target" id="DyssolDefines_8h_1a6165ddec8608fb375df64f3a4a5ad740a2600a773babcbdd9ae2012da1fbcadb3"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DISTR_PART_POROSITY</span></span></span><a class="headerlink" href="#_CPPv4N11EDistrTypes19DISTR_PART_POROSITYE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Distribution by porosity. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11EDistrTypes17DISTR_FORM_FACTORE">
+<span id="_CPPv3N11EDistrTypes17DISTR_FORM_FACTORE"></span><span id="_CPPv2N11EDistrTypes17DISTR_FORM_FACTORE"></span><span class="target" id="DyssolDefines_8h_1a6165ddec8608fb375df64f3a4a5ad740a5f42d217b98093cdf620226d7a818e7c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DISTR_FORM_FACTOR</span></span></span><a class="headerlink" href="#_CPPv4N11EDistrTypes17DISTR_FORM_FACTORE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Distribution by form factor. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11EDistrTypes11DISTR_COLORE">
+<span id="_CPPv3N11EDistrTypes11DISTR_COLORE"></span><span id="_CPPv2N11EDistrTypes11DISTR_COLORE"></span><span class="target" id="DyssolDefines_8h_1a6165ddec8608fb375df64f3a4a5ad740a2122d7bad96ad4792443a7458b7d8c6d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DISTR_COLOR</span></span></span><a class="headerlink" href="#_CPPv4N11EDistrTypes11DISTR_COLORE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Distribution by color. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11EDistrTypes14DISTR_MOISTUREE">
+<span id="_CPPv3N11EDistrTypes14DISTR_MOISTUREE"></span><span id="_CPPv2N11EDistrTypes14DISTR_MOISTUREE"></span><span class="target" id="DyssolDefines_8h_1a6165ddec8608fb375df64f3a4a5ad740a3799a74648926d823e3d3e1f67053a74"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DISTR_MOISTURE</span></span></span><a class="headerlink" href="#_CPPv4N11EDistrTypes14DISTR_MOISTUREE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Distribution by moisture. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11EDistrTypes21DISTR_USER_DEFINED_01E">
+<span id="_CPPv3N11EDistrTypes21DISTR_USER_DEFINED_01E"></span><span id="_CPPv2N11EDistrTypes21DISTR_USER_DEFINED_01E"></span><span class="target" id="DyssolDefines_8h_1a6165ddec8608fb375df64f3a4a5ad740aba0effeb31f0ce62d2b884b6b2f0386f"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DISTR_USER_DEFINED_01</span></span></span><a class="headerlink" href="#_CPPv4N11EDistrTypes21DISTR_USER_DEFINED_01E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined distribution. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11EDistrTypes21DISTR_USER_DEFINED_02E">
+<span id="_CPPv3N11EDistrTypes21DISTR_USER_DEFINED_02E"></span><span id="_CPPv2N11EDistrTypes21DISTR_USER_DEFINED_02E"></span><span class="target" id="DyssolDefines_8h_1a6165ddec8608fb375df64f3a4a5ad740a2c1084c56602263e5f6d84c1a63503a9"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DISTR_USER_DEFINED_02</span></span></span><a class="headerlink" href="#_CPPv4N11EDistrTypes21DISTR_USER_DEFINED_02E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined distribution. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11EDistrTypes21DISTR_USER_DEFINED_03E">
+<span id="_CPPv3N11EDistrTypes21DISTR_USER_DEFINED_03E"></span><span id="_CPPv2N11EDistrTypes21DISTR_USER_DEFINED_03E"></span><span class="target" id="DyssolDefines_8h_1a6165ddec8608fb375df64f3a4a5ad740a21dff657319215ad9989973ee2e21dad"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DISTR_USER_DEFINED_03</span></span></span><a class="headerlink" href="#_CPPv4N11EDistrTypes21DISTR_USER_DEFINED_03E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined distribution. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11EDistrTypes21DISTR_USER_DEFINED_04E">
+<span id="_CPPv3N11EDistrTypes21DISTR_USER_DEFINED_04E"></span><span id="_CPPv2N11EDistrTypes21DISTR_USER_DEFINED_04E"></span><span class="target" id="DyssolDefines_8h_1a6165ddec8608fb375df64f3a4a5ad740a2c6e8500412231372d142c00b8602058"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DISTR_USER_DEFINED_04</span></span></span><a class="headerlink" href="#_CPPv4N11EDistrTypes21DISTR_USER_DEFINED_04E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined distribution. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11EDistrTypes21DISTR_USER_DEFINED_05E">
+<span id="_CPPv3N11EDistrTypes21DISTR_USER_DEFINED_05E"></span><span id="_CPPv2N11EDistrTypes21DISTR_USER_DEFINED_05E"></span><span class="target" id="DyssolDefines_8h_1a6165ddec8608fb375df64f3a4a5ad740a5dcebce679d25c99189d988832c30aa5"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DISTR_USER_DEFINED_05</span></span></span><a class="headerlink" href="#_CPPv4N11EDistrTypes21DISTR_USER_DEFINED_05E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined distribution. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11EDistrTypes21DISTR_USER_DEFINED_06E">
+<span id="_CPPv3N11EDistrTypes21DISTR_USER_DEFINED_06E"></span><span id="_CPPv2N11EDistrTypes21DISTR_USER_DEFINED_06E"></span><span class="target" id="DyssolDefines_8h_1a6165ddec8608fb375df64f3a4a5ad740a827d72b5da232ce06eb2a31b8d0e24c9"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DISTR_USER_DEFINED_06</span></span></span><a class="headerlink" href="#_CPPv4N11EDistrTypes21DISTR_USER_DEFINED_06E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined distribution. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11EDistrTypes21DISTR_USER_DEFINED_07E">
+<span id="_CPPv3N11EDistrTypes21DISTR_USER_DEFINED_07E"></span><span id="_CPPv2N11EDistrTypes21DISTR_USER_DEFINED_07E"></span><span class="target" id="DyssolDefines_8h_1a6165ddec8608fb375df64f3a4a5ad740a90e9d86fecf6b5ead25e80c6ca70c5cc"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DISTR_USER_DEFINED_07</span></span></span><a class="headerlink" href="#_CPPv4N11EDistrTypes21DISTR_USER_DEFINED_07E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined distribution. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11EDistrTypes21DISTR_USER_DEFINED_08E">
+<span id="_CPPv3N11EDistrTypes21DISTR_USER_DEFINED_08E"></span><span id="_CPPv2N11EDistrTypes21DISTR_USER_DEFINED_08E"></span><span class="target" id="DyssolDefines_8h_1a6165ddec8608fb375df64f3a4a5ad740a639a877342f12af455f8a047317be30d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DISTR_USER_DEFINED_08</span></span></span><a class="headerlink" href="#_CPPv4N11EDistrTypes21DISTR_USER_DEFINED_08E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined distribution. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11EDistrTypes21DISTR_USER_DEFINED_09E">
+<span id="_CPPv3N11EDistrTypes21DISTR_USER_DEFINED_09E"></span><span id="_CPPv2N11EDistrTypes21DISTR_USER_DEFINED_09E"></span><span class="target" id="DyssolDefines_8h_1a6165ddec8608fb375df64f3a4a5ad740a456a61e3a669e23dd76d8a293bc3c478"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DISTR_USER_DEFINED_09</span></span></span><a class="headerlink" href="#_CPPv4N11EDistrTypes21DISTR_USER_DEFINED_09E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined distribution. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11EDistrTypes21DISTR_USER_DEFINED_10E">
+<span id="_CPPv3N11EDistrTypes21DISTR_USER_DEFINED_10E"></span><span id="_CPPv2N11EDistrTypes21DISTR_USER_DEFINED_10E"></span><span class="target" id="DyssolDefines_8h_1a6165ddec8608fb375df64f3a4a5ad740a9afce421e751eeab26775a59d8340ab6"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DISTR_USER_DEFINED_10</span></span></span><a class="headerlink" href="#_CPPv4N11EDistrTypes21DISTR_USER_DEFINED_10E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined distribution. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11EDistrTypes15DISTR_UNDEFINEDE">
+<span id="_CPPv3N11EDistrTypes15DISTR_UNDEFINEDE"></span><span id="_CPPv2N11EDistrTypes15DISTR_UNDEFINEDE"></span><span class="target" id="DyssolDefines_8h_1a6165ddec8608fb375df64f3a4a5ad740af6613d9552f0ac2251504f4e3f942ad1"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DISTR_UNDEFINED</span></span></span><a class="headerlink" href="#_CPPv4N11EDistrTypes15DISTR_UNDEFINEDE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Distribution type is undefined. </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum-class">
+<dt class="sig sig-object cpp" id="_CPPv410EGridEntry">
+<span id="_CPPv310EGridEntry"></span><span id="_CPPv210EGridEntry"></span><span class="target" id="DyssolDefines_8h_1a5e35802103f46884ab7949b5153e0be6"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">EGridEntry</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><a class="headerlink" href="#_CPPv410EGridEntry" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Types of grid entries for distributed properties of the solid phase. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N10EGridEntry12GRID_NUMERICE">
+<span id="_CPPv3N10EGridEntry12GRID_NUMERICE"></span><span id="_CPPv2N10EGridEntry12GRID_NUMERICE"></span><span class="target" id="DyssolDefines_8h_1a5e35802103f46884ab7949b5153e0be6aeadc1a416c8a1109aebf7976f48db1ad"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GRID_NUMERIC</span></span></span><a class="headerlink" href="#_CPPv4N10EGridEntry12GRID_NUMERICE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Numeric grid. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N10EGridEntry13GRID_SYMBOLICE">
+<span id="_CPPv3N10EGridEntry13GRID_SYMBOLICE"></span><span id="_CPPv2N10EGridEntry13GRID_SYMBOLICE"></span><span class="target" id="DyssolDefines_8h_1a5e35802103f46884ab7949b5153e0be6a97421c852008925b67f796f3960eaff0"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GRID_SYMBOLIC</span></span></span><a class="headerlink" href="#_CPPv4N10EGridEntry13GRID_SYMBOLICE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Symbolic grid. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N10EGridEntry14GRID_UNDEFINEDE">
+<span id="_CPPv3N10EGridEntry14GRID_UNDEFINEDE"></span><span id="_CPPv2N10EGridEntry14GRID_UNDEFINEDE"></span><span class="target" id="DyssolDefines_8h_1a5e35802103f46884ab7949b5153e0be6a68f8b2a9d09b2c00648f4ce2b1720b8f"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GRID_UNDEFINED</span></span></span><a class="headerlink" href="#_CPPv4N10EGridEntry14GRID_UNDEFINEDE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Grid type is undefined. </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv424ECompoundConstProperties">
+<span id="_CPPv324ECompoundConstProperties"></span><span id="_CPPv224ECompoundConstProperties"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3aca"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ECompoundConstProperties</span></span></span><a class="headerlink" href="#_CPPv424ECompoundConstProperties" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Identifiers of constant material properties. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties21CONST_PROP_NO_PROERTYE">
+<span id="_CPPv3N24ECompoundConstProperties21CONST_PROP_NO_PROERTYE"></span><span id="_CPPv2N24ECompoundConstProperties21CONST_PROP_NO_PROERTYE"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaacdab0057dac32ca14f27418ea7df2222"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONST_PROP_NO_PROERTY</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties21CONST_PROP_NO_PROERTYE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Undefined. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties17CRITICAL_PRESSUREE">
+<span id="_CPPv3N24ECompoundConstProperties17CRITICAL_PRESSUREE"></span><span id="_CPPv2N24ECompoundConstProperties17CRITICAL_PRESSUREE"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaa1adfbb4b6f9c256bb342c14925e8b705"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CRITICAL_PRESSURE</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties17CRITICAL_PRESSUREE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Critical pressure [Pa]. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties20CRITICAL_TEMPERATUREE">
+<span id="_CPPv3N24ECompoundConstProperties20CRITICAL_TEMPERATUREE"></span><span id="_CPPv2N24ECompoundConstProperties20CRITICAL_TEMPERATUREE"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaad3dc5def6ffc96046ed295d9a1ea2a81"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CRITICAL_TEMPERATURE</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties20CRITICAL_TEMPERATUREE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Critical temperature [K]. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties39HEAT_OF_FUSION_AT_NORMAL_FREEZING_POINTE">
+<span id="_CPPv3N24ECompoundConstProperties39HEAT_OF_FUSION_AT_NORMAL_FREEZING_POINTE"></span><span id="_CPPv2N24ECompoundConstProperties39HEAT_OF_FUSION_AT_NORMAL_FREEZING_POINTE"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaa82e045238ed6cbb77bbcb1c5d04f1af1"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HEAT_OF_FUSION_AT_NORMAL_FREEZING_POINT</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties39HEAT_OF_FUSION_AT_NORMAL_FREEZING_POINTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Heat of fusion at normal freezing point [J/mol]. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties44HEAT_OF_VAPORIZATION_AT_NORMAL_BOILING_POINTE">
+<span id="_CPPv3N24ECompoundConstProperties44HEAT_OF_VAPORIZATION_AT_NORMAL_BOILING_POINTE"></span><span id="_CPPv2N24ECompoundConstProperties44HEAT_OF_VAPORIZATION_AT_NORMAL_BOILING_POINTE"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaafc93dacc3a923403ab8b3f5111de63e9"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HEAT_OF_VAPORIZATION_AT_NORMAL_BOILING_POINT</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties44HEAT_OF_VAPORIZATION_AT_NORMAL_BOILING_POINTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Heat of vaporization at normal freezing point [J/mol]. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties10MOLAR_MASSE">
+<span id="_CPPv3N24ECompoundConstProperties10MOLAR_MASSE"></span><span id="_CPPv2N24ECompoundConstProperties10MOLAR_MASSE"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaa3726058b3ae5dece82b355e1aa747b3b"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MOLAR_MASS</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties10MOLAR_MASSE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Molar mass [kg/mol]. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties20NORMAL_BOILING_POINTE">
+<span id="_CPPv3N24ECompoundConstProperties20NORMAL_BOILING_POINTE"></span><span id="_CPPv2N24ECompoundConstProperties20NORMAL_BOILING_POINTE"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaaa88d27f2dfffc5933a81d2a0498d8831"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NORMAL_BOILING_POINT</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties20NORMAL_BOILING_POINTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Normal boiling point [K]. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties21NORMAL_FREEZING_POINTE">
+<span id="_CPPv3N24ECompoundConstProperties21NORMAL_FREEZING_POINTE"></span><span id="_CPPv2N24ECompoundConstProperties21NORMAL_FREEZING_POINTE"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaa9d759f3960c22339c60dfdab246a9963"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NORMAL_FREEZING_POINT</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties21NORMAL_FREEZING_POINTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Normal freezing point [K]. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties27STANDARD_FORMATION_ENTHALPYE">
+<span id="_CPPv3N24ECompoundConstProperties27STANDARD_FORMATION_ENTHALPYE"></span><span id="_CPPv2N24ECompoundConstProperties27STANDARD_FORMATION_ENTHALPYE"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaabffe8f5b09443f0946552dddee523007"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">STANDARD_FORMATION_ENTHALPY</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties27STANDARD_FORMATION_ENTHALPYE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Standard enthalpy of formation [J/mol]. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties15BOND_WORK_INDEXE">
+<span id="_CPPv3N24ECompoundConstProperties15BOND_WORK_INDEXE"></span><span id="_CPPv2N24ECompoundConstProperties15BOND_WORK_INDEXE"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaa968c58c5b776aac5e7b677c292e9feb1"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">BOND_WORK_INDEX</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties15BOND_WORK_INDEXE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Bond work index [kWh/t]. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties24SOA_AT_NORMAL_CONDITIONSE">
+<span id="_CPPv3N24ECompoundConstProperties24SOA_AT_NORMAL_CONDITIONSE"></span><span id="_CPPv2N24ECompoundConstProperties24SOA_AT_NORMAL_CONDITIONSE"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaad9e411f80e66cbec0d215bc16fdd93bd"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOA_AT_NORMAL_CONDITIONS</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties24SOA_AT_NORMAL_CONDITIONSE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>State of aggregation at normal conditions [-]. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_01E">
+<span id="_CPPv3N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_01E"></span><span id="_CPPv2N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_01E"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaa5fee853d6d3cce715933696aa72f22af"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONST_PROP_USER_DEFINED_01</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_01E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined constant property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_02E">
+<span id="_CPPv3N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_02E"></span><span id="_CPPv2N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_02E"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaaf3b511d7af59ce57fc5bbe52ac757534"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONST_PROP_USER_DEFINED_02</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_02E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined constant property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_03E">
+<span id="_CPPv3N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_03E"></span><span id="_CPPv2N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_03E"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaa1f425085c67ac650bf9b81633e5e582a"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONST_PROP_USER_DEFINED_03</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_03E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined constant property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_04E">
+<span id="_CPPv3N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_04E"></span><span id="_CPPv2N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_04E"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaaf96b766e620c837f63082167a5d6e0ad"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONST_PROP_USER_DEFINED_04</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_04E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined constant property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_05E">
+<span id="_CPPv3N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_05E"></span><span id="_CPPv2N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_05E"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaa09b91db43891c4ed0f3594aef56682ea"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONST_PROP_USER_DEFINED_05</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_05E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined constant property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_06E">
+<span id="_CPPv3N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_06E"></span><span id="_CPPv2N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_06E"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaa2c2b90204760d9ed7d2264e2f563042f"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONST_PROP_USER_DEFINED_06</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_06E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined constant property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_07E">
+<span id="_CPPv3N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_07E"></span><span id="_CPPv2N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_07E"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaa3af2e75ce676691916198af7a00a7bef"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONST_PROP_USER_DEFINED_07</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_07E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined constant property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_08E">
+<span id="_CPPv3N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_08E"></span><span id="_CPPv2N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_08E"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaa9f1385cbc0b08618a493a210393a65b1"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONST_PROP_USER_DEFINED_08</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_08E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined constant property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_09E">
+<span id="_CPPv3N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_09E"></span><span id="_CPPv2N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_09E"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaaa4606e36464a926cda4426abcd000b3a"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONST_PROP_USER_DEFINED_09</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_09E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined constant property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_10E">
+<span id="_CPPv3N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_10E"></span><span id="_CPPv2N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_10E"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaa89e9e87ba8834a6cf389b40efbb817a6"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONST_PROP_USER_DEFINED_10</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_10E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined constant property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_11E">
+<span id="_CPPv3N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_11E"></span><span id="_CPPv2N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_11E"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaaf3d83d2d7032969dcf195f765faa3b77"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONST_PROP_USER_DEFINED_11</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_11E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined constant property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_12E">
+<span id="_CPPv3N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_12E"></span><span id="_CPPv2N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_12E"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaa7cf7383b9ec46fd5f3f9f89f6bcd2693"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONST_PROP_USER_DEFINED_12</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_12E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined constant property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_13E">
+<span id="_CPPv3N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_13E"></span><span id="_CPPv2N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_13E"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaa57d3006644ad6ec89c1189cb333f92e8"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONST_PROP_USER_DEFINED_13</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_13E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined constant property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_14E">
+<span id="_CPPv3N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_14E"></span><span id="_CPPv2N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_14E"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaa1a2ff1babe6b42e5f7459ad97b05aaab"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONST_PROP_USER_DEFINED_14</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_14E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined constant property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_15E">
+<span id="_CPPv3N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_15E"></span><span id="_CPPv2N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_15E"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaae491632819fc7ae27683c134d9f63a2d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONST_PROP_USER_DEFINED_15</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_15E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined constant property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_16E">
+<span id="_CPPv3N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_16E"></span><span id="_CPPv2N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_16E"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaa469d124cb7b5ee1306f859d63d857a4b"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONST_PROP_USER_DEFINED_16</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_16E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined constant property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_17E">
+<span id="_CPPv3N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_17E"></span><span id="_CPPv2N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_17E"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaa08a4e9bcb3086c196fadc0e2d6751811"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONST_PROP_USER_DEFINED_17</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_17E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined constant property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_18E">
+<span id="_CPPv3N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_18E"></span><span id="_CPPv2N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_18E"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaaec46b04b77b4c3fbea96590542b7cd54"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONST_PROP_USER_DEFINED_18</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_18E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined constant property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_19E">
+<span id="_CPPv3N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_19E"></span><span id="_CPPv2N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_19E"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaada387212b1fa8a4957133494d1edc001"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONST_PROP_USER_DEFINED_19</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_19E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined constant property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_20E">
+<span id="_CPPv3N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_20E"></span><span id="_CPPv2N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_20E"></span><span class="target" id="DefinesMDB_8h_1a232b6b1f7e46e5118c5a901aeb4b3acaa72a3180d7b25453742c7090209320776"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CONST_PROP_USER_DEFINED_20</span></span></span><a class="headerlink" href="#_CPPv4N24ECompoundConstProperties26CONST_PROP_USER_DEFINED_20E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined constant property. </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv421ECompoundTPProperties">
+<span id="_CPPv321ECompoundTPProperties"></span><span id="_CPPv221ECompoundTPProperties"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ECompoundTPProperties</span></span></span><a class="headerlink" href="#_CPPv421ECompoundTPProperties" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Identifiers of temperature/pressure-dependent properties. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties18TP_PROP_NO_PROERTYE">
+<span id="_CPPv3N21ECompoundTPProperties18TP_PROP_NO_PROERTYE"></span><span id="_CPPv2N21ECompoundTPProperties18TP_PROP_NO_PROERTYE"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6a0b1d4582f19816671a8b9b9d17b5e119"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TP_PROP_NO_PROERTY</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties18TP_PROP_NO_PROERTYE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Undefined. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties16HEAT_CAPACITY_CPE">
+<span id="_CPPv3N21ECompoundTPProperties16HEAT_CAPACITY_CPE"></span><span id="_CPPv2N21ECompoundTPProperties16HEAT_CAPACITY_CPE"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6a8d15a6aa314845e4fb362e9ae82f291c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HEAT_CAPACITY_CP</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties16HEAT_CAPACITY_CPE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Heat capacity [J/(kg·K)]. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties8ENTHALPYE">
+<span id="_CPPv3N21ECompoundTPProperties8ENTHALPYE"></span><span id="_CPPv2N21ECompoundTPProperties8ENTHALPYE"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6aa0a0bdce1799465e690d63bceb4e1c34"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ENTHALPY</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties8ENTHALPYE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Enthalpy [J/kg]. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties20THERMAL_CONDUCTIVITYE">
+<span id="_CPPv3N21ECompoundTPProperties20THERMAL_CONDUCTIVITYE"></span><span id="_CPPv2N21ECompoundTPProperties20THERMAL_CONDUCTIVITYE"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6afb320726abaa7e7089ed24f295d285ff"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">THERMAL_CONDUCTIVITY</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties20THERMAL_CONDUCTIVITYE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Thermal conductivity [W/(m·K)]. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties28EQUILIBRIUM_MOISTURE_CONTENTE">
+<span id="_CPPv3N21ECompoundTPProperties28EQUILIBRIUM_MOISTURE_CONTENTE"></span><span id="_CPPv2N21ECompoundTPProperties28EQUILIBRIUM_MOISTURE_CONTENTE"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6a00c6159ff248b02eace546b565ab1181"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">EQUILIBRIUM_MOISTURE_CONTENT</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties28EQUILIBRIUM_MOISTURE_CONTENTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Equilibrium moisture content [kg/kg]. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties14VAPOR_PRESSUREE">
+<span id="_CPPv3N21ECompoundTPProperties14VAPOR_PRESSUREE"></span><span id="_CPPv2N21ECompoundTPProperties14VAPOR_PRESSUREE"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6a908acb6ee9584badef8bffd17931cad5"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">VAPOR_PRESSURE</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties14VAPOR_PRESSUREE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Vapor pressure [Pa]. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties9VISCOSITYE">
+<span id="_CPPv3N21ECompoundTPProperties9VISCOSITYE"></span><span id="_CPPv2N21ECompoundTPProperties9VISCOSITYE"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6af5dcdbc91041cc8ab41973956078c70d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">VISCOSITY</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties9VISCOSITYE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Dynamic viscosity [Pa·s]. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties7DENSITYE">
+<span id="_CPPv3N21ECompoundTPProperties7DENSITYE"></span><span id="_CPPv2N21ECompoundTPProperties7DENSITYE"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6a9d2cc316ab2e6e5637281696bebc6ffd"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DENSITY</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties7DENSITYE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Density [kg/m<sup>3</sup>]. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties12PERMITTIVITYE">
+<span id="_CPPv3N21ECompoundTPProperties12PERMITTIVITYE"></span><span id="_CPPv2N21ECompoundTPProperties12PERMITTIVITYE"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6a706a1f15626eadeb70051dbd8364b029"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PERMITTIVITY</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties12PERMITTIVITYE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Permittivity [F/m]. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties26MASS_DIFFUSION_COEFFICIENTE">
+<span id="_CPPv3N21ECompoundTPProperties26MASS_DIFFUSION_COEFFICIENTE"></span><span id="_CPPv2N21ECompoundTPProperties26MASS_DIFFUSION_COEFFICIENTE"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6a4a9843544df1a3ce0077327b38203098"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MASS_DIFFUSION_COEFFICIENT</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties26MASS_DIFFUSION_COEFFICIENTE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Mass diffusion Coefficient [m<sup>2</sup>/s]. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_01E">
+<span id="_CPPv3N21ECompoundTPProperties23TP_PROP_USER_DEFINED_01E"></span><span id="_CPPv2N21ECompoundTPProperties23TP_PROP_USER_DEFINED_01E"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6a7fefed2d49345f1a8626ea15ca106a49"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TP_PROP_USER_DEFINED_01</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_01E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined dependent property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_02E">
+<span id="_CPPv3N21ECompoundTPProperties23TP_PROP_USER_DEFINED_02E"></span><span id="_CPPv2N21ECompoundTPProperties23TP_PROP_USER_DEFINED_02E"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6a64cab883463ac500d54f704ae88ab631"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TP_PROP_USER_DEFINED_02</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_02E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined dependent property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_03E">
+<span id="_CPPv3N21ECompoundTPProperties23TP_PROP_USER_DEFINED_03E"></span><span id="_CPPv2N21ECompoundTPProperties23TP_PROP_USER_DEFINED_03E"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6ad8b3188b57ba7c846dadf6777b232387"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TP_PROP_USER_DEFINED_03</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_03E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined dependent property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_04E">
+<span id="_CPPv3N21ECompoundTPProperties23TP_PROP_USER_DEFINED_04E"></span><span id="_CPPv2N21ECompoundTPProperties23TP_PROP_USER_DEFINED_04E"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6a07d05ec411e7857664f4de0018b2f94c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TP_PROP_USER_DEFINED_04</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_04E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined dependent property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_05E">
+<span id="_CPPv3N21ECompoundTPProperties23TP_PROP_USER_DEFINED_05E"></span><span id="_CPPv2N21ECompoundTPProperties23TP_PROP_USER_DEFINED_05E"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6afaa335bc16e37646b5a38ab8835d795c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TP_PROP_USER_DEFINED_05</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_05E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined dependent property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_06E">
+<span id="_CPPv3N21ECompoundTPProperties23TP_PROP_USER_DEFINED_06E"></span><span id="_CPPv2N21ECompoundTPProperties23TP_PROP_USER_DEFINED_06E"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6ab1886c67c805487db6d230f0830d73a5"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TP_PROP_USER_DEFINED_06</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_06E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined dependent property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_07E">
+<span id="_CPPv3N21ECompoundTPProperties23TP_PROP_USER_DEFINED_07E"></span><span id="_CPPv2N21ECompoundTPProperties23TP_PROP_USER_DEFINED_07E"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6aee8cbe0e7ce5bb92b600de1daee3ddbc"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TP_PROP_USER_DEFINED_07</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_07E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined dependent property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_08E">
+<span id="_CPPv3N21ECompoundTPProperties23TP_PROP_USER_DEFINED_08E"></span><span id="_CPPv2N21ECompoundTPProperties23TP_PROP_USER_DEFINED_08E"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6ad8ce9d5182ccfac5c4babf3897407328"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TP_PROP_USER_DEFINED_08</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_08E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined dependent property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_09E">
+<span id="_CPPv3N21ECompoundTPProperties23TP_PROP_USER_DEFINED_09E"></span><span id="_CPPv2N21ECompoundTPProperties23TP_PROP_USER_DEFINED_09E"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6a38e592c508db5c2a588dabc902e5b0ef"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TP_PROP_USER_DEFINED_09</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_09E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined dependent property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_10E">
+<span id="_CPPv3N21ECompoundTPProperties23TP_PROP_USER_DEFINED_10E"></span><span id="_CPPv2N21ECompoundTPProperties23TP_PROP_USER_DEFINED_10E"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6a80e3dd3d34cf3e177cffad0d561736e4"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TP_PROP_USER_DEFINED_10</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_10E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined dependent property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_11E">
+<span id="_CPPv3N21ECompoundTPProperties23TP_PROP_USER_DEFINED_11E"></span><span id="_CPPv2N21ECompoundTPProperties23TP_PROP_USER_DEFINED_11E"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6a6e5b97b8f808baa0c5282c1e0d223751"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TP_PROP_USER_DEFINED_11</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_11E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined dependent property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_12E">
+<span id="_CPPv3N21ECompoundTPProperties23TP_PROP_USER_DEFINED_12E"></span><span id="_CPPv2N21ECompoundTPProperties23TP_PROP_USER_DEFINED_12E"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6a502420b7466c0585ad11469db835a662"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TP_PROP_USER_DEFINED_12</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_12E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined dependent property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_13E">
+<span id="_CPPv3N21ECompoundTPProperties23TP_PROP_USER_DEFINED_13E"></span><span id="_CPPv2N21ECompoundTPProperties23TP_PROP_USER_DEFINED_13E"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6a32e4d70f7ef37d195b91b83514cd13b8"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TP_PROP_USER_DEFINED_13</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_13E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined dependent property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_14E">
+<span id="_CPPv3N21ECompoundTPProperties23TP_PROP_USER_DEFINED_14E"></span><span id="_CPPv2N21ECompoundTPProperties23TP_PROP_USER_DEFINED_14E"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6aef1a3e54aa2d95ea051c43467b1d7c92"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TP_PROP_USER_DEFINED_14</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_14E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined dependent property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_15E">
+<span id="_CPPv3N21ECompoundTPProperties23TP_PROP_USER_DEFINED_15E"></span><span id="_CPPv2N21ECompoundTPProperties23TP_PROP_USER_DEFINED_15E"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6a96afb3ed170a1505e429be2911d27868"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TP_PROP_USER_DEFINED_15</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_15E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined dependent property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_16E">
+<span id="_CPPv3N21ECompoundTPProperties23TP_PROP_USER_DEFINED_16E"></span><span id="_CPPv2N21ECompoundTPProperties23TP_PROP_USER_DEFINED_16E"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6ac2e251461f5ce4c1eca0502378027e98"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TP_PROP_USER_DEFINED_16</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_16E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined dependent property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_17E">
+<span id="_CPPv3N21ECompoundTPProperties23TP_PROP_USER_DEFINED_17E"></span><span id="_CPPv2N21ECompoundTPProperties23TP_PROP_USER_DEFINED_17E"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6ac4b09b167f35f6333df7bdda669271e4"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TP_PROP_USER_DEFINED_17</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_17E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined dependent property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_18E">
+<span id="_CPPv3N21ECompoundTPProperties23TP_PROP_USER_DEFINED_18E"></span><span id="_CPPv2N21ECompoundTPProperties23TP_PROP_USER_DEFINED_18E"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6af3e4786a2b4ba291e21b691fe261746c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TP_PROP_USER_DEFINED_18</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_18E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined dependent property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_19E">
+<span id="_CPPv3N21ECompoundTPProperties23TP_PROP_USER_DEFINED_19E"></span><span id="_CPPv2N21ECompoundTPProperties23TP_PROP_USER_DEFINED_19E"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6a45d5b3ba43e7b6cb071ced7df973023c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TP_PROP_USER_DEFINED_19</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_19E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined dependent property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_20E">
+<span id="_CPPv3N21ECompoundTPProperties23TP_PROP_USER_DEFINED_20E"></span><span id="_CPPv2N21ECompoundTPProperties23TP_PROP_USER_DEFINED_20E"></span><span class="target" id="DefinesMDB_8h_1a363ed2f151147136dc2abc29ce390de6a9c03514b102798a65c3ecffca6337070"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TP_PROP_USER_DEFINED_20</span></span></span><a class="headerlink" href="#_CPPv4N21ECompoundTPProperties23TP_PROP_USER_DEFINED_20E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined dependent property. </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv422EInteractionProperties">
+<span id="_CPPv322EInteractionProperties"></span><span id="_CPPv222EInteractionProperties"></span><span class="target" id="DefinesMDB_8h_1af6f28f61ebf9618a2d6f08ff98c0e8a6"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">EInteractionProperties</span></span></span><a class="headerlink" href="#_CPPv422EInteractionProperties" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Identifiers of properties, defined for interaction of two compounds. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22EInteractionProperties19INT_PROP_NO_PROERTYE">
+<span id="_CPPv3N22EInteractionProperties19INT_PROP_NO_PROERTYE"></span><span id="_CPPv2N22EInteractionProperties19INT_PROP_NO_PROERTYE"></span><span class="target" id="DefinesMDB_8h_1af6f28f61ebf9618a2d6f08ff98c0e8a6a60b79415b8ce6928aa513172e30af0be"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INT_PROP_NO_PROERTY</span></span></span><a class="headerlink" href="#_CPPv4N22EInteractionProperties19INT_PROP_NO_PROERTYE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Undefined. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22EInteractionProperties17INTERFACE_TENSIONE">
+<span id="_CPPv3N22EInteractionProperties17INTERFACE_TENSIONE"></span><span id="_CPPv2N22EInteractionProperties17INTERFACE_TENSIONE"></span><span class="target" id="DefinesMDB_8h_1af6f28f61ebf9618a2d6f08ff98c0e8a6a5d30dcce30f044045d5d1924e0f25b2f"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INTERFACE_TENSION</span></span></span><a class="headerlink" href="#_CPPv4N22EInteractionProperties17INTERFACE_TENSIONE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Interface tension [N/m]. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_01E">
+<span id="_CPPv3N22EInteractionProperties24INT_PROP_USER_DEFINED_01E"></span><span id="_CPPv2N22EInteractionProperties24INT_PROP_USER_DEFINED_01E"></span><span class="target" id="DefinesMDB_8h_1af6f28f61ebf9618a2d6f08ff98c0e8a6a028af5f4afc77b477396d3cc4ff0f985"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INT_PROP_USER_DEFINED_01</span></span></span><a class="headerlink" href="#_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_01E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined interaction property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_02E">
+<span id="_CPPv3N22EInteractionProperties24INT_PROP_USER_DEFINED_02E"></span><span id="_CPPv2N22EInteractionProperties24INT_PROP_USER_DEFINED_02E"></span><span class="target" id="DefinesMDB_8h_1af6f28f61ebf9618a2d6f08ff98c0e8a6aa17ca04f8aaee8b5b620d513a4322fa2"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INT_PROP_USER_DEFINED_02</span></span></span><a class="headerlink" href="#_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_02E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined interaction property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_03E">
+<span id="_CPPv3N22EInteractionProperties24INT_PROP_USER_DEFINED_03E"></span><span id="_CPPv2N22EInteractionProperties24INT_PROP_USER_DEFINED_03E"></span><span class="target" id="DefinesMDB_8h_1af6f28f61ebf9618a2d6f08ff98c0e8a6a92615927d518ed3554a26d05d5769f35"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INT_PROP_USER_DEFINED_03</span></span></span><a class="headerlink" href="#_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_03E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined interaction property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_04E">
+<span id="_CPPv3N22EInteractionProperties24INT_PROP_USER_DEFINED_04E"></span><span id="_CPPv2N22EInteractionProperties24INT_PROP_USER_DEFINED_04E"></span><span class="target" id="DefinesMDB_8h_1af6f28f61ebf9618a2d6f08ff98c0e8a6a86a389ae465c8b4c98359b78639b687e"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INT_PROP_USER_DEFINED_04</span></span></span><a class="headerlink" href="#_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_04E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined interaction property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_05E">
+<span id="_CPPv3N22EInteractionProperties24INT_PROP_USER_DEFINED_05E"></span><span id="_CPPv2N22EInteractionProperties24INT_PROP_USER_DEFINED_05E"></span><span class="target" id="DefinesMDB_8h_1af6f28f61ebf9618a2d6f08ff98c0e8a6aa41f7810af18c443c9476dc5647c2d39"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INT_PROP_USER_DEFINED_05</span></span></span><a class="headerlink" href="#_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_05E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined interaction property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_06E">
+<span id="_CPPv3N22EInteractionProperties24INT_PROP_USER_DEFINED_06E"></span><span id="_CPPv2N22EInteractionProperties24INT_PROP_USER_DEFINED_06E"></span><span class="target" id="DefinesMDB_8h_1af6f28f61ebf9618a2d6f08ff98c0e8a6a2e3d543856a31bef4a2e0daf2eea4d77"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INT_PROP_USER_DEFINED_06</span></span></span><a class="headerlink" href="#_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_06E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined interaction property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_07E">
+<span id="_CPPv3N22EInteractionProperties24INT_PROP_USER_DEFINED_07E"></span><span id="_CPPv2N22EInteractionProperties24INT_PROP_USER_DEFINED_07E"></span><span class="target" id="DefinesMDB_8h_1af6f28f61ebf9618a2d6f08ff98c0e8a6a48a834598c1c7658b5750f7adfa7406d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INT_PROP_USER_DEFINED_07</span></span></span><a class="headerlink" href="#_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_07E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined interaction property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_08E">
+<span id="_CPPv3N22EInteractionProperties24INT_PROP_USER_DEFINED_08E"></span><span id="_CPPv2N22EInteractionProperties24INT_PROP_USER_DEFINED_08E"></span><span class="target" id="DefinesMDB_8h_1af6f28f61ebf9618a2d6f08ff98c0e8a6aa160e201ce671166bfe3d3bf0408151a"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INT_PROP_USER_DEFINED_08</span></span></span><a class="headerlink" href="#_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_08E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined interaction property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_09E">
+<span id="_CPPv3N22EInteractionProperties24INT_PROP_USER_DEFINED_09E"></span><span id="_CPPv2N22EInteractionProperties24INT_PROP_USER_DEFINED_09E"></span><span class="target" id="DefinesMDB_8h_1af6f28f61ebf9618a2d6f08ff98c0e8a6ae51f28674161580897bb928904202e57"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INT_PROP_USER_DEFINED_09</span></span></span><a class="headerlink" href="#_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_09E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined interaction property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_10E">
+<span id="_CPPv3N22EInteractionProperties24INT_PROP_USER_DEFINED_10E"></span><span id="_CPPv2N22EInteractionProperties24INT_PROP_USER_DEFINED_10E"></span><span class="target" id="DefinesMDB_8h_1af6f28f61ebf9618a2d6f08ff98c0e8a6ae3c25abec1c8d11cdf0ca0b6f70bf582"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INT_PROP_USER_DEFINED_10</span></span></span><a class="headerlink" href="#_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_10E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined interaction property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_11E">
+<span id="_CPPv3N22EInteractionProperties24INT_PROP_USER_DEFINED_11E"></span><span id="_CPPv2N22EInteractionProperties24INT_PROP_USER_DEFINED_11E"></span><span class="target" id="DefinesMDB_8h_1af6f28f61ebf9618a2d6f08ff98c0e8a6afd3593ec23152c3a5dcbe4d73f1822c5"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INT_PROP_USER_DEFINED_11</span></span></span><a class="headerlink" href="#_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_11E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined interaction property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_12E">
+<span id="_CPPv3N22EInteractionProperties24INT_PROP_USER_DEFINED_12E"></span><span id="_CPPv2N22EInteractionProperties24INT_PROP_USER_DEFINED_12E"></span><span class="target" id="DefinesMDB_8h_1af6f28f61ebf9618a2d6f08ff98c0e8a6a1bb75f34ac12630e03f6d3a07f27d91b"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INT_PROP_USER_DEFINED_12</span></span></span><a class="headerlink" href="#_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_12E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined interaction property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_13E">
+<span id="_CPPv3N22EInteractionProperties24INT_PROP_USER_DEFINED_13E"></span><span id="_CPPv2N22EInteractionProperties24INT_PROP_USER_DEFINED_13E"></span><span class="target" id="DefinesMDB_8h_1af6f28f61ebf9618a2d6f08ff98c0e8a6a6fbd12e107a3992affa036ddb75ccb89"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INT_PROP_USER_DEFINED_13</span></span></span><a class="headerlink" href="#_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_13E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined interaction property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_14E">
+<span id="_CPPv3N22EInteractionProperties24INT_PROP_USER_DEFINED_14E"></span><span id="_CPPv2N22EInteractionProperties24INT_PROP_USER_DEFINED_14E"></span><span class="target" id="DefinesMDB_8h_1af6f28f61ebf9618a2d6f08ff98c0e8a6ada734cbb4f16c048faf8665ad4830812"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INT_PROP_USER_DEFINED_14</span></span></span><a class="headerlink" href="#_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_14E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined interaction property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_15E">
+<span id="_CPPv3N22EInteractionProperties24INT_PROP_USER_DEFINED_15E"></span><span id="_CPPv2N22EInteractionProperties24INT_PROP_USER_DEFINED_15E"></span><span class="target" id="DefinesMDB_8h_1af6f28f61ebf9618a2d6f08ff98c0e8a6ad3e5b8d9954151c8b0033a579856016b"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INT_PROP_USER_DEFINED_15</span></span></span><a class="headerlink" href="#_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_15E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined interaction property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_16E">
+<span id="_CPPv3N22EInteractionProperties24INT_PROP_USER_DEFINED_16E"></span><span id="_CPPv2N22EInteractionProperties24INT_PROP_USER_DEFINED_16E"></span><span class="target" id="DefinesMDB_8h_1af6f28f61ebf9618a2d6f08ff98c0e8a6a7e32ebbcf33e59320d1fe08feb8f3e00"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INT_PROP_USER_DEFINED_16</span></span></span><a class="headerlink" href="#_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_16E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined interaction property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_17E">
+<span id="_CPPv3N22EInteractionProperties24INT_PROP_USER_DEFINED_17E"></span><span id="_CPPv2N22EInteractionProperties24INT_PROP_USER_DEFINED_17E"></span><span class="target" id="DefinesMDB_8h_1af6f28f61ebf9618a2d6f08ff98c0e8a6aa6ca7a282cdbc0606d260ab8e74d9c88"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INT_PROP_USER_DEFINED_17</span></span></span><a class="headerlink" href="#_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_17E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined interaction property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_18E">
+<span id="_CPPv3N22EInteractionProperties24INT_PROP_USER_DEFINED_18E"></span><span id="_CPPv2N22EInteractionProperties24INT_PROP_USER_DEFINED_18E"></span><span class="target" id="DefinesMDB_8h_1af6f28f61ebf9618a2d6f08ff98c0e8a6a503797278bd25a8a263abbb72df369af"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INT_PROP_USER_DEFINED_18</span></span></span><a class="headerlink" href="#_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_18E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined interaction property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_19E">
+<span id="_CPPv3N22EInteractionProperties24INT_PROP_USER_DEFINED_19E"></span><span id="_CPPv2N22EInteractionProperties24INT_PROP_USER_DEFINED_19E"></span><span class="target" id="DefinesMDB_8h_1af6f28f61ebf9618a2d6f08ff98c0e8a6a71ff7ba287047ec6ddaf60db33bc36f1"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INT_PROP_USER_DEFINED_19</span></span></span><a class="headerlink" href="#_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_19E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined interaction property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_20E">
+<span id="_CPPv3N22EInteractionProperties24INT_PROP_USER_DEFINED_20E"></span><span id="_CPPv2N22EInteractionProperties24INT_PROP_USER_DEFINED_20E"></span><span class="target" id="DefinesMDB_8h_1af6f28f61ebf9618a2d6f08ff98c0e8a6acab59f241c1b57fc8eff2c3cdb1cdb49"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INT_PROP_USER_DEFINED_20</span></span></span><a class="headerlink" href="#_CPPv4N22EInteractionProperties24INT_PROP_USER_DEFINED_20E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined interaction property. </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum-class">
+<dt class="sig sig-object cpp" id="_CPPv48EOverall">
+<span id="_CPPv38EOverall"></span><span id="_CPPv28EOverall"></span><span class="target" id="DyssolDefines_8h_1a4832d23e953562d0186e2c21ffdfc3f4"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">EOverall</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><a class="headerlink" href="#_CPPv48EOverall" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Identifiers of time-dependent overall properties. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N8EOverall12OVERALL_MASSE">
+<span id="_CPPv3N8EOverall12OVERALL_MASSE"></span><span id="_CPPv2N8EOverall12OVERALL_MASSE"></span><span class="target" id="DyssolDefines_8h_1a4832d23e953562d0186e2c21ffdfc3f4adb1a161028cb42fa2a0ab1ccad91a312"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">OVERALL_MASS</span></span></span><a class="headerlink" href="#_CPPv4N8EOverall12OVERALL_MASSE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Overall mass or mass flow. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N8EOverall19OVERALL_TEMPERATUREE">
+<span id="_CPPv3N8EOverall19OVERALL_TEMPERATUREE"></span><span id="_CPPv2N8EOverall19OVERALL_TEMPERATUREE"></span><span class="target" id="DyssolDefines_8h_1a4832d23e953562d0186e2c21ffdfc3f4a88999733418dff036f02c06c4cbf4cc3"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">OVERALL_TEMPERATURE</span></span></span><a class="headerlink" href="#_CPPv4N8EOverall19OVERALL_TEMPERATUREE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Overall temperature. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N8EOverall16OVERALL_PRESSUREE">
+<span id="_CPPv3N8EOverall16OVERALL_PRESSUREE"></span><span id="_CPPv2N8EOverall16OVERALL_PRESSUREE"></span><span class="target" id="DyssolDefines_8h_1a4832d23e953562d0186e2c21ffdfc3f4a9c1406fdc6e530b35ce51355c0d65f57"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">OVERALL_PRESSURE</span></span></span><a class="headerlink" href="#_CPPv4N8EOverall16OVERALL_PRESSUREE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Overall pressure. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N8EOverall23OVERALL_USER_DEFINED_01E">
+<span id="_CPPv3N8EOverall23OVERALL_USER_DEFINED_01E"></span><span id="_CPPv2N8EOverall23OVERALL_USER_DEFINED_01E"></span><span class="target" id="DyssolDefines_8h_1a4832d23e953562d0186e2c21ffdfc3f4aba0a85674e438c72b5e334a8c087bea2"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">OVERALL_USER_DEFINED_01</span></span></span><a class="headerlink" href="#_CPPv4N8EOverall23OVERALL_USER_DEFINED_01E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined overall property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N8EOverall23OVERALL_USER_DEFINED_02E">
+<span id="_CPPv3N8EOverall23OVERALL_USER_DEFINED_02E"></span><span id="_CPPv2N8EOverall23OVERALL_USER_DEFINED_02E"></span><span class="target" id="DyssolDefines_8h_1a4832d23e953562d0186e2c21ffdfc3f4a22edd9745a365c596f493fbd2921dd2d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">OVERALL_USER_DEFINED_02</span></span></span><a class="headerlink" href="#_CPPv4N8EOverall23OVERALL_USER_DEFINED_02E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined overall property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N8EOverall23OVERALL_USER_DEFINED_03E">
+<span id="_CPPv3N8EOverall23OVERALL_USER_DEFINED_03E"></span><span id="_CPPv2N8EOverall23OVERALL_USER_DEFINED_03E"></span><span class="target" id="DyssolDefines_8h_1a4832d23e953562d0186e2c21ffdfc3f4a30f13e33e287d74f3a3012736202e8da"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">OVERALL_USER_DEFINED_03</span></span></span><a class="headerlink" href="#_CPPv4N8EOverall23OVERALL_USER_DEFINED_03E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined overall property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N8EOverall23OVERALL_USER_DEFINED_04E">
+<span id="_CPPv3N8EOverall23OVERALL_USER_DEFINED_04E"></span><span id="_CPPv2N8EOverall23OVERALL_USER_DEFINED_04E"></span><span class="target" id="DyssolDefines_8h_1a4832d23e953562d0186e2c21ffdfc3f4a752d798550eb14e76ef193018652e6bb"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">OVERALL_USER_DEFINED_04</span></span></span><a class="headerlink" href="#_CPPv4N8EOverall23OVERALL_USER_DEFINED_04E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined overall property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N8EOverall23OVERALL_USER_DEFINED_05E">
+<span id="_CPPv3N8EOverall23OVERALL_USER_DEFINED_05E"></span><span id="_CPPv2N8EOverall23OVERALL_USER_DEFINED_05E"></span><span class="target" id="DyssolDefines_8h_1a4832d23e953562d0186e2c21ffdfc3f4ad85bfa958cdf1d16f89830fb616cc881"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">OVERALL_USER_DEFINED_05</span></span></span><a class="headerlink" href="#_CPPv4N8EOverall23OVERALL_USER_DEFINED_05E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined overall property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N8EOverall23OVERALL_USER_DEFINED_06E">
+<span id="_CPPv3N8EOverall23OVERALL_USER_DEFINED_06E"></span><span id="_CPPv2N8EOverall23OVERALL_USER_DEFINED_06E"></span><span class="target" id="DyssolDefines_8h_1a4832d23e953562d0186e2c21ffdfc3f4ad696855c530d21ca628b9d75aadf9abd"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">OVERALL_USER_DEFINED_06</span></span></span><a class="headerlink" href="#_CPPv4N8EOverall23OVERALL_USER_DEFINED_06E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined overall property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N8EOverall23OVERALL_USER_DEFINED_07E">
+<span id="_CPPv3N8EOverall23OVERALL_USER_DEFINED_07E"></span><span id="_CPPv2N8EOverall23OVERALL_USER_DEFINED_07E"></span><span class="target" id="DyssolDefines_8h_1a4832d23e953562d0186e2c21ffdfc3f4a35cd7b539a1e9095f3d10674e6d131ab"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">OVERALL_USER_DEFINED_07</span></span></span><a class="headerlink" href="#_CPPv4N8EOverall23OVERALL_USER_DEFINED_07E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined overall property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N8EOverall23OVERALL_USER_DEFINED_08E">
+<span id="_CPPv3N8EOverall23OVERALL_USER_DEFINED_08E"></span><span id="_CPPv2N8EOverall23OVERALL_USER_DEFINED_08E"></span><span class="target" id="DyssolDefines_8h_1a4832d23e953562d0186e2c21ffdfc3f4ac73691fc2d1ea0a06ca04e504558d40d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">OVERALL_USER_DEFINED_08</span></span></span><a class="headerlink" href="#_CPPv4N8EOverall23OVERALL_USER_DEFINED_08E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined overall property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N8EOverall23OVERALL_USER_DEFINED_09E">
+<span id="_CPPv3N8EOverall23OVERALL_USER_DEFINED_09E"></span><span id="_CPPv2N8EOverall23OVERALL_USER_DEFINED_09E"></span><span class="target" id="DyssolDefines_8h_1a4832d23e953562d0186e2c21ffdfc3f4a9f4d2782a24271ce98e779f10cdd011b"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">OVERALL_USER_DEFINED_09</span></span></span><a class="headerlink" href="#_CPPv4N8EOverall23OVERALL_USER_DEFINED_09E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined overall property. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N8EOverall23OVERALL_USER_DEFINED_10E">
+<span id="_CPPv3N8EOverall23OVERALL_USER_DEFINED_10E"></span><span id="_CPPv2N8EOverall23OVERALL_USER_DEFINED_10E"></span><span class="target" id="DyssolDefines_8h_1a4832d23e953562d0186e2c21ffdfc3f4a5d14653109ab43426b8d7c40f1a3f979"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">OVERALL_USER_DEFINED_10</span></span></span><a class="headerlink" href="#_CPPv4N8EOverall23OVERALL_USER_DEFINED_10E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>User-defined overall property. </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv49EPSDTypes">
+<span id="_CPPv39EPSDTypes"></span><span id="_CPPv29EPSDTypes"></span><span class="target" id="DyssolDefines_8h_1a2fd8293a1acf00304cb90b2c540ce2ba"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">EPSDTypes</span></span></span><a class="headerlink" href="#_CPPv49EPSDTypes" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Identifiers of PSD types. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(i\)</span> - index of size classes</p></li>
+<li><p><span class="math notranslate nohighlight">\(j\)</span> - index of compounds</p></li>
+<li><p><span class="math notranslate nohighlight">\(k\)</span> - index of porosities</p></li>
+<li><p><span class="math notranslate nohighlight">\(d_i\)</span> - particle diameter of class <span class="math notranslate nohighlight">\(i\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\Delta d_i\)</span> - size of the class <span class="math notranslate nohighlight">\(i\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(m_i\)</span> - mass of particles of class <span class="math notranslate nohighlight">\(i\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(M_{tot}\)</span> - total mass of particles</p></li>
+<li><p><span class="math notranslate nohighlight">\(N_i\)</span> - number of particles of class <span class="math notranslate nohighlight">\(i\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(N_{i,j}\)</span> - number of particles of compound <span class="math notranslate nohighlight">\(j\)</span> of size class <span class="math notranslate nohighlight">\(i\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(N_{tot}\)</span> - total number of particles</p></li>
+<li><p><span class="math notranslate nohighlight">\(w_i\)</span> - mass fraction of particles of class <span class="math notranslate nohighlight">\(i\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(w_{i,j}\)</span> - mass fraction of particles of compound <span class="math notranslate nohighlight">\(j\)</span> of size class <span class="math notranslate nohighlight">\(i\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(w_{i,j,k}\)</span> - mass fraction of particles of compound <span class="math notranslate nohighlight">\(j\)</span> of size class <span class="math notranslate nohighlight">\(i\)</span> and porosity <span class="math notranslate nohighlight">\(k\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\rho_{j}\)</span> - density of compound <span class="math notranslate nohighlight">\(j\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\varepsilon_{k}\)</span> - porosity of class <span class="math notranslate nohighlight">\(k\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(q_0\)</span> - number-related density distribution</p></li>
+<li><p><span class="math notranslate nohighlight">\(Q_0\)</span> - number-related cumulative distribution</p></li>
+<li><p><span class="math notranslate nohighlight">\(q_2\)</span> - surface-related density distribution</p></li>
+<li><p><span class="math notranslate nohighlight">\(Q_2\)</span> - surface-related cumulative distribution</p></li>
+<li><p><span class="math notranslate nohighlight">\(q_3\)</span> - mass-related density distribution</p></li>
+<li><p><span class="math notranslate nohighlight">\(Q_3\)</span> - mass-related cumulative distribution </p></li>
+</ul>
+</p>
+</div>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N9EPSDTypes6PSD_q3E">
+<span id="_CPPv3N9EPSDTypes6PSD_q3E"></span><span id="_CPPv2N9EPSDTypes6PSD_q3E"></span><span class="target" id="DyssolDefines_8h_1a2fd8293a1acf00304cb90b2c540ce2baa402c33f155b97bd81fa4e920bd3d4b73"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PSD_q3</span></span></span><a class="headerlink" href="#_CPPv4N9EPSDTypes6PSD_q3E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Mass-related density distribution: <span class="math notranslate nohighlight">\(q_{3,i} = \frac{w_i}{\Delta d_i}\)</span>. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N9EPSDTypes6PSD_Q3E">
+<span id="_CPPv3N9EPSDTypes6PSD_Q3E"></span><span id="_CPPv2N9EPSDTypes6PSD_Q3E"></span><span class="target" id="DyssolDefines_8h_1a2fd8293a1acf00304cb90b2c540ce2baa7deb1cae19fc22b6b70869873217fe6c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PSD_Q3</span></span></span><a class="headerlink" href="#_CPPv4N9EPSDTypes6PSD_Q3E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Mass-related cumulative distribution: <span class="math notranslate nohighlight">\(Q_{3,0} = w_0\)</span>, <span class="math notranslate nohighlight">\(Q_{3,i} = Q_{3,i-1} + w_i\)</span>. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N9EPSDTypes6PSD_q0E">
+<span id="_CPPv3N9EPSDTypes6PSD_q0E"></span><span id="_CPPv2N9EPSDTypes6PSD_q0E"></span><span class="target" id="DyssolDefines_8h_1a2fd8293a1acf00304cb90b2c540ce2baa515109fdb022efd3f54492cbea8abd01"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PSD_q0</span></span></span><a class="headerlink" href="#_CPPv4N9EPSDTypes6PSD_q0E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Number-related density distribution: <span class="math notranslate nohighlight">\(q_{0,i} = \frac{N_i}{N_{tot} \Delta d_i}\)</span>. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N9EPSDTypes6PSD_Q0E">
+<span id="_CPPv3N9EPSDTypes6PSD_Q0E"></span><span id="_CPPv2N9EPSDTypes6PSD_Q0E"></span><span class="target" id="DyssolDefines_8h_1a2fd8293a1acf00304cb90b2c540ce2baa3d4445f0347b613b80eea29c89ef2d3d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PSD_Q0</span></span></span><a class="headerlink" href="#_CPPv4N9EPSDTypes6PSD_Q0E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Number-related cumulative distribution: <span class="math notranslate nohighlight">\(Q_{0,i} = Q_{0,i-1} + q_{0,i} \Delta d_i\)</span>. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N9EPSDTypes12PSD_MassFracE">
+<span id="_CPPv3N9EPSDTypes12PSD_MassFracE"></span><span id="_CPPv2N9EPSDTypes12PSD_MassFracE"></span><span class="target" id="DyssolDefines_8h_1a2fd8293a1acf00304cb90b2c540ce2baaefab0803bc56443883bf7e1e718e192e"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PSD_MassFrac</span></span></span><a class="headerlink" href="#_CPPv4N9EPSDTypes12PSD_MassFracE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Size distribution in the form of mass fractions with the total sum of 1. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N9EPSDTypes10PSD_NumberE">
+<span id="_CPPv3N9EPSDTypes10PSD_NumberE"></span><span id="_CPPv2N9EPSDTypes10PSD_NumberE"></span><span class="target" id="DyssolDefines_8h_1a2fd8293a1acf00304cb90b2c540ce2baaba2787af622f24624918913a0d8840ea"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PSD_Number</span></span></span><a class="headerlink" href="#_CPPv4N9EPSDTypes10PSD_NumberE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Number-related distribution of particles, depends on several conditions:<ol class="lowerroman simple">
+<li><p>If only one compound is specified: <span class="math notranslate nohighlight">\(N_i = \frac{m_i}{\rho \frac{\pi}{6} d_i^3}\)</span>.</p></li>
+<li><p>For several compounds: <span class="math notranslate nohighlight">\(N_i = \sum_j \frac{M_{tot} w_{i,j}}{\frac{\pi d_i^3}{6} \rho_j}\)</span>.</p></li>
+<li><p>If distribution by particle porosity defined: <span class="math notranslate nohighlight">\(N_i = \sum_j N_{i,j}\)</span>, with <span class="math notranslate nohighlight">\(N_{i, j} = \sum_k \frac{M_{tot} w_{i,j,k}}{\frac{\pi d_i^3}{6} \rho_j (1 - \varepsilon_k)}\)</span>. </p></li>
+</ol>
+</p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N9EPSDTypes6PSD_q2E">
+<span id="_CPPv3N9EPSDTypes6PSD_q2E"></span><span id="_CPPv2N9EPSDTypes6PSD_q2E"></span><span class="target" id="DyssolDefines_8h_1a2fd8293a1acf00304cb90b2c540ce2baaa0611bd7bb4e301ad93049dcddedcd3d"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PSD_q2</span></span></span><a class="headerlink" href="#_CPPv4N9EPSDTypes6PSD_q2E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Surface-area-related density distribution: <span class="math notranslate nohighlight">\(q_{2,i} = \frac{Q_{2,i} - Q_{2,i-1}}{\Delta d_i}\)</span>. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N9EPSDTypes6PSD_Q2E">
+<span id="_CPPv3N9EPSDTypes6PSD_Q2E"></span><span id="_CPPv2N9EPSDTypes6PSD_Q2E"></span><span class="target" id="DyssolDefines_8h_1a2fd8293a1acf00304cb90b2c540ce2baa43749e5554303bab1a5dbfd5159e1403"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PSD_Q2</span></span></span><a class="headerlink" href="#_CPPv4N9EPSDTypes6PSD_Q2E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Surface-area-related cumulative distribution: <span class="math notranslate nohighlight">\(Q_{2,i} = \frac{\sum_{j=0}^i N_j \pi d_j^2}{\sum_j N_j \pi d_j^2}\)</span>. </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum-class">
+<dt class="sig sig-object cpp" id="_CPPv412EPSDGridType">
+<span id="_CPPv312EPSDGridType"></span><span id="_CPPv212EPSDGridType"></span><span class="target" id="DyssolDefines_8h_1a1b96f3d60d6d702763ebfb853f4fce94"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">EPSDGridType</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="kt"><span class="pre">unsigned</span></span><a class="headerlink" href="#_CPPv412EPSDGridType" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Common enumerators. </p>
+<p>Identifiers of grid unit types. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N12EPSDGridType8DIAMETERE">
+<span id="_CPPv3N12EPSDGridType8DIAMETERE"></span><span id="_CPPv2N12EPSDGridType8DIAMETERE"></span><span class="target" id="DyssolDefines_8h_1a1b96f3d60d6d702763ebfb853f4fce94a103e7959e98b4fa3a3452e6c69f305d5"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DIAMETER</span></span></span><a class="headerlink" href="#_CPPv4N12EPSDGridType8DIAMETERE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Diameter-based size-grid [m]. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N12EPSDGridType6VOLUMEE">
+<span id="_CPPv3N12EPSDGridType6VOLUMEE"></span><span id="_CPPv2N12EPSDGridType6VOLUMEE"></span><span class="target" id="DyssolDefines_8h_1a1b96f3d60d6d702763ebfb853f4fce94a730956af87021c351084317bbc63eea6"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">VOLUME</span></span></span><a class="headerlink" href="#_CPPv4N12EPSDGridType6VOLUMEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Volume-based size-grid [m<sup>3</sup>]. </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp enum-class">
+<dt class="sig sig-object cpp" id="_CPPv412ESolverTypes">
+<span id="_CPPv312ESolverTypes"></span><span id="_CPPv212ESolverTypes"></span><span class="target" id="BaseSolver_8h_1a4880088ab3c4ceedf20b18ee67670e35"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ESolverTypes</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><a class="headerlink" href="#_CPPv412ESolverTypes" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Types of solver parameters. </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N12ESolverTypes11SOLVER_NONEE">
+<span id="_CPPv3N12ESolverTypes11SOLVER_NONEE"></span><span id="_CPPv2N12ESolverTypes11SOLVER_NONEE"></span><span class="target" id="BaseSolver_8h_1a4880088ab3c4ceedf20b18ee67670e35ac09ce2fa7a058e818d200929b2904b01"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOLVER_NONE</span></span></span><a class="headerlink" href="#_CPPv4N12ESolverTypes11SOLVER_NONEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Undefined. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N12ESolverTypes22SOLVER_AGGLOMERATION_1E">
+<span id="_CPPv3N12ESolverTypes22SOLVER_AGGLOMERATION_1E"></span><span id="_CPPv2N12ESolverTypes22SOLVER_AGGLOMERATION_1E"></span><span class="target" id="BaseSolver_8h_1a4880088ab3c4ceedf20b18ee67670e35a6d88e3fe76802c263f39d7607662f39c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOLVER_AGGLOMERATION_1</span></span></span><a class="headerlink" href="#_CPPv4N12ESolverTypes22SOLVER_AGGLOMERATION_1E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Agglomeration solver. </p>
+</dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N12ESolverTypes12SOLVER_PBM_1E">
+<span id="_CPPv3N12ESolverTypes12SOLVER_PBM_1E"></span><span id="_CPPv2N12ESolverTypes12SOLVER_PBM_1E"></span><span class="target" id="BaseSolver_8h_1a4880088ab3c4ceedf20b18ee67670e35ab36732958a3c7e21144e84de86580127"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SOLVER_PBM_1</span></span></span><a class="headerlink" href="#_CPPv4N12ESolverTypes12SOLVER_PBM_1E" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Population balance solver. </p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="solver_external.html" class="btn btn-neutral float-left" title="External solver" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, DyssolTEC GmbH.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

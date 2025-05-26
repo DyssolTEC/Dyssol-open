@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enthalpy lookup table &mdash; Dyssol latest documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dyssol_style.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/logo.png"/>
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Two-mensional matrix" href="class_matrix2d.html" />
+    <link rel="prev" title="Plot manager" href="class_plotmanager.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #0E70B6" >
+            <a href="../index.html">
+            <img src="../_static/logo_doc.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Get started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../000_get_started/get_started.html">Get started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../000_get_started/get_started.html#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../000_get_started/get_started.html#windows">Windows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../000_get_started/get_started.html#linux">Linux</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../000_get_started/get_started.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../000_get_started/get_started.html#run-your-first-simulation">Run your first simulation</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User interface</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../001_ui/gui.html">Graphical user interfaced</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../001_ui/gui.html#menu">Menu</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#file">File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#setup">Setup</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#compounds-editor">Compounds editor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#phases-editor">Phases editor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#grids-specification">Grids specification</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#holdups-editor">Holdups editor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#options">Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#calculation-sequence">Calculation sequence</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#recycle-streams">Recycle streams</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#modules">Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#tools">Tools</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#models-manager">Models manager</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#materials-database">Materials database</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#settings">Settings</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#help">Help</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#about">About</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../001_ui/gui.html#tabs">Tabs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#flowsheet">Flowsheet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#simulator">Simulator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#streams">Streams</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#units">Units</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../001_ui/cli.html">Command line interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../001_ui/cli.html#main">Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../001_ui/cli.html#simulation">Simulation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#simulation-options">Simulation options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#phases">Phases</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#compounds">Compounds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#grids">Grids</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#flowsheet-structure">Flowsheet structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#unit-parameters">Unit parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#holdups">Holdups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#export">Export</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Structure and algorithms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/brief.html">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/brief.html#flowsheet-simulation-of-solids">Flowsheet simulation of solids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/brief.html#approaches-and-methods">Approaches and methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/brief.html#software-system-architecture">Software system architecture</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/simulation.html">Simulation core</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/simulation.html#material-streams">Material streams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/simulation.html#units">Units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/simulation.html#simulator">Simulator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/simulation.html#main-method-and-approaches">Main method and approaches</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/simulation.html#built-in-equation-solvers">Built-in equation solvers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/data.html">Data storage subsystem</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/data.html#hdf5-data-format">HDF5 data format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/data.html#data-caching">Data caching</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/materials.html">Material database</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#dmdb-file">DMDB file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#constant-parameters">Constant parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#dependent-parameters">Dependent parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#interaction-properties">Interaction properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#correlations">Correlations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/materials.html#correlation-search">Correlation search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/materials.html#correlation-functions">Correlation functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/multiDim.html">Multidimentional distributed parameters of solids</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/multiDim.html#tree-data-structures">Tree data structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/multiDim.html#treatment-of-dependent-parameters">Treatment of dependent parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/multiDim.html#transformation-matrices">Transformation matrices</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../002_theory/multiDim.html#application-of-transformation-matrices">Application of transformation matrices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../002_theory/multiDim.html#application-example">Application example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/time.html">Time point management</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/time.html#data-interpolation">Data interpolation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/time.html#interpolation-of-distributed-parameters">Interpolation of distributed parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/time.html#steady-state-units">Steady state units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/time.html#dynamic-units-with-recycle">Dynamic units with recycle</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/theory.html">Theoretical background</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/theory.html#discretization">Discretization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/theory.html#process-systems">Process systems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#sequential-modular-approach">Sequential-modular approach</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#equation-oriented-approach">Equation-oriented approach</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#partitioning-and-tearing">Partitioning and tearing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/theory.html#numerical-methods">Numerical methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#waveform-relaxation-method">Waveform relaxation method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#data-extrapolation">Data extrapolation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#convergence-methods">Convergence methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Libraries</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../003_models/units.html">Unit library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_agglomerator.html">Agglomerator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_agglomerator.html#kernels">Kernels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_agglomerator.html#solvers">Solvers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_crusher.html">Crusher</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_crusher.html#bond-s-model">Bond’s model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../003_models/unit_crusher.html#average-bond-work-indices-for-various-materials">Average Bond Work Indices for various materials</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_crusher.html#cone-model">Cone model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_crusher.html#const-output-model">Const output model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_cyclone.html">Cyclone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_granulator.html">Granulator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_granulator.html#continuous-granulator">Continuous granulator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_granulator.html#batch-granulator">Batch granulator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_inletflow.html">Inlet flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_mixer.html">Mixer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_outletflow.html">Outlet flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_screen.html">Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_screen.html#plitt-s-model">Plitt’s model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_screen.html#molerus-hoffmann-model">Molerus &amp; Hoffmann model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_screen.html#probability-model">Probability model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_screen.html#teipel-hennig-model">Teipel / Hennig model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_solidsbunker.html">Solids bunker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_splitter.html">Splitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_timedelay.html">Time delay</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_timedelay.html#simple-shift">Simple shift</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_timedelay.html#norm-based">Norm-based</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../003_models/solvers.html">Solver library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/solvers.html#agglomeration-solvers">Agglomeration solvers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/solver_cellaverage.html">Cell average</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/solver_fft.html">FFT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/solver_fixedpivot.html">Fixed pivot</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">For developers</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="compilation.html">Compilation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="compilation.html#windows">Windows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="compilation.html#compilation-requirements">Compilation requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compilation.html#build">Build</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compilation.html#build-documentation-and-installers">Build documentation and installers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="compilation.html#linux">Linux</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="compilation.html#sec-development-compilation-linux-requirements">Compilation requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compilation.html#install-build-environment">Install build environment</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="compilation.html#ubuntu-20-debian-11">Ubuntu 20, Debian 11</a></li>
+<li class="toctree-l4"><a class="reference internal" href="compilation.html#ubuntu-22-24-debian-12">Ubuntu 22/24, Debian 12</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="compilation.html#id2">Build</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="models_development.html">For models developers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="models_development.html#configuration-of-visual-studio-project-template">Configuration of Visual Studio project template</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models_development.html#unit-development">Unit development</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#add-new-unit-to-the-template-project">Add new unit to the template project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#configure-dyssol-to-work-with-implemented-units">Configure Dyssol to work with implemented units</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#development-of-steady-state-units">Development of steady-state units</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="models_development.html#application-example">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#development-of-steady-state-units-with-internal-non-linear-solver">Development of steady-state units with internal non-linear solver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="models_development.html#id1">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#development-of-dynamic-units">Development of dynamic units</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="models_development.html#label-basics">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#development-of-dynamic-units-with-internal-dae-solver">Development of dynamic units with internal DAE solver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="models_development.html#id3">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#configure-unit-to-work-with-matlab">Configure unit to work with MATLAB</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="models_development.html#solver-development">Solver development</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#add-new-solver-to-the-template-project">Add new solver to the template project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#configure-dyssol-to-work-with-implemented-solvers">Configure Dyssol to work with implemented solvers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#development-of-agglomeration-solver">Development of agglomeration solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#configure-solver-to-work-with-matlab">Configure solver to work with MATLAB</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">Models API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="class_baseunit.html">Basic unit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_basestream.html">Basic stream</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_stream.html">Stream</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_holdup.html">Holdup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_portsmanager.html">Ports manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_unitport.html">Unit port</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_unitparametersmanager.html">Unit parameters manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_unitparameters.html">Unit parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="class_upbase.html">Base class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upconst.html">Const</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upconstreal.html">Const real</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upconstint.html">Const int</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upconstuint.html">Const uint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_updependent.html">Dependent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_uptd.html">Time-dependent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upstring.html">String</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upcheckbox.html">Check box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upcombobox.html">Combo box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upcompound.html">Compound</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upcompoundmdb.html">MDB compound</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upreaction.html">Reaction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_uplist.html">List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_uplistreal.html">List real</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_uplistint.html">List int</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_uplistuint.html">List uint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upsolver.html">Solver</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="class_chemicalreaction.html">Chemical reaction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_agglomerationsolver.html">Agglomeration solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_basesolver.html">Base solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_statevariablesmanager.html">State variables manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_statevariable.html">State variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_curve.html">Curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_plot.html">Plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_plotmanager.html">Plot manager</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Enthalpy lookup table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_matrix2d.html">Two-mensional matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_densemdmatrix.html">Multidimensional matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_transformmatrix.html">Transformation matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auxiliary_classes.html">Auxiliary classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="psd_functions.html">PSD functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="distribution_functions.html">Distribution functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermodynamics.html">Thermodynamics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="thermodynamics.html#for-material-stream-and-holdup">For material stream and holdup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="thermodynamics.html#for-base-unit">For base unit</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="solver_dae.html">DAE Systems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solver_dae.html#dae-model">DAE model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="solver_dae.html#variables">Variables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="solver_dae.html#tolerance">Tolerance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="solver_dae.html#virtual-functions">Virtual functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="solver_dae.html#other-functions">Other functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="solver_dae.html#dae-solver">DAE solver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="solver_dae.html#model">Model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="solver_dae.html#id1">Other functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="solver_dae.html#application-example">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="solver_kinsol.html">NL Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solver_external.html">External solver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solver_external.html#basic-information">Basic information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solver_external.html#virtual-functions">Virtual functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html">List of constants</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="constants.html#universal-physical-constants">Universal physical constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="constants.html#dyssol-constants">Dyssol constants</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #0E70B6" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Dyssol</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="api.html">Models API</a> &raquo;</li>
+      <li>Enthalpy lookup table</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="enthalpy-lookup-table">
+<span id="sec-development-api-class-mixtureenthalpylookup"></span><h1>Enthalpy lookup table<a class="headerlink" href="#enthalpy-lookup-table" title="Permalink to this headline"></a></h1>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv422CMixtureEnthalpyLookup">
+<span id="_CPPv322CMixtureEnthalpyLookup"></span><span id="_CPPv222CMixtureEnthalpyLookup"></span><span id="CMixtureEnthalpyLookup"></span><span class="target" id="classCMixtureEnthalpyLookup"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CMixtureEnthalpyLookup</span></span></span><a class="headerlink" href="#_CPPv422CMixtureEnthalpyLookup" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Bidirectional lookup table to find the correspondence between temperature and enthalpy of a mixture of materials. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22CMixtureEnthalpyLookup22CMixtureEnthalpyLookupEv">
+<span id="_CPPv3N22CMixtureEnthalpyLookup22CMixtureEnthalpyLookupEv"></span><span id="_CPPv2N22CMixtureEnthalpyLookup22CMixtureEnthalpyLookupEv"></span><span id="CMixtureEnthalpyLookup::CMixtureEnthalpyLookup"></span><span class="target" id="classCMixtureEnthalpyLookup_1ab4543bcc26cc9979b7cb935a270f5066"></span><span class="sig-name descname"><span class="n"><span class="pre">CMixtureEnthalpyLookup</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N22CMixtureEnthalpyLookup22CMixtureEnthalpyLookupEv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Default constructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22CMixtureEnthalpyLookup22CMixtureEnthalpyLookupEPK18CMaterialsDatabaseNSt6vectorINSt6stringEEE">
+<span id="_CPPv3N22CMixtureEnthalpyLookup22CMixtureEnthalpyLookupEPK18CMaterialsDatabaseNSt6vectorINSt6stringEEE"></span><span id="_CPPv2N22CMixtureEnthalpyLookup22CMixtureEnthalpyLookupEPK18CMaterialsDatabaseNSt6vectorINSt6stringEEE"></span><span id="CMixtureEnthalpyLookup::CMixtureEnthalpyLookup__CMaterialsDatabaseCP.std::vector:ss:"></span><span class="target" id="classCMixtureEnthalpyLookup_1a2aca04eb433575a39320c37bc5b456b8"></span><span class="sig-name descname"><span class="n"><span class="pre">CMixtureEnthalpyLookup</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">CMaterialsDatabase</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">_materialsDB</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_compounds</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22CMixtureEnthalpyLookup22CMixtureEnthalpyLookupEPK18CMaterialsDatabaseNSt6vectorINSt6stringEEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Constructs lookup table with the pointer to materials database and compounds and default values of limits and number of intervals. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_materialsDB</strong> – Pointer to materials database. </p></li>
+<li><p><strong>_compounds</strong> – List of compounds. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22CMixtureEnthalpyLookup22CMixtureEnthalpyLookupEPK18CMaterialsDatabaseNSt6vectorINSt6stringEEERK9SInterval6size_t">
+<span id="_CPPv3N22CMixtureEnthalpyLookup22CMixtureEnthalpyLookupEPK18CMaterialsDatabaseNSt6vectorINSt6stringEEERK9SInterval6size_t"></span><span id="_CPPv2N22CMixtureEnthalpyLookup22CMixtureEnthalpyLookupEPK18CMaterialsDatabaseNSt6vectorINSt6stringEEERK9SInterval6size_t"></span><span id="CMixtureEnthalpyLookup::CMixtureEnthalpyLookup__CMaterialsDatabaseCP.std::vector:ss:.SIntervalCR.s"></span><span class="target" id="classCMixtureEnthalpyLookup_1a55349a1d0c1cebdac28fa6142ca4bc0a"></span><span class="sig-name descname"><span class="n"><span class="pre">CMixtureEnthalpyLookup</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">CMaterialsDatabase</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">_materialsDB</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_compounds</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="auxiliary_classes.html#_CPPv49SInterval" title="SInterval"><span class="n"><span class="pre">SInterval</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_limits</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_intervalsNumber</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22CMixtureEnthalpyLookup22CMixtureEnthalpyLookupEPK18CMaterialsDatabaseNSt6vectorINSt6stringEEERK9SInterval6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Constructs lookup table with the pointer to materials database, compounds, values of limits and number of intervals. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_materialsDB</strong> – Pointer to materials database. </p></li>
+<li><p><strong>_compounds</strong> – List of compounds. </p></li>
+<li><p><strong>_limits</strong> – Temperature limits. </p></li>
+<li><p><strong>_intervalsNumber</strong> – Number of temperature intervals. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22CMixtureEnthalpyLookup22CMixtureEnthalpyLookupERK22CMixtureEnthalpyLookup">
+<span id="_CPPv3N22CMixtureEnthalpyLookup22CMixtureEnthalpyLookupERK22CMixtureEnthalpyLookup"></span><span id="_CPPv2N22CMixtureEnthalpyLookup22CMixtureEnthalpyLookupERK22CMixtureEnthalpyLookup"></span><span id="CMixtureEnthalpyLookup::CMixtureEnthalpyLookup__CMixtureEnthalpyLookupCR"></span><span class="target" id="classCMixtureEnthalpyLookup_1a1937539fd74b5735e40d70ecaacc083f"></span><span class="sig-name descname"><span class="n"><span class="pre">CMixtureEnthalpyLookup</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N22CMixtureEnthalpyLookup22CMixtureEnthalpyLookupERK22CMixtureEnthalpyLookup" title="CMixtureEnthalpyLookup::CMixtureEnthalpyLookup"><span class="n"><span class="pre">CMixtureEnthalpyLookup</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N22CMixtureEnthalpyLookup22CMixtureEnthalpyLookupERK22CMixtureEnthalpyLookup" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Copy constructor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22CMixtureEnthalpyLookup9SetLimitsERK9SInterval6size_t">
+<span id="_CPPv3N22CMixtureEnthalpyLookup9SetLimitsERK9SInterval6size_t"></span><span id="_CPPv2N22CMixtureEnthalpyLookup9SetLimitsERK9SInterval6size_t"></span><span id="CMixtureEnthalpyLookup::SetLimits__SIntervalCR.s"></span><span class="target" id="classCMixtureEnthalpyLookup_1ac5a5346178a12ae11ca20411049258d4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SetLimits</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="auxiliary_classes.html#_CPPv49SInterval" title="SInterval"><span class="n"><span class="pre">SInterval</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_limits</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_number</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22CMixtureEnthalpyLookup9SetLimitsERK9SInterval6size_t" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sets temperature limits and number of intervals for the lookup table. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_limits</strong> – Temperature limits. </p></li>
+<li><p><strong>_number</strong> – Number of temperature intervals. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK22CMixtureEnthalpyLookup9GetLimitsEv">
+<span id="_CPPv3NK22CMixtureEnthalpyLookup9GetLimitsEv"></span><span id="_CPPv2NK22CMixtureEnthalpyLookup9GetLimitsEv"></span><span id="CMixtureEnthalpyLookup::GetLimitsC"></span><span class="target" id="classCMixtureEnthalpyLookup_1a3191c3523fcd5cbd097e67000efa9d10"></span><a class="reference internal" href="auxiliary_classes.html#_CPPv49SInterval" title="SInterval"><span class="n"><span class="pre">SInterval</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetLimits</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK22CMixtureEnthalpyLookup9GetLimitsEv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns current temperature limits. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Temperature limits. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK22CMixtureEnthalpyLookup18GetIntervalsNumberEv">
+<span id="_CPPv3NK22CMixtureEnthalpyLookup18GetIntervalsNumberEv"></span><span id="_CPPv2NK22CMixtureEnthalpyLookup18GetIntervalsNumberEv"></span><span id="CMixtureEnthalpyLookup::GetIntervalsNumberC"></span><span class="target" id="classCMixtureEnthalpyLookup_1a8558c416d844823d391dd794352714a9"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetIntervalsNumber</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK22CMixtureEnthalpyLookup18GetIntervalsNumberEv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns current number of temperature intervals. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Number of intervals. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22CMixtureEnthalpyLookup20SetMaterialsDatabaseEPK18CMaterialsDatabase">
+<span id="_CPPv3N22CMixtureEnthalpyLookup20SetMaterialsDatabaseEPK18CMaterialsDatabase"></span><span id="_CPPv2N22CMixtureEnthalpyLookup20SetMaterialsDatabaseEPK18CMaterialsDatabase"></span><span id="CMixtureEnthalpyLookup::SetMaterialsDatabase__CMaterialsDatabaseCP"></span><span class="target" id="classCMixtureEnthalpyLookup_1a02378b10c4cb8dd7b9f9cae025074ea6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SetMaterialsDatabase</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">CMaterialsDatabase</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">_materialsDB</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22CMixtureEnthalpyLookup20SetMaterialsDatabaseEPK18CMaterialsDatabase" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sets pointer to materials database. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>_materialsDB</strong> – Pointer to materials database. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22CMixtureEnthalpyLookup12SetCompoundsERKNSt6vectorINSt6stringEEE">
+<span id="_CPPv3N22CMixtureEnthalpyLookup12SetCompoundsERKNSt6vectorINSt6stringEEE"></span><span id="_CPPv2N22CMixtureEnthalpyLookup12SetCompoundsERKNSt6vectorINSt6stringEEE"></span><span id="CMixtureEnthalpyLookup::SetCompounds__std::vector:ss:CR"></span><span class="target" id="classCMixtureEnthalpyLookup_1a6bf2d75d63387e4a7bf4f7a31a6a5f49"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SetCompounds</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_compounds</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22CMixtureEnthalpyLookup12SetCompoundsERKNSt6vectorINSt6stringEEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sets new list of _compounds. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>_compounds</strong> – List of compounds. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22CMixtureEnthalpyLookup20SetCompoundFractionsERKNSt6vectorIdEE">
+<span id="_CPPv3N22CMixtureEnthalpyLookup20SetCompoundFractionsERKNSt6vectorIdEE"></span><span id="_CPPv2N22CMixtureEnthalpyLookup20SetCompoundFractionsERKNSt6vectorIdEE"></span><span id="CMixtureEnthalpyLookup::SetCompoundFractions__std::vector:double:CR"></span><span class="target" id="classCMixtureEnthalpyLookup_1abd2ab84cc1b08c82ea9715194c21815c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SetCompoundFractions</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_fractions</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22CMixtureEnthalpyLookup20SetCompoundFractionsERKNSt6vectorIdEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sets new fractions of all compounds. </p>
+<p>The length of fractions must be equal to the number of previously defined compounds. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>_fractions</strong> – Compounds fractions. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK22CMixtureEnthalpyLookup20GetCompoundFractionsEv">
+<span id="_CPPv3NK22CMixtureEnthalpyLookup20GetCompoundFractionsEv"></span><span id="_CPPv2NK22CMixtureEnthalpyLookup20GetCompoundFractionsEv"></span><span id="CMixtureEnthalpyLookup::GetCompoundFractionsC"></span><span class="target" id="classCMixtureEnthalpyLookup_1ae314a22472cc4ab8b33850560781e7ab"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetCompoundFractions</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK22CMixtureEnthalpyLookup20GetCompoundFractionsEv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns current fractions of compounds. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Compounds fractions. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK22CMixtureEnthalpyLookup4SizeEv">
+<span id="_CPPv3NK22CMixtureEnthalpyLookup4SizeEv"></span><span id="_CPPv2NK22CMixtureEnthalpyLookup4SizeEv"></span><span id="CMixtureEnthalpyLookup::SizeC"></span><span class="target" id="classCMixtureEnthalpyLookup_1aa7520440326e35ad598d30a705040dc3"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Size</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK22CMixtureEnthalpyLookup4SizeEv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns the number of entries in the lookup table. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Number of entries. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK22CMixtureEnthalpyLookup11GetEnthalpyEd">
+<span id="_CPPv3NK22CMixtureEnthalpyLookup11GetEnthalpyEd"></span><span id="_CPPv2NK22CMixtureEnthalpyLookup11GetEnthalpyEd"></span><span id="CMixtureEnthalpyLookup::GetEnthalpy__doubleC"></span><span class="target" id="classCMixtureEnthalpyLookup_1ad6cc16420eaced5c754b3a7528823887"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetEnthalpy</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_temperature</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK22CMixtureEnthalpyLookup11GetEnthalpyEd" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns enthalpy for the given temperature. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>_temperature</strong> – Temperature. </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Enthalpy. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK22CMixtureEnthalpyLookup14GetTemperatureEd">
+<span id="_CPPv3NK22CMixtureEnthalpyLookup14GetTemperatureEd"></span><span id="_CPPv2NK22CMixtureEnthalpyLookup14GetTemperatureEd"></span><span id="CMixtureEnthalpyLookup::GetTemperature__doubleC"></span><span class="target" id="classCMixtureEnthalpyLookup_1a531895daaf8eca51fbe0d34cfa41a055"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetTemperature</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_enthalpy</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK22CMixtureEnthalpyLookup14GetTemperatureEd" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns temperature for the given _enthalpy. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>_enthalpy</strong> – Enthalpy. </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Temperature. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22CMixtureEnthalpyLookup11GetEnthalpyEdRKNSt6vectorIdEE">
+<span id="_CPPv3N22CMixtureEnthalpyLookup11GetEnthalpyEdRKNSt6vectorIdEE"></span><span id="_CPPv2N22CMixtureEnthalpyLookup11GetEnthalpyEdRKNSt6vectorIdEE"></span><span id="CMixtureEnthalpyLookup::GetEnthalpy__double.std::vector:double:CR"></span><span class="target" id="classCMixtureEnthalpyLookup_1a8ec038cc167c77ce91e781c086c66d33"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetEnthalpy</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_temperature</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_fractions</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22CMixtureEnthalpyLookup11GetEnthalpyEdRKNSt6vectorIdEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sets new fractions of all compounds and returns enthalpy for the given temperature. </p>
+<p>The length of fractions must be equal to the number of previously defined compounds. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_temperature</strong> – Temperature. </p></li>
+<li><p><strong>_fractions</strong> – Compounds fractions. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Enthalpy. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22CMixtureEnthalpyLookup14GetTemperatureEdRKNSt6vectorIdEE">
+<span id="_CPPv3N22CMixtureEnthalpyLookup14GetTemperatureEdRKNSt6vectorIdEE"></span><span id="_CPPv2N22CMixtureEnthalpyLookup14GetTemperatureEdRKNSt6vectorIdEE"></span><span id="CMixtureEnthalpyLookup::GetTemperature__double.std::vector:double:CR"></span><span class="target" id="classCMixtureEnthalpyLookup_1ac20a991d1f8829c6db1c86ed7253676b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetTemperature</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_enthalpy</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_fractions</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22CMixtureEnthalpyLookup14GetTemperatureEdRKNSt6vectorIdEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sets new _fractions of all compounds and returns temperature for the given enthalpy. </p>
+<p>The length of fractions must be equal to the number of previously defined compounds. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_enthalpy</strong> – Enthalpy. </p></li>
+<li><p><strong>_fractions</strong> – Compounds fractions. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Temperature. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22CMixtureEnthalpyLookup5ClearEv">
+<span id="_CPPv3N22CMixtureEnthalpyLookup5ClearEv"></span><span id="_CPPv2N22CMixtureEnthalpyLookup5ClearEv"></span><span id="CMixtureEnthalpyLookup::Clear"></span><span class="target" id="classCMixtureEnthalpyLookup_1aa73a93d39a4d046fda37f093050b6cf6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Clear</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22CMixtureEnthalpyLookup5ClearEv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Removes all information. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22CMixtureEnthalpyLookup3AddEd">
+<span id="_CPPv3N22CMixtureEnthalpyLookup3AddEd"></span><span id="_CPPv2N22CMixtureEnthalpyLookup3AddEd"></span><span id="CMixtureEnthalpyLookup::Add__double"></span><span class="target" id="classCMixtureEnthalpyLookup_1a6a0c03bf45f3ab01c96b3768990f3be0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Add</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22CMixtureEnthalpyLookup3AddEd" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Adds value to each right (dependent) entry of the mixture table. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>_value</strong> – New value. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22CMixtureEnthalpyLookup3AddERK22CMixtureEnthalpyLookupd">
+<span id="_CPPv3N22CMixtureEnthalpyLookup3AddERK22CMixtureEnthalpyLookupd"></span><span id="_CPPv2N22CMixtureEnthalpyLookup3AddERK22CMixtureEnthalpyLookupd"></span><span id="CMixtureEnthalpyLookup::Add__CMixtureEnthalpyLookupCR.double"></span><span class="target" id="classCMixtureEnthalpyLookup_1a59bf4a4d9272139176834c9d44130d09"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Add</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv422CMixtureEnthalpyLookup" title="CMixtureEnthalpyLookup"><span class="n"><span class="pre">CMixtureEnthalpyLookup</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_table</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_weight</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1.</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22CMixtureEnthalpyLookup3AddERK22CMixtureEnthalpyLookupd" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Adds another mixture table with some weight to each right (dependent) entry of the mixture table. </p>
+<p>Table must have the same number of compounds. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_table</strong> – Mixture table. </p></li>
+<li><p><strong>_weight</strong> – Weight of the component. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22CMixtureEnthalpyLookup8MultiplyEd">
+<span id="_CPPv3N22CMixtureEnthalpyLookup8MultiplyEd"></span><span id="_CPPv2N22CMixtureEnthalpyLookup8MultiplyEd"></span><span id="CMixtureEnthalpyLookup::Multiply__double"></span><span class="target" id="classCMixtureEnthalpyLookup_1a3b7a6cd70c7f4132a3a620c51322fd71"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Multiply</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22CMixtureEnthalpyLookup8MultiplyEd" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Multiplies each right (dependent) entry of the mixture table with a value. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>_value</strong> – Value. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK22CMixtureEnthalpyLookupplEd">
+<span id="_CPPv3NK22CMixtureEnthalpyLookupplEd"></span><span id="_CPPv2NK22CMixtureEnthalpyLookupplEd"></span><span id="CMixtureEnthalpyLookup::add-operator__doubleC"></span><span class="target" id="classCMixtureEnthalpyLookup_1a6044ad5335037389f890079e1adb4744"></span><a class="reference internal" href="#_CPPv422CMixtureEnthalpyLookup" title="CMixtureEnthalpyLookup"><span class="n"><span class="pre">CMixtureEnthalpyLookup</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">+</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_d</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK22CMixtureEnthalpyLookupplEd" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Adds a value to all entries of the lookup table. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>_d</strong> – Value. </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Copy of the lookup table. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK22CMixtureEnthalpyLookupmlEd">
+<span id="_CPPv3NK22CMixtureEnthalpyLookupmlEd"></span><span id="_CPPv2NK22CMixtureEnthalpyLookupmlEd"></span><span id="CMixtureEnthalpyLookup::mul-operator__doubleC"></span><span class="target" id="classCMixtureEnthalpyLookup_1af59b49ceae4ffe5d2c9d11d22e4723f0"></span><a class="reference internal" href="#_CPPv422CMixtureEnthalpyLookup" title="CMixtureEnthalpyLookup"><span class="n"><span class="pre">CMixtureEnthalpyLookup</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">*</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_d</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK22CMixtureEnthalpyLookupmlEd" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Multiplies all entries of the lookup table with a value. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>_d</strong> – Value. </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Copy of the lookup table. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK22CMixtureEnthalpyLookupplERK22CMixtureEnthalpyLookup">
+<span id="_CPPv3NK22CMixtureEnthalpyLookupplERK22CMixtureEnthalpyLookup"></span><span id="_CPPv2NK22CMixtureEnthalpyLookupplERK22CMixtureEnthalpyLookup"></span><span id="CMixtureEnthalpyLookup::add-operator__CMixtureEnthalpyLookupCRC"></span><span class="target" id="classCMixtureEnthalpyLookup_1a5874168ee8e2f7f638c9b996b7349032"></span><a class="reference internal" href="#_CPPv422CMixtureEnthalpyLookup" title="CMixtureEnthalpyLookup"><span class="n"><span class="pre">CMixtureEnthalpyLookup</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">+</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv422CMixtureEnthalpyLookup" title="CMixtureEnthalpyLookup"><span class="n"><span class="pre">CMixtureEnthalpyLookup</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_t</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK22CMixtureEnthalpyLookupplERK22CMixtureEnthalpyLookup" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Adds another lookup table. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>_t</strong> – Lookup table. </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Copy of the lookup table. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22CMixtureEnthalpyLookuppLEd">
+<span id="_CPPv3N22CMixtureEnthalpyLookuppLEd"></span><span id="_CPPv2N22CMixtureEnthalpyLookuppLEd"></span><span id="CMixtureEnthalpyLookup::add-assign-operator__double"></span><span class="target" id="classCMixtureEnthalpyLookup_1a8ca512e8499808f9d70e5d254d16c515"></span><a class="reference internal" href="#_CPPv422CMixtureEnthalpyLookup" title="CMixtureEnthalpyLookup"><span class="n"><span class="pre">CMixtureEnthalpyLookup</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">+=</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_d</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22CMixtureEnthalpyLookuppLEd" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Adds a value to all entries of the lookup table. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>_d</strong> – Value. </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Reference to the lookup table. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22CMixtureEnthalpyLookupmLEd">
+<span id="_CPPv3N22CMixtureEnthalpyLookupmLEd"></span><span id="_CPPv2N22CMixtureEnthalpyLookupmLEd"></span><span id="CMixtureEnthalpyLookup::mul-assign-operator__double"></span><span class="target" id="classCMixtureEnthalpyLookup_1a74ec248dcd970cc7fa247c0f811fa59d"></span><a class="reference internal" href="#_CPPv422CMixtureEnthalpyLookup" title="CMixtureEnthalpyLookup"><span class="n"><span class="pre">CMixtureEnthalpyLookup</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">*=</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_d</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22CMixtureEnthalpyLookupmLEd" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Multiplies all entries of the lookup table with a value. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>_d</strong> – Value. </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Reference to the lookup table. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N22CMixtureEnthalpyLookuppLERK22CMixtureEnthalpyLookup">
+<span id="_CPPv3N22CMixtureEnthalpyLookuppLERK22CMixtureEnthalpyLookup"></span><span id="_CPPv2N22CMixtureEnthalpyLookuppLERK22CMixtureEnthalpyLookup"></span><span id="CMixtureEnthalpyLookup::add-assign-operator__CMixtureEnthalpyLookupCR"></span><span class="target" id="classCMixtureEnthalpyLookup_1a719a16d2df6cc7e6267e178d6f50e5d6"></span><a class="reference internal" href="#_CPPv422CMixtureEnthalpyLookup" title="CMixtureEnthalpyLookup"><span class="n"><span class="pre">CMixtureEnthalpyLookup</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">+=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv422CMixtureEnthalpyLookup" title="CMixtureEnthalpyLookup"><span class="n"><span class="pre">CMixtureEnthalpyLookup</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_t</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N22CMixtureEnthalpyLookuppLERK22CMixtureEnthalpyLookup" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Adds another lookup table. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>_t</strong> – Lookup table. </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Reference to the lookup table. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK22CMixtureEnthalpyLookupeqERK22CMixtureEnthalpyLookup">
+<span id="_CPPv3NK22CMixtureEnthalpyLookupeqERK22CMixtureEnthalpyLookup"></span><span id="_CPPv2NK22CMixtureEnthalpyLookupeqERK22CMixtureEnthalpyLookup"></span><span id="CMixtureEnthalpyLookup::eq-operator__CMixtureEnthalpyLookupCRC"></span><span class="target" id="classCMixtureEnthalpyLookup_1a76cb6660eee276db19f23e7f8af422ee"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">==</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv422CMixtureEnthalpyLookup" title="CMixtureEnthalpyLookup"><span class="n"><span class="pre">CMixtureEnthalpyLookup</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_t</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK22CMixtureEnthalpyLookupeqERK22CMixtureEnthalpyLookup" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Compares two lookup tables. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>_t</strong> – Lookup table. </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Whether lookup tables are the same. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="class_plotmanager.html" class="btn btn-neutral float-left" title="Plot manager" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="class_matrix2d.html" class="btn btn-neutral float-right" title="Two-mensional matrix" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, DyssolTEC GmbH.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
