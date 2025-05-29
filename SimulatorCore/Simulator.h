@@ -24,7 +24,6 @@ enum class ESimulatorState
 
 class CSimulator
 {
-	friend class CSimulatorTab;
 
 private:
 	struct SPartitionStatus
@@ -84,6 +83,12 @@ public:
 
 	/// Stop Simulation
 	void Stop();
+
+	/// Gets the simulation log.
+	CSimulatorLog& GetLog();
+
+	/// Gets the name of the currently calculated unit.
+	const std::string& GetUnitName() const;
 
 private:
 	/// Initialize status for each partition.

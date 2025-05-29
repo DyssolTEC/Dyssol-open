@@ -123,6 +123,14 @@ void CSimulator::Stop()
 		SetCurrentStatus(ESimulatorState::TO_BE_STOPPED);
 }
 
+CSimulatorLog& CSimulator::GetLog() {
+	return m_log;
+}
+
+const std::string& CSimulator::GetUnitName () const {
+	return m_unitName; 
+}
+
 void CSimulator::InitializePartitionsStatus()
 {
 	m_partitionsStatus.clear();
