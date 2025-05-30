@@ -176,15 +176,15 @@ void CSimulatorTab::ClearLog() const
 
 void CSimulatorTab::UpdateLog() const
 {
-	while (!m_pSimulator->m_log.EndOfLog())
+	while (!m_pSimulator->GetLog().EndOfLog())
 	{
-		switch (m_pSimulator->m_log.GetReadColor())
+		switch (m_pSimulator->GetLog().GetReadColor())
 		{
 		case CSimulatorLog::ELogColor::DEFAULT: ui.textBrowserLog->setTextColor(QColor(Qt::black));		break;
 		case CSimulatorLog::ELogColor::RED:		ui.textBrowserLog->setTextColor(QColor(Qt::red));		break;
 		case CSimulatorLog::ELogColor::ORANGE:	ui.textBrowserLog->setTextColor(QColor(255, 128, 0));	break;
 		}
-		ui.textBrowserLog->append(QString::fromStdString(m_pSimulator->m_log.Read()));
+		ui.textBrowserLog->append(QString::fromStdString(m_pSimulator->GetLog().Read()));
 	}
 	ui.textBrowserLog->setTextColor(QColor(Qt::black));
 
@@ -194,7 +194,7 @@ void CSimulatorTab::UpdateLog() const
 	ui.tableLog->SetItemNotEditable(EStatTable::TIME_WIN_LENGTH,  0, status.dTWLength);
 	ui.tableLog->SetItemNotEditable(EStatTable::ITERATION_NUMBER, 0, status.iTWIterationFull);
 	ui.tableLog->SetItemNotEditable(EStatTable::WINDOW_NUMBER,    0, status.iWindowNumber);
-	ui.tableLog->SetItemNotEditable(EStatTable::UNIT_NAME,        0, m_pSimulator->m_unitName);
+	ui.tableLog->SetItemNotEditable(EStatTable::UNIT_NAME,        0, m_pSimulator->GetUnitName());
 	ui.tableLog->SetItemNotEditable(EStatTable::ELAPSED_TIME,     0, QDateTime::fromSecsSinceEpoch(m_simulationTimer.elapsed() / 1000).toUTC().toString("hh:mm:ss"));
 }
 
