@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Command line interface &mdash; Dyssol latest documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dyssol_style.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/logo.png"/>
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Overview" href="../002_theory/brief.html" />
+    <link rel="prev" title="Graphical user interfaced" href="gui.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #0E70B6" >
+            <a href="../index.html">
+            <img src="../_static/logo_doc.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Get started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../000_get_started/get_started.html">Get started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../000_get_started/get_started.html#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../000_get_started/get_started.html#windows">Windows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../000_get_started/get_started.html#linux">Linux</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../000_get_started/get_started.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../000_get_started/get_started.html#run-your-first-simulation">Run your first simulation</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User interface</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gui.html">Graphical user interfaced</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gui.html#menu">Menu</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gui.html#file">File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gui.html#setup">Setup</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gui.html#compounds-editor">Compounds editor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gui.html#phases-editor">Phases editor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gui.html#grids-specification">Grids specification</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gui.html#holdups-editor">Holdups editor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gui.html#options">Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gui.html#calculation-sequence">Calculation sequence</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gui.html#recycle-streams">Recycle streams</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gui.html#modules">Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gui.html#tools">Tools</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gui.html#models-manager">Models manager</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gui.html#materials-database">Materials database</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gui.html#settings">Settings</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gui.html#help">Help</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gui.html#about">About</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gui.html#tabs">Tabs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gui.html#flowsheet">Flowsheet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gui.html#simulator">Simulator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gui.html#streams">Streams</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gui.html#units">Units</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Command line interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#main">Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#simulation">Simulation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#simulation-options">Simulation options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#phases">Phases</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compounds">Compounds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#grids">Grids</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flowsheet-structure">Flowsheet structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unit-parameters">Unit parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#holdups">Holdups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#export">Export</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Structure and algorithms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/brief.html">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/brief.html#flowsheet-simulation-of-solids">Flowsheet simulation of solids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/brief.html#approaches-and-methods">Approaches and methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/brief.html#software-system-architecture">Software system architecture</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/simulation.html">Simulation core</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/simulation.html#material-streams">Material streams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/simulation.html#units">Units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/simulation.html#simulator">Simulator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/simulation.html#main-method-and-approaches">Main method and approaches</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/simulation.html#built-in-equation-solvers">Built-in equation solvers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/data.html">Data storage subsystem</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/data.html#hdf5-data-format">HDF5 data format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/data.html#data-caching">Data caching</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/materials.html">Material database</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#dmdb-file">DMDB file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#constant-parameters">Constant parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#dependent-parameters">Dependent parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#interaction-properties">Interaction properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#correlations">Correlations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/materials.html#correlation-search">Correlation search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/materials.html#correlation-functions">Correlation functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/multiDim.html">Multidimentional distributed parameters of solids</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/multiDim.html#tree-data-structures">Tree data structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/multiDim.html#treatment-of-dependent-parameters">Treatment of dependent parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/multiDim.html#transformation-matrices">Transformation matrices</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../002_theory/multiDim.html#application-of-transformation-matrices">Application of transformation matrices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../002_theory/multiDim.html#application-example">Application example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/time.html">Time point management</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/time.html#data-interpolation">Data interpolation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/time.html#interpolation-of-distributed-parameters">Interpolation of distributed parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/time.html#steady-state-units">Steady state units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/time.html#dynamic-units-with-recycle">Dynamic units with recycle</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/theory.html">Theoretical background</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/theory.html#discretization">Discretization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/theory.html#process-systems">Process systems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#sequential-modular-approach">Sequential-modular approach</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#equation-oriented-approach">Equation-oriented approach</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#partitioning-and-tearing">Partitioning and tearing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/theory.html#numerical-methods">Numerical methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#waveform-relaxation-method">Waveform relaxation method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#data-extrapolation">Data extrapolation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#convergence-methods">Convergence methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Libraries</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../003_models/units.html">Unit library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_agglomerator.html">Agglomerator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_agglomerator.html#kernels">Kernels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_agglomerator.html#solvers">Solvers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_crusher.html">Crusher</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_crusher.html#bond-s-model">Bond’s model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../003_models/unit_crusher.html#average-bond-work-indices-for-various-materials">Average Bond Work Indices for various materials</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_crusher.html#cone-model">Cone model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_crusher.html#const-output-model">Const output model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_cyclone.html">Cyclone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_granulator.html">Granulator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_granulator.html#continuous-granulator">Continuous granulator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_granulator.html#batch-granulator">Batch granulator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_inletflow.html">Inlet flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_mixer.html">Mixer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_outletflow.html">Outlet flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_screen.html">Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_screen.html#plitt-s-model">Plitt’s model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_screen.html#molerus-hoffmann-model">Molerus &amp; Hoffmann model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_screen.html#probability-model">Probability model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_screen.html#teipel-hennig-model">Teipel / Hennig model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_solidsbunker.html">Solids bunker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_splitter.html">Splitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_timedelay.html">Time delay</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_timedelay.html#simple-shift">Simple shift</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_timedelay.html#norm-based">Norm-based</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../003_models/solvers.html">Solver library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/solvers.html#agglomeration-solvers">Agglomeration solvers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/solver_cellaverage.html">Cell average</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/solver_fft.html">FFT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/solver_fixedpivot.html">Fixed pivot</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">For developers</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../004_development/compilation.html">Compilation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/compilation.html#windows">Windows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/compilation.html#compilation-requirements">Compilation requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/compilation.html#build">Build</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/compilation.html#build-documentation-and-installers">Build documentation and installers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/compilation.html#linux">Linux</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/compilation.html#sec-development-compilation-linux-requirements">Compilation requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/compilation.html#install-build-environment">Install build environment</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/compilation.html#ubuntu-20-debian-11">Ubuntu 20, Debian 11</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/compilation.html#ubuntu-22-24-debian-12">Ubuntu 22/24, Debian 12</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/compilation.html#id2">Build</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../004_development/models_development.html">For models developers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/models_development.html#configuration-of-visual-studio-project-template">Configuration of Visual Studio project template</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/models_development.html#unit-development">Unit development</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/models_development.html#add-new-unit-to-the-template-project">Add new unit to the template project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/models_development.html#configure-dyssol-to-work-with-implemented-units">Configure Dyssol to work with implemented units</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/models_development.html#development-of-steady-state-units">Development of steady-state units</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/models_development.html#application-example">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/models_development.html#development-of-steady-state-units-with-internal-non-linear-solver">Development of steady-state units with internal non-linear solver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/models_development.html#id1">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/models_development.html#development-of-dynamic-units">Development of dynamic units</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/models_development.html#label-basics">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/models_development.html#development-of-dynamic-units-with-internal-dae-solver">Development of dynamic units with internal DAE solver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/models_development.html#id3">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/models_development.html#configure-unit-to-work-with-matlab">Configure unit to work with MATLAB</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/models_development.html#solver-development">Solver development</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/models_development.html#add-new-solver-to-the-template-project">Add new solver to the template project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/models_development.html#configure-dyssol-to-work-with-implemented-solvers">Configure Dyssol to work with implemented solvers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/models_development.html#development-of-agglomeration-solver">Development of agglomeration solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/models_development.html#configure-solver-to-work-with-matlab">Configure solver to work with MATLAB</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../004_development/api.html">Models API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_baseunit.html">Basic unit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_basestream.html">Basic stream</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_stream.html">Stream</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_holdup.html">Holdup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_portsmanager.html">Ports manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_unitport.html">Unit port</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_unitparametersmanager.html">Unit parameters manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_unitparameters.html">Unit parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upbase.html">Base class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upconst.html">Const</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upconstreal.html">Const real</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upconstint.html">Const int</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upconstuint.html">Const uint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_updependent.html">Dependent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_uptd.html">Time-dependent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upstring.html">String</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upcheckbox.html">Check box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upcombobox.html">Combo box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upcompound.html">Compound</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upcompoundmdb.html">MDB compound</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upreaction.html">Reaction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_uplist.html">List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_uplistreal.html">List real</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_uplistint.html">List int</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_uplistuint.html">List uint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/class_upsolver.html">Solver</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_chemicalreaction.html">Chemical reaction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_agglomerationsolver.html">Agglomeration solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_basesolver.html">Base solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_statevariablesmanager.html">State variables manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_statevariable.html">State variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_curve.html">Curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_plot.html">Plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_plotmanager.html">Plot manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_mixtureenthalpylookup.html">Enthalpy lookup table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_matrix2d.html">Two-mensional matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_densemdmatrix.html">Multidimensional matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/class_transformmatrix.html">Transformation matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/auxiliary_classes.html">Auxiliary classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/psd_functions.html">PSD functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/distribution_functions.html">Distribution functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/thermodynamics.html">Thermodynamics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/thermodynamics.html#for-material-stream-and-holdup">For material stream and holdup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/thermodynamics.html#for-base-unit">For base unit</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/solver_dae.html">DAE Systems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/solver_dae.html#dae-model">DAE model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/solver_dae.html#variables">Variables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/solver_dae.html#tolerance">Tolerance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/solver_dae.html#virtual-functions">Virtual functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/solver_dae.html#other-functions">Other functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/solver_dae.html#dae-solver">DAE solver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/solver_dae.html#model">Model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../004_development/solver_dae.html#id1">Other functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/solver_dae.html#application-example">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/solver_kinsol.html">NL Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/solver_external.html">External solver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/solver_external.html#basic-information">Basic information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/solver_external.html#virtual-functions">Virtual functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../004_development/constants.html">List of constants</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/constants.html#universal-physical-constants">Universal physical constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../004_development/constants.html#dyssol-constants">Dyssol constants</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #0E70B6" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Dyssol</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Command line interface</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="command-line-interface">
+<span id="sec-cli"></span><h1>Command line interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline"></a></h1>
+<p>You can run simulation from the command lines with <code class="docutils literal notranslate"><span class="pre">DyssolC.exe</span></code>, which can be found in the installation directory. Usage:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>DyssolC.exe --key<span class="o">[=</span>value<span class="o">]</span> <span class="o">[</span>--key<span class="o">[=</span>value<span class="o">]</span> <span class="o">[</span>...<span class="o">]]</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 15%" />
+<col style="width: 61%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Short key</p></th>
+<th class="head"><p>Example</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>--script</p></td>
+<td><p>-s</p></td>
+<td><p>DyssolC.exe --script=”script.txt”</p></td>
+</tr>
+<tr class="row-odd"><td><p>--version</p></td>
+<td><p>-v</p></td>
+<td><p>DyssolC.exe --version</p></td>
+</tr>
+<tr class="row-even"><td><p>--models</p></td>
+<td><p>-m</p></td>
+<td><p>DyssolC.exe -m</p></td>
+</tr>
+<tr class="row-odd"><td><p>--models_path</p></td>
+<td><p>-mp</p></td>
+<td><p>DyssolC.exe -m -mp=”models1” -mp=”models2”</p></td>
+</tr>
+<tr class="row-even"><td><p>--help</p></td>
+<td><p>-h</p></td>
+<td><p>DyssolC.exe --help</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">--script</span></code> defines a script file, and it is a required key needed to start simulation. Script is a text file describing all necessary parameters for your simulation file. Details about the script keys are described below.</p>
+<p>You can find exemplary script files in the installation directory under <code class="docutils literal notranslate"><span class="pre">Example</span> <span class="pre">Scripts</span></code>.</p>
+<p>Only 3 script keys from the list are mandatory: <code class="docutils literal notranslate"><span class="pre">SOURCE_FILE</span></code> or <code class="docutils literal notranslate"><span class="pre">RESULT_FILE</span></code>, <code class="docutils literal notranslate"><span class="pre">MODELS_PATH</span></code>, and <code class="docutils literal notranslate"><span class="pre">MATERIALS_DATABASE</span></code>. The rest are optional and will override parameters set in initial file, specified as <code class="docutils literal notranslate"><span class="pre">SOURCE_FILE</span></code>. If <code class="docutils literal notranslate"><span class="pre">SOURCE_FILE</span></code> is not defined, the script should describe the entire flowsheet with all parameters, and <code class="docutils literal notranslate"><span class="pre">RESULT_FILE</span></code> is required. If <code class="docutils literal notranslate"><span class="pre">RESULT_FILE</span></code> parameter is not specified, results of the simulation will be written to a <code class="docutils literal notranslate"><span class="pre">SOURCE_FILE</span></code>.</p>
+<p>script keys <code class="docutils literal notranslate"><span class="pre">MODELS_PATH</span></code>, <code class="docutils literal notranslate"><span class="pre">DISTRIBUTION_GRID</span></code>, <code class="docutils literal notranslate"><span class="pre">UNIT</span></code>, <code class="docutils literal notranslate"><span class="pre">STREAM</span></code>, <code class="docutils literal notranslate"><span class="pre">UNIT_PARAMETER</span></code>, <code class="docutils literal notranslate"><span class="pre">UNIT_HOLDUP_*</span></code>, <code class="docutils literal notranslate"><span class="pre">EXPORT_STREAM_*</span></code>, <code class="docutils literal notranslate"><span class="pre">EXPORT_HOLDUP_*</span></code>, <code class="docutils literal notranslate"><span class="pre">EXPORT_UNIT_*</span></code> can be mentioned several times in the script file, the rest should be places only once.</p>
+<section id="main">
+<h2>Main<a class="headerlink" href="#main" title="Permalink to this headline"></a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 28%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Script key</p></th>
+<th class="head"><p>Value</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>JOB</p></td>
+<td></td>
+<td><p>Delimiter for a sequentially executed job within one script</p></td>
+</tr>
+<tr class="row-odd"><td><p>SOURCE_FILE</p></td>
+<td><p>&lt;path&gt;</p></td>
+<td><p>Full path to a *.dflw file with initial flowsheet</p></td>
+</tr>
+<tr class="row-even"><td><p>RESULT_FILE</p></td>
+<td><p>&lt;path&gt;</p></td>
+<td><p>Full path to a file where simulation results will be written</p></td>
+</tr>
+<tr class="row-odd"><td><p>MODELS_PATH</p></td>
+<td><p>&lt;path&gt;</p></td>
+<td><p>Path to the directory with libraries of units and solvers</p></td>
+</tr>
+<tr class="row-even"><td><p>MATERIALS_DATABASE</p></td>
+<td><p>&lt;path&gt;</p></td>
+<td><p>Full path to the file with materials database</p></td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="simulation">
+<h2>Simulation<a class="headerlink" href="#simulation" title="Permalink to this headline"></a></h2>
+<section id="simulation-options">
+<h3>Simulation options<a class="headerlink" href="#simulation-options" title="Permalink to this headline"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 21%" />
+<col style="width: 64%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Script key</p></th>
+<th class="head"><p>Value</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SIMULATION_TIME</p></td>
+<td><p>&lt;value&gt;</p></td>
+<td><p>End simulation time [s]</p></td>
+</tr>
+<tr class="row-odd"><td><p>RELATIVE_TOLERANCE</p></td>
+<td><p>&lt;value&gt;</p></td>
+<td><p>Global relative tolerance</p></td>
+</tr>
+<tr class="row-even"><td><p>ABSOLUTE_TOLERANCE</p></td>
+<td><p>&lt;value&gt;</p></td>
+<td><p>Global absolute tolerance</p></td>
+</tr>
+<tr class="row-odd"><td><p>MINIMAL_FRACTION</p></td>
+<td><p>&lt;value&gt;</p></td>
+<td><p>Minimum significant fraction in MD matrices</p></td>
+</tr>
+<tr class="row-even"><td><p>SAVE_TIME_STEP_HINT</p></td>
+<td><p>&lt;value&gt;</p></td>
+<td><p>Save time step hint [s] for streams</p></td>
+</tr>
+<tr class="row-odd"><td><p>SAVE_FLAG_FOR_HOLDUPS</p></td>
+<td><p>YES/NO</p></td>
+<td><p>Apply save time step hint for holdups and internal streams</p></td>
+</tr>
+<tr class="row-even"><td><p>THERMO_TEMPERATURE_MIN</p></td>
+<td><p>&lt;value&gt;</p></td>
+<td><p>Min of temperature range [K] where mixtures can be calculated</p></td>
+</tr>
+<tr class="row-odd"><td><p>THERMO_TEMPERATURE_MAX</p></td>
+<td><p>&lt;value&gt;</p></td>
+<td><p>Max of temperature range [K] where mixtures can be calculated</p></td>
+</tr>
+<tr class="row-even"><td><p>THERMO_TEMPERATURE_INTERVALS</p></td>
+<td><p>&lt;value&gt;</p></td>
+<td><p>Number of intervals to calculate temperature of mixtures</p></td>
+</tr>
+<tr class="row-odd"><td><p>INIT_TIME_WINDOW</p></td>
+<td><p>&lt;value&gt;</p></td>
+<td><p>Initial time window [s]</p></td>
+</tr>
+<tr class="row-even"><td><p>MIN_TIME_WINDOW</p></td>
+<td><p>&lt;value&gt;</p></td>
+<td><p>Min size of time window [s]</p></td>
+</tr>
+<tr class="row-odd"><td><p>MAX_TIME_WINDOW</p></td>
+<td><p>&lt;value&gt;</p></td>
+<td><p>Max size of time window [s]</p></td>
+</tr>
+<tr class="row-even"><td><p>MAX_ITERATIONS_NUMBER</p></td>
+<td><p>&lt;value&gt;</p></td>
+<td><p>Max allowed number of iterations</p></td>
+</tr>
+<tr class="row-odd"><td><p>WINDOW_CHANGE_RATE</p></td>
+<td><p>&lt;value&gt;</p></td>
+<td><p>Rate of change of the time window</p></td>
+</tr>
+<tr class="row-even"><td><p>TERATIONS_UPPER_LIMIT</p></td>
+<td><p>&lt;value&gt;</p></td>
+<td><p>Upper limit of iterations for adjusting time window size</p></td>
+</tr>
+<tr class="row-odd"><td><p>ITERATIONS_LOWER_LIMIT</p></td>
+<td><p>&lt;value&gt;</p></td>
+<td><p>Lower limit of iterations for adjusting time window size</p></td>
+</tr>
+<tr class="row-even"><td><p>ITERATIONS_UPPER_LIMIT_1ST</p></td>
+<td><p>&lt;value&gt;</p></td>
+<td><p>Upper limit of iterations for adjusting time window size of the 1st window</p></td>
+</tr>
+<tr class="row-odd"><td><p>RELAXATION_PARAMETER</p></td>
+<td><p>&lt;value&gt;</p></td>
+<td><p>Relaxation parameter for DIRECT_SUBSTITUTION (0;1]</p></td>
+</tr>
+<tr class="row-even"><td><p>ACCELERATION_LIMIT</p></td>
+<td><p>&lt;value&gt;</p></td>
+<td><p>Axxeleration parameter limit for WEGSTEIN (-5;1)</p></td>
+</tr>
+<tr class="row-odd"><td><p>CONVERGENCE_METHOD</p></td>
+<td><p>DIRECT_SUBSTITUTION/WEGSTEIN/STEFFENSEN</p></td>
+<td><p>Convergence method</p></td>
+</tr>
+<tr class="row-even"><td><p>EXTRAPOLATION_METHOD</p></td>
+<td><p>NEAREST_NEIGHBOR/LINEAR/CUBIC_SPLINE</p></td>
+<td><p>Extrapolation method</p></td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="phases">
+<h3>Phases<a class="headerlink" href="#phases" title="Permalink to this headline"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 67%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Script key</p></th>
+<th class="head"><p>Value</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>PHASES</p></td>
+<td><p>&lt;name&gt; SOLID/LIQUID/GAS [&lt;name&gt; SOLID/LIQUID/GAS […]]</p></td>
+<td><p>Defined phases</p></td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="compounds">
+<h3>Compounds<a class="headerlink" href="#compounds" title="Permalink to this headline"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 39%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Script key</p></th>
+<th class="head"><p>Value</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>COMPOUNDS</p></td>
+<td><p>&lt;key&gt;/&lt;name&gt; [&lt;key&gt;/&lt;name&gt; […]]</p></td>
+<td><p>Defined compounds from materials database</p></td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="grids">
+<h3>Grids<a class="headerlink" href="#grids" title="Permalink to this headline"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 55%" />
+<col style="width: 38%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Script key</p></th>
+<th class="head"><p>Value</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>KEEP_EXISTING_GRIDS_VALUES</p></td>
+<td><p>YES/NO</p></td>
+<td><p>Whether to keep grids defined in SOURCE_FILE. If set to NO, all grids are removed before applying any DISTRIBUTION_GRID. Default = YES</p></td>
+</tr>
+<tr class="row-odd"><td><p>DISTRIBUTION_GRID</p></td>
+<td><p>GLOBAL/&lt;unit_name&gt;/&lt;unit_index&gt; SIZE/PARTICLE_POROSITY/FORM_FACTOR/COLOR/USER_DEFINED_** SYMBOLIC &lt;classes_number&gt; &lt;values&gt;</p></td>
+<td><p>Definition of a symbolic grid</p></td>
+</tr>
+<tr class="row-even"><td><p>DISTRIBUTION_GRID</p></td>
+<td><p>GLOBAL/&lt;unit_name&gt;/&lt;unit_index&gt; SIZE NUMERIC MANUAL/EQUIDISTANT/GEOMETRIC_INC/GEOMETRIC_DEC/LOGARITHMIC_INC/LOGARITHMIC_DEC DIAMETER/VOLUME &lt;classes_number&gt; &lt;values&gt;</p></td>
+<td><p>Definition of a numeric size grid</p></td>
+</tr>
+<tr class="row-odd"><td><p>DISTRIBUTION_GRID</p></td>
+<td><p>GLOBAL/&lt;unit_name&gt;/&lt;unit_index&gt; PARTICLE_POROSITY/FORM_FACTOR/COLOR/USER_DEFINED_** NUMERIC MANUAL/EQUIDISTANT/GEOMETRIC_INC/GEOMETRIC_DEC/LOGARITHMIC_INC/LOGARITHMIC_DEC &lt;classes_number&gt; &lt;values&gt;</p></td>
+<td><p>Definition of a numeric non-size grid</p></td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="flowsheet-structure">
+<h3>Flowsheet structure<a class="headerlink" href="#flowsheet-structure" title="Permalink to this headline"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 46%" />
+<col style="width: 46%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Script key</p></th>
+<th class="head"><p>Value</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>KEEP_EXISTING_UNITS</p></td>
+<td><p>YES/NO</p></td>
+<td><p>Whether to keep units defined in SOURCE_FILE. If set to NO, all units are removed before applying any UNIT. Default = YES</p></td>
+</tr>
+<tr class="row-odd"><td><p>UNIT</p></td>
+<td><p>&lt;name&gt; &lt;model_id&gt;/&lt;model_name&gt;/&lt;lib_path&gt;</p></td>
+<td><p>Definition of a unit</p></td>
+</tr>
+<tr class="row-even"><td><p>STREAM</p></td>
+<td><p>&lt;name&gt; &lt;o_unit_name&gt;/&lt;o_unit_index&gt; &lt;o_port_name&gt;/&lt;o_port_index&gt; &lt;i_unit_name&gt;/&lt;i_unit_index&gt; &lt;i_port_name&gt;/&lt;i_port_index&gt;</p></td>
+<td><p>Definition of a stream</p></td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="unit-parameters">
+<h3>Unit parameters<a class="headerlink" href="#unit-parameters" title="Permalink to this headline"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 62%" />
+<col style="width: 31%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Script key</p></th>
+<th class="head"><p>Value</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>UNIT_PARAMETER</p></td>
+<td><p>&lt;unit_name&gt;/&lt;unit_index&gt; &lt;param_name/param_index&gt; &lt;value&gt; [&lt;value&gt; […]]</p></td>
+<td><p>Definition of a constant/string/compound/flag/solver unit parameter</p></td>
+</tr>
+<tr class="row-odd"><td><p>UNIT_PARAMETER</p></td>
+<td><p>&lt;unit_name&gt;/&lt;unit_index&gt; &lt;param_name/param_index&gt; &lt;time&gt; &lt;value&gt; [&lt;time&gt; &lt;value&gt; […]]</p></td>
+<td><p>Definition of a time-dependent unit parameter</p></td>
+</tr>
+<tr class="row-even"><td><p>UNIT_PARAMETER</p></td>
+<td><p>&lt;unit_name&gt;/&lt;unit_index&gt; &lt;param_name/param_index&gt; &lt;subs_number&gt; &lt;base_subs&gt; &lt;name&gt; &lt;nu&gt; &lt;order&gt; &lt;phase&gt; [&lt;name&gt; &lt;nu&gt; &lt;order&gt; &lt;phase&gt; […]]</p></td>
+<td><p>Definition of a reaction unit parameter</p></td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="holdups">
+<h3>Holdups<a class="headerlink" href="#holdups" title="Permalink to this headline"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 58%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Script key</p></th>
+<th class="head"><p>Value</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>KEEP_EXISTING_HOLDUPS_VALUES</p></td>
+<td><p>YES/NO</p></td>
+<td><p>Whether to keep holdups defined in SOURCE_FILE. If set to NO, all holdups values are removed before applying any HOLDUP_*. Default = YES</p></td>
+</tr>
+<tr class="row-odd"><td><p>HOLDUP_OVERALL</p></td>
+<td><p>&lt;unit_name&gt;/&lt;unit_index&gt; &lt;holdup_name&gt;/&lt;holdup_index&gt; &lt;values&gt;</p></td>
+<td><p>Overall (mass/mass flow, temperature, pressure) stream properties for a single time point 0 [s]</p></td>
+</tr>
+<tr class="row-even"><td><p>HOLDUP_OVERALL</p></td>
+<td><p>&lt;unit_name&gt;/&lt;unit_index&gt; &lt;holdup_name&gt;/&lt;holdup_index&gt; &lt;time&gt; &lt;values&gt; [&lt;time&gt; &lt;values&gt; […]]</p></td>
+<td><p>Overall (mass/mass flow, temperature, pressure) stream properties for several time points [s]</p></td>
+</tr>
+<tr class="row-odd"><td><p>HOLDUP_PHASES</p></td>
+<td><p>&lt;unit_name&gt;/&lt;unit_index&gt; &lt;holdup_name&gt;/&lt;holdup_index&gt; &lt;values&gt;</p></td>
+<td><p>Mass fractions of all defined phases for a single time point 0 [s]</p></td>
+</tr>
+<tr class="row-even"><td><p>HOLDUP_PHASES</p></td>
+<td><p>&lt;unit_name&gt;/&lt;unit_index&gt; &lt;holdup_name&gt;/&lt;holdup_index&gt; &lt;time&gt; &lt;values&gt; [&lt;time&gt; &lt;values&gt; […]]</p></td>
+<td><p>Mass fractions of all defined phases for several time points [s]</p></td>
+</tr>
+<tr class="row-odd"><td><p>HOLDUP_COMPOUNDS</p></td>
+<td><p>&lt;unit_name&gt;/&lt;unit_index&gt; &lt;holdup_name&gt;/&lt;holdup_index&gt; SOLID/LIQUID/GAS &lt;values&gt;</p></td>
+<td><p>Compounds mass fractions of all defined compounds in a selected phase for a single time point 0 [s]</p></td>
+</tr>
+<tr class="row-even"><td><p>HOLDUP_COMPOUNDS</p></td>
+<td><p>&lt;unit_name&gt;/&lt;unit_index&gt; &lt;holdup_name&gt;/&lt;holdup_index&gt; SOLID/LIQUID/GAS &lt;time&gt; &lt;values&gt; [&lt;time&gt; &lt;values&gt; […]]</p></td>
+<td><p>Compounds mass fractions of all defined compounds in a selected phase for several time points [s]</p></td>
+</tr>
+<tr class="row-odd"><td><p>HOLDUP_DISTRIBUTION</p></td>
+<td><p>&lt;unit_name&gt;/&lt;unit_index&gt; &lt;holdup_name&gt;/&lt;holdup_index&gt; SIZE MIXTURE/&lt;compound_key&gt;/&lt;compound_name&gt; MASS_FRACTION/NUMBER/Q*_DENSITY/Q*_CUMULATIVE DIAMETER/VOLUME MANUAL/NORMAL/LOG_NORMAL/RRSB/GGS [time] &lt;values&gt; [time &lt;values&gt; […]]</p></td>
+<td><p>Particle size distribution</p></td>
+</tr>
+<tr class="row-even"><td><p>HOLDUP_DISTRIBUTION</p></td>
+<td><p>&lt;unit_name&gt;/&lt;unit_index&gt; &lt;holdup_name&gt;/&lt;holdup_index&gt; PARTICLE_POROSITY/FORM_FACTOR/COLOR/USER_DEFINED_** MIXTURE/&lt;compound_key&gt;/&lt;compound_name&gt; MANUAL/NORMAL/LOG_NORMAL/RRSB/GGS [time] &lt;values&gt; [time &lt;values&gt; […]]</p></td>
+<td><p>Other distributions aside from particle size distribution</p></td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+<section id="export">
+<h3>Export<a class="headerlink" href="#export" title="Permalink to this headline"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 39%" />
+<col style="width: 43%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Script key</p></th>
+<th class="head"><p>Value</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>EXPORT_FILE</p></td>
+<td><p>&lt;path&gt;</p></td>
+<td><p>Full path to a text file where to export all data</p></td>
+</tr>
+<tr class="row-odd"><td><p>EXPORT_PRECISION</p></td>
+<td><p>&lt;value&gt;</p></td>
+<td><p>Precision for floating point output. Default = 6</p></td>
+</tr>
+<tr class="row-even"><td><p>EXPORT_FIXED_POINT</p></td>
+<td><p>YES/NO</p></td>
+<td><p>Formatting for floating-point output. Default = NO</p></td>
+</tr>
+<tr class="row-odd"><td><p>EXPORT_SIGNIFICANCE_LIMIT</p></td>
+<td><p>&lt;value&gt;</p></td>
+<td><p>Values whose absolute value is less than this will be interpreted as 0. Default = 0</p></td>
+</tr>
+<tr class="row-even"><td><p>EXPORT_ONLY</p></td>
+<td><p>YES/NO</p></td>
+<td><p>Perform only export (no simulation) within this JOB. Default = NO</p></td>
+</tr>
+<tr class="row-odd"><td><p>EXPORT_STREAM_MASS</p></td>
+<td><p>&lt;stream_name&gt;/&lt;stream_index&gt; [&lt;time_points&gt;]</p></td>
+<td><p>Export mass flows of a stream</p></td>
+</tr>
+<tr class="row-even"><td><p>EXPORT_STREAM_TEMPERATURE</p></td>
+<td><p>&lt;stream_name&gt;/&lt;stream_index&gt; [&lt;time_points&gt;]</p></td>
+<td><p>Export temperatures of a stream</p></td>
+</tr>
+<tr class="row-odd"><td><p>EXPORT_STREAM_PRESSURE</p></td>
+<td><p>&lt;stream_name&gt;/&lt;stream_index&gt; [&lt;time_points&gt;]</p></td>
+<td><p>Export pressures of a stream</p></td>
+</tr>
+<tr class="row-even"><td><p>EXPORT_STREAM_OVERALLS</p></td>
+<td><p>&lt;stream_name&gt;/&lt;stream_index&gt; [&lt;time_points&gt;]</p></td>
+<td><p>Export all overall properties (mass flow, temperature, pressure) of a stream</p></td>
+</tr>
+<tr class="row-odd"><td><p>EXPORT_STREAM_PHASES_FRACTIONS</p></td>
+<td><p>&lt;stream_name&gt;/&lt;stream_index&gt; [&lt;time_points&gt;]</p></td>
+<td><p>Export phases mass fractions of a stream</p></td>
+</tr>
+<tr class="row-even"><td><p>EXPORT_STREAM_COMPOUNDS_FRACTIONS</p></td>
+<td><p>&lt;stream_name&gt;/&lt;stream_index&gt; [&lt;time_points&gt;]</p></td>
+<td><p>Export compounds mass fractions of a stream</p></td>
+</tr>
+<tr class="row-odd"><td><p>EXPORT_STREAM_PSD</p></td>
+<td><p>&lt;stream_name&gt;/&lt;stream_index&gt; [&lt;time_points&gt;]</p></td>
+<td><p>Export particle size distributions of a stream</p></td>
+</tr>
+<tr class="row-even"><td><p>EXPORT_STREAM_DISTRIBUTIONS</p></td>
+<td><p>&lt;stream_name&gt;/&lt;stream_index&gt; [&lt;time_points&gt;]</p></td>
+<td><p>Export distributed parameters of a stream</p></td>
+</tr>
+<tr class="row-odd"><td><p>EXPORT_HOLDUP_MASS</p></td>
+<td><p>&lt;unit_name&gt;/&lt;unit_index&gt; &lt;holdup_name&gt;/&lt;holdup_index&gt; [&lt;time_points&gt;]</p></td>
+<td><p>Export mass a unit’s holdup</p></td>
+</tr>
+<tr class="row-even"><td><p>EXPORT_HOLDUP_TEMPERATURE</p></td>
+<td><p>&lt;unit_name&gt;/&lt;unit_index&gt; &lt;holdup_name&gt;/&lt;holdup_index&gt; [&lt;time_points&gt;]</p></td>
+<td><p>Export temperatures of a unit’s holdup</p></td>
+</tr>
+<tr class="row-odd"><td><p>EXPORT_HOLDUP_PRESSURE</p></td>
+<td><p>&lt;unit_name&gt;/&lt;unit_index&gt; &lt;holdup_name&gt;/&lt;holdup_index&gt; [&lt;time_points&gt;]</p></td>
+<td><p>Export pressures of a unit’s holdup</p></td>
+</tr>
+<tr class="row-even"><td><p>EXPORT_HOLDUP_OVERALLS</p></td>
+<td><p>&lt;unit_name&gt;/&lt;unit_index&gt; &lt;holdup_name&gt;/&lt;holdup_index&gt; [&lt;time_points&gt;]</p></td>
+<td><p>Export all overall properties (mass, temperature, pressure) of a unit’s holdup</p></td>
+</tr>
+<tr class="row-odd"><td><p>EXPORT_HOLDUP_PHASES_FRACTIONS</p></td>
+<td><p>&lt;unit_name&gt;/&lt;unit_index&gt; &lt;holdup_name&gt;/&lt;holdup_index&gt; [&lt;time_points&gt;]</p></td>
+<td><p>Export phases mass fractions of a unit’s holdup</p></td>
+</tr>
+<tr class="row-even"><td><p>EXPORT_HOLDUP_COMPOUNDS_FRACTIONS</p></td>
+<td><p>&lt;unit_name&gt;/&lt;unit_index&gt; &lt;holdup_name&gt;/&lt;holdup_index&gt; [&lt;time_points&gt;]</p></td>
+<td><p>Export compounds mass fractions of a unit’s holdup</p></td>
+</tr>
+<tr class="row-odd"><td><p>EXPORT_HOLDUP_PSD</p></td>
+<td><p>&lt;unit_name&gt;/&lt;unit_index&gt; &lt;holdup_name&gt;/&lt;holdup_index&gt; [&lt;time_points&gt;]</p></td>
+<td><p>Export particle size distributions of a unit’s holdup</p></td>
+</tr>
+<tr class="row-even"><td><p>EXPORT_HOLDUP_DISTRIBUTIONS</p></td>
+<td><p>&lt;unit_name&gt;/&lt;unit_index&gt; &lt;holdup_name&gt;/&lt;holdup_index&gt; [&lt;time_points&gt;]</p></td>
+<td><p>Export distributed parameters of a unit’s holdup</p></td>
+</tr>
+<tr class="row-odd"><td><p>EXPORT_UNIT_STATE_VARIABLE</p></td>
+<td><p>&lt;unit_name&gt;/&lt;unit_index&gt; &lt;var_name&gt;/&lt;var_index&gt;</p></td>
+<td><p>Export state variable of a unit</p></td>
+</tr>
+<tr class="row-even"><td><p>EXPORT_UNIT_PLOT</p></td>
+<td><p>&lt;unit_name&gt;/&lt;unit_index&gt; &lt;plot_name&gt;/&lt;plot_index&gt; &lt;curve_name&gt;/&lt;curve_index&gt;</p></td>
+<td><p>Export plot values of a unit</p></td>
+</tr>
+<tr class="row-odd"><td><p>EXPORT_FLOWSHEET_GRAPH</p></td>
+<td><p>&lt;path&gt;</p></td>
+<td><p>Export flowsheet graph as a *.png file</p></td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="gui.html" class="btn btn-neutral float-left" title="Graphical user interfaced" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../002_theory/brief.html" class="btn btn-neutral float-right" title="Overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, DyssolTEC GmbH.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multidimensional matrix &mdash; Dyssol latest documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dyssol_style.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/logo.png"/>
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Transformation matrix" href="class_transformmatrix.html" />
+    <link rel="prev" title="Two-mensional matrix" href="class_matrix2d.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #0E70B6" >
+            <a href="../index.html">
+            <img src="../_static/logo_doc.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Get started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../000_get_started/get_started.html">Get started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../000_get_started/get_started.html#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../000_get_started/get_started.html#windows">Windows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../000_get_started/get_started.html#linux">Linux</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../000_get_started/get_started.html#files">Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../000_get_started/get_started.html#run-your-first-simulation">Run your first simulation</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User interface</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../001_ui/gui.html">Graphical user interfaced</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../001_ui/gui.html#menu">Menu</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#file">File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#setup">Setup</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#compounds-editor">Compounds editor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#phases-editor">Phases editor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#grids-specification">Grids specification</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#holdups-editor">Holdups editor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#options">Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#calculation-sequence">Calculation sequence</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#recycle-streams">Recycle streams</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#modules">Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#tools">Tools</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#models-manager">Models manager</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#materials-database">Materials database</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#settings">Settings</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#help">Help</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../001_ui/gui.html#about">About</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../001_ui/gui.html#tabs">Tabs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#flowsheet">Flowsheet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#simulator">Simulator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#streams">Streams</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/gui.html#units">Units</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../001_ui/cli.html">Command line interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../001_ui/cli.html#main">Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../001_ui/cli.html#simulation">Simulation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#simulation-options">Simulation options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#phases">Phases</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#compounds">Compounds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#grids">Grids</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#flowsheet-structure">Flowsheet structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#unit-parameters">Unit parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#holdups">Holdups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../001_ui/cli.html#export">Export</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Structure and algorithms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/brief.html">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/brief.html#flowsheet-simulation-of-solids">Flowsheet simulation of solids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/brief.html#approaches-and-methods">Approaches and methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/brief.html#software-system-architecture">Software system architecture</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/simulation.html">Simulation core</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/simulation.html#material-streams">Material streams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/simulation.html#units">Units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/simulation.html#simulator">Simulator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/simulation.html#main-method-and-approaches">Main method and approaches</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/simulation.html#built-in-equation-solvers">Built-in equation solvers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/data.html">Data storage subsystem</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/data.html#hdf5-data-format">HDF5 data format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/data.html#data-caching">Data caching</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/materials.html">Material database</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#dmdb-file">DMDB file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#constant-parameters">Constant parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#dependent-parameters">Dependent parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#interaction-properties">Interaction properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/materials.html#correlations">Correlations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/materials.html#correlation-search">Correlation search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/materials.html#correlation-functions">Correlation functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/multiDim.html">Multidimentional distributed parameters of solids</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/multiDim.html#tree-data-structures">Tree data structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/multiDim.html#treatment-of-dependent-parameters">Treatment of dependent parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/multiDim.html#transformation-matrices">Transformation matrices</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../002_theory/multiDim.html#application-of-transformation-matrices">Application of transformation matrices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../002_theory/multiDim.html#application-example">Application example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/time.html">Time point management</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/time.html#data-interpolation">Data interpolation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/time.html#interpolation-of-distributed-parameters">Interpolation of distributed parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/time.html#steady-state-units">Steady state units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/time.html#dynamic-units-with-recycle">Dynamic units with recycle</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../002_theory/theory.html">Theoretical background</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/theory.html#discretization">Discretization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/theory.html#process-systems">Process systems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#sequential-modular-approach">Sequential-modular approach</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#equation-oriented-approach">Equation-oriented approach</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#partitioning-and-tearing">Partitioning and tearing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../002_theory/theory.html#numerical-methods">Numerical methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#waveform-relaxation-method">Waveform relaxation method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#data-extrapolation">Data extrapolation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../002_theory/theory.html#convergence-methods">Convergence methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Libraries</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../003_models/units.html">Unit library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_agglomerator.html">Agglomerator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_agglomerator.html#kernels">Kernels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_agglomerator.html#solvers">Solvers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_crusher.html">Crusher</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_crusher.html#bond-s-model">Bond’s model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../003_models/unit_crusher.html#average-bond-work-indices-for-various-materials">Average Bond Work Indices for various materials</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_crusher.html#cone-model">Cone model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_crusher.html#const-output-model">Const output model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_cyclone.html">Cyclone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_granulator.html">Granulator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_granulator.html#continuous-granulator">Continuous granulator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_granulator.html#batch-granulator">Batch granulator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_inletflow.html">Inlet flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_mixer.html">Mixer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_outletflow.html">Outlet flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_screen.html">Screen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_screen.html#plitt-s-model">Plitt’s model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_screen.html#molerus-hoffmann-model">Molerus &amp; Hoffmann model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_screen.html#probability-model">Probability model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_screen.html#teipel-hennig-model">Teipel / Hennig model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_solidsbunker.html">Solids bunker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_splitter.html">Splitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/unit_timedelay.html">Time delay</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_timedelay.html#simple-shift">Simple shift</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/unit_timedelay.html#norm-based">Norm-based</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../003_models/solvers.html">Solver library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../003_models/solvers.html#agglomeration-solvers">Agglomeration solvers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/solver_cellaverage.html">Cell average</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/solver_fft.html">FFT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../003_models/solver_fixedpivot.html">Fixed pivot</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">For developers</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="compilation.html">Compilation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="compilation.html#windows">Windows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="compilation.html#compilation-requirements">Compilation requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compilation.html#build">Build</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compilation.html#build-documentation-and-installers">Build documentation and installers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="compilation.html#linux">Linux</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="compilation.html#sec-development-compilation-linux-requirements">Compilation requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compilation.html#install-build-environment">Install build environment</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="compilation.html#ubuntu-20-debian-11">Ubuntu 20, Debian 11</a></li>
+<li class="toctree-l4"><a class="reference internal" href="compilation.html#ubuntu-22-24-debian-12">Ubuntu 22/24, Debian 12</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="compilation.html#id2">Build</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="models_development.html">For models developers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="models_development.html#configuration-of-visual-studio-project-template">Configuration of Visual Studio project template</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models_development.html#unit-development">Unit development</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#add-new-unit-to-the-template-project">Add new unit to the template project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#configure-dyssol-to-work-with-implemented-units">Configure Dyssol to work with implemented units</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#development-of-steady-state-units">Development of steady-state units</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="models_development.html#application-example">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#development-of-steady-state-units-with-internal-non-linear-solver">Development of steady-state units with internal non-linear solver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="models_development.html#id1">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#development-of-dynamic-units">Development of dynamic units</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="models_development.html#label-basics">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#development-of-dynamic-units-with-internal-dae-solver">Development of dynamic units with internal DAE solver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="models_development.html#id3">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#configure-unit-to-work-with-matlab">Configure unit to work with MATLAB</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="models_development.html#solver-development">Solver development</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#add-new-solver-to-the-template-project">Add new solver to the template project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#configure-dyssol-to-work-with-implemented-solvers">Configure Dyssol to work with implemented solvers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#development-of-agglomeration-solver">Development of agglomeration solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models_development.html#configure-solver-to-work-with-matlab">Configure solver to work with MATLAB</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">Models API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="class_baseunit.html">Basic unit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_basestream.html">Basic stream</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_stream.html">Stream</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_holdup.html">Holdup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_portsmanager.html">Ports manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_unitport.html">Unit port</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_unitparametersmanager.html">Unit parameters manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_unitparameters.html">Unit parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="class_upbase.html">Base class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upconst.html">Const</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upconstreal.html">Const real</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upconstint.html">Const int</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upconstuint.html">Const uint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_updependent.html">Dependent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_uptd.html">Time-dependent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upstring.html">String</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upcheckbox.html">Check box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upcombobox.html">Combo box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upcompound.html">Compound</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upcompoundmdb.html">MDB compound</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upreaction.html">Reaction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_uplist.html">List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_uplistreal.html">List real</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_uplistint.html">List int</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_uplistuint.html">List uint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="class_upsolver.html">Solver</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="class_chemicalreaction.html">Chemical reaction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_agglomerationsolver.html">Agglomeration solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_basesolver.html">Base solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_statevariablesmanager.html">State variables manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_statevariable.html">State variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_curve.html">Curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_plot.html">Plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_plotmanager.html">Plot manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_mixtureenthalpylookup.html">Enthalpy lookup table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_matrix2d.html">Two-mensional matrix</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Multidimensional matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_transformmatrix.html">Transformation matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auxiliary_classes.html">Auxiliary classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="psd_functions.html">PSD functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="distribution_functions.html">Distribution functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thermodynamics.html">Thermodynamics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="thermodynamics.html#for-material-stream-and-holdup">For material stream and holdup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="thermodynamics.html#for-base-unit">For base unit</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="solver_dae.html">DAE Systems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solver_dae.html#dae-model">DAE model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="solver_dae.html#variables">Variables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="solver_dae.html#tolerance">Tolerance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="solver_dae.html#virtual-functions">Virtual functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="solver_dae.html#other-functions">Other functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="solver_dae.html#dae-solver">DAE solver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="solver_dae.html#model">Model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="solver_dae.html#id1">Other functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="solver_dae.html#application-example">Application example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="solver_kinsol.html">NL Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solver_external.html">External solver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solver_external.html#basic-information">Basic information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solver_external.html#virtual-functions">Virtual functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html">List of constants</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="constants.html#universal-physical-constants">Universal physical constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="constants.html#dyssol-constants">Dyssol constants</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #0E70B6" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Dyssol</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="api.html">Models API</a> &raquo;</li>
+      <li>Multidimensional matrix</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="multidimensional-matrix">
+<span id="sec-development-api-densemdmatrix"></span><h1>Multidimensional matrix<a class="headerlink" href="#multidimensional-matrix" title="Permalink to this headline"></a></h1>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv414CDenseMDMatrix">
+<span id="_CPPv314CDenseMDMatrix"></span><span id="_CPPv214CDenseMDMatrix"></span><span id="CDenseMDMatrix"></span><span class="target" id="classCDenseMDMatrix"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CDenseMDMatrix</span></span></span><a class="headerlink" href="#_CPPv414CDenseMDMatrix" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Multidimensional matrix in dense format. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrix14CDenseMDMatrixEv">
+<span id="_CPPv3N14CDenseMDMatrix14CDenseMDMatrixEv"></span><span id="_CPPv2N14CDenseMDMatrix14CDenseMDMatrixEv"></span><span id="CDenseMDMatrix::CDenseMDMatrix"></span><span class="target" id="classCDenseMDMatrix_1a2ddcfef5ea52050a08313d92908542c8"></span><span class="sig-name descname"><span class="n"><span class="pre">CDenseMDMatrix</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrix14CDenseMDMatrixEv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Basic constructor. Creates an empty matrix. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrix14CDenseMDMatrixERKNSt6vectorIjEERKNSt6vectorIjEE">
+<span id="_CPPv3N14CDenseMDMatrix14CDenseMDMatrixERKNSt6vectorIjEERKNSt6vectorIjEE"></span><span id="_CPPv2N14CDenseMDMatrix14CDenseMDMatrixERKNSt6vectorIjEERKNSt6vectorIjEE"></span><span id="CDenseMDMatrix::CDenseMDMatrix__std::vector:unsigned:CR.std::vector:unsigned:CR"></span><span class="target" id="classCDenseMDMatrix_1a6d55cb44eb95618445a6ce2a69720fe2"></span><span class="sig-name descname"><span class="n"><span class="pre">CDenseMDMatrix</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">unsigned</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vTypes</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">unsigned</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vClasses</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrix14CDenseMDMatrixERKNSt6vectorIjEERKNSt6vectorIjEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Constructor creating a matrix with the given types and number of classes. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_vTypes</strong> – Distribution types. </p></li>
+<li><p><strong>_vClasses</strong> – Numbers of classes of distributions. </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrix13SetDimensionsEjj">
+<span id="_CPPv3N14CDenseMDMatrix13SetDimensionsEjj"></span><span id="_CPPv2N14CDenseMDMatrix13SetDimensionsEjj"></span><span id="CDenseMDMatrix::SetDimensions__unsigned.unsigned"></span><span class="target" id="classCDenseMDMatrix_1a966f62bce490969e768a793153e53365"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SetDimensions</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nType</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nClasses</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrix13SetDimensionsEjj" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sets new dimensions set with erasing of old data. </p>
+<p>Type is one of the <a class="reference internal" href="constants.html#DyssolDefines_8h_1a6165ddec8608fb375df64f3a4a5ad740"><span class="std std-ref">EDistrTypes</span></a>. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_nType</strong> – Distribution type. </p></li>
+<li><p><strong>_nClasses</strong> – Number of classes. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Error flag. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrix13SetDimensionsEjjjj">
+<span id="_CPPv3N14CDenseMDMatrix13SetDimensionsEjjjj"></span><span id="_CPPv2N14CDenseMDMatrix13SetDimensionsEjjjj"></span><span id="CDenseMDMatrix::SetDimensions__unsigned.unsigned.unsigned.unsigned"></span><span class="target" id="classCDenseMDMatrix_1a53dfa589e2898924548cfeb8696fd44e"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SetDimensions</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nType1</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nClasses1</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nType2</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nClasses2</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrix13SetDimensionsEjjjj" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sets new dimensions set with erasing of old data. </p>
+<p>Types are types of the <a class="reference internal" href="constants.html#DyssolDefines_8h_1a6165ddec8608fb375df64f3a4a5ad740"><span class="std std-ref">EDistrTypes</span></a>. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_nType1</strong> – Fisrt distribution type. </p></li>
+<li><p><strong>_nClasses1</strong> – Number of classes of first distribution. </p></li>
+<li><p><strong>_nType2</strong> – Second distribution type. </p></li>
+<li><p><strong>_nClasses2</strong> – Number of classes of second distribution. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Error flag. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrix13SetDimensionsEjjjjjj">
+<span id="_CPPv3N14CDenseMDMatrix13SetDimensionsEjjjjjj"></span><span id="_CPPv2N14CDenseMDMatrix13SetDimensionsEjjjjjj"></span><span id="CDenseMDMatrix::SetDimensions__unsigned.unsigned.unsigned.unsigned.unsigned.unsigned"></span><span class="target" id="classCDenseMDMatrix_1a071524a4fcaa97d054a84c2864f9d104"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SetDimensions</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nType1</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nClasses1</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nType2</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nClasses2</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nType3</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nClasses3</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrix13SetDimensionsEjjjjjj" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sets new dimensions set with erasing of old data. </p>
+<p>Types are one of the <a class="reference internal" href="constants.html#DyssolDefines_8h_1a6165ddec8608fb375df64f3a4a5ad740"><span class="std std-ref">EDistrTypes</span></a>. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_nType1</strong> – First distribution type. </p></li>
+<li><p><strong>_nClasses1</strong> – Number of classes of first distribution. </p></li>
+<li><p><strong>_nType2</strong> – Second distribution type. </p></li>
+<li><p><strong>_nClasses2</strong> – Number of classes of second distribution. </p></li>
+<li><p><strong>_nType3</strong> – Third distribution type. </p></li>
+<li><p><strong>_nClasses3</strong> – Number of classes of third distribution. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Error flag. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrix13SetDimensionsERKNSt6vectorIjEERKNSt6vectorIjEE">
+<span id="_CPPv3N14CDenseMDMatrix13SetDimensionsERKNSt6vectorIjEERKNSt6vectorIjEE"></span><span id="_CPPv2N14CDenseMDMatrix13SetDimensionsERKNSt6vectorIjEERKNSt6vectorIjEE"></span><span id="CDenseMDMatrix::SetDimensions__std::vector:unsigned:CR.std::vector:unsigned:CR"></span><span class="target" id="classCDenseMDMatrix_1a27a74c304f7e8bbd59efd5801809217e"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SetDimensions</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">unsigned</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vTypes</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">unsigned</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vClasses</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrix13SetDimensionsERKNSt6vectorIjEERKNSt6vectorIjEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sets new dimensions set with erasing of old data. </p>
+<p>Types is the vector of <a class="reference internal" href="constants.html#DyssolDefines_8h_1a6165ddec8608fb375df64f3a4a5ad740"><span class="std std-ref">EDistrTypes</span></a>. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_vTypes</strong> – Distribution types. </p></li>
+<li><p><strong>_vClasses</strong> – Numbers of classes of distributions. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Error flag. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14CDenseMDMatrix13GetDimensionsEv">
+<span id="_CPPv3NK14CDenseMDMatrix13GetDimensionsEv"></span><span id="_CPPv2NK14CDenseMDMatrix13GetDimensionsEv"></span><span id="CDenseMDMatrix::GetDimensionsC"></span><span class="target" id="classCDenseMDMatrix_1a328447b14675e0926b8b8977e5f5fa25"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">unsigned</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetDimensions</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14CDenseMDMatrix13GetDimensionsEv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns vector with all current defined dimensions types. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Vector of defined dimensions types. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14CDenseMDMatrix10GetClassesEv">
+<span id="_CPPv3NK14CDenseMDMatrix10GetClassesEv"></span><span id="_CPPv2NK14CDenseMDMatrix10GetClassesEv"></span><span id="CDenseMDMatrix::GetClassesC"></span><span class="target" id="classCDenseMDMatrix_1a40437dee3d6248be3d8040f25c9a5717"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">unsigned</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetClasses</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14CDenseMDMatrix10GetClassesEv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns vector with current numbers of classes. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Vector of defined classes. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14CDenseMDMatrix19GetDimensionsNumberEv">
+<span id="_CPPv3NK14CDenseMDMatrix19GetDimensionsNumberEv"></span><span id="_CPPv2NK14CDenseMDMatrix19GetDimensionsNumberEv"></span><span id="CDenseMDMatrix::GetDimensionsNumberC"></span><span class="target" id="classCDenseMDMatrix_1a7bd9dcc880c065a41773c1b4ee5faad0"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetDimensionsNumber</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14CDenseMDMatrix19GetDimensionsNumberEv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns current number of dimensions. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Number of defined dimensions </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrix5ClearEv">
+<span id="_CPPv3N14CDenseMDMatrix5ClearEv"></span><span id="_CPPv2N14CDenseMDMatrix5ClearEv"></span><span id="CDenseMDMatrix::Clear"></span><span class="target" id="classCDenseMDMatrix_1a4f4937c56255d32b3931a4a7b063babf"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Clear</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrix5ClearEv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Clears all data and information about dimensions. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrix9ClearDataEv">
+<span id="_CPPv3N14CDenseMDMatrix9ClearDataEv"></span><span id="_CPPv2N14CDenseMDMatrix9ClearDataEv"></span><span id="CDenseMDMatrix::ClearData"></span><span class="target" id="classCDenseMDMatrix_1a255252c347ac65ef156356b2868d6a05"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ClearData</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrix9ClearDataEv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Clears all data in the matrix by setting all values to 0. </p>
+<p>Dimensions set won’t be erased. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14CDenseMDMatrix10GetDataPtrEv">
+<span id="_CPPv3NK14CDenseMDMatrix10GetDataPtrEv"></span><span id="_CPPv2NK14CDenseMDMatrix10GetDataPtrEv"></span><span id="CDenseMDMatrix::GetDataPtrC"></span><span class="target" id="classCDenseMDMatrix_1a5ed4a1a2a37fe78a2ba0a197a353ef22"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">GetDataPtr</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14CDenseMDMatrix10GetDataPtrEv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns const pointer to data. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Const pointer to data. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrix10GetDataPtrEv">
+<span id="_CPPv3N14CDenseMDMatrix10GetDataPtrEv"></span><span id="_CPPv2N14CDenseMDMatrix10GetDataPtrEv"></span><span id="CDenseMDMatrix::GetDataPtr"></span><span class="target" id="classCDenseMDMatrix_1a8ce1b7a50443add419c3d571575155f8"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">GetDataPtr</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrix10GetDataPtrEv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns pointer to data. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Pointer to data. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14CDenseMDMatrix13GetDataLengthEv">
+<span id="_CPPv3NK14CDenseMDMatrix13GetDataLengthEv"></span><span id="_CPPv2NK14CDenseMDMatrix13GetDataLengthEv"></span><span id="CDenseMDMatrix::GetDataLengthC"></span><span class="target" id="classCDenseMDMatrix_1a299ecf66a546fb822605dd9cd097b163"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetDataLength</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14CDenseMDMatrix13GetDataLengthEv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns length of the plain data array. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Total data length. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14CDenseMDMatrix8GetValueEjj">
+<span id="_CPPv3NK14CDenseMDMatrix8GetValueEjj"></span><span id="_CPPv2NK14CDenseMDMatrix8GetValueEjj"></span><span id="CDenseMDMatrix::GetValue__unsigned.unsignedC"></span><span class="target" id="classCDenseMDMatrix_1a4362a5f2bc4f0edd2e7d4e092f0f8fc6"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetValue</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nDim</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nCoord</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14CDenseMDMatrix8GetValueEjj" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns value by specified dimension and coordinate with possible reducing of dimensions set. </p>
+<p>Returns -1 on error. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_nDim</strong> – Target dimension. </p></li>
+<li><p><strong>_nCoord</strong> – Coordinate. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Value by specified dimension and coordinate. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14CDenseMDMatrix8GetValueEjjjj">
+<span id="_CPPv3NK14CDenseMDMatrix8GetValueEjjjj"></span><span id="_CPPv2NK14CDenseMDMatrix8GetValueEjjjj"></span><span id="CDenseMDMatrix::GetValue__unsigned.unsigned.unsigned.unsignedC"></span><span class="target" id="classCDenseMDMatrix_1aaefe297e399e45bc1a85efe83a061dd6"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetValue</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nDim1</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nCoord1</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nDim2</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nCoord2</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14CDenseMDMatrix8GetValueEjjjj" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns value by specified dimensions and coordinates with possible reducing of dimensions set. </p>
+<p>Returns -1 on error. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_nDim1</strong> – First dimension. </p></li>
+<li><p><strong>_nCoord1</strong> – First coordinate. </p></li>
+<li><p><strong>_nDim2</strong> – Second dimension. </p></li>
+<li><p><strong>_nCoord2</strong> – Second coordinate. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Value by specified dimensions and coordinates. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14CDenseMDMatrix8GetValueEjjjjjj">
+<span id="_CPPv3NK14CDenseMDMatrix8GetValueEjjjjjj"></span><span id="_CPPv2NK14CDenseMDMatrix8GetValueEjjjjjj"></span><span id="CDenseMDMatrix::GetValue__unsigned.unsigned.unsigned.unsigned.unsigned.unsignedC"></span><span class="target" id="classCDenseMDMatrix_1aeee8fefdc60f4282b2b771180d2ebf5c"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetValue</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nDim1</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nCoord1</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nDim2</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nCoord2</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nDim3</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nCoord3</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14CDenseMDMatrix8GetValueEjjjjjj" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns value by specified dimensions and coordinates with possible reducing of dimensions set. </p>
+<p>Returns -1 on error. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_nDim1</strong> – First dimension. </p></li>
+<li><p><strong>_nCoord1</strong> – First coordinate. </p></li>
+<li><p><strong>_nDim2</strong> – Second dimension. </p></li>
+<li><p><strong>_nCoord2</strong> – Second coordinate. </p></li>
+<li><p><strong>_nDim3</strong> – Third dimension. </p></li>
+<li><p><strong>_nCoord3</strong> – Third coordinate. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Value by specified dimensions and coordinates. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14CDenseMDMatrix8GetValueERKNSt6vectorIjEE">
+<span id="_CPPv3NK14CDenseMDMatrix8GetValueERKNSt6vectorIjEE"></span><span id="_CPPv2NK14CDenseMDMatrix8GetValueERKNSt6vectorIjEE"></span><span id="CDenseMDMatrix::GetValue__std::vector:unsigned:CRC"></span><span class="target" id="classCDenseMDMatrix_1a15928c5d04a250218399d90bb36f10db"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetValue</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">unsigned</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vCoords</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14CDenseMDMatrix8GetValueERKNSt6vectorIjEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns value by specified coordinates according to the full defined set of dimensions. </p>
+<p>Returns -1 on error. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>_vCoords</strong> – Coordinates. </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Value by specified coordinates. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14CDenseMDMatrix8GetValueERKNSt6vectorIjEERKNSt6vectorIjEE">
+<span id="_CPPv3NK14CDenseMDMatrix8GetValueERKNSt6vectorIjEERKNSt6vectorIjEE"></span><span id="_CPPv2NK14CDenseMDMatrix8GetValueERKNSt6vectorIjEERKNSt6vectorIjEE"></span><span id="CDenseMDMatrix::GetValue__std::vector:unsigned:CR.std::vector:unsigned:CRC"></span><span class="target" id="classCDenseMDMatrix_1ac9ed6bd4fa25e9d76d558090e0e8b74b"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetValue</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">unsigned</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vDims</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">unsigned</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vCoords</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14CDenseMDMatrix8GetValueERKNSt6vectorIjEERKNSt6vectorIjEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns value by specified coordinates and dimensions sequence. </p>
+<p>Dimensions set can be reduced. Returns -1 on error. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_vDims</strong> – Dimensions. </p></li>
+<li><p><strong>_vCoords</strong> – Coordinates. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Value by specified dimensions and coordinates sequence. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14CDenseMDMatrix14GetVectorValueEj">
+<span id="_CPPv3NK14CDenseMDMatrix14GetVectorValueEj"></span><span id="_CPPv2NK14CDenseMDMatrix14GetVectorValueEj"></span><span id="CDenseMDMatrix::GetVectorValue__unsignedC"></span><span class="target" id="classCDenseMDMatrix_1acf6383d5d7b0d66656117ec6e23927a2"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetVectorValue</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nDim</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14CDenseMDMatrix14GetVectorValueEj" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns vector of values according to specified dimension with possible reducing of dimensions set. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>_nDim</strong> – Target dimension. </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Vector of values according to specified dimension. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14CDenseMDMatrix14GetVectorValueEjRNSt6vectorIdEE">
+<span id="_CPPv3NK14CDenseMDMatrix14GetVectorValueEjRNSt6vectorIdEE"></span><span id="_CPPv2NK14CDenseMDMatrix14GetVectorValueEjRNSt6vectorIdEE"></span><span id="CDenseMDMatrix::GetVectorValue__unsigned.std::vector:double:RC"></span><span class="target" id="classCDenseMDMatrix_1a5432f9237a94d9905255851ae26c4f96"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetVectorValue</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nDim</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vResult</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14CDenseMDMatrix14GetVectorValueEjRNSt6vectorIdEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns vector of values according to specified dimension with possible reducing of dimensions set. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_nDim</strong> – Target dimension. </p></li>
+<li><p><strong>_vResult</strong> – Vector of values according to specified dimension. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Error flag. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14CDenseMDMatrix14GetVectorValueEjjjRNSt6vectorIdEE">
+<span id="_CPPv3NK14CDenseMDMatrix14GetVectorValueEjjjRNSt6vectorIdEE"></span><span id="_CPPv2NK14CDenseMDMatrix14GetVectorValueEjjjRNSt6vectorIdEE"></span><span id="CDenseMDMatrix::GetVectorValue__unsigned.unsigned.unsigned.std::vector:double:RC"></span><span class="target" id="classCDenseMDMatrix_1a698438212dad703ae0b321d1c168cc1f"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetVectorValue</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nDim1</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nCoord1</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nDim2</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vResult</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14CDenseMDMatrix14GetVectorValueEjjjRNSt6vectorIdEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns vector of values according to specified dimensions and coordinates with possible reducing of dimensions set. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_nDim1</strong> – First dimension. </p></li>
+<li><p><strong>_nCoord1</strong> – First coordinate. </p></li>
+<li><p><strong>_nDim2</strong> – Second dimension. </p></li>
+<li><p><strong>_vResult</strong> – Vector of values according to specified dimensions and coordinates. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Error flag. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14CDenseMDMatrix14GetVectorValueEjjjjjRNSt6vectorIdEE">
+<span id="_CPPv3NK14CDenseMDMatrix14GetVectorValueEjjjjjRNSt6vectorIdEE"></span><span id="_CPPv2NK14CDenseMDMatrix14GetVectorValueEjjjjjRNSt6vectorIdEE"></span><span id="CDenseMDMatrix::GetVectorValue__unsigned.unsigned.unsigned.unsigned.unsigned.std::vector:double:RC"></span><span class="target" id="classCDenseMDMatrix_1a080efc4abb8d54deacfc1c4fbc24736a"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetVectorValue</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nDim1</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nCoord1</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nDim2</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nCoord2</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nDim3</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vResult</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14CDenseMDMatrix14GetVectorValueEjjjjjRNSt6vectorIdEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns vector of values according to specified dimensions and coordinates with possible reducing of dimensions set. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_nDim1</strong> – First dimension. </p></li>
+<li><p><strong>_nCoord1</strong> – First coordinate. </p></li>
+<li><p><strong>_nDim2</strong> – Second dimension. </p></li>
+<li><p><strong>_nCoord2</strong> – Second coordinate. </p></li>
+<li><p><strong>_nDim3</strong> – Third dimension. </p></li>
+<li><p><strong>_vResult</strong> – Vector of values according to specified dimensions and coordinates. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Error flag. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14CDenseMDMatrix14GetVectorValueEjjjjj">
+<span id="_CPPv3NK14CDenseMDMatrix14GetVectorValueEjjjjj"></span><span id="_CPPv2NK14CDenseMDMatrix14GetVectorValueEjjjjj"></span><span id="CDenseMDMatrix::GetVectorValue__unsigned.unsigned.unsigned.unsigned.unsignedC"></span><span class="target" id="classCDenseMDMatrix_1abd8730e6ff18c078eb80c45a4adc7d18"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetVectorValue</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nDim1</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nCoord1</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nDim2</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nCoord2</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nDim3</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14CDenseMDMatrix14GetVectorValueEjjjjj" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns vector of values according to specified dimensions and coordinates with possible reducing of dimensions set. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_nDim1</strong> – First dimension. </p></li>
+<li><p><strong>_nCoord1</strong> – First coordinate. </p></li>
+<li><p><strong>_nDim2</strong> – Second dimension. </p></li>
+<li><p><strong>_nCoord2</strong> – Second coordinate. </p></li>
+<li><p><strong>_nDim3</strong> – Third dimension. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Vector of values according to specified dimensions and coordinates. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14CDenseMDMatrix14GetVectorValueERKNSt6vectorIjEERNSt6vectorIdEE">
+<span id="_CPPv3NK14CDenseMDMatrix14GetVectorValueERKNSt6vectorIjEERNSt6vectorIdEE"></span><span id="_CPPv2NK14CDenseMDMatrix14GetVectorValueERKNSt6vectorIjEERNSt6vectorIdEE"></span><span id="CDenseMDMatrix::GetVectorValue__std::vector:unsigned:CR.std::vector:double:RC"></span><span class="target" id="classCDenseMDMatrix_1a1ccd70553301f099935185227f70a026"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetVectorValue</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">unsigned</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vCoords</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vResult</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14CDenseMDMatrix14GetVectorValueERKNSt6vectorIjEERNSt6vectorIdEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns vector of values by specified coordinates according to a full defined dimensions set. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_vCoords</strong> – Coordinates. </p></li>
+<li><p><strong>_vResult</strong> – Vector of values by specified coordinates. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Error flag. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14CDenseMDMatrix14GetVectorValueERKNSt6vectorIjEERKNSt6vectorIjEERNSt6vectorIdEE">
+<span id="_CPPv3NK14CDenseMDMatrix14GetVectorValueERKNSt6vectorIjEERKNSt6vectorIjEERNSt6vectorIdEE"></span><span id="_CPPv2NK14CDenseMDMatrix14GetVectorValueERKNSt6vectorIjEERKNSt6vectorIjEERNSt6vectorIdEE"></span><span id="CDenseMDMatrix::GetVectorValue__std::vector:unsigned:CR.std::vector:unsigned:CR.std::vector:double:RC"></span><span class="target" id="classCDenseMDMatrix_1a0056988187de409dead395c69f87e11e"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetVectorValue</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">unsigned</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vDims</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">unsigned</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vCoords</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vResult</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14CDenseMDMatrix14GetVectorValueERKNSt6vectorIjEERKNSt6vectorIjEERNSt6vectorIdEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns vector of values according to specified dimensions and coordinates. </p>
+<p>Dimensions set can be reduced. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_vDims</strong> – Dimensions. </p></li>
+<li><p><strong>_vCoords</strong> – Coordinates. </p></li>
+<li><p><strong>_vResult</strong> – Vector of values according to specified dimensions and coordinates. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Error flag. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK14CDenseMDMatrix14GetVectorValueERKNSt6vectorIjEERKNSt6vectorIjEE">
+<span id="_CPPv3NK14CDenseMDMatrix14GetVectorValueERKNSt6vectorIjEERKNSt6vectorIjEE"></span><span id="_CPPv2NK14CDenseMDMatrix14GetVectorValueERKNSt6vectorIjEERKNSt6vectorIjEE"></span><span id="CDenseMDMatrix::GetVectorValue__std::vector:unsigned:CR.std::vector:unsigned:CRC"></span><span class="target" id="classCDenseMDMatrix_1ab7928a2150ccd4180df603b281a2d7b8"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GetVectorValue</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">unsigned</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vDims</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">unsigned</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vCoords</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK14CDenseMDMatrix14GetVectorValueERKNSt6vectorIjEERKNSt6vectorIjEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Returns vector of values according to specified dimensions and coordinates. Dimensions set can be reduced. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_vDims</strong> – Dimensions. </p></li>
+<li><p><strong>_vCoords</strong> – Coordinates. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Vector of values according to specified dimensions and coordinates. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrix8SetValueEjd">
+<span id="_CPPv3N14CDenseMDMatrix8SetValueEjd"></span><span id="_CPPv2N14CDenseMDMatrix8SetValueEjd"></span><span id="CDenseMDMatrix::SetValue__unsigned.double"></span><span class="target" id="classCDenseMDMatrix_1aeedfb5895756bcac8db2f5b60e1f77e4"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SetValue</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nCoord</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_dValue</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrix8SetValueEjd" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sets value in 1D-matrix by specified coordinate. </p>
+<p>Sets value only if the number of dimensions is the same as in the matrix. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_nCoord</strong> – Coordinate. </p></li>
+<li><p><strong>_dValue</strong> – New value. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Error flag. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrix8SetValueEjjjd">
+<span id="_CPPv3N14CDenseMDMatrix8SetValueEjjjd"></span><span id="_CPPv2N14CDenseMDMatrix8SetValueEjjjd"></span><span id="CDenseMDMatrix::SetValue__unsigned.unsigned.unsigned.double"></span><span class="target" id="classCDenseMDMatrix_1a3dd719017572977d71825a7602669eb9"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SetValue</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nDim1</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nCoord1</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nCoord2</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_dValue</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrix8SetValueEjjjd" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sets value in 2D-matrix by specified dimensions and coordinates. </p>
+<p>Sets value only if the number of dimensions is the same as in the matrix. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_nDim1</strong> – First dimension. </p></li>
+<li><p><strong>_nCoord1</strong> – First coordinate. </p></li>
+<li><p><strong>_nCoord2</strong> – Second coordinate. </p></li>
+<li><p><strong>_dValue</strong> – New value. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Error flag. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrix8SetValueEjjjjjd">
+<span id="_CPPv3N14CDenseMDMatrix8SetValueEjjjjjd"></span><span id="_CPPv2N14CDenseMDMatrix8SetValueEjjjjjd"></span><span id="CDenseMDMatrix::SetValue__unsigned.unsigned.unsigned.unsigned.unsigned.double"></span><span class="target" id="classCDenseMDMatrix_1a209b492db20b887d19bc6188830b6120"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SetValue</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nDim1</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nCoord1</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nDim2</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nCoord2</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nCoord3</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_dValue</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrix8SetValueEjjjjjd" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sets value in 3D-matrix by specified dimensions and coordinates. </p>
+<p>Sets value only if the number of dimensions is the same as in the matrix. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_nDim1</strong> – First dimension. </p></li>
+<li><p><strong>_nCoord1</strong> – First coordinate. </p></li>
+<li><p><strong>_nDim2</strong> – Second dimension. </p></li>
+<li><p><strong>_nCoord2</strong> – Second coordinate. </p></li>
+<li><p><strong>_nCoord3</strong> – Third coordinate. </p></li>
+<li><p><strong>_dValue</strong> – New value. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Error flag. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrix8SetValueERKNSt6vectorIjEEd">
+<span id="_CPPv3N14CDenseMDMatrix8SetValueERKNSt6vectorIjEEd"></span><span id="_CPPv2N14CDenseMDMatrix8SetValueERKNSt6vectorIjEEd"></span><span id="CDenseMDMatrix::SetValue__std::vector:unsigned:CR.double"></span><span class="target" id="classCDenseMDMatrix_1a20b3e5691f5d76435a3464ee2c170c24"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SetValue</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">unsigned</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vCoords</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_dValue</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrix8SetValueERKNSt6vectorIjEEd" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sets value by specified coordinates according to the full defined set of dimensions. </p>
+<p>Sets value only if the number of dimensions is the same as in the matrix. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_vCoords</strong> – Coordinates. </p></li>
+<li><p><strong>_dValue</strong> – New value. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Error flag. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrix8SetValueERKNSt6vectorIjEERKNSt6vectorIjEEd">
+<span id="_CPPv3N14CDenseMDMatrix8SetValueERKNSt6vectorIjEERKNSt6vectorIjEEd"></span><span id="_CPPv2N14CDenseMDMatrix8SetValueERKNSt6vectorIjEERKNSt6vectorIjEEd"></span><span id="CDenseMDMatrix::SetValue__std::vector:unsigned:CR.std::vector:unsigned:CR.double"></span><span class="target" id="classCDenseMDMatrix_1a9f8a6e5da0043c1744ac8de2128c1e20"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SetValue</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">unsigned</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vDims</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">unsigned</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vCoords</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_dValue</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrix8SetValueERKNSt6vectorIjEERKNSt6vectorIjEEd" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sets value by specified coordinates and dimensions sequence. </p>
+<p>Sets value only if the number of dimensions is the same as in the matrix. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_vDims</strong> – Dimensions. </p></li>
+<li><p><strong>_vCoords</strong> – Coordinates. </p></li>
+<li><p><strong>_dValue</strong> – New value. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Error flag. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrix14SetVectorValueERKNSt6vectorIdEE">
+<span id="_CPPv3N14CDenseMDMatrix14SetVectorValueERKNSt6vectorIdEE"></span><span id="_CPPv2N14CDenseMDMatrix14SetVectorValueERKNSt6vectorIdEE"></span><span id="CDenseMDMatrix::SetVectorValue__std::vector:double:CR"></span><span class="target" id="classCDenseMDMatrix_1a2951552131c6d8581cd53c99abc681c4"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SetVectorValue</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vValue</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrix14SetVectorValueERKNSt6vectorIdEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sets vector of values in 1D-matrix. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>_vValue</strong> – New values. </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Error flag. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrix14SetVectorValueEjjRKNSt6vectorIdEE">
+<span id="_CPPv3N14CDenseMDMatrix14SetVectorValueEjjRKNSt6vectorIdEE"></span><span id="_CPPv2N14CDenseMDMatrix14SetVectorValueEjjRKNSt6vectorIdEE"></span><span id="CDenseMDMatrix::SetVectorValue__unsigned.unsigned.std::vector:double:CR"></span><span class="target" id="classCDenseMDMatrix_1aafad25355c6becbd9344820ddb018156"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SetVectorValue</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nDim</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nCoord</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vValue</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrix14SetVectorValueEjjRKNSt6vectorIdEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sets vector of values according to specified dimensions and coordinates in 2D-matrix. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_nDim</strong> – Target dimension. </p></li>
+<li><p><strong>_nCoord</strong> – Coordinate. </p></li>
+<li><p><strong>_vValue</strong> – New values. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Error flag. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrix14SetVectorValueEjjjjRKNSt6vectorIdEE">
+<span id="_CPPv3N14CDenseMDMatrix14SetVectorValueEjjjjRKNSt6vectorIdEE"></span><span id="_CPPv2N14CDenseMDMatrix14SetVectorValueEjjjjRKNSt6vectorIdEE"></span><span id="CDenseMDMatrix::SetVectorValue__unsigned.unsigned.unsigned.unsigned.std::vector:double:CR"></span><span class="target" id="classCDenseMDMatrix_1ae08f0b36125a9a04c01e362faab02f06"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SetVectorValue</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nDim1</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nCoord1</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nDim2</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_nCoord2</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vValue</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrix14SetVectorValueEjjjjRKNSt6vectorIdEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sets vector of values according to specified dimensions and coordinates in 3D-matrix. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_nDim1</strong> – First dimension. </p></li>
+<li><p><strong>_nCoord1</strong> – First coordinate. </p></li>
+<li><p><strong>_nDim2</strong> – Second dimension. </p></li>
+<li><p><strong>_nCoord2</strong> – Second coordinate. </p></li>
+<li><p><strong>_vValue</strong> – New values. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Error flag. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrix14SetVectorValueERKNSt6vectorIjEERKNSt6vectorIdEE">
+<span id="_CPPv3N14CDenseMDMatrix14SetVectorValueERKNSt6vectorIjEERKNSt6vectorIdEE"></span><span id="_CPPv2N14CDenseMDMatrix14SetVectorValueERKNSt6vectorIjEERKNSt6vectorIdEE"></span><span id="CDenseMDMatrix::SetVectorValue__std::vector:unsigned:CR.std::vector:double:CR"></span><span class="target" id="classCDenseMDMatrix_1a602f07f6564ffe81a146c1c255c402ca"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SetVectorValue</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">unsigned</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vCoords</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vValue</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrix14SetVectorValueERKNSt6vectorIjEERKNSt6vectorIdEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sets vector of values by specified coordinates according to a full defined dimensions set. </p>
+<p>Sets values only if the number of coordinates is one less than number of dimensions in the matrix. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_vCoords</strong> – Coordinates. </p></li>
+<li><p><strong>_vValue</strong> – New values. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Whether an error has occurred. </p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Error flag. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrix14SetVectorValueERKNSt6vectorIjEERKNSt6vectorIjEERKNSt6vectorIdEE">
+<span id="_CPPv3N14CDenseMDMatrix14SetVectorValueERKNSt6vectorIjEERKNSt6vectorIjEERKNSt6vectorIdEE"></span><span id="_CPPv2N14CDenseMDMatrix14SetVectorValueERKNSt6vectorIjEERKNSt6vectorIjEERKNSt6vectorIdEE"></span><span id="CDenseMDMatrix::SetVectorValue__std::vector:unsigned:CR.std::vector:unsigned:CR.std::vector:double:CR"></span><span class="target" id="classCDenseMDMatrix_1ae18f3feaced73d29a31724c9f20520fb"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SetVectorValue</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">unsigned</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vDims</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">unsigned</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vCoords</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_vValue</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrix14SetVectorValueERKNSt6vectorIjEERKNSt6vectorIjEERKNSt6vectorIdEE" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Sets vector of values according to specified dimensions and coordinates. </p>
+<p>Sets values only if the number of dimensions is one less than in the matrix. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_vDims</strong> – Dimensions. </p></li>
+<li><p><strong>_vCoords</strong> – Coordinates. </p></li>
+<li><p><strong>_vValue</strong> – New values. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Error flag. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrix12IsNormalizedEv">
+<span id="_CPPv3N14CDenseMDMatrix12IsNormalizedEv"></span><span id="_CPPv2N14CDenseMDMatrix12IsNormalizedEv"></span><span id="CDenseMDMatrix::IsNormalized"></span><span class="target" id="classCDenseMDMatrix_1a1e8e889c9eefbab335f2b65585089cee"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IsNormalized</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrix12IsNormalizedEv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Checks if the matrix is normalized. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Whether the matrix is normalized. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrix9NormalizeEv">
+<span id="_CPPv3N14CDenseMDMatrix9NormalizeEv"></span><span id="_CPPv2N14CDenseMDMatrix9NormalizeEv"></span><span id="CDenseMDMatrix::Normalize"></span><span class="target" id="classCDenseMDMatrix_1adeb2c31e950491514607fbbca96e2aa0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Normalize</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrix9NormalizeEv" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Normalizes the matrix so that the sum of all elements equals to 1. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrixplERK14CDenseMDMatrix">
+<span id="_CPPv3N14CDenseMDMatrixplERK14CDenseMDMatrix"></span><span id="_CPPv2N14CDenseMDMatrixplERK14CDenseMDMatrix"></span><span id="CDenseMDMatrix::add-operator__CDenseMDMatrixCR"></span><span class="target" id="classCDenseMDMatrix_1aa93b882184d2256cc811ff1627ad172a"></span><a class="reference internal" href="#_CPPv414CDenseMDMatrix" title="CDenseMDMatrix"><span class="n"><span class="pre">CDenseMDMatrix</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">+</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv414CDenseMDMatrix" title="CDenseMDMatrix"><span class="n"><span class="pre">CDenseMDMatrix</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_matrix</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrixplERK14CDenseMDMatrix" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Adds matrix with the same dimensions. </p>
+<p>If dimensions are not the same, than the empty matrix will be returned. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>_matrix</strong> – Other matrix. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrixmiERK14CDenseMDMatrix">
+<span id="_CPPv3N14CDenseMDMatrixmiERK14CDenseMDMatrix"></span><span id="_CPPv2N14CDenseMDMatrixmiERK14CDenseMDMatrix"></span><span id="CDenseMDMatrix::sub-operator__CDenseMDMatrixCR"></span><span class="target" id="classCDenseMDMatrix_1abec5197a728c977778409bd7282c5170"></span><a class="reference internal" href="#_CPPv414CDenseMDMatrix" title="CDenseMDMatrix"><span class="n"><span class="pre">CDenseMDMatrix</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">-</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv414CDenseMDMatrix" title="CDenseMDMatrix"><span class="n"><span class="pre">CDenseMDMatrix</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">_matrix</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrixmiERK14CDenseMDMatrix" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Subtracts matrix with the same dimensions. </p>
+<p>If dimensions are not the same, than the empty matrix will be returned. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>_matrix</strong> – Other matrix. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14CDenseMDMatrixmlEd">
+<span id="_CPPv3N14CDenseMDMatrixmlEd"></span><span id="_CPPv2N14CDenseMDMatrixmlEd"></span><span id="CDenseMDMatrix::mul-operator__double"></span><span class="target" id="classCDenseMDMatrix_1a9f67be75a9db1244b182dcd0d662c082"></span><a class="reference internal" href="#_CPPv414CDenseMDMatrix" title="CDenseMDMatrix"><span class="n"><span class="pre">CDenseMDMatrix</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">*</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">_dFactor</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14CDenseMDMatrixmlEd" title="Permalink to this definition"></a><br /></dt>
+<dd><p>Multiplication of the matrix by a coefficient. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>_dFactor</strong> – Coefficient. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="class_matrix2d.html" class="btn btn-neutral float-left" title="Two-mensional matrix" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="class_transformmatrix.html" class="btn btn-neutral float-right" title="Transformation matrix" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, DyssolTEC GmbH.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
